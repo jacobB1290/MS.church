@@ -415,15 +415,21 @@ app.get('/', (c) => {
                 flex-direction: column;
             }
 
+            .outreach-header {
+                margin-bottom: 48px;
+                position: relative;
+                z-index: 10;
+            }
+
             .outreach-scroll-container {
                 position: relative;
-                margin-top: 48px;
+                margin-top: 0;
             }
 
             .sticky-wrapper {
                 position: sticky;
-                top: 20vh;
-                height: 80vh;
+                top: 15vh;
+                height: 70vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -520,6 +526,14 @@ app.get('/', (c) => {
                 gap: 40px;
                 grid-template-columns: 1fr 1fr;
                 align-items: start;
+            }
+
+            .event-content.flyer-left {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .event-content.flyer-left .event-flyer-container {
+                order: -1;
             }
 
             .event-description {
@@ -827,7 +841,6 @@ app.get('/', (c) => {
             </header>
             <main>
                 <section class="hero" id="home" style="animation-delay: 0.1s">
-                    <span class="eyebrow">A Church Anchored in Hope</span>
                     <h1>Mending the Broken.</h1>
                     <p>Join us every Sunday as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
                     <div class="cta-group">
@@ -863,9 +876,11 @@ app.get('/', (c) => {
                 </section>
                 
                 <section class="outreach" id="outreach" style="animation-delay: 0.3s">
-                    <span class="section-eyebrow">Outreach</span>
-                    <h2 class="section-heading">Upcoming Events</h2>
-                    <p class="section-lead">We are called to be the hands and feet of Jesus by serving our local community and growing in fellowship. Here's how you can get involved.</p>
+                    <div class="outreach-header">
+                        <span class="section-eyebrow">Outreach</span>
+                        <h2 class="section-heading">Upcoming Events</h2>
+                        <p class="section-lead">We are called to be the hands and feet of Jesus by serving our local community and growing in fellowship. Here's how you can get involved.</p>
+                    </div>
                     
                     <div class="outreach-scroll-container">
                         <div class="sticky-wrapper">
@@ -878,7 +893,7 @@ app.get('/', (c) => {
                                             <h3 class="event-title">Community Thanksgiving Dinner</h3>
                                             <div class="event-time">11:00 AM - 1:00 PM</div>
                                         </div>
-                                        <div class="event-content">
+                                        <div class="event-content flyer-left">
                                             <div class="event-description">
                                                 <p>Join us for a community Thanksgiving dinner. All are welcome to share a meal and give thanks together. Find more details on our Outreach page.</p>
                                                 <ul>
@@ -940,7 +955,7 @@ app.get('/', (c) => {
                                             <h3 class="event-title">Christmas Eve Candlelight Service</h3>
                                             <div class="event-time">5:00 PM & 7:00 PM</div>
                                         </div>
-                                        <div class="event-content">
+                                        <div class="event-content flyer-left">
                                             <div class="event-description">
                                                 <p>Celebrate the birth of Jesus with us at our special candlelight services. A beautiful evening of carols, scripture, and reflection in the main sanctuary.</p>
                                                 <ul>
@@ -1003,6 +1018,9 @@ app.get('/', (c) => {
                 let currentEventIndex = 0;
                 const totalEvents = eventSlides.length;
                 
+                // Track if we're in the outreach section
+                let inOutreachSection = false;
+                
                 // Smooth scroll handler
                 function handleScroll() {
                     if (!outreachSection || !scrollSpacer) return;
@@ -1012,6 +1030,8 @@ app.get('/', (c) => {
                     
                     // Check if we're in the outreach section
                     if (outreachRect.top <= window.innerHeight * 0.3 && spacerRect.bottom > window.innerHeight * 0.7) {
+                        inOutreachSection = true;
+                        
                         // Calculate scroll progress through the spacer
                         const spacerTop = spacerRect.top - window.innerHeight * 0.3;
                         const spacerHeight = spacerRect.height - window.innerHeight * 0.4;
@@ -1026,22 +1046,31 @@ app.get('/', (c) => {
                             currentEventIndex = clampedIndex;
                             updateActiveEvent(currentEventIndex);
                         }
-                    } else if (spacerRect.bottom <= window.innerHeight * 0.7) {
-                        // Scrolled past - show last event
-                        if (currentEventIndex !== totalEvents - 1) {
-                            currentEventIndex = totalEvents - 1;
-                            updateActiveEvent(currentEventIndex);
+                    } else {
+                        // Outside the outreach section - reset to default background
+                        if (inOutreachSection) {
+                            inOutreachSection = false;
+                            resetBackground();
                         }
-                    } else if (outreachRect.top > window.innerHeight * 0.3) {
-                        // Before section - show first event
-                        if (currentEventIndex !== 0) {
-                            currentEventIndex = 0;
-                            updateActiveEvent(0);
+                        
+                        // Still update event index for proper state
+                        if (spacerRect.bottom <= window.innerHeight * 0.7) {
+                            // Scrolled past - show last event
+                            if (currentEventIndex !== totalEvents - 1) {
+                                currentEventIndex = totalEvents - 1;
+                                updateActiveEvent(currentEventIndex, true);
+                            }
+                        } else if (outreachRect.top > window.innerHeight * 0.3) {
+                            // Before section - show first event
+                            if (currentEventIndex !== 0) {
+                                currentEventIndex = 0;
+                                updateActiveEvent(0, true);
+                            }
                         }
                     }
                 }
                 
-                function updateActiveEvent(index) {
+                function updateActiveEvent(index, skipBackground = false) {
                     // Remove active class from all events
                     eventSlides.forEach(slide => slide.classList.remove('active'));
                     
@@ -1049,10 +1078,17 @@ app.get('/', (c) => {
                     if (eventSlides[index]) {
                         eventSlides[index].classList.add('active');
                         
-                        // Update body background based on event
-                        body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
-                        body.classList.add(\`event-\${index + 1}-active\`);
+                        // Update body background based on event (only if in section)
+                        if (!skipBackground) {
+                            body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
+                            body.classList.add(\`event-\${index + 1}-active\`);
+                        }
                     }
+                }
+                
+                function resetBackground() {
+                    // Remove all event background classes to return to default
+                    body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
                 }
                 
                 // Throttle scroll events for performance

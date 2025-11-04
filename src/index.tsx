@@ -27,9 +27,9 @@ app.get('/', (c) => {
             :root {
                 color-scheme: light;
                 --bg-default: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
-                --bg-event1: linear-gradient(135deg, #fff5ed 0%, #ffe8d6 100%);
-                --bg-event2: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-                --bg-event3: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+                --bg-event1: linear-gradient(135deg, #ffb347 0%, #ff6b6b 100%); /* Orange-Yellow to Red for Friendsgiving */
+                --bg-event2: linear-gradient(135deg, #ff7f50 0%, #ffb3d9 100%); /* Red-Orange to Pink for Clothes Drive */
+                --bg-event3: linear-gradient(135deg, #d4f1d4 0%, #ffebee 50%, #e8f5e9 100%); /* Green-White-Red for Christmas */
             }
 
             * {
@@ -1030,7 +1030,12 @@ app.get('/', (c) => {
                     
                     // Check if we're in the outreach section
                     if (outreachRect.top <= window.innerHeight * 0.3 && spacerRect.bottom > window.innerHeight * 0.7) {
-                        inOutreachSection = true;
+                        // Just entering the section
+                        if (!inOutreachSection) {
+                            inOutreachSection = true;
+                            // Apply background for current event when entering
+                            updateActiveEvent(currentEventIndex, false);
+                        }
                         
                         // Calculate scroll progress through the spacer
                         const spacerTop = spacerRect.top - window.innerHeight * 0.3;
@@ -1044,7 +1049,7 @@ app.get('/', (c) => {
                         // Update event if changed
                         if (clampedIndex !== currentEventIndex) {
                             currentEventIndex = clampedIndex;
-                            updateActiveEvent(currentEventIndex);
+                            updateActiveEvent(currentEventIndex, false);
                         }
                     } else {
                         // Outside the outreach section - reset to default background

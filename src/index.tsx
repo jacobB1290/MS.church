@@ -416,19 +416,37 @@ app.get('/', (c) => {
             }
 
             .outreach-header {
-                margin-bottom: 60px;
+                margin-bottom: 0;
+                position: relative;
+                z-index: 1;
+            }
+
+            .outreach-header .section-eyebrow {
+                display: none;
+            }
+
+            .outreach-header .section-lead {
+                display: none;
+            }
+
+            .outreach-title-sticky {
                 position: sticky;
-                top: 130px;
-                z-index: 100;
-                background: rgba(255, 255, 255, 0.98);
-                padding: 32px 0 48px 0;
-                backdrop-filter: blur(30px);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
-                border-radius: 0 0 32px 32px;
-                margin-left: -5%;
-                margin-right: -5%;
-                padding-left: 5%;
-                padding-right: 5%;
+                top: 120px;
+                z-index: 50;
+                text-align: center;
+                padding: 16px 0;
+                margin-bottom: 40px;
+                pointer-events: none;
+            }
+
+            .outreach-title-sticky h2 {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(28px, 5vw, 42px);
+                color: #1a1a2e;
+                font-weight: 700;
+                line-height: 1.2;
+                text-shadow: 0 2px 16px rgba(255, 255, 255, 0.9),
+                             0 0 40px rgba(255, 255, 255, 0.8);
             }
 
             .outreach-scroll-container {
@@ -438,8 +456,8 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 15vh;
-                height: 70vh;
+                top: 18vh;
+                height: 65vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -796,9 +814,13 @@ app.get('/', (c) => {
                     padding: 32px 32px 24px 32px;
                 }
 
-                .outreach-header {
-                    top: 120px;
-                    padding: 24px 0 36px 0;
+                .outreach-title-sticky {
+                    top: 110px;
+                    font-size: 32px;
+                }
+
+                .sticky-wrapper {
+                    top: 20vh;
                 }
             }
 
@@ -859,13 +881,12 @@ app.get('/', (c) => {
                     padding: 24px;
                 }
 
-                .outreach-header {
-                    margin-left: 0;
-                    margin-right: 0;
-                    padding-left: 0;
-                    padding-right: 0;
-                    border-radius: 0 0 24px 24px;
-                    top: 110px;
+                .outreach-title-sticky {
+                    top: 100px;
+                }
+
+                .outreach-title-sticky h2 {
+                    font-size: 28px;
                 }
 
                 .watch-card {
@@ -940,6 +961,9 @@ app.get('/', (c) => {
                     </div>
                     
                     <div class="outreach-scroll-container">
+                        <div class="outreach-title-sticky">
+                            <h2>Upcoming Events</h2>
+                        </div>
                         <div class="sticky-wrapper">
                             <div class="events-container">
                                 <!-- Event 1: Community Thanksgiving Dinner -->

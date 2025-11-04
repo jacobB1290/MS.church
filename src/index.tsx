@@ -417,8 +417,12 @@ app.get('/', (c) => {
 
             .outreach-header {
                 margin-bottom: 48px;
-                position: relative;
-                z-index: 10;
+                position: sticky;
+                top: 140px;
+                z-index: 100;
+                background: linear-gradient(180deg, rgba(248, 249, 253, 0.95) 0%, rgba(248, 249, 253, 0.85) 80%, transparent 100%);
+                padding: 20px 0 40px 0;
+                backdrop-filter: blur(10px);
             }
 
             .outreach-scroll-container {
@@ -1033,8 +1037,12 @@ app.get('/', (c) => {
                         // Just entering the section
                         if (!inOutreachSection) {
                             inOutreachSection = true;
-                            // Apply background for current event when entering
-                            updateActiveEvent(currentEventIndex, false);
+                            // Small delay to ensure CSS transition applies smoothly
+                            requestAnimationFrame(() => {
+                                requestAnimationFrame(() => {
+                                    updateActiveEvent(currentEventIndex, false);
+                                });
+                            });
                         }
                         
                         // Calculate scroll progress through the spacer
@@ -1055,7 +1063,10 @@ app.get('/', (c) => {
                         // Outside the outreach section - reset to default background
                         if (inOutreachSection) {
                             inOutreachSection = false;
-                            resetBackground();
+                            // Ensure smooth fade out by using requestAnimationFrame
+                            requestAnimationFrame(() => {
+                                resetBackground();
+                            });
                         }
                         
                         // Still update event index for proper state

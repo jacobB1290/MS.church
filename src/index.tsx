@@ -142,6 +142,11 @@ app.get('/', (c) => {
                 padding-bottom: 4px;
             }
 
+            nav a.active {
+                opacity: 1;
+                color: #d4a574;
+            }
+
             nav a::after {
                 content: '';
                 position: absolute;
@@ -152,6 +157,11 @@ app.get('/', (c) => {
                 height: 2px;
                 background: currentColor;
                 transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            nav a.active::after {
+                transform: translateX(-50%) scaleX(1);
+                background: #d4a574;
             }
 
             nav a:hover {
@@ -419,14 +429,21 @@ app.get('/', (c) => {
                 margin-bottom: 0;
                 position: relative;
                 z-index: 1;
+                text-align: center;
             }
 
             .outreach-header .section-eyebrow {
-                display: none;
+                display: inline-flex;
             }
 
             .outreach-header .section-lead {
                 display: none;
+            }
+
+            .outreach-header .section-heading {
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .outreach-title-sticky {
@@ -449,20 +466,7 @@ app.get('/', (c) => {
             }
 
             .outreach-title-sticky .section-eyebrow {
-                display: inline-flex;
-                padding: 8px 20px;
-                border-radius: 100px;
-                background: rgba(255, 255, 255, 0.9);
-                text-transform: uppercase;
-                font-size: 10px;
-                font-weight: 700;
-                letter-spacing: 2.5px;
-                color: rgba(26, 26, 46, 0.5);
-                margin-bottom: 12px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.5);
-                pointer-events: auto;
+                display: none;
             }
 
             .outreach-title-sticky h2 {
@@ -988,7 +992,6 @@ app.get('/', (c) => {
                     
                     <div class="outreach-scroll-container">
                         <div class="outreach-title-sticky" id="sticky-title">
-                            <span class="section-eyebrow">Outreach</span>
                             <h2>Upcoming Events</h2>
                         </div>
                         <div class="sticky-wrapper">
@@ -1125,11 +1128,35 @@ app.get('/', (c) => {
                 const stickyTitle = document.getElementById('sticky-title');
                 const outreachHeader = document.querySelector('.outreach-header');
                 
+                // Get all sections and nav links
+                const sections = document.querySelectorAll('section[id]');
+                const navLinks = document.querySelectorAll('nav a[href^="#"]');
+                
                 let currentEventIndex = 0;
                 const totalEvents = eventSlides.length;
                 
                 // Track if we're in the outreach section
                 let inOutreachSection = false;
+                
+                // Update active nav link
+                function updateActiveNavLink() {
+                    let currentSection = '';
+                    
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop;
+                        const sectionHeight = section.clientHeight;
+                        if (window.pageYOffset >= sectionTop - 200) {
+                            currentSection = section.getAttribute('id');
+                        }
+                    });
+                    
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === \`#\${currentSection}\`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
                 
                 // Smooth scroll handler
                 function handleScroll() {
@@ -1137,6 +1164,9 @@ app.get('/', (c) => {
                     
                     const outreachRect = outreachSection.getBoundingClientRect();
                     const spacerRect = scrollSpacer.getBoundingClientRect();
+                    
+                    // Update active nav link
+                    updateActiveNavLink();
                     
                     // Check if main header has scrolled past
                     if (outreachHeader) {

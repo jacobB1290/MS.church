@@ -437,6 +437,32 @@ app.get('/', (c) => {
                 padding: 20px 0;
                 margin-bottom: 60px;
                 pointer-events: none;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .outreach-title-sticky.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .outreach-title-sticky .section-eyebrow {
+                display: inline-flex;
+                padding: 8px 20px;
+                border-radius: 100px;
+                background: rgba(255, 255, 255, 0.9);
+                text-transform: uppercase;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 2.5px;
+                color: rgba(26, 26, 46, 0.5);
+                margin-bottom: 12px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                pointer-events: auto;
             }
 
             .outreach-title-sticky h2 {
@@ -961,7 +987,8 @@ app.get('/', (c) => {
                     </div>
                     
                     <div class="outreach-scroll-container">
-                        <div class="outreach-title-sticky">
+                        <div class="outreach-title-sticky" id="sticky-title">
+                            <span class="section-eyebrow">Outreach</span>
                             <h2>Upcoming Events</h2>
                         </div>
                         <div class="sticky-wrapper">
@@ -1095,6 +1122,8 @@ app.get('/', (c) => {
                 const body = document.body;
                 const outreachSection = document.querySelector('.outreach');
                 const scrollSpacer = document.querySelector('.scroll-spacer');
+                const stickyTitle = document.getElementById('sticky-title');
+                const outreachHeader = document.querySelector('.outreach-header');
                 
                 let currentEventIndex = 0;
                 const totalEvents = eventSlides.length;
@@ -1108,6 +1137,18 @@ app.get('/', (c) => {
                     
                     const outreachRect = outreachSection.getBoundingClientRect();
                     const spacerRect = scrollSpacer.getBoundingClientRect();
+                    
+                    // Check if main header has scrolled past
+                    if (outreachHeader) {
+                        const headerRect = outreachHeader.getBoundingClientRect();
+                        if (headerRect.bottom < 200 && stickyTitle) {
+                            // Main header has scrolled away, show sticky title
+                            stickyTitle.classList.add('visible');
+                        } else if (stickyTitle) {
+                            // Main header is visible, hide sticky title
+                            stickyTitle.classList.remove('visible');
+                        }
+                    }
                     
                     // Check if we're in the outreach section
                     if (outreachRect.top <= window.innerHeight * 0.3 && spacerRect.bottom > window.innerHeight * 0.7) {

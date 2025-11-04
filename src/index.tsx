@@ -456,8 +456,8 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 24vh;
-                height: 60vh;
+                top: 30vh;
+                height: 55vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;

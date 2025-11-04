@@ -32,13 +32,14 @@
 
 ### 3. Scroll-Based Event Viewer
 - **Sticky Container**: Events container freezes in the middle of the screen
-- **Scroll Transitions**: Events cycle through with smooth fade and scale animations
-- **Dynamic Backgrounds**: Body background changes color based on active event:
-  - Event 1 (Friendsgiving): Orange-yellow to red gradient (#ffb347 → #ff6b6b)
-  - Event 2 (Clothes Drive): Red-orange to pink gradient (#ff7f50 → #ffb3d9)
-  - Event 3 (Christmas Candlelight): Green-white-red gradient (#d4f1d4 → #ffebee → #e8f5e9)
+- **Scroll Transitions**: Events cycle through with smooth fade and scale animations (1.2s)
+- **Dynamic Backgrounds**: Body background changes color based on active event with smooth 1.8s fade:
+  - Event 1 (Friendsgiving): Soft peach to light coral pastel (#ffe8d6 → #ffd4d4)
+  - Event 2 (Clothes Drive): Soft pink to lighter pink pastel (#ffd6e8 → #ffe5f0)
+  - Event 3 (Christmas Candlelight): Pale green to white-pink to pale green (#e8f5e8 → #fff5f5 → #f0f8f0)
 - **Progress-Based**: Scroll progress through spacer determines active event
 - **Auto-Reset**: Background returns to default white/blue gradient when exiting section
+- **Smooth Fading**: All colors are light pastels that fade smoothly between events
 
 ### 4. Event Cards
 Each event card includes:
@@ -150,10 +151,11 @@ webapp/
 - **Trigger**: When Outreach section reaches 30% from top of viewport
 - **Duration**: 300vh scroll distance (3x viewport height)
 - **Transitions**: 
-  - Opacity: 0.8s cubic-bezier
-  - Transform: 0.8s cubic-bezier (translateY + scale)
-  - Background: 1.2s cubic-bezier
+  - Opacity: 1.2s cubic-bezier (smooth fade in/out)
+  - Transform: 1.2s cubic-bezier (translateY + scale)
+  - Background: 1.8s cubic-bezier (gentle color transitions)
 - **Performance**: RequestAnimationFrame for smooth 60fps
+- **Colors**: Light pastel gradients that blend seamlessly
 
 ### Navigation
 - **Link hover**: 0.4s ease with underline animation

@@ -27,9 +27,9 @@ app.get('/', (c) => {
             :root {
                 color-scheme: light;
                 --bg-default: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
-                --bg-event1: linear-gradient(135deg, #ffb347 0%, #ff6b6b 100%); /* Orange-Yellow to Red for Friendsgiving */
-                --bg-event2: linear-gradient(135deg, #ff7f50 0%, #ffb3d9 100%); /* Red-Orange to Pink for Clothes Drive */
-                --bg-event3: linear-gradient(135deg, #d4f1d4 0%, #ffebee 50%, #e8f5e9 100%); /* Green-White-Red for Christmas */
+                --bg-event1: linear-gradient(135deg, #ffe8d6 0%, #ffd4d4 100%); /* Soft peach to light coral for Friendsgiving */
+                --bg-event2: linear-gradient(135deg, #ffd6e8 0%, #ffe5f0 100%); /* Soft pink to lighter pink for Clothes Drive */
+                --bg-event3: linear-gradient(135deg, #e8f5e8 0%, #fff5f5 50%, #f0f8f0 100%); /* Pale green to white-pink to pale green for Christmas */
             }
 
             * {
@@ -45,7 +45,7 @@ app.get('/', (c) => {
                 min-height: 100vh;
                 line-height: 1.6;
                 overflow-x: hidden;
-                transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             body.event-1-active {
@@ -448,9 +448,9 @@ app.get('/', (c) => {
                 left: 0;
                 width: 100%;
                 opacity: 0;
-                transform: translateY(40px) scale(0.95);
-                transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                transform: translateY(40px) scale(0.96);
+                transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
                 pointer-events: none;
             }
 

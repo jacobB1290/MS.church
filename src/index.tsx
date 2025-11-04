@@ -239,6 +239,39 @@ app.get('/', (c) => {
                 gap: 40px;
                 padding: 60px 0;
             }
+            
+            .hero-title {
+                /* Inherits from .hero h1 styles below */
+            }
+            
+            .hero-body {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 60px;
+                align-items: start;
+            }
+            
+            .hero-content {
+                display: grid;
+                gap: 32px;
+            }
+            
+            .hero-image {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                min-height: 450px;
+                border-radius: 32px;
+                overflow: hidden;
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
+            }
+            
+            .hero-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
 
             .hero .eyebrow {
                 display: inline-flex;
@@ -1460,15 +1493,27 @@ app.get('/', (c) => {
 
                 .hero {
                     padding: 50px 0 60px;
-                    min-height: 70vh;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
+                    min-height: auto;
+                    gap: 28px;
                     background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
                     border-radius: 32px;
                     margin: 0 -5%;
                     padding-left: 5%;
                     padding-right: 5%;
+                }
+                
+                .hero-body {
+                    grid-template-columns: 1fr 1fr;
+                    gap: 20px;
+                }
+                
+                .hero-content {
+                    gap: 24px;
+                }
+                
+                .hero-image {
+                    min-height: 280px;
+                    border-radius: 20px;
                 }
 
                 .hero .eyebrow {
@@ -1809,11 +1854,18 @@ app.get('/', (c) => {
             </header>
             <main>
                 <section class="hero" id="home" style="animation-delay: 0.1s">
-                    <h1>Mending the Broken.</h1>
-                    <p>Join us every Sunday as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
-                    <div class="cta-group">
-                        <a class="btn btn-primary" href="#contact">Get in Touch</a>
-                        <a class="btn btn-secondary" href="#watch">Watch live stream</a>
+                    <h1 class="hero-title">Mending the Broken.</h1>
+                    <div class="hero-body">
+                        <div class="hero-content">
+                            <p>Join us every Sunday as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
+                            <div class="cta-group">
+                                <a class="btn btn-primary" href="#contact">Get in Touch</a>
+                                <a class="btn btn-secondary" href="#watch">Watch live stream</a>
+                            </div>
+                        </div>
+                        <div class="hero-image">
+                            <img src="https://page.gensparksite.com/v1/base64_upload/0f4d6b188732ea8e86f0a81a009691c2" alt="Cross on hilltop at sunset">
+                        </div>
                     </div>
                 </section>
                 

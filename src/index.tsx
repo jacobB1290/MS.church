@@ -431,11 +431,11 @@ app.get('/', (c) => {
 
             .outreach-title-sticky {
                 position: sticky;
-                top: 120px;
+                top: 130px;
                 z-index: 50;
                 text-align: center;
-                padding: 16px 0;
-                margin-bottom: 40px;
+                padding: 20px 0;
+                margin-bottom: 60px;
                 pointer-events: none;
             }
 
@@ -456,8 +456,8 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 18vh;
-                height: 65vh;
+                top: 24vh;
+                height: 60vh;
                 display: flex;
                 align-items: center;
                 justify-content: center;

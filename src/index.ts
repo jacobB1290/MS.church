@@ -1,0 +1,2271 @@
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
+import { serveStatic } from '@hono/node-server/serve-static'
+
+const app = new Hono()
+
+// Enable CORS for API routes
+app.use('/api/*', cors())
+
+// Serve static files
+app.use('/static/*', serveStatic({ root: './public' }))
+app.use('/favicon.ico', serveStatic({ root: './public' }))
+
+// Main landing page with enhanced scroll animations
+app.get('/', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Morning Star Christian Church</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                color-scheme: light;
+                --bg-default: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
+                --bg-event1: linear-gradient(135deg, #ffe8d6 0%, #ffd4d4 100%); /* Soft peach to light coral for Friendsgiving */
+                --bg-event2: linear-gradient(135deg, #ffd6e8 0%, #ffe5f0 100%); /* Soft pink to lighter pink for Clothes Drive */
+                --bg-event3: linear-gradient(135deg, #e8f5e8 0%, #fff5f5 50%, #f0f8f0 100%); /* Pale green to white-pink to pale green for Christmas */
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: var(--bg-default);
+                color: #1a1a2e;
+                min-height: 100vh;
+                line-height: 1.6;
+                overflow-x: hidden;
+                transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            body.event-1-active {
+                background: var(--bg-event1);
+            }
+
+            body.event-2-active {
+                background: var(--bg-event2);
+            }
+
+            body.event-3-active {
+                background: var(--bg-event3);
+            }
+
+            a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .page {
+                width: min(1280px, 94%);
+                margin: 0 auto;
+            }
+
+            /* Enhanced Navigation */
+            .nav-shell {
+                margin: 40px auto 100px;
+                padding: 20px 40px;
+                background: rgba(255, 255, 255, 0.75);
+                border-radius: 100px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 40px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 
+                            0 8px 20px rgba(0, 0, 0, 0.04);
+                backdrop-filter: blur(20px);
+                position: sticky;
+                top: 32px;
+                z-index: 1000;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                transition: padding 0.3s ease, margin 0.3s ease, border-radius 0.3s ease, top 0.3s ease;
+            }
+            
+            .nav-shell.scrolled-mobile {
+                padding: 10px 20px;
+                margin-bottom: 60px;
+            }
+            
+            .nav-shell.scrolled-mobile .brand {
+                display: none;
+            }
+            
+            .nav-shell.scrolled-mobile .nav-cta {
+                display: none;
+            }
+            
+            .nav-shell.scrolled-mobile nav ul {
+                margin: 0;
+            }
+
+            .nav-shell:hover {
+                background: rgba(255, 255, 255, 0.85);
+                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1), 
+                            0 10px 24px rgba(0, 0, 0, 0.05);
+            }
+
+            .brand {
+                display: flex;
+                flex-direction: column;
+                line-height: 1;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .brand:hover {
+                transform: translateY(-2px);
+            }
+
+            .brand-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 22px;
+                font-weight: 700;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+                color: #1a1a2e;
+            }
+
+            .brand-subtitle {
+                font-size: 11px;
+                letter-spacing: 4px;
+                text-transform: uppercase;
+                color: rgba(26, 26, 46, 0.5);
+                font-weight: 600;
+                margin-top: 2px;
+            }
+
+            nav ul {
+                list-style: none;
+                display: flex;
+                gap: 36px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+            nav a {
+                opacity: 0.6;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                padding-bottom: 4px;
+            }
+
+            nav a.active {
+                opacity: 1;
+                color: #d4a574;
+            }
+
+            nav a::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%) scaleX(0);
+                width: 100%;
+                height: 2px;
+                background: currentColor;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            nav a.active::after {
+                transform: translateX(-50%) scaleX(1);
+                background: #d4a574;
+            }
+
+            nav a:hover {
+                opacity: 1;
+                transform: translateY(-2px);
+            }
+
+            nav a:hover::after {
+                transform: translateX(-50%) scaleX(1);
+            }
+
+            .nav-cta {
+                padding: 14px 32px;
+                border-radius: 100px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: #fff;
+                font-size: 12px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                box-shadow: 0 12px 28px rgba(200, 152, 96, 0.35);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .nav-cta:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 16px 36px rgba(200, 152, 96, 0.45);
+                background: linear-gradient(135deg, #dbb078 0%, #d4a574 100%);
+            }
+
+            main {
+                display: flex;
+                flex-direction: column;
+                gap: 200px;
+                margin-bottom: 200px;
+            }
+
+            section {
+                width: 100%;
+                opacity: 0;
+                transform: translateY(60px);
+                animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Hero Section */
+            .hero {
+                display: grid;
+                gap: 40px;
+                padding: 60px 0;
+            }
+
+            .hero .eyebrow {
+                display: inline-flex;
+                align-items: center;
+                padding: 12px 28px;
+                background: rgba(255, 255, 255, 0.7);
+                border-radius: 100px;
+                text-transform: uppercase;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 3px;
+                color: rgba(26, 26, 46, 0.6);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                animation: float 3s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-8px); }
+            }
+
+            .hero h1 {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(52px, 9vw, 96px);
+                line-height: 1.05;
+                letter-spacing: -2px;
+                color: #1a1a2e;
+                font-weight: 700;
+                background: linear-gradient(135deg, #1a1a2e 0%, #4a4a6e 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .hero p {
+                max-width: 640px;
+                font-size: 20px;
+                color: rgba(26, 26, 46, 0.7);
+                line-height: 1.8;
+            }
+
+            .cta-group {
+                display: flex;
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 18px 40px;
+                border-radius: 100px;
+                text-transform: uppercase;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                border: none;
+                cursor: pointer;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: #fff;
+                box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35);
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 50px rgba(200, 152, 96, 0.45);
+            }
+
+            .btn-secondary {
+                background: rgba(255, 255, 255, 0.9);
+                color: #1a1a2e;
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+            }
+
+            .btn-secondary:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+                background: #fff;
+            }
+
+            /* Section Headers */
+            .section-eyebrow {
+                display: inline-flex;
+                padding: 12px 28px;
+                border-radius: 100px;
+                background: rgba(255, 255, 255, 0.8);
+                text-transform: uppercase;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 3px;
+                color: rgba(26, 26, 46, 0.5);
+                margin-bottom: 32px;
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+            }
+
+            .section-heading {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(40px, 7vw, 64px);
+                color: #1a1a2e;
+                margin-bottom: 24px;
+                max-width: 800px;
+                font-weight: 700;
+                line-height: 1.1;
+                letter-spacing: -1px;
+            }
+
+            .section-lead {
+                max-width: 720px;
+                color: rgba(26, 26, 46, 0.7);
+                font-size: 20px;
+                margin-bottom: 16px;
+                line-height: 1.8;
+            }
+
+            address {
+                font-style: normal;
+                font-size: 13px;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+                color: rgba(26, 26, 46, 0.5);
+                margin-bottom: 48px;
+                font-weight: 600;
+            }
+
+            /* Schedule Section */
+            .section-card {
+                background: rgba(255, 255, 255, 0.85);
+                border-radius: 48px;
+                padding: 56px 64px;
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
+                            0 12px 32px rgba(0, 0, 0, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                backdrop-filter: blur(20px);
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .section-card:hover {
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
+                            0 16px 40px rgba(0, 0, 0, 0.05);
+                transform: translateY(-4px);
+            }
+
+            .schedule-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 32px;
+            }
+
+            .schedule-item {
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 32px;
+                padding: 36px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                display: grid;
+                gap: 16px;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .schedule-item:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            }
+
+            .schedule-item span {
+                text-transform: uppercase;
+                letter-spacing: 2.5px;
+                font-size: 11px;
+                font-weight: 700;
+                color: rgba(26, 26, 46, 0.45);
+            }
+
+            .schedule-item h3 {
+                font-size: 26px;
+                font-weight: 700;
+                color: #1a1a2e;
+                font-family: 'Playfair Display', serif;
+            }
+
+            .schedule-item p {
+                color: rgba(26, 26, 46, 0.65);
+                line-height: 1.8;
+                font-size: 16px;
+            }
+
+            /* Enhanced Outreach Section with Scroll Container */
+            .outreach {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .outreach-header {
+                margin-bottom: 0;
+                position: relative;
+                z-index: 1;
+                text-align: left;
+            }
+
+            .outreach-header .section-eyebrow {
+                display: inline-flex;
+            }
+
+            .outreach-header .section-lead {
+                display: none;
+            }
+
+            .outreach-header .section-heading {
+                text-align: left;
+            }
+
+            .outreach-title-sticky {
+                position: sticky;
+                top: 130px;
+                z-index: 50;
+                text-align: center;
+                padding: 20px 0;
+                margin-bottom: 60px;
+                pointer-events: none;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .outreach-title-sticky.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .outreach-title-sticky .section-eyebrow {
+                display: none;
+            }
+
+            .outreach-title-sticky h2 {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(28px, 5vw, 42px);
+                color: #1a1a2e;
+                font-weight: 700;
+                line-height: 1.2;
+                text-shadow: 0 2px 16px rgba(255, 255, 255, 0.9),
+                             0 0 40px rgba(255, 255, 255, 0.8);
+            }
+
+            .outreach-scroll-container {
+                position: relative;
+                margin-top: 0;
+            }
+
+            .sticky-wrapper {
+                position: sticky;
+                top: 30vh;
+                height: 55vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .events-container {
+                width: 100%;
+                max-width: 1000px;
+                margin: 0 auto;
+                position: relative;
+            }
+
+            .event-slide {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(20px);
+                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                            visibility 0s 0.5s;
+                pointer-events: none;
+            }
+
+            .event-slide.active {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+                pointer-events: auto;
+                position: relative;
+                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                            visibility 0s 0s;
+            }
+
+            .scroll-spacer {
+                height: 400vh;
+                pointer-events: none;
+            }
+            
+            /* Event Indicator Dots */
+            .event-indicators {
+                display: none;
+                justify-content: center;
+                align-items: center;
+                gap: 12px;
+                padding: 16px 0 0 0;
+                position: relative;
+                z-index: 60;
+            }
+            
+            .event-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: rgba(26, 26, 46, 0.2);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+            }
+            
+            .event-dot.active {
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                box-shadow: 0 4px 12px rgba(200, 152, 96, 0.4);
+                transform: scale(1.3);
+            }
+
+            /* Event Cards with Enhanced Styling */
+            .event-card {
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 32px;
+                padding: 0;
+                box-shadow: 0 24px 64px rgba(0, 0, 0, 0.08), 
+                            0 8px 24px rgba(0, 0, 0, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(30px);
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                overflow: hidden;
+            }
+
+            .event-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 50px 120px rgba(0, 0, 0, 0.15), 
+                            0 20px 50px rgba(0, 0, 0, 0.08);
+            }
+
+            .event-header {
+                margin-bottom: 0;
+                padding: 40px 48px 32px 48px;
+                position: relative;
+            }
+            
+            .event-header-mobile {
+                display: none;
+            }
+
+            .event-date {
+                display: inline-flex;
+                align-items: center;
+                padding: 10px 24px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: #fff;
+                border-radius: 100px;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                box-shadow: 0 8px 24px rgba(200, 152, 96, 0.35);
+                margin-bottom: 20px;
+            }
+
+            .event-title {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(32px, 5vw, 48px);
+                color: #1a1a2e;
+                margin-bottom: 16px;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+
+            .event-time {
+                font-size: 16px;
+                color: rgba(26, 26, 46, 0.6);
+                font-weight: 600;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-bottom: 24px;
+            }
+
+            .event-content {
+                display: grid;
+                gap: 0;
+                grid-template-columns: 1fr 1fr;
+                align-items: stretch;
+                min-height: 400px;
+            }
+
+            .event-content.flyer-left {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .event-content.flyer-left .event-flyer-container {
+                order: -1;
+            }
+
+            .event-description {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+                padding: 0 48px 40px 48px;
+                justify-content: center;
+            }
+
+            .event-description p {
+                color: rgba(26, 26, 46, 0.7);
+                line-height: 1.9;
+                font-size: 17px;
+            }
+
+            .event-description ul {
+                list-style: none;
+                display: grid;
+                gap: 12px;
+                padding-left: 0;
+            }
+
+            .event-description li {
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+                color: rgba(26, 26, 46, 0.7);
+                font-size: 16px;
+            }
+
+            .event-description li::before {
+                content: '';
+                width: 8px;
+                height: 8px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                border-radius: 50%;
+                margin-top: 8px;
+                flex-shrink: 0;
+                box-shadow: 0 4px 12px rgba(200, 152, 96, 0.4);
+            }
+
+            .event-flyer-container {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 40px;
+                background: linear-gradient(135deg, rgba(248, 248, 252, 0.5) 0%, rgba(242, 242, 248, 0.5) 100%);
+            }
+
+            .flyer-frame {
+                width: 100%;
+                max-width: 380px;
+                background: #ffffff;
+                border-radius: 20px;
+                padding: 16px;
+                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12),
+                            0 4px 16px rgba(0, 0, 0, 0.08);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .flyer-frame:hover {
+                transform: translateY(-6px) scale(1.02);
+                box-shadow: 0 24px 64px rgba(0, 0, 0, 0.16),
+                            0 8px 24px rgba(0, 0, 0, 0.1);
+            }
+
+            .flyer-image {
+                width: 100%;
+                border-radius: 12px;
+                display: block;
+            }
+
+            .placeholder-flyer {
+                width: 100%;
+                aspect-ratio: 3/4;
+                background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
+                border-radius: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                color: rgba(26, 26, 46, 0.4);
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+            }
+
+            .event-cta {
+                margin-top: 8px;
+            }
+
+            /* Watch Section */
+            .watch {
+                display: flex;
+                flex-direction: column;
+                gap: 32px;
+            }
+
+            .watch-header {
+                text-align: left;
+            }
+
+            .watch-card {
+                background: linear-gradient(135deg, #8B0000 0%, #5A0000 100%);
+                border-radius: 32px;
+                padding: 48px;
+                color: #ffffff;
+                box-shadow: 0 32px 80px rgba(139, 0, 0, 0.3);
+                position: relative;
+                overflow: hidden;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .watch-main {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 32px;
+            }
+
+            .preview-screen {
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 24px;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                padding: 48px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 24px;
+                min-height: 320px;
+                backdrop-filter: blur(10px);
+                text-align: center;
+            }
+
+            .live-status {
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+                background: rgba(244, 114, 94, 0.2);
+                border-radius: 100px;
+                padding: 8px 20px;
+                color: #ffb5a6;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+            }
+
+            .live-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: #ff7761;
+                box-shadow: 0 0 16px rgba(255, 119, 97, 0.7);
+                animation: pulse 2s ease-in-out infinite;
+            }
+
+            @keyframes pulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.7; transform: scale(1.1); }
+            }
+
+            .preview-screen p {
+                color: rgba(255, 255, 255, 0.85);
+                line-height: 1.9;
+                font-size: 18px;
+            }
+
+            .preview-screen small {
+                display: block;
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 14px;
+                margin-top: 8px;
+                letter-spacing: 1px;
+            }
+
+            .btn-outline {
+                background: rgba(255, 255, 255, 0.95);
+                border: 2px solid #ffffff;
+                color: #FF0000;
+                padding: 16px 38px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                font-weight: 700;
+            }
+
+            .btn-outline:hover {
+                background: #ffffff;
+                transform: translateY(-4px);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            }
+
+            .past-streams {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+                margin-top: 16px;
+            }
+
+            .stream-thumbnail {
+                aspect-ratio: 16/9;
+                background: rgba(0, 0, 0, 0.4);
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: rgba(255, 255, 255, 0.5);
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+            }
+
+            .stream-thumbnail:hover {
+                background: rgba(0, 0, 0, 0.6);
+                border-color: rgba(255, 255, 255, 0.3);
+                transform: translateY(-4px);
+            }
+
+            .past-streams-label {
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: rgba(255, 255, 255, 0.7);
+                margin-bottom: 16px;
+            }
+
+            /* Responsive Design */
+            @media (max-width: 1024px) {
+                .event-content {
+                    grid-template-columns: 1fr;
+                    gap: 0;
+                    min-height: auto;
+                }
+
+                .event-flyer-container {
+                    order: -1;
+                    padding: 32px;
+                }
+
+                .event-description {
+                    padding: 32px;
+                }
+
+                .event-header {
+                    padding: 32px 32px 24px 32px;
+                }
+                
+                .flyer-frame {
+                    max-width: 100%;
+                }
+                
+                .placeholder-flyer {
+                    aspect-ratio: 3/4;
+                }
+
+                .outreach-title-sticky {
+                    top: 110px;
+                }
+
+                .sticky-wrapper {
+                    top: 20vh;
+                }
+                
+                .scroll-spacer {
+                    height: 350vh;
+                }
+            }
+
+            @media (max-width: 960px) {
+                .nav-shell {
+                    flex-wrap: wrap;
+                    border-radius: 40px;
+                    gap: 16px;
+                    margin: 20px auto 50px;
+                    padding: 16px 20px;
+                    top: 12px;
+                }
+                
+                .nav-shell.scrolled-mobile {
+                    border-radius: 100px;
+                    padding: 8px 20px;
+                    gap: 0;
+                    margin-bottom: 30px;
+                    top: 8px;
+                }
+
+                nav ul {
+                    width: 100%;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    row-gap: 10px;
+                    gap: 18px;
+                }
+                
+                .nav-shell.scrolled-mobile nav ul {
+                    gap: 16px;
+                    row-gap: 0;
+                }
+
+                .nav-cta {
+                    width: 100%;
+                    padding: 10px 24px;
+                    font-size: 10px;
+                }
+
+                .brand {
+                    align-items: center;
+                    width: 100%;
+                }
+
+                .brand-title {
+                    font-size: 16px;
+                    letter-spacing: 2px;
+                }
+
+                .brand-subtitle {
+                    font-size: 9px;
+                    letter-spacing: 3px;
+                }
+                
+                nav a {
+                    font-size: 10px;
+                    letter-spacing: 2px;
+                }
+
+                .hero h1 {
+                    font-size: clamp(36px, 8vw, 52px);
+                    letter-spacing: -1px;
+                }
+
+                .hero p {
+                    font-size: 18px;
+                }
+
+                .section-heading {
+                    font-size: clamp(32px, 6vw, 48px);
+                }
+
+                .section-lead {
+                    font-size: 18px;
+                }
+
+                .schedule-grid {
+                    grid-template-columns: 1fr;
+                    gap: 24px;
+                }
+
+                .schedule-item {
+                    padding: 28px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .page {
+                    width: 92%;
+                }
+
+                main {
+                    gap: 100px;
+                    margin-bottom: 100px;
+                }
+
+                section {
+                    padding: 0;
+                }
+
+                .hero {
+                    padding: 40px 0;
+                }
+
+                .hero h1 {
+                    font-size: clamp(32px, 7vw, 44px);
+                }
+
+                .hero p {
+                    font-size: 16px;
+                    line-height: 1.7;
+                }
+
+                .btn {
+                    padding: 16px 32px;
+                    font-size: 11px;
+                }
+
+                .section-card {
+                    padding: 36px 28px;
+                    border-radius: 32px;
+                }
+
+                .section-eyebrow {
+                    font-size: 9px;
+                    padding: 10px 20px;
+                    letter-spacing: 2.5px;
+                }
+
+                .section-heading {
+                    font-size: clamp(28px, 5.5vw, 40px);
+                    margin-bottom: 20px;
+                }
+
+                .section-lead {
+                    font-size: 16px;
+                    line-height: 1.7;
+                }
+
+                address {
+                    font-size: 11px;
+                    letter-spacing: 2px;
+                    margin-bottom: 32px;
+                }
+
+                .schedule-item h3 {
+                    font-size: 22px;
+                }
+
+                .schedule-item p {
+                    font-size: 15px;
+                }
+
+                .outreach-title-sticky {
+                    top: 75px;
+                    padding: 10px 0;
+                    margin-bottom: 30px;
+                }
+
+                .outreach-title-sticky h2 {
+                    font-size: clamp(24px, 4.5vw, 36px);
+                }
+                
+                .outreach-header {
+                    margin-bottom: 40px;
+                    padding-bottom: 0;
+                }
+                
+                .outreach-header .section-heading {
+                    margin-bottom: 16px;
+                }
+                
+                .outreach-header .section-eyebrow {
+                    margin-bottom: 16px;
+                }
+
+                .event-card {
+                    border-radius: 28px;
+                }
+                
+                .event-header {
+                    padding: 28px 28px 20px 28px;
+                }
+
+                .event-title {
+                    font-size: clamp(26px, 4.5vw, 36px);
+                }
+
+                .event-date {
+                    font-size: 10px;
+                    padding: 8px 20px;
+                    letter-spacing: 1.5px;
+                }
+
+                .event-time {
+                    font-size: 13px;
+                }
+                
+                .event-description {
+                    padding: 0 28px 28px 28px;
+                }
+
+                .event-description p {
+                    font-size: 15px;
+                    line-height: 1.7;
+                }
+
+                .event-description li {
+                    font-size: 14px;
+                }
+                
+                .event-flyer-container {
+                    padding: 28px;
+                }
+                
+                .flyer-frame {
+                    max-width: 340px;
+                }
+
+                .watch-card {
+                    padding: 32px 24px;
+                    border-radius: 28px;
+                }
+
+                .preview-screen {
+                    padding: 32px 24px;
+                    min-height: 280px;
+                }
+
+                .preview-screen p {
+                    font-size: 16px;
+                    line-height: 1.7;
+                }
+
+                .preview-screen small {
+                    font-size: 13px;
+                }
+
+                .past-streams {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .page {
+                    width: 90%;
+                }
+
+                .nav-shell {
+                    margin: 16px auto 40px;
+                    padding: 14px 18px;
+                    border-radius: 32px;
+                    top: 10px;
+                }
+                
+                .nav-shell.scrolled-mobile {
+                    border-radius: 100px;
+                    padding: 7px 18px;
+                    margin-bottom: 25px;
+                    top: 6px;
+                }
+                
+                /* Show event indicators on mobile */
+                .event-indicators {
+                    display: flex;
+                }
+                
+                /* Mobile event card layout - flyer in header */
+                .event-header {
+                    padding: 20px;
+                    display: grid;
+                    grid-template-columns: 1fr 120px;
+                    gap: 16px;
+                    align-items: start;
+                }
+                
+                .event-header-content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                
+                .event-header-mobile {
+                    display: block;
+                }
+                
+                .event-flyer-mobile {
+                    width: 120px;
+                    background: #ffffff;
+                    border-radius: 12px;
+                    padding: 8px;
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                }
+                
+                .event-flyer-mobile img,
+                .event-flyer-mobile .placeholder-flyer {
+                    width: 100%;
+                    border-radius: 8px;
+                    aspect-ratio: 3/4;
+                    font-size: 9px;
+                    padding: 8px;
+                }
+                
+                /* Hide desktop flyer container on mobile */
+                .event-content {
+                    grid-template-columns: 1fr !important;
+                }
+                
+                .event-flyer-container {
+                    display: none !important;
+                }
+
+                .brand-title {
+                    font-size: 15px;
+                    letter-spacing: 1.5px;
+                }
+
+                .brand-subtitle {
+                    font-size: 8px;
+                    letter-spacing: 2.5px;
+                }
+
+                nav ul {
+                    gap: 14px;
+                    row-gap: 8px;
+                }
+                
+                .nav-shell.scrolled-mobile nav ul {
+                    gap: 12px;
+                    row-gap: 0;
+                }
+
+                nav a {
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
+                }
+                
+                .nav-shell.scrolled-mobile nav a {
+                    font-size: 9px;
+                    letter-spacing: 1.2px;
+                }
+
+                .nav-cta {
+                    padding: 10px 20px;
+                    font-size: 9px;
+                    letter-spacing: 1.5px;
+                }
+
+                main {
+                    gap: 80px;
+                    margin-bottom: 80px;
+                }
+
+                .hero {
+                    padding: 30px 0;
+                }
+
+                .hero .eyebrow {
+                    padding: 10px 20px;
+                    font-size: 10px;
+                    letter-spacing: 2px;
+                }
+
+                .hero h1 {
+                    font-size: clamp(28px, 6vw, 36px);
+                    line-height: 1.1;
+                    letter-spacing: -0.5px;
+                }
+
+                .hero p {
+                    font-size: 15px;
+                    line-height: 1.6;
+                }
+
+                .cta-group {
+                    flex-direction: column;
+                    gap: 12px;
+                    width: 100%;
+                }
+
+                .btn {
+                    width: 100%;
+                    padding: 14px 28px;
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
+                }
+
+                .section-eyebrow {
+                    font-size: 8px;
+                    padding: 8px 16px;
+                    letter-spacing: 2px;
+                    margin-bottom: 20px;
+                }
+
+                .section-heading {
+                    font-size: clamp(24px, 5vw, 32px);
+                    margin-bottom: 16px;
+                    line-height: 1.15;
+                }
+
+                .section-lead {
+                    font-size: 15px;
+                    line-height: 1.65;
+                    margin-bottom: 12px;
+                }
+
+                address {
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
+                    margin-bottom: 28px;
+                }
+
+                .section-card {
+                    padding: 28px 20px;
+                    border-radius: 28px;
+                }
+
+                .schedule-item {
+                    padding: 24px 20px;
+                    border-radius: 24px;
+                }
+
+                .schedule-item span {
+                    font-size: 10px;
+                    letter-spacing: 2px;
+                }
+
+                .schedule-item h3 {
+                    font-size: 20px;
+                }
+
+                .schedule-item p {
+                    font-size: 14px;
+                    line-height: 1.6;
+                }
+
+                .outreach-title-sticky {
+                    top: 60px;
+                    padding: 6px 0;
+                    margin-bottom: 20px;
+                }
+
+                .outreach-title-sticky h2 {
+                    font-size: clamp(22px, 4vw, 28px);
+                }
+                
+                .outreach-header {
+                    margin-bottom: 24px;
+                    padding-bottom: 0;
+                }
+                
+                .outreach-header .section-heading {
+                    margin-bottom: 8px;
+                }
+                
+                .outreach-header .section-eyebrow {
+                    margin-bottom: 10px;
+                }
+                
+                .outreach-scroll-container {
+                    margin-top: 0;
+                }
+                
+                .outreach {
+                    padding-top: 0;
+                }
+
+                .sticky-wrapper {
+                    height: auto;
+                    min-height: 50vh;
+                    top: 18vh;
+                    gap: 0;
+                }
+
+                .scroll-spacer {
+                    height: 400vh;
+                }
+                
+                .events-container {
+                    margin-top: 0;
+                    flex: 0 0 auto;
+                }
+                
+                .event-indicators {
+                    margin-top: 0;
+                    padding-top: 12px;
+                }
+
+                .event-card {
+                    border-radius: 20px;
+                }
+
+                .event-card {
+                    border-radius: 24px;
+                }
+
+                .event-date {
+                    font-size: 9px;
+                    padding: 6px 14px;
+                    letter-spacing: 1.5px;
+                    margin-bottom: 0;
+                }
+
+                .event-title {
+                    font-size: clamp(20px, 4vw, 24px);
+                    margin-bottom: 6px;
+                    line-height: 1.2;
+                }
+
+                .event-time {
+                    font-size: 11px;
+                    margin-bottom: 0;
+                }
+                
+                .event-content {
+                    min-height: auto;
+                }
+
+                .event-description {
+                    padding: 0 20px 20px 20px;
+                    gap: 14px;
+                }
+
+                .event-description p {
+                    font-size: 13px;
+                    line-height: 1.6;
+                }
+
+                .event-description ul {
+                    gap: 8px;
+                }
+
+                .event-description li {
+                    font-size: 12px;
+                    line-height: 1.5;
+                }
+
+                .event-description li::before {
+                    width: 5px;
+                    height: 5px;
+                    margin-top: 5px;
+                }
+                
+                .event-cta {
+                    margin-top: 4px;
+                }
+                
+                .event-cta .btn {
+                    padding: 12px 24px;
+                    font-size: 9px;
+                }
+                
+                .placeholder-flyer {
+                    aspect-ratio: 3/4;
+                }
+
+                .flyer-image {
+                    border-radius: 10px;
+                }
+
+                .placeholder-flyer {
+                    font-size: 14px;
+                    letter-spacing: 1.5px;
+                    border-radius: 20px;
+                }
+
+                .watch-card {
+                    padding: 28px 20px;
+                    border-radius: 24px;
+                }
+
+                .preview-screen {
+                    padding: 28px 20px;
+                    min-height: 240px;
+                    gap: 20px;
+                    border-radius: 20px;
+                }
+
+                .live-status {
+                    font-size: 10px;
+                    padding: 6px 16px;
+                    letter-spacing: 1.5px;
+                }
+
+                .live-dot {
+                    width: 8px;
+                    height: 8px;
+                }
+
+                .preview-screen p {
+                    font-size: 15px;
+                    line-height: 1.65;
+                }
+
+                .preview-screen small {
+                    font-size: 12px;
+                    margin-top: 6px;
+                }
+
+                .btn-outline {
+                    padding: 14px 32px;
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
+                }
+
+                .past-streams-label {
+                    font-size: 12px;
+                    letter-spacing: 1.5px;
+                    margin-bottom: 12px;
+                }
+
+                .stream-thumbnail {
+                    font-size: 12px;
+                    border-radius: 12px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="page">
+            <header class="nav-shell">
+                <div class="brand">
+                    <span class="brand-title">Morning Star</span>
+                    <span class="brand-subtitle">Christian Church</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#schedule">Schedule</a></li>
+                        <li><a href="#outreach">Outreach</a></li>
+                        <li><a href="#watch">Watch</a></li>
+                    </ul>
+                </nav>
+                <a class="nav-cta" href="/form">Submit the form</a>
+            </header>
+            <main>
+                <section class="hero" id="home" style="animation-delay: 0.1s">
+                    <h1>Mending the Broken.</h1>
+                    <p>Join us every Sunday as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
+                    <div class="cta-group">
+                        <a class="btn btn-primary" href="/form">Submit the form</a>
+                        <a class="btn btn-secondary" href="#watch">Watch live stream</a>
+                    </div>
+                </section>
+                
+                <section class="schedule" id="schedule" style="animation-delay: 0.2s">
+                    <span class="section-eyebrow">Weekly Schedule</span>
+                    <h2 class="section-heading">Three simple touchpoints to connect every week.</h2>
+                    <p class="section-lead">We gather on Sundays, grow in community throughout the week, and stay rooted in Boise. You'll find us at:</p>
+                    <address>3080 N Wildwood St · Boise, Idaho</address>
+                    <div class="section-card">
+                        <div class="schedule-grid">
+                            <article class="schedule-item">
+                                <span>Sunday Gatherings</span>
+                                <h3>9:00 AM</h3>
+                                <p>Worship & kids environments for every age.</p>
+                            </article>
+                            <article class="schedule-item">
+                                <span>Bible Study</span>
+                                <h3>Tuesdays · 8:30 AM</h3>
+                                <p>Morning study with hot coffee, child care, and community prayer.</p>
+                            </article>
+                            <article class="schedule-item">
+                                <span>Bible Study</span>
+                                <h3>Thursdays · 6:00 PM</h3>
+                                <p>Evening groups across Boise with dinner, discussion, and worship.</p>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="outreach" id="outreach" style="animation-delay: 0.3s">
+                    <div class="outreach-header">
+                        <span class="section-eyebrow">Outreach</span>
+                        <h2 class="section-heading">Upcoming Events</h2>
+                        <p class="section-lead">We are called to be the hands and feet of Jesus by serving our local community and growing in fellowship. Here's how you can get involved.</p>
+                    </div>
+                    
+                    <div class="outreach-scroll-container">
+                        <div class="outreach-title-sticky" id="sticky-title">
+                            <h2>Upcoming Events</h2>
+                        </div>
+                        <div class="sticky-wrapper">
+                            <div class="events-container">
+                                <!-- Event 1: Community Thanksgiving Dinner -->
+                                <div class="event-slide active" data-event="1">
+                                    <div class="event-card">
+                                        <div class="event-header">
+                                            <div class="event-header-content">
+                                                <span class="event-date">Nov 26</span>
+                                                <h3 class="event-title">Community Thanksgiving Dinner</h3>
+                                                <div class="event-time">11:00 AM - 1:00 PM</div>
+                                            </div>
+                                            <div class="event-header-mobile">
+                                                <div class="event-flyer-mobile">
+                                                    <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="event-content flyer-left">
+                                            <div class="event-description">
+                                                <p>Join us for a community Thanksgiving dinner. All are welcome to share a meal and give thanks together. Find more details on our Outreach page.</p>
+                                                <ul>
+                                                    <li>Bring a side or dessert to share</li>
+                                                    <li>Kid-friendly seating and activities</li>
+                                                    <li>Fellowship and community prayer</li>
+                                                    <li>All ages welcome</li>
+                                                </ul>
+                                                <div class="event-cta">
+                                                    <a class="btn btn-primary" href="/form">RSVP Now</a>
+                                                </div>
+                                            </div>
+                                            <div class="event-flyer-container">
+                                                <div class="flyer-frame">
+                                                    <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Event 2: Christmas Clothes Drive -->
+                                <div class="event-slide" data-event="2">
+                                    <div class="event-card">
+                                        <div class="event-header">
+                                            <div class="event-header-content">
+                                                <span class="event-date">Dec 6</span>
+                                                <h3 class="event-title">Christmas Clothes Drive for Mothers</h3>
+                                                <div class="event-time">Drop-off during office hours</div>
+                                            </div>
+                                            <div class="event-header-mobile">
+                                                <div class="event-flyer-mobile">
+                                                    <div class="placeholder-flyer">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="event-content flyer-left">
+                                            <div class="event-description">
+                                                <p>We are collecting new and gently used winter clothing for single mothers and their children in our community. Your donations can make a significant difference this winter.</p>
+                                                <ul>
+                                                    <li>Winter coats, sweaters, and warm clothing</li>
+                                                    <li>Children's clothing all sizes</li>
+                                                    <li>New socks and undergarments</li>
+                                                    <li>Accessories like gloves, scarves, and hats</li>
+                                                </ul>
+                                                <div class="event-cta">
+                                                    <a class="btn btn-primary" href="/form">Volunteer or Request Items</a>
+                                                </div>
+                                            </div>
+                                            <div class="event-flyer-container">
+                                                <div class="flyer-frame">
+                                                    <div class="placeholder-flyer">
+                                                        Flyer Coming Soon
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Event 3: Christmas Eve Candlelight Service -->
+                                <div class="event-slide" data-event="3">
+                                    <div class="event-card">
+                                        <div class="event-header">
+                                            <div class="event-header-content">
+                                                <span class="event-date">Dec 24</span>
+                                                <h3 class="event-title">Christmas Eve Candlelight Service</h3>
+                                                <div class="event-time">5:00 PM & 7:00 PM</div>
+                                            </div>
+                                            <div class="event-header-mobile">
+                                                <div class="event-flyer-mobile">
+                                                    <div class="placeholder-flyer">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="event-content flyer-left">
+                                            <div class="event-description">
+                                                <p>Celebrate the birth of Jesus with us at our special candlelight services. A beautiful evening of carols, scripture, and reflection in the main sanctuary.</p>
+                                                <ul>
+                                                    <li>Traditional Christmas carols</li>
+                                                    <li>Candlelight ceremony</li>
+                                                    <li>Scripture reading and reflection</li>
+                                                    <li>Family-friendly service</li>
+                                                </ul>
+                                                <div class="event-cta">
+                                                    <a class="btn btn-primary" href="/form">Reserve Your Seat</a>
+                                                </div>
+                                            </div>
+                                            <div class="event-flyer-container">
+                                                <div class="flyer-frame">
+                                                    <div class="placeholder-flyer">
+                                                        Flyer Coming Soon
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="event-indicators">
+                                <div class="event-dot active" data-dot="1"></div>
+                                <div class="event-dot" data-dot="2"></div>
+                                <div class="event-dot" data-dot="3"></div>
+                            </div>
+                        </div>
+                        <div class="scroll-spacer"></div>
+                    </div>
+                </section>
+                
+                <section class="watch" id="watch" style="animation-delay: 0.4s">
+                    <div class="watch-header">
+                        <span class="section-eyebrow">Watch</span>
+                        <h2 class="section-heading">Join us live every Sunday.</h2>
+                        <p class="section-lead">Tune in from wherever you are to worship together online. Our stream goes live fifteen minutes before service begins.</p>
+                    </div>
+                    <div class="watch-card">
+                        <div class="watch-main">
+                            <div class="preview-screen">
+                                <span class="live-status"><span class="live-dot"></span>Live Soon</span>
+                                <p>"He heals the brokenhearted and binds up their wounds."<small>Psalm 147:3</small></p>
+                                <a class="btn btn-outline" href="https://www.youtube.com/" target="_blank" rel="noopener">Open live stream</a>
+                            </div>
+                            <div class="past-streams-label">Previous Livestreams</div>
+                            <div class="past-streams">
+                                <div class="stream-thumbnail">Last Sunday</div>
+                                <div class="stream-thumbnail">2 Weeks Ago</div>
+                                <div class="stream-thumbnail">3 Weeks Ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <script>
+            // Smooth scroll animation for events with background color change
+            document.addEventListener('DOMContentLoaded', () => {
+                const eventSlides = document.querySelectorAll('.event-slide');
+                const body = document.body;
+                const outreachSection = document.querySelector('.outreach');
+                const scrollSpacer = document.querySelector('.scroll-spacer');
+                const stickyTitle = document.getElementById('sticky-title');
+                const outreachHeader = document.querySelector('.outreach-header');
+                const navShell = document.querySelector('.nav-shell');
+                
+                // Get all sections and nav links
+                const sections = document.querySelectorAll('section[id]');
+                const navLinks = document.querySelectorAll('nav a[href^="#"]');
+                
+                // Mobile nav compression on scroll
+                let lastScrollY = 0;
+                let scrollThreshold = 50;
+                
+                function handleMobileNav() {
+                    // Only apply on mobile (960px and below)
+                    if (window.innerWidth <= 960) {
+                        if (window.scrollY > scrollThreshold) {
+                            navShell.classList.add('scrolled-mobile');
+                        } else {
+                            navShell.classList.remove('scrolled-mobile');
+                        }
+                    } else {
+                        // Remove class on desktop
+                        navShell.classList.remove('scrolled-mobile');
+                    }
+                    lastScrollY = window.scrollY;
+                }
+                
+                let currentEventIndex = 0;
+                const totalEvents = eventSlides.length;
+                
+                // Track if we're in the outreach section
+                let inOutreachSection = false;
+                
+                // Update active nav link
+                function updateActiveNavLink() {
+                    let currentSection = '';
+                    
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop;
+                        const sectionHeight = section.clientHeight;
+                        if (window.pageYOffset >= sectionTop - 200) {
+                            currentSection = section.getAttribute('id');
+                        }
+                    });
+                    
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === \`#\${currentSection}\`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+                
+                // Smooth scroll handler
+                function handleScroll() {
+                    if (!outreachSection || !scrollSpacer) return;
+                    
+                    const outreachRect = outreachSection.getBoundingClientRect();
+                    const spacerRect = scrollSpacer.getBoundingClientRect();
+                    
+                    // Handle mobile nav compression
+                    handleMobileNav();
+                    
+                    // Update active nav link
+                    updateActiveNavLink();
+                    
+                    // Check if main header has scrolled past
+                    if (outreachHeader) {
+                        const headerRect = outreachHeader.getBoundingClientRect();
+                        if (headerRect.bottom < 200 && stickyTitle) {
+                            // Main header has scrolled away, show sticky title
+                            stickyTitle.classList.add('visible');
+                        } else if (stickyTitle) {
+                            // Main header is visible, hide sticky title
+                            stickyTitle.classList.remove('visible');
+                        }
+                    }
+                    
+                    // Check if we're in the outreach section
+                    if (outreachRect.top <= window.innerHeight * 0.3 && spacerRect.bottom > window.innerHeight * 0.7) {
+                        // Just entering the section
+                        if (!inOutreachSection) {
+                            inOutreachSection = true;
+                            // Small delay to ensure CSS transition applies smoothly
+                            requestAnimationFrame(() => {
+                                requestAnimationFrame(() => {
+                                    updateActiveEvent(currentEventIndex, false);
+                                });
+                            });
+                        }
+                        
+                        // Calculate scroll progress through the spacer
+                        const spacerTop = spacerRect.top - window.innerHeight * 0.35;
+                        const spacerHeight = spacerRect.height - window.innerHeight * 0.5;
+                        const scrollProgress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
+                        
+                        // Fade out headers after scrolling past last event (90%+)
+                        if (scrollProgress > 0.9) {
+                            const fadeProgress = Math.min(1, (scrollProgress - 0.9) / 0.1);
+                            if (outreachHeader) {
+                                outreachHeader.style.opacity = String(1 - fadeProgress);
+                                outreachHeader.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
+                            }
+                            if (stickyTitle) {
+                                stickyTitle.style.opacity = String(1 - fadeProgress);
+                                stickyTitle.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
+                            }
+                        } else {
+                            // Reset opacity when scrolling back
+                            if (outreachHeader) {
+                                outreachHeader.style.opacity = '1';
+                                outreachHeader.style.transform = 'translateY(0)';
+                            }
+                            if (stickyTitle && stickyTitle.classList.contains('visible')) {
+                                stickyTitle.style.opacity = '1';
+                                stickyTitle.style.transform = 'translateY(0)';
+                            }
+                        }
+                        
+                        // Calculate which event should be shown with better distribution
+                        // Divide scroll area evenly into 3 zones (one per event)
+                        let newEventIndex;
+                        if (scrollProgress < 0.33) {
+                            newEventIndex = 0;
+                        } else if (scrollProgress < 0.67) {
+                            newEventIndex = 1;
+                        } else {
+                            newEventIndex = 2;
+                        }
+                        
+                        // Add small hysteresis only at boundaries to prevent rapid switching
+                        const threshold = 0.05;
+                        if (newEventIndex > currentEventIndex) {
+                            // Moving forward - require clear progress past boundary
+                            const boundary = (newEventIndex) * 0.33;
+                            if (scrollProgress < boundary + threshold) {
+                                newEventIndex = currentEventIndex;
+                            }
+                        } else if (newEventIndex < currentEventIndex) {
+                            // Moving backward - require clear progress past boundary
+                            const boundary = (currentEventIndex) * 0.33;
+                            if (scrollProgress > boundary - threshold) {
+                                newEventIndex = currentEventIndex;
+                            }
+                        }
+                        
+                        const clampedIndex = Math.max(0, Math.min(totalEvents - 1, newEventIndex));
+                        
+                        // Update event if changed
+                        if (clampedIndex !== currentEventIndex) {
+                            currentEventIndex = clampedIndex;
+                            updateActiveEvent(currentEventIndex, false);
+                        }
+                    } else {
+                        // Outside the outreach section - reset to default background
+                        if (inOutreachSection) {
+                            inOutreachSection = false;
+                            // Ensure smooth fade out by using requestAnimationFrame
+                            requestAnimationFrame(() => {
+                                resetBackground();
+                            });
+                        }
+                        
+                        // Still update event index for proper state
+                        if (spacerRect.bottom <= window.innerHeight * 0.7) {
+                            // Scrolled past - show last event
+                            if (currentEventIndex !== totalEvents - 1) {
+                                currentEventIndex = totalEvents - 1;
+                                updateActiveEvent(currentEventIndex, true);
+                            }
+                        } else if (outreachRect.top > window.innerHeight * 0.3) {
+                            // Before section - show first event
+                            if (currentEventIndex !== 0) {
+                                currentEventIndex = 0;
+                                updateActiveEvent(0, true);
+                            }
+                        }
+                    }
+                }
+                
+                function updateActiveEvent(index, skipBackground = false) {
+                    // Remove active class from all events
+                    eventSlides.forEach(slide => slide.classList.remove('active'));
+                    
+                    // Add active class to current event
+                    if (eventSlides[index]) {
+                        eventSlides[index].classList.add('active');
+                        
+                        // Update body background based on event (only if in section)
+                        if (!skipBackground) {
+                            body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
+                            body.classList.add(\`event-\${index + 1}-active\`);
+                        }
+                        
+                        // Update indicator dots
+                        const dots = document.querySelectorAll('.event-dot');
+                        dots.forEach((dot, i) => {
+                            if (i === index) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        });
+                    }
+                }
+                
+                function resetBackground() {
+                    // Remove all event background classes to return to default
+                    body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
+                }
+                
+                // Throttle scroll events for performance
+                let ticking = false;
+                window.addEventListener('scroll', () => {
+                    if (!ticking) {
+                        window.requestAnimationFrame(() => {
+                            handleScroll();
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                });
+                
+                // Initial check
+                handleScroll();
+                
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    handleMobileNav();
+                });
+                
+                // Smooth scrolling for navigation links with offset for sticky nav
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href');
+                        const target = document.querySelector(targetId);
+                        if (target) {
+                            // Calculate offset based on screen size and section
+                            let navOffset = 160; // Desktop default
+                            
+                            // Special handling for outreach section on mobile
+                            if (targetId === '#outreach' && window.innerWidth <= 960) {
+                                navOffset = 80; // Tighter offset for outreach on mobile
+                            } else if (window.innerWidth <= 960) {
+                                navOffset = 100; // Mobile/tablet - reduced offset for other sections
+                            }
+                            
+                            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
+                            
+                            window.scrollTo({
+                                top: targetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+    </html>
+  `)
+})
+
+// Other routes remain the same
+app.get('/form', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Contact - Morning Star Christian Church</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .header {
+                background: rgba(255, 255, 255, 0.75);
+                padding: 24px 60px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+                backdrop-filter: blur(20px);
+            }
+            
+            .header-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+            
+            .logo {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .logo h1 {
+                font-family: 'Playfair Display', serif;
+                font-size: 22px;
+                font-weight: 700;
+                color: #1a1a2e;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+            }
+            
+            .logo span {
+                font-size: 11px;
+                color: rgba(26, 26, 46, 0.5);
+                letter-spacing: 4px;
+                text-transform: uppercase;
+                font-weight: 600;
+                margin-top: 2px;
+            }
+            
+            nav {
+                display: flex;
+                gap: 40px;
+                align-items: center;
+            }
+            
+            nav a {
+                text-decoration: none;
+                color: #1a1a2e;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                transition: opacity 0.3s;
+                opacity: 0.6;
+            }
+            
+            nav a:hover {
+                opacity: 1;
+            }
+            
+            nav a:last-child {
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: white;
+                padding: 12px 28px;
+                border-radius: 100px;
+                opacity: 1;
+            }
+            
+            .content {
+                padding: 80px 60px;
+                max-width: 1400px;
+                margin: 0 auto;
+                width: 100%;
+            }
+            
+            h2 {
+                font-family: 'Playfair Display', serif;
+                font-size: 52px;
+                color: #1a1a2e;
+                font-weight: 700;
+                margin-bottom: 48px;
+            }
+            
+            .form-container {
+                background: rgba(255, 255, 255, 0.85);
+                padding: 48px;
+                border-radius: 32px;
+                box-shadow: 0 32px 80px rgba(0,0,0,0.08);
+                max-width: 700px;
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+            }
+            
+            .form-group {
+                margin-bottom: 28px;
+            }
+            
+            label {
+                display: block;
+                color: #1a1a2e;
+                font-size: 13px;
+                font-weight: 700;
+                margin-bottom: 10px;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+            }
+            
+            input, textarea, select {
+                width: 100%;
+                padding: 16px 20px;
+                border: 1px solid rgba(26, 26, 46, 0.15);
+                border-radius: 16px;
+                font-size: 16px;
+                font-family: inherit;
+                background: rgba(255, 255, 255, 0.9);
+                transition: all 0.3s;
+            }
+            
+            input:focus, textarea:focus, select:focus {
+                outline: none;
+                border-color: #d4a574;
+                background: white;
+                box-shadow: 0 8px 24px rgba(212, 165, 116, 0.15);
+            }
+            
+            textarea {
+                min-height: 140px;
+                resize: vertical;
+            }
+            
+            .submit-btn {
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: white;
+                padding: 18px 40px;
+                border-radius: 100px;
+                border: none;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                cursor: pointer;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                width: 100%;
+                box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35);
+            }
+            
+            .submit-btn:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 50px rgba(200, 152, 96, 0.45);
+            }
+        </style>
+    </head>
+    <body>
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>MORNING STAR</h1>
+                    <span>CHRISTIAN CHURCH</span>
+                </div>
+                <nav>
+                    <a href="/#home">HOME</a>
+                    <a href="/#schedule">SCHEDULE</a>
+                    <a href="/#outreach">OUTREACH</a>
+                    <a href="/#watch">WATCH</a>
+                    <a href="/form">SUBMIT THE FORM</a>
+                </nav>
+            </div>
+        </header>
+        
+        <div class="content">
+            <h2>Contact Us</h2>
+            <div class="form-container">
+                <form>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <select id="subject" name="subject" required>
+                            <option value="">Select a subject</option>
+                            <option value="general">General Inquiry</option>
+                            <option value="prayer">Prayer Request</option>
+                            <option value="volunteer">Volunteer</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Submit Form</button>
+                </form>
+            </div>
+        </div>
+    </body>
+    </html>
+  `)
+})
+
+export default app

@@ -416,13 +416,19 @@ app.get('/', (c) => {
             }
 
             .outreach-header {
-                margin-bottom: 48px;
+                margin-bottom: 60px;
                 position: sticky;
-                top: 140px;
+                top: 130px;
                 z-index: 100;
-                background: linear-gradient(180deg, rgba(248, 249, 253, 0.95) 0%, rgba(248, 249, 253, 0.85) 80%, transparent 100%);
-                padding: 20px 0 40px 0;
-                backdrop-filter: blur(10px);
+                background: rgba(255, 255, 255, 0.98);
+                padding: 32px 0 48px 0;
+                backdrop-filter: blur(30px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+                border-radius: 0 0 32px 32px;
+                margin-left: -5%;
+                margin-right: -5%;
+                padding-left: 5%;
+                padding-right: 5%;
             }
 
             .outreach-scroll-container {
@@ -472,14 +478,15 @@ app.get('/', (c) => {
 
             /* Event Cards with Enhanced Styling */
             .event-card {
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 48px;
-                padding: 48px;
-                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.12), 
-                            0 16px 40px rgba(0, 0, 0, 0.06);
-                border: 1px solid rgba(255, 255, 255, 0.8);
-                backdrop-filter: blur(20px);
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 32px;
+                padding: 0;
+                box-shadow: 0 24px 64px rgba(0, 0, 0, 0.08), 
+                            0 8px 24px rgba(0, 0, 0, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(30px);
                 transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                overflow: hidden;
             }
 
             .event-card:hover {
@@ -489,7 +496,8 @@ app.get('/', (c) => {
             }
 
             .event-header {
-                margin-bottom: 32px;
+                margin-bottom: 0;
+                padding: 40px 48px 32px 48px;
             }
 
             .event-date {
@@ -527,9 +535,10 @@ app.get('/', (c) => {
 
             .event-content {
                 display: grid;
-                gap: 40px;
+                gap: 0;
                 grid-template-columns: 1fr 1fr;
-                align-items: start;
+                align-items: stretch;
+                min-height: 400px;
             }
 
             .event-content.flyer-left {
@@ -544,6 +553,8 @@ app.get('/', (c) => {
                 display: flex;
                 flex-direction: column;
                 gap: 24px;
+                padding: 0 48px 40px 48px;
+                justify-content: center;
             }
 
             .event-description p {
@@ -580,27 +591,34 @@ app.get('/', (c) => {
 
             .event-flyer-container {
                 position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 40px;
+                background: linear-gradient(135deg, rgba(248, 248, 252, 0.5) 0%, rgba(242, 242, 248, 0.5) 100%);
             }
 
             .flyer-frame {
-                background: rgba(255, 255, 255, 0.95);
-                border-radius: 32px;
-                padding: 24px;
-                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.8);
+                width: 100%;
+                max-width: 380px;
+                background: #ffffff;
+                border-radius: 20px;
+                padding: 16px;
+                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12),
+                            0 4px 16px rgba(0, 0, 0, 0.08);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .flyer-frame:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 28px 70px rgba(0, 0, 0, 0.12);
+                transform: translateY(-6px) scale(1.02);
+                box-shadow: 0 24px 64px rgba(0, 0, 0, 0.16),
+                            0 8px 24px rgba(0, 0, 0, 0.1);
             }
 
             .flyer-image {
                 width: 100%;
-                border-radius: 24px;
+                border-radius: 12px;
                 display: block;
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
             }
 
             .placeholder-flyer {
@@ -619,7 +637,7 @@ app.get('/', (c) => {
             }
 
             .event-cta {
-                margin-top: 32px;
+                margin-top: 8px;
             }
 
             /* Watch Section */
@@ -762,11 +780,25 @@ app.get('/', (c) => {
             @media (max-width: 1024px) {
                 .event-content {
                     grid-template-columns: 1fr;
-                    gap: 32px;
+                    gap: 0;
                 }
 
                 .event-flyer-container {
                     order: -1;
+                    padding: 32px;
+                }
+
+                .event-description {
+                    padding: 32px;
+                }
+
+                .event-header {
+                    padding: 32px 32px 24px 32px;
+                }
+
+                .outreach-header {
+                    top: 120px;
+                    padding: 24px 0 36px 0;
                 }
             }
 
@@ -811,8 +843,29 @@ app.get('/', (c) => {
                 }
 
                 .event-card {
-                    padding: 32px;
-                    border-radius: 36px;
+                    padding: 0;
+                    border-radius: 24px;
+                }
+
+                .event-header {
+                    padding: 24px 24px 20px 24px;
+                }
+
+                .event-description {
+                    padding: 0 24px 32px 24px;
+                }
+
+                .event-flyer-container {
+                    padding: 24px;
+                }
+
+                .outreach-header {
+                    margin-left: 0;
+                    margin-right: 0;
+                    padding-left: 0;
+                    padding-right: 0;
+                    border-radius: 0 0 24px 24px;
+                    top: 110px;
                 }
 
                 .watch-card {

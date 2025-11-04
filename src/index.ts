@@ -29,7 +29,7 @@ app.get('/', (c) => {
                 --bg-default: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
                 --bg-event1: linear-gradient(135deg, #ffe8d6 0%, #ffd4d4 100%); /* Soft peach to light coral for Friendsgiving */
                 --bg-event2: linear-gradient(135deg, #ffd6e8 0%, #ffe5f0 100%); /* Soft pink to lighter pink for Clothes Drive */
-                --bg-event3: linear-gradient(135deg, #e8f5e8 0%, #fff5f5 50%, #f0f8f0 100%); /* Pale green to white-pink to pale green for Christmas */
+                --bg-event3: linear-gradient(135deg, #c8e6c8 0%, #ffe0e0 50%, #d4f0d4 100%); /* Vibrant green to soft red to vibrant green for Christmas */
             }
 
             * {
@@ -1439,29 +1439,40 @@ app.get('/', (c) => {
                 }
 
                 main {
-                    gap: 80px;
+                    gap: 100px;
                     margin-bottom: 80px;
                 }
 
                 .hero {
-                    padding: 30px 0;
+                    padding: 50px 0 60px;
+                    min-height: 70vh;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+                    border-radius: 32px;
+                    margin: 0 -5%;
+                    padding-left: 5%;
+                    padding-right: 5%;
                 }
 
                 .hero .eyebrow {
-                    padding: 10px 20px;
-                    font-size: 10px;
-                    letter-spacing: 2px;
+                    padding: 12px 24px;
+                    font-size: 11px;
+                    letter-spacing: 2.5px;
                 }
 
                 .hero h1 {
-                    font-size: clamp(28px, 6vw, 36px);
-                    line-height: 1.1;
-                    letter-spacing: -0.5px;
+                    font-size: clamp(40px, 8vw, 52px);
+                    line-height: 1.05;
+                    letter-spacing: -1px;
+                    margin: 24px 0;
                 }
 
                 .hero p {
-                    font-size: 15px;
-                    line-height: 1.6;
+                    font-size: 17px;
+                    line-height: 1.7;
+                    max-width: 100%;
                 }
 
                 .cta-group {
@@ -1472,34 +1483,34 @@ app.get('/', (c) => {
 
                 .btn {
                     width: 100%;
-                    padding: 14px 28px;
-                    font-size: 10px;
-                    letter-spacing: 1.5px;
+                    padding: 16px 32px;
+                    font-size: 12px;
+                    letter-spacing: 2px;
                 }
 
                 .section-eyebrow {
-                    font-size: 8px;
-                    padding: 8px 16px;
-                    letter-spacing: 2px;
-                    margin-bottom: 20px;
+                    font-size: 10px;
+                    padding: 10px 20px;
+                    letter-spacing: 2.5px;
+                    margin-bottom: 16px;
                 }
 
                 .section-heading {
-                    font-size: clamp(24px, 5vw, 32px);
+                    font-size: clamp(28px, 6vw, 36px);
                     margin-bottom: 16px;
-                    line-height: 1.15;
+                    line-height: 1.2;
                 }
 
                 .section-lead {
-                    font-size: 15px;
-                    line-height: 1.65;
+                    font-size: 16px;
+                    line-height: 1.7;
                     margin-bottom: 12px;
                 }
 
                 address {
-                    font-size: 10px;
-                    letter-spacing: 1.5px;
-                    margin-bottom: 28px;
+                    font-size: 11px;
+                    letter-spacing: 2px;
+                    margin-bottom: 20px;
                 }
 
                 .section-card {

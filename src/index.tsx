@@ -1503,17 +1503,34 @@ app.get('/', (c) => {
                 }
                 
                 .hero-body {
+                    display: grid;
                     grid-template-columns: 1fr 1fr;
+                    grid-template-rows: auto auto;
                     gap: 20px;
                 }
                 
                 .hero-content {
-                    gap: 24px;
+                    grid-column: 1;
+                    grid-row: 1;
+                }
+                
+                .hero-content p {
+                    margin: 0;
+                    line-height: 1.7;
                 }
                 
                 .hero-image {
-                    min-height: 280px;
+                    grid-column: 2;
+                    grid-row: 1;
+                    min-height: auto;
+                    height: 100%;
                     border-radius: 20px;
+                }
+                
+                .hero-body .cta-group {
+                    grid-column: 1 / -1;
+                    grid-row: 2;
+                    margin-top: 0;
                 }
 
                 .hero .eyebrow {
@@ -1858,13 +1875,13 @@ app.get('/', (c) => {
                     <div class="hero-body">
                         <div class="hero-content">
                             <p>Join us every Sunday as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
-                            <div class="cta-group">
-                                <a class="btn btn-primary" href="#contact">Get in Touch</a>
-                                <a class="btn btn-secondary" href="#watch">Watch live stream</a>
-                            </div>
                         </div>
                         <div class="hero-image">
                             <img src="https://page.gensparksite.com/v1/base64_upload/0f4d6b188732ea8e86f0a81a009691c2" alt="Cross on hilltop at sunset">
+                        </div>
+                        <div class="cta-group">
+                            <a class="btn btn-primary" href="#contact">Get in Touch</a>
+                            <a class="btn btn-secondary" href="#watch">Watch live stream</a>
                         </div>
                     </div>
                 </section>

@@ -883,6 +883,173 @@ app.get('/', (c) => {
                 margin-bottom: 16px;
             }
 
+            /* Contact Section */
+            .contact {
+                display: flex;
+                flex-direction: column;
+                gap: 48px;
+            }
+            
+            .contact-header {
+                text-align: center;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            
+            .contact-container {
+                width: 100%;
+            }
+            
+            .contact-card {
+                background: rgba(255, 255, 255, 0.85);
+                border-radius: 48px;
+                padding: 64px;
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
+                            0 12px 32px rgba(0, 0, 0, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                backdrop-filter: blur(20px);
+                display: grid;
+                grid-template-columns: 1.5fr 1fr;
+                gap: 64px;
+                align-items: start;
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .contact-card:hover {
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
+                            0 16px 40px rgba(0, 0, 0, 0.05);
+                transform: translateY(-4px);
+            }
+            
+            .contact-form {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+            
+            .form-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+            
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .form-group-full {
+                grid-column: 1 / -1;
+            }
+            
+            .form-group label {
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                color: rgba(26, 26, 46, 0.7);
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 16px 20px;
+                border: 2px solid rgba(26, 26, 46, 0.1);
+                border-radius: 16px;
+                font-size: 16px;
+                font-family: inherit;
+                background: rgba(255, 255, 255, 0.9);
+                color: #1a1a2e;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .form-group input::placeholder,
+            .form-group textarea::placeholder {
+                color: rgba(26, 26, 46, 0.4);
+            }
+            
+            .form-group input:focus,
+            .form-group select:focus,
+            .form-group textarea:focus {
+                outline: none;
+                border-color: #d4a574;
+                background: white;
+                box-shadow: 0 8px 24px rgba(212, 165, 116, 0.15);
+                transform: translateY(-2px);
+            }
+            
+            .form-group textarea {
+                resize: vertical;
+                min-height: 140px;
+                line-height: 1.6;
+            }
+            
+            .form-group select {
+                cursor: pointer;
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%231a1a2e' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 20px center;
+                padding-right: 50px;
+            }
+            
+            .btn-submit {
+                width: 100%;
+                margin-top: 8px;
+                cursor: pointer;
+                font-size: 13px;
+                padding: 20px 40px;
+            }
+            
+            .btn-submit:hover {
+                transform: translateY(-4px) scale(1.02);
+            }
+            
+            .contact-info {
+                display: flex;
+                flex-direction: column;
+                gap: 32px;
+                padding-top: 8px;
+            }
+            
+            .contact-info-item {
+                display: flex;
+                gap: 20px;
+                align-items: flex-start;
+                padding: 24px;
+                background: rgba(255, 255, 255, 0.6);
+                border-radius: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .contact-info-item:hover {
+                background: rgba(255, 255, 255, 0.9);
+                transform: translateX(4px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            }
+            
+            .contact-icon {
+                font-size: 32px;
+                line-height: 1;
+                flex-shrink: 0;
+            }
+            
+            .contact-text h4 {
+                font-size: 16px;
+                font-weight: 700;
+                color: #1a1a2e;
+                margin-bottom: 6px;
+                letter-spacing: 0.5px;
+            }
+            
+            .contact-text p {
+                font-size: 15px;
+                color: rgba(26, 26, 46, 0.7);
+                line-height: 1.6;
+            }
+
             /* Responsive Design */
             @media (max-width: 1024px) {
                 .event-content {
@@ -1164,6 +1331,18 @@ app.get('/', (c) => {
                 .past-streams {
                     grid-template-columns: 1fr;
                     gap: 16px;
+                }
+                
+                /* Contact Section Tablet */
+                .contact-card {
+                    padding: 48px 36px;
+                    border-radius: 36px;
+                    grid-template-columns: 1fr;
+                    gap: 48px;
+                }
+                
+                .form-row {
+                    grid-template-columns: 1fr;
                 }
             }
 
@@ -1549,6 +1728,65 @@ app.get('/', (c) => {
                     font-size: 13px;
                     border-radius: 12px;
                 }
+                
+                /* Contact Section Mobile */
+                .contact {
+                    gap: 32px;
+                }
+                
+                .contact-card {
+                    padding: 32px 24px;
+                    border-radius: 28px;
+                    grid-template-columns: 1fr;
+                    gap: 40px;
+                }
+                
+                .form-row {
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                }
+                
+                .form-group label {
+                    font-size: 12px;
+                }
+                
+                .form-group input,
+                .form-group select,
+                .form-group textarea {
+                    padding: 14px 18px;
+                    font-size: 15px;
+                    border-radius: 14px;
+                }
+                
+                .form-group textarea {
+                    min-height: 120px;
+                }
+                
+                .btn-submit {
+                    padding: 16px 32px;
+                    font-size: 12px;
+                }
+                
+                .contact-info {
+                    gap: 20px;
+                }
+                
+                .contact-info-item {
+                    padding: 20px;
+                    border-radius: 16px;
+                }
+                
+                .contact-icon {
+                    font-size: 28px;
+                }
+                
+                .contact-text h4 {
+                    font-size: 15px;
+                }
+                
+                .contact-text p {
+                    font-size: 14px;
+                }
             }
         </style>
     </head>
@@ -1567,14 +1805,14 @@ app.get('/', (c) => {
                         <li><a href="#watch">Watch</a></li>
                     </ul>
                 </nav>
-                <a class="nav-cta" href="/form">Submit the form</a>
+                <a class="nav-cta" href="#contact">Submit the form</a>
             </header>
             <main>
                 <section class="hero" id="home" style="animation-delay: 0.1s">
                     <h1>Mending the Broken.</h1>
                     <p>Join us every Sunday as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
                     <div class="cta-group">
-                        <a class="btn btn-primary" href="/form">Submit the form</a>
+                        <a class="btn btn-primary" href="#contact">Get in Touch</a>
                         <a class="btn btn-secondary" href="#watch">Watch live stream</a>
                     </div>
                 </section>
@@ -1643,7 +1881,7 @@ app.get('/', (c) => {
                                                     <li>All ages welcome</li>
                                                 </ul>
                                                 <div class="event-cta">
-                                                    <a class="btn btn-primary" href="/form">RSVP Now</a>
+                                                    <a class="btn btn-primary" href="#contact">RSVP Now</a>
                                                 </div>
                                             </div>
                                             <div class="event-flyer-container">
@@ -1680,7 +1918,7 @@ app.get('/', (c) => {
                                                     <li>Accessories like gloves, scarves, and hats</li>
                                                 </ul>
                                                 <div class="event-cta">
-                                                    <a class="btn btn-primary" href="/form">Volunteer or Request Items</a>
+                                                    <a class="btn btn-primary" href="#contact">Volunteer or Request Items</a>
                                                 </div>
                                             </div>
                                             <div class="event-flyer-container">
@@ -1719,7 +1957,7 @@ app.get('/', (c) => {
                                                     <li>Family-friendly service</li>
                                                 </ul>
                                                 <div class="event-cta">
-                                                    <a class="btn btn-primary" href="/form">Reserve Your Seat</a>
+                                                    <a class="btn btn-primary" href="#contact">Reserve Your Seat</a>
                                                 </div>
                                             </div>
                                             <div class="event-flyer-container">
@@ -1761,6 +1999,81 @@ app.get('/', (c) => {
                                 <div class="stream-thumbnail">Last Sunday</div>
                                 <div class="stream-thumbnail">2 Weeks Ago</div>
                                 <div class="stream-thumbnail">3 Weeks Ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="contact" id="contact" style="animation-delay: 0.5s">
+                    <div class="contact-header">
+                        <span class="section-eyebrow">Get In Touch</span>
+                        <h2 class="section-heading">We'd Love to Hear From You</h2>
+                        <p class="section-lead">Whether you're interested in attending a service, volunteering, or just want to connect, we're here for you.</p>
+                    </div>
+                    <div class="contact-container">
+                        <div class="contact-card">
+                            <form class="contact-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="name">Your Name</label>
+                                        <input type="text" id="name" name="name" required placeholder="John Doe">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email Address</label>
+                                        <input type="email" id="email" name="email" required placeholder="john@example.com">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="phone">Phone Number</label>
+                                        <input type="tel" id="phone" name="phone" placeholder="(123) 456-7890">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="subject">Subject</label>
+                                        <select id="subject" name="subject" required>
+                                            <option value="">Select a subject</option>
+                                            <option value="general">General Inquiry</option>
+                                            <option value="prayer">Prayer Request</option>
+                                            <option value="volunteer">Volunteer Opportunity</option>
+                                            <option value="event">Event RSVP</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group form-group-full">
+                                    <label for="message">Your Message</label>
+                                    <textarea id="message" name="message" rows="6" required placeholder="Tell us how we can help..."></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary btn-submit">Send Message</button>
+                            </form>
+                            
+                            <div class="contact-info">
+                                <div class="contact-info-item">
+                                    <div class="contact-icon">📍</div>
+                                    <div class="contact-text">
+                                        <h4>Visit Us</h4>
+                                        <p>3080 N Wildwood St<br>Boise, Idaho</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="contact-info-item">
+                                    <div class="contact-icon">⏰</div>
+                                    <div class="contact-text">
+                                        <h4>Service Times</h4>
+                                        <p>Sunday: 9:00 AM<br>Tuesday: 8:30 AM<br>Thursday: 6:00 PM</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="contact-info-item">
+                                    <div class="contact-icon">✉️</div>
+                                    <div class="contact-text">
+                                        <h4>Connect Online</h4>
+                                        <p>Follow our livestreams<br>and stay updated</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

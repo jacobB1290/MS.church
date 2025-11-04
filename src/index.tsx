@@ -429,7 +429,7 @@ app.get('/', (c) => {
                 margin-bottom: 0;
                 position: relative;
                 z-index: 1;
-                text-align: center;
+                text-align: left;
             }
 
             .outreach-header .section-eyebrow {
@@ -441,9 +441,7 @@ app.get('/', (c) => {
             }
 
             .outreach-header .section-heading {
-                text-align: center;
-                margin-left: auto;
-                margin-right: auto;
+                text-align: left;
             }
 
             .outreach-title-sticky {

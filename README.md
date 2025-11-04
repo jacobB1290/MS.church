@@ -34,10 +34,11 @@
 - **Sticky Container**: Events container freezes in the middle of the screen
 - **Scroll Transitions**: Events cycle through with smooth fade and scale animations
 - **Dynamic Backgrounds**: Body background changes color based on active event:
-  - Event 1 (Thanksgiving): Warm orange/cream gradient
-  - Event 2 (Clothes Drive): Fresh green gradient
-  - Event 3 (Candlelight): Cool blue gradient
+  - Event 1 (Friendsgiving): Orange-yellow to red gradient (#ffb347 → #ff6b6b)
+  - Event 2 (Clothes Drive): Red-orange to pink gradient (#ff7f50 → #ffb3d9)
+  - Event 3 (Christmas Candlelight): Green-white-red gradient (#d4f1d4 → #ffebee → #e8f5e9)
 - **Progress-Based**: Scroll progress through spacer determines active event
+- **Auto-Reset**: Background returns to default white/blue gradient when exiting section
 
 ### 4. Event Cards
 Each event card includes:
@@ -47,6 +48,9 @@ Each event card includes:
 - Bulleted feature list
 - Call-to-action button
 - Flyer image or placeholder
+- **Alternating Layout**: Flyer/text positions alternate for visual variety
+  - Events 1 & 3: Flyer on left, text on right
+  - Event 2: Text on left, flyer on right
 
 ### 5. Current Events
 1. **Community Thanksgiving Dinner** (Nov 26)

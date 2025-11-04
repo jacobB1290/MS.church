@@ -32,6 +32,7 @@
 
 ### 3. Scroll-Based Event Viewer
 - **Sticky Container**: Events container freezes in the middle of the screen
+- **Sticky Header**: "Outreach / Upcoming Events" header stays visible below nav bar while scrolling
 - **Scroll Transitions**: Events cycle through with smooth fade and scale animations (1.2s)
 - **Dynamic Backgrounds**: Body background changes color based on active event with smooth 1.8s fade:
   - Event 1 (Friendsgiving): Soft peach to light coral pastel (#ffe8d6 → #ffd4d4)
@@ -40,6 +41,7 @@
 - **Progress-Based**: Scroll progress through spacer determines active event
 - **Auto-Reset**: Background returns to default white/blue gradient when exiting section
 - **Smooth Fading**: All colors are light pastels that fade smoothly between events
+- **Entry/Exit Animation**: Background color gradually fades in when entering and out when leaving section
 
 ### 4. Event Cards
 Each event card includes:
@@ -154,8 +156,10 @@ webapp/
   - Opacity: 1.2s cubic-bezier (smooth fade in/out)
   - Transform: 1.2s cubic-bezier (translateY + scale)
   - Background: 1.8s cubic-bezier (gentle color transitions)
+  - Entry/Exit: Double requestAnimationFrame for smooth color application
 - **Performance**: RequestAnimationFrame for smooth 60fps
 - **Colors**: Light pastel gradients that blend seamlessly
+- **Header**: Sticky positioned at 140px from top with gradient overlay for readability
 
 ### Navigation
 - **Link hover**: 0.4s ease with underline animation

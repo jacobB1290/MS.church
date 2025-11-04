@@ -87,7 +87,24 @@ app.get('/', (c) => {
                 top: 32px;
                 z-index: 1000;
                 border: 1px solid rgba(255, 255, 255, 0.4);
-                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: padding 0.3s ease, margin 0.3s ease, border-radius 0.3s ease, top 0.3s ease;
+            }
+            
+            .nav-shell.scrolled-mobile {
+                padding: 10px 20px;
+                margin-bottom: 60px;
+            }
+            
+            .nav-shell.scrolled-mobile .brand {
+                display: none;
+            }
+            
+            .nav-shell.scrolled-mobile .nav-cta {
+                display: none;
+            }
+            
+            .nav-shell.scrolled-mobile nav ul {
+                margin: 0;
             }
 
             .nav-shell:hover {
@@ -487,6 +504,7 @@ app.get('/', (c) => {
                 top: 30vh;
                 height: 55vh;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
             }
@@ -504,22 +522,54 @@ app.get('/', (c) => {
                 left: 0;
                 width: 100%;
                 opacity: 0;
-                transform: translateY(40px) scale(0.96);
-                transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+                visibility: hidden;
+                transform: translateY(20px);
+                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                            visibility 0s 0.5s;
                 pointer-events: none;
             }
 
             .event-slide.active {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                visibility: visible;
+                transform: translateY(0);
                 pointer-events: auto;
                 position: relative;
+                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                            visibility 0s 0s;
             }
 
             .scroll-spacer {
-                height: 300vh;
+                height: 400vh;
                 pointer-events: none;
+            }
+            
+            /* Event Indicator Dots */
+            .event-indicators {
+                display: none;
+                justify-content: center;
+                align-items: center;
+                gap: 12px;
+                padding: 16px 0 0 0;
+                position: relative;
+                z-index: 60;
+            }
+            
+            .event-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: rgba(26, 26, 46, 0.2);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+            }
+            
+            .event-dot.active {
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                box-shadow: 0 4px 12px rgba(200, 152, 96, 0.4);
+                transform: scale(1.3);
             }
 
             /* Event Cards with Enhanced Styling */
@@ -544,6 +594,11 @@ app.get('/', (c) => {
             .event-header {
                 margin-bottom: 0;
                 padding: 40px 48px 32px 48px;
+                position: relative;
+            }
+            
+            .event-header-mobile {
+                display: none;
             }
 
             .event-date {
@@ -698,11 +753,11 @@ app.get('/', (c) => {
             }
 
             .watch-card {
-                background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+                background: linear-gradient(135deg, #8B0000 0%, #5A0000 100%);
                 border-radius: 32px;
                 padding: 48px;
                 color: #ffffff;
-                box-shadow: 0 32px 80px rgba(255, 0, 0, 0.25);
+                box-shadow: 0 32px 80px rgba(139, 0, 0, 0.3);
                 position: relative;
                 overflow: hidden;
                 border: 1px solid rgba(255, 255, 255, 0.1);
@@ -833,6 +888,7 @@ app.get('/', (c) => {
                 .event-content {
                     grid-template-columns: 1fr;
                     gap: 0;
+                    min-height: auto;
                 }
 
                 .event-flyer-container {
@@ -847,14 +903,25 @@ app.get('/', (c) => {
                 .event-header {
                     padding: 32px 32px 24px 32px;
                 }
+                
+                .flyer-frame {
+                    max-width: 100%;
+                }
+                
+                .placeholder-flyer {
+                    aspect-ratio: 3/4;
+                }
 
                 .outreach-title-sticky {
                     top: 110px;
-                    font-size: 32px;
                 }
 
                 .sticky-wrapper {
                     top: 20vh;
+                }
+                
+                .scroll-spacer {
+                    height: 350vh;
                 }
             }
 
@@ -862,79 +929,615 @@ app.get('/', (c) => {
                 .nav-shell {
                     flex-wrap: wrap;
                     border-radius: 40px;
-                    gap: 24px;
-                    margin: 32px auto 80px;
-                    padding: 24px 32px;
+                    gap: 16px;
+                    margin: 20px auto 50px;
+                    padding: 16px 20px;
+                    top: 12px;
+                }
+                
+                .nav-shell.scrolled-mobile {
+                    border-radius: 100px;
+                    padding: 8px 20px;
+                    gap: 0;
+                    margin-bottom: 30px;
+                    top: 8px;
                 }
 
                 nav ul {
                     width: 100%;
                     justify-content: center;
                     flex-wrap: wrap;
-                    row-gap: 16px;
+                    row-gap: 10px;
+                    gap: 18px;
+                }
+                
+                .nav-shell.scrolled-mobile nav ul {
+                    gap: 16px;
+                    row-gap: 0;
                 }
 
                 .nav-cta {
                     width: 100%;
+                    padding: 10px 24px;
+                    font-size: 10px;
                 }
 
                 .brand {
                     align-items: center;
                     width: 100%;
                 }
+
+                .brand-title {
+                    font-size: 16px;
+                    letter-spacing: 2px;
+                }
+
+                .brand-subtitle {
+                    font-size: 9px;
+                    letter-spacing: 3px;
+                }
+                
+                nav a {
+                    font-size: 10px;
+                    letter-spacing: 2px;
+                }
+
+                .hero h1 {
+                    font-size: clamp(36px, 8vw, 52px);
+                    letter-spacing: -1px;
+                }
+
+                .hero p {
+                    font-size: 18px;
+                }
+
+                .section-heading {
+                    font-size: clamp(32px, 6vw, 48px);
+                }
+
+                .section-lead {
+                    font-size: 18px;
+                }
+
+                .schedule-grid {
+                    grid-template-columns: 1fr;
+                    gap: 24px;
+                }
+
+                .schedule-item {
+                    padding: 28px;
+                }
             }
 
-            @media (max-width: 680px) {
+            @media (max-width: 768px) {
                 .page {
-                    width: 90%;
+                    width: 92%;
                 }
 
                 main {
-                    gap: 120px;
+                    gap: 100px;
+                    margin-bottom: 100px;
+                }
+
+                section {
+                    padding: 0;
+                }
+
+                .hero {
+                    padding: 40px 0;
+                }
+
+                .hero h1 {
+                    font-size: clamp(32px, 7vw, 44px);
+                }
+
+                .hero p {
+                    font-size: 16px;
+                    line-height: 1.7;
+                }
+
+                .btn {
+                    padding: 16px 32px;
+                    font-size: 11px;
                 }
 
                 .section-card {
-                    padding: 40px;
-                    border-radius: 36px;
+                    padding: 36px 28px;
+                    border-radius: 32px;
                 }
 
-                .event-card {
-                    padding: 0;
-                    border-radius: 24px;
+                .section-eyebrow {
+                    font-size: 9px;
+                    padding: 10px 20px;
+                    letter-spacing: 2.5px;
                 }
 
-                .event-header {
-                    padding: 24px 24px 20px 24px;
+                .section-heading {
+                    font-size: clamp(28px, 5.5vw, 40px);
+                    margin-bottom: 20px;
                 }
 
-                .event-description {
-                    padding: 0 24px 32px 24px;
+                .section-lead {
+                    font-size: 16px;
+                    line-height: 1.7;
                 }
 
-                .event-flyer-container {
-                    padding: 24px;
+                address {
+                    font-size: 11px;
+                    letter-spacing: 2px;
+                    margin-bottom: 32px;
+                }
+
+                .schedule-item h3 {
+                    font-size: 22px;
+                }
+
+                .schedule-item p {
+                    font-size: 15px;
                 }
 
                 .outreach-title-sticky {
-                    top: 100px;
+                    top: 75px;
+                    padding: 10px 0;
+                    margin-bottom: 30px;
                 }
 
                 .outreach-title-sticky h2 {
-                    font-size: 28px;
+                    font-size: clamp(24px, 4.5vw, 36px);
+                }
+                
+                .outreach-header {
+                    margin-bottom: 40px;
+                    padding-bottom: 0;
+                }
+                
+                .outreach-header .section-heading {
+                    margin-bottom: 16px;
+                }
+                
+                .outreach-header .section-eyebrow {
+                    margin-bottom: 16px;
+                }
+
+                .event-card {
+                    border-radius: 28px;
+                }
+                
+                .event-header {
+                    padding: 28px 28px 20px 28px;
+                }
+
+                .event-title {
+                    font-size: clamp(26px, 4.5vw, 36px);
+                }
+
+                .event-date {
+                    font-size: 10px;
+                    padding: 8px 20px;
+                    letter-spacing: 1.5px;
+                }
+
+                .event-time {
+                    font-size: 13px;
+                }
+                
+                .event-description {
+                    padding: 0 28px 28px 28px;
+                }
+
+                .event-description p {
+                    font-size: 15px;
+                    line-height: 1.7;
+                }
+
+                .event-description li {
+                    font-size: 14px;
+                }
+                
+                .event-flyer-container {
+                    padding: 28px;
+                }
+                
+                .flyer-frame {
+                    max-width: 340px;
                 }
 
                 .watch-card {
                     padding: 32px 24px;
-                    border-radius: 24px;
+                    border-radius: 28px;
+                }
+
+                .preview-screen {
+                    padding: 32px 24px;
+                    min-height: 280px;
+                }
+
+                .preview-screen p {
+                    font-size: 16px;
+                    line-height: 1.7;
+                }
+
+                .preview-screen small {
+                    font-size: 13px;
                 }
 
                 .past-streams {
                     grid-template-columns: 1fr;
                     gap: 16px;
                 }
+            }
+
+            @media (max-width: 480px) {
+                .page {
+                    width: 90%;
+                }
+
+                .nav-shell {
+                    margin: 16px auto 40px;
+                    padding: 14px 18px;
+                    border-radius: 32px;
+                    top: 10px;
+                }
+                
+                .nav-shell.scrolled-mobile {
+                    border-radius: 100px;
+                    padding: 7px 18px;
+                    margin-bottom: 25px;
+                    top: 6px;
+                }
+                
+                /* Show event indicators on mobile */
+                .event-indicators {
+                    display: flex;
+                }
+                
+                /* Mobile event card layout - flyer in header */
+                .event-header {
+                    padding: 20px;
+                    display: grid;
+                    grid-template-columns: 1fr 120px;
+                    gap: 16px;
+                    align-items: start;
+                }
+                
+                .event-header-content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                
+                .event-header-mobile {
+                    display: block;
+                }
+                
+                .event-flyer-mobile {
+                    width: 120px;
+                    background: #ffffff;
+                    border-radius: 12px;
+                    padding: 8px;
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                }
+                
+                .event-flyer-mobile img,
+                .event-flyer-mobile .placeholder-flyer {
+                    width: 100%;
+                    border-radius: 8px;
+                    aspect-ratio: 3/4;
+                    font-size: 9px;
+                    padding: 8px;
+                }
+                
+                /* Hide desktop flyer container on mobile */
+                .event-content {
+                    grid-template-columns: 1fr !important;
+                }
+                
+                .event-flyer-container {
+                    display: none !important;
+                }
+
+                .brand-title {
+                    font-size: 15px;
+                    letter-spacing: 1.5px;
+                }
+
+                .brand-subtitle {
+                    font-size: 8px;
+                    letter-spacing: 2.5px;
+                }
+
+                nav ul {
+                    gap: 14px;
+                    row-gap: 8px;
+                }
+                
+                .nav-shell.scrolled-mobile nav ul {
+                    gap: 12px;
+                    row-gap: 0;
+                }
+
+                nav a {
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
+                }
+                
+                .nav-shell.scrolled-mobile nav a {
+                    font-size: 9px;
+                    letter-spacing: 1.2px;
+                }
+
+                .nav-cta {
+                    padding: 10px 20px;
+                    font-size: 9px;
+                    letter-spacing: 1.5px;
+                }
+
+                main {
+                    gap: 80px;
+                    margin-bottom: 80px;
+                }
+
+                .hero {
+                    padding: 30px 0;
+                }
+
+                .hero .eyebrow {
+                    padding: 10px 20px;
+                    font-size: 10px;
+                    letter-spacing: 2px;
+                }
+
+                .hero h1 {
+                    font-size: clamp(28px, 6vw, 36px);
+                    line-height: 1.1;
+                    letter-spacing: -0.5px;
+                }
+
+                .hero p {
+                    font-size: 15px;
+                    line-height: 1.6;
+                }
+
+                .cta-group {
+                    flex-direction: column;
+                    gap: 12px;
+                    width: 100%;
+                }
+
+                .btn {
+                    width: 100%;
+                    padding: 14px 28px;
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
+                }
+
+                .section-eyebrow {
+                    font-size: 8px;
+                    padding: 8px 16px;
+                    letter-spacing: 2px;
+                    margin-bottom: 20px;
+                }
+
+                .section-heading {
+                    font-size: clamp(24px, 5vw, 32px);
+                    margin-bottom: 16px;
+                    line-height: 1.15;
+                }
+
+                .section-lead {
+                    font-size: 15px;
+                    line-height: 1.65;
+                    margin-bottom: 12px;
+                }
+
+                address {
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
+                    margin-bottom: 28px;
+                }
+
+                .section-card {
+                    padding: 28px 20px;
+                    border-radius: 28px;
+                }
+
+                .schedule-item {
+                    padding: 24px 20px;
+                    border-radius: 24px;
+                }
+
+                .schedule-item span {
+                    font-size: 10px;
+                    letter-spacing: 2px;
+                }
+
+                .schedule-item h3 {
+                    font-size: 20px;
+                }
+
+                .schedule-item p {
+                    font-size: 14px;
+                    line-height: 1.6;
+                }
+
+                .outreach-title-sticky {
+                    top: 60px;
+                    padding: 6px 0;
+                    margin-bottom: 20px;
+                }
+
+                .outreach-title-sticky h2 {
+                    font-size: clamp(22px, 4vw, 28px);
+                }
+                
+                .outreach-header {
+                    margin-bottom: 24px;
+                    padding-bottom: 0;
+                }
+                
+                .outreach-header .section-heading {
+                    margin-bottom: 8px;
+                }
+                
+                .outreach-header .section-eyebrow {
+                    margin-bottom: 10px;
+                }
+                
+                .outreach-scroll-container {
+                    margin-top: 0;
+                }
+                
+                .outreach {
+                    padding-top: 0;
+                }
 
                 .sticky-wrapper {
-                    height: 60vh;
+                    height: auto;
+                    min-height: 50vh;
+                    top: 18vh;
+                    gap: 0;
+                }
+
+                .scroll-spacer {
+                    height: 400vh;
+                }
+                
+                .events-container {
+                    margin-top: 0;
+                    flex: 0 0 auto;
+                }
+                
+                .event-indicators {
+                    margin-top: 0;
+                    padding-top: 12px;
+                }
+
+                .event-card {
+                    border-radius: 20px;
+                }
+
+                .event-card {
+                    border-radius: 24px;
+                }
+
+                .event-date {
+                    font-size: 9px;
+                    padding: 6px 14px;
+                    letter-spacing: 1.5px;
+                    margin-bottom: 0;
+                }
+
+                .event-title {
+                    font-size: clamp(20px, 4vw, 24px);
+                    margin-bottom: 6px;
+                    line-height: 1.2;
+                }
+
+                .event-time {
+                    font-size: 11px;
+                    margin-bottom: 0;
+                }
+                
+                .event-content {
+                    min-height: auto;
+                }
+
+                .event-description {
+                    padding: 0 20px 20px 20px;
+                    gap: 14px;
+                }
+
+                .event-description p {
+                    font-size: 13px;
+                    line-height: 1.6;
+                }
+
+                .event-description ul {
+                    gap: 8px;
+                }
+
+                .event-description li {
+                    font-size: 12px;
+                    line-height: 1.5;
+                }
+
+                .event-description li::before {
+                    width: 5px;
+                    height: 5px;
+                    margin-top: 5px;
+                }
+                
+                .event-cta {
+                    margin-top: 4px;
+                }
+                
+                .event-cta .btn {
+                    padding: 12px 24px;
+                    font-size: 9px;
+                }
+                
+                .placeholder-flyer {
+                    aspect-ratio: 3/4;
+                }
+
+                .flyer-image {
+                    border-radius: 10px;
+                }
+
+                .placeholder-flyer {
+                    font-size: 14px;
+                    letter-spacing: 1.5px;
+                    border-radius: 20px;
+                }
+
+                .watch-card {
+                    padding: 28px 20px;
+                    border-radius: 24px;
+                }
+
+                .preview-screen {
+                    padding: 28px 20px;
+                    min-height: 240px;
+                    gap: 20px;
+                    border-radius: 20px;
+                }
+
+                .live-status {
+                    font-size: 10px;
+                    padding: 6px 16px;
+                    letter-spacing: 1.5px;
+                }
+
+                .live-dot {
+                    width: 8px;
+                    height: 8px;
+                }
+
+                .preview-screen p {
+                    font-size: 15px;
+                    line-height: 1.65;
+                }
+
+                .preview-screen small {
+                    font-size: 12px;
+                    margin-top: 6px;
+                }
+
+                .btn-outline {
+                    padding: 14px 32px;
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
+                }
+
+                .past-streams-label {
+                    font-size: 12px;
+                    letter-spacing: 1.5px;
+                    margin-bottom: 12px;
+                }
+
+                .stream-thumbnail {
+                    font-size: 12px;
+                    border-radius: 12px;
                 }
             }
         </style>
@@ -1009,9 +1612,16 @@ app.get('/', (c) => {
                                 <div class="event-slide active" data-event="1">
                                     <div class="event-card">
                                         <div class="event-header">
-                                            <span class="event-date">Nov 26</span>
-                                            <h3 class="event-title">Community Thanksgiving Dinner</h3>
-                                            <div class="event-time">11:00 AM - 1:00 PM</div>
+                                            <div class="event-header-content">
+                                                <span class="event-date">Nov 26</span>
+                                                <h3 class="event-title">Community Thanksgiving Dinner</h3>
+                                                <div class="event-time">11:00 AM - 1:00 PM</div>
+                                            </div>
+                                            <div class="event-header-mobile">
+                                                <div class="event-flyer-mobile">
+                                                    <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="event-content flyer-left">
                                             <div class="event-description">
@@ -1039,11 +1649,18 @@ app.get('/', (c) => {
                                 <div class="event-slide" data-event="2">
                                     <div class="event-card">
                                         <div class="event-header">
-                                            <span class="event-date">Dec 6</span>
-                                            <h3 class="event-title">Christmas Clothes Drive for Mothers</h3>
-                                            <div class="event-time">Drop-off during office hours</div>
+                                            <div class="event-header-content">
+                                                <span class="event-date">Dec 6</span>
+                                                <h3 class="event-title">Christmas Clothes Drive for Mothers</h3>
+                                                <div class="event-time">Drop-off during office hours</div>
+                                            </div>
+                                            <div class="event-header-mobile">
+                                                <div class="event-flyer-mobile">
+                                                    <div class="placeholder-flyer">Coming Soon</div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="event-content">
+                                        <div class="event-content flyer-left">
                                             <div class="event-description">
                                                 <p>We are collecting new and gently used winter clothing for single mothers and their children in our community. Your donations can make a significant difference this winter.</p>
                                                 <ul>
@@ -1071,9 +1688,16 @@ app.get('/', (c) => {
                                 <div class="event-slide" data-event="3">
                                     <div class="event-card">
                                         <div class="event-header">
-                                            <span class="event-date">Dec 24</span>
-                                            <h3 class="event-title">Christmas Eve Candlelight Service</h3>
-                                            <div class="event-time">5:00 PM & 7:00 PM</div>
+                                            <div class="event-header-content">
+                                                <span class="event-date">Dec 24</span>
+                                                <h3 class="event-title">Christmas Eve Candlelight Service</h3>
+                                                <div class="event-time">5:00 PM & 7:00 PM</div>
+                                            </div>
+                                            <div class="event-header-mobile">
+                                                <div class="event-flyer-mobile">
+                                                    <div class="placeholder-flyer">Coming Soon</div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="event-content flyer-left">
                                             <div class="event-description">
@@ -1098,6 +1722,11 @@ app.get('/', (c) => {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="event-indicators">
+                                <div class="event-dot active" data-dot="1"></div>
+                                <div class="event-dot" data-dot="2"></div>
+                                <div class="event-dot" data-dot="3"></div>
                             </div>
                         </div>
                         <div class="scroll-spacer"></div>
@@ -1138,10 +1767,30 @@ app.get('/', (c) => {
                 const scrollSpacer = document.querySelector('.scroll-spacer');
                 const stickyTitle = document.getElementById('sticky-title');
                 const outreachHeader = document.querySelector('.outreach-header');
+                const navShell = document.querySelector('.nav-shell');
                 
                 // Get all sections and nav links
                 const sections = document.querySelectorAll('section[id]');
                 const navLinks = document.querySelectorAll('nav a[href^="#"]');
+                
+                // Mobile nav compression on scroll
+                let lastScrollY = 0;
+                let scrollThreshold = 50;
+                
+                function handleMobileNav() {
+                    // Only apply on mobile (960px and below)
+                    if (window.innerWidth <= 960) {
+                        if (window.scrollY > scrollThreshold) {
+                            navShell.classList.add('scrolled-mobile');
+                        } else {
+                            navShell.classList.remove('scrolled-mobile');
+                        }
+                    } else {
+                        // Remove class on desktop
+                        navShell.classList.remove('scrolled-mobile');
+                    }
+                    lastScrollY = window.scrollY;
+                }
                 
                 let currentEventIndex = 0;
                 const totalEvents = eventSlides.length;
@@ -1176,6 +1825,9 @@ app.get('/', (c) => {
                     const outreachRect = outreachSection.getBoundingClientRect();
                     const spacerRect = scrollSpacer.getBoundingClientRect();
                     
+                    // Handle mobile nav compression
+                    handleMobileNav();
+                    
                     // Update active nav link
                     updateActiveNavLink();
                     
@@ -1205,12 +1857,60 @@ app.get('/', (c) => {
                         }
                         
                         // Calculate scroll progress through the spacer
-                        const spacerTop = spacerRect.top - window.innerHeight * 0.3;
-                        const spacerHeight = spacerRect.height - window.innerHeight * 0.4;
+                        const spacerTop = spacerRect.top - window.innerHeight * 0.35;
+                        const spacerHeight = spacerRect.height - window.innerHeight * 0.5;
                         const scrollProgress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
                         
-                        // Calculate which event should be shown
-                        const newEventIndex = Math.floor(scrollProgress * totalEvents);
+                        // Fade out headers after scrolling past last event (90%+)
+                        if (scrollProgress > 0.9) {
+                            const fadeProgress = Math.min(1, (scrollProgress - 0.9) / 0.1);
+                            if (outreachHeader) {
+                                outreachHeader.style.opacity = String(1 - fadeProgress);
+                                outreachHeader.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
+                            }
+                            if (stickyTitle) {
+                                stickyTitle.style.opacity = String(1 - fadeProgress);
+                                stickyTitle.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
+                            }
+                        } else {
+                            // Reset opacity when scrolling back
+                            if (outreachHeader) {
+                                outreachHeader.style.opacity = '1';
+                                outreachHeader.style.transform = 'translateY(0)';
+                            }
+                            if (stickyTitle && stickyTitle.classList.contains('visible')) {
+                                stickyTitle.style.opacity = '1';
+                                stickyTitle.style.transform = 'translateY(0)';
+                            }
+                        }
+                        
+                        // Calculate which event should be shown with better distribution
+                        // Divide scroll area evenly into 3 zones (one per event)
+                        let newEventIndex;
+                        if (scrollProgress < 0.33) {
+                            newEventIndex = 0;
+                        } else if (scrollProgress < 0.67) {
+                            newEventIndex = 1;
+                        } else {
+                            newEventIndex = 2;
+                        }
+                        
+                        // Add small hysteresis only at boundaries to prevent rapid switching
+                        const threshold = 0.05;
+                        if (newEventIndex > currentEventIndex) {
+                            // Moving forward - require clear progress past boundary
+                            const boundary = (newEventIndex) * 0.33;
+                            if (scrollProgress < boundary + threshold) {
+                                newEventIndex = currentEventIndex;
+                            }
+                        } else if (newEventIndex < currentEventIndex) {
+                            // Moving backward - require clear progress past boundary
+                            const boundary = (currentEventIndex) * 0.33;
+                            if (scrollProgress > boundary - threshold) {
+                                newEventIndex = currentEventIndex;
+                            }
+                        }
+                        
                         const clampedIndex = Math.max(0, Math.min(totalEvents - 1, newEventIndex));
                         
                         // Update event if changed
@@ -1258,6 +1958,16 @@ app.get('/', (c) => {
                             body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
                             body.classList.add(\`event-\${index + 1}-active\`);
                         }
+                        
+                        // Update indicator dots
+                        const dots = document.querySelectorAll('.event-dot');
+                        dots.forEach((dot, i) => {
+                            if (i === index) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        });
                     }
                 }
                 
@@ -1281,15 +1991,33 @@ app.get('/', (c) => {
                 // Initial check
                 handleScroll();
                 
-                // Smooth scrolling for navigation links
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    handleMobileNav();
+                });
+                
+                // Smooth scrolling for navigation links with offset for sticky nav
                 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                     anchor.addEventListener('click', function (e) {
                         e.preventDefault();
-                        const target = document.querySelector(this.getAttribute('href'));
+                        const targetId = this.getAttribute('href');
+                        const target = document.querySelector(targetId);
                         if (target) {
-                            target.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start'
+                            // Calculate offset based on screen size and section
+                            let navOffset = 160; // Desktop default
+                            
+                            // Special handling for outreach section on mobile
+                            if (targetId === '#outreach' && window.innerWidth <= 960) {
+                                navOffset = 80; // Tighter offset for outreach on mobile
+                            } else if (window.innerWidth <= 960) {
+                                navOffset = 100; // Mobile/tablet - reduced offset for other sections
+                            }
+                            
+                            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
+                            
+                            window.scrollTo({
+                                top: targetPosition,
+                                behavior: 'smooth'
                             });
                         }
                     });

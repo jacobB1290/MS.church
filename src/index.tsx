@@ -687,82 +687,48 @@ app.get('/', (c) => {
             }
 
             /* Watch Section */
+            .watch {
+                display: flex;
+                flex-direction: column;
+                gap: 32px;
+            }
+
+            .watch-header {
+                text-align: left;
+            }
+
             .watch-card {
-                background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4e 100%);
-                border-radius: 48px;
-                padding: 64px;
-                display: grid;
-                gap: 56px;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+                border-radius: 32px;
+                padding: 48px;
                 color: #ffffff;
-                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 32px 80px rgba(255, 0, 0, 0.25);
                 position: relative;
                 overflow: hidden;
                 border: 1px solid rgba(255, 255, 255, 0.1);
             }
 
-            .watch-card::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: radial-gradient(circle at top right, rgba(212, 165, 116, 0.2), transparent 60%);
-                pointer-events: none;
-            }
-
-            .watch-copy {
+            .watch-main {
                 position: relative;
                 z-index: 1;
-                display: grid;
-                gap: 24px;
-            }
-
-            .watch-copy .section-eyebrow {
-                background: rgba(255, 255, 255, 0.1);
-                color: rgba(255, 255, 255, 0.8);
-                box-shadow: none;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-            }
-
-            .watch-copy h2 {
-                font-family: 'Playfair Display', serif;
-                font-size: clamp(36px, 6vw, 52px);
-                line-height: 1.2;
-                font-weight: 700;
-            }
-
-            .watch-copy p {
-                color: rgba(255, 255, 255, 0.75);
-                line-height: 1.9;
-                font-size: 18px;
-            }
-
-            .watch-meta {
-                display: grid;
-                gap: 12px;
-                font-size: 16px;
-                color: rgba(255, 255, 255, 0.7);
-            }
-
-            .watch-meta strong {
-                color: #ffffff;
-            }
-
-            .stream-preview {
-                position: relative;
-                z-index: 1;
-                display: grid;
-                gap: 28px;
+                display: flex;
+                flex-direction: column;
+                gap: 32px;
             }
 
             .preview-screen {
-                background: rgba(255, 255, 255, 0.08);
-                border-radius: 32px;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 24px;
                 border: 1px solid rgba(255, 255, 255, 0.15);
-                padding: 40px;
-                display: grid;
-                gap: 20px;
-                min-height: 240px;
+                padding: 48px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 24px;
+                min-height: 320px;
                 backdrop-filter: blur(10px);
+                text-align: center;
             }
 
             .live-status {
@@ -808,18 +774,58 @@ app.get('/', (c) => {
             }
 
             .btn-outline {
-                background: transparent;
-                border: 2px solid rgba(255, 255, 255, 0.5);
-                color: #ffffff;
+                background: rgba(255, 255, 255, 0.95);
+                border: 2px solid #ffffff;
+                color: #FF0000;
                 padding: 16px 38px;
-                box-shadow: none;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                font-weight: 700;
             }
 
             .btn-outline:hover {
-                background: rgba(255, 255, 255, 0.15);
-                border-color: rgba(255, 255, 255, 0.7);
+                background: #ffffff;
                 transform: translateY(-4px);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            }
+
+            .past-streams {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+                margin-top: 16px;
+            }
+
+            .stream-thumbnail {
+                aspect-ratio: 16/9;
+                background: rgba(0, 0, 0, 0.4);
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: rgba(255, 255, 255, 0.5);
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer;
+            }
+
+            .stream-thumbnail:hover {
+                background: rgba(0, 0, 0, 0.6);
+                border-color: rgba(255, 255, 255, 0.3);
+                transform: translateY(-4px);
+            }
+
+            .past-streams-label {
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: rgba(255, 255, 255, 0.7);
+                margin-bottom: 16px;
             }
 
             /* Responsive Design */
@@ -918,8 +924,13 @@ app.get('/', (c) => {
                 }
 
                 .watch-card {
-                    padding: 40px 28px;
-                    border-radius: 36px;
+                    padding: 32px 24px;
+                    border-radius: 24px;
+                }
+
+                .past-streams {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
                 }
 
                 .sticky-wrapper {
@@ -1094,22 +1105,24 @@ app.get('/', (c) => {
                 </section>
                 
                 <section class="watch" id="watch" style="animation-delay: 0.4s">
+                    <div class="watch-header">
+                        <span class="section-eyebrow">Watch</span>
+                        <h2 class="section-heading">Join us live every Sunday.</h2>
+                        <p class="section-lead">Tune in from wherever you are to worship together online. Our stream goes live fifteen minutes before service begins.</p>
+                    </div>
                     <div class="watch-card">
-                        <div class="watch-copy">
-                            <span class="section-eyebrow">Watch</span>
-                            <h2>Join us live every Sunday.</h2>
-                            <p>Tune in from wherever you are to worship together online. Our stream goes live fifteen minutes before service begins.</p>
-                            <div class="watch-meta">
-                                <span><strong>Sundays</strong> · 10:30 AM (MST)</span>
-                                <span><strong>YouTube & Facebook</strong> @morningstarboise</span>
-                            </div>
-                        </div>
-                        <div class="stream-preview">
+                        <div class="watch-main">
                             <div class="preview-screen">
                                 <span class="live-status"><span class="live-dot"></span>Live Soon</span>
                                 <p>"He heals the brokenhearted and binds up their wounds."<small>Psalm 147:3</small></p>
+                                <a class="btn btn-outline" href="https://www.youtube.com/" target="_blank" rel="noopener">Open live stream</a>
                             </div>
-                            <a class="btn btn-outline" href="https://www.youtube.com/" target="_blank" rel="noopener">Open live stream</a>
+                            <div class="past-streams-label">Previous Livestreams</div>
+                            <div class="past-streams">
+                                <div class="stream-thumbnail">Last Sunday</div>
+                                <div class="stream-thumbnail">2 Weeks Ago</div>
+                                <div class="stream-thumbnail">3 Weeks Ago</div>
+                            </div>
                         </div>
                     </div>
                 </section>

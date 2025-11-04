@@ -11,7 +11,7 @@ app.use('/api/*', cors())
 app.use('/static/*', serveStatic({ root: './public' }))
 app.use('/favicon.ico', serveStatic({ root: './public' }))
 
-// Main landing page - EXACT layout as original, just no gradient
+// Main landing page with enhanced scroll animations
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
@@ -20,701 +20,1077 @@ app.get('/', (c) => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Morning Star Christian Church</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
+            :root {
+                color-scheme: light;
+                --bg-default: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
+                --bg-event1: linear-gradient(135deg, #fff5ed 0%, #ffe8d6 100%);
+                --bg-event2: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+                --bg-event3: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            }
+
             * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
             }
-            
+
             body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-                background: #f5f5f5;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: var(--bg-default);
+                color: #1a1a2e;
                 min-height: 100vh;
-                display: flex;
-                flex-direction: column;
+                line-height: 1.6;
+                overflow-x: hidden;
+                transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            
-            /* Header */
-            .header {
-                background: white;
-                padding: 20px 60px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+            body.event-1-active {
+                background: var(--bg-event1);
             }
-            
-            .header-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                max-width: 1400px;
-                margin: 0 auto;
+
+            body.event-2-active {
+                background: var(--bg-event2);
             }
-            
-            .logo {
-                display: flex;
-                align-items: baseline;
-                gap: 10px;
+
+            body.event-3-active {
+                background: var(--bg-event3);
             }
-            
-            .logo h1 {
-                font-size: 18px;
-                font-weight: 400;
-                color: #333;
-                letter-spacing: 1px;
-            }
-            
-            .logo span {
-                font-size: 14px;
-                color: #666;
-            }
-            
-            nav {
-                display: flex;
-                gap: 40px;
-                align-items: center;
-            }
-            
-            nav a {
+
+            a {
+                color: inherit;
                 text-decoration: none;
-                color: #333;
-                font-size: 14px;
-                font-weight: 500;
-                letter-spacing: 0.5px;
-                transition: color 0.3s;
             }
-            
-            nav a:hover {
-                color: #666;
+
+            .page {
+                width: min(1280px, 94%);
+                margin: 0 auto;
             }
-            
-            nav a:last-child {
-                background: #333;
-                color: white;
-                padding: 10px 20px;
-                border-radius: 25px;
+
+            /* Enhanced Navigation */
+            .nav-shell {
+                margin: 40px auto 100px;
+                padding: 20px 40px;
+                background: rgba(255, 255, 255, 0.75);
+                border-radius: 100px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 40px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 
+                            0 8px 20px rgba(0, 0, 0, 0.04);
+                backdrop-filter: blur(20px);
+                position: sticky;
+                top: 32px;
+                z-index: 1000;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            
-            nav a:last-child:hover {
-                background: #555;
+
+            .nav-shell:hover {
+                background: rgba(255, 255, 255, 0.85);
+                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1), 
+                            0 10px 24px rgba(0, 0, 0, 0.05);
             }
-            
-            /* Main Content */
-            .main-content {
-                flex: 1;
+
+            .brand {
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
-                align-items: flex-start;
-                padding: 100px 60px;
-                background: #f0f0f0;
-                position: relative;
+                line-height: 1;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            
-            .content-wrapper {
-                max-width: 1400px;
-                margin: 0 auto;
-                width: 100%;
+
+            .brand:hover {
+                transform: translateY(-2px);
             }
-            
-            .tagline {
-                background: white;
-                color: #333;
-                display: inline-block;
-                padding: 12px 25px;
-                border-radius: 30px;
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: 1.5px;
+
+            .brand-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 22px;
+                font-weight: 700;
+                letter-spacing: 3px;
                 text-transform: uppercase;
-                margin-bottom: 40px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                color: #1a1a2e;
             }
-            
-            h2.main-heading {
-                font-size: 72px;
-                color: #2c3e50;
-                font-weight: 300;
-                margin-bottom: 30px;
-                line-height: 1.1;
+
+            .brand-subtitle {
+                font-size: 11px;
+                letter-spacing: 4px;
+                text-transform: uppercase;
+                color: rgba(26, 26, 46, 0.5);
+                font-weight: 600;
+                margin-top: 2px;
             }
-            
-            .description {
-                font-size: 18px;
-                color: #666;
+
+            nav ul {
+                list-style: none;
+                display: flex;
+                gap: 36px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+            nav a {
+                opacity: 0.6;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                padding-bottom: 4px;
+            }
+
+            nav a::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%) scaleX(0);
+                width: 100%;
+                height: 2px;
+                background: currentColor;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            nav a:hover {
+                opacity: 1;
+                transform: translateY(-2px);
+            }
+
+            nav a:hover::after {
+                transform: translateX(-50%) scaleX(1);
+            }
+
+            .nav-cta {
+                padding: 14px 32px;
+                border-radius: 100px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: #fff;
+                font-size: 12px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                box-shadow: 0 12px 28px rgba(200, 152, 96, 0.35);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .nav-cta:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 16px 36px rgba(200, 152, 96, 0.45);
+                background: linear-gradient(135deg, #dbb078 0%, #d4a574 100%);
+            }
+
+            main {
+                display: flex;
+                flex-direction: column;
+                gap: 200px;
+                margin-bottom: 200px;
+            }
+
+            section {
+                width: 100%;
+                opacity: 0;
+                transform: translateY(60px);
+                animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Hero Section */
+            .hero {
+                display: grid;
+                gap: 40px;
+                padding: 60px 0;
+            }
+
+            .hero .eyebrow {
+                display: inline-flex;
+                align-items: center;
+                padding: 12px 28px;
+                background: rgba(255, 255, 255, 0.7);
+                border-radius: 100px;
+                text-transform: uppercase;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 3px;
+                color: rgba(26, 26, 46, 0.6);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                animation: float 3s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-8px); }
+            }
+
+            .hero h1 {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(52px, 9vw, 96px);
+                line-height: 1.05;
+                letter-spacing: -2px;
+                color: #1a1a2e;
+                font-weight: 700;
+                background: linear-gradient(135deg, #1a1a2e 0%, #4a4a6e 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .hero p {
+                max-width: 640px;
+                font-size: 20px;
+                color: rgba(26, 26, 46, 0.7);
                 line-height: 1.8;
-                max-width: 600px;
-                margin-bottom: 50px;
-                font-weight: 300;
             }
-            
-            .buttons {
+
+            .cta-group {
                 display: flex;
                 gap: 20px;
+                flex-wrap: wrap;
             }
-            
-            .btn {
-                padding: 15px 35px;
-                border-radius: 30px;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                transition: all 0.3s;
-                cursor: pointer;
-                border: none;
-                text-transform: uppercase;
-            }
-            
-            .btn-primary {
-                background: #f4e4c1;
-                color: #333;
-            }
-            
-            .btn-primary:hover {
-                background: #e8d4a8;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-            
-            .btn-secondary {
-                background: #e0e0e0;
-                color: #333;
-            }
-            
-            .btn-secondary:hover {
-                background: #d0d0d0;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-            
-            /* Responsive */
-            @media (max-width: 768px) {
-                .header {
-                    padding: 20px 30px;
-                }
-                
-                nav {
-                    display: none;
-                }
-                
-                .main-content {
-                    padding: 60px 30px;
-                }
-                
-                h2.main-heading {
-                    font-size: 48px;
-                }
-                
-                .description {
-                    font-size: 16px;
-                }
-                
-                .buttons {
-                    flex-direction: column;
-                    width: 100%;
-                    max-width: 300px;
-                }
-                
-                .btn {
-                    width: 100%;
-                    text-align: center;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>MORNING STAR</h1>
-                    <span>CHRISTIAN CHURCH</span>
-                </div>
-                <nav>
-                    <a href="/">HOME</a>
-                    <a href="/schedule">SCHEDULE</a>
-                    <a href="/outreach">OUTREACH</a>
-                    <a href="/watch">WATCH</a>
-                    <a href="/form">SUBMIT THE FORM</a>
-                </nav>
-            </div>
-        </header>
-        
-        <main class="main-content">
-            <div class="content-wrapper">
-                <span class="tagline">A CHURCH ANCHORED IN HOPE</span>
-                
-                <h2 class="main-heading">Mending the Broken.</h2>
-                
-                <p class="description">
-                    Join us every Sunday as we gather to hear meaningful teaching, 
-                    join in passionate worship, and connect with a community focused on 
-                    restoring hope and purpose.
-                </p>
-                
-                <div class="buttons">
-                    <a href="/form" class="btn btn-primary">SUBMIT THE FORM</a>
-                    <a href="/watch" class="btn btn-secondary">WATCH LIVE STREAM</a>
-                </div>
-            </div>
-        </main>
-    </body>
-    </html>
-  `)
-})
 
-// Simple placeholder pages for other routes
-app.get('/schedule', (c) => {
-  return c.html(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Schedule - Morning Star Christian Church</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-                background: #f5f5f5;
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
-            
-            .header {
-                background: white;
-                padding: 20px 60px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            
-            .header-content {
-                display: flex;
-                justify-content: space-between;
+            .btn {
+                display: inline-flex;
                 align-items: center;
-                max-width: 1400px;
-                margin: 0 auto;
+                justify-content: center;
+                padding: 18px 40px;
+                border-radius: 100px;
+                text-transform: uppercase;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                border: none;
+                cursor: pointer;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            
-            .logo {
-                display: flex;
-                align-items: baseline;
-                gap: 10px;
+
+            .btn-primary {
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: #fff;
+                box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35);
             }
-            
-            .logo h1 {
-                font-size: 18px;
-                font-weight: 400;
-                color: #333;
-                letter-spacing: 1px;
+
+            .btn-primary:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 50px rgba(200, 152, 96, 0.45);
             }
-            
-            .logo span {
-                font-size: 14px;
-                color: #666;
+
+            .btn-secondary {
+                background: rgba(255, 255, 255, 0.9);
+                color: #1a1a2e;
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.5);
             }
-            
-            nav {
-                display: flex;
-                gap: 40px;
-                align-items: center;
+
+            .btn-secondary:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+                background: #fff;
             }
-            
-            nav a {
-                text-decoration: none;
-                color: #333;
-                font-size: 14px;
-                font-weight: 500;
-                letter-spacing: 0.5px;
-                transition: color 0.3s;
+
+            /* Section Headers */
+            .section-eyebrow {
+                display: inline-flex;
+                padding: 12px 28px;
+                border-radius: 100px;
+                background: rgba(255, 255, 255, 0.8);
+                text-transform: uppercase;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 3px;
+                color: rgba(26, 26, 46, 0.5);
+                margin-bottom: 32px;
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
             }
-            
-            nav a:hover {
-                color: #666;
+
+            .section-heading {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(40px, 7vw, 64px);
+                color: #1a1a2e;
+                margin-bottom: 24px;
+                max-width: 800px;
+                font-weight: 700;
+                line-height: 1.1;
+                letter-spacing: -1px;
             }
-            
-            nav a:last-child {
-                background: #333;
-                color: white;
-                padding: 10px 20px;
-                border-radius: 25px;
+
+            .section-lead {
+                max-width: 720px;
+                color: rgba(26, 26, 46, 0.7);
+                font-size: 20px;
+                margin-bottom: 16px;
+                line-height: 1.8;
             }
-            
-            .content {
-                padding: 80px 60px;
-                max-width: 1400px;
-                margin: 0 auto;
+
+            address {
+                font-style: normal;
+                font-size: 13px;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+                color: rgba(26, 26, 46, 0.5);
+                margin-bottom: 48px;
+                font-weight: 600;
             }
-            
-            h2 {
-                font-size: 48px;
-                color: #2c3e50;
-                font-weight: 300;
-                margin-bottom: 40px;
+
+            /* Schedule Section */
+            .section-card {
+                background: rgba(255, 255, 255, 0.85);
+                border-radius: 48px;
+                padding: 56px 64px;
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
+                            0 12px 32px rgba(0, 0, 0, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                backdrop-filter: blur(20px);
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            
+
+            .section-card:hover {
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
+                            0 16px 40px rgba(0, 0, 0, 0.05);
+                transform: translateY(-4px);
+            }
+
             .schedule-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 30px;
-                margin-top: 40px;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 32px;
             }
-            
+
             .schedule-item {
-                background: white;
-                padding: 30px;
-                border-radius: 10px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 32px;
+                padding: 36px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                display: grid;
+                gap: 16px;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            
+
+            .schedule-item:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            }
+
+            .schedule-item span {
+                text-transform: uppercase;
+                letter-spacing: 2.5px;
+                font-size: 11px;
+                font-weight: 700;
+                color: rgba(26, 26, 46, 0.45);
+            }
+
             .schedule-item h3 {
-                color: #333;
-                margin-bottom: 15px;
-                font-size: 24px;
-                font-weight: 400;
+                font-size: 26px;
+                font-weight: 700;
+                color: #1a1a2e;
+                font-family: 'Playfair Display', serif;
             }
-            
+
             .schedule-item p {
-                color: #666;
-                line-height: 1.6;
+                color: rgba(26, 26, 46, 0.65);
+                line-height: 1.8;
                 font-size: 16px;
             }
-        </style>
-    </head>
-    <body>
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>MORNING STAR</h1>
-                    <span>CHRISTIAN CHURCH</span>
-                </div>
-                <nav>
-                    <a href="/">HOME</a>
-                    <a href="/schedule">SCHEDULE</a>
-                    <a href="/outreach">OUTREACH</a>
-                    <a href="/watch">WATCH</a>
-                    <a href="/form">SUBMIT THE FORM</a>
-                </nav>
-            </div>
-        </header>
-        
-        <div class="content">
-            <h2>Service Schedule</h2>
-            
-            <div class="schedule-grid">
-                <div class="schedule-item">
-                    <h3>Sunday Service</h3>
-                    <p>9:00 AM - Sunday School<br>
-                    10:30 AM - Morning Worship<br>
-                    6:00 PM - Evening Service</p>
-                </div>
-                
-                <div class="schedule-item">
-                    <h3>Wednesday</h3>
-                    <p>7:00 PM - Bible Study & Prayer Meeting</p>
-                </div>
-                
-                <div class="schedule-item">
-                    <h3>Special Events</h3>
-                    <p>First Saturday of each month - Community Outreach<br>
-                    Last Friday of each month - Youth Night</p>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-  `)
-})
 
-app.get('/outreach', (c) => {
-  return c.html(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Outreach - Morning Star Christian Church</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-                background: #f5f5f5;
+            /* Enhanced Outreach Section with Scroll Container */
+            .outreach {
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
             }
-            
-            .header {
-                background: white;
-                padding: 20px 60px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            
-            .header-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                max-width: 1400px;
-                margin: 0 auto;
-            }
-            
-            .logo {
-                display: flex;
-                align-items: baseline;
-                gap: 10px;
-            }
-            
-            .logo h1 {
-                font-size: 18px;
-                font-weight: 400;
-                color: #333;
-                letter-spacing: 1px;
-            }
-            
-            .logo span {
-                font-size: 14px;
-                color: #666;
-            }
-            
-            nav {
-                display: flex;
-                gap: 40px;
-                align-items: center;
-            }
-            
-            nav a {
-                text-decoration: none;
-                color: #333;
-                font-size: 14px;
-                font-weight: 500;
-                letter-spacing: 0.5px;
-                transition: color 0.3s;
-            }
-            
-            nav a:hover {
-                color: #666;
-            }
-            
-            nav a:last-child {
-                background: #333;
-                color: white;
-                padding: 10px 20px;
-                border-radius: 25px;
-            }
-            
-            .content {
-                padding: 80px 60px;
-                max-width: 1400px;
-                margin: 0 auto;
-            }
-            
-            h2 {
-                font-size: 48px;
-                color: #2c3e50;
-                font-weight: 300;
-                margin-bottom: 40px;
-            }
-            
-            p {
-                font-size: 18px;
-                color: #666;
-                line-height: 1.8;
-                max-width: 800px;
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>MORNING STAR</h1>
-                    <span>CHRISTIAN CHURCH</span>
-                </div>
-                <nav>
-                    <a href="/">HOME</a>
-                    <a href="/schedule">SCHEDULE</a>
-                    <a href="/outreach">OUTREACH</a>
-                    <a href="/watch">WATCH</a>
-                    <a href="/form">SUBMIT THE FORM</a>
-                </nav>
-            </div>
-        </header>
-        
-        <div class="content">
-            <h2>Community Outreach</h2>
-            <p>
-                At Morning Star Christian Church, we believe in serving our community with love and compassion. 
-                Our outreach programs focus on meeting practical needs while sharing hope and encouragement.
-            </p>
-            <p>
-                Join us as we make a difference through food banks, homeless ministry, youth programs, 
-                and various community service initiatives. Together, we can restore hope and transform lives.
-            </p>
-        </div>
-    </body>
-    </html>
-  `)
-})
 
-app.get('/watch', (c) => {
-  return c.html(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Watch - Morning Star Christian Church</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
+            .outreach-scroll-container {
+                position: relative;
+                margin-top: 48px;
             }
-            
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-                background: #f5f5f5;
-                min-height: 100vh;
+
+            .sticky-wrapper {
+                position: sticky;
+                top: 20vh;
+                height: 80vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .events-container {
+                width: 100%;
+                max-width: 1000px;
+                margin: 0 auto;
+                position: relative;
+            }
+
+            .event-slide {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+                transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                pointer-events: none;
+            }
+
+            .event-slide.active {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                pointer-events: auto;
+                position: relative;
+            }
+
+            .scroll-spacer {
+                height: 300vh;
+                pointer-events: none;
+            }
+
+            /* Event Cards with Enhanced Styling */
+            .event-card {
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 48px;
+                padding: 48px;
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.12), 
+                            0 16px 40px rgba(0, 0, 0, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(20px);
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .event-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 50px 120px rgba(0, 0, 0, 0.15), 
+                            0 20px 50px rgba(0, 0, 0, 0.08);
+            }
+
+            .event-header {
+                margin-bottom: 32px;
+            }
+
+            .event-date {
+                display: inline-flex;
+                align-items: center;
+                padding: 10px 24px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: #fff;
+                border-radius: 100px;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                box-shadow: 0 8px 24px rgba(200, 152, 96, 0.35);
+                margin-bottom: 20px;
+            }
+
+            .event-title {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(32px, 5vw, 48px);
+                color: #1a1a2e;
+                margin-bottom: 16px;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+
+            .event-time {
+                font-size: 16px;
+                color: rgba(26, 26, 46, 0.6);
+                font-weight: 600;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-bottom: 24px;
+            }
+
+            .event-content {
+                display: grid;
+                gap: 40px;
+                grid-template-columns: 1fr 1fr;
+                align-items: start;
+            }
+
+            .event-description {
                 display: flex;
                 flex-direction: column;
+                gap: 24px;
             }
-            
-            .header {
-                background: white;
-                padding: 20px 60px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+            .event-description p {
+                color: rgba(26, 26, 46, 0.7);
+                line-height: 1.9;
+                font-size: 17px;
             }
-            
-            .header-content {
+
+            .event-description ul {
+                list-style: none;
+                display: grid;
+                gap: 12px;
+                padding-left: 0;
+            }
+
+            .event-description li {
                 display: flex;
-                justify-content: space-between;
+                gap: 12px;
+                align-items: flex-start;
+                color: rgba(26, 26, 46, 0.7);
+                font-size: 16px;
+            }
+
+            .event-description li::before {
+                content: '';
+                width: 8px;
+                height: 8px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                border-radius: 50%;
+                margin-top: 8px;
+                flex-shrink: 0;
+                box-shadow: 0 4px 12px rgba(200, 152, 96, 0.4);
+            }
+
+            .event-flyer-container {
+                position: relative;
+            }
+
+            .flyer-frame {
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 32px;
+                padding: 24px;
+                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .flyer-frame:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 28px 70px rgba(0, 0, 0, 0.12);
+            }
+
+            .flyer-image {
+                width: 100%;
+                border-radius: 24px;
+                display: block;
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+            }
+
+            .placeholder-flyer {
+                width: 100%;
+                aspect-ratio: 3/4;
+                background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
+                border-radius: 24px;
+                display: flex;
                 align-items: center;
-                max-width: 1400px;
-                margin: 0 auto;
-            }
-            
-            .logo {
-                display: flex;
-                align-items: baseline;
-                gap: 10px;
-            }
-            
-            .logo h1 {
+                justify-content: center;
                 font-size: 18px;
-                font-weight: 400;
-                color: #333;
-                letter-spacing: 1px;
+                color: rgba(26, 26, 46, 0.4);
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 2px;
             }
-            
-            .logo span {
-                font-size: 14px;
-                color: #666;
+
+            .event-cta {
+                margin-top: 32px;
             }
-            
-            nav {
-                display: flex;
-                gap: 40px;
-                align-items: center;
+
+            /* Watch Section */
+            .watch-card {
+                background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4e 100%);
+                border-radius: 48px;
+                padding: 64px;
+                display: grid;
+                gap: 56px;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                color: #ffffff;
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
+                position: relative;
+                overflow: hidden;
+                border: 1px solid rgba(255, 255, 255, 0.1);
             }
-            
-            nav a {
-                text-decoration: none;
-                color: #333;
-                font-size: 14px;
-                font-weight: 500;
-                letter-spacing: 0.5px;
-                transition: color 0.3s;
+
+            .watch-card::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at top right, rgba(212, 165, 116, 0.2), transparent 60%);
+                pointer-events: none;
             }
-            
-            nav a:hover {
-                color: #666;
+
+            .watch-copy {
+                position: relative;
+                z-index: 1;
+                display: grid;
+                gap: 24px;
             }
-            
-            nav a:last-child {
-                background: #333;
-                color: white;
-                padding: 10px 20px;
-                border-radius: 25px;
+
+            .watch-copy .section-eyebrow {
+                background: rgba(255, 255, 255, 0.1);
+                color: rgba(255, 255, 255, 0.8);
+                box-shadow: none;
+                border: 1px solid rgba(255, 255, 255, 0.2);
             }
-            
-            .content {
-                padding: 80px 60px;
-                max-width: 1400px;
-                margin: 0 auto;
+
+            .watch-copy h2 {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(36px, 6vw, 52px);
+                line-height: 1.2;
+                font-weight: 700;
             }
-            
-            h2 {
-                font-size: 48px;
-                color: #2c3e50;
-                font-weight: 300;
-                margin-bottom: 40px;
+
+            .watch-copy p {
+                color: rgba(255, 255, 255, 0.75);
+                line-height: 1.9;
+                font-size: 18px;
             }
-            
-            .video-container {
-                background: white;
+
+            .watch-meta {
+                display: grid;
+                gap: 12px;
+                font-size: 16px;
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            .watch-meta strong {
+                color: #ffffff;
+            }
+
+            .stream-preview {
+                position: relative;
+                z-index: 1;
+                display: grid;
+                gap: 28px;
+            }
+
+            .preview-screen {
+                background: rgba(255, 255, 255, 0.08);
+                border-radius: 32px;
+                border: 1px solid rgba(255, 255, 255, 0.15);
                 padding: 40px;
-                border-radius: 10px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                text-align: center;
+                display: grid;
+                gap: 20px;
+                min-height: 240px;
+                backdrop-filter: blur(10px);
             }
-            
-            .video-placeholder {
-                background: #333;
-                color: white;
-                padding: 100px 40px;
-                border-radius: 10px;
-                margin-bottom: 30px;
+
+            .live-status {
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+                background: rgba(244, 114, 94, 0.2);
+                border-radius: 100px;
+                padding: 8px 20px;
+                color: #ffb5a6;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
             }
-            
-            p {
+
+            .live-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: #ff7761;
+                box-shadow: 0 0 16px rgba(255, 119, 97, 0.7);
+                animation: pulse 2s ease-in-out infinite;
+            }
+
+            @keyframes pulse {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.7; transform: scale(1.1); }
+            }
+
+            .preview-screen p {
+                color: rgba(255, 255, 255, 0.85);
+                line-height: 1.9;
                 font-size: 18px;
-                color: #666;
-                line-height: 1.8;
+            }
+
+            .preview-screen small {
+                display: block;
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 14px;
+                margin-top: 8px;
+                letter-spacing: 1px;
+            }
+
+            .btn-outline {
+                background: transparent;
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                color: #ffffff;
+                padding: 16px 38px;
+                box-shadow: none;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .btn-outline:hover {
+                background: rgba(255, 255, 255, 0.15);
+                border-color: rgba(255, 255, 255, 0.7);
+                transform: translateY(-4px);
+            }
+
+            /* Responsive Design */
+            @media (max-width: 1024px) {
+                .event-content {
+                    grid-template-columns: 1fr;
+                    gap: 32px;
+                }
+
+                .event-flyer-container {
+                    order: -1;
+                }
+            }
+
+            @media (max-width: 960px) {
+                .nav-shell {
+                    flex-wrap: wrap;
+                    border-radius: 40px;
+                    gap: 24px;
+                    margin: 32px auto 80px;
+                    padding: 24px 32px;
+                }
+
+                nav ul {
+                    width: 100%;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    row-gap: 16px;
+                }
+
+                .nav-cta {
+                    width: 100%;
+                }
+
+                .brand {
+                    align-items: center;
+                    width: 100%;
+                }
+            }
+
+            @media (max-width: 680px) {
+                .page {
+                    width: 90%;
+                }
+
+                main {
+                    gap: 120px;
+                }
+
+                .section-card {
+                    padding: 40px;
+                    border-radius: 36px;
+                }
+
+                .event-card {
+                    padding: 32px;
+                    border-radius: 36px;
+                }
+
+                .watch-card {
+                    padding: 40px 28px;
+                    border-radius: 36px;
+                }
+
+                .sticky-wrapper {
+                    height: 60vh;
+                }
             }
         </style>
     </head>
     <body>
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>MORNING STAR</h1>
-                    <span>CHRISTIAN CHURCH</span>
+        <div class="page">
+            <header class="nav-shell">
+                <div class="brand">
+                    <span class="brand-title">Morning Star</span>
+                    <span class="brand-subtitle">Christian Church</span>
                 </div>
                 <nav>
-                    <a href="/">HOME</a>
-                    <a href="/schedule">SCHEDULE</a>
-                    <a href="/outreach">OUTREACH</a>
-                    <a href="/watch">WATCH</a>
-                    <a href="/form">SUBMIT THE FORM</a>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#schedule">Schedule</a></li>
+                        <li><a href="#outreach">Outreach</a></li>
+                        <li><a href="#watch">Watch</a></li>
+                    </ul>
                 </nav>
-            </div>
-        </header>
-        
-        <div class="content">
-            <h2>Watch Live Stream</h2>
-            <div class="video-container">
-                <div class="video-placeholder">
-                    <h3>Live Stream</h3>
-                    <p>Sunday Service - 10:30 AM</p>
-                </div>
-                <p>Join us online every Sunday for worship, teaching, and community.</p>
-            </div>
+                <a class="nav-cta" href="/form">Submit the form</a>
+            </header>
+            <main>
+                <section class="hero" id="home" style="animation-delay: 0.1s">
+                    <span class="eyebrow">A Church Anchored in Hope</span>
+                    <h1>Mending the Broken.</h1>
+                    <p>Join us every Sunday as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
+                    <div class="cta-group">
+                        <a class="btn btn-primary" href="/form">Submit the form</a>
+                        <a class="btn btn-secondary" href="#watch">Watch live stream</a>
+                    </div>
+                </section>
+                
+                <section class="schedule" id="schedule" style="animation-delay: 0.2s">
+                    <span class="section-eyebrow">Weekly Schedule</span>
+                    <h2 class="section-heading">Three simple touchpoints to connect every week.</h2>
+                    <p class="section-lead">We gather on Sundays, grow in community throughout the week, and stay rooted in Boise. You'll find us at:</p>
+                    <address>3080 N Wildwood St · Boise, Idaho</address>
+                    <div class="section-card">
+                        <div class="schedule-grid">
+                            <article class="schedule-item">
+                                <span>Sunday Gatherings</span>
+                                <h3>9:00 AM</h3>
+                                <p>Worship & kids environments for every age.</p>
+                            </article>
+                            <article class="schedule-item">
+                                <span>Bible Study</span>
+                                <h3>Tuesdays · 8:30 AM</h3>
+                                <p>Morning study with hot coffee, child care, and community prayer.</p>
+                            </article>
+                            <article class="schedule-item">
+                                <span>Bible Study</span>
+                                <h3>Thursdays · 6:00 PM</h3>
+                                <p>Evening groups across Boise with dinner, discussion, and worship.</p>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="outreach" id="outreach" style="animation-delay: 0.3s">
+                    <span class="section-eyebrow">Outreach</span>
+                    <h2 class="section-heading">Upcoming Events</h2>
+                    <p class="section-lead">We are called to be the hands and feet of Jesus by serving our local community and growing in fellowship. Here's how you can get involved.</p>
+                    
+                    <div class="outreach-scroll-container">
+                        <div class="sticky-wrapper">
+                            <div class="events-container">
+                                <!-- Event 1: Community Thanksgiving Dinner -->
+                                <div class="event-slide active" data-event="1">
+                                    <div class="event-card">
+                                        <div class="event-header">
+                                            <span class="event-date">Nov 26</span>
+                                            <h3 class="event-title">Community Thanksgiving Dinner</h3>
+                                            <div class="event-time">11:00 AM - 1:00 PM</div>
+                                        </div>
+                                        <div class="event-content">
+                                            <div class="event-description">
+                                                <p>Join us for a community Thanksgiving dinner. All are welcome to share a meal and give thanks together. Find more details on our Outreach page.</p>
+                                                <ul>
+                                                    <li>Bring a side or dessert to share</li>
+                                                    <li>Kid-friendly seating and activities</li>
+                                                    <li>Fellowship and community prayer</li>
+                                                    <li>All ages welcome</li>
+                                                </ul>
+                                                <div class="event-cta">
+                                                    <a class="btn btn-primary" href="/form">RSVP Now</a>
+                                                </div>
+                                            </div>
+                                            <div class="event-flyer-container">
+                                                <div class="flyer-frame">
+                                                    <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Event 2: Christmas Clothes Drive -->
+                                <div class="event-slide" data-event="2">
+                                    <div class="event-card">
+                                        <div class="event-header">
+                                            <span class="event-date">Dec 6</span>
+                                            <h3 class="event-title">Christmas Clothes Drive for Mothers</h3>
+                                            <div class="event-time">Drop-off during office hours</div>
+                                        </div>
+                                        <div class="event-content">
+                                            <div class="event-description">
+                                                <p>We are collecting new and gently used winter clothing for single mothers and their children in our community. Your donations can make a significant difference this winter.</p>
+                                                <ul>
+                                                    <li>Winter coats, sweaters, and warm clothing</li>
+                                                    <li>Children's clothing all sizes</li>
+                                                    <li>New socks and undergarments</li>
+                                                    <li>Accessories like gloves, scarves, and hats</li>
+                                                </ul>
+                                                <div class="event-cta">
+                                                    <a class="btn btn-primary" href="/form">Volunteer or Request Items</a>
+                                                </div>
+                                            </div>
+                                            <div class="event-flyer-container">
+                                                <div class="flyer-frame">
+                                                    <div class="placeholder-flyer">
+                                                        Flyer Coming Soon
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Event 3: Christmas Eve Candlelight Service -->
+                                <div class="event-slide" data-event="3">
+                                    <div class="event-card">
+                                        <div class="event-header">
+                                            <span class="event-date">Dec 24</span>
+                                            <h3 class="event-title">Christmas Eve Candlelight Service</h3>
+                                            <div class="event-time">5:00 PM & 7:00 PM</div>
+                                        </div>
+                                        <div class="event-content">
+                                            <div class="event-description">
+                                                <p>Celebrate the birth of Jesus with us at our special candlelight services. A beautiful evening of carols, scripture, and reflection in the main sanctuary.</p>
+                                                <ul>
+                                                    <li>Traditional Christmas carols</li>
+                                                    <li>Candlelight ceremony</li>
+                                                    <li>Scripture reading and reflection</li>
+                                                    <li>Family-friendly service</li>
+                                                </ul>
+                                                <div class="event-cta">
+                                                    <a class="btn btn-primary" href="/form">Reserve Your Seat</a>
+                                                </div>
+                                            </div>
+                                            <div class="event-flyer-container">
+                                                <div class="flyer-frame">
+                                                    <div class="placeholder-flyer">
+                                                        Flyer Coming Soon
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scroll-spacer"></div>
+                    </div>
+                </section>
+                
+                <section class="watch" id="watch" style="animation-delay: 0.4s">
+                    <div class="watch-card">
+                        <div class="watch-copy">
+                            <span class="section-eyebrow">Watch</span>
+                            <h2>Join us live every Sunday.</h2>
+                            <p>Tune in from wherever you are to worship together online. Our stream goes live fifteen minutes before service begins.</p>
+                            <div class="watch-meta">
+                                <span><strong>Sundays</strong> · 10:30 AM (MST)</span>
+                                <span><strong>YouTube & Facebook</strong> @morningstarboise</span>
+                            </div>
+                        </div>
+                        <div class="stream-preview">
+                            <div class="preview-screen">
+                                <span class="live-status"><span class="live-dot"></span>Live Soon</span>
+                                <p>"He heals the brokenhearted and binds up their wounds."<small>Psalm 147:3</small></p>
+                            </div>
+                            <a class="btn btn-outline" href="https://www.youtube.com/" target="_blank" rel="noopener">Open live stream</a>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
+
+        <script>
+            // Smooth scroll animation for events with background color change
+            document.addEventListener('DOMContentLoaded', () => {
+                const eventSlides = document.querySelectorAll('.event-slide');
+                const body = document.body;
+                const outreachSection = document.querySelector('.outreach');
+                const scrollSpacer = document.querySelector('.scroll-spacer');
+                
+                let currentEventIndex = 0;
+                const totalEvents = eventSlides.length;
+                
+                // Smooth scroll handler
+                function handleScroll() {
+                    if (!outreachSection || !scrollSpacer) return;
+                    
+                    const outreachRect = outreachSection.getBoundingClientRect();
+                    const spacerRect = scrollSpacer.getBoundingClientRect();
+                    
+                    // Check if we're in the outreach section
+                    if (outreachRect.top <= window.innerHeight * 0.3 && spacerRect.bottom > window.innerHeight * 0.7) {
+                        // Calculate scroll progress through the spacer
+                        const spacerTop = spacerRect.top - window.innerHeight * 0.3;
+                        const spacerHeight = spacerRect.height - window.innerHeight * 0.4;
+                        const scrollProgress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
+                        
+                        // Calculate which event should be shown
+                        const newEventIndex = Math.floor(scrollProgress * totalEvents);
+                        const clampedIndex = Math.max(0, Math.min(totalEvents - 1, newEventIndex));
+                        
+                        // Update event if changed
+                        if (clampedIndex !== currentEventIndex) {
+                            currentEventIndex = clampedIndex;
+                            updateActiveEvent(currentEventIndex);
+                        }
+                    } else if (spacerRect.bottom <= window.innerHeight * 0.7) {
+                        // Scrolled past - show last event
+                        if (currentEventIndex !== totalEvents - 1) {
+                            currentEventIndex = totalEvents - 1;
+                            updateActiveEvent(currentEventIndex);
+                        }
+                    } else if (outreachRect.top > window.innerHeight * 0.3) {
+                        // Before section - show first event
+                        if (currentEventIndex !== 0) {
+                            currentEventIndex = 0;
+                            updateActiveEvent(0);
+                        }
+                    }
+                }
+                
+                function updateActiveEvent(index) {
+                    // Remove active class from all events
+                    eventSlides.forEach(slide => slide.classList.remove('active'));
+                    
+                    // Add active class to current event
+                    if (eventSlides[index]) {
+                        eventSlides[index].classList.add('active');
+                        
+                        // Update body background based on event
+                        body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
+                        body.classList.add(\`event-\${index + 1}-active\`);
+                    }
+                }
+                
+                // Throttle scroll events for performance
+                let ticking = false;
+                window.addEventListener('scroll', () => {
+                    if (!ticking) {
+                        window.requestAnimationFrame(() => {
+                            handleScroll();
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                });
+                
+                // Initial check
+                handleScroll();
+                
+                // Smooth scrolling for navigation links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const target = document.querySelector(this.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
     </body>
     </html>
   `)
 })
 
+// Other routes remain the same
 app.get('/form', (c) => {
   return c.html(`
     <!DOCTYPE html>
@@ -723,6 +1099,9 @@ app.get('/form', (c) => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Contact - Morning Star Christian Church</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
             * {
                 margin: 0;
@@ -731,17 +1110,18 @@ app.get('/form', (c) => {
             }
             
             body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-                background: #f5f5f5;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
             }
             
             .header {
-                background: white;
-                padding: 20px 60px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                background: rgba(255, 255, 255, 0.75);
+                padding: 24px 60px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+                backdrop-filter: blur(20px);
             }
             
             .header-content {
@@ -754,20 +1134,25 @@ app.get('/form', (c) => {
             
             .logo {
                 display: flex;
-                align-items: baseline;
-                gap: 10px;
+                flex-direction: column;
             }
             
             .logo h1 {
-                font-size: 18px;
-                font-weight: 400;
-                color: #333;
-                letter-spacing: 1px;
+                font-family: 'Playfair Display', serif;
+                font-size: 22px;
+                font-weight: 700;
+                color: #1a1a2e;
+                letter-spacing: 3px;
+                text-transform: uppercase;
             }
             
             .logo span {
-                font-size: 14px;
-                color: #666;
+                font-size: 11px;
+                color: rgba(26, 26, 46, 0.5);
+                letter-spacing: 4px;
+                text-transform: uppercase;
+                font-weight: 600;
+                margin-top: 2px;
             }
             
             nav {
@@ -778,22 +1163,25 @@ app.get('/form', (c) => {
             
             nav a {
                 text-decoration: none;
-                color: #333;
-                font-size: 14px;
-                font-weight: 500;
-                letter-spacing: 0.5px;
-                transition: color 0.3s;
+                color: #1a1a2e;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                transition: opacity 0.3s;
+                opacity: 0.6;
             }
             
             nav a:hover {
-                color: #666;
+                opacity: 1;
             }
             
             nav a:last-child {
-                background: #333;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: white;
-                padding: 10px 20px;
-                border-radius: 25px;
+                padding: 12px 28px;
+                border-radius: 100px;
+                opacity: 1;
             }
             
             .content {
@@ -804,74 +1192,79 @@ app.get('/form', (c) => {
             }
             
             h2 {
-                font-size: 48px;
-                color: #2c3e50;
-                font-weight: 300;
-                margin-bottom: 40px;
+                font-family: 'Playfair Display', serif;
+                font-size: 52px;
+                color: #1a1a2e;
+                font-weight: 700;
+                margin-bottom: 48px;
             }
             
             .form-container {
-                background: white;
-                padding: 40px;
-                border-radius: 10px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                max-width: 600px;
+                background: rgba(255, 255, 255, 0.85);
+                padding: 48px;
+                border-radius: 32px;
+                box-shadow: 0 32px 80px rgba(0,0,0,0.08);
+                max-width: 700px;
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.6);
             }
             
             .form-group {
-                margin-bottom: 25px;
+                margin-bottom: 28px;
             }
             
             label {
                 display: block;
-                color: #333;
-                font-size: 14px;
-                font-weight: 500;
-                margin-bottom: 8px;
-                letter-spacing: 0.5px;
+                color: #1a1a2e;
+                font-size: 13px;
+                font-weight: 700;
+                margin-bottom: 10px;
+                letter-spacing: 1px;
+                text-transform: uppercase;
             }
             
             input, textarea, select {
                 width: 100%;
-                padding: 12px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
+                padding: 16px 20px;
+                border: 1px solid rgba(26, 26, 46, 0.15);
+                border-radius: 16px;
                 font-size: 16px;
                 font-family: inherit;
-                background: #fafafa;
+                background: rgba(255, 255, 255, 0.9);
                 transition: all 0.3s;
             }
             
             input:focus, textarea:focus, select:focus {
                 outline: none;
-                border-color: #999;
+                border-color: #d4a574;
                 background: white;
+                box-shadow: 0 8px 24px rgba(212, 165, 116, 0.15);
             }
             
             textarea {
-                min-height: 120px;
+                min-height: 140px;
                 resize: vertical;
             }
             
             .submit-btn {
-                background: #f4e4c1;
-                color: #333;
-                padding: 15px 35px;
-                border-radius: 30px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: white;
+                padding: 18px 40px;
+                border-radius: 100px;
                 border: none;
-                font-size: 14px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 2px;
                 text-transform: uppercase;
                 cursor: pointer;
-                transition: all 0.3s;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 width: 100%;
+                box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35);
             }
             
             .submit-btn:hover {
-                background: #e8d4a8;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                transform: translateY(-4px);
+                box-shadow: 0 20px 50px rgba(200, 152, 96, 0.45);
             }
         </style>
     </head>
@@ -883,10 +1276,10 @@ app.get('/form', (c) => {
                     <span>CHRISTIAN CHURCH</span>
                 </div>
                 <nav>
-                    <a href="/">HOME</a>
-                    <a href="/schedule">SCHEDULE</a>
-                    <a href="/outreach">OUTREACH</a>
-                    <a href="/watch">WATCH</a>
+                    <a href="/#home">HOME</a>
+                    <a href="/#schedule">SCHEDULE</a>
+                    <a href="/#outreach">OUTREACH</a>
+                    <a href="/#watch">WATCH</a>
                     <a href="/form">SUBMIT THE FORM</a>
                 </nav>
             </div>

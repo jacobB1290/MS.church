@@ -521,6 +521,7 @@ app.get('/', (c) => {
 
             .outreach-header .section-heading {
                 text-align: left;
+                position: relative;
             }
 
             /* Removed sticky title - now using sticky header instead */
@@ -597,7 +598,8 @@ app.get('/', (c) => {
                 align-items: center;
                 gap: 10px;
                 position: absolute;
-                top: 0;
+                top: 50%;
+                transform: translateY(-50%);
                 right: 0;
                 z-index: 70;
                 padding: 0;
@@ -4057,7 +4059,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.3.1</div>
+        <div class="version-footer">v1.3.2</div>
     </body>
     </html>
   `)

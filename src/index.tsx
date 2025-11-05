@@ -1464,6 +1464,10 @@ app.get('/', (c) => {
                     justify-content: center;
                 }
                 
+                nav {
+                    text-align: center;
+                }
+                
                 .nav-shell.scrolled-mobile nav ul {
                     gap: 16px;
                     row-gap: 0;
@@ -1518,6 +1522,7 @@ app.get('/', (c) => {
                 .hero-content p {
                     margin: 0;
                     line-height: 1.7;
+                    text-align: center;
                 }
                 
                 .hero-image {
@@ -1538,6 +1543,7 @@ app.get('/', (c) => {
                     display: flex;
                     flex-direction: column;
                     gap: 12px;
+                    align-items: center;
                 }
                 
                 .hero-body .cta-group .btn {
@@ -1555,6 +1561,7 @@ app.get('/', (c) => {
                     line-height: 1.0;
                     letter-spacing: -1.5px;
                     margin: 0 0 20px 0;
+                    text-align: center;
                 }
 
                 .hero p {
@@ -1665,7 +1672,7 @@ app.get('/', (c) => {
                 }
 
                 .scroll-spacer {
-                    height: 280vh;
+                    height: 180vh;
                 }
                 
                 .events-container {

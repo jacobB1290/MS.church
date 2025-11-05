@@ -491,7 +491,7 @@ app.get('/', (c) => {
             }
 
             .outreach-header {
-                margin-bottom: 25vh;
+                margin-bottom: 15vh;
                 position: sticky;
                 top: 80px;
                 z-index: 10;
@@ -519,7 +519,7 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 18vh;
+                top: 24vh;
                 height: 62vh;
                 display: flex;
                 flex-direction: column;

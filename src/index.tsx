@@ -496,6 +496,12 @@ app.get('/', (c) => {
                 top: 80px;
                 z-index: 10;
                 text-align: left;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .outreach-header .section-heading {
+                position: relative;
             }
             
             /* Desktop-only reduced gap */
@@ -576,35 +582,36 @@ app.get('/', (c) => {
             .event-indicators {
                 display: none;
                 flex-direction: row;
-                justify-content: center;
+                justify-content: flex-end;
                 align-items: center;
-                gap: 12px;
-                padding: 16px 0;
+                gap: 10px;
                 position: absolute;
-                bottom: 50px;
-                left: 0;
-                width: 100%;
-                z-index: 60;
+                top: 0;
+                right: 0;
+                z-index: 70;
+                padding: 0;
             }
             
             .event-dot {
-                width: 10px;
-                height: 10px;
+                width: 8px;
+                height: 8px;
                 border-radius: 50%;
-                background: rgba(26, 26, 46, 0.15);
-                transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                background: rgba(26, 26, 46, 0.25);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 cursor: pointer;
             }
             
             .event-dot.active {
-                width: 12px;
-                height: 12px;
+                width: 10px;
+                height: 10px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                box-shadow: 0 4px 16px rgba(200, 152, 96, 0.4);
+                box-shadow: 0 2px 8px rgba(200, 152, 96, 0.5);
+                transform: scale(1);
             }
             
             .event-dot:hover {
-                background: rgba(26, 26, 46, 0.3);
+                background: rgba(26, 26, 46, 0.4);
+                transform: scale(1.15);
             }
             
             .scroll-hint {
@@ -3095,7 +3102,14 @@ app.get('/', (c) => {
                 <section class="outreach" id="outreach" style="animation-delay: 0.3s">
                     <div class="outreach-header">
                         <span class="section-eyebrow">Outreach</span>
-                        <h2 class="section-heading">Upcoming Events</h2>
+                        <h2 class="section-heading">
+                            Upcoming Events
+                            <div class="event-indicators">
+                                <div class="event-dot active" data-dot="1"></div>
+                                <div class="event-dot" data-dot="2"></div>
+                                <div class="event-dot" data-dot="3"></div>
+                            </div>
+                        </h2>
                         <p class="section-lead">We are called to be the hands and feet of Jesus by serving our local community and growing in fellowship. Here's how you can get involved.</p>
                     </div>
                     
@@ -3193,11 +3207,6 @@ app.get('/', (c) => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="event-indicators">
-                                <div class="event-dot active" data-dot="1"></div>
-                                <div class="event-dot" data-dot="2"></div>
-                                <div class="event-dot" data-dot="3"></div>
                             </div>
                             <div class="scroll-hint">
                                 <div class="scroll-hint-icon">↓</div>
@@ -3583,6 +3592,61 @@ app.get('/', (c) => {
                     body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
                 }
                 
+                // Touch/Swipe handling for events
+                let touchStartX = 0;
+                let touchStartY = 0;
+                let touchEndX = 0;
+                let touchEndY = 0;
+                let isSwipeActive = false;
+                let swipeDebounceTimer = null;
+                const swipeThreshold = 40; // Very small threshold for easy swiping
+                const swipeDebounceTime = 600; // Prevent accidental double-swipes
+                
+                const eventsContainer = document.querySelector('.events-container');
+                
+                if (eventsContainer) {
+                    eventsContainer.addEventListener('touchstart', (e) => {
+                        if (isSwipeActive) return;
+                        touchStartX = e.changedTouches[0].screenX;
+                        touchStartY = e.changedTouches[0].screenY;
+                    }, { passive: true });
+                    
+                    eventsContainer.addEventListener('touchend', (e) => {
+                        if (isSwipeActive) return;
+                        
+                        touchEndX = e.changedTouches[0].screenX;
+                        touchEndY = e.changedTouches[0].screenY;
+                        
+                        const deltaX = touchEndX - touchStartX;
+                        const deltaY = touchEndY - touchStartY;
+                        
+                        // Only process if horizontal swipe is dominant
+                        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+                            isSwipeActive = true;
+                            
+                            if (deltaX > 0) {
+                                // Swipe right - go to previous event
+                                if (currentEventIndex > 0) {
+                                    currentEventIndex--;
+                                    updateActiveEvent(currentEventIndex, false);
+                                }
+                            } else {
+                                // Swipe left - go to next event
+                                if (currentEventIndex < totalEvents - 1) {
+                                    currentEventIndex++;
+                                    updateActiveEvent(currentEventIndex, false);
+                                }
+                            }
+                            
+                            // Reset swipe lock after debounce time
+                            clearTimeout(swipeDebounceTimer);
+                            swipeDebounceTimer = setTimeout(() => {
+                                isSwipeActive = false;
+                            }, swipeDebounceTime);
+                        }
+                    }, { passive: true });
+                }
+                
                 // Throttle scroll events for performance
                 let ticking = false;
                 window.addEventListener('scroll', () => {
@@ -3963,7 +4027,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.2.1</div>
+        <div class="version-footer">v1.3.0</div>
     </body>
     </html>
   `)

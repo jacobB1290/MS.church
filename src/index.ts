@@ -1488,15 +1488,16 @@ app.get('/', (c) => {
                 }
                 
                 .hero-body {
-                    display: grid;
-                    grid-template-columns: 0.85fr 1.15fr;
-                    grid-template-rows: auto auto;
-                    gap: 14px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 24px;
                 }
                 
                 .hero-content {
-                    grid-column: 1;
-                    grid-row: 1;
+                    order: 2;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
                 }
                 
                 .hero-content p {
@@ -1505,22 +1506,16 @@ app.get('/', (c) => {
                 }
                 
                 .hero-image {
-                    grid-column: 2;
-                    grid-row: 1;
-                    min-height: auto;
-                    height: 100%;
-                    border-radius: 20px;
+                    order: 1;
+                    min-height: 320px;
+                    border-radius: 24px;
                 }
                 
                 .hero-body .cta-group {
-                    grid-column: 1 / -1;
-                    grid-row: 2;
-                    margin-top: 8px;
+                    margin-top: 4px;
                     display: flex;
                     flex-direction: column;
                     gap: 12px;
-                    max-width: 100%;
-                    padding: 0;
                 }
                 
                 .hero-body .cta-group .btn {

@@ -2447,6 +2447,397 @@ app.get('/', (c) => {
                     font-size: 17px;
                 }
             }
+            
+            /* Smaller Phones (iPhone X, iPhone SE, etc - 375px and below) */
+            @media (max-width: 375px) {
+                .page {
+                    width: 100%;
+                    padding: 0 4%;
+                }
+                
+                /* Navigation - More Compact */
+                .nav-spacer {
+                    height: 170px;
+                }
+                
+                .nav-shell {
+                    padding: 12px 14px;
+                    border-radius: 28px;
+                    top: 8px;
+                    width: 94%;
+                }
+                
+                .nav-shell.scrolled-mobile {
+                    padding: 6px 14px;
+                    top: 4px;
+                }
+                
+                .brand-title {
+                    font-size: 16px;
+                    letter-spacing: 1.5px;
+                }
+                
+                .brand-subtitle {
+                    font-size: 9px;
+                    letter-spacing: 2.5px;
+                }
+                
+                nav a {
+                    font-size: 11px;
+                    letter-spacing: 1.5px;
+                }
+                
+                .nav-shell.scrolled-mobile nav a {
+                    font-size: 10px;
+                    letter-spacing: 1.2px;
+                }
+                
+                .nav-cta {
+                    padding: 8px 16px;
+                    font-size: 10px;
+                    letter-spacing: 1.2px;
+                }
+                
+                /* Main Content Spacing */
+                main {
+                    gap: 80px;
+                    margin-bottom: 60px;
+                }
+                
+                /* Hero Section */
+                .hero {
+                    padding: 16px 0 48px;
+                    gap: 16px;
+                }
+                
+                .hero .eyebrow {
+                    padding: 10px 20px;
+                    font-size: 11px;
+                    letter-spacing: 2px;
+                }
+                
+                .hero h1 {
+                    font-size: clamp(48px, 11vw, 64px);
+                    line-height: 0.95;
+                    letter-spacing: -1.2px;
+                    margin-bottom: 16px;
+                }
+                
+                .hero p {
+                    font-size: 17px;
+                    line-height: 1.6;
+                }
+                
+                .hero-image {
+                    min-height: 280px;
+                    border-radius: 20px;
+                }
+                
+                .btn {
+                    padding: 14px 28px;
+                    font-size: 12px;
+                    letter-spacing: 1.5px;
+                }
+                
+                /* Section Headers */
+                .section-eyebrow {
+                    font-size: 10px;
+                    padding: 8px 16px;
+                    letter-spacing: 2px;
+                    margin-bottom: 12px;
+                }
+                
+                .section-heading {
+                    font-size: clamp(28px, 6.5vw, 36px);
+                    margin-bottom: 12px;
+                    line-height: 1.15;
+                }
+                
+                .section-lead {
+                    font-size: 15px;
+                    line-height: 1.6;
+                    margin-bottom: 10px;
+                }
+                
+                address {
+                    font-size: 11px;
+                    letter-spacing: 1.5px;
+                    margin-bottom: 16px;
+                }
+                
+                /* Schedule Section */
+                .section-card {
+                    padding: 16px 14px;
+                    border-radius: 20px;
+                }
+                
+                .schedule-grid {
+                    gap: 14px;
+                }
+                
+                .schedule-item {
+                    padding: 14px 12px;
+                    border-radius: 16px;
+                    gap: 6px;
+                }
+                
+                .schedule-item span {
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
+                }
+                
+                .schedule-item h3 {
+                    font-size: 22px;
+                }
+                
+                .schedule-item p {
+                    font-size: 13px;
+                    line-height: 1.4;
+                }
+                
+                /* Outreach Section */
+                .outreach-header {
+                    margin-bottom: 20px;
+                }
+                
+                .outreach-header .section-heading {
+                    margin-bottom: 6px;
+                }
+                
+                .outreach-header .section-eyebrow {
+                    margin-bottom: 8px;
+                }
+                
+                .sticky-wrapper {
+                    height: auto;
+                    min-height: 50vh;
+                    top: 22vh;
+                    padding-bottom: 80px;
+                }
+                
+                .scroll-spacer {
+                    height: 160vh;
+                }
+                
+                /* Event Cards - Smaller */
+                .event-card {
+                    border-radius: 20px;
+                }
+                
+                .event-header-content {
+                    padding: 14px 22px 10px 22px;
+                }
+                
+                .event-date {
+                    padding: 9px 22px;
+                    font-size: 10px;
+                    letter-spacing: 1.3px;
+                }
+                
+                .event-title {
+                    font-size: clamp(26px, 6.8vw, 34px);
+                    margin-bottom: 5px;
+                    line-height: 1.1;
+                }
+                
+                .event-time {
+                    font-size: 14px;
+                }
+                
+                .event-flyer-container {
+                    padding: 14px 22px;
+                }
+                
+                .flyer-frame {
+                    padding: 8px;
+                    border-radius: 14px;
+                }
+                
+                .flyer-image {
+                    height: 240px;
+                }
+                
+                .placeholder-flyer {
+                    height: 240px !important;
+                    font-size: 14px;
+                }
+                
+                .event-cta {
+                    padding: 0 22px 20px 22px;
+                }
+                
+                .event-cta .btn {
+                    padding: 16px 30px;
+                    font-size: 13px;
+                }
+                
+                .event-indicators {
+                    bottom: 40px;
+                }
+                
+                .event-dot {
+                    width: 8px;
+                    height: 8px;
+                }
+                
+                .event-dot.active {
+                    width: 10px;
+                    height: 10px;
+                }
+                
+                .scroll-hint {
+                    bottom: 8px;
+                }
+                
+                .scroll-hint-icon {
+                    font-size: 20px;
+                }
+                
+                .scroll-hint-text {
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
+                }
+                
+                /* Watch Section */
+                .watch-card {
+                    padding: 28px 20px;
+                    border-radius: 24px;
+                }
+                
+                .preview-screen {
+                    padding: 28px 20px;
+                    min-height: 240px;
+                    border-radius: 20px;
+                }
+                
+                .live-status {
+                    font-size: 10px;
+                    padding: 6px 16px;
+                    letter-spacing: 1.5px;
+                }
+                
+                .live-dot {
+                    width: 8px;
+                    height: 8px;
+                }
+                
+                .preview-screen p {
+                    font-size: 15px;
+                    line-height: 1.6;
+                }
+                
+                .preview-screen small {
+                    font-size: 12px;
+                }
+                
+                .btn-outline {
+                    padding: 13px 28px;
+                    font-size: 11px;
+                    letter-spacing: 1.5px;
+                }
+                
+                .past-streams-label {
+                    font-size: 12px;
+                    letter-spacing: 1.5px;
+                    margin-bottom: 10px;
+                }
+                
+                .stream-thumbnail {
+                    font-size: 13px;
+                    border-radius: 10px;
+                }
+                
+                /* Contact Section */
+                .contact {
+                    gap: 28px;
+                }
+                
+                .contact-card {
+                    padding: 28px 20px;
+                    border-radius: 24px;
+                    gap: 32px;
+                }
+                
+                .jotform-container {
+                    min-height: 700px;
+                }
+                
+                .jotform-container iframe {
+                    min-height: 700px;
+                }
+                
+                /* Form Success State - Smaller */
+                .form-success {
+                    padding: 32px 20px;
+                    min-height: 400px;
+                    gap: 20px;
+                }
+                
+                .success-icon {
+                    font-size: 56px;
+                }
+                
+                .success-heading {
+                    font-size: clamp(24px, 5.5vw, 28px);
+                }
+                
+                .success-message {
+                    font-size: 15px;
+                    line-height: 1.5;
+                }
+                
+                .success-details {
+                    padding: 16px;
+                    gap: 12px;
+                }
+                
+                .detail-item {
+                    padding: 10px 0;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 6px;
+                }
+                
+                .detail-label {
+                    font-size: 13px;
+                }
+                
+                .detail-value {
+                    font-size: 13px;
+                    text-align: left;
+                    font-weight: 700;
+                }
+                
+                .calendar-buttons {
+                    gap: 10px;
+                }
+                
+                .btn-calendar {
+                    padding: 12px 18px;
+                    font-size: 11px;
+                    letter-spacing: 0.8px;
+                }
+                
+                .calendar-icon {
+                    font-size: 16px;
+                }
+                
+                /* Lightbox - Smaller Close Button */
+                .lightbox-close {
+                    width: 40px;
+                    height: 40px;
+                    top: 16px;
+                    right: 16px;
+                    font-size: 24px;
+                }
+                
+                .lightbox-instructions {
+                    bottom: 20px;
+                    padding: 10px 20px;
+                    font-size: 10px;
+                    letter-spacing: 0.8px;
+                }
+            }
         </style>
     </head>
     <body>

@@ -70,9 +70,14 @@ app.get('/', (c) => {
                 margin: 0 auto;
             }
 
+            /* Navigation Spacer - maintains layout when nav is fixed */
+            .nav-spacer {
+                height: 160px;
+                pointer-events: none;
+            }
+
             /* Enhanced Navigation */
             .nav-shell {
-                margin: 40px auto 100px;
                 padding: 20px 40px;
                 background: rgba(255, 255, 255, 0.75);
                 border-radius: 100px;
@@ -83,16 +88,20 @@ app.get('/', (c) => {
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 
                             0 8px 20px rgba(0, 0, 0, 0.04);
                 backdrop-filter: blur(20px);
-                position: sticky;
+                position: fixed;
                 top: 32px;
+                left: 50%;
+                transform: translateX(-50%);
                 z-index: 1000;
                 border: 1px solid rgba(255, 255, 255, 0.4);
-                transition: padding 0.3s ease, margin 0.3s ease, border-radius 0.3s ease, top 0.3s ease;
+                transition: padding 0.3s ease, top 0.3s ease, width 0.3s ease, border-radius 0.3s ease;
+                max-width: 90%;
+                width: auto;
             }
             
             .nav-shell.scrolled-mobile {
                 padding: 10px 20px;
-                margin-bottom: 60px;
+                top: 16px;
             }
             
             .nav-shell.scrolled-mobile .brand {
@@ -1373,17 +1382,20 @@ app.get('/', (c) => {
                     box-sizing: border-box;
                 }
 
+                .nav-spacer {
+                    height: 80px;
+                }
+
                 .nav-shell {
-                    margin: 16px auto 40px;
                     padding: 14px 18px;
                     border-radius: 32px;
                     top: 10px;
+                    max-width: 95%;
                 }
                 
                 .nav-shell.scrolled-mobile {
                     border-radius: 100px;
                     padding: 7px 18px;
-                    margin-bottom: 25px;
                     top: 6px;
                 }
                 
@@ -1868,6 +1880,7 @@ app.get('/', (c) => {
                 </nav>
                 <a class="nav-cta" href="#contact">Submit the form</a>
             </header>
+            <div class="nav-spacer"></div>
             <main>
                 <section class="hero" id="home" style="animation-delay: 0.1s">
                     <h1 class="hero-title">Mending the Broken.</h1>

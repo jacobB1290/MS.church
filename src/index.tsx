@@ -2612,7 +2612,7 @@ app.get('/', (c) => {
                 .sticky-wrapper {
                     height: auto;
                     min-height: 45vh;
-                    top: 18vh;
+                    top: 28vh;
                     padding-bottom: 60px;
                 }
                 
@@ -3729,7 +3729,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.0.1</div>
+        <div class="version-footer">v1.0.2</div>
     </body>
     </html>
   `)

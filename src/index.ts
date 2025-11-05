@@ -501,8 +501,15 @@ app.get('/', (c) => {
                 align-items: flex-start;
             }
             
+            .heading-wrapper {
+                position: relative;
+                display: inline-block;
+                width: auto;
+            }
+            
             .outreach-header .section-heading {
                 position: relative;
+                margin: 0;
             }
             
             /* Desktop-only reduced gap */
@@ -3065,8 +3072,8 @@ app.get('/', (c) => {
                         <li><a href="#watch">Watch</a></li>
                     </ul>
                 </nav>
-                <a class="nav-cta" href="#contact">Submit the form</a>
-                <a class="nav-form-btn" href="#contact">Form</a>
+                <a class="nav-cta" href="#contact">Register for free gifts</a>
+                <a class="nav-form-btn" href="#contact">Gifts</a>
             </header>
             <div class="nav-spacer"></div>
             <main>
@@ -3115,7 +3122,7 @@ app.get('/', (c) => {
                 <section class="outreach" id="outreach" style="animation-delay: 0.3s">
                     <div class="outreach-header">
                         <span class="section-eyebrow">Outreach</span>
-                        <div style="position: relative; width: 100%;">
+                        <div class="heading-wrapper">
                             <h2 class="section-heading">Upcoming Events</h2>
                             <div class="event-indicators">
                                 <div class="event-dot active" data-dot="1"></div>
@@ -4059,7 +4066,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.3.4</div>
+        <div class="version-footer">v1.3.5</div>
     </body>
     </html>
   `)

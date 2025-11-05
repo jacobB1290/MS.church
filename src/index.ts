@@ -2498,16 +2498,16 @@ app.get('/', (c) => {
                     letter-spacing: 0.8px;
                 }
                 
-                /* Main Content Spacing */
+                /* Main Content Spacing - Reduce gaps to move sections up */
                 main {
-                    gap: 50px;
-                    margin-bottom: 40px;
+                    gap: 35px;
+                    margin-bottom: 30px;
                 }
                 
                 /* Hero Section */
                 .hero {
-                    padding: 20px 0 30px;
-                    gap: 12px;
+                    padding: 0px 0 20px;
+                    gap: 10px;
                 }
                 
                 .hero .eyebrow {
@@ -2544,31 +2544,28 @@ app.get('/', (c) => {
                     font-size: 8px;
                     padding: 6px 12px;
                     letter-spacing: 1.5px;
-                    margin-bottom: 6px;
+                    margin-bottom: 4px;
                 }
                 
                 .section-heading {
                     font-size: clamp(22px, 5.5vw, 28px);
-                    margin-bottom: 6px;
+                    margin-bottom: 4px;
                     line-height: 1.1;
                 }
                 
                 .section-lead {
                     font-size: 13px;
                     line-height: 1.5;
-                    margin-bottom: 4px;
+                    margin-bottom: 2px;
                 }
                 
                 address {
                     font-size: 9px;
                     letter-spacing: 1px;
-                    margin-bottom: 8px;
+                    margin-bottom: 4px;
                 }
                 
-                /* Schedule Section - Reduced top spacing */
-                section {
-                    padding-top: 0 !important;
-                }
+                /* Schedule Section - Move sections up */
                 
                 .section-card {
                     padding: 12px 10px;
@@ -2704,11 +2701,11 @@ app.get('/', (c) => {
                 
                 /* Watch Section */
                 .watch {
-                    gap: 20px;
+                    gap: 12px;
                 }
                 
                 .watch-header {
-                    margin-bottom: -8px;
+                    margin-bottom: -4px;
                 }
                 
                 .watch-card {
@@ -2761,17 +2758,17 @@ app.get('/', (c) => {
                 
                 /* Contact Section */
                 .contact {
-                    gap: 16px;
+                    gap: 12px;
                 }
                 
                 .contact-header {
-                    margin-bottom: -8px;
+                    margin-bottom: -4px;
                 }
                 
                 .contact-card {
-                    padding: 20px 14px;
+                    padding: 16px 14px;
                     border-radius: 18px;
-                    gap: 20px;
+                    gap: 16px;
                 }
                 
                 .jotform-container {

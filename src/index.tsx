@@ -206,13 +206,15 @@ app.get('/', (c) => {
             .nav-cta {
                 padding: 14px 32px;
                 border-radius: 100px;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: #fff;
+                background: rgba(255, 255, 255, 0.9);
+                color: #1a1a2e;
                 font-size: 12px;
                 font-weight: 700;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                box-shadow: 0 12px 28px rgba(200, 152, 96, 0.35);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 display: inline-flex;
                 align-items: center;
@@ -221,8 +223,8 @@ app.get('/', (c) => {
 
             .nav-cta:hover {
                 transform: translateY(-3px);
-                box-shadow: 0 16px 36px rgba(200, 152, 96, 0.45);
-                background: linear-gradient(135deg, #dbb078 0%, #d4a574 100%);
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+                background: rgba(255, 255, 255, 1);
             }
 
             main {
@@ -1425,13 +1427,15 @@ app.get('/', (c) => {
                     display: none;
                     padding: 6px 14px;
                     border-radius: 100px;
-                    background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                    color: #fff;
+                    background: rgba(255, 255, 255, 0.9);
+                    color: #1a1a2e;
                     font-size: 10px;
                     font-weight: 700;
                     text-transform: uppercase;
                     letter-spacing: 1.2px;
-                    box-shadow: 0 6px 16px rgba(200, 152, 96, 0.3);
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
                     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                     align-items: center;
                     justify-content: center;

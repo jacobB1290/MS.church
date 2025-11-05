@@ -491,15 +491,11 @@ app.get('/', (c) => {
             }
 
             .outreach-header {
-                margin-bottom: 60px;
+                margin-bottom: 120px;
                 position: sticky;
-                top: 140px;
-                z-index: 50;
+                top: 100px;
+                z-index: 10;
                 text-align: left;
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(20px);
-                padding: 20px 0;
-                border-radius: 24px;
             }
 
             .outreach-header .section-eyebrow {
@@ -605,6 +601,8 @@ app.get('/', (c) => {
                 backdrop-filter: blur(30px);
                 transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                 overflow: hidden;
+                position: relative;
+                z-index: 100;
             }
 
             .event-card:hover {

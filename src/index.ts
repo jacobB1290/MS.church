@@ -1489,9 +1489,9 @@ app.get('/', (c) => {
                 
                 .hero-body {
                     display: grid;
-                    grid-template-columns: 1fr 1fr;
+                    grid-template-columns: 1fr 1.2fr;
                     grid-template-rows: auto auto;
-                    gap: 20px;
+                    gap: 16px;
                 }
                 
                 .hero-content {
@@ -1515,7 +1515,16 @@ app.get('/', (c) => {
                 .hero-body .cta-group {
                     grid-column: 1 / -1;
                     grid-row: 2;
-                    margin-top: 0;
+                    margin-top: 8px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    max-width: 100%;
+                    padding: 0;
+                }
+                
+                .hero-body .cta-group .btn {
+                    width: 100%;
                 }
 
                 .hero .eyebrow {

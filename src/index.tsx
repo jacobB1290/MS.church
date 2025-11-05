@@ -676,40 +676,22 @@ app.get('/', (c) => {
             /* Event Cards - Full-screen Image Layout */
             .event-card {
                 background: transparent;
-                border-radius: 0;
                 padding: 0;
-                box-shadow: none;
-                border: none;
-                backdrop-filter: none;
-                transition: none;
-                overflow: visible;
-                position: relative;
-                z-index: 100;
+                margin: 0;
                 display: flex;
                 flex-direction: column;
                 gap: 24px;
-                height: 85vh;
-                max-height: 900px;
+                height: 90vh;
+                max-height: none;
             }
 
-            .event-card:hover {
-                transform: none;
-                box-shadow: none;
-            }
-
-            .event-header {
-                margin-bottom: 0;
-                padding: 0;
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                display: flex;
-                flex-direction: row;
-                align-items: flex-start;
-                justify-content: space-between;
+            .event-flyer-wrapper {
+                position: relative;
+                flex: 1;
                 width: 100%;
-                z-index: 10;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             
             .event-header-mobile {
@@ -722,18 +704,22 @@ app.get('/', (c) => {
             }
 
             .event-date {
+                position: absolute;
+                top: 20px;
+                left: 20px;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                padding: 12px 28px;
+                padding: 10px 24px;
                 background: rgba(212, 165, 116, 0.95);
                 border-radius: 100px;
-                font-size: 14px;
+                font-size: 13px;
                 font-weight: 700;
                 letter-spacing: 2.5px;
                 color: #ffffff;
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
                 backdrop-filter: blur(10px);
+                z-index: 20;
                 padding: 12px 35px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: #fff;
@@ -800,51 +786,32 @@ app.get('/', (c) => {
                 display: none;
             }
 
-            .event-flyer-container {
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 0;
-                background: transparent;
-                width: 100%;
-                flex: 1;
+            .event-flyer-wrapper .event-indicators {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                z-index: 20;
             }
 
-            .flyer-frame {
+            .event-flyer-wrapper .flyer-image,
+            .event-flyer-wrapper .placeholder-flyer,
+            .event-flyer-wrapper .carousel-container {
                 width: 100%;
                 height: 100%;
-                max-width: 100%;
-                background: transparent;
-                border-radius: 0;
-                padding: 0;
-                box-shadow: none;
-                transition: none;
-            }
-
-            .flyer-frame:hover {
-                transform: none;
-                box-shadow: none;
-            }
-
-            .flyer-image {
-                width: 100%;
-                height: 100%;
-                max-height: 75vh;
+                max-height: none;
                 object-fit: contain;
                 object-position: center;
                 border-radius: 16px;
-                display: block;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
                             0 8px 20px rgba(0, 0, 0, 0.08);
             }
 
+            .flyer-image {
+                display: block;
+            }
+
             .placeholder-flyer {
-                width: 100%;
-                height: 100%;
-                max-height: 75vh;
                 background: rgba(255, 255, 255, 0.95);
-                border-radius: 16px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -853,8 +820,6 @@ app.get('/', (c) => {
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-                            0 8px 20px rgba(0, 0, 0, 0.08);
             }
 
             /* Carousel Styles */
@@ -863,20 +828,31 @@ app.get('/', (c) => {
                 width: 100%;
                 height: 100%;
                 overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .carousel-slides {
                 display: flex;
+                height: 100%;
+                width: 100%;
                 transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .carousel-slide {
                 min-width: 100%;
+                height: 100%;
                 flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .carousel-slide .flyer-frame {
-                margin: 0;
+            .carousel-slide .flyer-image,
+            .carousel-slide .placeholder-flyer {
+                width: 100%;
+                height: 100%;
             }
 
             .carousel-controls {
@@ -939,17 +915,14 @@ app.get('/', (c) => {
             }
 
             .event-cta {
-                margin-top: 0;
+                margin-top: auto;
                 padding: 0;
                 width: 100%;
                 box-sizing: border-box;
-                display: flex;
-                justify-content: center;
             }
             
             .event-cta .btn {
-                width: auto;
-                min-width: 280px;
+                width: 100%;
                 padding: 20px 48px;
                 font-size: 16px;
                 font-weight: 700;
@@ -3174,23 +3147,17 @@ app.get('/', (c) => {
                                 <!-- Event 1: Community Thanksgiving Dinner -->
                                 <div class="event-slide active" data-event="1">
                                     <div class="event-card">
-                                        <div class="event-header">
+                                        <div class="event-flyer-wrapper">
                                             <span class="event-date">NOV 26</span>
                                             <div class="event-indicators">
                                                 <div class="event-dot active" data-dot="1"></div>
                                                 <div class="event-dot" data-dot="2"></div>
                                                 <div class="event-dot" data-dot="3"></div>
                                             </div>
+                                            <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
                                         </div>
-                                        <div class="event-content">
-                                            <div class="event-flyer-container">
-                                                <div class="flyer-frame">
-                                                    <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
-                                                </div>
-                                            </div>
-                                            <div class="event-cta">
-                                                <a class="btn btn-primary" href="#contact">RSVP NOW</a>
-                                            </div>
+                                        <div class="event-cta">
+                                            <a class="btn btn-primary" href="#contact">RSVP NOW</a>
                                         </div>
                                     </div>
                                 </div>
@@ -3198,44 +3165,36 @@ app.get('/', (c) => {
                                 <!-- Event 2: Christmas Clothes Drive -->
                                 <div class="event-slide" data-event="2" id="event-2">
                                     <div class="event-card">
-                                        <div class="event-header">
+                                        <div class="event-flyer-wrapper">
                                             <span class="event-date">DEC 6</span>
                                             <div class="event-indicators">
                                                 <div class="event-dot active" data-dot="1"></div>
                                                 <div class="event-dot" data-dot="2"></div>
                                                 <div class="event-dot" data-dot="3"></div>
                                             </div>
-                                        </div>
-                                        <div class="event-content">
-                                            <div class="event-flyer-container">
-                                                <div class="carousel-container">
-                                                    <div class="carousel-arrow prev" onclick="moveCarousel('event2', -1)">‹</div>
-                                                    <div class="carousel-arrow next" onclick="moveCarousel('event2', 1)">›</div>
-                                                    <div class="carousel-slides" id="event2-carousel">
-                                                        <!-- Slide 1: Placeholder Flyer -->
-                                                        <div class="carousel-slide">
-                                                            <div class="flyer-frame">
-                                                                <div class="placeholder-flyer">
-                                                                    Flyer Coming Soon
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <!-- Slide 2: Community Service Image -->
-                                                        <div class="carousel-slide">
-                                                            <div class="flyer-frame">
-                                                                <img src="/static/community-service-1.jpg" alt="Community Service Day" class="flyer-image">
-                                                            </div>
+                                            <div class="carousel-container">
+                                                <div class="carousel-arrow prev" onclick="moveCarousel('event2', -1)">‹</div>
+                                                <div class="carousel-arrow next" onclick="moveCarousel('event2', 1)">›</div>
+                                                <div class="carousel-slides" id="event2-carousel">
+                                                    <!-- Slide 1: Placeholder Flyer -->
+                                                    <div class="carousel-slide">
+                                                        <div class="placeholder-flyer">
+                                                            Flyer Coming Soon
                                                         </div>
                                                     </div>
-                                                    <div class="carousel-controls">
-                                                        <div class="carousel-dot active" onclick="goToSlide('event2', 0)"></div>
-                                                        <div class="carousel-dot" onclick="goToSlide('event2', 1)"></div>
+                                                    <!-- Slide 2: Community Service Image -->
+                                                    <div class="carousel-slide">
+                                                        <img src="/static/community-service-1.jpg" alt="Community Service Day" class="flyer-image">
                                                     </div>
                                                 </div>
+                                                <div class="carousel-controls">
+                                                    <div class="carousel-dot active" onclick="goToSlide('event2', 0)"></div>
+                                                    <div class="carousel-dot" onclick="goToSlide('event2', 1)"></div>
+                                                </div>
                                             </div>
-                                            <div class="event-cta">
-                                                <a class="btn btn-primary" href="#contact">REQUEST ITEMS</a>
-                                            </div>
+                                        </div>
+                                        <div class="event-cta">
+                                            <a class="btn btn-primary" href="#contact">REQUEST ITEMS</a>
                                         </div>
                                     </div>
                                 </div>
@@ -3243,25 +3202,19 @@ app.get('/', (c) => {
                                 <!-- Event 3: Christmas Eve Candlelight Service -->
                                 <div class="event-slide" data-event="3">
                                     <div class="event-card">
-                                        <div class="event-header">
+                                        <div class="event-flyer-wrapper">
                                             <span class="event-date">DEC 24</span>
                                             <div class="event-indicators">
                                                 <div class="event-dot active" data-dot="1"></div>
                                                 <div class="event-dot" data-dot="2"></div>
                                                 <div class="event-dot" data-dot="3"></div>
                                             </div>
+                                            <div class="placeholder-flyer">
+                                                Flyer Coming Soon
+                                            </div>
                                         </div>
-                                        <div class="event-content">
-                                            <div class="event-flyer-container">
-                                                <div class="flyer-frame">
-                                                    <div class="placeholder-flyer">
-                                                        Flyer Coming Soon
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="event-cta">
-                                                <a class="btn btn-primary" href="#contact">RESERVE YOUR SEAT</a>
-                                            </div>
+                                        <div class="event-cta">
+                                            <a class="btn btn-primary" href="#contact">RESERVE YOUR SEAT</a>
                                         </div>
                                     </div>
                                 </div>
@@ -4109,7 +4062,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.5.1</div>
+        <div class="version-footer">v1.5.2</div>
     </body>
     </html>
   `)

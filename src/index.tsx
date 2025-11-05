@@ -1504,9 +1504,9 @@ app.get('/', (c) => {
                 
                 .hero-body {
                     display: grid;
-                    grid-template-columns: 1fr 1.2fr;
+                    grid-template-columns: 0.85fr 1.15fr;
                     grid-template-rows: auto auto;
-                    gap: 16px;
+                    gap: 14px;
                 }
                 
                 .hero-content {
@@ -1549,10 +1549,10 @@ app.get('/', (c) => {
                 }
 
                 .hero h1 {
-                    font-size: clamp(40px, 8vw, 52px);
-                    line-height: 1.05;
-                    letter-spacing: -1px;
-                    margin: 24px 0;
+                    font-size: clamp(48px, 10vw, 64px);
+                    line-height: 1.0;
+                    letter-spacing: -1.5px;
+                    margin: 20px 0 24px 0;
                 }
 
                 .hero p {

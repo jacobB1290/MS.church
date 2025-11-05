@@ -519,8 +519,8 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 32vh;
-                height: 32vh;
+                top: 30vh;
+                height: 48vh;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -665,7 +665,7 @@ app.get('/', (c) => {
             
             .event-header-content {
                 order: 2;
-                padding: 8px 18px 6px 18px;
+                padding: 12px 27px 9px 27px;
             }
 
             .event-date {
@@ -673,11 +673,11 @@ app.get('/', (c) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 6px 18px;
+                padding: 9px 27px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: #fff;
                 border-radius: 0;
-                font-size: 9px;
+                font-size: 10px;
                 font-weight: 700;
                 letter-spacing: 2px;
                 text-transform: uppercase;
@@ -688,15 +688,15 @@ app.get('/', (c) => {
 
             .event-title {
                 font-family: 'Playfair Display', serif;
-                font-size: clamp(20px, 3.2vw, 26px);
+                font-size: clamp(30px, 4.8vw, 39px);
                 color: #1a1a2e;
-                margin-bottom: 3px;
+                margin-bottom: 5px;
                 font-weight: 700;
                 line-height: 1.1;
             }
 
             .event-time {
-                font-size: 10px;
+                font-size: 15px;
                 color: rgba(26, 26, 46, 0.65);
                 font-weight: 600;
                 letter-spacing: 0.5px;
@@ -744,7 +744,7 @@ app.get('/', (c) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 8px 18px;
+                padding: 12px 27px;
                 background: transparent;
                 width: 100%;
             }
@@ -753,10 +753,10 @@ app.get('/', (c) => {
                 width: 100%;
                 max-width: 100%;
                 background: #ffffff;
-                border-radius: 10px;
-                padding: 6px;
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08),
-                            0 3px 8px rgba(0, 0, 0, 0.04);
+                border-radius: 15px;
+                padding: 9px;
+                box-shadow: 0 9px 30px rgba(0, 0, 0, 0.08),
+                            0 5px 12px rgba(0, 0, 0, 0.04);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
@@ -768,7 +768,7 @@ app.get('/', (c) => {
 
             .flyer-image {
                 width: 100%;
-                max-height: 180px;
+                max-height: 270px;
                 object-fit: cover;
                 border-radius: 8px;
                 display: block;
@@ -776,13 +776,13 @@ app.get('/', (c) => {
 
             .placeholder-flyer {
                 width: 100%;
-                height: 180px;
+                height: 270px;
                 background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
                 border-radius: 8px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 13px;
+                font-size: 15px;
                 color: rgba(26, 26, 46, 0.4);
                 font-weight: 600;
                 text-transform: uppercase;
@@ -791,15 +791,15 @@ app.get('/', (c) => {
 
             .event-cta {
                 margin-top: 0;
-                padding: 0 18px 12px 18px;
+                padding: 0 27px 18px 27px;
                 width: 100%;
                 box-sizing: border-box;
             }
             
             .event-cta .btn {
                 width: 100%;
-                padding: 10px 20px;
-                font-size: 11px;
+                padding: 15px 30px;
+                font-size: 13px;
                 border-radius: 100px;
             }
 
@@ -1489,28 +1489,28 @@ app.get('/', (c) => {
                 
                 .event-header-content {
                     order: 2;
-                    padding: 8px 14px 6px 14px;
+                    padding: 12px 21px 9px 21px;
                     display: flex;
                     flex-direction: column;
-                    gap: 3px;
+                    gap: 5px;
                 }
                 
                 .event-date {
                     order: 1;
-                    padding: 5px 14px;
-                    font-size: 8px;
+                    padding: 8px 21px;
+                    font-size: 9px;
                     border-radius: 0;
                     letter-spacing: 1.5px;
                 }
                 
                 .event-title {
-                    font-size: clamp(16px, 4vw, 22px);
-                    margin-bottom: 2px;
+                    font-size: clamp(24px, 6vw, 33px);
+                    margin-bottom: 3px;
                     line-height: 1.1;
                 }
                 
                 .event-time {
-                    font-size: 9px;
+                    font-size: 12px;
                 }
                 
                 .event-header-mobile {
@@ -1529,21 +1529,29 @@ app.get('/', (c) => {
                 
                 .event-flyer-container {
                     display: flex !important;
-                    padding: 8px 14px;
+                    padding: 12px 21px;
                 }
                 
                 .flyer-frame {
-                    padding: 5px;
-                    border-radius: 8px;
+                    padding: 8px;
+                    border-radius: 12px;
+                }
+                
+                .flyer-image {
+                    max-height: 210px;
+                }
+                
+                .placeholder-flyer {
+                    height: 210px !important;
                 }
                 
                 .event-cta {
-                    padding: 0 14px 12px 14px;
+                    padding: 0 21px 18px 21px;
                 }
                 
                 .event-cta .btn {
-                    padding: 9px 18px;
-                    font-size: 10px;
+                    padding: 14px 27px;
+                    font-size: 12px;
                 }
 
                 .brand-title {
@@ -1778,8 +1786,8 @@ app.get('/', (c) => {
 
                 .sticky-wrapper {
                     height: auto;
-                    min-height: 28vh;
-                    top: 32vh;
+                    min-height: 42vh;
+                    top: 28vh;
                     gap: 0;
                 }
 

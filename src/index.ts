@@ -3259,7 +3259,7 @@ app.get('/', (c) => {
                     <div class="contact-header">
                         <span class="section-eyebrow">Christmas Outreach</span>
                         <h2 class="section-heading">Christmas Clothes Drive for Mothers</h2>
-                        <p class="section-lead form-message">It's not just about gifts — it's about Jesus. He gave His all for us; may we learn to give our all for Him. His love, His hope, for our community.</p>
+                        <p class="section-lead form-message">After you fill out the form, we will get to work putting your free gift together based on what you entered. We will send you a message with all the details!</p>
                         <address>3080 N Wildwood St, Boise, Idaho</address>
                         <a href="#event-2" class="btn btn-secondary btn-more-info">More Info</a>
                     </div>
@@ -3963,7 +3963,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.2.0</div>
+        <div class="version-footer">v1.2.1</div>
     </body>
     </html>
   `)

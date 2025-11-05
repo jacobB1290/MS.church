@@ -524,7 +524,8 @@ app.get('/', (c) => {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
+                justify-content: flex-start;
+                padding-bottom: 100px;
             }
 
             .events-container {
@@ -571,9 +572,9 @@ app.get('/', (c) => {
                 justify-content: center;
                 align-items: center;
                 gap: 12px;
-                padding: 0;
-                position: fixed;
-                bottom: 80px;
+                padding: 16px 0;
+                position: absolute;
+                bottom: 50px;
                 left: 0;
                 width: 100%;
                 z-index: 60;
@@ -601,13 +602,14 @@ app.get('/', (c) => {
             
             .scroll-hint {
                 display: none;
-                position: fixed;
-                bottom: 120px;
+                position: absolute;
+                bottom: 10px;
                 left: 0;
                 width: 100%;
                 z-index: 60;
                 text-align: center;
                 animation: bounce 2s ease-in-out infinite;
+                padding: 12px 0;
             }
             
             .scroll-hint-icon {
@@ -1792,6 +1794,8 @@ app.get('/', (c) => {
                     min-height: 55vh;
                     top: 24vh;
                     gap: 0;
+                    padding-bottom: 100px;
+                    justify-content: flex-start;
                 }
 
                 .scroll-spacer {

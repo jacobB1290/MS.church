@@ -491,7 +491,7 @@ app.get('/', (c) => {
             }
 
             .outreach-header {
-                margin-bottom: 240px;
+                margin-bottom: 400px;
                 position: sticky;
                 top: 80px;
                 z-index: 10;

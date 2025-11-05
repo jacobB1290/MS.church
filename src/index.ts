@@ -491,9 +491,9 @@ app.get('/', (c) => {
             }
 
             .outreach-header {
-                margin-bottom: 120px;
+                margin-bottom: 160px;
                 position: sticky;
-                top: 100px;
+                top: 80px;
                 z-index: 10;
                 text-align: left;
             }
@@ -2277,12 +2277,14 @@ app.get('/', (c) => {
                         // Fade out header after scrolling past last event (90%+)
                         if (scrollProgress > 0.9) {
                             const fadeProgress = Math.min(1, (scrollProgress - 0.9) / 0.1);
+                            const outreachHeader = document.querySelector('.outreach-header');
                             if (outreachHeader) {
                                 outreachHeader.style.opacity = String(1 - fadeProgress);
                                 outreachHeader.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
                             }
                         } else {
                             // Reset opacity when scrolling back
+                            const outreachHeader = document.querySelector('.outreach-header');
                             if (outreachHeader) {
                                 outreachHeader.style.opacity = '1';
                                 outreachHeader.style.transform = 'translateY(0)';

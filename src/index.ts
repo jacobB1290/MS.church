@@ -522,7 +522,6 @@ app.get('/', (c) => {
 
             .outreach-header .section-heading {
                 text-align: left;
-                position: relative;
             }
 
             /* Removed sticky title - now using sticky header instead */
@@ -3116,14 +3115,14 @@ app.get('/', (c) => {
                 <section class="outreach" id="outreach" style="animation-delay: 0.3s">
                     <div class="outreach-header">
                         <span class="section-eyebrow">Outreach</span>
-                        <h2 class="section-heading">
-                            Upcoming Events
+                        <div style="position: relative; width: 100%;">
+                            <h2 class="section-heading">Upcoming Events</h2>
                             <div class="event-indicators">
                                 <div class="event-dot active" data-dot="1"></div>
                                 <div class="event-dot" data-dot="2"></div>
                                 <div class="event-dot" data-dot="3"></div>
                             </div>
-                        </h2>
+                        </div>
                         <p class="section-lead">We are called to be the hands and feet of Jesus by serving our local community and growing in fellowship. Here's how you can get involved.</p>
                     </div>
                     
@@ -4060,7 +4059,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.3.3</div>
+        <div class="version-footer">v1.3.4</div>
     </body>
     </html>
   `)

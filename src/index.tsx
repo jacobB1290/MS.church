@@ -1381,7 +1381,9 @@ app.get('/', (c) => {
 
             @media (max-width: 480px) {
                 .page {
-                    width: 90%;
+                    width: 100%;
+                    padding: 0 5%;
+                    box-sizing: border-box;
                 }
 
                 .nav-shell {
@@ -1898,7 +1900,7 @@ app.get('/', (c) => {
                             <img src="https://page.gensparksite.com/v1/base64_upload/0f4d6b188732ea8e86f0a81a009691c2" alt="Cross on hilltop at sunset">
                         </div>
                         <div class="cta-group">
-                            <a class="btn btn-primary" href="#contact">Get in Touch</a>
+                            <a class="btn btn-primary" href="#contact">From the radio? - Press here</a>
                             <a class="btn btn-secondary" href="#watch">Watch live stream</a>
                         </div>
                     </div>

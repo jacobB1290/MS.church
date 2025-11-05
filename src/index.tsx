@@ -1435,7 +1435,7 @@ app.get('/', (c) => {
                     width: 100%;
                     border-radius: 8px;
                     aspect-ratio: 3/4;
-                    font-size: 9px;
+                    font-size: 11px;
                     padding: 8px;
                 }
                 
@@ -1454,7 +1454,7 @@ app.get('/', (c) => {
                 }
 
                 .brand-subtitle {
-                    font-size: 8px;
+                    font-size: 10px;
                     letter-spacing: 2.5px;
                 }
 
@@ -1471,18 +1471,18 @@ app.get('/', (c) => {
                 }
 
                 nav a {
-                    font-size: 11px;
+                    font-size: 13px;
                     letter-spacing: 1.8px;
                 }
                 
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: 10px;
+                    font-size: 12px;
                     letter-spacing: 1.5px;
                 }
 
                 .nav-cta {
                     padding: 10px 20px;
-                    font-size: 10px;
+                    font-size: 12px;
                     letter-spacing: 1.5px;
                 }
 
@@ -1544,19 +1544,19 @@ app.get('/', (c) => {
 
                 .hero .eyebrow {
                     padding: 12px 24px;
-                    font-size: 11px;
+                    font-size: 13px;
                     letter-spacing: 2.5px;
                 }
 
                 .hero h1 {
-                    font-size: clamp(48px, 10vw, 64px);
+                    font-size: clamp(58px, 12vw, 77px);
                     line-height: 1.0;
                     letter-spacing: -1.5px;
                     margin: 20px 0 24px 0;
                 }
 
                 .hero p {
-                    font-size: 17px;
+                    font-size: 20px;
                     line-height: 1.7;
                     max-width: 100%;
                 }
@@ -1570,19 +1570,19 @@ app.get('/', (c) => {
                 .btn {
                     width: 100%;
                     padding: 16px 32px;
-                    font-size: 12px;
+                    font-size: 14px;
                     letter-spacing: 2px;
                 }
 
                 .section-eyebrow {
-                    font-size: 10px;
+                    font-size: 12px;
                     padding: 10px 20px;
                     letter-spacing: 2.5px;
                     margin-bottom: 16px;
                 }
 
                 .section-heading {
-                    font-size: clamp(28px, 6vw, 36px);
+                    font-size: clamp(34px, 7vw, 43px);
                     margin-bottom: 16px;
                     line-height: 1.2;
                 }
@@ -1594,7 +1594,7 @@ app.get('/', (c) => {
                 }
 
                 address {
-                    font-size: 11px;
+                    font-size: 13px;
                     letter-spacing: 2px;
                     margin-bottom: 20px;
                 }
@@ -1611,12 +1611,12 @@ app.get('/', (c) => {
                 }
 
                 .schedule-item span {
-                    font-size: 10px;
+                    font-size: 12px;
                     letter-spacing: 2px;
                 }
 
                 .schedule-item h3 {
-                    font-size: 22px;
+                    font-size: 31px;
                 }
 
                 .schedule-item p {
@@ -1631,7 +1631,7 @@ app.get('/', (c) => {
                 }
 
                 .outreach-title-sticky h2 {
-                    font-size: clamp(22px, 4vw, 28px);
+                    font-size: clamp(26px, 5vw, 34px);
                 }
                 
                 .outreach-header {
@@ -1681,20 +1681,20 @@ app.get('/', (c) => {
                 }
 
                 .event-date {
-                    font-size: 10px;
+                    font-size: 12px;
                     padding: 7px 16px;
                     letter-spacing: 1.8px;
                     margin-bottom: 0;
                 }
 
                 .event-title {
-                    font-size: clamp(22px, 4.5vw, 26px);
+                    font-size: clamp(26px, 5.5vw, 31px);
                     margin-bottom: 6px;
                     line-height: 1.2;
                 }
 
                 .event-time {
-                    font-size: 12px;
+                    font-size: 14px;
                     margin-bottom: 0;
                 }
                 
@@ -1708,7 +1708,7 @@ app.get('/', (c) => {
                 }
 
                 .event-description p {
-                    font-size: 14px;
+                    font-size: 17px;
                     line-height: 1.65;
                 }
 
@@ -1717,7 +1717,7 @@ app.get('/', (c) => {
                 }
 
                 .event-description li {
-                    font-size: 13px;
+                    font-size: 16px;
                     line-height: 1.6;
                 }
 
@@ -1733,7 +1733,7 @@ app.get('/', (c) => {
                 
                 .event-cta .btn {
                     padding: 12px 24px;
-                    font-size: 9px;
+                    font-size: 11px;
                 }
                 
                 .placeholder-flyer {
@@ -1745,7 +1745,7 @@ app.get('/', (c) => {
                 }
 
                 .placeholder-flyer {
-                    font-size: 14px;
+                    font-size: 17px;
                     letter-spacing: 1.5px;
                     border-radius: 20px;
                 }
@@ -1763,7 +1763,7 @@ app.get('/', (c) => {
                 }
 
                 .live-status {
-                    font-size: 11px;
+                    font-size: 13px;
                     padding: 7px 18px;
                     letter-spacing: 2px;
                 }
@@ -1779,24 +1779,24 @@ app.get('/', (c) => {
                 }
 
                 .preview-screen small {
-                    font-size: 13px;
+                    font-size: 16px;
                     margin-top: 6px;
                 }
 
                 .btn-outline {
                     padding: 15px 34px;
-                    font-size: 11px;
+                    font-size: 13px;
                     letter-spacing: 2px;
                 }
 
                 .past-streams-label {
-                    font-size: 13px;
+                    font-size: 16px;
                     letter-spacing: 2px;
                     margin-bottom: 12px;
                 }
 
                 .stream-thumbnail {
-                    font-size: 13px;
+                    font-size: 16px;
                     border-radius: 12px;
                 }
                 
@@ -1818,7 +1818,7 @@ app.get('/', (c) => {
                 }
                 
                 .form-group label {
-                    font-size: 12px;
+                    font-size: 14px;
                 }
                 
                 .form-group input,
@@ -1835,7 +1835,7 @@ app.get('/', (c) => {
                 
                 .btn-submit {
                     padding: 16px 32px;
-                    font-size: 12px;
+                    font-size: 14px;
                 }
                 
                 .contact-info {
@@ -1856,7 +1856,7 @@ app.get('/', (c) => {
                 }
                 
                 .contact-text p {
-                    font-size: 14px;
+                    font-size: 17px;
                 }
             }
         </style>

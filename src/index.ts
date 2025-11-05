@@ -1164,6 +1164,21 @@ app.get('/', (c) => {
                 cursor: pointer;
             }
             
+            /* JotForm Container Styles */
+            .jotform-container {
+                width: 100%;
+                min-height: 800px;
+                background: transparent;
+                border-radius: 20px;
+                overflow: hidden;
+            }
+            
+            .jotform-container iframe {
+                width: 100%;
+                border: none;
+                min-height: 800px;
+            }
+            
             .contact-info {
                 display: flex;
                 flex-direction: column;
@@ -2300,7 +2315,10 @@ app.get('/', (c) => {
                     </div>
                     <div class="contact-container">
                         <div class="contact-card">
-                            <form class="contact-form clothes-drive-form">
+                            <div class="jotform-container">
+                                <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
+                            </div>
+                            <form class="contact-form clothes-drive-form" style="display: none;">
                                 <!-- Parent/Guardian Information -->
                                 <div class="form-section">
                                     <h3 class="form-section-title">Parent/Guardian Information</h3>

@@ -606,17 +606,18 @@ app.get('/', (c) => {
             
             /* Event Indicator Dots */
             .event-indicators {
-                display: none;
+                display: flex;
                 flex-direction: row;
                 justify-content: flex-end;
                 align-items: center;
                 gap: 10px;
-                position: absolute;
-                top: 55%;
-                transform: translateY(-50%);
-                right: 0;
+                position: relative;
                 z-index: 70;
                 padding: 0;
+            }
+            
+            .heading-wrapper .event-indicators {
+                display: none;
             }
             
             .event-dot {
@@ -672,27 +673,26 @@ app.get('/', (c) => {
                 50% { transform: translateY(-8px); }
             }
 
-            /* Event Cards - Redesigned Streamlined Layout */
+            /* Event Cards - Minimal Container-less Layout */
             .event-card {
-                background: rgba(255, 255, 255, 0.95);
-                border-radius: 24px;
+                background: transparent;
+                border-radius: 0;
                 padding: 0;
-                box-shadow: 0 24px 64px rgba(0, 0, 0, 0.08), 
-                            0 8px 24px rgba(0, 0, 0, 0.04);
-                border: 1px solid rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(30px);
+                box-shadow: none;
+                border: none;
+                backdrop-filter: none;
                 transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-                overflow: hidden;
+                overflow: visible;
                 position: relative;
                 z-index: 100;
                 display: flex;
                 flex-direction: column;
+                gap: 20px;
             }
 
             .event-card:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 50px 120px rgba(0, 0, 0, 0.15), 
-                            0 20px 50px rgba(0, 0, 0, 0.08);
+                transform: none;
+                box-shadow: none;
             }
 
             .event-header {
@@ -700,7 +700,10 @@ app.get('/', (c) => {
                 padding: 0;
                 position: relative;
                 display: flex;
-                flex-direction: column;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
             }
             
             .event-header-mobile {
@@ -713,10 +716,18 @@ app.get('/', (c) => {
             }
 
             .event-date {
-                order: 1;
-                display: flex;
+                display: inline-flex;
                 align-items: center;
                 justify-content: center;
+                padding: 10px 24px;
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 100px;
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                color: #1a1a2e;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+                backdrop-filter: blur(10px);
                 padding: 12px 35px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: #fff;
@@ -788,7 +799,7 @@ app.get('/', (c) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 16px 35px;
+                padding: 0;
                 background: transparent;
                 width: 100%;
             }
@@ -796,34 +807,34 @@ app.get('/', (c) => {
             .flyer-frame {
                 width: 100%;
                 max-width: 100%;
-                background: #ffffff;
-                border-radius: 20px;
-                padding: 12px;
-                box-shadow: 0 12px 39px rgba(0, 0, 0, 0.08),
-                            0 7px 16px rgba(0, 0, 0, 0.04);
+                background: transparent;
+                border-radius: 0;
+                padding: 0;
+                box-shadow: none;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .flyer-frame:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12),
-                            0 6px 16px rgba(0, 0, 0, 0.06);
+                transform: none;
+                box-shadow: none;
             }
 
             .flyer-image {
                 width: 100%;
-                height: 500px;
+                height: 600px;
                 object-fit: contain;
                 object-position: center;
-                border-radius: 8px;
+                border-radius: 16px;
                 display: block;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
+                            0 8px 20px rgba(0, 0, 0, 0.08);
             }
 
             .placeholder-flyer {
                 width: 100%;
-                height: 500px;
-                background: #f5f5f5;
-                border-radius: 8px;
+                height: 600px;
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 16px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -832,6 +843,8 @@ app.get('/', (c) => {
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
+                            0 8px 20px rgba(0, 0, 0, 0.08);
             }
 
             /* Carousel Styles */
@@ -916,15 +929,16 @@ app.get('/', (c) => {
 
             .event-cta {
                 margin-top: 0;
-                padding: 0 35px 23px 35px;
+                padding: 0;
                 width: 100%;
                 box-sizing: border-box;
             }
             
             .event-cta .btn {
                 width: 100%;
-                padding: 20px 39px;
-                font-size: 15px;
+                padding: 22px 39px;
+                font-size: 16px;
+                font-weight: 700;
                 border-radius: 100px;
             }
             
@@ -3146,6 +3160,14 @@ app.get('/', (c) => {
                                 <!-- Event 1: Community Thanksgiving Dinner -->
                                 <div class="event-slide active" data-event="1">
                                     <div class="event-card">
+                                        <div class="event-header">
+                                            <span class="event-date">NOV 26</span>
+                                            <div class="event-indicators">
+                                                <div class="event-dot active" data-dot="1"></div>
+                                                <div class="event-dot" data-dot="2"></div>
+                                                <div class="event-dot" data-dot="3"></div>
+                                            </div>
+                                        </div>
                                         <div class="event-content">
                                             <div class="event-flyer-container">
                                                 <div class="flyer-frame">
@@ -3162,6 +3184,14 @@ app.get('/', (c) => {
                                 <!-- Event 2: Christmas Clothes Drive -->
                                 <div class="event-slide" data-event="2" id="event-2">
                                     <div class="event-card">
+                                        <div class="event-header">
+                                            <span class="event-date">DEC 6</span>
+                                            <div class="event-indicators">
+                                                <div class="event-dot active" data-dot="1"></div>
+                                                <div class="event-dot" data-dot="2"></div>
+                                                <div class="event-dot" data-dot="3"></div>
+                                            </div>
+                                        </div>
                                         <div class="event-content">
                                             <div class="event-flyer-container">
                                                 <div class="carousel-container">
@@ -3199,6 +3229,14 @@ app.get('/', (c) => {
                                 <!-- Event 3: Christmas Eve Candlelight Service -->
                                 <div class="event-slide" data-event="3">
                                     <div class="event-card">
+                                        <div class="event-header">
+                                            <span class="event-date">DEC 24</span>
+                                            <div class="event-indicators">
+                                                <div class="event-dot active" data-dot="1"></div>
+                                                <div class="event-dot" data-dot="2"></div>
+                                                <div class="event-dot" data-dot="3"></div>
+                                            </div>
+                                        </div>
                                         <div class="event-content">
                                             <div class="event-flyer-container">
                                                 <div class="flyer-frame">
@@ -4057,7 +4095,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.4.0</div>
+        <div class="version-footer">v1.5.0</div>
     </body>
     </html>
   `)

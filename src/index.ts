@@ -491,11 +491,18 @@ app.get('/', (c) => {
             }
 
             .outreach-header {
-                margin-bottom: 15vh;
+                margin-bottom: 8vh;
                 position: sticky;
                 top: 80px;
                 z-index: 10;
                 text-align: left;
+            }
+            
+            /* Desktop-only reduced gap */
+            @media (min-width: 769px) {
+                .outreach-header {
+                    margin-bottom: 8vh;
+                }
             }
 
             .outreach-header .section-eyebrow {
@@ -519,7 +526,7 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 24vh;
+                top: 20vh;
                 height: 62vh;
                 display: flex;
                 flex-direction: column;

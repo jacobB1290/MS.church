@@ -72,7 +72,7 @@ app.get('/', (c) => {
 
             /* Navigation Spacer - maintains layout when nav is fixed */
             .nav-spacer {
-                height: 160px;
+                height: 200px;
                 pointer-events: none;
             }
 
@@ -95,8 +95,7 @@ app.get('/', (c) => {
                 z-index: 1000;
                 border: 1px solid rgba(255, 255, 255, 0.4);
                 transition: padding 0.3s ease, top 0.3s ease, width 0.3s ease, border-radius 0.3s ease;
-                max-width: 90%;
-                width: auto;
+                width: min(1280px, 94%);
             }
             
             .nav-shell.scrolled-mobile {
@@ -1396,14 +1395,14 @@ app.get('/', (c) => {
                 }
 
                 .nav-spacer {
-                    height: 80px;
+                    height: 100px;
                 }
 
                 .nav-shell {
                     padding: 14px 18px;
                     border-radius: 32px;
                     top: 10px;
-                    max-width: 95%;
+                    width: 94%;
                 }
                 
                 .nav-shell.scrolled-mobile {

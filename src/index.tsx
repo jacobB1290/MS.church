@@ -813,6 +813,114 @@ app.get('/', (c) => {
                 font-size: 15px;
                 border-radius: 100px;
             }
+            
+            /* Lightbox for Flyer Full-Screen View */
+            .lightbox {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 9999;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: zoom-out;
+            }
+            
+            .lightbox.active {
+                display: flex;
+                opacity: 1;
+            }
+            
+            .lightbox-content {
+                position: relative;
+                max-width: 95vw;
+                max-height: 95vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .lightbox-image {
+                max-width: 100%;
+                max-height: 95vh;
+                object-fit: contain;
+                border-radius: 12px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                cursor: zoom-in;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .lightbox-image.zoomed {
+                cursor: zoom-out;
+                transform: scale(2);
+            }
+            
+            .lightbox-close {
+                position: fixed;
+                top: 24px;
+                right: 24px;
+                width: 48px;
+                height: 48px;
+                background: rgba(255, 255, 255, 0.9);
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+                font-weight: 300;
+                color: #1a1a2e;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 10000;
+                line-height: 1;
+            }
+            
+            .lightbox-close:hover {
+                background: #fff;
+                transform: scale(1.1) rotate(90deg);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+            }
+            
+            .lightbox-instructions {
+                position: fixed;
+                bottom: 32px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(255, 255, 255, 0.9);
+                padding: 12px 28px;
+                border-radius: 100px;
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                color: #1a1a2e;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(10px);
+                z-index: 10000;
+                opacity: 0.8;
+                transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .lightbox-instructions:hover {
+                opacity: 1;
+            }
+            
+            /* Add cursor pointer to flyer frames */
+            .flyer-frame {
+                cursor: pointer;
+            }
+            
+            .flyer-image {
+                cursor: pointer;
+            }
 
             /* Watch Section */
             .watch {
@@ -2782,6 +2890,97 @@ app.get('/', (c) => {
                             }, 800);
                         }
                     });
+                }
+                
+                // Lightbox functionality for flyer images
+                const lightbox = document.createElement('div');
+                lightbox.className = 'lightbox';
+                lightbox.innerHTML = \`
+                    <button class="lightbox-close" aria-label="Close">×</button>
+                    <div class="lightbox-content">
+                        <img src="" alt="Flyer" class="lightbox-image">
+                    </div>
+                    <div class="lightbox-instructions">
+                        Click image to zoom • Click × or press ESC to close
+                    </div>
+                \`;
+                document.body.appendChild(lightbox);
+                
+                const lightboxImage = lightbox.querySelector('.lightbox-image');
+                const lightboxClose = lightbox.querySelector('.lightbox-close');
+                let isZoomed = false;
+                
+                // Open lightbox when clicking on flyer images
+                document.querySelectorAll('.flyer-image').forEach(img => {
+                    img.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        lightboxImage.src = img.src;
+                        lightboxImage.alt = img.alt;
+                        lightbox.classList.add('active');
+                        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                        isZoomed = false;
+                        lightboxImage.classList.remove('zoomed');
+                    });
+                });
+                
+                // Toggle zoom on image click
+                lightboxImage.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    isZoomed = !isZoomed;
+                    if (isZoomed) {
+                        lightboxImage.classList.add('zoomed');
+                    } else {
+                        lightboxImage.classList.remove('zoomed');
+                    }
+                });
+                
+                // Close lightbox function
+                function closeLightbox() {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = ''; // Restore scrolling
+                    isZoomed = false;
+                    lightboxImage.classList.remove('zoomed');
+                    setTimeout(() => {
+                        lightboxImage.src = '';
+                    }, 300);
+                }
+                
+                // Close on X button
+                lightboxClose.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeLightbox();
+                });
+                
+                // Close on background click
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox) {
+                        closeLightbox();
+                    }
+                });
+                
+                // Close on ESC key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                        closeLightbox();
+                    }
+                });
+                
+                // Prevent zoom on mobile pinch (keep native zoom)
+                if ('ontouchstart' in window) {
+                    let lastTouchEnd = 0;
+                    lightboxImage.addEventListener('touchend', (e) => {
+                        const now = Date.now();
+                        if (now - lastTouchEnd <= 300) {
+                            e.preventDefault();
+                            isZoomed = !isZoomed;
+                            if (isZoomed) {
+                                lightboxImage.classList.add('zoomed');
+                            } else {
+                                lightboxImage.classList.remove('zoomed');
+                            }
+                        }
+                        lastTouchEnd = now;
+                    }, false);
                 }
             });
         </script>

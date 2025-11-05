@@ -2498,15 +2498,15 @@ app.get('/', (c) => {
                     letter-spacing: 0.8px;
                 }
                 
-                /* Main Content Spacing - Reduce gaps to move sections up */
+                /* Main Content Spacing - Dramatically reduce gaps to move sections up */
                 main {
-                    gap: 35px;
-                    margin-bottom: 30px;
+                    gap: 20px;
+                    margin-bottom: 20px;
                 }
                 
-                /* Hero Section */
+                /* Hero Section - Add padding to push text down */
                 .hero {
-                    padding: 0px 0 20px;
+                    padding: 40px 0 20px;
                     gap: 10px;
                 }
                 
@@ -2539,30 +2539,30 @@ app.get('/', (c) => {
                     letter-spacing: 1px;
                 }
                 
-                /* Section Headers */
+                /* Section Headers - Minimal spacing */
                 .section-eyebrow {
                     font-size: 8px;
                     padding: 6px 12px;
                     letter-spacing: 1.5px;
-                    margin-bottom: 4px;
+                    margin-bottom: 2px;
                 }
                 
                 .section-heading {
                     font-size: clamp(22px, 5.5vw, 28px);
-                    margin-bottom: 4px;
+                    margin-bottom: 2px;
                     line-height: 1.1;
                 }
                 
                 .section-lead {
                     font-size: 13px;
                     line-height: 1.5;
-                    margin-bottom: 2px;
+                    margin-bottom: 0px;
                 }
                 
                 address {
                     font-size: 9px;
                     letter-spacing: 1px;
-                    margin-bottom: 4px;
+                    margin-bottom: 2px;
                 }
                 
                 /* Schedule Section - Move sections up */
@@ -3729,7 +3729,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.0.0</div>
+        <div class="version-footer">v1.0.1</div>
     </body>
     </html>
   `)

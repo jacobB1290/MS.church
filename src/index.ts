@@ -519,12 +519,13 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 28vh;
-                height: 44vh;
+                top: 26vh;
+                height: 62vh;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
+                justify-content: flex-start;
+                padding-bottom: 100px;
             }
 
             .events-container {
@@ -567,30 +568,31 @@ app.get('/', (c) => {
             /* Event Indicator Dots */
             .event-indicators {
                 display: none;
-                flex-direction: column;
+                flex-direction: row;
                 justify-content: center;
                 align-items: center;
-                gap: 8px;
-                padding: 0;
-                position: fixed;
-                right: 20px;
-                top: 50%;
-                transform: translateY(-50%);
+                gap: 12px;
+                padding: 16px 0;
+                position: absolute;
+                bottom: 50px;
+                left: 0;
+                width: 100%;
                 z-index: 60;
             }
             
             .event-dot {
-                width: 8px;
-                height: 24px;
-                border-radius: 12px;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
                 background: rgba(26, 26, 46, 0.15);
                 transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                 cursor: pointer;
             }
             
             .event-dot.active {
-                height: 40px;
-                background: linear-gradient(180deg, #d4a574 0%, #c89860 100%);
+                width: 12px;
+                height: 12px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 box-shadow: 0 4px 16px rgba(200, 152, 96, 0.4);
             }
             
@@ -600,13 +602,14 @@ app.get('/', (c) => {
             
             .scroll-hint {
                 display: none;
-                position: fixed;
-                bottom: 40px;
-                left: 50%;
-                transform: translateX(-50%);
+                position: absolute;
+                bottom: 10px;
+                left: 0;
+                width: 100%;
                 z-index: 60;
                 text-align: center;
                 animation: bounce 2s ease-in-out infinite;
+                padding: 12px 0;
             }
             
             .scroll-hint-icon {
@@ -624,8 +627,8 @@ app.get('/', (c) => {
             }
             
             @keyframes bounce {
-                0%, 100% { transform: translateX(-50%) translateY(0); }
-                50% { transform: translateX(-50%) translateY(-8px); }
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-8px); }
             }
 
             /* Event Cards - Redesigned Streamlined Layout */
@@ -665,7 +668,7 @@ app.get('/', (c) => {
             
             .event-header-content {
                 order: 2;
-                padding: 16px 24px 12px 24px;
+                padding: 16px 35px 12px 35px;
             }
 
             .event-date {
@@ -673,11 +676,11 @@ app.get('/', (c) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 10px 24px;
+                padding: 12px 35px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: #fff;
                 border-radius: 0;
-                font-size: 10px;
+                font-size: 11px;
                 font-weight: 700;
                 letter-spacing: 2px;
                 text-transform: uppercase;
@@ -688,15 +691,15 @@ app.get('/', (c) => {
 
             .event-title {
                 font-family: 'Playfair Display', serif;
-                font-size: clamp(24px, 4vw, 32px);
+                font-size: clamp(39px, 6.2vw, 51px);
                 color: #1a1a2e;
-                margin-bottom: 6px;
+                margin-bottom: 7px;
                 font-weight: 700;
-                line-height: 1.15;
+                line-height: 1.1;
             }
 
             .event-time {
-                font-size: 12px;
+                font-size: 20px;
                 color: rgba(26, 26, 46, 0.65);
                 font-weight: 600;
                 letter-spacing: 0.5px;
@@ -744,7 +747,7 @@ app.get('/', (c) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 16px 24px;
+                padding: 16px 35px;
                 background: transparent;
                 width: 100%;
             }
@@ -753,10 +756,10 @@ app.get('/', (c) => {
                 width: 100%;
                 max-width: 100%;
                 background: #ffffff;
-                border-radius: 14px;
-                padding: 10px;
-                box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08),
-                            0 4px 10px rgba(0, 0, 0, 0.04);
+                border-radius: 20px;
+                padding: 12px;
+                box-shadow: 0 12px 39px rgba(0, 0, 0, 0.08),
+                            0 7px 16px rgba(0, 0, 0, 0.04);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
@@ -768,19 +771,22 @@ app.get('/', (c) => {
 
             .flyer-image {
                 width: 100%;
-                border-radius: 10px;
+                height: 350px;
+                object-fit: contain;
+                object-position: center;
+                border-radius: 8px;
                 display: block;
             }
 
             .placeholder-flyer {
                 width: 100%;
-                aspect-ratio: 3/4;
-                background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
+                height: 350px;
+                background: #f5f5f5;
                 border-radius: 8px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 14px;
+                font-size: 16px;
                 color: rgba(26, 26, 46, 0.4);
                 font-weight: 600;
                 text-transform: uppercase;
@@ -789,15 +795,15 @@ app.get('/', (c) => {
 
             .event-cta {
                 margin-top: 0;
-                padding: 0 24px 20px 24px;
+                padding: 0 35px 23px 35px;
                 width: 100%;
                 box-sizing: border-box;
             }
             
             .event-cta .btn {
                 width: 100%;
-                padding: 14px 28px;
-                font-size: 13px;
+                padding: 20px 39px;
+                font-size: 15px;
                 border-radius: 100px;
             }
 
@@ -1466,7 +1472,6 @@ app.get('/', (c) => {
                 /* Show event indicators on mobile */
                 .event-indicators {
                     display: flex;
-                    right: 16px;
                 }
                 
                 /* Show scroll hint on mobile */
@@ -1487,27 +1492,28 @@ app.get('/', (c) => {
                 
                 .event-header-content {
                     order: 2;
-                    padding: 14px 18px 12px 18px;
+                    padding: 16px 27px 12px 27px;
                     display: flex;
                     flex-direction: column;
-                    gap: 6px;
+                    gap: 7px;
                 }
                 
                 .event-date {
                     order: 1;
-                    padding: 9px 18px;
-                    font-size: 9px;
+                    padding: 10px 27px;
+                    font-size: 10px;
                     border-radius: 0;
+                    letter-spacing: 1.5px;
                 }
                 
                 .event-title {
-                    font-size: clamp(20px, 5vw, 26px);
+                    font-size: clamp(31px, 7.8vw, 43px);
                     margin-bottom: 4px;
-                    line-height: 1.2;
+                    line-height: 1.1;
                 }
                 
                 .event-time {
-                    font-size: 11px;
+                    font-size: 16px;
                 }
                 
                 .event-header-mobile {
@@ -1526,21 +1532,31 @@ app.get('/', (c) => {
                 
                 .event-flyer-container {
                     display: flex !important;
-                    padding: 14px 18px;
+                    padding: 16px 27px;
                 }
                 
                 .flyer-frame {
-                    padding: 8px;
-                    border-radius: 12px;
+                    padding: 10px;
+                    border-radius: 16px;
+                }
+                
+                .flyer-image {
+                    height: 273px;
+                    object-fit: contain;
+                }
+                
+                .placeholder-flyer {
+                    height: 273px !important;
+                    background: #f5f5f5 !important;
                 }
                 
                 .event-cta {
-                    padding: 0 18px 18px 18px;
+                    padding: 0 27px 23px 27px;
                 }
                 
                 .event-cta .btn {
-                    padding: 12px 24px;
-                    font-size: 12px;
+                    padding: 18px 35px;
+                    font-size: 14px;
                 }
 
                 .brand-title {
@@ -1775,9 +1791,11 @@ app.get('/', (c) => {
 
                 .sticky-wrapper {
                     height: auto;
-                    min-height: 42vh;
-                    top: 26vh;
+                    min-height: 55vh;
+                    top: 24vh;
                     gap: 0;
+                    padding-bottom: 100px;
+                    justify-content: flex-start;
                 }
 
                 .scroll-spacer {

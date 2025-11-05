@@ -800,6 +800,86 @@ app.get('/', (c) => {
                 letter-spacing: 2px;
             }
 
+            /* Carousel Styles */
+            .carousel-container {
+                position: relative;
+                width: 100%;
+                overflow: hidden;
+            }
+
+            .carousel-slides {
+                display: flex;
+                transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .carousel-slide {
+                min-width: 100%;
+                flex-shrink: 0;
+            }
+
+            .carousel-slide .flyer-frame {
+                margin: 0;
+            }
+
+            .carousel-controls {
+                position: absolute;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 12px;
+                z-index: 10;
+            }
+
+            .carousel-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.4);
+                border: 2px solid rgba(255, 255, 255, 0.6);
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .carousel-dot.active {
+                background: rgba(255, 255, 255, 0.95);
+                border-color: rgba(255, 255, 255, 1);
+                transform: scale(1.2);
+            }
+
+            .carousel-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 40px;
+                height: 40px;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 18px;
+                color: #1a1a2e;
+                transition: all 0.3s ease;
+                z-index: 10;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .carousel-arrow:hover {
+                background: rgba(255, 255, 255, 1);
+                transform: translateY(-50%) scale(1.1);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            }
+
+            .carousel-arrow.prev {
+                left: 20px;
+            }
+
+            .carousel-arrow.next {
+                right: 20px;
+            }
+
             .event-cta {
                 margin-top: 0;
                 padding: 0 35px 23px 35px;
@@ -3057,9 +3137,28 @@ app.get('/', (c) => {
                                         </div>
                                         <div class="event-content">
                                             <div class="event-flyer-container">
-                                                <div class="flyer-frame">
-                                                    <div class="placeholder-flyer">
-                                                        Flyer Coming Soon
+                                                <div class="carousel-container">
+                                                    <div class="carousel-arrow prev" onclick="moveCarousel('event2', -1)">‹</div>
+                                                    <div class="carousel-arrow next" onclick="moveCarousel('event2', 1)">›</div>
+                                                    <div class="carousel-slides" id="event2-carousel">
+                                                        <!-- Slide 1: Placeholder Flyer -->
+                                                        <div class="carousel-slide">
+                                                            <div class="flyer-frame">
+                                                                <div class="placeholder-flyer">
+                                                                    Flyer Coming Soon
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Slide 2: Community Service Image -->
+                                                        <div class="carousel-slide">
+                                                            <div class="flyer-frame">
+                                                                <img src="/static/community-service-1.jpg" alt="Community Service Day" class="flyer-image">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="carousel-controls">
+                                                        <div class="carousel-dot active" onclick="goToSlide('event2', 0)"></div>
+                                                        <div class="carousel-dot" onclick="goToSlide('event2', 1)"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -3820,11 +3919,51 @@ app.get('/', (c) => {
                         document.body.removeChild(link);
                     });
                 }
+
+                // Carousel functionality
+                const carouselStates = {
+                    event2: { currentSlide: 0, totalSlides: 2 }
+                };
+
+                window.moveCarousel = function(carouselId, direction) {
+                    const state = carouselStates[carouselId];
+                    state.currentSlide = (state.currentSlide + direction + state.totalSlides) % state.totalSlides;
+                    updateCarousel(carouselId);
+                };
+
+                window.goToSlide = function(carouselId, slideIndex) {
+                    const state = carouselStates[carouselId];
+                    state.currentSlide = slideIndex;
+                    updateCarousel(carouselId);
+                };
+
+                function updateCarousel(carouselId) {
+                    const state = carouselStates[carouselId];
+                    const carousel = document.getElementById(carouselId + '-carousel');
+                    const dots = carousel.parentElement.querySelectorAll('.carousel-dot');
+                    
+                    // Update slides position
+                    carousel.style.transform = \`translateX(-\${state.currentSlide * 100}%)\`;
+                    
+                    // Update dots
+                    dots.forEach((dot, index) => {
+                        if (index === state.currentSlide) {
+                            dot.classList.add('active');
+                        } else {
+                            dot.classList.remove('active');
+                        }
+                    });
+                }
+
+                // Auto-advance carousel (optional, every 5 seconds)
+                setInterval(() => {
+                    moveCarousel('event2', 1);
+                }, 5000);
             });
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.1.2</div>
+        <div class="version-footer">v1.2.0</div>
     </body>
     </html>
   `)

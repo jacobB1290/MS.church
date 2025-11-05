@@ -2452,390 +2452,390 @@ app.get('/', (c) => {
             @media (max-width: 375px) {
                 .page {
                     width: 100%;
-                    padding: 0 4%;
+                    padding: 0 3.5%;
                 }
                 
                 /* Navigation - More Compact */
                 .nav-spacer {
-                    height: 170px;
+                    height: 150px;
                 }
                 
                 .nav-shell {
-                    padding: 12px 14px;
-                    border-radius: 28px;
-                    top: 8px;
+                    padding: 10px 12px;
+                    border-radius: 24px;
+                    top: 6px;
                     width: 94%;
                 }
                 
                 .nav-shell.scrolled-mobile {
-                    padding: 6px 14px;
-                    top: 4px;
+                    padding: 5px 12px;
+                    top: 3px;
                 }
                 
                 .brand-title {
-                    font-size: 16px;
-                    letter-spacing: 1.5px;
+                    font-size: 14px;
+                    letter-spacing: 1.2px;
                 }
                 
                 .brand-subtitle {
-                    font-size: 9px;
-                    letter-spacing: 2.5px;
+                    font-size: 8px;
+                    letter-spacing: 2px;
                 }
                 
                 nav a {
-                    font-size: 11px;
-                    letter-spacing: 1.5px;
+                    font-size: 10px;
+                    letter-spacing: 1.2px;
                 }
                 
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: 10px;
-                    letter-spacing: 1.2px;
+                    font-size: 9px;
+                    letter-spacing: 1px;
                 }
                 
                 .nav-cta {
-                    padding: 8px 16px;
-                    font-size: 10px;
-                    letter-spacing: 1.2px;
+                    padding: 7px 14px;
+                    font-size: 9px;
+                    letter-spacing: 1px;
                 }
                 
                 /* Main Content Spacing */
                 main {
-                    gap: 80px;
-                    margin-bottom: 60px;
+                    gap: 60px;
+                    margin-bottom: 50px;
                 }
                 
                 /* Hero Section */
                 .hero {
-                    padding: 16px 0 48px;
-                    gap: 16px;
+                    padding: 12px 0 36px;
+                    gap: 14px;
                 }
                 
                 .hero .eyebrow {
-                    padding: 10px 20px;
-                    font-size: 11px;
-                    letter-spacing: 2px;
+                    padding: 8px 16px;
+                    font-size: 10px;
+                    letter-spacing: 1.5px;
                 }
                 
                 .hero h1 {
-                    font-size: clamp(48px, 11vw, 64px);
-                    line-height: 0.95;
-                    letter-spacing: -1.2px;
-                    margin-bottom: 16px;
+                    font-size: clamp(40px, 10vw, 54px);
+                    line-height: 0.92;
+                    letter-spacing: -1px;
+                    margin-bottom: 12px;
                 }
                 
                 .hero p {
-                    font-size: 17px;
-                    line-height: 1.6;
+                    font-size: 15px;
+                    line-height: 1.55;
                 }
                 
                 .hero-image {
-                    min-height: 280px;
-                    border-radius: 20px;
+                    min-height: 250px;
+                    border-radius: 18px;
                 }
                 
                 .btn {
-                    padding: 14px 28px;
-                    font-size: 12px;
-                    letter-spacing: 1.5px;
+                    padding: 12px 24px;
+                    font-size: 11px;
+                    letter-spacing: 1.2px;
                 }
                 
                 /* Section Headers */
                 .section-eyebrow {
-                    font-size: 10px;
-                    padding: 8px 16px;
-                    letter-spacing: 2px;
-                    margin-bottom: 12px;
-                }
-                
-                .section-heading {
-                    font-size: clamp(28px, 6.5vw, 36px);
-                    margin-bottom: 12px;
-                    line-height: 1.15;
-                }
-                
-                .section-lead {
-                    font-size: 15px;
-                    line-height: 1.6;
+                    font-size: 9px;
+                    padding: 7px 14px;
+                    letter-spacing: 1.8px;
                     margin-bottom: 10px;
                 }
                 
+                .section-heading {
+                    font-size: clamp(24px, 6vw, 32px);
+                    margin-bottom: 10px;
+                    line-height: 1.12;
+                }
+                
+                .section-lead {
+                    font-size: 14px;
+                    line-height: 1.55;
+                    margin-bottom: 8px;
+                }
+                
                 address {
-                    font-size: 11px;
-                    letter-spacing: 1.5px;
-                    margin-bottom: 16px;
+                    font-size: 10px;
+                    letter-spacing: 1.2px;
+                    margin-bottom: 14px;
                 }
                 
                 /* Schedule Section */
                 .section-card {
-                    padding: 16px 14px;
-                    border-radius: 20px;
+                    padding: 14px 12px;
+                    border-radius: 18px;
                 }
                 
                 .schedule-grid {
-                    gap: 14px;
+                    gap: 12px;
                 }
                 
                 .schedule-item {
-                    padding: 14px 12px;
-                    border-radius: 16px;
-                    gap: 6px;
+                    padding: 12px 10px;
+                    border-radius: 14px;
+                    gap: 5px;
                 }
                 
                 .schedule-item span {
-                    font-size: 10px;
-                    letter-spacing: 1.5px;
+                    font-size: 9px;
+                    letter-spacing: 1.2px;
                 }
                 
                 .schedule-item h3 {
-                    font-size: 22px;
+                    font-size: 20px;
                 }
                 
                 .schedule-item p {
-                    font-size: 13px;
-                    line-height: 1.4;
+                    font-size: 12px;
+                    line-height: 1.35;
                 }
                 
                 /* Outreach Section */
                 .outreach-header {
-                    margin-bottom: 20px;
+                    margin-bottom: 16px;
                 }
                 
                 .outreach-header .section-heading {
-                    margin-bottom: 6px;
+                    margin-bottom: 5px;
                 }
                 
                 .outreach-header .section-eyebrow {
-                    margin-bottom: 8px;
+                    margin-bottom: 6px;
                 }
                 
                 .sticky-wrapper {
                     height: auto;
-                    min-height: 50vh;
-                    top: 22vh;
-                    padding-bottom: 80px;
+                    min-height: 48vh;
+                    top: 20vh;
+                    padding-bottom: 70px;
                 }
                 
                 .scroll-spacer {
-                    height: 160vh;
+                    height: 150vh;
                 }
                 
                 /* Event Cards - Smaller */
                 .event-card {
-                    border-radius: 20px;
+                    border-radius: 18px;
                 }
                 
                 .event-header-content {
-                    padding: 14px 22px 10px 22px;
+                    padding: 12px 18px 8px 18px;
                 }
                 
                 .event-date {
-                    padding: 9px 22px;
-                    font-size: 10px;
-                    letter-spacing: 1.3px;
+                    padding: 8px 18px;
+                    font-size: 9px;
+                    letter-spacing: 1.1px;
                 }
                 
                 .event-title {
-                    font-size: clamp(26px, 6.8vw, 34px);
-                    margin-bottom: 5px;
-                    line-height: 1.1;
+                    font-size: clamp(22px, 6.2vw, 29px);
+                    margin-bottom: 4px;
+                    line-height: 1.08;
                 }
                 
                 .event-time {
-                    font-size: 14px;
+                    font-size: 12px;
                 }
                 
                 .event-flyer-container {
-                    padding: 14px 22px;
+                    padding: 12px 18px;
                 }
                 
                 .flyer-frame {
-                    padding: 8px;
-                    border-radius: 14px;
+                    padding: 7px;
+                    border-radius: 12px;
                 }
                 
                 .flyer-image {
-                    height: 240px;
+                    height: 210px;
                 }
                 
                 .placeholder-flyer {
-                    height: 240px !important;
-                    font-size: 14px;
+                    height: 210px !important;
+                    font-size: 12px;
                 }
                 
                 .event-cta {
-                    padding: 0 22px 20px 22px;
+                    padding: 0 18px 16px 18px;
                 }
                 
                 .event-cta .btn {
-                    padding: 16px 30px;
-                    font-size: 13px;
+                    padding: 14px 26px;
+                    font-size: 12px;
                 }
                 
                 .event-indicators {
-                    bottom: 40px;
+                    bottom: 35px;
                 }
                 
                 .event-dot {
-                    width: 8px;
-                    height: 8px;
+                    width: 7px;
+                    height: 7px;
                 }
                 
                 .event-dot.active {
-                    width: 10px;
-                    height: 10px;
+                    width: 9px;
+                    height: 9px;
                 }
                 
                 .scroll-hint {
-                    bottom: 8px;
+                    bottom: 6px;
                 }
                 
                 .scroll-hint-icon {
-                    font-size: 20px;
+                    font-size: 18px;
                 }
                 
                 .scroll-hint-text {
-                    font-size: 10px;
-                    letter-spacing: 1.5px;
+                    font-size: 9px;
+                    letter-spacing: 1.2px;
                 }
                 
                 /* Watch Section */
                 .watch-card {
-                    padding: 28px 20px;
-                    border-radius: 24px;
-                }
-                
-                .preview-screen {
-                    padding: 28px 20px;
-                    min-height: 240px;
+                    padding: 24px 16px;
                     border-radius: 20px;
                 }
                 
+                .preview-screen {
+                    padding: 24px 16px;
+                    min-height: 210px;
+                    border-radius: 18px;
+                }
+                
                 .live-status {
-                    font-size: 10px;
-                    padding: 6px 16px;
-                    letter-spacing: 1.5px;
+                    font-size: 9px;
+                    padding: 5px 14px;
+                    letter-spacing: 1.2px;
                 }
                 
                 .live-dot {
-                    width: 8px;
-                    height: 8px;
+                    width: 7px;
+                    height: 7px;
                 }
                 
                 .preview-screen p {
-                    font-size: 15px;
-                    line-height: 1.6;
+                    font-size: 14px;
+                    line-height: 1.55;
                 }
                 
                 .preview-screen small {
-                    font-size: 12px;
+                    font-size: 11px;
                 }
                 
                 .btn-outline {
-                    padding: 13px 28px;
-                    font-size: 11px;
-                    letter-spacing: 1.5px;
+                    padding: 11px 24px;
+                    font-size: 10px;
+                    letter-spacing: 1.2px;
                 }
                 
                 .past-streams-label {
-                    font-size: 12px;
-                    letter-spacing: 1.5px;
-                    margin-bottom: 10px;
+                    font-size: 11px;
+                    letter-spacing: 1.2px;
+                    margin-bottom: 8px;
                 }
                 
                 .stream-thumbnail {
-                    font-size: 13px;
-                    border-radius: 10px;
+                    font-size: 12px;
+                    border-radius: 9px;
                 }
                 
                 /* Contact Section */
                 .contact {
-                    gap: 28px;
+                    gap: 24px;
                 }
                 
                 .contact-card {
-                    padding: 28px 20px;
-                    border-radius: 24px;
-                    gap: 32px;
+                    padding: 24px 16px;
+                    border-radius: 20px;
+                    gap: 28px;
                 }
                 
                 .jotform-container {
-                    min-height: 700px;
+                    min-height: 650px;
                 }
                 
                 .jotform-container iframe {
-                    min-height: 700px;
+                    min-height: 650px;
                 }
                 
                 /* Form Success State - Smaller */
                 .form-success {
-                    padding: 32px 20px;
-                    min-height: 400px;
-                    gap: 20px;
+                    padding: 28px 16px;
+                    min-height: 360px;
+                    gap: 18px;
                 }
                 
                 .success-icon {
-                    font-size: 56px;
+                    font-size: 48px;
                 }
                 
                 .success-heading {
-                    font-size: clamp(24px, 5.5vw, 28px);
+                    font-size: clamp(22px, 5.2vw, 26px);
                 }
                 
                 .success-message {
-                    font-size: 15px;
-                    line-height: 1.5;
+                    font-size: 13px;
+                    line-height: 1.45;
                 }
                 
                 .success-details {
-                    padding: 16px;
-                    gap: 12px;
+                    padding: 14px;
+                    gap: 10px;
                 }
                 
                 .detail-item {
-                    padding: 10px 0;
+                    padding: 8px 0;
                     flex-direction: column;
                     align-items: flex-start;
-                    gap: 6px;
+                    gap: 5px;
                 }
                 
                 .detail-label {
-                    font-size: 13px;
+                    font-size: 12px;
                 }
                 
                 .detail-value {
-                    font-size: 13px;
+                    font-size: 12px;
                     text-align: left;
                     font-weight: 700;
                 }
                 
                 .calendar-buttons {
-                    gap: 10px;
+                    gap: 8px;
                 }
                 
                 .btn-calendar {
-                    padding: 12px 18px;
-                    font-size: 11px;
-                    letter-spacing: 0.8px;
+                    padding: 11px 16px;
+                    font-size: 10px;
+                    letter-spacing: 0.6px;
                 }
                 
                 .calendar-icon {
-                    font-size: 16px;
+                    font-size: 15px;
                 }
                 
                 /* Lightbox - Smaller Close Button */
                 .lightbox-close {
-                    width: 40px;
-                    height: 40px;
-                    top: 16px;
-                    right: 16px;
-                    font-size: 24px;
+                    width: 36px;
+                    height: 36px;
+                    top: 12px;
+                    right: 12px;
+                    font-size: 22px;
                 }
                 
                 .lightbox-instructions {
-                    bottom: 20px;
-                    padding: 10px 20px;
-                    font-size: 10px;
-                    letter-spacing: 0.8px;
+                    bottom: 16px;
+                    padding: 8px 16px;
+                    font-size: 9px;
+                    letter-spacing: 0.6px;
                 }
             }
         </style>

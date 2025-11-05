@@ -507,6 +507,13 @@ app.get('/', (c) => {
                 width: auto;
             }
             
+            @media (max-width: 768px) {
+                .heading-wrapper {
+                    width: 100%;
+                    display: block;
+                }
+            }
+            
             .outreach-header .section-heading {
                 position: relative;
                 margin: 0;
@@ -3288,7 +3295,12 @@ app.get('/', (c) => {
                     <div class="contact-header">
                         <span class="section-eyebrow">Christmas Outreach</span>
                         <h2 class="section-heading">Christmas Clothes Drive for Mothers</h2>
-                        <p class="section-lead form-message">After you fill out the form, we will get to work putting your free gift together based on what you entered. We will send you a message with all the details!</p>
+                        <p class="section-lead form-message">
+                            <strong>What you'll get:</strong><br>
+                            👟 Adults will receive a pair of shoes of their choosing<br>
+                            🧸 Children will receive a toy/item of their choosing<br><br>
+                            After you fill out the form, we will get to work putting your free gift together based on what you entered. We will send you a message with all the details!
+                        </p>
                         <address>3080 N Wildwood St, Boise, Idaho</address>
                         <a href="#event-2" class="btn btn-secondary btn-more-info">More Info</a>
                     </div>
@@ -4066,7 +4078,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.3.5</div>
+        <div class="version-footer">v1.3.6</div>
     </body>
     </html>
   `)

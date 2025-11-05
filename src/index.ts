@@ -519,8 +519,8 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 35vh;
-                height: 50vh;
+                top: 25vh;
+                height: 55vh;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -1689,8 +1689,8 @@ app.get('/', (c) => {
 
                 .sticky-wrapper {
                     height: auto;
-                    min-height: 45vh;
-                    top: 30vh;
+                    min-height: 50vh;
+                    top: 22vh;
                     gap: 0;
                 }
 

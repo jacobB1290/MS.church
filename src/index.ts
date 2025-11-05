@@ -491,10 +491,15 @@ app.get('/', (c) => {
             }
 
             .outreach-header {
-                margin-bottom: 0;
-                position: relative;
-                z-index: 1;
+                margin-bottom: 60px;
+                position: sticky;
+                top: 140px;
+                z-index: 50;
                 text-align: left;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                padding: 20px 0;
+                border-radius: 24px;
             }
 
             .outreach-header .section-eyebrow {
@@ -509,38 +514,7 @@ app.get('/', (c) => {
                 text-align: left;
             }
 
-            .outreach-title-sticky {
-                position: sticky;
-                top: 130px;
-                z-index: 50;
-                text-align: center;
-                padding: 20px 0;
-                margin-bottom: 60px;
-                pointer-events: none;
-                opacity: 0;
-                transform: translateY(-20px);
-                transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .outreach-title-sticky.visible {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            .outreach-title-sticky .section-eyebrow {
-                display: none;
-            }
-
-            .outreach-title-sticky h2 {
-                font-family: 'Playfair Display', serif;
-                font-size: clamp(28px, 5vw, 42px);
-                color: #1a1a2e;
-                font-weight: 700;
-                line-height: 1.2;
-                text-shadow: 0 2px 16px rgba(255, 255, 255, 0.9),
-                             0 0 40px rgba(255, 255, 255, 0.8);
-            }
+            /* Removed sticky title - now using sticky header instead */
 
             .outreach-scroll-container {
                 position: relative;
@@ -1986,9 +1960,6 @@ app.get('/', (c) => {
                     </div>
                     
                     <div class="outreach-scroll-container">
-                        <div class="outreach-title-sticky" id="sticky-title">
-                            <h2>Upcoming Events</h2>
-                        </div>
                         <div class="sticky-wrapper">
                             <div class="events-container">
                                 <!-- Event 1: Community Thanksgiving Dinner -->
@@ -2223,8 +2194,6 @@ app.get('/', (c) => {
                 const body = document.body;
                 const outreachSection = document.querySelector('.outreach');
                 const scrollSpacer = document.querySelector('.scroll-spacer');
-                const stickyTitle = document.getElementById('sticky-title');
-                const outreachHeader = document.querySelector('.outreach-header');
                 const navShell = document.querySelector('.nav-shell');
                 
                 // Get all sections and nav links
@@ -2289,18 +2258,6 @@ app.get('/', (c) => {
                     // Update active nav link
                     updateActiveNavLink();
                     
-                    // Check if main header has scrolled past
-                    if (outreachHeader) {
-                        const headerRect = outreachHeader.getBoundingClientRect();
-                        if (headerRect.bottom < 200 && stickyTitle) {
-                            // Main header has scrolled away, show sticky title
-                            stickyTitle.classList.add('visible');
-                        } else if (stickyTitle) {
-                            // Main header is visible, hide sticky title
-                            stickyTitle.classList.remove('visible');
-                        }
-                    }
-                    
                     // Check if we're in the outreach section
                     if (outreachRect.top <= window.innerHeight * 0.3 && spacerRect.bottom > window.innerHeight * 0.7) {
                         // Just entering the section
@@ -2319,26 +2276,18 @@ app.get('/', (c) => {
                         const spacerHeight = spacerRect.height - window.innerHeight * 0.5;
                         const scrollProgress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
                         
-                        // Fade out headers after scrolling past last event (90%+)
+                        // Fade out header after scrolling past last event (90%+)
                         if (scrollProgress > 0.9) {
                             const fadeProgress = Math.min(1, (scrollProgress - 0.9) / 0.1);
                             if (outreachHeader) {
                                 outreachHeader.style.opacity = String(1 - fadeProgress);
                                 outreachHeader.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
                             }
-                            if (stickyTitle) {
-                                stickyTitle.style.opacity = String(1 - fadeProgress);
-                                stickyTitle.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
-                            }
                         } else {
                             // Reset opacity when scrolling back
                             if (outreachHeader) {
                                 outreachHeader.style.opacity = '1';
                                 outreachHeader.style.transform = 'translateY(0)';
-                            }
-                            if (stickyTitle && stickyTitle.classList.contains('visible')) {
-                                stickyTitle.style.opacity = '1';
-                                stickyTitle.style.transform = 'translateY(0)';
                             }
                         }
                         

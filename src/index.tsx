@@ -1501,9 +1501,9 @@ app.get('/', (c) => {
                     gap: 20px;
                     background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
                     border-radius: 32px;
-                    margin: 0 -5%;
-                    padding-left: 5%;
-                    padding-right: 5%;
+                    margin: 0;
+                    padding-left: 0;
+                    padding-right: 0;
                 }
                 
                 .hero-body {
@@ -2297,9 +2297,9 @@ app.get('/', (c) => {
                         // Calculate which event should be shown with better distribution
                         // Divide scroll area evenly into 3 zones (one per event)
                         let newEventIndex;
-                        if (scrollProgress < 0.33) {
+                        if (scrollProgress < 0.2) {
                             newEventIndex = 0;
-                        } else if (scrollProgress < 0.67) {
+                        } else if (scrollProgress < 0.6) {
                             newEventIndex = 1;
                         } else {
                             newEventIndex = 2;
@@ -2309,13 +2309,13 @@ app.get('/', (c) => {
                         const threshold = 0.05;
                         if (newEventIndex > currentEventIndex) {
                             // Moving forward - require clear progress past boundary
-                            const boundary = (newEventIndex) * 0.33;
+                            const boundary = newEventIndex === 1 ? 0.2 : newEventIndex === 2 ? 0.6 : 0;
                             if (scrollProgress < boundary + threshold) {
                                 newEventIndex = currentEventIndex;
                             }
                         } else if (newEventIndex < currentEventIndex) {
                             // Moving backward - require clear progress past boundary
-                            const boundary = (currentEventIndex) * 0.33;
+                            const boundary = currentEventIndex === 1 ? 0.2 : currentEventIndex === 2 ? 0.6 : 0;
                             if (scrollProgress > boundary - threshold) {
                                 newEventIndex = currentEventIndex;
                             }

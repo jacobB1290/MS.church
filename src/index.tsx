@@ -1524,6 +1524,14 @@ app.get('/', (c) => {
                 
                 nav {
                     text-align: center;
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                }
+                
+                nav ul {
+                    margin: 0;
+                    padding: 0;
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {

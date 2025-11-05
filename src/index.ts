@@ -1506,10 +1506,19 @@ app.get('/', (c) => {
                 nav ul {
                     gap: 14px;
                     row-gap: 8px;
+                    justify-content: center;
                 }
                 
                 nav {
                     text-align: center;
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                }
+                
+                nav ul {
+                    margin: 0;
+                    padding: 0;
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {

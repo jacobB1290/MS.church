@@ -1477,9 +1477,9 @@ app.get('/', (c) => {
                 }
 
                 .hero {
-                    padding: 50px 0 60px;
+                    padding: 20px 0 60px;
                     min-height: auto;
-                    gap: 28px;
+                    gap: 20px;
                     background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
                     border-radius: 32px;
                     margin: 0 -5%;
@@ -1494,7 +1494,7 @@ app.get('/', (c) => {
                 }
                 
                 .hero-content {
-                    order: 2;
+                    order: 1;
                     display: flex;
                     flex-direction: column;
                     gap: 20px;
@@ -1506,7 +1506,7 @@ app.get('/', (c) => {
                 }
                 
                 .hero-image {
-                    order: 1;
+                    order: 2;
                     min-height: 320px;
                     border-radius: 24px;
                 }
@@ -1532,7 +1532,7 @@ app.get('/', (c) => {
                     font-size: clamp(58px, 12vw, 77px);
                     line-height: 1.0;
                     letter-spacing: -1.5px;
-                    margin: 20px 0 24px 0;
+                    margin: 0 0 20px 0;
                 }
 
                 .hero p {

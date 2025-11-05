@@ -1874,9 +1874,17 @@ app.get('/', (c) => {
                     font-size: clamp(24px, 4.5vw, 36px);
                 }
                 
+                .outreach {
+                    width: 100vw;
+                    margin-left: calc(-50vw + 50%);
+                }
+                
                 .outreach-header {
                     margin-bottom: 40px;
                     padding-bottom: 0;
+                    width: 92%;
+                    margin-left: auto;
+                    margin-right: auto;
                 }
                 
                 .outreach-header .section-heading {
@@ -1887,44 +1895,44 @@ app.get('/', (c) => {
                     margin-bottom: 16px;
                 }
 
+                .events-container,
+                .sticky-wrapper {
+                    width: 100vw;
+                    padding: 0 16px;
+                    box-sizing: border-box;
+                }
+                
                 .event-card {
-                    border-radius: 20px;
+                    height: 90vh;
+                    gap: 20px;
                 }
                 
-                .event-header-content {
-                    padding: 20px 24px 16px 24px;
+                .event-card > .event-date {
+                    top: 16px;
+                    left: 16px;
+                    padding: 8px 20px;
+                    font-size: 11px;
+                    letter-spacing: 2px;
                 }
 
-                .event-title {
-                    font-size: clamp(24px, 4vw, 32px);
-                }
-
-                .event-date {
-                    font-size: 10px;
-                    padding: 12px 24px;
-                    letter-spacing: 1.5px;
-                }
-
-                .event-time {
-                    font-size: 13px;
+                .event-card > .event-indicators {
+                    top: 16px;
+                    right: 16px;
                 }
                 
-                .event-flyer-container {
-                    padding: 20px 24px;
-                }
-                
-                .flyer-frame {
-                    max-width: 100%;
-                    padding: 10px;
+                .event-flyer-wrapper {
+                    flex: 1;
                 }
                 
                 .event-cta {
-                    padding: 0 24px 24px 24px;
+                    padding: 0;
+                    margin: 0;
                 }
                 
                 .event-cta .btn {
-                    padding: 14px 28px;
-                    font-size: 13px;
+                    padding: 18px 32px;
+                    font-size: 14px;
+                    width: 100%;
                 }
 
                 .watch-card {
@@ -4062,7 +4070,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.5.3</div>
+        <div class="version-footer">v1.5.4</div>
     </body>
     </html>
   `)

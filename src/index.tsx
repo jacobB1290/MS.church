@@ -2851,6 +2851,32 @@ app.get('/', (c) => {
                     letter-spacing: 0.5px;
                 }
             }
+            
+            /* Version Number Footer */
+            .version-footer {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 4px 10px;
+                border-radius: 12px;
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                z-index: 9999;
+                pointer-events: none;
+                font-family: 'Inter', monospace;
+            }
+            
+            @media (max-width: 768px) {
+                .version-footer {
+                    bottom: 8px;
+                    right: 8px;
+                    font-size: 9px;
+                    padding: 3px 8px;
+                }
+            }
         </style>
     </head>
     <body>
@@ -3701,6 +3727,9 @@ app.get('/', (c) => {
                 }
             });
         </script>
+        
+        <!-- Version Number Footer -->
+        <div class="version-footer">v1.0.0</div>
     </body>
     </html>
   `)

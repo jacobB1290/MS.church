@@ -1,15 +1,22 @@
 # Morning Star Christian Church Website
 
+## 🔢 CURRENT VERSION: v1.0.0
+**⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
 ## Project Overview
 - **Name**: Morning Star Christian Church
 - **Goal**: Community church website with upscale design, smooth animations, and interactive event showcase
 - **Features**: 
   - Scroll-based event viewer with dynamic backgrounds
   - Fluid animations and transitions throughout
-  - Responsive design for all devices
+  - Responsive design for all devices (including iPhone X optimization)
   - Enhanced typography with Playfair Display and Inter fonts
   - Sticky navigation with blur effects
   - Interactive event cards with flyer images
+  - Full-screen lightbox for flyer viewing with zoom
+  - JotForm integration for Christmas Clothes Drive
+  - Form success state with present emoji confetti
+  - Calendar integration (Apple & Google)
 
 ## URLs
 - **Development**: https://3000-iprrbc7u2mmhba4el56qt-0e616f0a.sandbox.novita.ai
@@ -197,3 +204,17 @@ webapp/
 - **Scroll Performance**: Optimized with requestAnimationFrame
 - **Image Loading**: Lazy loading ready
 - **CSS**: Inline for critical path optimization
+
+## 📝 Version History
+
+### v1.0.0 (Current)
+- iPhone X optimization with aggressive scaling
+- Fixed vertical spacing issues for smaller phones
+- Version number footer added for cache verification
+- All responsive breakpoints refined (375px, 480px, 768px, 960px, 1024px)
+
+**HOW TO UPDATE VERSION:**
+1. Change version in README.md (line 3)
+2. Update version in src/index.tsx (search for `<div class="version-footer">v1.0.0</div>`)
+3. Increment version (v1.0.0 → v1.0.1 for small fixes, v1.1.0 for features, v2.0.0 for major changes)
+4. Commit with message: "Bump version to vX.X.X - [description]"

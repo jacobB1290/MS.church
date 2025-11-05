@@ -498,6 +498,7 @@ app.get('/', (c) => {
                 text-align: left;
                 display: flex;
                 flex-direction: column;
+                align-items: flex-start;
             }
             
             .outreach-header .section-heading {
@@ -598,7 +599,7 @@ app.get('/', (c) => {
                 align-items: center;
                 gap: 10px;
                 position: absolute;
-                top: 50%;
+                top: 55%;
                 transform: translateY(-50%);
                 right: 0;
                 z-index: 70;
@@ -4059,7 +4060,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.3.2</div>
+        <div class="version-footer">v1.3.3</div>
     </body>
     </html>
   `)

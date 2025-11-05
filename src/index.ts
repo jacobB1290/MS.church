@@ -1410,27 +1410,31 @@ app.get('/', (c) => {
                 
                 .nav-form-btn {
                     display: none;
-                    padding: 8px 18px;
+                    padding: 6px 14px;
                     border-radius: 100px;
                     background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                     color: #fff;
-                    font-size: 11px;
+                    font-size: 10px;
                     font-weight: 700;
                     text-transform: uppercase;
-                    letter-spacing: 1.5px;
-                    box-shadow: 0 8px 20px rgba(200, 152, 96, 0.35);
-                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    letter-spacing: 1.2px;
+                    box-shadow: 0 6px 16px rgba(200, 152, 96, 0.3);
+                    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                     align-items: center;
                     justify-content: center;
                     white-space: nowrap;
                     opacity: 0;
-                    transform: scale(0.8);
+                    transform: scale(0.85);
+                    position: absolute;
+                    right: 18px;
                 }
                 
                 .nav-shell.scrolled-mobile .nav-form-btn {
                     display: inline-flex;
                     opacity: 1;
                     transform: scale(1);
+                    position: relative;
+                    right: auto;
                 }
                 
                 /* Show event indicators on mobile */
@@ -1926,7 +1930,7 @@ app.get('/', (c) => {
                             <p>Join us every Sunday as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
                         </div>
                         <div class="hero-image">
-                            <img src="https://page.gensparksite.com/v1/base64_upload/0f4d6b188732ea8e86f0a81a009691c2" alt="Cross on hilltop at sunset">
+                            <img src="https://page.gensparksite.com/v1/base64_upload/30ce03975e70e9994a8bf1a838712739" alt="Cross on hilltop at sunset">
                         </div>
                         <div class="cta-group">
                             <a class="btn btn-primary" href="#contact">From the radio? - Press here</a>

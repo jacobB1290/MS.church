@@ -2506,7 +2506,7 @@ app.get('/', (c) => {
                 
                 /* Hero Section */
                 .hero {
-                    padding: 10px 0 30px;
+                    padding: 20px 0 30px;
                     gap: 12px;
                 }
                 
@@ -2544,28 +2544,32 @@ app.get('/', (c) => {
                     font-size: 8px;
                     padding: 6px 12px;
                     letter-spacing: 1.5px;
-                    margin-bottom: 8px;
+                    margin-bottom: 6px;
                 }
                 
                 .section-heading {
                     font-size: clamp(22px, 5.5vw, 28px);
-                    margin-bottom: 8px;
+                    margin-bottom: 6px;
                     line-height: 1.1;
                 }
                 
                 .section-lead {
                     font-size: 13px;
                     line-height: 1.5;
-                    margin-bottom: 6px;
+                    margin-bottom: 4px;
                 }
                 
                 address {
                     font-size: 9px;
                     letter-spacing: 1px;
-                    margin-bottom: 12px;
+                    margin-bottom: 8px;
                 }
                 
-                /* Schedule Section */
+                /* Schedule Section - Reduced top spacing */
+                section {
+                    padding-top: 0 !important;
+                }
+                
                 .section-card {
                     padding: 12px 10px;
                     border-radius: 16px;
@@ -2699,6 +2703,14 @@ app.get('/', (c) => {
                 }
                 
                 /* Watch Section */
+                .watch {
+                    gap: 20px;
+                }
+                
+                .watch-header {
+                    margin-bottom: -8px;
+                }
+                
                 .watch-card {
                     padding: 20px 14px;
                     border-radius: 18px;
@@ -2749,13 +2761,17 @@ app.get('/', (c) => {
                 
                 /* Contact Section */
                 .contact {
-                    gap: 20px;
+                    gap: 16px;
+                }
+                
+                .contact-header {
+                    margin-bottom: -8px;
                 }
                 
                 .contact-card {
                     padding: 20px 14px;
                     border-radius: 18px;
-                    gap: 24px;
+                    gap: 20px;
                 }
                 
                 .jotform-container {

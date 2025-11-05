@@ -1072,6 +1072,98 @@ app.get('/', (c) => {
                 transform: translateY(-4px) scale(1.02);
             }
             
+            /* Clothes Drive Form Styles */
+            .scripture {
+                font-style: italic;
+                color: #d4a574;
+                font-size: 17px;
+                margin-bottom: 12px;
+                font-weight: 500;
+            }
+            
+            .section-description {
+                font-size: 16px;
+                color: rgba(26, 26, 46, 0.7);
+                max-width: 700px;
+                margin: 0 auto;
+            }
+            
+            .form-section {
+                padding: 32px;
+                background: rgba(248, 248, 252, 0.5);
+                border-radius: 20px;
+                margin-bottom: 24px;
+            }
+            
+            .form-section-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 24px;
+                color: #1a1a2e;
+                margin-bottom: 24px;
+                font-weight: 700;
+            }
+            
+            .form-row-3 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            
+            .child-form {
+                padding: 24px;
+                background: white;
+                border-radius: 16px;
+                margin-bottom: 20px;
+                border: 2px solid rgba(212, 165, 116, 0.2);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .child-form:hover {
+                border-color: rgba(212, 165, 116, 0.4);
+                box-shadow: 0 8px 24px rgba(212, 165, 116, 0.1);
+            }
+            
+            .child-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 16px;
+                border-bottom: 2px solid rgba(212, 165, 116, 0.2);
+            }
+            
+            .child-number {
+                font-family: 'Playfair Display', serif;
+                font-size: 20px;
+                color: #d4a574;
+                font-weight: 700;
+                margin: 0;
+            }
+            
+            .btn-remove-child {
+                padding: 8px 16px;
+                font-size: 12px;
+                background: rgba(220, 38, 38, 0.1);
+                color: #dc2626;
+                border: 1px solid rgba(220, 38, 38, 0.3);
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                font-weight: 600;
+            }
+            
+            .btn-remove-child:hover {
+                background: rgba(220, 38, 38, 0.2);
+                transform: translateY(-2px);
+            }
+            
+            .btn-add-child {
+                width: 100%;
+                padding: 16px;
+                font-size: 14px;
+                font-weight: 600;
+                margin-top: 8px;
+                cursor: pointer;
+            }
+            
             .contact-info {
                 display: flex;
                 flex-direction: column;
@@ -1406,6 +1498,22 @@ app.get('/', (c) => {
                 
                 .form-row {
                     grid-template-columns: 1fr;
+                }
+                
+                .form-row-3 {
+                    grid-template-columns: 1fr;
+                }
+                
+                .form-section {
+                    padding: 20px;
+                }
+                
+                .form-section-title {
+                    font-size: 20px;
+                }
+                
+                .child-form {
+                    padding: 16px;
                 }
             }
 
@@ -2185,48 +2293,94 @@ app.get('/', (c) => {
                 
                 <section class="contact" id="contact" style="animation-delay: 0.5s">
                     <div class="contact-header">
-                        <span class="section-eyebrow">Get In Touch</span>
-                        <h2 class="section-heading">We'd Love to Hear From You</h2>
-                        <p class="section-lead">Whether you're interested in attending a service, volunteering, or just want to connect, we're here for you.</p>
+                        <span class="section-eyebrow">Christmas Outreach</span>
+                        <h2 class="section-heading">Christmas Clothes Drive for Mothers</h2>
+                        <p class="section-lead scripture">"Whoever is generous to the poor lends to the Lord, and he will repay him for his deed." — Proverbs 19:17</p>
+                        <p class="section-description">Help us bless families this Christmas. Fill out this simple form to request winter clothing and essentials for you and your children.</p>
                     </div>
                     <div class="contact-container">
                         <div class="contact-card">
-                            <form class="contact-form">
-                                <div class="form-row">
+                            <form class="contact-form clothes-drive-form">
+                                <!-- Parent/Guardian Information -->
+                                <div class="form-section">
+                                    <h3 class="form-section-title">Parent/Guardian Information</h3>
+                                    
                                     <div class="form-group">
-                                        <label for="name">Your Name</label>
-                                        <input type="text" id="name" name="name" required placeholder="John Doe">
+                                        <label for="parent-name">Full Name *</label>
+                                        <input type="text" id="parent-name" name="parent-name" required placeholder="Jane Doe">
                                     </div>
+                                    
+                                    <div class="form-row form-row-3">
+                                        <div class="form-group">
+                                            <label for="parent-gender">Gender *</label>
+                                            <select id="parent-gender" name="parent-gender" required>
+                                                <option value="">Select</option>
+                                                <option value="F">Female</option>
+                                                <option value="M">Male</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="parent-age">Age *</label>
+                                            <input type="number" id="parent-age" name="parent-age" required placeholder="30" min="18" max="120">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="parent-shoe">Shoe Size *</label>
+                                            <input type="text" id="parent-shoe" name="parent-shoe" required placeholder="8">
+                                        </div>
+                                    </div>
+                                    
                                     <div class="form-group">
-                                        <label for="email">Email Address</label>
-                                        <input type="email" id="email" name="email" required placeholder="john@example.com">
+                                        <label for="parent-phone">Phone Number *</label>
+                                        <input type="tel" id="parent-phone" name="parent-phone" required placeholder="(208) 555-1234">
                                     </div>
                                 </div>
                                 
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="phone">Phone Number</label>
-                                        <input type="tel" id="phone" name="phone" placeholder="(123) 456-7890">
+                                <!-- Children Information Container -->
+                                <div class="form-section">
+                                    <h3 class="form-section-title">Children Information</h3>
+                                    
+                                    <div id="children-container">
+                                        <!-- Child 1 (Default) -->
+                                        <div class="child-form" data-child-number="1">
+                                            <div class="child-header">
+                                                <h4 class="child-number">Child 1</h4>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="child-1-name">Child's Name *</label>
+                                                <input type="text" id="child-1-name" name="child-1-name" required placeholder="John Doe">
+                                            </div>
+                                            
+                                            <div class="form-row form-row-3">
+                                                <div class="form-group">
+                                                    <label for="child-1-age">Age *</label>
+                                                    <input type="number" id="child-1-age" name="child-1-age" required placeholder="8" min="0" max="18">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="child-1-gender">Gender *</label>
+                                                    <select id="child-1-gender" name="child-1-gender" required>
+                                                        <option value="">Select</option>
+                                                        <option value="F">Female</option>
+                                                        <option value="M">Male</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="child-1-shoe">Shoe Size *</label>
+                                                    <input type="text" id="child-1-shoe" name="child-1-shoe" required placeholder="2">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="child-1-interests">Interests (Optional)</label>
+                                                <input type="text" id="child-1-interests" name="child-1-interests" placeholder="Sports, art, music...">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="subject">Subject</label>
-                                        <select id="subject" name="subject" required>
-                                            <option value="">Select a subject</option>
-                                            <option value="general">General Inquiry</option>
-                                            <option value="prayer">Prayer Request</option>
-                                            <option value="volunteer">Volunteer Opportunity</option>
-                                            <option value="event">Event RSVP</option>
-                                            <option value="other">Other</option>
-                                        </select>
-                                    </div>
+                                    
+                                    <button type="button" class="btn btn-secondary btn-add-child">+ Add Another Child</button>
                                 </div>
                                 
-                                <div class="form-group form-group-full">
-                                    <label for="message">Your Message</label>
-                                    <textarea id="message" name="message" rows="6" required placeholder="Tell us how we can help..."></textarea>
-                                </div>
-                                
-                                <button type="submit" class="btn btn-primary btn-submit">Send Message</button>
+                                <button type="submit" class="btn btn-primary btn-submit">Submit Request</button>
                             </form>
                             
                             <div class="contact-info">
@@ -2504,6 +2658,72 @@ app.get('/', (c) => {
                         }
                     });
                 });
+                
+                // Clothes Drive Form - Add/Remove Children
+                const addChildBtn = document.querySelector('.btn-add-child');
+                const childrenContainer = document.getElementById('children-container');
+                let childCount = 1;
+                
+                if (addChildBtn && childrenContainer) {
+                    addChildBtn.addEventListener('click', () => {
+                        childCount++;
+                        
+                        const childForm = document.createElement('div');
+                        childForm.className = 'child-form';
+                        childForm.setAttribute('data-child-number', childCount);
+                        childForm.innerHTML = \`
+                            <div class="child-header">
+                                <h4 class="child-number">Child \${childCount}</h4>
+                                <button type="button" class="btn-remove-child" data-child="\${childCount}">Remove</button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="child-\${childCount}-name">Child's Name *</label>
+                                <input type="text" id="child-\${childCount}-name" name="child-\${childCount}-name" required placeholder="John Doe">
+                            </div>
+                            
+                            <div class="form-row form-row-3">
+                                <div class="form-group">
+                                    <label for="child-\${childCount}-age">Age *</label>
+                                    <input type="number" id="child-\${childCount}-age" name="child-\${childCount}-age" required placeholder="8" min="0" max="18">
+                                </div>
+                                <div class="form-group">
+                                    <label for="child-\${childCount}-gender">Gender *</label>
+                                    <select id="child-\${childCount}-gender" name="child-\${childCount}-gender" required>
+                                        <option value="">Select</option>
+                                        <option value="F">Female</option>
+                                        <option value="M">Male</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="child-\${childCount}-shoe">Shoe Size *</label>
+                                    <input type="text" id="child-\${childCount}-shoe" name="child-\${childCount}-shoe" required placeholder="2">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="child-\${childCount}-interests">Interests (Optional)</label>
+                                <input type="text" id="child-\${childCount}-interests" name="child-\${childCount}-interests" placeholder="Sports, art, music...">
+                            </div>
+                        \`;
+                        
+                        childrenContainer.appendChild(childForm);
+                        
+                        // Smooth scroll to new child form
+                        childForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    });
+                    
+                    // Handle remove child buttons
+                    childrenContainer.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('btn-remove-child')) {
+                            const childNumber = e.target.getAttribute('data-child');
+                            const childForm = childrenContainer.querySelector(\`[data-child-number="\${childNumber}"]\`);
+                            if (childForm) {
+                                childForm.remove();
+                            }
+                        }
+                    });
+                }
             });
         </script>
     </body>

@@ -703,7 +703,7 @@ app.get('/', (c) => {
                 padding: 16px 35px 12px 35px;
             }
 
-            .event-date {
+            .event-card > .event-date {
                 position: absolute;
                 top: 20px;
                 left: 20px;
@@ -786,7 +786,7 @@ app.get('/', (c) => {
                 display: none;
             }
 
-            .event-flyer-wrapper .event-indicators {
+            .event-card > .event-indicators {
                 position: absolute;
                 top: 20px;
                 right: 20px;
@@ -3147,13 +3147,13 @@ app.get('/', (c) => {
                                 <!-- Event 1: Community Thanksgiving Dinner -->
                                 <div class="event-slide active" data-event="1">
                                     <div class="event-card">
+                                        <span class="event-date">NOV 26</span>
+                                        <div class="event-indicators">
+                                            <div class="event-dot active" data-dot="1"></div>
+                                            <div class="event-dot" data-dot="2"></div>
+                                            <div class="event-dot" data-dot="3"></div>
+                                        </div>
                                         <div class="event-flyer-wrapper">
-                                            <span class="event-date">NOV 26</span>
-                                            <div class="event-indicators">
-                                                <div class="event-dot active" data-dot="1"></div>
-                                                <div class="event-dot" data-dot="2"></div>
-                                                <div class="event-dot" data-dot="3"></div>
-                                            </div>
                                             <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
                                         </div>
                                         <div class="event-cta">
@@ -3165,13 +3165,13 @@ app.get('/', (c) => {
                                 <!-- Event 2: Christmas Clothes Drive -->
                                 <div class="event-slide" data-event="2" id="event-2">
                                     <div class="event-card">
+                                        <span class="event-date">DEC 6</span>
+                                        <div class="event-indicators">
+                                            <div class="event-dot active" data-dot="1"></div>
+                                            <div class="event-dot" data-dot="2"></div>
+                                            <div class="event-dot" data-dot="3"></div>
+                                        </div>
                                         <div class="event-flyer-wrapper">
-                                            <span class="event-date">DEC 6</span>
-                                            <div class="event-indicators">
-                                                <div class="event-dot active" data-dot="1"></div>
-                                                <div class="event-dot" data-dot="2"></div>
-                                                <div class="event-dot" data-dot="3"></div>
-                                            </div>
                                             <div class="carousel-container">
                                                 <div class="carousel-arrow prev" onclick="moveCarousel('event2', -1)">‹</div>
                                                 <div class="carousel-arrow next" onclick="moveCarousel('event2', 1)">›</div>
@@ -3202,13 +3202,13 @@ app.get('/', (c) => {
                                 <!-- Event 3: Christmas Eve Candlelight Service -->
                                 <div class="event-slide" data-event="3">
                                     <div class="event-card">
+                                        <span class="event-date">DEC 24</span>
+                                        <div class="event-indicators">
+                                            <div class="event-dot active" data-dot="1"></div>
+                                            <div class="event-dot" data-dot="2"></div>
+                                            <div class="event-dot" data-dot="3"></div>
+                                        </div>
                                         <div class="event-flyer-wrapper">
-                                            <span class="event-date">DEC 24</span>
-                                            <div class="event-indicators">
-                                                <div class="event-dot active" data-dot="1"></div>
-                                                <div class="event-dot" data-dot="2"></div>
-                                                <div class="event-dot" data-dot="3"></div>
-                                            </div>
                                             <div class="placeholder-flyer">
                                                 Flyer Coming Soon
                                             </div>
@@ -4062,7 +4062,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.5.2</div>
+        <div class="version-footer">v1.5.3</div>
     </body>
     </html>
   `)

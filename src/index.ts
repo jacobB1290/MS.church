@@ -2755,12 +2755,27 @@ app.get('/', (c) => {
                     moreInfoBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         
-                        // First, scroll to outreach section
+                        // First, scroll to sticky-wrapper (where events actually are)
+                        const stickyWrapper = document.querySelector('.sticky-wrapper');
                         const outreachSection = document.getElementById('outreach');
-                        if (outreachSection) {
-                            // Calculate position to scroll to
-                            const navHeight = document.querySelector('.nav-shell')?.offsetHeight || 0;
-                            const targetPosition = outreachSection.offsetTop - navHeight - 20;
+                        
+                        if (stickyWrapper && outreachSection) {
+                            // For desktop, calculate position to the sticky wrapper
+                            // For mobile, use outreach section
+                            const isDesktop = window.innerWidth > 960;
+                            
+                            let targetPosition;
+                            if (isDesktop) {
+                                // On desktop, scroll to where the sticky-wrapper will be visible
+                                // Account for the header margin-bottom and sticky positioning
+                                const outreachTop = outreachSection.offsetTop;
+                                const stickyWrapperOffset = outreachTop + window.innerHeight * 0.3; // 30vh into the section
+                                targetPosition = stickyWrapperOffset - 100;
+                            } else {
+                                // On mobile, use the original calculation
+                                const navHeight = document.querySelector('.nav-shell')?.offsetHeight || 0;
+                                targetPosition = outreachSection.offsetTop - navHeight - 20;
+                            }
                             
                             window.scrollTo({
                                 top: targetPosition,

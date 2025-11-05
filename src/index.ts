@@ -72,7 +72,7 @@ app.get('/', (c) => {
 
             /* Navigation Spacer - maintains layout when nav is fixed */
             .nav-spacer {
-                height: 320px;
+                height: 380px;
                 pointer-events: none;
             }
 
@@ -1382,7 +1382,7 @@ app.get('/', (c) => {
                 }
 
                 .nav-spacer {
-                    height: 160px;
+                    height: 190px;
                 }
 
                 .nav-shell {

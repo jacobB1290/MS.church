@@ -572,12 +572,11 @@ app.get('/', (c) => {
                 align-items: center;
                 gap: 12px;
                 padding: 0;
-                position: sticky;
-                bottom: 20px;
+                position: fixed;
+                bottom: 80px;
                 left: 0;
                 width: 100%;
                 z-index: 60;
-                margin-top: 16px;
             }
             
             .event-dot {
@@ -602,14 +601,13 @@ app.get('/', (c) => {
             
             .scroll-hint {
                 display: none;
-                position: sticky;
-                bottom: 60px;
+                position: fixed;
+                bottom: 120px;
                 left: 0;
                 width: 100%;
                 z-index: 60;
                 text-align: center;
                 animation: bounce 2s ease-in-out infinite;
-                margin-top: 12px;
             }
             
             .scroll-hint-icon {
@@ -771,8 +769,9 @@ app.get('/', (c) => {
 
             .flyer-image {
                 width: 100%;
-                max-height: 350px;
-                object-fit: cover;
+                height: 350px;
+                object-fit: contain;
+                object-position: center;
                 border-radius: 8px;
                 display: block;
             }
@@ -780,7 +779,7 @@ app.get('/', (c) => {
             .placeholder-flyer {
                 width: 100%;
                 height: 350px;
-                background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
+                background: #f5f5f5;
                 border-radius: 8px;
                 display: flex;
                 align-items: center;
@@ -1540,11 +1539,13 @@ app.get('/', (c) => {
                 }
                 
                 .flyer-image {
-                    max-height: 273px;
+                    height: 273px;
+                    object-fit: contain;
                 }
                 
                 .placeholder-flyer {
                     height: 273px !important;
+                    background: #f5f5f5 !important;
                 }
                 
                 .event-cta {

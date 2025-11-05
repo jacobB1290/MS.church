@@ -574,8 +574,19 @@ app.get('/', (c) => {
             }
 
             .scroll-spacer {
-                height: 400vh;
+                height: 300vh; /* Reduced for tighter control */
                 pointer-events: none;
+            }
+            
+            /* Scroll snap for controlled event transitions */
+            @supports (scroll-snap-type: y mandatory) {
+                .outreach-scroll-container {
+                    scroll-snap-type: y proximity;
+                }
+                
+                .scroll-spacer {
+                    scroll-snap-align: start;
+                }
             }
             
             /* Event Indicator Dots */
@@ -3432,6 +3443,12 @@ app.get('/', (c) => {
                 // Track if we're in the outreach section
                 let inOutreachSection = false;
                 
+                // Scroll lock mechanism to prevent momentum scrolling through events
+                let isScrollLocked = false;
+                let scrollLockTimer = null;
+                let lastEventChangeTime = 0;
+                const scrollLockDuration = 800; // Lock scroll for 800ms after event change
+                
                 // Update active nav link
                 function updateActiveNavLink() {
                     let currentSection = '';
@@ -3500,28 +3517,28 @@ app.get('/', (c) => {
                             }
                         }
                         
-                        // Calculate which event should be shown with better distribution
-                        // Divide scroll area evenly into 3 zones (one per event)
+                        // Calculate which event should be shown with tighter boundaries
+                        // Much smaller zones to prevent scrolling through multiple events
                         let newEventIndex;
-                        if (scrollProgress < 0.2) {
+                        if (scrollProgress < 0.25) {
                             newEventIndex = 0;
-                        } else if (scrollProgress < 0.6) {
+                        } else if (scrollProgress < 0.65) {
                             newEventIndex = 1;
                         } else {
                             newEventIndex = 2;
                         }
                         
-                        // Add small hysteresis only at boundaries to prevent rapid switching
-                        const threshold = 0.05;
+                        // Larger hysteresis to create "sticky" zones around each event
+                        const threshold = 0.12; // Increased from 0.05 to create stronger boundaries
                         if (newEventIndex > currentEventIndex) {
                             // Moving forward - require clear progress past boundary
-                            const boundary = newEventIndex === 1 ? 0.2 : newEventIndex === 2 ? 0.6 : 0;
+                            const boundary = newEventIndex === 1 ? 0.25 : newEventIndex === 2 ? 0.65 : 0;
                             if (scrollProgress < boundary + threshold) {
                                 newEventIndex = currentEventIndex;
                             }
                         } else if (newEventIndex < currentEventIndex) {
                             // Moving backward - require clear progress past boundary
-                            const boundary = currentEventIndex === 1 ? 0.2 : currentEventIndex === 2 ? 0.6 : 0;
+                            const boundary = currentEventIndex === 1 ? 0.25 : currentEventIndex === 2 ? 0.65 : 0;
                             if (scrollProgress > boundary - threshold) {
                                 newEventIndex = currentEventIndex;
                             }
@@ -3531,8 +3548,21 @@ app.get('/', (c) => {
                         
                         // Update event if changed
                         if (clampedIndex !== currentEventIndex) {
-                            currentEventIndex = clampedIndex;
-                            updateActiveEvent(currentEventIndex, false);
+                            const now = Date.now();
+                            // Only update if enough time has passed since last change (prevents rapid switching)
+                            if (!isScrollLocked || (now - lastEventChangeTime) > scrollLockDuration) {
+                                currentEventIndex = clampedIndex;
+                                updateActiveEvent(currentEventIndex, false);
+                                
+                                // Lock scrolling temporarily after event change
+                                isScrollLocked = true;
+                                lastEventChangeTime = now;
+                                
+                                clearTimeout(scrollLockTimer);
+                                scrollLockTimer = setTimeout(() => {
+                                    isScrollLocked = false;
+                                }, scrollLockDuration);
+                            }
                         }
                     } else {
                         // Outside the outreach section - reset to default background
@@ -4027,7 +4057,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.3.0</div>
+        <div class="version-footer">v1.3.1</div>
     </body>
     </html>
   `)

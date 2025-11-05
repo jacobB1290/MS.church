@@ -567,33 +567,71 @@ app.get('/', (c) => {
             /* Event Indicator Dots */
             .event-indicators {
                 display: none;
+                flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                gap: 12px;
-                padding: 16px 0 0 0;
-                position: relative;
+                gap: 8px;
+                padding: 0;
+                position: fixed;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
                 z-index: 60;
             }
             
             .event-dot {
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-                background: rgba(26, 26, 46, 0.2);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                width: 8px;
+                height: 24px;
+                border-radius: 12px;
+                background: rgba(26, 26, 46, 0.15);
+                transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                 cursor: pointer;
             }
             
             .event-dot.active {
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                box-shadow: 0 4px 12px rgba(200, 152, 96, 0.4);
-                transform: scale(1.3);
+                height: 40px;
+                background: linear-gradient(180deg, #d4a574 0%, #c89860 100%);
+                box-shadow: 0 4px 16px rgba(200, 152, 96, 0.4);
+            }
+            
+            .event-dot:hover {
+                background: rgba(26, 26, 46, 0.3);
+            }
+            
+            .scroll-hint {
+                display: none;
+                position: fixed;
+                bottom: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 60;
+                text-align: center;
+                animation: bounce 2s ease-in-out infinite;
+            }
+            
+            .scroll-hint-icon {
+                font-size: 24px;
+                color: rgba(26, 26, 46, 0.4);
+                margin-bottom: 4px;
+            }
+            
+            .scroll-hint-text {
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-weight: 700;
+                color: rgba(26, 26, 46, 0.4);
+            }
+            
+            @keyframes bounce {
+                0%, 100% { transform: translateX(-50%) translateY(0); }
+                50% { transform: translateX(-50%) translateY(-8px); }
             }
 
-            /* Event Cards with Enhanced Styling */
+            /* Event Cards - Redesigned Streamlined Layout */
             .event-card {
                 background: rgba(255, 255, 255, 0.95);
-                border-radius: 32px;
+                border-radius: 24px;
                 padding: 0;
                 box-shadow: 0 24px 64px rgba(0, 0, 0, 0.08), 
                             0 8px 24px rgba(0, 0, 0, 0.04);
@@ -603,6 +641,8 @@ app.get('/', (c) => {
                 overflow: hidden;
                 position: relative;
                 z-index: 100;
+                display: flex;
+                flex-direction: column;
             }
 
             .event-card:hover {
@@ -613,101 +653,90 @@ app.get('/', (c) => {
 
             .event-header {
                 margin-bottom: 0;
-                padding: 40px 48px 32px 48px;
+                padding: 0;
                 position: relative;
+                display: flex;
+                flex-direction: column;
             }
             
             .event-header-mobile {
                 display: none;
             }
+            
+            .event-header-content {
+                order: 2;
+                padding: 24px 28px 20px 28px;
+            }
 
             .event-date {
-                display: inline-flex;
+                order: 1;
+                display: flex;
                 align-items: center;
-                padding: 10px 24px;
+                justify-content: center;
+                padding: 14px 28px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: #fff;
-                border-radius: 100px;
+                border-radius: 0;
                 font-size: 11px;
                 font-weight: 700;
                 letter-spacing: 2px;
                 text-transform: uppercase;
-                box-shadow: 0 8px 24px rgba(200, 152, 96, 0.35);
-                margin-bottom: 20px;
+                box-shadow: none;
+                margin-bottom: 0;
+                width: 100%;
             }
 
             .event-title {
                 font-family: 'Playfair Display', serif;
-                font-size: clamp(32px, 5vw, 48px);
+                font-size: clamp(28px, 4.5vw, 36px);
                 color: #1a1a2e;
-                margin-bottom: 16px;
+                margin-bottom: 8px;
                 font-weight: 700;
                 line-height: 1.2;
             }
 
             .event-time {
-                font-size: 16px;
-                color: rgba(26, 26, 46, 0.6);
+                font-size: 14px;
+                color: rgba(26, 26, 46, 0.65);
                 font-weight: 600;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                margin-bottom: 24px;
+                letter-spacing: 0.5px;
+                margin-bottom: 0;
             }
 
             .event-content {
-                display: grid;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 0;
                 gap: 0;
-                grid-template-columns: 1fr 1fr;
-                align-items: stretch;
-                min-height: 400px;
             }
 
             .event-content.flyer-left {
-                grid-template-columns: 1fr 1fr;
+                flex-direction: column;
             }
 
             .event-content.flyer-left .event-flyer-container {
-                order: -1;
+                order: 0;
             }
 
             .event-description {
-                display: flex;
-                flex-direction: column;
-                gap: 24px;
-                padding: 0 48px 40px 48px;
-                justify-content: center;
+                display: none; /* Hide all description text and bullets */
             }
 
             .event-description p {
-                color: rgba(26, 26, 46, 0.7);
-                line-height: 1.9;
-                font-size: 17px;
+                display: none;
             }
 
             .event-description ul {
-                list-style: none;
-                display: grid;
-                gap: 12px;
-                padding-left: 0;
+                display: none;
             }
 
             .event-description li {
-                display: flex;
-                gap: 12px;
-                align-items: flex-start;
-                color: rgba(26, 26, 46, 0.7);
-                font-size: 16px;
+                display: none;
             }
 
             .event-description li::before {
-                content: '';
-                width: 8px;
-                height: 8px;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                border-radius: 50%;
-                margin-top: 8px;
-                flex-shrink: 0;
-                box-shadow: 0 4px 12px rgba(200, 152, 96, 0.4);
+                display: none;
             }
 
             .event-flyer-container {
@@ -715,30 +744,31 @@ app.get('/', (c) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 40px;
-                background: linear-gradient(135deg, rgba(248, 248, 252, 0.5) 0%, rgba(242, 242, 248, 0.5) 100%);
+                padding: 24px 28px;
+                background: transparent;
+                width: 100%;
             }
 
             .flyer-frame {
                 width: 100%;
-                max-width: 380px;
+                max-width: 100%;
                 background: #ffffff;
-                border-radius: 20px;
-                padding: 16px;
-                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12),
-                            0 4px 16px rgba(0, 0, 0, 0.08);
+                border-radius: 16px;
+                padding: 12px;
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08),
+                            0 4px 12px rgba(0, 0, 0, 0.04);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .flyer-frame:hover {
-                transform: translateY(-6px) scale(1.02);
-                box-shadow: 0 24px 64px rgba(0, 0, 0, 0.16),
-                            0 8px 24px rgba(0, 0, 0, 0.1);
+                transform: translateY(-4px);
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12),
+                            0 6px 16px rgba(0, 0, 0, 0.06);
             }
 
             .flyer-image {
                 width: 100%;
-                border-radius: 12px;
+                border-radius: 10px;
                 display: block;
             }
 
@@ -746,11 +776,11 @@ app.get('/', (c) => {
                 width: 100%;
                 aspect-ratio: 3/4;
                 background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
-                border-radius: 24px;
+                border-radius: 10px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 18px;
+                font-size: 16px;
                 color: rgba(26, 26, 46, 0.4);
                 font-weight: 600;
                 text-transform: uppercase;
@@ -758,7 +788,17 @@ app.get('/', (c) => {
             }
 
             .event-cta {
-                margin-top: 8px;
+                margin-top: 0;
+                padding: 0 28px 28px 28px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            
+            .event-cta .btn {
+                width: 100%;
+                padding: 16px 32px;
+                font-size: 14px;
+                border-radius: 100px;
             }
 
             /* Watch Section */
@@ -903,6 +943,7 @@ app.get('/', (c) => {
                 margin-bottom: 16px;
             }
 
+            /* Contact Section */
             .contact {
                 display: flex;
                 flex-direction: column;
@@ -1286,20 +1327,20 @@ app.get('/', (c) => {
                 }
 
                 .event-card {
-                    border-radius: 28px;
+                    border-radius: 20px;
                 }
                 
-                .event-header {
-                    padding: 28px 28px 20px 28px;
+                .event-header-content {
+                    padding: 20px 24px 16px 24px;
                 }
 
                 .event-title {
-                    font-size: clamp(26px, 4.5vw, 36px);
+                    font-size: clamp(24px, 4vw, 32px);
                 }
 
                 .event-date {
                     font-size: 10px;
-                    padding: 8px 20px;
+                    padding: 12px 24px;
                     letter-spacing: 1.5px;
                 }
 
@@ -1307,25 +1348,22 @@ app.get('/', (c) => {
                     font-size: 13px;
                 }
                 
-                .event-description {
-                    padding: 0 28px 28px 28px;
-                }
-
-                .event-description p {
-                    font-size: 15px;
-                    line-height: 1.7;
-                }
-
-                .event-description li {
-                    font-size: 14px;
-                }
-                
                 .event-flyer-container {
-                    padding: 28px;
+                    padding: 20px 24px;
                 }
                 
                 .flyer-frame {
-                    max-width: 340px;
+                    max-width: 100%;
+                    padding: 10px;
+                }
+                
+                .event-cta {
+                    padding: 0 24px 24px 24px;
+                }
+                
+                .event-cta .btn {
+                    padding: 14px 28px;
+                    font-size: 13px;
                 }
 
                 .watch-card {
@@ -1350,6 +1388,18 @@ app.get('/', (c) => {
                 .past-streams {
                     grid-template-columns: 1fr;
                     gap: 16px;
+                }
+                
+                /* Contact Section Tablet */
+                .contact-card {
+                    padding: 48px 36px;
+                    border-radius: 36px;
+                    grid-template-columns: 1fr;
+                    gap: 48px;
+                }
+                
+                .form-row {
+                    grid-template-columns: 1fr;
                 }
             }
 
@@ -1416,51 +1466,80 @@ app.get('/', (c) => {
                 /* Show event indicators on mobile */
                 .event-indicators {
                     display: flex;
+                    right: 16px;
                 }
                 
-                /* Mobile event card layout - flyer in header */
-                .event-header {
-                    padding: 20px;
-                    display: grid;
-                    grid-template-columns: 1fr 120px;
-                    gap: 16px;
-                    align-items: start;
-                }
-                
-                .event-header-content {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                }
-                
-                .event-header-mobile {
+                /* Show scroll hint on mobile */
+                .scroll-hint {
                     display: block;
                 }
                 
+                /* Mobile event card layout - streamlined vertical */
+                .event-card {
+                    border-radius: 20px;
+                }
+                
+                .event-header {
+                    padding: 0;
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                .event-header-content {
+                    order: 2;
+                    padding: 20px 20px 16px 20px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+                
+                .event-date {
+                    order: 1;
+                    padding: 12px 20px;
+                    font-size: 10px;
+                    border-radius: 0;
+                }
+                
+                .event-title {
+                    font-size: clamp(22px, 5.5vw, 28px);
+                    margin-bottom: 6px;
+                }
+                
+                .event-time {
+                    font-size: 12px;
+                }
+                
+                .event-header-mobile {
+                    display: none;
+                }
+                
                 .event-flyer-mobile {
-                    width: 120px;
-                    background: #ffffff;
-                    border-radius: 12px;
-                    padding: 8px;
-                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                    display: none;
                 }
                 
-                .event-flyer-mobile img,
-                .event-flyer-mobile .placeholder-flyer {
-                    width: 100%;
-                    border-radius: 8px;
-                    aspect-ratio: 3/4;
-                    font-size: 11px;
-                    padding: 8px;
-                }
-                
-                /* Hide desktop flyer container on mobile */
+                /* Show large flyer in content on mobile */
                 .event-content {
-                    grid-template-columns: 1fr !important;
+                    display: flex;
+                    flex-direction: column;
                 }
                 
                 .event-flyer-container {
-                    display: none !important;
+                    display: flex !important;
+                    padding: 20px 20px;
+                }
+                
+                .flyer-frame {
+                    padding: 10px;
+                    border-radius: 14px;
+                }
+                
+                .event-cta {
+                    padding: 0 20px 20px 20px;
+                }
+                
+                .event-cta .btn {
+                    padding: 14px 28px;
+                    font-size: 13px;
                 }
 
                 .brand-title {
@@ -1476,7 +1555,7 @@ app.get('/', (c) => {
                 }
 
                 nav ul {
-                    gap: 14px;
+                    gap: 18px;
                     row-gap: 8px;
                     justify-content: center;
                 }
@@ -1494,23 +1573,24 @@ app.get('/', (c) => {
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: 12px;
+                    gap: 16px;
                     row-gap: 0;
+                    justify-content: center;
                 }
 
                 nav a {
-                    font-size: 12px;
-                    letter-spacing: 1.5px;
+                    font-size: 13px;
+                    letter-spacing: 1.8px;
                 }
                 
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: 11px;
-                    letter-spacing: 1.2px;
+                    font-size: 12px;
+                    letter-spacing: 1.5px;
                 }
 
                 .nav-cta {
                     padding: 10px 20px;
-                    font-size: 11px;
+                    font-size: 12px;
                     letter-spacing: 1.5px;
                 }
 
@@ -1709,12 +1789,12 @@ app.get('/', (c) => {
                 }
                 
                 .event-indicators {
-                    margin-top: 0;
-                    padding-top: 12px;
+                    display: flex;
+                    right: 16px;
                 }
-
-                .event-card {
-                    border-radius: 20px;
+                
+                .scroll-hint {
+                    display: block;
                 }
 
                 .event-card {
@@ -1722,20 +1802,20 @@ app.get('/', (c) => {
                 }
 
                 .event-date {
-                    font-size: 11px;
-                    padding: 6px 14px;
-                    letter-spacing: 1.5px;
+                    font-size: 12px;
+                    padding: 7px 16px;
+                    letter-spacing: 1.8px;
                     margin-bottom: 0;
                 }
 
                 .event-title {
-                    font-size: clamp(20px, 4vw, 24px);
+                    font-size: clamp(26px, 5.5vw, 31px);
                     margin-bottom: 6px;
                     line-height: 1.2;
                 }
 
                 .event-time {
-                    font-size: 13px;
+                    font-size: 14px;
                     margin-bottom: 0;
                 }
                 
@@ -1749,8 +1829,8 @@ app.get('/', (c) => {
                 }
 
                 .event-description p {
-                    font-size: 16px;
-                    line-height: 1.6;
+                    font-size: 17px;
+                    line-height: 1.65;
                 }
 
                 .event-description ul {
@@ -1758,14 +1838,14 @@ app.get('/', (c) => {
                 }
 
                 .event-description li {
-                    font-size: 14px;
-                    line-height: 1.5;
+                    font-size: 16px;
+                    line-height: 1.6;
                 }
 
                 .event-description li::before {
-                    width: 5px;
-                    height: 5px;
-                    margin-top: 5px;
+                    width: 6px;
+                    height: 6px;
+                    margin-top: 6px;
                 }
                 
                 .event-cta {
@@ -1786,7 +1866,7 @@ app.get('/', (c) => {
                 }
 
                 .placeholder-flyer {
-                    font-size: 20px;
+                    font-size: 17px;
                     letter-spacing: 1.5px;
                     border-radius: 20px;
                 }
@@ -1804,43 +1884,44 @@ app.get('/', (c) => {
                 }
 
                 .live-status {
-                    font-size: 12px;
-                    padding: 6px 16px;
-                    letter-spacing: 1.5px;
+                    font-size: 13px;
+                    padding: 7px 18px;
+                    letter-spacing: 2px;
                 }
 
                 .live-dot {
-                    width: 8px;
-                    height: 8px;
+                    width: 9px;
+                    height: 9px;
                 }
 
                 .preview-screen p {
-                    font-size: 15px;
-                    line-height: 1.65;
+                    font-size: 16px;
+                    line-height: 1.7;
                 }
 
                 .preview-screen small {
-                    font-size: 14px;
+                    font-size: 16px;
                     margin-top: 6px;
                 }
 
                 .btn-outline {
-                    padding: 14px 32px;
-                    font-size: 12px;
-                    letter-spacing: 1.5px;
+                    padding: 15px 34px;
+                    font-size: 13px;
+                    letter-spacing: 2px;
                 }
 
                 .past-streams-label {
-                    font-size: 14px;
-                    letter-spacing: 1.5px;
+                    font-size: 16px;
+                    letter-spacing: 2px;
                     margin-bottom: 12px;
                 }
 
                 .stream-thumbnail {
-                    font-size: 14px;
+                    font-size: 16px;
                     border-radius: 12px;
                 }
                 
+                /* Contact Section Mobile */
                 .contact {
                     gap: 32px;
                 }
@@ -1889,6 +1970,14 @@ app.get('/', (c) => {
                 
                 .contact-icon {
                     font-size: 28px;
+                }
+                
+                .contact-text h4 {
+                    font-size: 15px;
+                }
+                
+                .contact-text p {
+                    font-size: 17px;
                 }
             }
         </style>
@@ -1969,34 +2058,20 @@ app.get('/', (c) => {
                                 <div class="event-slide active" data-event="1">
                                     <div class="event-card">
                                         <div class="event-header">
+                                            <span class="event-date">NOV 26</span>
                                             <div class="event-header-content">
-                                                <span class="event-date">Nov 26</span>
                                                 <h3 class="event-title">Community Thanksgiving Dinner</h3>
                                                 <div class="event-time">11:00 AM - 1:00 PM</div>
                                             </div>
-                                            <div class="event-header-mobile">
-                                                <div class="event-flyer-mobile">
-                                                    <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
-                                                </div>
-                                            </div>
                                         </div>
-                                        <div class="event-content flyer-left">
-                                            <div class="event-description">
-                                                <p>Join us for a community Thanksgiving dinner. All are welcome to share a meal and give thanks together. Find more details on our Outreach page.</p>
-                                                <ul>
-                                                    <li>Bring a side or dessert to share</li>
-                                                    <li>Kid-friendly seating and activities</li>
-                                                    <li>Fellowship and community prayer</li>
-                                                    <li>All ages welcome</li>
-                                                </ul>
-                                                <div class="event-cta">
-                                                    <a class="btn btn-primary" href="#contact">RSVP Now</a>
-                                                </div>
-                                            </div>
+                                        <div class="event-content">
                                             <div class="event-flyer-container">
                                                 <div class="flyer-frame">
                                                     <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
                                                 </div>
+                                            </div>
+                                            <div class="event-cta">
+                                                <a class="btn btn-primary" href="#contact">RSVP NOW</a>
                                             </div>
                                         </div>
                                     </div>
@@ -2006,36 +2081,22 @@ app.get('/', (c) => {
                                 <div class="event-slide" data-event="2">
                                     <div class="event-card">
                                         <div class="event-header">
+                                            <span class="event-date">DEC 6</span>
                                             <div class="event-header-content">
-                                                <span class="event-date">Dec 6</span>
                                                 <h3 class="event-title">Christmas Clothes Drive for Mothers</h3>
                                                 <div class="event-time">Drop-off during office hours</div>
                                             </div>
-                                            <div class="event-header-mobile">
-                                                <div class="event-flyer-mobile">
-                                                    <div class="placeholder-flyer">Coming Soon</div>
-                                                </div>
-                                            </div>
                                         </div>
-                                        <div class="event-content flyer-left">
-                                            <div class="event-description">
-                                                <p>We are collecting new and gently used winter clothing for single mothers and their children in our community. Your donations can make a significant difference this winter.</p>
-                                                <ul>
-                                                    <li>Winter coats, sweaters, and warm clothing</li>
-                                                    <li>Children's clothing all sizes</li>
-                                                    <li>New socks and undergarments</li>
-                                                    <li>Accessories like gloves, scarves, and hats</li>
-                                                </ul>
-                                                <div class="event-cta">
-                                                    <a class="btn btn-primary" href="#contact">Volunteer or Request Items</a>
-                                                </div>
-                                            </div>
+                                        <div class="event-content">
                                             <div class="event-flyer-container">
                                                 <div class="flyer-frame">
                                                     <div class="placeholder-flyer">
                                                         Flyer Coming Soon
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="event-cta">
+                                                <a class="btn btn-primary" href="#contact">VOLUNTEER OR REQUEST ITEMS</a>
                                             </div>
                                         </div>
                                     </div>
@@ -2045,36 +2106,22 @@ app.get('/', (c) => {
                                 <div class="event-slide" data-event="3">
                                     <div class="event-card">
                                         <div class="event-header">
+                                            <span class="event-date">DEC 24</span>
                                             <div class="event-header-content">
-                                                <span class="event-date">Dec 24</span>
                                                 <h3 class="event-title">Christmas Eve Candlelight Service</h3>
                                                 <div class="event-time">5:00 PM & 7:00 PM</div>
                                             </div>
-                                            <div class="event-header-mobile">
-                                                <div class="event-flyer-mobile">
-                                                    <div class="placeholder-flyer">Coming Soon</div>
-                                                </div>
-                                            </div>
                                         </div>
-                                        <div class="event-content flyer-left">
-                                            <div class="event-description">
-                                                <p>Celebrate the birth of Jesus with us at our special candlelight services. A beautiful evening of carols, scripture, and reflection in the main sanctuary.</p>
-                                                <ul>
-                                                    <li>Traditional Christmas carols</li>
-                                                    <li>Candlelight ceremony</li>
-                                                    <li>Scripture reading and reflection</li>
-                                                    <li>Family-friendly service</li>
-                                                </ul>
-                                                <div class="event-cta">
-                                                    <a class="btn btn-primary" href="#contact">Reserve Your Seat</a>
-                                                </div>
-                                            </div>
+                                        <div class="event-content">
                                             <div class="event-flyer-container">
                                                 <div class="flyer-frame">
                                                     <div class="placeholder-flyer">
                                                         Flyer Coming Soon
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="event-cta">
+                                                <a class="btn btn-primary" href="#contact">RESERVE YOUR SEAT</a>
                                             </div>
                                         </div>
                                     </div>

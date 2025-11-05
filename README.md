@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.0.2
+## 🔢 CURRENT VERSION: v1.1.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -205,9 +205,59 @@ webapp/
 - **Image Loading**: Lazy loading ready
 - **CSS**: Inline for critical path optimization
 
+## 🎥 YouTube Video Embedding
+
+### How to Add Your Videos/Playlist:
+
+1. **Main Live Stream Video:**
+   - Find the line: `src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE"`
+   - Replace `YOUR_VIDEO_ID_HERE` with your YouTube video ID
+   - Example: `https://www.youtube.com/embed/dQw4w9WgXcQ`
+   
+2. **Get YouTube Video ID:**
+   - From URL: `https://www.youtube.com/watch?v=dQw4w9WgXcQ` → Video ID is `dQw4w9WgXcQ`
+   - From embed: Copy the part after `/embed/`
+
+3. **Playlist of Previous Streams:**
+   - Find the line: `src="https://www.youtube.com/embed/videoseries?list=YOUR_PLAYLIST_ID_HERE"`
+   - Replace `YOUR_PLAYLIST_ID_HERE` with your YouTube playlist ID
+   - Example: `https://www.youtube.com/embed/videoseries?list=PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf`
+
+4. **Get YouTube Playlist ID:**
+   - Go to your YouTube playlist
+   - Click "Share"
+   - Copy the URL: `https://www.youtube.com/playlist?list=PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf`
+   - Playlist ID is the part after `list=`
+
+### For Live Streaming:
+- When you go live, YouTube generates a unique video ID
+- You can use the same video ID format for live streams
+- Or use your channel's live stream URL
+
+### Video Features:
+- ✅ Responsive 16:9 aspect ratio
+- ✅ Full screen support
+- ✅ Playlist auto-plays next video
+- ✅ Mobile optimized
+- ✅ Dark theme integration
+
 ## 📝 Version History
 
-### v1.0.0 (Current)
+### v1.1.0 (Current)
+- **NEW**: YouTube video/playlist embedding in Watch section
+- Responsive video players with 16:9 aspect ratio
+- Support for live streams and playlists
+- Documentation added for video setup
+
+### v1.0.2
+- Moved outreach cards down (sticky-wrapper 18vh→28vh)
+
+### v1.0.1
+- Fixed iPhone X spacing issues
+- Hero padding increased to 40px
+- Main gaps reduced to 20px
+
+### v1.0.0
 - iPhone X optimization with aggressive scaling
 - Fixed vertical spacing issues for smaller phones
 - Version number footer added for cache verification

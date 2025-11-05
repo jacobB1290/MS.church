@@ -1063,6 +1063,77 @@ app.get('/', (c) => {
                 color: rgba(255, 255, 255, 0.7);
                 margin-bottom: 16px;
             }
+            
+            /* YouTube Video Embed Styles */
+            .live-stream-container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
+            }
+            
+            .live-verse {
+                color: rgba(255, 255, 255, 0.85);
+                line-height: 1.9;
+                font-size: 18px;
+                text-align: center;
+                margin: 0;
+            }
+            
+            .live-verse small {
+                display: block;
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 14px;
+                margin-top: 8px;
+                letter-spacing: 1px;
+            }
+            
+            .video-embed-wrapper {
+                position: relative;
+                width: 100%;
+                padding-bottom: 56.25%; /* 16:9 aspect ratio */
+                height: 0;
+                overflow: hidden;
+                border-radius: 16px;
+                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+            }
+            
+            .youtube-embed {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border: none;
+                border-radius: 16px;
+            }
+            
+            .playlist-section {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .playlist-embed-wrapper {
+                position: relative;
+                width: 100%;
+                padding-bottom: 56.25%; /* 16:9 aspect ratio */
+                height: 0;
+                overflow: hidden;
+                border-radius: 16px;
+                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+                background: rgba(0, 0, 0, 0.3);
+            }
+            
+            .youtube-playlist {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border: none;
+                border-radius: 16px;
+            }
 
             /* Contact Section */
             .contact {
@@ -3046,16 +3117,42 @@ app.get('/', (c) => {
                     </div>
                     <div class="watch-card">
                         <div class="watch-main">
-                            <div class="preview-screen">
+                            <!-- Live Stream Status -->
+                            <div class="live-stream-container">
                                 <span class="live-status"><span class="live-dot"></span>Live Soon</span>
-                                <p>"He heals the brokenhearted and binds up their wounds."<small>Psalm 147:3</small></p>
-                                <a class="btn btn-outline" href="https://www.youtube.com/" target="_blank" rel="noopener">Open live stream</a>
+                                <p class="live-verse">"He heals the brokenhearted and binds up their wounds."<small>Psalm 147:3</small></p>
+                                
+                                <!-- Main Video Embed - Replace VIDEO_ID with your YouTube video ID -->
+                                <!-- For live stream, use the live stream URL -->
+                                <!-- Format: https://www.youtube.com/embed/VIDEO_ID -->
+                                <div class="video-embed-wrapper">
+                                    <iframe 
+                                        class="youtube-embed"
+                                        src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE"
+                                        title="YouTube video player" 
+                                        frameborder="0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
                             </div>
-                            <div class="past-streams-label">Previous Livestreams</div>
-                            <div class="past-streams">
-                                <div class="stream-thumbnail">Last Sunday</div>
-                                <div class="stream-thumbnail">2 Weeks Ago</div>
-                                <div class="stream-thumbnail">3 Weeks Ago</div>
+                            
+                            <!-- YouTube Playlist Section -->
+                            <div class="playlist-section">
+                                <div class="past-streams-label">Previous Livestreams</div>
+                                
+                                <!-- YouTube Playlist Embed - Replace PLAYLIST_ID with your YouTube playlist ID -->
+                                <!-- To get playlist ID: Go to YouTube playlist → Share → Copy the part after "list=" -->
+                                <div class="playlist-embed-wrapper">
+                                    <iframe 
+                                        class="youtube-playlist"
+                                        src="https://www.youtube.com/embed/videoseries?list=YOUR_PLAYLIST_ID_HERE"
+                                        title="YouTube playlist" 
+                                        frameborder="0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3729,7 +3826,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.0.2</div>
+        <div class="version-footer">v1.1.0</div>
     </body>
     </html>
   `)

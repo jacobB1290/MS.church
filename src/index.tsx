@@ -1647,28 +1647,32 @@ app.get('/', (c) => {
                 }
 
                 .section-card {
-                    padding: 24px 18px;
-                    border-radius: 28px;
+                    padding: 18px 16px;
+                    border-radius: 24px;
+                }
+
+                .schedule-grid {
+                    gap: 16px;
                 }
 
                 .schedule-item {
-                    padding: 20px 18px;
-                    border-radius: 20px;
-                    gap: 12px;
+                    padding: 16px 14px;
+                    border-radius: 18px;
+                    gap: 8px;
                 }
 
                 .schedule-item span {
-                    font-size: 12px;
-                    letter-spacing: 2px;
+                    font-size: 11px;
+                    letter-spacing: 1.8px;
                 }
 
                 .schedule-item h3 {
-                    font-size: 31px;
+                    font-size: 26px;
                 }
 
                 .schedule-item p {
-                    font-size: 15px;
-                    line-height: 1.65;
+                    font-size: 14px;
+                    line-height: 1.5;
                 }
 
                 .outreach-title-sticky {

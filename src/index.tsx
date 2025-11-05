@@ -812,7 +812,7 @@ app.get('/', (c) => {
 
             .flyer-image {
                 width: 100%;
-                height: 350px;
+                height: 500px;
                 object-fit: contain;
                 object-position: center;
                 border-radius: 8px;
@@ -821,7 +821,7 @@ app.get('/', (c) => {
 
             .placeholder-flyer {
                 width: 100%;
-                height: 350px;
+                height: 500px;
                 background: #f5f5f5;
                 border-radius: 8px;
                 display: flex;
@@ -2840,11 +2840,11 @@ app.get('/', (c) => {
                 }
                 
                 .flyer-image {
-                    height: 190px;
+                    height: 280px;
                 }
                 
                 .placeholder-flyer {
-                    height: 190px !important;
+                    height: 280px !important;
                     font-size: 11px;
                 }
                 
@@ -3146,13 +3146,6 @@ app.get('/', (c) => {
                                 <!-- Event 1: Community Thanksgiving Dinner -->
                                 <div class="event-slide active" data-event="1">
                                     <div class="event-card">
-                                        <div class="event-header">
-                                            <span class="event-date">NOV 26</span>
-                                            <div class="event-header-content">
-                                                <h3 class="event-title">Community Thanksgiving Dinner</h3>
-                                                <div class="event-time">11:00 AM - 1:00 PM</div>
-                                            </div>
-                                        </div>
                                         <div class="event-content">
                                             <div class="event-flyer-container">
                                                 <div class="flyer-frame">
@@ -3169,13 +3162,6 @@ app.get('/', (c) => {
                                 <!-- Event 2: Christmas Clothes Drive -->
                                 <div class="event-slide" data-event="2" id="event-2">
                                     <div class="event-card">
-                                        <div class="event-header">
-                                            <span class="event-date">DEC 6</span>
-                                            <div class="event-header-content">
-                                                <h3 class="event-title">Christmas Clothes Drive for Mothers</h3>
-                                                <div class="event-time">Drop-off during office hours</div>
-                                            </div>
-                                        </div>
                                         <div class="event-content">
                                             <div class="event-flyer-container">
                                                 <div class="carousel-container">
@@ -3213,13 +3199,6 @@ app.get('/', (c) => {
                                 <!-- Event 3: Christmas Eve Candlelight Service -->
                                 <div class="event-slide" data-event="3">
                                     <div class="event-card">
-                                        <div class="event-header">
-                                            <span class="event-date">DEC 24</span>
-                                            <div class="event-header-content">
-                                                <h3 class="event-title">Christmas Eve Candlelight Service</h3>
-                                                <div class="event-time">5:00 PM & 7:00 PM</div>
-                                            </div>
-                                        </div>
                                         <div class="event-content">
                                             <div class="event-flyer-container">
                                                 <div class="flyer-frame">
@@ -4078,7 +4057,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.3.6</div>
+        <div class="version-footer">v1.4.0</div>
     </body>
     </html>
   `)

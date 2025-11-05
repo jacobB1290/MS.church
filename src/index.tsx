@@ -3122,13 +3122,12 @@ app.get('/', (c) => {
                                 <span class="live-status"><span class="live-dot"></span>Live Soon</span>
                                 <p class="live-verse">"He heals the brokenhearted and binds up their wounds."<small>Psalm 147:3</small></p>
                                 
-                                <!-- Main Video Embed - Replace VIDEO_ID with your YouTube video ID -->
-                                <!-- For live stream, use the live stream URL -->
-                                <!-- Format: https://www.youtube.com/embed/VIDEO_ID -->
+                                <!-- Main Video Embed - Featured/Latest Video -->
+                                <!-- This will show the latest video from your playlist -->
                                 <div class="video-embed-wrapper">
                                     <iframe 
                                         class="youtube-embed"
-                                        src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE"
+                                        src="https://www.youtube.com/embed?listType=playlist&list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC&index=1"
                                         title="YouTube video player" 
                                         frameborder="0" 
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -3141,12 +3140,11 @@ app.get('/', (c) => {
                             <div class="playlist-section">
                                 <div class="past-streams-label">Previous Livestreams</div>
                                 
-                                <!-- YouTube Playlist Embed - Replace PLAYLIST_ID with your YouTube playlist ID -->
-                                <!-- To get playlist ID: Go to YouTube playlist → Share → Copy the part after "list=" -->
+                                <!-- YouTube Playlist Embed -->
                                 <div class="playlist-embed-wrapper">
                                     <iframe 
                                         class="youtube-playlist"
-                                        src="https://www.youtube.com/embed/videoseries?list=YOUR_PLAYLIST_ID_HERE"
+                                        src="https://www.youtube.com/embed/videoseries?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC"
                                         title="YouTube playlist" 
                                         frameborder="0" 
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -3826,7 +3824,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.1.0</div>
+        <div class="version-footer">v1.1.1</div>
     </body>
     </html>
   `)

@@ -610,7 +610,7 @@ app.get('/', (c) => {
                 flex-direction: row;
                 justify-content: flex-end;
                 align-items: center;
-                gap: 10px;
+                gap: 12px;
                 position: relative;
                 z-index: 70;
                 padding: 0;
@@ -673,7 +673,7 @@ app.get('/', (c) => {
                 50% { transform: translateY(-8px); }
             }
 
-            /* Event Cards - Minimal Container-less Layout */
+            /* Event Cards - Full-screen Image Layout */
             .event-card {
                 background: transparent;
                 border-radius: 0;
@@ -681,13 +681,15 @@ app.get('/', (c) => {
                 box-shadow: none;
                 border: none;
                 backdrop-filter: none;
-                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: none;
                 overflow: visible;
                 position: relative;
                 z-index: 100;
                 display: flex;
                 flex-direction: column;
-                gap: 20px;
+                gap: 24px;
+                height: 85vh;
+                max-height: 900px;
             }
 
             .event-card:hover {
@@ -698,12 +700,16 @@ app.get('/', (c) => {
             .event-header {
                 margin-bottom: 0;
                 padding: 0;
-                position: relative;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
                 display: flex;
                 flex-direction: row;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: space-between;
                 width: 100%;
+                z-index: 10;
             }
             
             .event-header-mobile {
@@ -719,14 +725,14 @@ app.get('/', (c) => {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                padding: 10px 24px;
-                background: rgba(255, 255, 255, 0.95);
+                padding: 12px 28px;
+                background: rgba(212, 165, 116, 0.95);
                 border-radius: 100px;
-                font-size: 13px;
+                font-size: 14px;
                 font-weight: 700;
-                letter-spacing: 2px;
-                color: #1a1a2e;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+                letter-spacing: 2.5px;
+                color: #ffffff;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
                 backdrop-filter: blur(10px);
                 padding: 12px 35px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
@@ -802,16 +808,18 @@ app.get('/', (c) => {
                 padding: 0;
                 background: transparent;
                 width: 100%;
+                flex: 1;
             }
 
             .flyer-frame {
                 width: 100%;
+                height: 100%;
                 max-width: 100%;
                 background: transparent;
                 border-radius: 0;
                 padding: 0;
                 box-shadow: none;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: none;
             }
 
             .flyer-frame:hover {
@@ -821,7 +829,8 @@ app.get('/', (c) => {
 
             .flyer-image {
                 width: 100%;
-                height: 600px;
+                height: 100%;
+                max-height: 75vh;
                 object-fit: contain;
                 object-position: center;
                 border-radius: 16px;
@@ -832,13 +841,14 @@ app.get('/', (c) => {
 
             .placeholder-flyer {
                 width: 100%;
-                height: 600px;
+                height: 100%;
+                max-height: 75vh;
                 background: rgba(255, 255, 255, 0.95);
                 border-radius: 16px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 16px;
+                font-size: 18px;
                 color: rgba(26, 26, 46, 0.4);
                 font-weight: 600;
                 text-transform: uppercase;
@@ -851,6 +861,7 @@ app.get('/', (c) => {
             .carousel-container {
                 position: relative;
                 width: 100%;
+                height: 100%;
                 overflow: hidden;
             }
 
@@ -932,11 +943,14 @@ app.get('/', (c) => {
                 padding: 0;
                 width: 100%;
                 box-sizing: border-box;
+                display: flex;
+                justify-content: center;
             }
             
             .event-cta .btn {
-                width: 100%;
-                padding: 22px 39px;
+                width: auto;
+                min-width: 280px;
+                padding: 20px 48px;
                 font-size: 16px;
                 font-weight: 700;
                 border-radius: 100px;
@@ -4095,7 +4109,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.5.0</div>
+        <div class="version-footer">v1.5.1</div>
     </body>
     </html>
   `)

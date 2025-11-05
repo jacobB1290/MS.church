@@ -519,8 +519,8 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 30vh;
-                height: 38vh;
+                top: 32vh;
+                height: 32vh;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -665,7 +665,7 @@ app.get('/', (c) => {
             
             .event-header-content {
                 order: 2;
-                padding: 12px 20px 10px 20px;
+                padding: 8px 18px 6px 18px;
             }
 
             .event-date {
@@ -673,7 +673,7 @@ app.get('/', (c) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 8px 20px;
+                padding: 6px 18px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: #fff;
                 border-radius: 0;
@@ -688,15 +688,15 @@ app.get('/', (c) => {
 
             .event-title {
                 font-family: 'Playfair Display', serif;
-                font-size: clamp(22px, 3.5vw, 28px);
+                font-size: clamp(20px, 3.2vw, 26px);
                 color: #1a1a2e;
-                margin-bottom: 4px;
+                margin-bottom: 3px;
                 font-weight: 700;
                 line-height: 1.1;
             }
 
             .event-time {
-                font-size: 11px;
+                font-size: 10px;
                 color: rgba(26, 26, 46, 0.65);
                 font-weight: 600;
                 letter-spacing: 0.5px;
@@ -744,7 +744,7 @@ app.get('/', (c) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 12px 20px;
+                padding: 8px 18px;
                 background: transparent;
                 width: 100%;
             }
@@ -753,10 +753,10 @@ app.get('/', (c) => {
                 width: 100%;
                 max-width: 100%;
                 background: #ffffff;
-                border-radius: 12px;
-                padding: 8px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08),
-                            0 4px 10px rgba(0, 0, 0, 0.04);
+                border-radius: 10px;
+                padding: 6px;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08),
+                            0 3px 8px rgba(0, 0, 0, 0.04);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
@@ -768,19 +768,21 @@ app.get('/', (c) => {
 
             .flyer-image {
                 width: 100%;
-                border-radius: 10px;
+                max-height: 180px;
+                object-fit: cover;
+                border-radius: 8px;
                 display: block;
             }
 
             .placeholder-flyer {
                 width: 100%;
-                aspect-ratio: 3/4;
+                height: 180px;
                 background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
                 border-radius: 8px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 14px;
+                font-size: 13px;
                 color: rgba(26, 26, 46, 0.4);
                 font-weight: 600;
                 text-transform: uppercase;
@@ -789,15 +791,15 @@ app.get('/', (c) => {
 
             .event-cta {
                 margin-top: 0;
-                padding: 0 20px 16px 20px;
+                padding: 0 18px 12px 18px;
                 width: 100%;
                 box-sizing: border-box;
             }
             
             .event-cta .btn {
                 width: 100%;
-                padding: 12px 24px;
-                font-size: 12px;
+                padding: 10px 20px;
+                font-size: 11px;
                 border-radius: 100px;
             }
 
@@ -1487,28 +1489,28 @@ app.get('/', (c) => {
                 
                 .event-header-content {
                     order: 2;
-                    padding: 10px 16px 8px 16px;
+                    padding: 8px 14px 6px 14px;
                     display: flex;
                     flex-direction: column;
-                    gap: 4px;
+                    gap: 3px;
                 }
                 
                 .event-date {
                     order: 1;
-                    padding: 7px 16px;
+                    padding: 5px 14px;
                     font-size: 8px;
                     border-radius: 0;
                     letter-spacing: 1.5px;
                 }
                 
                 .event-title {
-                    font-size: clamp(18px, 4.5vw, 24px);
-                    margin-bottom: 3px;
-                    line-height: 1.15;
+                    font-size: clamp(16px, 4vw, 22px);
+                    margin-bottom: 2px;
+                    line-height: 1.1;
                 }
                 
                 .event-time {
-                    font-size: 10px;
+                    font-size: 9px;
                 }
                 
                 .event-header-mobile {
@@ -1527,21 +1529,21 @@ app.get('/', (c) => {
                 
                 .event-flyer-container {
                     display: flex !important;
-                    padding: 10px 16px;
+                    padding: 8px 14px;
                 }
                 
                 .flyer-frame {
-                    padding: 6px;
-                    border-radius: 10px;
+                    padding: 5px;
+                    border-radius: 8px;
                 }
                 
                 .event-cta {
-                    padding: 0 16px 14px 16px;
+                    padding: 0 14px 12px 14px;
                 }
                 
                 .event-cta .btn {
-                    padding: 10px 20px;
-                    font-size: 11px;
+                    padding: 9px 18px;
+                    font-size: 10px;
                 }
 
                 .brand-title {
@@ -1776,8 +1778,8 @@ app.get('/', (c) => {
 
                 .sticky-wrapper {
                     height: auto;
-                    min-height: 36vh;
-                    top: 28vh;
+                    min-height: 28vh;
+                    top: 32vh;
                     gap: 0;
                 }
 

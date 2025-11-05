@@ -1300,6 +1300,147 @@ app.get('/', (c) => {
                 min-height: 800px;
             }
             
+            /* Form Success State */
+            .form-success {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 64px 48px;
+                min-height: 600px;
+                gap: 32px;
+            }
+            
+            .success-icon {
+                font-size: 96px;
+                animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            }
+            
+            @keyframes bounceIn {
+                0% { transform: scale(0); opacity: 0; }
+                50% { transform: scale(1.2); }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            
+            .success-heading {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(32px, 5vw, 48px);
+                color: #1a1a2e;
+                font-weight: 700;
+                margin: 0;
+            }
+            
+            .success-message {
+                font-size: 20px;
+                color: rgba(26, 26, 46, 0.7);
+                max-width: 500px;
+                margin: 0;
+                line-height: 1.6;
+            }
+            
+            .success-details {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                width: 100%;
+                max-width: 500px;
+                background: rgba(255, 255, 255, 0.6);
+                padding: 24px;
+                border-radius: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.8);
+            }
+            
+            .detail-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                padding: 12px 0;
+                border-bottom: 1px solid rgba(26, 26, 46, 0.1);
+            }
+            
+            .detail-item:last-child {
+                border-bottom: none;
+            }
+            
+            .detail-label {
+                font-size: 16px;
+                font-weight: 600;
+                color: rgba(26, 26, 46, 0.6);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .detail-value {
+                font-size: 16px;
+                font-weight: 600;
+                color: #1a1a2e;
+                text-align: right;
+            }
+            
+            .calendar-buttons {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+                max-width: 500px;
+            }
+            
+            .btn-calendar {
+                flex: 1;
+                min-width: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                padding: 16px 24px;
+                border-radius: 100px;
+                background: rgba(255, 255, 255, 0.9);
+                color: #1a1a2e;
+                font-size: 14px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                text-decoration: none;
+            }
+            
+            .btn-calendar:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+                background: #fff;
+            }
+            
+            .calendar-icon {
+                font-size: 20px;
+            }
+            
+            /* Confetti Animation */
+            .confetti {
+                position: fixed;
+                top: -10px;
+                font-size: 32px;
+                animation: confettiFall 3s ease-out forwards;
+                pointer-events: none;
+                z-index: 10000;
+            }
+            
+            @keyframes confettiFall {
+                0% {
+                    transform: translateY(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+            
             .contact-info {
                 display: flex;
                 flex-direction: column;
@@ -1650,6 +1791,33 @@ app.get('/', (c) => {
                 
                 .child-form {
                     padding: 16px;
+                }
+                
+                .form-success {
+                    padding: 48px 28px;
+                    min-height: 500px;
+                }
+                
+                .success-icon {
+                    font-size: 72px;
+                }
+                
+                .success-heading {
+                    font-size: clamp(28px, 6vw, 36px);
+                }
+                
+                .success-message {
+                    font-size: 18px;
+                }
+                
+                .calendar-buttons {
+                    flex-direction: column;
+                    gap: 12px;
+                }
+                
+                .btn-calendar {
+                    width: 100%;
+                    min-width: auto;
                 }
             }
 
@@ -2235,6 +2403,42 @@ app.get('/', (c) => {
                     font-size: 28px;
                 }
                 
+                .form-success {
+                    padding: 40px 24px;
+                    min-height: 450px;
+                    gap: 24px;
+                }
+                
+                .success-icon {
+                    font-size: 64px;
+                }
+                
+                .success-heading {
+                    font-size: clamp(26px, 5.5vw, 32px);
+                }
+                
+                .success-message {
+                    font-size: 16px;
+                }
+                
+                .success-details {
+                    padding: 20px;
+                }
+                
+                .detail-label,
+                .detail-value {
+                    font-size: 14px;
+                }
+                
+                .btn-calendar {
+                    font-size: 12px;
+                    padding: 14px 20px;
+                }
+                
+                .calendar-icon {
+                    font-size: 18px;
+                }
+                
                 .contact-text h4 {
                     font-size: 15px;
                 }
@@ -2359,7 +2563,7 @@ app.get('/', (c) => {
                                                 </div>
                                             </div>
                                             <div class="event-cta">
-                                                <a class="btn btn-primary" href="#contact">VOLUNTEER OR REQUEST ITEMS</a>
+                                                <a class="btn btn-primary" href="#contact">REQUEST ITEMS</a>
                                             </div>
                                         </div>
                                     </div>
@@ -2432,12 +2636,42 @@ app.get('/', (c) => {
                         <span class="section-eyebrow">Christmas Outreach</span>
                         <h2 class="section-heading">Christmas Clothes Drive for Mothers</h2>
                         <p class="section-lead form-message">It's not just about gifts — it's about Jesus. He gave His all for us; may we learn to give our all for Him. His love, His hope, for our community.</p>
+                        <address>3080 N Wildwood St, Boise, Idaho</address>
                         <a href="#event-2" class="btn btn-secondary btn-more-info">More Info</a>
                     </div>
                     <div class="contact-container">
                         <div class="contact-card">
                             <div class="jotform-container">
                                 <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
+                            </div>
+                            
+                            <!-- Success State (Hidden by default) -->
+                            <div class="form-success" style="display: none;">
+                                <div class="success-icon">🎁</div>
+                                <h3 class="success-heading">Request Submitted!</h3>
+                                <p class="success-message">You will receive a text message with more information.</p>
+                                
+                                <div class="success-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">📅 Date:</span>
+                                        <span class="detail-value">December 6, 2025</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">📍 Location:</span>
+                                        <span class="detail-value">3080 N Wildwood St, Boise, Idaho</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="calendar-buttons">
+                                    <a href="#" class="btn btn-calendar" id="apple-calendar">
+                                        <span class="calendar-icon">🍎</span>
+                                        <span>Add to Apple Calendar</span>
+                                    </a>
+                                    <a href="#" class="btn btn-calendar" id="google-calendar" target="_blank" rel="noopener">
+                                        <span class="calendar-icon">📅</span>
+                                        <span>Add to Google Calendar</span>
+                                    </a>
+                                </div>
                             </div>
                             <form class="contact-form clothes-drive-form" style="display: none;">
                                 <!-- Parent/Guardian Information -->
@@ -2521,32 +2755,6 @@ app.get('/', (c) => {
                                 
                                 <button type="submit" class="btn btn-primary btn-submit">Submit Request</button>
                             </form>
-                            
-                            <div class="contact-info">
-                                <div class="contact-info-item">
-                                    <div class="contact-icon">📍</div>
-                                    <div class="contact-text">
-                                        <h4>Visit Us</h4>
-                                        <p>3080 N Wildwood St<br>Boise, Idaho</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="contact-info-item">
-                                    <div class="contact-icon">⏰</div>
-                                    <div class="contact-text">
-                                        <h4>Service Times</h4>
-                                        <p>Sunday: 9:00 AM<br>Tuesday: 8:30 AM<br>Thursday: 6:00 PM</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="contact-info-item">
-                                    <div class="contact-icon">✉️</div>
-                                    <div class="contact-text">
-                                        <h4>Connect Online</h4>
-                                        <p>Follow our livestreams<br>and stay updated</p>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -2981,6 +3189,111 @@ app.get('/', (c) => {
                         }
                         lastTouchEnd = now;
                     }, false);
+                }
+                
+                // JotForm Submission Handler - Listen for form completion
+                window.addEventListener('message', function(e) {
+                    if (typeof e.data === 'object' && e.data.action === 'submission-completed') {
+                        // Form was successfully submitted
+                        showSuccessState();
+                    }
+                });
+                
+                function showSuccessState() {
+                    // Hide JotForm, show success state
+                    const jotformContainer = document.querySelector('.jotform-container');
+                    const successState = document.querySelector('.form-success');
+                    
+                    if (jotformContainer && successState) {
+                        jotformContainer.style.display = 'none';
+                        successState.style.display = 'flex';
+                        
+                        // Trigger confetti animation
+                        createConfetti();
+                        
+                        // Scroll to success message
+                        successState.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+                
+                function createConfetti() {
+                    const confettiEmojis = ['🎁', '🎁', '🎁', '🎁', '🎁'];
+                    const confettiCount = 50;
+                    
+                    for (let i = 0; i < confettiCount; i++) {
+                        setTimeout(() => {
+                            const confetti = document.createElement('div');
+                            confetti.className = 'confetti';
+                            confetti.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
+                            confetti.style.left = Math.random() * 100 + '%';
+                            confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                            confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                            document.body.appendChild(confetti);
+                            
+                            // Remove after animation
+                            setTimeout(() => confetti.remove(), 4000);
+                        }, i * 50);
+                    }
+                }
+                
+                // Calendar Integration
+                const appleCalendarBtn = document.getElementById('apple-calendar');
+                const googleCalendarBtn = document.getElementById('google-calendar');
+                
+                // Event details
+                const eventTitle = 'Christmas Clothes Drive for Mothers';
+                const eventDescription = 'Christmas outreach program - drop off during office hours';
+                const eventLocation = '3080 N Wildwood St, Boise, Idaho';
+                const eventDate = '20251206'; // December 6, 2025 (YYYYMMDD)
+                const eventStartTime = '20251206T090000'; // 9:00 AM
+                const eventEndTime = '20251206T170000'; // 5:00 PM
+                
+                // Google Calendar URL
+                if (googleCalendarBtn) {
+                    const googleUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+                        '&text=' + encodeURIComponent(eventTitle) +
+                        '&dates=' + eventStartTime + '/' + eventEndTime +
+                        '&details=' + encodeURIComponent(eventDescription) +
+                        '&location=' + encodeURIComponent(eventLocation) +
+                        '&sf=true&output=xml';
+                    
+                    googleCalendarBtn.href = googleUrl;
+                }
+                
+                // Apple Calendar (ICS download)
+                if (appleCalendarBtn) {
+                    appleCalendarBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        const icsContent = [
+                            'BEGIN:VCALENDAR',
+                            'VERSION:2.0',
+                            'PRODID:-//Morning Star Christian Church//EN',
+                            'BEGIN:VEVENT',
+                            'UID:' + Date.now() + '@morningstarchurch.com',
+                            'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
+                            'DTSTART:' + eventStartTime,
+                            'DTEND:' + eventEndTime,
+                            'SUMMARY:' + eventTitle,
+                            'DESCRIPTION:' + eventDescription,
+                            'LOCATION:' + eventLocation,
+                            'BEGIN:VALARM',
+                            'TRIGGER:-PT24H',
+                            'ACTION:DISPLAY',
+                            'DESCRIPTION:Reminder: ' + eventTitle + ' tomorrow',
+                            'END:VALARM',
+                            'END:VEVENT',
+                            'END:VCALENDAR'
+                        ].join('\\r\\n');
+                        
+                        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+                        const link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = 'christmas-clothes-drive.ics';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    });
                 }
             });
         </script>

@@ -520,7 +520,7 @@ app.get('/', (c) => {
             .sticky-wrapper {
                 position: sticky;
                 top: 28vh;
-                height: 52vh;
+                height: 44vh;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -665,7 +665,7 @@ app.get('/', (c) => {
             
             .event-header-content {
                 order: 2;
-                padding: 24px 28px 20px 28px;
+                padding: 16px 24px 12px 24px;
             }
 
             .event-date {
@@ -673,11 +673,11 @@ app.get('/', (c) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 14px 28px;
+                padding: 10px 24px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: #fff;
                 border-radius: 0;
-                font-size: 11px;
+                font-size: 10px;
                 font-weight: 700;
                 letter-spacing: 2px;
                 text-transform: uppercase;
@@ -688,15 +688,15 @@ app.get('/', (c) => {
 
             .event-title {
                 font-family: 'Playfair Display', serif;
-                font-size: clamp(28px, 4.5vw, 36px);
+                font-size: clamp(24px, 4vw, 32px);
                 color: #1a1a2e;
-                margin-bottom: 8px;
+                margin-bottom: 6px;
                 font-weight: 700;
-                line-height: 1.2;
+                line-height: 1.15;
             }
 
             .event-time {
-                font-size: 14px;
+                font-size: 12px;
                 color: rgba(26, 26, 46, 0.65);
                 font-weight: 600;
                 letter-spacing: 0.5px;
@@ -744,7 +744,7 @@ app.get('/', (c) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 24px 28px;
+                padding: 16px 24px;
                 background: transparent;
                 width: 100%;
             }
@@ -753,10 +753,10 @@ app.get('/', (c) => {
                 width: 100%;
                 max-width: 100%;
                 background: #ffffff;
-                border-radius: 16px;
-                padding: 12px;
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08),
-                            0 4px 12px rgba(0, 0, 0, 0.04);
+                border-radius: 14px;
+                padding: 10px;
+                box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08),
+                            0 4px 10px rgba(0, 0, 0, 0.04);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
@@ -776,11 +776,11 @@ app.get('/', (c) => {
                 width: 100%;
                 aspect-ratio: 3/4;
                 background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
-                border-radius: 10px;
+                border-radius: 8px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 16px;
+                font-size: 14px;
                 color: rgba(26, 26, 46, 0.4);
                 font-weight: 600;
                 text-transform: uppercase;
@@ -789,15 +789,15 @@ app.get('/', (c) => {
 
             .event-cta {
                 margin-top: 0;
-                padding: 0 28px 28px 28px;
+                padding: 0 24px 20px 24px;
                 width: 100%;
                 box-sizing: border-box;
             }
             
             .event-cta .btn {
                 width: 100%;
-                padding: 16px 32px;
-                font-size: 14px;
+                padding: 14px 28px;
+                font-size: 13px;
                 border-radius: 100px;
             }
 
@@ -1487,26 +1487,27 @@ app.get('/', (c) => {
                 
                 .event-header-content {
                     order: 2;
-                    padding: 20px 20px 16px 20px;
+                    padding: 14px 18px 12px 18px;
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
+                    gap: 6px;
                 }
                 
                 .event-date {
                     order: 1;
-                    padding: 12px 20px;
-                    font-size: 10px;
+                    padding: 9px 18px;
+                    font-size: 9px;
                     border-radius: 0;
                 }
                 
                 .event-title {
-                    font-size: clamp(22px, 5.5vw, 28px);
-                    margin-bottom: 6px;
+                    font-size: clamp(20px, 5vw, 26px);
+                    margin-bottom: 4px;
+                    line-height: 1.2;
                 }
                 
                 .event-time {
-                    font-size: 12px;
+                    font-size: 11px;
                 }
                 
                 .event-header-mobile {
@@ -1525,21 +1526,21 @@ app.get('/', (c) => {
                 
                 .event-flyer-container {
                     display: flex !important;
-                    padding: 20px 20px;
+                    padding: 14px 18px;
                 }
                 
                 .flyer-frame {
-                    padding: 10px;
-                    border-radius: 14px;
+                    padding: 8px;
+                    border-radius: 12px;
                 }
                 
                 .event-cta {
-                    padding: 0 20px 20px 20px;
+                    padding: 0 18px 18px 18px;
                 }
                 
                 .event-cta .btn {
-                    padding: 14px 28px;
-                    font-size: 13px;
+                    padding: 12px 24px;
+                    font-size: 12px;
                 }
 
                 .brand-title {
@@ -1774,7 +1775,7 @@ app.get('/', (c) => {
 
                 .sticky-wrapper {
                     height: auto;
-                    min-height: 48vh;
+                    min-height: 42vh;
                     top: 26vh;
                     gap: 0;
                 }

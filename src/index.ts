@@ -1494,7 +1494,7 @@ app.get('/', (c) => {
                 }
                 
                 .hero-content {
-                    order: 1;
+                    order: 2;
                     display: flex;
                     flex-direction: column;
                     gap: 20px;
@@ -1506,9 +1506,16 @@ app.get('/', (c) => {
                 }
                 
                 .hero-image {
-                    order: 2;
+                    order: 1;
                     min-height: 320px;
                     border-radius: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                
+                .hero-image img {
+                    object-position: center;
                 }
                 
                 .hero-body .cta-group {

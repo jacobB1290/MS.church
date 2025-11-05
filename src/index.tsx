@@ -1073,19 +1073,25 @@ app.get('/', (c) => {
             }
             
             /* Clothes Drive Form Styles */
-            .scripture {
-                font-style: italic;
-                color: #d4a574;
-                font-size: 17px;
-                margin-bottom: 12px;
-                font-weight: 500;
+            .form-message {
+                font-size: 18px;
+                line-height: 1.7;
+                color: rgba(26, 26, 46, 0.8);
+                max-width: 700px;
+                margin: 0 auto 24px auto;
+                font-weight: 400;
             }
             
-            .section-description {
-                font-size: 16px;
-                color: rgba(26, 26, 46, 0.7);
-                max-width: 700px;
-                margin: 0 auto;
+            .btn-more-info {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 8px;
+                padding: 14px 32px;
+                font-size: 13px;
+                font-weight: 600;
+                text-decoration: none;
+                cursor: pointer;
             }
             
             .form-section {
@@ -2220,7 +2226,7 @@ app.get('/', (c) => {
                                 </div>
 
                                 <!-- Event 2: Christmas Clothes Drive -->
-                                <div class="event-slide" data-event="2">
+                                <div class="event-slide" data-event="2" id="event-2">
                                     <div class="event-card">
                                         <div class="event-header">
                                             <span class="event-date">DEC 6</span>
@@ -2310,8 +2316,8 @@ app.get('/', (c) => {
                     <div class="contact-header">
                         <span class="section-eyebrow">Christmas Outreach</span>
                         <h2 class="section-heading">Christmas Clothes Drive for Mothers</h2>
-                        <p class="section-lead scripture">"Whoever is generous to the poor lends to the Lord, and he will repay him for his deed." — Proverbs 19:17</p>
-                        <p class="section-description">Help us bless families this Christmas. Fill out this simple form to request winter clothing and essentials for you and your children.</p>
+                        <p class="section-lead form-message">It's not just about gifts — it's about Jesus. He gave His all for us; may we learn to give our all for Him. His love, His hope, for our community.</p>
+                        <a href="#event-2" class="btn btn-secondary btn-more-info">More Info</a>
                     </div>
                     <div class="contact-container">
                         <div class="contact-card">
@@ -2739,6 +2745,34 @@ app.get('/', (c) => {
                             if (childForm) {
                                 childForm.remove();
                             }
+                        }
+                    });
+                }
+                
+                // Handle "More Info" button click to scroll to Event 2 and activate it
+                const moreInfoBtn = document.querySelector('.btn-more-info');
+                if (moreInfoBtn) {
+                    moreInfoBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        
+                        // First, scroll to outreach section
+                        const outreachSection = document.getElementById('outreach');
+                        if (outreachSection) {
+                            // Calculate position to scroll to
+                            const navHeight = document.querySelector('.nav-shell')?.offsetHeight || 0;
+                            const targetPosition = outreachSection.offsetTop - navHeight - 20;
+                            
+                            window.scrollTo({
+                                top: targetPosition,
+                                behavior: 'smooth'
+                            });
+                            
+                            // Wait for scroll to complete, then activate event 2
+                            setTimeout(() => {
+                                // Trigger event 2 to become active
+                                currentEventIndex = 1; // Event 2 (index 1)
+                                updateActiveEvent(currentEventIndex, false);
+                            }, 800);
                         }
                     });
                 }

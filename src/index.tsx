@@ -567,27 +567,65 @@ app.get('/', (c) => {
             /* Event Indicator Dots */
             .event-indicators {
                 display: none;
+                flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                gap: 12px;
-                padding: 16px 0 0 0;
-                position: relative;
+                gap: 8px;
+                padding: 0;
+                position: fixed;
+                right: 20px;
+                top: 50%;
+                transform: translateY(-50%);
                 z-index: 60;
             }
             
             .event-dot {
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-                background: rgba(26, 26, 46, 0.2);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                width: 8px;
+                height: 24px;
+                border-radius: 12px;
+                background: rgba(26, 26, 46, 0.15);
+                transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                 cursor: pointer;
             }
             
             .event-dot.active {
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                box-shadow: 0 4px 12px rgba(200, 152, 96, 0.4);
-                transform: scale(1.3);
+                height: 40px;
+                background: linear-gradient(180deg, #d4a574 0%, #c89860 100%);
+                box-shadow: 0 4px 16px rgba(200, 152, 96, 0.4);
+            }
+            
+            .event-dot:hover {
+                background: rgba(26, 26, 46, 0.3);
+            }
+            
+            .scroll-hint {
+                display: none;
+                position: fixed;
+                bottom: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 60;
+                text-align: center;
+                animation: bounce 2s ease-in-out infinite;
+            }
+            
+            .scroll-hint-icon {
+                font-size: 24px;
+                color: rgba(26, 26, 46, 0.4);
+                margin-bottom: 4px;
+            }
+            
+            .scroll-hint-text {
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-weight: 700;
+                color: rgba(26, 26, 46, 0.4);
+            }
+            
+            @keyframes bounce {
+                0%, 100% { transform: translateX(-50%) translateY(0); }
+                50% { transform: translateX(-50%) translateY(-8px); }
             }
 
             /* Event Cards with Enhanced Styling */
@@ -1723,8 +1761,12 @@ app.get('/', (c) => {
                 }
                 
                 .event-indicators {
-                    margin-top: 0;
-                    padding-top: 12px;
+                    display: flex;
+                    right: 16px;
+                }
+                
+                .scroll-hint {
+                    display: block;
                 }
 
                 .event-card {
@@ -2103,6 +2145,10 @@ app.get('/', (c) => {
                                 <div class="event-dot active" data-dot="1"></div>
                                 <div class="event-dot" data-dot="2"></div>
                                 <div class="event-dot" data-dot="3"></div>
+                            </div>
+                            <div class="scroll-hint">
+                                <div class="scroll-hint-icon">↓</div>
+                                <div class="scroll-hint-text">Scroll</div>
                             </div>
                         </div>
                         <div class="scroll-spacer"></div>

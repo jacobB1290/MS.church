@@ -2085,6 +2085,10 @@ app.get('/', (c) => {
                                 <div class="event-dot" data-dot="2"></div>
                                 <div class="event-dot" data-dot="3"></div>
                             </div>
+                            <div class="scroll-hint">
+                                <div class="scroll-hint-icon">↓</div>
+                                <div class="scroll-hint-text">Scroll</div>
+                            </div>
                         </div>
                         <div class="scroll-spacer"></div>
                     </div>

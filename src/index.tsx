@@ -94,7 +94,7 @@ app.get('/', (c) => {
                 transform: translateX(-50%);
                 z-index: 1000;
                 border: 1px solid rgba(255, 255, 255, 0.4);
-                transition: padding 0.3s ease, top 0.3s ease, width 0.3s ease, border-radius 0.3s ease;
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                 width: min(1280px, 94%);
             }
             
@@ -108,6 +108,11 @@ app.get('/', (c) => {
             }
             
             .nav-shell.scrolled-mobile .nav-cta {
+                display: none;
+            }
+            
+            /* Mobile-only form button for scrolled state */
+            .nav-form-btn {
                 display: none;
             }
             
@@ -1403,12 +1408,42 @@ app.get('/', (c) => {
                     border-radius: 32px;
                     top: 10px;
                     width: 94%;
+                    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
                 
                 .nav-shell.scrolled-mobile {
                     border-radius: 100px;
                     padding: 7px 18px;
                     top: 6px;
+                }
+                
+                .nav-shell.scrolled-mobile .nav-cta {
+                    display: none;
+                }
+                
+                .nav-form-btn {
+                    display: none;
+                    padding: 8px 18px;
+                    border-radius: 100px;
+                    background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                    color: #fff;
+                    font-size: 11px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 1.5px;
+                    box-shadow: 0 8px 20px rgba(200, 152, 96, 0.35);
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    align-items: center;
+                    justify-content: center;
+                    white-space: nowrap;
+                    opacity: 0;
+                    transform: scale(0.8);
+                }
+                
+                .nav-shell.scrolled-mobile .nav-form-btn {
+                    display: inline-flex;
+                    opacity: 1;
+                    transform: scale(1);
                 }
                 
                 /* Show event indicators on mobile */
@@ -1462,13 +1497,15 @@ app.get('/', (c) => {
                 }
 
                 .brand-title {
-                    font-size: 15px;
-                    letter-spacing: 1.5px;
+                    font-size: 18px;
+                    letter-spacing: 1.8px;
+                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                 }
 
                 .brand-subtitle {
-                    font-size: 10px;
-                    letter-spacing: 2.5px;
+                    font-size: 11px;
+                    letter-spacing: 2.8px;
+                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                 }
 
                 nav ul {
@@ -1899,6 +1936,7 @@ app.get('/', (c) => {
                     </ul>
                 </nav>
                 <a class="nav-cta" href="#contact">Submit the form</a>
+                <a class="nav-form-btn" href="#contact">Form</a>
             </header>
             <div class="nav-spacer"></div>
             <main>

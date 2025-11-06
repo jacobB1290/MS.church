@@ -3445,20 +3445,38 @@ app.get('/', (c) => {
                 // Mobile nav compression on scroll
                 let lastNavScrollY = 0;
                 let scrollThreshold = 50;
+                let scrollUpAtTopCount = 0;
                 
                 function handleMobileNav() {
+                    const currentScrollY = window.scrollY;
+                    
                     // Only apply on mobile (960px and below)
                     if (window.innerWidth <= 960) {
-                        if (window.scrollY > scrollThreshold) {
+                        // Detect scroll up when already at/near top
+                        if (currentScrollY <= scrollThreshold && currentScrollY < lastNavScrollY) {
+                            scrollUpAtTopCount++;
+                            
+                            // If scrolling up at top, smooth scroll to absolute top and expand nav
+                            if (scrollUpAtTopCount >= 2) {
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                navShell.classList.remove('scrolled-mobile');
+                                scrollUpAtTopCount = 0;
+                            }
+                        } else if (currentScrollY > scrollThreshold) {
+                            // Past threshold - compress nav
                             navShell.classList.add('scrolled-mobile');
+                            scrollUpAtTopCount = 0;
                         } else {
+                            // At top but not scrolling up - expand nav
                             navShell.classList.remove('scrolled-mobile');
+                            scrollUpAtTopCount = 0;
                         }
                     } else {
                         // Remove class on desktop
                         navShell.classList.remove('scrolled-mobile');
+                        scrollUpAtTopCount = 0;
                     }
-                    lastNavScrollY = window.scrollY;
+                    lastNavScrollY = currentScrollY;
                 }
                 
                 let currentEventIndex = 0;
@@ -3735,6 +3753,20 @@ app.get('/', (c) => {
                     anchor.addEventListener('click', function (e) {
                         e.preventDefault();
                         const targetId = this.getAttribute('href');
+                        
+                        // Special handling for HOME link - scroll to absolute top and expand nav
+                        if (targetId === '#home' || targetId === '#') {
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth'
+                            });
+                            // Force expand nav on mobile
+                            if (window.innerWidth <= 960) {
+                                navShell.classList.remove('scrolled-mobile');
+                            }
+                            return;
+                        }
+                        
                         const target = document.querySelector(targetId);
                         if (target) {
                             // Default offset for most sections

@@ -622,36 +622,7 @@ app.get('/', (c) => {
                 transform: scale(1.15);
             }
             
-            .scroll-hint {
-                display: none;
-                position: absolute;
-                bottom: 10px;
-                left: 0;
-                width: 100%;
-                z-index: 60;
-                text-align: center;
-                animation: bounce 2s ease-in-out infinite;
-                padding: 12px 0;
-            }
-            
-            .scroll-hint-icon {
-                font-size: 24px;
-                color: rgba(26, 26, 46, 0.4);
-                margin-bottom: 4px;
-            }
-            
-            .scroll-hint-text {
-                font-size: 11px;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-                font-weight: 700;
-                color: rgba(26, 26, 46, 0.4);
-            }
-            
-            @keyframes bounce {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-8px); }
-            }
+            /* Scroll hint removed - using dot indicators only */
 
             @media (prefers-reduced-motion: reduce) {
                 .event-slide { transition: none; transform: none; }
@@ -2334,10 +2305,6 @@ app.get('/', (c) => {
                     display: flex;
                     right: 16px;
                 }
-                
-                .scroll-hint {
-                    display: block;
-                }
 
                 .event-card {
                     border-radius: 24px;
@@ -2764,19 +2731,6 @@ app.get('/', (c) => {
                     border-radius: 16px;
                 }
                 
-                .scroll-hint {
-                    bottom: 5px;
-                }
-                
-                .scroll-hint-icon {
-                    font-size: 16px;
-                }
-                
-                .scroll-hint-text {
-                    font-size: 8px;
-                    letter-spacing: 1px;
-                }
-                
                 /* Watch Section */
                 .watch {
                     gap: 12px;
@@ -3100,10 +3054,6 @@ app.get('/', (c) => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="scroll-hint">
-                                <div class="scroll-hint-icon">↓</div>
-                                <div class="scroll-hint-text">Scroll</div>
-                            </div>
                         </div>
                         <div class="scroll-spacer"></div>
                     </div>
@@ -3388,10 +3338,18 @@ app.get('/', (c) => {
                             }
                         }
 
+                        // Calculate which event should be shown based on scroll progress
+                        // But respect manual swipe overrides - don't fight the user!
                         let newIndex = progress < 0.25 ? 0 : (progress < 0.65 ? 1 : 2);
 
                         const now = Date.now();
-                        if (newIndex !== currentEventIndex &&
+                        
+                        // Only update from scroll if:
+                        // 1. Not currently being manually swiped
+                        // 2. Index actually changed
+                        // 3. Not rate limited
+                        if (!manualSwipeOverride && 
+                            newIndex !== currentEventIndex &&
                            (!isChangeRateLimited || (now - lastEventChangeTime) > changeCooldownMs)) {
                             currentEventIndex = newIndex;
                             updateActiveEvent(currentEventIndex, false);
@@ -3447,39 +3405,96 @@ app.get('/', (c) => {
 
                 updateActiveEvent(0, true);
                 
+                // Unified swipe and scroll navigation system
+                // Both horizontal swipes and vertical scrolls update the same currentEventIndex
+                // This ensures consistency - if you swipe to event 2, scrolling continues from there
+                
                 let touchStartX = 0, touchStartY = 0;
                 let isSwipeActive = false;
                 let swipeTimer = null;
-                const swipeThreshold = 40;
-                const swipeCooldown = 600;
+                const swipeThreshold = 50; // Minimum pixels to register as swipe
+                const swipeCooldown = 400; // Debounce time between swipes
+                let lastSwipeTime = 0;
+                let manualSwipeOverride = false; // Flag to prevent scroll from overriding swipe
 
                 if (eventsContainer) {
                     eventsContainer.addEventListener('touchstart', e => {
                         if (isSwipeActive) return;
                         const t = e.changedTouches[0];
-                        touchStartX = t.screenX;
-                        touchStartY = t.screenY;
+                        touchStartX = t.clientX;
+                        touchStartY = t.clientY;
+                    }, { passive: true });
+
+                    eventsContainer.addEventListener('touchmove', e => {
+                        // Detect horizontal swipe intent early to prevent vertical scroll
+                        const t = e.changedTouches[0];
+                        const dx = Math.abs(t.clientX - touchStartX);
+                        const dy = Math.abs(t.clientY - touchStartY);
+                        
+                        // If horizontal movement is dominant, we're swiping cards
+                        if (dx > dy && dx > 10) {
+                            // Don't prevent default - let both work together
+                            manualSwipeOverride = true;
+                        }
                     }, { passive: true });
 
                     eventsContainer.addEventListener('touchend', e => {
                         if (isSwipeActive) return;
+                        
+                        const now = Date.now();
+                        if (now - lastSwipeTime < swipeCooldown) return;
+                        
                         const t = e.changedTouches[0];
-                        const dx = t.screenX - touchStartX;
-                        const dy = t.screenY - touchStartY;
+                        const dx = t.clientX - touchStartX;
+                        const dy = t.clientY - touchStartY;
+                        
+                        // Only process as horizontal swipe if horizontal movement dominates
                         if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
                             isSwipeActive = true;
+                            lastSwipeTime = now;
+                            
+                            // Swipe right (dx > 0) = go to previous event
+                            // Swipe left (dx < 0) = go to next event
                             if (dx > 0 && currentEventIndex > 0) {
                                 currentEventIndex--;
                                 updateActiveEvent(currentEventIndex, false);
+                                manualSwipeOverride = true;
                             } else if (dx < 0 && currentEventIndex < totalEvents - 1) {
                                 currentEventIndex++;
                                 updateActiveEvent(currentEventIndex, false);
+                                manualSwipeOverride = true;
                             }
+                            
+                            // Clear manual override after a short delay
                             clearTimeout(swipeTimer);
-                            swipeTimer = setTimeout(() => { isSwipeActive = false; }, swipeCooldown);
+                            swipeTimer = setTimeout(() => { 
+                                isSwipeActive = false;
+                                manualSwipeOverride = false;
+                            }, swipeCooldown);
+                        } else {
+                            // Not a horizontal swipe, allow scroll to take over immediately
+                            manualSwipeOverride = false;
                         }
                     }, { passive: true });
                 }
+                
+                // Dot click navigation - tap any dot to jump to that event
+                dots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        if (currentEventIndex === index) return; // Already on this event
+                        
+                        currentEventIndex = index;
+                        updateActiveEvent(currentEventIndex, false);
+                        
+                        // Set manual override to prevent scroll from interfering
+                        manualSwipeOverride = true;
+                        setTimeout(() => { manualSwipeOverride = false; }, 600);
+                    });
+                    
+                    // Add touch feedback
+                    dot.style.cursor = 'pointer';
+                    dot.style.transition = 'transform 0.2s ease, background 0.3s ease';
+                });
                 
                 let ticking = false;
                 window.addEventListener('scroll', () => {
@@ -3862,7 +3877,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.2</div>
+        <div class="version-footer">v1.9.3</div>
     </body>
     </html>
   `)

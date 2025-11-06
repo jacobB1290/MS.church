@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.2
+## 🔢 CURRENT VERSION: v1.9.3
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,24 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.2 (Current) - CARD POSITIONING FIX + REFINED SCROLL LOGIC
+### v1.9.3 (Current) - UNIFIED SWIPE & SCROLL NAVIGATION
+- **NEW: Horizontal swipe navigation** - Swipe left/right to navigate between events
+- **NEW: Clickable dot indicators** - Tap any dot to jump directly to that event
+- **Unified navigation system** - Swipe and scroll work together seamlessly
+  - Swipe to event 2, then scroll down → continues to event 3
+  - Single shared `currentEventIndex` for both input methods
+  - Manual swipe overrides prevent scroll interference
+  - Automatic sync when scroll continues after swipe
+- **Removed scroll-down indicator** - Cleaner UI, dots show current position
+- **Smart gesture detection**:
+  - Horizontal swipes change events (50px threshold)
+  - Vertical scrolls also change events  
+  - Dominant direction wins - no accidental triggers
+  - 400ms cooldown prevents rapid switching
+- **Active dot highlighting** - Always shows which event (1/2/3) you're viewing
+- Result: Intuitive, user-friendly event navigation that feels natural
+
+### v1.9.2 - CARD POSITIONING FIX + REFINED SCROLL LOGIC
 - **Fixed event card positioning** - Cards were too low on screen
 - Adjusted sticky-wrapper: top from 20vh to 12vh, height from 62vh to 70vh
 - Changed alignment: flex-start instead of center for better vertical positioning

@@ -3335,9 +3335,12 @@ app.get('/', (c) => {
                 // Track if we're in the outreach section
                 let inOutreachSection = false;
                 
-                // Snap behavior - small swipes register as full event changes
-                let committedEventIndex = 0; // The event we've committed to showing
-                const SNAP_THRESHOLD = 0.15; // 15% of a zone triggers snap to next event
+                // Discrete card navigation - each scroll gesture moves one card
+                let committedEventIndex = 0;
+                let lastScrollY = window.pageYOffset;
+                let scrollDirection = 0; // 1 = down, -1 = up, 0 = none
+                let isTransitioning = false; // Prevent multiple events during transition
+                let transitionTimeout = null;
                 
                 // Update active nav link
                 function updateActiveNavLink() {
@@ -3416,38 +3419,53 @@ app.get('/', (c) => {
                             }
                         }
                         
-                        // SNAP BEHAVIOR - small swipes register as full event changes
-                        // Each event gets EXACTLY 1/3 of scroll space (33.3%)
-                        const zoneSize = 1.0 / totalEvents; // 0.333 for 3 events
+                        // DISCRETE CARD NAVIGATION
+                        // Any scroll gesture = move exactly one card (no multi-jumps)
                         
-                        // Calculate which zone we're in and position within that zone
-                        const currentZone = Math.floor(scrollProgress / zoneSize);
-                        const positionInZone = (scrollProgress % zoneSize) / zoneSize; // 0 to 1 within zone
+                        // Detect scroll direction
+                        const currentScrollY = window.pageYOffset;
+                        const scrollDelta = currentScrollY - lastScrollY;
                         
-                        // Determine target event with snap behavior
-                        let targetEventIndex = committedEventIndex;
+                        // Only process if scrolled more than 5px (filter out tiny jiggles)
+                        if (Math.abs(scrollDelta) > 5 && !isTransitioning) {
+                            const newDirection = scrollDelta > 0 ? 1 : -1; // 1=down, -1=up
+                            
+                            // If direction changed or this is first scroll, trigger card change
+                            if (newDirection !== scrollDirection) {
+                                scrollDirection = newDirection;
+                                
+                                let targetEventIndex = committedEventIndex;
+                                
+                                if (scrollDirection > 0) {
+                                    // Scrolling DOWN - next card
+                                    if (committedEventIndex < totalEvents - 1) {
+                                        targetEventIndex = committedEventIndex + 1;
+                                    }
+                                } else {
+                                    // Scrolling UP - previous card
+                                    if (committedEventIndex > 0) {
+                                        targetEventIndex = committedEventIndex - 1;
+                                    }
+                                }
+                                
+                                // Update if changed
+                                if (targetEventIndex !== committedEventIndex) {
+                                    committedEventIndex = targetEventIndex;
+                                    currentEventIndex = targetEventIndex;
+                                    updateActiveEvent(currentEventIndex, false);
+                                    
+                                    // Lock transitions for 400ms to prevent rapid switching
+                                    isTransitioning = true;
+                                    clearTimeout(transitionTimeout);
+                                    transitionTimeout = setTimeout(() => {
+                                        isTransitioning = false;
+                                        scrollDirection = 0; // Reset direction for next gesture
+                                    }, 400);
+                                }
+                            }
+                        }
                         
-                        // Forward snap: If we're 15% into the NEXT zone, commit to it
-                        if (currentZone > committedEventIndex && positionInZone >= SNAP_THRESHOLD) {
-                            targetEventIndex = Math.min(currentZone, totalEvents - 1);
-                            committedEventIndex = targetEventIndex;
-                        }
-                        // Backward snap: If we're past 85% back into PREVIOUS zone, commit to it
-                        else if (currentZone < committedEventIndex && positionInZone <= (1 - SNAP_THRESHOLD)) {
-                            targetEventIndex = Math.max(currentZone, 0);
-                            committedEventIndex = targetEventIndex;
-                        }
-                        // Full zone crossing: If we're deep into a different zone, commit immediately
-                        else if (currentZone !== committedEventIndex && positionInZone >= 0.5) {
-                            targetEventIndex = Math.min(Math.max(0, currentZone), totalEvents - 1);
-                            committedEventIndex = targetEventIndex;
-                        }
-                        
-                        // Update event display if target changed
-                        if (targetEventIndex !== currentEventIndex) {
-                            currentEventIndex = targetEventIndex;
-                            updateActiveEvent(currentEventIndex, false);
-                        }
+                        lastScrollY = currentScrollY;
                     } else {
                         // Outside the outreach section - reset to default background
                         if (inOutreachSection) {

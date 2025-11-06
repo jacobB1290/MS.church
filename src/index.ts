@@ -1641,7 +1641,7 @@ app.get('/', (c) => {
                 }
 
                 .sticky-wrapper {
-                    top: 20vh;
+                    top: 8vh;
                 }
                 
                 .scroll-spacer {
@@ -1864,7 +1864,11 @@ app.get('/', (c) => {
                 }
                 
                 .flyer-image {
-                    border-radius: 40px;
+                    border-radius: 48px;
+                }
+                
+                .placeholder-flyer {
+                    border-radius: 48px;
                 }
                 
                 .placeholder-flyer {
@@ -2047,11 +2051,11 @@ app.get('/', (c) => {
                 }
                 
                 .flyer-image {
-                    border-radius: 36px;
+                    border-radius: 48px;
                 }
                 
                 .placeholder-flyer {
-                    border-radius: 36px;
+                    border-radius: 48px;
                 }
                 
                 .event-cta {
@@ -2299,7 +2303,7 @@ app.get('/', (c) => {
                 .sticky-wrapper {
                     height: auto;
                     min-height: 55vh;
-                    top: 24vh;
+                    top: 10vh;
                     gap: 0;
                     padding-bottom: 100px;
                     justify-content: flex-start;
@@ -2725,11 +2729,11 @@ app.get('/', (c) => {
                 }
                 
                 .flyer-image {
-                    border-radius: 32px;
+                    border-radius: 48px;
                 }
                 
                 .placeholder-flyer {
-                    border-radius: 32px;
+                    border-radius: 48px;
                 }
                 
                 .event-cta {

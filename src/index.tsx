@@ -692,32 +692,13 @@ app.get('/', (c) => {
                 box-sizing: border-box;
             }
             
-            /* Date Pill - Floating in upper left */
+            /* Hide date pill and dots */
             .event-card > .event-date {
-                position: absolute;
-                top: 20px;
-                left: 20px;
-                padding: 8px 20px;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                border-radius: 100px;
-                font-size: 11px;
-                font-weight: 700;
-                letter-spacing: 2px;
-                color: #ffffff;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-                z-index: 150;
-                text-transform: uppercase;
-                white-space: nowrap;
+                display: none !important;
             }
             
-            /* Dots - Floating in upper right */
             .event-card > .event-indicators {
-                position: absolute;
-                top: 28px;
-                right: 20px;
-                z-index: 150;
-                display: flex;
-                gap: 10px;
+                display: none !important;
             }
             
             /* Image Wrapper - Takes up 75-80% of viewport */
@@ -1866,19 +1847,6 @@ app.get('/', (c) => {
                     width: 100vw;
                 }
                 
-                .event-card > .event-date {
-                    top: 16px;
-                    left: 16px;
-                    padding: 8px 18px;
-                    font-size: 10px;
-                    letter-spacing: 2px;
-                }
-
-                .event-card > .event-indicators {
-                    top: 22px;
-                    right: 16px;
-                }
-                
                 .event-flyer-wrapper {
                     height: 76vh;
                 }
@@ -2037,19 +2005,6 @@ app.get('/', (c) => {
                 /* Mobile 480px Event Cards - Ultra clean */
                 .event-card {
                     height: 88vh;
-                }
-                
-                .event-card > .event-date {
-                    top: 12px;
-                    left: 12px;
-                    padding: 7px 16px;
-                    font-size: 9px;
-                    letter-spacing: 1.8px;
-                }
-                
-                .event-card > .event-indicators {
-                    top: 18px;
-                    right: 12px;
                 }
                 
                 .event-flyer-wrapper {
@@ -2709,29 +2664,6 @@ app.get('/', (c) => {
                 /* Mobile 375px Event Cards - Compact */
                 .event-card {
                     height: 86vh;
-                }
-                
-                .event-card > .event-date {
-                    top: 10px;
-                    left: 10px;
-                    padding: 6px 14px;
-                    font-size: 8px;
-                    letter-spacing: 1.5px;
-                }
-                
-                .event-card > .event-indicators {
-                    top: 16px;
-                    right: 10px;
-                }
-                
-                .event-dot {
-                    width: 7px;
-                    height: 7px;
-                }
-                
-                .event-dot.active {
-                    width: 9px;
-                    height: 9px;
                 }
                 
                 .event-flyer-wrapper {

@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.6.0
+## 🔢 CURRENT VERSION: v1.6.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -50,14 +50,12 @@
 - **Smooth Fading**: All colors are light pastels that fade smoothly between events
 - **Entry/Exit Animation**: Background color gradually fades in when entering and out when leaving section
 
-### 4. Event Cards - Full-Screen Image Layout (v1.6.0)
-**Complete redesign with ultra-clean, image-focused layout:**
-- **Small gold date pill** floating in upper left corner (e.g., "NOV 26", "DEC 6")
-- **3 small indicator dots** floating in upper right corner for event navigation
+### 4. Event Cards - Full-Screen Image Layout (v1.6.1)
+**Ultra-minimalist, image-only layout:**
 - **Massive flyer image** taking up 75-80% of screen height, full width
 - **Gold CTA button** positioned near bottom of screen, full width
-- **No containers or borders** - pure full-screen experience
-- **Absolute positioning** - Date pill and dots float OVER the image
+- **No date pills, no dots, no decorations** - pure image focus
+- **No containers or borders** - clean full-screen experience
 - **Responsive breakpoints** - Optimized for iPhone 17 Pro Max down to iPhone SE
 - **Carousel support** - Event 2 has image slider functionality
 
@@ -242,7 +240,13 @@ webapp/
 
 ## 📝 Version History
 
-### v1.6.0 (Current)
+### v1.6.1 (Current)
+- **Removed date pills and indicator dots** - Pure minimalist image-only layout
+- Event cards now show only: massive image + gold CTA button
+- Cleaner, more focused visual experience
+- All mobile breakpoints updated to remove date/dot styling
+
+### v1.6.0
 - **MAJOR REBUILD**: Event cards completely redesigned with full-screen image layout
 - Small gold date pill floating in upper left corner
 - 3 indicator dots floating in upper right corner  

@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.7.4
+## 🔢 CURRENT VERSION: v1.7.5
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,17 @@ webapp/
 
 ## 📝 Version History
 
-### v1.7.4 (Current)
+### v1.7.5 (Current)
+- **NEW: Snap behavior for swipe-like card switching**
+- 15% threshold: Small swipes (15% into next zone) commit to full event change
+- Committed event tracking: Maintains current event until clear directional scroll
+- Three snap triggers:
+  - Forward snap at 15% into next zone
+  - Backward snap at 85% back into previous zone
+  - Full crossing at 50%+ into different zone
+- Result: Responsive, card-swipe feel while maintaining equal zone distribution
+
+### v1.7.4
 - **REAL FIX: Removed scroll-snap interference and all artificial delays**
 - Root causes identified:
   - CSS `scroll-snap-type: y proximity` was fighting manual zone calculations

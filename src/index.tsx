@@ -3933,7 +3933,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.7.4</div>
+        <div class="version-footer">v1.7.5</div>
     </body>
     </html>
   `)

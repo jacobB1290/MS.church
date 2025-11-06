@@ -19,9 +19,10 @@
   - Calendar integration (Apple & Google)
 
 ## URLs
-- **Development**: https://3000-iprrbc7u2mmhba4el56qt-0e616f0a.sandbox.novita.ai
+- **Cloudflare Development**: https://3000-iprrbc7u2mmhba4el56qt-0e616f0a.sandbox.novita.ai
+- **Vercel Production**: https://ms-church.vercel.app (synced with GitHub)
+- **GitHub Repository**: https://github.com/jacobB1290/MS.church
 - **Local**: http://localhost:3000
-- **GitHub**: (To be configured)
 
 ## Key Features Implemented
 

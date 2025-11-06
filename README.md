@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.15
+## 🔢 CURRENT VERSION: v1.9.16
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,19 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.15 (Current) - GIFT GALLERY LAYOUT FIX & BUTTON REPOSITIONING
+### v1.9.16 (Current) - SEE FLYER BUTTON REPOSITIONED & RESIZED
+- **Moved button to just below section heading**
+  - Repositioned from below form to below "Christmas Clothes Drive for Mothers" heading
+  - Appears as small centered button between heading and copy
+  - Better visual hierarchy and logical flow
+- **Made button much smaller**
+  - Desktop: `padding: 8px 24px`, `font-size: 11px`
+  - Mobile 480px: `padding: 7px 20px`, `font-size: 10px`
+  - Mobile 375px: `padding: 6px 16px`, `font-size: 9px`
+  - Lighter shadow for more subtle appearance
+- Result: Compact, unobtrusive button positioned logically below heading
+
+### v1.9.15 - GIFT GALLERY LAYOUT FIX & BUTTON REPOSITIONING
 - **Fixed gift gallery to always display in a row**
   - Changed from fixed widths to `flex: 1` with `max-width: 30%`
   - Images now scale responsively and never wrap

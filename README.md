@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.5
+## 🔢 CURRENT VERSION: v1.9.8
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,24 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.5 (Current) - REMOVED FORM CONTAINER
+### v1.9.8 (Current) - EVENT CARDS REDESIGN
+- **Event cards moved up**: Sticky wrapper top from 12vh → 5vh, height increased to 75vh
+- **Cards 15% smaller**: Max-width reduced from 450px → 382px for tighter layout
+- **Date pill overlaid on image**: Positioned absolute in top-left corner (16px from edge)
+- **Dots overlaid on image**: Positioned absolute in top-right corner (16px from edge)
+- **Rounded corners match pill**: Border-radius increased from 24px → 32px
+- **Cleaner layout**: No separate meta row, everything overlaid on image
+- Result: More compact, modern card design with floating date/dots overlay
+
+### v1.9.7 - PRECISE SCROLL POSITIONING FOR CLEAN NAV LOOK
+- Adjusted outreach-header sticky position to 28px (was 80px)
+- Section pills now hide perfectly behind navigation
+- Scroll offsets fine-tuned for all sections
+
+### v1.9.6 - DISABLED AUTO-ZOOM ON MOBILE
+- Viewport meta tag updated to prevent auto-zoom on input focus
+
+### v1.9.5 - REMOVED FORM CONTAINER
 - **REMOVED: White rounded container around JotForm**
   - Removed `.contact-card` div wrapper from HTML structure
   - JotForm now extends to edges of page instead of being boxed in

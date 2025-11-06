@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.9.5 - Form container removed, JotForm extends to edges -->
+    <!-- v1.9.8 - Event cards: moved up, 15% smaller, overlaid date/dots, rounded corners -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">

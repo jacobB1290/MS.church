@@ -570,39 +570,30 @@ app.get('/', (c) => {
                 width: 100%;
                 opacity: 0;
                 visibility: hidden;
-                transform: translateY(20px);
-                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-                            visibility 0s 0.5s;
+                transform: translateY(30px) scale(0.95);
+                transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                            transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                            visibility 0s 0.4s;
                 pointer-events: none;
             }
 
             .event-slide.active {
                 opacity: 1;
                 visibility: visible;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
                 pointer-events: auto;
                 position: relative;
-                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                            transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                             visibility 0s 0s;
             }
 
             .scroll-spacer {
-                height: 300vh; /* Reduced for tighter control */
+                height: 100vh;  /* Reduced from 250vh for responsive swipe-like feel */
                 pointer-events: none;
             }
             
-            /* Scroll snap for controlled event transitions */
-            @supports (scroll-snap-type: y mandatory) {
-                .outreach-scroll-container {
-                    scroll-snap-type: y proximity;
-                }
-                
-                .scroll-spacer {
-                    scroll-snap-align: start;
-                }
-            }
+            /* Scroll snap disabled - using manual zone calculation for precise control */
             
             /* Event Indicator Dots */
             .event-indicators {
@@ -673,156 +664,138 @@ app.get('/', (c) => {
                 50% { transform: translateY(-8px); }
             }
 
-            /* Event Cards - Full-screen Image Layout */
+            /* ========================================
+               EVENT CARDS - COMPLETE REBUILD
+               Full-screen image layout with floating elements
+               ======================================== */
+            
+            /* Main Event Card Container */
             .event-card {
-                background: transparent;
-                padding: 0;
-                margin: 0;
+                position: relative;
+                width: 100vw;
+                height: 90vh;
+                margin-left: calc(-50vw + 50%);
                 display: flex;
                 flex-direction: column;
-                gap: 24px;
-                height: 90vh;
-                max-height: none;
+                align-items: center;
+                justify-content: flex-start;
+                padding-top: 20px;
+                box-sizing: border-box;
             }
-
-            .event-flyer-wrapper {
-                position: relative;
-                flex: 1;
+            
+            /* Meta row with date and dots */
+            .event-meta-row {
                 width: 100%;
+                max-width: 500px;
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: space-between;
+                padding: 0 24px;
+                margin-bottom: 20px;
+                box-sizing: border-box;
             }
             
-            .event-header-mobile {
-                display: none;
-            }
-            
-            .event-header-content {
-                order: 2;
-                padding: 16px 35px 12px 35px;
-            }
-
-            .event-card > .event-date {
-                position: absolute;
-                top: 20px;
-                left: 20px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: 10px 24px;
-                background: rgba(212, 165, 116, 0.95);
-                border-radius: 100px;
-                font-size: 13px;
-                font-weight: 700;
-                letter-spacing: 2.5px;
-                color: #ffffff;
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-                backdrop-filter: blur(10px);
-                z-index: 20;
-                padding: 12px 35px;
+            /* Date pill styling */
+            .event-date {
+                padding: 8px 20px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: #fff;
-                border-radius: 0;
+                border-radius: 100px;
                 font-size: 11px;
                 font-weight: 700;
                 letter-spacing: 2px;
+                color: #ffffff;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
                 text-transform: uppercase;
-                box-shadow: none;
-                margin-bottom: 0;
-                width: 100%;
+                white-space: nowrap;
             }
-
-            .event-title {
-                font-family: 'Playfair Display', serif;
-                font-size: clamp(39px, 6.2vw, 51px);
-                color: #1a1a2e;
-                margin-bottom: 7px;
-                font-weight: 700;
-                line-height: 1.1;
-            }
-
-            .event-time {
-                font-size: 20px;
-                color: rgba(26, 26, 46, 0.65);
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                margin-bottom: 0;
-            }
-
-            .event-content {
+            
+            /* Event indicators (dots) */
+            .event-indicators {
                 display: flex;
-                flex-direction: column;
+                gap: 10px;
+            }
+            
+            /* Image Wrapper - Fixed 3:4 portrait aspect ratio, 10% smaller */
+            .event-flyer-wrapper {
+                position: relative;
+                width: 100%;
+                max-width: 450px;
+                aspect-ratio: 3/4;
+                display: flex;
                 align-items: center;
-                padding: 0;
-                gap: 0;
+                justify-content: center;
+                z-index: 10;
+                margin-bottom: 24px;
+                padding: 0 24px;
+                box-sizing: border-box;
             }
-
-            .event-content.flyer-left {
-                flex-direction: column;
-            }
-
-            .event-content.flyer-left .event-flyer-container {
-                order: 0;
-            }
-
-            .event-description {
-                display: none; /* Hide all description text and bullets */
-            }
-
-            .event-description p {
-                display: none;
-            }
-
-            .event-description ul {
-                display: none;
-            }
-
-            .event-description li {
-                display: none;
-            }
-
-            .event-description li::before {
-                display: none;
-            }
-
-            .event-card > .event-indicators {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                z-index: 20;
-            }
-
-            .event-flyer-wrapper .flyer-image,
-            .event-flyer-wrapper .placeholder-flyer,
-            .event-flyer-wrapper .carousel-container {
+            
+            /* Image styling - Enforces 3:4 aspect ratio */
+            .flyer-image {
                 width: 100%;
                 height: 100%;
-                max-height: none;
-                object-fit: contain;
+                object-fit: cover;
                 object-position: center;
-                border-radius: 16px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-                            0 8px 20px rgba(0, 0, 0, 0.08);
+                border-radius: 24px;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             }
-
-            .flyer-image {
-                display: block;
-            }
-
+            
             .placeholder-flyer {
+                width: 100%;
+                height: 100%;
                 background: rgba(255, 255, 255, 0.95);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 18px;
+                font-size: 16px;
                 color: rgba(26, 26, 46, 0.4);
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
+                border-radius: 24px;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            }
+            
+            /* CTA Button - Below image */
+            .event-cta {
+                position: relative;
+                width: 100%;
+                max-width: 800px;
+                padding: 0 24px;
+                margin-bottom: 24px;
+                z-index: 100;
+            }
+            
+            .event-cta .btn {
+                width: 100%;
+                padding: 20px 40px;
+                font-size: 15px;
+                font-weight: 700;
+                border-radius: 24px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: white;
+                box-shadow: 0 8px 24px rgba(200, 152, 96, 0.4);
+                transition: all 0.3s ease;
+            }
+            
+            .event-cta .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 12px 32px rgba(200, 152, 96, 0.5);
+            }
+            
+            /* Hide legacy elements */
+            .event-header-mobile,
+            .event-header-content,
+            .event-title,
+            .event-time,
+            .event-content,
+            .event-description {
+                display: none !important;
             }
 
-            /* Carousel Styles */
+            /* ========================================
+               CAROUSEL SUPPORT FOR EVENT 2
+               ======================================== */
             .carousel-container {
                 position: relative;
                 width: 100%;
@@ -862,7 +835,7 @@ app.get('/', (c) => {
                 transform: translateX(-50%);
                 display: flex;
                 gap: 12px;
-                z-index: 10;
+                z-index: 120;
             }
 
             .carousel-dot {
@@ -885,48 +858,33 @@ app.get('/', (c) => {
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                width: 40px;
-                height: 40px;
+                width: 48px;
+                height: 48px;
                 background: rgba(255, 255, 255, 0.9);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
-                font-size: 18px;
+                font-size: 22px;
                 color: #1a1a2e;
                 transition: all 0.3s ease;
-                z-index: 10;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 120;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
             }
 
             .carousel-arrow:hover {
                 background: rgba(255, 255, 255, 1);
                 transform: translateY(-50%) scale(1.1);
-                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             }
 
             .carousel-arrow.prev {
-                left: 20px;
+                left: 24px;
             }
 
             .carousel-arrow.next {
-                right: 20px;
-            }
-
-            .event-cta {
-                margin-top: auto;
-                padding: 0;
-                width: 100%;
-                box-sizing: border-box;
-            }
-            
-            .event-cta .btn {
-                width: 100%;
-                padding: 20px 48px;
-                font-size: 16px;
-                font-weight: 700;
-                border-radius: 100px;
+                right: 24px;
             }
             
             /* Lightbox for Flyer Full-Screen View */
@@ -1895,44 +1853,56 @@ app.get('/', (c) => {
                     margin-bottom: 16px;
                 }
 
+                /* Mobile 768px Event Cards - Clean layout */
                 .events-container,
                 .sticky-wrapper {
                     width: 100vw;
-                    padding: 0 16px;
+                    padding: 0;
                     box-sizing: border-box;
                 }
                 
                 .event-card {
                     height: 90vh;
-                    gap: 20px;
+                    margin-left: 0;
+                    width: 100vw;
+                    padding-top: 16px;
                 }
                 
-                .event-card > .event-date {
-                    top: 16px;
-                    left: 16px;
-                    padding: 8px 20px;
-                    font-size: 11px;
-                    letter-spacing: 2px;
+                .event-meta-row {
+                    max-width: 405px;
+                    padding: 0 20px;
+                    margin-bottom: 16px;
                 }
-
-                .event-card > .event-indicators {
-                    top: 16px;
-                    right: 16px;
+                
+                .event-date {
+                    padding: 7px 18px;
+                    font-size: 10px;
                 }
                 
                 .event-flyer-wrapper {
-                    flex: 1;
+                    max-width: 405px;
+                    padding: 0 20px;
+                    margin-bottom: 20px;
+                }
+                
+                .flyer-image {
+                    border-radius: 20px;
+                }
+                
+                .placeholder-flyer {
+                    border-radius: 20px;
                 }
                 
                 .event-cta {
-                    padding: 0;
-                    margin: 0;
+                    padding: 0 20px;
+                    margin-bottom: 20px;
+                    max-width: 405px;
                 }
                 
                 .event-cta .btn {
                     padding: 18px 32px;
                     font-size: 14px;
-                    width: 100%;
+                    border-radius: 20px;
                 }
 
                 .watch-card {
@@ -2075,94 +2045,47 @@ app.get('/', (c) => {
                     right: auto;
                 }
                 
-                /* Show event indicators on mobile */
-                .event-indicators {
-                    display: flex;
-                }
-                
-                /* Show scroll hint on mobile */
-                .scroll-hint {
-                    display: block;
-                }
-                
-                /* Mobile event card layout - streamlined vertical */
+                /* Mobile 480px Event Cards - Ultra clean */
                 .event-card {
-                    border-radius: 20px;
+                    height: 88vh;
+                    padding-top: 14px;
                 }
                 
-                .event-header {
-                    padding: 0;
-                    display: flex;
-                    flex-direction: column;
-                }
-                
-                .event-header-content {
-                    order: 2;
-                    padding: 16px 27px 12px 27px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 7px;
+                .event-meta-row {
+                    max-width: 360px;
+                    padding: 0 16px;
+                    margin-bottom: 14px;
                 }
                 
                 .event-date {
-                    order: 1;
-                    padding: 10px 27px;
-                    font-size: 10px;
-                    border-radius: 0;
-                    letter-spacing: 1.5px;
+                    padding: 6px 16px;
+                    font-size: 9px;
                 }
                 
-                .event-title {
-                    font-size: clamp(31px, 7.8vw, 43px);
-                    margin-bottom: 4px;
-                    line-height: 1.1;
-                }
-                
-                .event-time {
-                    font-size: 16px;
-                }
-                
-                .event-header-mobile {
-                    display: none;
-                }
-                
-                .event-flyer-mobile {
-                    display: none;
-                }
-                
-                /* Show large flyer in content on mobile */
-                .event-content {
-                    display: flex;
-                    flex-direction: column;
-                }
-                
-                .event-flyer-container {
-                    display: flex !important;
-                    padding: 16px 27px;
-                }
-                
-                .flyer-frame {
-                    padding: 10px;
-                    border-radius: 16px;
+                .event-flyer-wrapper {
+                    max-width: 360px;
+                    padding: 0 16px;
+                    margin-bottom: 16px;
                 }
                 
                 .flyer-image {
-                    height: 273px;
-                    object-fit: contain;
+                    border-radius: 18px;
                 }
                 
                 .placeholder-flyer {
-                    height: 273px !important;
-                    background: #f5f5f5 !important;
+                    border-radius: 18px;
                 }
                 
                 .event-cta {
-                    padding: 0 27px 23px 27px;
+                    padding: 0 16px;
+                    margin-bottom: 16px;
+                    max-width: 360px;
                 }
                 
                 .event-cta .btn {
-                    padding: 18px 35px;
-                    font-size: 14px;
+                    padding: 16px 32px;
+                    font-size: 13px;
+                    border-radius: 18px;
                 }
 
                 .brand-title {
@@ -2790,94 +2713,61 @@ app.get('/', (c) => {
                     line-height: 1.3;
                 }
                 
-                /* Outreach Section */
-                .outreach-header {
-                    margin-bottom: 14px;
-                }
-                
-                .outreach-header .section-heading {
-                    margin-bottom: 4px;
-                }
-                
-                .outreach-header .section-eyebrow {
-                    margin-bottom: 5px;
-                }
-                
-                .sticky-wrapper {
-                    height: auto;
-                    min-height: 45vh;
-                    top: 28vh;
-                    padding-bottom: 60px;
-                }
-                
-                .scroll-spacer {
-                    height: 140vh;
-                }
-                
-                /* Event Cards - Smaller */
+                /* Mobile 375px Event Cards - Compact */
                 .event-card {
-                    border-radius: 16px;
+                    height: 86vh;
+                    padding-top: 12px;
                 }
                 
-                .event-header-content {
-                    padding: 10px 15px 7px 15px;
+                .event-meta-row {
+                    max-width: 324px;
+                    padding: 0 12px;
+                    margin-bottom: 12px;
                 }
                 
                 .event-date {
-                    padding: 7px 15px;
+                    padding: 6px 14px;
                     font-size: 8px;
-                    letter-spacing: 0.9px;
-                }
-                
-                .event-title {
-                    font-size: clamp(20px, 5.8vw, 26px);
-                    margin-bottom: 3px;
-                    line-height: 1.05;
-                }
-                
-                .event-time {
-                    font-size: 11px;
-                }
-                
-                .event-flyer-container {
-                    padding: 10px 15px;
-                }
-                
-                .flyer-frame {
-                    padding: 6px;
-                    border-radius: 10px;
-                }
-                
-                .flyer-image {
-                    height: 280px;
-                }
-                
-                .placeholder-flyer {
-                    height: 280px !important;
-                    font-size: 11px;
-                }
-                
-                .event-cta {
-                    padding: 0 15px 14px 15px;
-                }
-                
-                .event-cta .btn {
-                    padding: 13px 24px;
-                    font-size: 11px;
                 }
                 
                 .event-indicators {
-                    bottom: 30px;
+                    gap: 8px;
                 }
                 
                 .event-dot {
-                    width: 6px;
-                    height: 6px;
+                    width: 7px;
+                    height: 7px;
                 }
                 
                 .event-dot.active {
-                    width: 8px;
-                    height: 8px;
+                    width: 9px;
+                    height: 9px;
+                }
+                
+                .event-flyer-wrapper {
+                    max-width: 324px;
+                    padding: 0 12px;
+                    margin-bottom: 14px;
+                }
+                
+                .flyer-image {
+                    border-radius: 16px;
+                }
+                
+                .placeholder-flyer {
+                    border-radius: 16px;
+                }
+                
+                .event-cta {
+                    padding: 0 12px;
+                    margin-bottom: 14px;
+                    max-width: 324px;
+                }
+                
+                .event-cta .btn {
+                    padding: 14px 28px;
+                    font-size: 12px;
+                    border-radius: 16px;
                 }
                 
                 .scroll-hint {
@@ -3155,11 +3045,13 @@ app.get('/', (c) => {
                                 <!-- Event 1: Community Thanksgiving Dinner -->
                                 <div class="event-slide active" data-event="1">
                                     <div class="event-card">
-                                        <span class="event-date">NOV 26</span>
-                                        <div class="event-indicators">
-                                            <div class="event-dot active" data-dot="1"></div>
-                                            <div class="event-dot" data-dot="2"></div>
-                                            <div class="event-dot" data-dot="3"></div>
+                                        <div class="event-meta-row">
+                                            <span class="event-date">NOV 26</span>
+                                            <div class="event-indicators">
+                                                <div class="event-dot active" data-dot="1"></div>
+                                                <div class="event-dot" data-dot="2"></div>
+                                                <div class="event-dot" data-dot="3"></div>
+                                            </div>
                                         </div>
                                         <div class="event-flyer-wrapper">
                                             <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
@@ -3173,32 +3065,17 @@ app.get('/', (c) => {
                                 <!-- Event 2: Christmas Clothes Drive -->
                                 <div class="event-slide" data-event="2" id="event-2">
                                     <div class="event-card">
-                                        <span class="event-date">DEC 6</span>
-                                        <div class="event-indicators">
-                                            <div class="event-dot active" data-dot="1"></div>
-                                            <div class="event-dot" data-dot="2"></div>
-                                            <div class="event-dot" data-dot="3"></div>
+                                        <div class="event-meta-row">
+                                            <span class="event-date">DEC 6</span>
+                                            <div class="event-indicators">
+                                                <div class="event-dot active" data-dot="1"></div>
+                                                <div class="event-dot" data-dot="2"></div>
+                                                <div class="event-dot" data-dot="3"></div>
+                                            </div>
                                         </div>
                                         <div class="event-flyer-wrapper">
-                                            <div class="carousel-container">
-                                                <div class="carousel-arrow prev" onclick="moveCarousel('event2', -1)">‹</div>
-                                                <div class="carousel-arrow next" onclick="moveCarousel('event2', 1)">›</div>
-                                                <div class="carousel-slides" id="event2-carousel">
-                                                    <!-- Slide 1: Placeholder Flyer -->
-                                                    <div class="carousel-slide">
-                                                        <div class="placeholder-flyer">
-                                                            Flyer Coming Soon
-                                                        </div>
-                                                    </div>
-                                                    <!-- Slide 2: Community Service Image -->
-                                                    <div class="carousel-slide">
-                                                        <img src="/static/community-service-1.jpg" alt="Community Service Day" class="flyer-image">
-                                                    </div>
-                                                </div>
-                                                <div class="carousel-controls">
-                                                    <div class="carousel-dot active" onclick="goToSlide('event2', 0)"></div>
-                                                    <div class="carousel-dot" onclick="goToSlide('event2', 1)"></div>
-                                                </div>
+                                            <div class="placeholder-flyer">
+                                                Flyer Coming Soon
                                             </div>
                                         </div>
                                         <div class="event-cta">
@@ -3210,11 +3087,13 @@ app.get('/', (c) => {
                                 <!-- Event 3: Christmas Eve Candlelight Service -->
                                 <div class="event-slide" data-event="3">
                                     <div class="event-card">
-                                        <span class="event-date">DEC 24</span>
-                                        <div class="event-indicators">
-                                            <div class="event-dot active" data-dot="1"></div>
-                                            <div class="event-dot" data-dot="2"></div>
-                                            <div class="event-dot" data-dot="3"></div>
+                                        <div class="event-meta-row">
+                                            <span class="event-date">DEC 24</span>
+                                            <div class="event-indicators">
+                                                <div class="event-dot active" data-dot="1"></div>
+                                                <div class="event-dot" data-dot="2"></div>
+                                                <div class="event-dot" data-dot="3"></div>
+                                            </div>
                                         </div>
                                         <div class="event-flyer-wrapper">
                                             <div class="placeholder-flyer">
@@ -3432,7 +3311,7 @@ app.get('/', (c) => {
                 const navLinks = document.querySelectorAll('nav a[href^="#"]');
                 
                 // Mobile nav compression on scroll
-                let lastScrollY = 0;
+                let lastNavScrollY = 0;
                 let scrollThreshold = 50;
                 
                 function handleMobileNav() {
@@ -3447,7 +3326,7 @@ app.get('/', (c) => {
                         // Remove class on desktop
                         navShell.classList.remove('scrolled-mobile');
                     }
-                    lastScrollY = window.scrollY;
+                    lastNavScrollY = window.scrollY;
                 }
                 
                 let currentEventIndex = 0;
@@ -4047,6 +3926,8 @@ app.get('/', (c) => {
                 function updateCarousel(carouselId) {
                     const state = carouselStates[carouselId];
                     const carousel = document.getElementById(carouselId + '-carousel');
+                    if (!carousel || !carousel.parentElement) return;
+                    
                     const dots = carousel.parentElement.querySelectorAll('.carousel-dot');
                     
                     // Update slides position
@@ -4314,5 +4195,6 @@ app.get('/form', (c) => {
     </html>
   `)
 })
+
 
 export default app

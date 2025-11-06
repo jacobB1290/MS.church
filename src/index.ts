@@ -2310,7 +2310,7 @@ app.get('/', (c) => {
                 }
 
                 .scroll-spacer {
-                    height: 180vh;
+                    height: 120vh;
                 }
                 
                 .events-container {

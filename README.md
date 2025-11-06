@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.16
+## 🔢 CURRENT VERSION: v1.9.17
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,23 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.16 (Current) - SEE FLYER BUTTON REPOSITIONED & RESIZED
+### v1.9.17 (Current) - RESTORED ORIGINAL CONTACT SECTION LAYOUT
+- **Removed overlay styling from form**
+  - Removed `contact-container` wrapper div
+  - Restored `jotform-container` to original simple styling
+  - No more absolute positioning, shadows, or borders
+  - Form flows naturally in document flow
+- **Eliminated gap between address and form**
+  - Removed `position: relative` from container
+  - Form appears directly below address with no spacing
+  - Clean, seamless integration with page layout
+- **Simplified structure**
+  - Back to original transparent background
+  - Full width form container
+  - No overlay effects
+- Result: Clean, simple form layout with no unnecessary gaps or overlays
+
+### v1.9.16 - SEE FLYER BUTTON REPOSITIONED & RESIZED
 - **Moved button to just below section heading**
   - Repositioned from below form to below "Christmas Clothes Drive for Mothers" heading
   - Appears as small centered button between heading and copy

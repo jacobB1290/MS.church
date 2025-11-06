@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.6.1
+## 🔢 CURRENT VERSION: v1.6.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -50,12 +50,13 @@
 - **Smooth Fading**: All colors are light pastels that fade smoothly between events
 - **Entry/Exit Animation**: Background color gradually fades in when entering and out when leaving section
 
-### 4. Event Cards - Full-Screen Image Layout (v1.6.1)
-**Ultra-minimalist, image-only layout:**
-- **Massive flyer image** taking up 75-80% of screen height, full width
-- **Gold CTA button** positioned near bottom of screen, full width
+### 4. Event Cards - Clean Image Layout (v1.6.2)
+**Ultra-minimalist, refined layout:**
+- **Flyer image** at ~65% viewport height with elegant rounded corners (24px desktop, 16-20px mobile)
+- **Matching rounded gold CTA button** (24px border-radius) positioned below image
+- **Subtle shadow effects** - Soft shadows on both image and button for depth
 - **No date pills, no dots, no decorations** - pure image focus
-- **No containers or borders** - clean full-screen experience
+- **Centered, contained design** - Max-width 800px for optimal viewing
 - **Responsive breakpoints** - Optimized for iPhone 17 Pro Max down to iPhone SE
 - **Carousel support** - Event 2 has image slider functionality
 
@@ -240,7 +241,15 @@ webapp/
 
 ## 📝 Version History
 
-### v1.6.1 (Current)
+### v1.6.2 (Current)
+- **Refined image sizing** - Reduced from full-screen to ~65vh for better balance
+- **Added matching rounded corners** - 24px border-radius on desktop, 16-20px on mobile
+- **Updated button styling** - Matching 24px border-radius to complement image
+- **Subtle shadow effects** - Added soft shadows for depth and polish
+- **Centered, contained layout** - Max-width 800px for optimal presentation
+- All mobile breakpoints updated with proper sizing and corner radii
+
+### v1.6.1
 - **Removed date pills and indicator dots** - Pure minimalist image-only layout
 - Event cards now show only: massive image + gold CTA button
 - Cleaner, more focused visual experience

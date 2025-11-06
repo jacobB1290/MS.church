@@ -701,30 +701,34 @@ app.get('/', (c) => {
                 display: none !important;
             }
             
-            /* Image Wrapper - Takes up 75-80% of viewport */
+            /* Image Wrapper - Takes up ~65% of viewport with padding */
             .event-flyer-wrapper {
-                position: absolute;
-                top: 0;
-                left: 0;
+                position: relative;
                 width: 100%;
-                height: 78vh;
+                max-width: 800px;
+                height: auto;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 z-index: 10;
+                margin-bottom: 24px;
+                padding: 0 24px;
             }
             
             /* Image styling */
             .flyer-image {
                 width: 100%;
-                height: 100%;
+                height: auto;
+                max-height: 65vh;
                 object-fit: contain;
                 object-position: center;
+                border-radius: 24px;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             }
             
             .placeholder-flyer {
                 width: 100%;
-                height: 100%;
+                height: 65vh;
                 background: rgba(255, 255, 255, 0.95);
                 display: flex;
                 align-items: center;
@@ -734,13 +738,15 @@ app.get('/', (c) => {
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
+                border-radius: 24px;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             }
             
-            /* CTA Button - At bottom */
+            /* CTA Button - Below image */
             .event-cta {
                 position: relative;
                 width: 100%;
-                max-width: 600px;
+                max-width: 800px;
                 padding: 0 24px;
                 margin-bottom: 24px;
                 z-index: 100;
@@ -751,7 +757,7 @@ app.get('/', (c) => {
                 padding: 20px 40px;
                 font-size: 15px;
                 font-weight: 700;
-                border-radius: 100px;
+                border-radius: 24px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: white;
                 box-shadow: 0 8px 24px rgba(200, 152, 96, 0.4);
@@ -1848,18 +1854,31 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    height: 76vh;
+                    max-width: 90%;
+                    padding: 0 20px;
+                    margin-bottom: 20px;
+                }
+                
+                .flyer-image {
+                    max-height: 60vh;
+                    border-radius: 20px;
+                }
+                
+                .placeholder-flyer {
+                    height: 60vh;
+                    border-radius: 20px;
                 }
                 
                 .event-cta {
                     padding: 0 20px;
                     margin-bottom: 20px;
-                    max-width: 100%;
+                    max-width: 90%;
                 }
                 
                 .event-cta .btn {
                     padding: 18px 32px;
                     font-size: 14px;
+                    border-radius: 20px;
                 }
 
                 .watch-card {
@@ -2008,17 +2027,31 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    height: 74vh;
+                    max-width: 92%;
+                    padding: 0 16px;
+                    margin-bottom: 16px;
+                }
+                
+                .flyer-image {
+                    max-height: 58vh;
+                    border-radius: 18px;
+                }
+                
+                .placeholder-flyer {
+                    height: 58vh;
+                    border-radius: 18px;
                 }
                 
                 .event-cta {
                     padding: 0 16px;
                     margin-bottom: 16px;
+                    max-width: 92%;
                 }
                 
                 .event-cta .btn {
                     padding: 16px 32px;
                     font-size: 13px;
+                    border-radius: 18px;
                 }
                 
                 /* Carousel adjustments */
@@ -2667,17 +2700,31 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    height: 72vh;
+                    max-width: 94%;
+                    padding: 0 12px;
+                    margin-bottom: 14px;
+                }
+                
+                .flyer-image {
+                    max-height: 56vh;
+                    border-radius: 16px;
+                }
+                
+                .placeholder-flyer {
+                    height: 56vh;
+                    border-radius: 16px;
                 }
                 
                 .event-cta {
                     padding: 0 12px;
                     margin-bottom: 14px;
+                    max-width: 94%;
                 }
                 
                 .event-cta .btn {
                     padding: 14px 28px;
                     font-size: 12px;
+                    border-radius: 16px;
                 }
                 
                 /* Carousel adjustments */

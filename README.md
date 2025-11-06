@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.9
+## 🔢 CURRENT VERSION: v1.9.10
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,15 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.9 (Current) - EVENT CARDS SIZE & POSITION REFINEMENT
+### v1.9.10 (Current) - MOBILE SPACING FIX
+- **Fixed excessive spacing between outreach and watch sections on mobile**
+  - Reduced `.scroll-spacer` height from 180vh → 120vh on mobile (480px breakpoint)
+  - Eliminated large white gap that appeared after event cards
+  - Maintains smooth scroll-based event switching functionality
+  - Improves mobile UX with tighter, more cohesive section flow
+- Result: Watch section now appears immediately after outreach with proper spacing
+
+### v1.9.9 - EVENT CARDS SIZE & POSITION REFINEMENT
 - **Cards moved much higher**: Sticky wrapper top from 5vh → 0vh, cards now at very top
 - **Cards 15% LARGER**: Max-width increased from 382px → 517px (450px × 1.15)
 - **Extra rounded corners**: Border-radius increased from 32px → 48px to better match pill aesthetic

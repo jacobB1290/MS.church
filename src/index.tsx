@@ -3335,6 +3335,10 @@ app.get('/', (c) => {
                 // Track if we're in the outreach section
                 let inOutreachSection = false;
                 
+                // Snap behavior - small swipes register as full event changes
+                let committedEventIndex = 0; // The event we've committed to showing
+                const SNAP_THRESHOLD = 0.15; // 15% of a zone triggers snap to next event
+                
                 // Update active nav link
                 function updateActiveNavLink() {
                     let currentSection = '';
@@ -3403,18 +3407,34 @@ app.get('/', (c) => {
                             }
                         }
                         
-                        // SIMPLE, CLEAN zone calculation - no artificial delays
-                        // Each event gets EXACTLY 1/3 of scroll space
+                        // SNAP BEHAVIOR - small swipes register as full event changes
+                        // Each event gets EXACTLY 1/3 of scroll space (33.3%)
                         const zoneSize = 1.0 / totalEvents; // 0.333 for 3 events
                         
-                        // Calculate target event based purely on scroll position
-                        // Use simple division - let Math.floor handle boundaries naturally
-                        let targetEventIndex = Math.floor(scrollProgress / zoneSize);
+                        // Calculate which zone we're in and position within that zone
+                        const currentZone = Math.floor(scrollProgress / zoneSize);
+                        const positionInZone = (scrollProgress % zoneSize) / zoneSize; // 0 to 1 within zone
                         
-                        // Clamp to valid range [0, totalEvents-1]
-                        targetEventIndex = Math.min(Math.max(0, targetEventIndex), totalEvents - 1);
+                        // Determine target event with snap behavior
+                        let targetEventIndex = committedEventIndex;
                         
-                        // Update immediately when zone changes - no locks, no delays, no thresholds
+                        // Forward snap: If we're 15% into the NEXT zone, commit to it
+                        if (currentZone > committedEventIndex && positionInZone >= SNAP_THRESHOLD) {
+                            targetEventIndex = Math.min(currentZone, totalEvents - 1);
+                            committedEventIndex = targetEventIndex;
+                        }
+                        // Backward snap: If we're past 85% back into PREVIOUS zone, commit to it
+                        else if (currentZone < committedEventIndex && positionInZone <= (1 - SNAP_THRESHOLD)) {
+                            targetEventIndex = Math.max(currentZone, 0);
+                            committedEventIndex = targetEventIndex;
+                        }
+                        // Full zone crossing: If we're deep into a different zone, commit immediately
+                        else if (currentZone !== committedEventIndex && positionInZone >= 0.5) {
+                            targetEventIndex = Math.min(Math.max(0, currentZone), totalEvents - 1);
+                            committedEventIndex = targetEventIndex;
+                        }
+                        
+                        // Update event display if target changed
                         if (targetEventIndex !== currentEventIndex) {
                             currentEventIndex = targetEventIndex;
                             updateActiveEvent(currentEventIndex, false);

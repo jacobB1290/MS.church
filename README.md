@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.8.0
+## 🔢 CURRENT VERSION: v1.9.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,23 @@ webapp/
 
 ## 📝 Version History
 
-### v1.8.0 (Current) - PROFESSIONAL DISCRETE NAVIGATION
+### v1.9.0 (Current) - COMPLETE REBUILD WITH ROBUST ZONE LOGIC
+- **SCRAPPED AND REBUILT: All scroll logic rewritten from scratch**
+- Previous approach issues:
+  - Sticky header adjustments skewing zone calculations
+  - Debouncing creating timing race conditions
+  - Complex state tracking with locks causing unpredictable behavior
+  - Events 2 & 3 not showing consistently
+- New bulletproof approach:
+  - **requestAnimationFrame**: Smooth 60fps updates, no janky debouncing
+  - **Pure zone math**: Clean if/else logic (0-33%, 33-66%, 66-100%)
+  - **No adjustments**: Raw scroll progress directly maps to zones
+  - **Simple state**: Only `currentEventIndex` and `requestId`
+  - **Zero complexity**: ~50 lines of crystal-clear code
+- Result: All 3 events show reliably, predictably, every time
+- Professional-grade: Production-ready scroll implementation
+
+### v1.8.0 - PROFESSIONAL DISCRETE NAVIGATION
 - **CRITICAL BUG FIX: Removed direction change requirement**
 - Previous bug: Only triggered on direction change
   - First scroll → Event 1 ✅

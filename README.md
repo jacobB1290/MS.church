@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.11
+## 🔢 CURRENT VERSION: v1.9.12
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,15 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.11 (Current) - WATCH SECTION OVERLAP FIX
+### v1.9.12 (Current) - INCREASED WATCH SECTION SPACING
+- **Increased watch section top margin for more natural spacing**
+  - Updated `margin-top: 80px → 120px` at 480px breakpoint
+  - Updated `margin-top: 60px → 100px` at 375px breakpoint
+  - Creates more comfortable breathing room between outreach and watch sections
+  - Spacing now feels natural and balanced on mobile
+- Result: More generous, natural-feeling spacing between sections
+
+### v1.9.11 - WATCH SECTION OVERLAP FIX
 - **Fixed watch section overlapping with outreach section on mobile**
   - Added `margin-top: 80px` to `.watch` section at 480px breakpoint
   - Added `margin-top: 60px` to `.watch` section at 375px breakpoint

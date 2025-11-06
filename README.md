@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.7.9
+## 🔢 CURRENT VERSION: v1.8.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,19 @@ webapp/
 
 ## 📝 Version History
 
-### v1.7.9 (Current)
+### v1.8.0 (Current) - PROFESSIONAL DISCRETE NAVIGATION
+- **CRITICAL BUG FIX: Removed direction change requirement**
+- Previous bug: Only triggered on direction change
+  - First scroll → Event 1 ✅
+  - Continue scrolling → STUCK (no direction change) ❌
+  - Result: Skipped cards 2 & 3
+- Fix: Trigger on ANY scroll >20px while not locked
+- Increased lock: 400ms → 600ms for stability
+- Increased threshold: 5px → 20px for deliberate scrolls
+- Behavior: Each scroll gesture = exactly one card advance
+- Professional level: Predictable, stable, simple
+
+### v1.7.9
 - **DISCRETE CARD NAVIGATION: One swipe = exactly one card**
 - Replaced position-based logic with direction detection
 - Small scroll (>5px) = next card

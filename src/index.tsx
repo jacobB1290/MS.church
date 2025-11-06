@@ -3418,39 +3418,43 @@ app.get('/', (c) => {
                             }
                         }
                         
-                        // Snappier event boundaries with clear separation
-                        let newEventIndex;
-                        if (scrollProgress < 0.33) {
-                            newEventIndex = 0;
-                        } else if (scrollProgress < 0.66) {
-                            newEventIndex = 1;
-                        } else {
-                            newEventIndex = 2;
+                        // TRULY EQUAL zones - each event gets exactly 1/3 of scroll space
+                        // Use midpoint-based switching instead of boundary + hysteresis
+                        const zoneSize = 1.0 / totalEvents; // 0.333 for 3 events
+                        
+                        // Calculate which zone the scroll position falls into
+                        // Using floor ensures clean zone boundaries
+                        const targetZone = Math.floor(scrollProgress / zoneSize);
+                        
+                        // Clamp to valid range [0, totalEvents-1]
+                        const newEventIndex = Math.min(Math.max(0, targetZone), totalEvents - 1);
+                        
+                        // Add small hysteresis ONLY at exact boundaries to prevent flickering
+                        // Only switch if we're clearly in a different zone (not right at boundary)
+                        const boundaryThreshold = 0.02; // 2% buffer at boundaries
+                        const positionInZone = (scrollProgress % zoneSize) / zoneSize; // 0 to 1 within current zone
+                        
+                        // Prevent switching if we're at the very edge of a zone (within 2% of boundary)
+                        let shouldSwitch = true;
+                        if (newEventIndex !== currentEventIndex) {
+                            // If moving forward and we're at the very start of new zone
+                            if (newEventIndex > currentEventIndex && positionInZone < boundaryThreshold) {
+                                shouldSwitch = false;
+                            }
+                            // If moving backward and we're at the very end of new zone
+                            else if (newEventIndex < currentEventIndex && positionInZone > (1 - boundaryThreshold)) {
+                                shouldSwitch = false;
+                            }
                         }
                         
-                        // Snappy threshold - smaller for quick transitions
-                        const threshold = 0.05;
-                        if (newEventIndex > currentEventIndex) {
-                            // Moving forward
-                            const boundary = newEventIndex === 1 ? 0.33 : 0.66;
-                            if (scrollProgress < boundary + threshold) {
-                                newEventIndex = currentEventIndex;
-                            }
-                        } else if (newEventIndex < currentEventIndex) {
-                            // Moving backward
-                            const boundary = currentEventIndex === 1 ? 0.33 : 0.66;
-                            if (scrollProgress > boundary - threshold) {
-                                newEventIndex = currentEventIndex;
-                            }
-                        }
+                        let finalEventIndex = shouldSwitch ? newEventIndex : currentEventIndex;
                         
-                        const clampedIndex = Math.max(0, Math.min(totalEvents - 1, newEventIndex));
-                        
-                        // Update event with reduced lock duration for snappier feel
-                        if (clampedIndex !== currentEventIndex) {
+                        // Update event only if changed
+                        if (finalEventIndex !== currentEventIndex) {
                             const now = Date.now();
-                            if (!isScrollLocked || (now - lastEventChangeTime) > 300) {
-                                currentEventIndex = clampedIndex;
+                            // Reduced lock for responsive feel but prevent rapid switching
+                            if (!isScrollLocked || (now - lastEventChangeTime) > 250) {
+                                currentEventIndex = finalEventIndex;
                                 updateActiveEvent(currentEventIndex, false);
                                 
                                 isScrollLocked = true;
@@ -3459,7 +3463,7 @@ app.get('/', (c) => {
                                 clearTimeout(scrollLockTimer);
                                 scrollLockTimer = setTimeout(() => {
                                     isScrollLocked = false;
-                                }, 300);
+                                }, 250);
                             }
                         }
                     } else {

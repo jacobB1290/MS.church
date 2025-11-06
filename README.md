@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.12
+## 🔢 CURRENT VERSION: v1.9.13
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,23 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.12 (Current) - INCREASED WATCH SECTION SPACING
+### v1.9.13 (Current) - DATE PILL POSITIONING & INDICATOR DOTS FIX
+- **Adjusted date pill positioning**
+  - Desktop: Moved from `top: 16px, left: 40px` to `top: 12px, left: 24px`
+  - Mobile 480px: `top: 10px, left: 20px`
+  - Mobile 375px: `top: 8px, left: 16px`
+  - Date pill now positioned further into the image corner
+- **Fixed indicator dots functionality**
+  - Dots in header now properly highlight gold based on active event
+  - Fixed selector to only target header dots: `.heading-wrapper .event-dot`
+  - Overlaid dots on images sync with active event state
+  - All 3 dots update correctly when scrolling or swiping
+- **Image rounded corners confirmed**
+  - All event images already have 48px border-radius matching pill aesthetic
+  - Corners properly rounded on all events including Event 1
+- Result: Date pill better positioned in image corner, indicator dots work perfectly
+
+### v1.9.12 - INCREASED WATCH SECTION SPACING
 - **Increased watch section top margin for more natural spacing**
   - Updated `margin-top: 80px → 120px` at 480px breakpoint
   - Updated `margin-top: 60px → 100px` at 375px breakpoint

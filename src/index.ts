@@ -1199,8 +1199,54 @@ app.get('/', (c) => {
                 margin: 0 auto;
             }
             
+            /* Gift Gallery - Images in a row */
+            .gift-gallery {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 20px;
+                margin: 32px 0;
+                flex-wrap: wrap;
+            }
+            
+            .gift-image {
+                width: 200px;
+                height: 200px;
+                object-fit: cover;
+                border-radius: 16px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .gift-image:hover {
+                transform: translateY(-4px) scale(1.05);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            }
+            
+            /* See Flyer Button - Smaller */
+            .btn-see-flyer {
+                display: inline-block;
+                padding: 12px 32px;
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: white;
+                border-radius: 100px;
+                box-shadow: 0 8px 24px rgba(200, 152, 96, 0.3);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                margin-top: 20px;
+            }
+            
+            .btn-see-flyer:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 12px 32px rgba(200, 152, 96, 0.4);
+            }
+            
             .contact-container {
                 width: 100%;
+                position: relative;
             }
             
             .contact-card {
@@ -1407,19 +1453,25 @@ app.get('/', (c) => {
                 cursor: pointer;
             }
             
-            /* JotForm Container Styles */
+            /* JotForm Container Styles - Overlaid in upper right */
             .jotform-container {
-                width: 100%;
-                min-height: 800px;
-                background: transparent;
-                border-radius: 20px;
+                position: absolute;
+                top: -80px;
+                right: 40px;
+                width: 450px;
+                max-width: 90vw;
+                background: rgba(255, 255, 255, 0.98);
+                border-radius: 24px;
                 overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+                border: 2px solid rgba(200, 152, 96, 0.3);
+                z-index: 50;
             }
             
             .jotform-container iframe {
                 width: 100%;
                 border: none;
-                min-height: 800px;
+                min-height: 700px;
             }
             
             /* Form Success State */
@@ -2461,6 +2513,33 @@ app.get('/', (c) => {
                     gap: 32px;
                 }
                 
+                /* Gift Gallery Mobile */
+                .gift-gallery {
+                    gap: 12px;
+                    margin: 24px 0;
+                }
+                
+                .gift-image {
+                    width: 140px;
+                    height: 140px;
+                    border-radius: 12px;
+                }
+                
+                /* JotForm Mobile - Stack below content */
+                .jotform-container {
+                    position: relative;
+                    top: 0;
+                    right: 0;
+                    width: 100%;
+                    max-width: 100%;
+                    margin-top: 40px;
+                }
+                
+                .btn-see-flyer {
+                    padding: 10px 28px;
+                    font-size: 12px;
+                }
+                
                 .contact-card {
                     padding: 32px 24px;
                     border-radius: 28px;
@@ -2829,6 +2908,23 @@ app.get('/', (c) => {
                     margin-bottom: -4px;
                 }
                 
+                /* Gift Gallery 375px */
+                .gift-gallery {
+                    gap: 8px;
+                    margin: 16px 0;
+                }
+                
+                .gift-image {
+                    width: 100px;
+                    height: 100px;
+                    border-radius: 8px;
+                }
+                
+                .btn-see-flyer {
+                    padding: 8px 20px;
+                    font-size: 10px;
+                }
+                
                 .contact-card {
                     padding: 16px 14px;
                     border-radius: 18px;
@@ -3137,13 +3233,18 @@ app.get('/', (c) => {
                         <span class="section-eyebrow">Christmas Outreach</span>
                         <h2 class="section-heading">Christmas Clothes Drive for Mothers</h2>
                         <p class="section-lead form-message">
-                            <strong>What you'll get:</strong><br>
-                            👟 Adults will receive a pair of shoes of their choosing<br>
-                            🧸 Children will receive a toy/item of their choosing<br><br>
-                            After you fill out the form, we will get to work putting your free gift together based on what you entered. We will send you a message with all the details!
+                            Based on what you fill out on the form, our team will pack you a personal gift for you and your children. What you can expect is shoes for adults and an item related to school and outside fun for children. After the form is submitted, you'll receive a text message with more details.
                         </p>
+                        
+                        <!-- Image Gallery -->
+                        <div class="gift-gallery">
+                            <img src="https://page.gensparksite.com/v1/base64_upload/5c1a4fbfd958bc5aeb993b48c261bc94" alt="Shoes display" class="gift-image">
+                            <img src="https://page.gensparksite.com/v1/base64_upload/8baf94a4a4ec4b77e4f2d6f455046d00" alt="Backpacks" class="gift-image">
+                            <img src="https://page.gensparksite.com/v1/base64_upload/fdac7f790dc8cbb99902308e71533891" alt="School supplies" class="gift-image">
+                        </div>
+                        
                         <address>3080 N Wildwood St, Boise, Idaho</address>
-                        <a href="#event-2" class="btn btn-secondary btn-more-info">More Info</a>
+                        <a href="#event-2" class="btn btn-secondary btn-see-flyer">See Flyer</a>
                     </div>
                     <div class="contact-container">
                         <div class="jotform-container">

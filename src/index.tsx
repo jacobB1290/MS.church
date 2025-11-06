@@ -3372,22 +3372,21 @@ app.get('/', (c) => {
                     // Update active nav link
                     updateActiveNavLink();
                     
-                    // Check if we're in the outreach section
-                    if (outreachRect.top <= window.innerHeight * 0.3 && spacerRect.bottom > window.innerHeight * 0.7) {
+                    // Check if we're in the outreach section - IMMEDIATE entry, no dead zone
+                    // Enter as soon as section reaches top 50% of viewport
+                    if (outreachRect.top <= window.innerHeight * 0.5 && spacerRect.bottom > 0) {
                         // Just entering the section
                         if (!inOutreachSection) {
                             inOutreachSection = true;
-                            // Small delay to ensure CSS transition applies smoothly
-                            requestAnimationFrame(() => {
-                                requestAnimationFrame(() => {
-                                    updateActiveEvent(currentEventIndex, false);
-                                });
-                            });
+                            // Initialize committed event immediately
+                            committedEventIndex = 0;
+                            updateActiveEvent(0, false);
                         }
                         
-                        // Calculate scroll progress through the spacer
-                        const spacerTop = spacerRect.top - window.innerHeight * 0.35;
-                        const spacerHeight = spacerRect.height - window.innerHeight * 0.5;
+                        // Calculate scroll progress - INSTANT START, no offsets or delays
+                        // As soon as section is in view, scrollProgress starts at 0
+                        const spacerTop = spacerRect.top;
+                        const spacerHeight = spacerRect.height;
                         const scrollProgress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
                         
                         // Fade out header after scrolling past last event (90%+)
@@ -3443,24 +3442,23 @@ app.get('/', (c) => {
                         // Outside the outreach section - reset to default background
                         if (inOutreachSection) {
                             inOutreachSection = false;
-                            // Ensure smooth fade out by using requestAnimationFrame
-                            requestAnimationFrame(() => {
-                                resetBackground();
-                            });
+                            resetBackground();
                         }
                         
-                        // Still update event index for proper state
-                        if (spacerRect.bottom <= window.innerHeight * 0.7) {
-                            // Scrolled past - show last event
-                            if (currentEventIndex !== totalEvents - 1) {
-                                currentEventIndex = totalEvents - 1;
-                                updateActiveEvent(currentEventIndex, true);
-                            }
-                        } else if (outreachRect.top > window.innerHeight * 0.3) {
-                            // Before section - show first event
+                        // Reset to first event when before section
+                        if (outreachRect.top > window.innerHeight * 0.5) {
                             if (currentEventIndex !== 0) {
                                 currentEventIndex = 0;
+                                committedEventIndex = 0;
                                 updateActiveEvent(0, true);
+                            }
+                        }
+                        // Keep last event when scrolled past
+                        else if (spacerRect.bottom <= 0) {
+                            if (currentEventIndex !== totalEvents - 1) {
+                                currentEventIndex = totalEvents - 1;
+                                committedEventIndex = totalEvents - 1;
+                                updateActiveEvent(currentEventIndex, true);
                             }
                         }
                     }

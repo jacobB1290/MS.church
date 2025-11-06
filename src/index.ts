@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.9.8 - Event cards: moved up, 15% smaller, overlaid date/dots, rounded corners -->
+    <!-- v1.9.9 - Event cards: moved higher (0vh), 15% larger (517px), extra rounded (48px) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -548,12 +548,12 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 5vh;
-                height: 75vh;
+                top: 0vh;
+                height: 80vh;
                 display: flex;
                 align-items: flex-start;
                 justify-content: center;
-                padding-top: 10px;
+                padding-top: 5px;
             }
 
             .outreach-scroll-container { position: relative; }
@@ -677,11 +677,11 @@ app.get('/', (c) => {
                 gap: 10px;
             }
             
-            /* Image Wrapper - Fixed 3:4 portrait aspect ratio, 15% smaller */
+            /* Image Wrapper - Fixed 3:4 portrait aspect ratio, increased by 15% */
             .event-flyer-wrapper {
                 position: relative;
                 width: 100%;
-                max-width: 382px;
+                max-width: 517px;
                 aspect-ratio: 3/4;
                 display: flex;
                 align-items: center;
@@ -692,13 +692,13 @@ app.get('/', (c) => {
                 box-sizing: border-box;
             }
             
-            /* Image styling - Enforces 3:4 aspect ratio, rounded corners match pill */
+            /* Image styling - Enforces 3:4 aspect ratio, extra rounded corners to match pill */
             .flyer-image {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 object-position: center;
-                border-radius: 32px;
+                border-radius: 48px;
                 box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             }
             
@@ -714,7 +714,7 @@ app.get('/', (c) => {
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                border-radius: 32px;
+                border-radius: 48px;
                 box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             }
             

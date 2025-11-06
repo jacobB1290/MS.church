@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.8
+## 🔢 CURRENT VERSION: v1.9.9
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,14 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.8 (Current) - EVENT CARDS REDESIGN
+### v1.9.9 (Current) - EVENT CARDS SIZE & POSITION REFINEMENT
+- **Cards moved much higher**: Sticky wrapper top from 5vh → 0vh, cards now at very top
+- **Cards 15% LARGER**: Max-width increased from 382px → 517px (450px × 1.15)
+- **Extra rounded corners**: Border-radius increased from 32px → 48px to better match pill aesthetic
+- **Height increased**: Sticky wrapper height 75vh → 80vh for more breathing room
+- Result: Larger, more prominent cards positioned at the top with pill-matching rounded corners
+
+### v1.9.8 - EVENT CARDS REDESIGN
 - **Event cards moved up**: Sticky wrapper top from 12vh → 5vh, height increased to 75vh
 - **Cards 15% smaller**: Max-width reduced from 450px → 382px for tighter layout
 - **Date pill overlaid on image**: Positioned absolute in top-left corner (16px from edge)

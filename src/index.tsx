@@ -1735,6 +1735,13 @@ app.get('/', (c) => {
                     padding: 10px 24px;
                     font-size: 10px;
                 }
+                
+                /* GIFTS button - shift right when compressed */
+                .nav-shell.scrolled-mobile .nav-cta {
+                    width: auto;
+                    margin-left: auto;
+                    padding: 8px 20px;
+                }
 
                 .brand {
                     align-items: center;
@@ -2074,7 +2081,14 @@ app.get('/', (c) => {
                     opacity: 1;
                     transform: scale(1);
                     position: relative;
+                    margin-left: 8px;
                     right: auto;
+                }
+                
+                /* Active state for GIFTS button */
+                .nav-form-btn.active {
+                    font-weight: 900;
+                    background: rgba(255, 255, 255, 1);
                 }
                 
                 /* Mobile 480px Event Cards - Ultra clean */
@@ -3414,6 +3428,16 @@ app.get('/', (c) => {
                             link.classList.add('active');
                         }
                     });
+                    
+                    // Update GIFTS button active state
+                    const giftsBtn = document.querySelector('.nav-form-btn');
+                    if (giftsBtn) {
+                        if (currentSection === 'contact') {
+                            giftsBtn.classList.add('active');
+                        } else {
+                            giftsBtn.classList.remove('active');
+                        }
+                    }
                 }
                 
                 function handleScroll() {

@@ -3419,49 +3419,43 @@ app.get('/', (c) => {
                             }
                         }
                         
-                        // DISCRETE CARD NAVIGATION
-                        // Any scroll gesture = move exactly one card (no multi-jumps)
+                        // DISCRETE CARD NAVIGATION - PROFESSIONAL IMPLEMENTATION
+                        // One scroll gesture = exactly one card move
+                        // Lock prevents multi-card jumps during continuous scroll
                         
-                        // Detect scroll direction
                         const currentScrollY = window.pageYOffset;
                         const scrollDelta = currentScrollY - lastScrollY;
                         
-                        // Only process if scrolled more than 5px (filter out tiny jiggles)
-                        if (Math.abs(scrollDelta) > 5 && !isTransitioning) {
-                            const newDirection = scrollDelta > 0 ? 1 : -1; // 1=down, -1=up
+                        // Trigger on ANY meaningful scroll (>20px) while not locked
+                        if (Math.abs(scrollDelta) > 20 && !isTransitioning) {
+                            const newDirection = scrollDelta > 0 ? 1 : -1;
                             
-                            // If direction changed or this is first scroll, trigger card change
-                            if (newDirection !== scrollDirection) {
-                                scrollDirection = newDirection;
-                                
-                                let targetEventIndex = committedEventIndex;
-                                
-                                if (scrollDirection > 0) {
-                                    // Scrolling DOWN - next card
-                                    if (committedEventIndex < totalEvents - 1) {
-                                        targetEventIndex = committedEventIndex + 1;
-                                    }
-                                } else {
-                                    // Scrolling UP - previous card
-                                    if (committedEventIndex > 0) {
-                                        targetEventIndex = committedEventIndex - 1;
-                                    }
+                            let targetEventIndex = committedEventIndex;
+                            
+                            if (newDirection > 0) {
+                                // Scrolling DOWN - advance to next card
+                                if (committedEventIndex < totalEvents - 1) {
+                                    targetEventIndex = committedEventIndex + 1;
                                 }
-                                
-                                // Update if changed
-                                if (targetEventIndex !== committedEventIndex) {
-                                    committedEventIndex = targetEventIndex;
-                                    currentEventIndex = targetEventIndex;
-                                    updateActiveEvent(currentEventIndex, false);
-                                    
-                                    // Lock transitions for 400ms to prevent rapid switching
-                                    isTransitioning = true;
-                                    clearTimeout(transitionTimeout);
-                                    transitionTimeout = setTimeout(() => {
-                                        isTransitioning = false;
-                                        scrollDirection = 0; // Reset direction for next gesture
-                                    }, 400);
+                            } else {
+                                // Scrolling UP - go to previous card
+                                if (committedEventIndex > 0) {
+                                    targetEventIndex = committedEventIndex - 1;
                                 }
+                            }
+                            
+                            // Execute the card change
+                            if (targetEventIndex !== committedEventIndex) {
+                                committedEventIndex = targetEventIndex;
+                                currentEventIndex = targetEventIndex;
+                                updateActiveEvent(currentEventIndex, false);
+                                
+                                // Lock for 600ms to ensure one card per gesture
+                                isTransitioning = true;
+                                clearTimeout(transitionTimeout);
+                                transitionTimeout = setTimeout(() => {
+                                    isTransitioning = false;
+                                }, 600);
                             }
                         }
                         

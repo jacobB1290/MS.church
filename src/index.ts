@@ -1199,19 +1199,22 @@ app.get('/', (c) => {
                 margin: 0 auto;
             }
             
-            /* Gift Gallery - Images in a row */
+            /* Gift Gallery - Images always in a row, scale to fit */
             .gift-gallery {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                gap: 20px;
+                gap: 2%;
                 margin: 32px 0;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
+                width: 100%;
             }
             
             .gift-image {
-                width: 200px;
-                height: 200px;
+                flex: 1;
+                max-width: 30%;
+                height: auto;
+                aspect-ratio: 1/1;
                 object-fit: cover;
                 border-radius: 16px;
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
@@ -1223,9 +1226,11 @@ app.get('/', (c) => {
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
             }
             
-            /* See Flyer Button - Smaller */
+            /* See Flyer Button - Below form */
             .btn-see-flyer {
-                display: inline-block;
+                display: block;
+                width: fit-content;
+                margin: 24px auto 0;
                 padding: 12px 32px;
                 font-size: 13px;
                 font-weight: 700;
@@ -1236,7 +1241,7 @@ app.get('/', (c) => {
                 border-radius: 100px;
                 box-shadow: 0 8px 24px rgba(200, 152, 96, 0.3);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                margin-top: 20px;
+                text-align: center;
             }
             
             .btn-see-flyer:hover {
@@ -2513,15 +2518,13 @@ app.get('/', (c) => {
                     gap: 32px;
                 }
                 
-                /* Gift Gallery Mobile */
+                /* Gift Gallery Mobile - Keep in row, smaller gap */
                 .gift-gallery {
-                    gap: 12px;
+                    gap: 1.5%;
                     margin: 24px 0;
                 }
                 
                 .gift-image {
-                    width: 140px;
-                    height: 140px;
                     border-radius: 12px;
                 }
                 
@@ -2538,6 +2541,7 @@ app.get('/', (c) => {
                 .btn-see-flyer {
                     padding: 10px 28px;
                     font-size: 12px;
+                    margin-top: 20px;
                 }
                 
                 .contact-card {
@@ -2908,21 +2912,20 @@ app.get('/', (c) => {
                     margin-bottom: -4px;
                 }
                 
-                /* Gift Gallery 375px */
+                /* Gift Gallery 375px - Tighter spacing */
                 .gift-gallery {
-                    gap: 8px;
+                    gap: 1%;
                     margin: 16px 0;
                 }
                 
                 .gift-image {
-                    width: 100px;
-                    height: 100px;
                     border-radius: 8px;
                 }
                 
                 .btn-see-flyer {
                     padding: 8px 20px;
                     font-size: 10px;
+                    margin-top: 16px;
                 }
                 
                 .contact-card {
@@ -3244,12 +3247,12 @@ app.get('/', (c) => {
                         </div>
                         
                         <address>3080 N Wildwood St, Boise, Idaho</address>
-                        <a href="#event-2" class="btn btn-secondary btn-see-flyer">See Flyer</a>
                     </div>
                     <div class="contact-container">
                         <div class="jotform-container">
                             <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
                         </div>
+                        <a href="#event-2" class="btn btn-secondary btn-see-flyer">See Flyer</a>
                         
                         <!-- Success State (Hidden by default) -->
                         <div class="form-success" style="display: none;">

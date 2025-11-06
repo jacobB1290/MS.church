@@ -1251,7 +1251,6 @@ app.get('/', (c) => {
             
             .contact-container {
                 width: 100%;
-                position: relative;
             }
             
             .contact-card {
@@ -1458,25 +1457,19 @@ app.get('/', (c) => {
                 cursor: pointer;
             }
             
-            /* JotForm Container Styles - Overlaid in upper right */
+            /* JotForm Container Styles */
             .jotform-container {
-                position: absolute;
-                top: -80px;
-                right: 40px;
-                width: 450px;
-                max-width: 90vw;
-                background: rgba(255, 255, 255, 0.98);
-                border-radius: 24px;
+                width: 100%;
+                min-height: 800px;
+                background: transparent;
+                border-radius: 20px;
                 overflow: hidden;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-                border: 2px solid rgba(200, 152, 96, 0.3);
-                z-index: 50;
             }
             
             .jotform-container iframe {
                 width: 100%;
                 border: none;
-                min-height: 700px;
+                min-height: 800px;
             }
             
             /* Form Success State */
@@ -2528,16 +2521,6 @@ app.get('/', (c) => {
                     border-radius: 12px;
                 }
                 
-                /* JotForm Mobile - Stack below content */
-                .jotform-container {
-                    position: relative;
-                    top: 0;
-                    right: 0;
-                    width: 100%;
-                    max-width: 100%;
-                    margin-top: 40px;
-                }
-                
                 .btn-see-flyer {
                     padding: 7px 20px;
                     font-size: 10px;
@@ -3249,10 +3232,9 @@ app.get('/', (c) => {
                         
                         <address>3080 N Wildwood St, Boise, Idaho</address>
                     </div>
-                    <div class="contact-container">
-                        <div class="jotform-container">
-                            <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
-                        </div>
+                    <div class="jotform-container">
+                        <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
+                    </div>
                         
                         <!-- Success State (Hidden by default) -->
                         <div class="form-success" style="display: none;">

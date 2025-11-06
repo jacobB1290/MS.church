@@ -1858,13 +1858,13 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 405px;
+                    max-width: 466px;
                     padding: 0 20px;
                     margin-bottom: 20px;
                 }
                 
                 .flyer-image {
-                    border-radius: 20px;
+                    border-radius: 40px;
                 }
                 
                 .placeholder-flyer {
@@ -2041,17 +2041,17 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 360px;
+                    max-width: 414px;
                     padding: 0 16px;
                     margin-bottom: 16px;
                 }
                 
                 .flyer-image {
-                    border-radius: 18px;
+                    border-radius: 36px;
                 }
                 
                 .placeholder-flyer {
-                    border-radius: 18px;
+                    border-radius: 36px;
                 }
                 
                 .event-cta {
@@ -2719,17 +2719,17 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 324px;
+                    max-width: 373px;
                     padding: 0 12px;
                     margin-bottom: 14px;
                 }
                 
                 .flyer-image {
-                    border-radius: 16px;
+                    border-radius: 32px;
                 }
                 
                 .placeholder-flyer {
-                    border-radius: 16px;
+                    border-radius: 32px;
                 }
                 
                 .event-cta {

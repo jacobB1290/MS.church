@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.14
+## 🔢 CURRENT VERSION: v1.9.15
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,20 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.14 (Current) - CONTACT SECTION REDESIGN WITH GIFT GALLERY
+### v1.9.15 (Current) - GIFT GALLERY LAYOUT FIX & BUTTON REPOSITIONING
+- **Fixed gift gallery to always display in a row**
+  - Changed from fixed widths to `flex: 1` with `max-width: 30%`
+  - Images now scale responsively and never wrap
+  - Using `aspect-ratio: 1/1` to maintain square shape
+  - Gap adjusted to percentages: 2% (desktop), 1.5% (480px), 1% (375px)
+  - Works perfectly on all screen sizes from 375px to desktop
+- **Moved "See Flyer" button**
+  - Repositioned from header to below JotForm container
+  - Centered with `margin: 24px auto 0`
+  - Button now appears at bottom of contact section
+- Result: Clean, scalable image row and logical button placement
+
+### v1.9.14 - CONTACT SECTION REDESIGN WITH GIFT GALLERY
 - **Rewrote contact section copy**
   - Clear explanation of personal gift packing process
   - Details about what recipients can expect (shoes for adults, school/fun items for children)

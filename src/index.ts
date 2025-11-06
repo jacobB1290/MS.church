@@ -721,8 +721,8 @@ app.get('/', (c) => {
             /* Date and Dots Overlaid on Image */
             .event-flyer-wrapper .event-date {
                 position: absolute;
-                top: 16px;
-                left: 40px;
+                top: 12px;
+                left: 24px;
                 z-index: 20;
                 margin: 0;
             }
@@ -2333,6 +2333,11 @@ app.get('/', (c) => {
                     letter-spacing: 1.8px;
                     margin-bottom: 0;
                 }
+                
+                .event-flyer-wrapper .event-date {
+                    top: 10px;
+                    left: 20px;
+                }
 
                 .event-title {
                     font-size: clamp(26px, 5.5vw, 31px);
@@ -2710,6 +2715,11 @@ app.get('/', (c) => {
                 .event-date {
                     padding: 6px 14px;
                     font-size: 8px;
+                }
+                
+                .event-flyer-wrapper .event-date {
+                    top: 8px;
+                    left: 16px;
                 }
                 
                 .event-indicators {
@@ -3266,7 +3276,7 @@ app.get('/', (c) => {
                 const navShell = document.querySelector('.nav-shell');
                 const sections = document.querySelectorAll('section[id]');
                 const navLinks = document.querySelectorAll('nav a[href^="#"]');
-                const dots = document.querySelectorAll('.event-dot');
+                const dots = document.querySelectorAll('.heading-wrapper .event-dot');
 
                 if (!outreachSection || !scrollSpacer || !eventsContainer || !eventSlides.length) return;
                 
@@ -3426,6 +3436,18 @@ app.get('/', (c) => {
                     setAriaVisibility(index);
                     updateDots(index);
                     updateBodyBg(index, skipBackground);
+                    
+                    // Update dots overlaid on each event image to match active state
+                    eventSlides.forEach((slide, slideIndex) => {
+                        const overlaidDots = slide.querySelectorAll('.event-flyer-wrapper .event-dot');
+                        overlaidDots.forEach((dot, dotIndex) => {
+                            if (dotIndex === index) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        });
+                    });
                 }
 
                 updateActiveEvent(0, true);

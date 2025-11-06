@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.5.4
+## 🔢 CURRENT VERSION: v1.6.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -50,17 +50,16 @@
 - **Smooth Fading**: All colors are light pastels that fade smoothly between events
 - **Entry/Exit Animation**: Background color gradually fades in when entering and out when leaving section
 
-### 4. Event Cards
-Each event card includes:
-- Date badge with gradient background
-- Event title and time
-- Detailed description
-- Bulleted feature list
-- Call-to-action button
-- Flyer image or placeholder
-- **Alternating Layout**: Flyer/text positions alternate for visual variety
-  - Events 1 & 3: Flyer on left, text on right
-  - Event 2: Text on left, flyer on right
+### 4. Event Cards - Full-Screen Image Layout (v1.6.0)
+**Complete redesign with ultra-clean, image-focused layout:**
+- **Small gold date pill** floating in upper left corner (e.g., "NOV 26", "DEC 6")
+- **3 small indicator dots** floating in upper right corner for event navigation
+- **Massive flyer image** taking up 75-80% of screen height, full width
+- **Gold CTA button** positioned near bottom of screen, full width
+- **No containers or borders** - pure full-screen experience
+- **Absolute positioning** - Date pill and dots float OVER the image
+- **Responsive breakpoints** - Optimized for iPhone 17 Pro Max down to iPhone SE
+- **Carousel support** - Event 2 has image slider functionality
 
 ### 5. Current Events
 1. **Community Thanksgiving Dinner** (Nov 26)
@@ -243,7 +242,24 @@ webapp/
 
 ## 📝 Version History
 
-### v1.1.0 (Current)
+### v1.6.0 (Current)
+- **MAJOR REBUILD**: Event cards completely redesigned with full-screen image layout
+- Small gold date pill floating in upper left corner
+- 3 indicator dots floating in upper right corner  
+- Massive flyer image taking up 75-80% of viewport height
+- Gold button near bottom of screen, full width
+- No containers, borders, or padding - pure immersive experience
+- Date pill and dots use absolute positioning over image
+- Mobile-optimized for all screen sizes (375px to iPhone 17 Pro Max)
+- Carousel functionality preserved for Event 2
+
+### v1.5.4
+- Form copy updated with gift details and emojis
+- Navigation button text changed to "Register for free gifts"
+- Hero image replaced with church building photo
+- Event 2 carousel added with placeholder and community service photo
+
+### v1.1.0
 - **NEW**: YouTube video/playlist embedding in Watch section
 - Responsive video players with 16:9 aspect ratio
 - Support for live streams and playlists

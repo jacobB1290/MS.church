@@ -673,156 +673,128 @@ app.get('/', (c) => {
                 50% { transform: translateY(-8px); }
             }
 
-            /* Event Cards - Full-screen Image Layout */
+            /* ========================================
+               EVENT CARDS - COMPLETE REBUILD
+               Full-screen image layout with floating elements
+               ======================================== */
+            
+            /* Main Event Card Container */
             .event-card {
-                background: transparent;
-                padding: 0;
-                margin: 0;
+                position: relative;
+                width: 100vw;
+                height: 90vh;
+                margin-left: calc(-50vw + 50%);
                 display: flex;
                 flex-direction: column;
-                gap: 24px;
-                height: 90vh;
-                max-height: none;
-            }
-
-            .event-flyer-wrapper {
-                position: relative;
-                flex: 1;
-                width: 100%;
-                display: flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: flex-end;
+                padding: 0;
+                box-sizing: border-box;
             }
             
-            .event-header-mobile {
-                display: none;
-            }
-            
-            .event-header-content {
-                order: 2;
-                padding: 16px 35px 12px 35px;
-            }
-
+            /* Date Pill - Floating in upper left */
             .event-card > .event-date {
                 position: absolute;
                 top: 20px;
                 left: 20px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: 10px 24px;
-                background: rgba(212, 165, 116, 0.95);
-                border-radius: 100px;
-                font-size: 13px;
-                font-weight: 700;
-                letter-spacing: 2.5px;
-                color: #ffffff;
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-                backdrop-filter: blur(10px);
-                z-index: 20;
-                padding: 12px 35px;
+                padding: 8px 20px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: #fff;
-                border-radius: 0;
+                border-radius: 100px;
                 font-size: 11px;
                 font-weight: 700;
                 letter-spacing: 2px;
+                color: #ffffff;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+                z-index: 150;
                 text-transform: uppercase;
-                box-shadow: none;
-                margin-bottom: 0;
-                width: 100%;
+                white-space: nowrap;
             }
-
-            .event-title {
-                font-family: 'Playfair Display', serif;
-                font-size: clamp(39px, 6.2vw, 51px);
-                color: #1a1a2e;
-                margin-bottom: 7px;
-                font-weight: 700;
-                line-height: 1.1;
-            }
-
-            .event-time {
-                font-size: 20px;
-                color: rgba(26, 26, 46, 0.65);
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                margin-bottom: 0;
-            }
-
-            .event-content {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 0;
-                gap: 0;
-            }
-
-            .event-content.flyer-left {
-                flex-direction: column;
-            }
-
-            .event-content.flyer-left .event-flyer-container {
-                order: 0;
-            }
-
-            .event-description {
-                display: none; /* Hide all description text and bullets */
-            }
-
-            .event-description p {
-                display: none;
-            }
-
-            .event-description ul {
-                display: none;
-            }
-
-            .event-description li {
-                display: none;
-            }
-
-            .event-description li::before {
-                display: none;
-            }
-
+            
+            /* Dots - Floating in upper right */
             .event-card > .event-indicators {
                 position: absolute;
-                top: 20px;
+                top: 28px;
                 right: 20px;
-                z-index: 20;
+                z-index: 150;
+                display: flex;
+                gap: 10px;
             }
-
-            .event-flyer-wrapper .flyer-image,
-            .event-flyer-wrapper .placeholder-flyer,
-            .event-flyer-wrapper .carousel-container {
+            
+            /* Image Wrapper - Takes up 75-80% of viewport */
+            .event-flyer-wrapper {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 78vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+            }
+            
+            /* Image styling */
+            .flyer-image {
                 width: 100%;
                 height: 100%;
-                max-height: none;
                 object-fit: contain;
                 object-position: center;
-                border-radius: 16px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-                            0 8px 20px rgba(0, 0, 0, 0.08);
             }
-
-            .flyer-image {
-                display: block;
-            }
-
+            
             .placeholder-flyer {
+                width: 100%;
+                height: 100%;
                 background: rgba(255, 255, 255, 0.95);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 18px;
+                font-size: 16px;
                 color: rgba(26, 26, 46, 0.4);
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
             }
+            
+            /* CTA Button - At bottom */
+            .event-cta {
+                position: relative;
+                width: 100%;
+                max-width: 600px;
+                padding: 0 24px;
+                margin-bottom: 24px;
+                z-index: 100;
+            }
+            
+            .event-cta .btn {
+                width: 100%;
+                padding: 20px 40px;
+                font-size: 15px;
+                font-weight: 700;
+                border-radius: 100px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: white;
+                box-shadow: 0 8px 24px rgba(200, 152, 96, 0.4);
+                transition: all 0.3s ease;
+            }
+            
+            .event-cta .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 12px 32px rgba(200, 152, 96, 0.5);
+            }
+            
+            /* Hide legacy elements */
+            .event-header-mobile,
+            .event-header-content,
+            .event-title,
+            .event-time,
+            .event-content,
+            .event-description {
+                display: none !important;
+            }
 
-            /* Carousel Styles */
+            /* ========================================
+               CAROUSEL SUPPORT FOR EVENT 2
+               ======================================== */
             .carousel-container {
                 position: relative;
                 width: 100%;
@@ -862,7 +834,7 @@ app.get('/', (c) => {
                 transform: translateX(-50%);
                 display: flex;
                 gap: 12px;
-                z-index: 10;
+                z-index: 120;
             }
 
             .carousel-dot {
@@ -885,48 +857,33 @@ app.get('/', (c) => {
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                width: 40px;
-                height: 40px;
+                width: 48px;
+                height: 48px;
                 background: rgba(255, 255, 255, 0.9);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
-                font-size: 18px;
+                font-size: 22px;
                 color: #1a1a2e;
                 transition: all 0.3s ease;
-                z-index: 10;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 120;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
             }
 
             .carousel-arrow:hover {
                 background: rgba(255, 255, 255, 1);
                 transform: translateY(-50%) scale(1.1);
-                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             }
 
             .carousel-arrow.prev {
-                left: 20px;
+                left: 24px;
             }
 
             .carousel-arrow.next {
-                right: 20px;
-            }
-
-            .event-cta {
-                margin-top: auto;
-                padding: 0;
-                width: 100%;
-                box-sizing: border-box;
-            }
-            
-            .event-cta .btn {
-                width: 100%;
-                padding: 20px 48px;
-                font-size: 16px;
-                font-weight: 700;
-                border-radius: 100px;
+                right: 24px;
             }
             
             /* Lightbox for Flyer Full-Screen View */
@@ -1895,44 +1852,46 @@ app.get('/', (c) => {
                     margin-bottom: 16px;
                 }
 
+                /* Mobile 768px Event Cards - Clean layout */
                 .events-container,
                 .sticky-wrapper {
                     width: 100vw;
-                    padding: 0 16px;
+                    padding: 0;
                     box-sizing: border-box;
                 }
                 
                 .event-card {
                     height: 90vh;
-                    gap: 20px;
+                    margin-left: 0;
+                    width: 100vw;
                 }
                 
                 .event-card > .event-date {
                     top: 16px;
                     left: 16px;
-                    padding: 8px 20px;
-                    font-size: 11px;
+                    padding: 8px 18px;
+                    font-size: 10px;
                     letter-spacing: 2px;
                 }
 
                 .event-card > .event-indicators {
-                    top: 16px;
+                    top: 22px;
                     right: 16px;
                 }
                 
                 .event-flyer-wrapper {
-                    flex: 1;
+                    height: 76vh;
                 }
                 
                 .event-cta {
-                    padding: 0;
-                    margin: 0;
+                    padding: 0 20px;
+                    margin-bottom: 20px;
+                    max-width: 100%;
                 }
                 
                 .event-cta .btn {
                     padding: 18px 32px;
                     font-size: 14px;
-                    width: 100%;
                 }
 
                 .watch-card {
@@ -2075,94 +2034,51 @@ app.get('/', (c) => {
                     right: auto;
                 }
                 
-                /* Show event indicators on mobile */
-                .event-indicators {
-                    display: flex;
-                }
-                
-                /* Show scroll hint on mobile */
-                .scroll-hint {
-                    display: block;
-                }
-                
-                /* Mobile event card layout - streamlined vertical */
+                /* Mobile 480px Event Cards - Ultra clean */
                 .event-card {
-                    border-radius: 20px;
+                    height: 88vh;
                 }
                 
-                .event-header {
-                    padding: 0;
-                    display: flex;
-                    flex-direction: column;
+                .event-card > .event-date {
+                    top: 12px;
+                    left: 12px;
+                    padding: 7px 16px;
+                    font-size: 9px;
+                    letter-spacing: 1.8px;
                 }
                 
-                .event-header-content {
-                    order: 2;
-                    padding: 16px 27px 12px 27px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 7px;
+                .event-card > .event-indicators {
+                    top: 18px;
+                    right: 12px;
                 }
                 
-                .event-date {
-                    order: 1;
-                    padding: 10px 27px;
-                    font-size: 10px;
-                    border-radius: 0;
-                    letter-spacing: 1.5px;
-                }
-                
-                .event-title {
-                    font-size: clamp(31px, 7.8vw, 43px);
-                    margin-bottom: 4px;
-                    line-height: 1.1;
-                }
-                
-                .event-time {
-                    font-size: 16px;
-                }
-                
-                .event-header-mobile {
-                    display: none;
-                }
-                
-                .event-flyer-mobile {
-                    display: none;
-                }
-                
-                /* Show large flyer in content on mobile */
-                .event-content {
-                    display: flex;
-                    flex-direction: column;
-                }
-                
-                .event-flyer-container {
-                    display: flex !important;
-                    padding: 16px 27px;
-                }
-                
-                .flyer-frame {
-                    padding: 10px;
-                    border-radius: 16px;
-                }
-                
-                .flyer-image {
-                    height: 273px;
-                    object-fit: contain;
-                }
-                
-                .placeholder-flyer {
-                    height: 273px !important;
-                    background: #f5f5f5 !important;
+                .event-flyer-wrapper {
+                    height: 74vh;
                 }
                 
                 .event-cta {
-                    padding: 0 27px 23px 27px;
+                    padding: 0 16px;
+                    margin-bottom: 16px;
                 }
                 
                 .event-cta .btn {
-                    padding: 18px 35px;
-                    font-size: 14px;
+                    padding: 16px 32px;
+                    font-size: 13px;
+                }
+                
+                /* Carousel adjustments */
+                .carousel-arrow {
+                    width: 40px;
+                    height: 40px;
+                    font-size: 18px;
+                }
+                
+                .carousel-arrow.prev {
+                    left: 16px;
+                }
+                
+                .carousel-arrow.next {
+                    right: 16px;
                 }
 
                 .brand-title {
@@ -2790,94 +2706,65 @@ app.get('/', (c) => {
                     line-height: 1.3;
                 }
                 
-                /* Outreach Section */
-                .outreach-header {
-                    margin-bottom: 14px;
-                }
-                
-                .outreach-header .section-heading {
-                    margin-bottom: 4px;
-                }
-                
-                .outreach-header .section-eyebrow {
-                    margin-bottom: 5px;
-                }
-                
-                .sticky-wrapper {
-                    height: auto;
-                    min-height: 45vh;
-                    top: 28vh;
-                    padding-bottom: 60px;
-                }
-                
-                .scroll-spacer {
-                    height: 140vh;
-                }
-                
-                /* Event Cards - Smaller */
+                /* Mobile 375px Event Cards - Compact */
                 .event-card {
-                    border-radius: 16px;
+                    height: 86vh;
                 }
                 
-                .event-header-content {
-                    padding: 10px 15px 7px 15px;
-                }
-                
-                .event-date {
-                    padding: 7px 15px;
+                .event-card > .event-date {
+                    top: 10px;
+                    left: 10px;
+                    padding: 6px 14px;
                     font-size: 8px;
-                    letter-spacing: 0.9px;
+                    letter-spacing: 1.5px;
                 }
                 
-                .event-title {
-                    font-size: clamp(20px, 5.8vw, 26px);
-                    margin-bottom: 3px;
-                    line-height: 1.05;
-                }
-                
-                .event-time {
-                    font-size: 11px;
-                }
-                
-                .event-flyer-container {
-                    padding: 10px 15px;
-                }
-                
-                .flyer-frame {
-                    padding: 6px;
-                    border-radius: 10px;
-                }
-                
-                .flyer-image {
-                    height: 280px;
-                }
-                
-                .placeholder-flyer {
-                    height: 280px !important;
-                    font-size: 11px;
-                }
-                
-                .event-cta {
-                    padding: 0 15px 14px 15px;
-                }
-                
-                .event-cta .btn {
-                    padding: 13px 24px;
-                    font-size: 11px;
-                }
-                
-                .event-indicators {
-                    bottom: 30px;
+                .event-card > .event-indicators {
+                    top: 16px;
+                    right: 10px;
                 }
                 
                 .event-dot {
-                    width: 6px;
-                    height: 6px;
+                    width: 7px;
+                    height: 7px;
                 }
                 
                 .event-dot.active {
-                    width: 8px;
-                    height: 8px;
+                    width: 9px;
+                    height: 9px;
+                }
+                
+                .event-flyer-wrapper {
+                    height: 72vh;
+                }
+                
+                .event-cta {
+                    padding: 0 12px;
+                    margin-bottom: 14px;
+                }
+                
+                .event-cta .btn {
+                    padding: 14px 28px;
+                    font-size: 12px;
+                }
+                
+                /* Carousel adjustments */
+                .carousel-arrow {
+                    width: 36px;
+                    height: 36px;
+                    font-size: 16px;
+                }
+                
+                .carousel-arrow.prev {
+                    left: 12px;
+                }
+                
+                .carousel-arrow.next {
+                    right: 12px;
+                }
+                
+                .carousel-controls {
+                    bottom: 16px;
                 }
                 
                 .scroll-hint {

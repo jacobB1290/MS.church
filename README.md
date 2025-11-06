@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.7.7
+## 🔢 CURRENT VERSION: v1.7.8
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,19 @@ webapp/
 
 ## 📝 Version History
 
-### v1.7.7 (Current)
+### v1.7.8 (Current)
+- **PARADIGM SHIFT: Sticky header moment = Event 1 committed**
+- User insight: "Scroll tracking starts when title sticks = 33% scrolled"
+- When header becomes sticky (top <= 80px), Event 1 is locked in
+- Base progress jumps to 33.3% at sticky moment
+- Remaining spacer scroll maps to 33.3% → 100% (Events 2 & 3)
+- Result: One visible scroll per event switch
+  - Scroll to stick = Event 1
+  - Next scroll = Event 2
+  - Next scroll = Event 3
+- Intuitive, predictable, matches visual state
+
+### v1.7.7
 - **ROOT CAUSE FIXED: Spacer height was causing massive scroll distances**
 - Deep investigation revealed: 250vh spacer meant 1+ full viewport scroll per event
 - Why "3 big scrolls" for first card: E0→E1 needed 40% of 250vh = 800px (1.0 viewport)

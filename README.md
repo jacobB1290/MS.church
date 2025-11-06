@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.20
+## 🔢 CURRENT VERSION: v1.9.21
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,30 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.20 (Current) - COUNTDOWN TIMER REFINEMENTS
+### v1.9.21 (Current) - SCHEDULE SECTION IMPROVEMENTS
+- **Removed copy text under heading**
+  - Deleted paragraph "We gather on Sundays, grow in community..."
+  - Kept only address line: "3080 N Wildwood St · Boise, Idaho"
+  - Cleaner, more focused section header
+- **Standardized time format across all three items**
+  - Changed "9:00 AM" to "Sundays · 9:00 AM" to match other days
+  - All three items now follow same format: "Day · Time"
+  - More consistent visual rhythm
+- **Updated Sunday description**
+  - New: "Morning service with free community breakfast after. Free transportation from select shelters included."
+  - Highlights community breakfast and transportation services
+  - More welcoming and inclusive messaging
+- **Updated Tuesday description**
+  - New: "Morning Bible study with coffee at select local coffee shops."
+  - Brief and clear about location and format
+  - Removed mention of child care and prayer to keep concise
+- **Updated Thursday description**
+  - New: "Evening Bible study at the church with free coffee."
+  - Simple and direct about location and amenities
+  - Removed dinner/discussion/worship details for brevity
+- Result: Cleaner schedule section with consistent formatting and concise, welcoming descriptions
+
+### v1.9.20 - COUNTDOWN TIMER REFINEMENTS
 - **Made countdown much smaller**
   - Reduced countdown numbers from 42px to 24px
   - Reduced item min-width from 70px to 45px

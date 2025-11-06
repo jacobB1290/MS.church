@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.18
+## 🔢 CURRENT VERSION: v1.9.19
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,31 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.18 (Current) - MOBILE NAV GIFTS BUTTON IMPROVEMENTS
+### v1.9.19 (Current) - WATCH SECTION IMPROVEMENTS
+- **Removed copy text under heading**
+  - Deleted the paragraph "Tune in from wherever you are..." under "Join us live every Sunday."
+  - Cleaner, more focused watch section header
+- **Show only 1 video - latest stream**
+  - Changed from 2 identical videos to single video showing latest stream from playlist
+  - Uses YouTube playlist embed with `index=1` parameter to show most recent upload
+  - Eliminates redundancy and improves user experience
+- **Added "View Full Playlist" button**
+  - Replaced second video with button linking to full YouTube playlist
+  - Opens in new tab with `target="_blank"` and `rel="noopener"`
+  - Uses `.btn-outline` styling for consistency
+- **Added countdown timer to next Sunday service**
+  - Displays time until next Sunday 9:00 AM Mountain Time
+  - Shows days, hours, minutes, and seconds in real-time
+  - Automatically handles timezone conversion using `America/Denver`
+  - Updates every second with smooth JavaScript interval
+  - Handles edge cases (currently Sunday after 9am, DST changes)
+  - Large 42px Playfair Display numbers with elegant styling
+- **Enhanced "Live Soon" status**
+  - Now displays active countdown timer when service is not live
+  - Clear countdown labels and white-on-dark-red color scheme
+- Result: Cleaner watch section with single video, countdown timer, and playlist access button
+
+### v1.9.18 - MOBILE NAV GIFTS BUTTON IMPROVEMENTS
 - **Shifted GIFTS button right in compressed mobile nav**
   - Added `margin-left: 8px` to `.nav-form-btn` when nav is compressed
   - Better visual balance with nav links on the left

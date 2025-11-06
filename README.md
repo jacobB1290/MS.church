@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.7.1
+## 🔢 CURRENT VERSION: v1.7.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,15 @@ webapp/
 
 ## 📝 Version History
 
-### v1.7.1 (Current)
+### v1.7.2 (Current)
+- **Adjusted image sizing to 10% reduction** - Max-width reduced from 500px to 450px desktop (was 400px in v1.7.1)
+- Better visual balance - 10% reduction provides optimal size
+- Updated all mobile breakpoints with 10% smaller dimensions:
+  - 768px: 450px → 405px
+  - 480px: 400px → 360px
+  - 375px: 360px → 324px
+
+### v1.7.1
 - **Scaled down images by 20%** - Max-width reduced from 500px to 400px desktop
 - **Fixed indicator dots** - Now properly update to show which event is active
 - Updated all mobile breakpoints with 20% smaller dimensions:

@@ -724,11 +724,11 @@ app.get('/', (c) => {
                 gap: 10px;
             }
             
-            /* Image Wrapper - Fixed 3:4 portrait aspect ratio, 20% smaller */
+            /* Image Wrapper - Fixed 3:4 portrait aspect ratio, 10% smaller */
             .event-flyer-wrapper {
                 position: relative;
                 width: 100%;
-                max-width: 400px;
+                max-width: 450px;
                 aspect-ratio: 3/4;
                 display: flex;
                 align-items: center;
@@ -1878,7 +1878,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-meta-row {
-                    max-width: 360px;
+                    max-width: 405px;
                     padding: 0 20px;
                     margin-bottom: 16px;
                 }
@@ -1889,7 +1889,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 360px;
+                    max-width: 405px;
                     padding: 0 20px;
                     margin-bottom: 20px;
                 }
@@ -1905,7 +1905,7 @@ app.get('/', (c) => {
                 .event-cta {
                     padding: 0 20px;
                     margin-bottom: 20px;
-                    max-width: 360px;
+                    max-width: 405px;
                 }
                 
                 .event-cta .btn {
@@ -2061,7 +2061,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-meta-row {
-                    max-width: 320px;
+                    max-width: 360px;
                     padding: 0 16px;
                     margin-bottom: 14px;
                 }
@@ -2072,7 +2072,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 320px;
+                    max-width: 360px;
                     padding: 0 16px;
                     margin-bottom: 16px;
                 }
@@ -2088,7 +2088,7 @@ app.get('/', (c) => {
                 .event-cta {
                     padding: 0 16px;
                     margin-bottom: 16px;
-                    max-width: 320px;
+                    max-width: 360px;
                 }
                 
                 .event-cta .btn {
@@ -2729,7 +2729,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-meta-row {
-                    max-width: 288px;
+                    max-width: 324px;
                     padding: 0 12px;
                     margin-bottom: 12px;
                 }
@@ -2754,7 +2754,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 288px;
+                    max-width: 324px;
                     padding: 0 12px;
                     margin-bottom: 14px;
                 }
@@ -2770,7 +2770,7 @@ app.get('/', (c) => {
                 .event-cta {
                     padding: 0 12px;
                     margin-bottom: 14px;
-                    max-width: 288px;
+                    max-width: 324px;
                 }
                 
                 .event-cta .btn {
@@ -3956,7 +3956,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.7.1</div>
+        <div class="version-footer">v1.7.2</div>
     </body>
     </html>
   `)

@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.7.3
+## 🔢 CURRENT VERSION: v1.7.4
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,20 @@ webapp/
 
 ## 📝 Version History
 
-### v1.7.3 (Current)
+### v1.7.4 (Current)
+- **REAL FIX: Removed scroll-snap interference and all artificial delays**
+- Root causes identified:
+  - CSS `scroll-snap-type: y proximity` was fighting manual zone calculations
+  - Boundary threshold logic was backwards (blocked switches at zone entry)
+  - Scroll lock mechanism added 250ms artificial delays
+- Solution: Complete simplification
+  - Removed CSS scroll-snap for full manual control
+  - Pure zone calculation: `Math.floor(scrollProgress / 0.333)`
+  - No locks, no thresholds, no delays
+  - Removed 50+ lines of complex logic
+- Result: Truly equal, instant, predictable scroll behavior
+
+### v1.7.3
 - **FIXED: Equal zone distribution for event scroll** - Each event now gets exactly 33.3% of scroll space
 - Bug fix: Previous version had first card at 41.3%, Event 2 at 33.4%, Event 3 at 25.3%
 - New algorithm: Pure zone-based calculation using `Math.floor(scrollProgress / zoneSize)`

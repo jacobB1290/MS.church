@@ -1226,27 +1226,27 @@ app.get('/', (c) => {
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
             }
             
-            /* See Flyer Button - Below form */
+            /* See Flyer Button - Small, below heading */
             .btn-see-flyer {
-                display: block;
-                width: fit-content;
-                margin: 24px auto 0;
-                padding: 12px 32px;
-                font-size: 13px;
-                font-weight: 700;
-                letter-spacing: 2px;
+                display: inline-block;
+                width: auto;
+                margin: 8px auto 16px;
+                padding: 8px 24px;
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 1.5px;
                 text-transform: uppercase;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: white;
                 border-radius: 100px;
-                box-shadow: 0 8px 24px rgba(200, 152, 96, 0.3);
+                box-shadow: 0 4px 12px rgba(200, 152, 96, 0.25);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 text-align: center;
             }
             
             .btn-see-flyer:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 12px 32px rgba(200, 152, 96, 0.4);
+                box-shadow: 0 6px 18px rgba(200, 152, 96, 0.35);
             }
             
             .contact-container {
@@ -2539,9 +2539,9 @@ app.get('/', (c) => {
                 }
                 
                 .btn-see-flyer {
-                    padding: 10px 28px;
-                    font-size: 12px;
-                    margin-top: 20px;
+                    padding: 7px 20px;
+                    font-size: 10px;
+                    margin: 6px auto 12px;
                 }
                 
                 .contact-card {
@@ -2923,9 +2923,9 @@ app.get('/', (c) => {
                 }
                 
                 .btn-see-flyer {
-                    padding: 8px 20px;
-                    font-size: 10px;
-                    margin-top: 16px;
+                    padding: 6px 16px;
+                    font-size: 9px;
+                    margin: 5px auto 10px;
                 }
                 
                 .contact-card {
@@ -3235,6 +3235,7 @@ app.get('/', (c) => {
                     <div class="contact-header">
                         <span class="section-eyebrow">Christmas Outreach</span>
                         <h2 class="section-heading">Christmas Clothes Drive for Mothers</h2>
+                        <a href="#event-2" class="btn btn-secondary btn-see-flyer">See Flyer</a>
                         <p class="section-lead form-message">
                             Based on what you fill out on the form, our team will pack you a personal gift for you and your children. What you can expect is shoes for adults and an item related to school and outside fun for children. After the form is submitted, you'll receive a text message with more details.
                         </p>
@@ -3252,7 +3253,6 @@ app.get('/', (c) => {
                         <div class="jotform-container">
                             <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
                         </div>
-                        <a href="#event-2" class="btn btn-secondary btn-see-flyer">See Flyer</a>
                         
                         <!-- Success State (Hidden by default) -->
                         <div class="form-success" style="display: none;">

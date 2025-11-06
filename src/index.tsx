@@ -3134,24 +3134,23 @@ app.get('/', (c) => {
                 <section class="schedule" id="schedule" style="animation-delay: 0.2s">
                     <span class="section-eyebrow">Weekly Schedule</span>
                     <h2 class="section-heading">Three simple touchpoints to connect every week.</h2>
-                    <p class="section-lead">We gather on Sundays, grow in community throughout the week, and stay rooted in Boise. You'll find us at:</p>
                     <address>3080 N Wildwood St · Boise, Idaho</address>
                     <div class="section-card">
                         <div class="schedule-grid">
                             <article class="schedule-item">
                                 <span>Sunday Gatherings</span>
-                                <h3>9:00 AM</h3>
-                                <p>Worship & kids environments for every age.</p>
+                                <h3>Sundays · 9:00 AM</h3>
+                                <p>Morning service with free community breakfast after. Free transportation from select shelters included.</p>
                             </article>
                             <article class="schedule-item">
                                 <span>Bible Study</span>
                                 <h3>Tuesdays · 8:30 AM</h3>
-                                <p>Morning study with hot coffee, child care, and community prayer.</p>
+                                <p>Morning Bible study with coffee at select local coffee shops.</p>
                             </article>
                             <article class="schedule-item">
                                 <span>Bible Study</span>
                                 <h3>Thursdays · 6:00 PM</h3>
-                                <p>Evening groups across Boise with dinner, discussion, and worship.</p>
+                                <p>Evening Bible study at the church with free coffee.</p>
                             </article>
                         </div>
                     </div>

@@ -3527,20 +3527,29 @@ app.get('/', (c) => {
                 });
                 
                 // Smooth scrolling for navigation links with offset for sticky nav
+                // Optimized offset to perfectly hide section pills behind nav
                 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                     anchor.addEventListener('click', function (e) {
                         e.preventDefault();
                         const targetId = this.getAttribute('href');
                         const target = document.querySelector(targetId);
                         if (target) {
-                            // Calculate offset based on screen size and section
-                            let navOffset = 160; // Desktop default
+                            // Default offset for most sections
+                            let navOffset = 45; // Desktop - perfect balance
                             
-                            // Special handling for outreach section on mobile
-                            if (targetId === '#outreach' && window.innerWidth <= 960) {
-                                navOffset = 80; // Tighter offset for outreach on mobile
-                            } else if (window.innerWidth <= 960) {
-                                navOffset = 100; // Mobile/tablet - reduced offset for other sections
+                            // Special handling for outreach section (has sticky header + events)
+                            // Smaller offset = scrolls further down to hide pill
+                            if (targetId === '#outreach') {
+                                navOffset = 20; // Desktop - scroll much further for outreach
+                                
+                                if (window.innerWidth <= 960) {
+                                    navOffset = 10; // Mobile - scroll even further for outreach
+                                }
+                            } else {
+                                // Other sections - mobile adjustment
+                                if (window.innerWidth <= 960) {
+                                    navOffset = 30; // Mobile - adjusted for smaller nav
+                                }
                             }
                             
                             const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navOffset;

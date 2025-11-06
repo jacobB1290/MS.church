@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.7.6
+## 🔢 CURRENT VERSION: v1.7.7
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,16 @@ webapp/
 
 ## 📝 Version History
 
-### v1.7.6 (Current)
+### v1.7.7 (Current)
+- **ROOT CAUSE FIXED: Spacer height was causing massive scroll distances**
+- Deep investigation revealed: 250vh spacer meant 1+ full viewport scroll per event
+- Why "3 big scrolls" for first card: E0→E1 needed 40% of 250vh = 800px (1.0 viewport)
+- Why "1 tiny one" for second: E1→E2 only needed 700px more (asymmetric!)
+- Solution: Reduced spacer from 250vh to 100vh
+- New distances: ~320px per event switch (~40% of viewport)
+- Result: True swipe-like feel, equal distances, small scrolls register
+
+### v1.7.6
 - **FIXED: Instant scroll progress - eliminated dead zone at section entry**
 - Root cause: Entry required section at 30% + spacer at 70%, plus 35%/50% offsets
 - This created a "dead zone" where initial scrolling didn't register

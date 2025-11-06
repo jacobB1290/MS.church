@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.7.8
+## 🔢 CURRENT VERSION: v1.7.9
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,21 @@ webapp/
 
 ## 📝 Version History
 
-### v1.7.8 (Current)
+### v1.7.9 (Current)
+- **DISCRETE CARD NAVIGATION: One swipe = exactly one card**
+- Replaced position-based logic with direction detection
+- Small scroll (>5px) = next card
+- Large scroll = still just one card (no multi-jumps)
+- Direction change triggers card switch
+- 400ms transition lock prevents rapid switching
+- Behavior like photo gallery swipe:
+  - Scroll down (any size) → next card
+  - Scroll up (any size) → previous card
+  - Multiple scrolls in same direction = locked
+  - Change direction = new card move
+- Result: Predictable, discrete navigation
+
+### v1.7.8
 - **PARADIGM SHIFT: Sticky header moment = Event 1 committed**
 - User insight: "Scroll tracking starts when title sticks = 33% scrolled"
 - When header becomes sticky (top <= 80px), Event 1 is locked in

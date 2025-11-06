@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.21
+## 🔢 CURRENT VERSION: v1.9.22
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,22 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.21 (Current) - SCHEDULE SECTION IMPROVEMENTS
+### v1.9.22 (Current) - SCROLL TO TOP & NAV EXPANSION
+- **HOME link scrolls to absolute top**
+  - Clicking HOME in navigation scrolls to position 0 (very top of page)
+  - Automatically expands navigation from compact to full on mobile
+  - Smooth scroll animation for better UX
+- **Scroll up gesture at top expands nav**
+  - When already at top (within 50px), scrolling up twice triggers scroll to absolute top
+  - Navigation automatically expands from compact to full state
+  - Provides intuitive way to return to starting position
+- **Does not affect other section scroll points**
+  - All other navigation links maintain their existing scroll offsets
+  - Outreach section still uses custom offset (-50px mobile, 20px desktop)
+  - Other sections still use standard offsets (30px mobile, 45px desktop)
+- Result: Better navigation UX with intuitive "scroll to top" behavior on mobile
+
+### v1.9.21 - SCHEDULE SECTION IMPROVEMENTS
 - **Removed copy text under heading**
   - Deleted paragraph "We gather on Sundays, grow in community..."
   - Kept only address line: "3080 N Wildwood St · Boise, Idaho"

@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.0
+## 🔢 CURRENT VERSION: v1.9.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,20 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.0 (Current) - COMPLETE REBUILD WITH ROBUST ZONE LOGIC
+### v1.9.1 (Current) - IMPORTED WORKING SCROLL LOGIC FROM GITHUB
+- **SUCCESS: Used proven GitHub/Vercel implementation**
+- Previous v1.9.0 attempt failed - events still skipping
+- Solution: Imported working scroll logic from GitHub v1.5.4
+- Key features of GitHub implementation:
+  - **Asymmetric zones**: 0-25%, 25-65%, 65-100% (not equal thirds)
+  - **Hysteresis threshold**: 0.12 (12%) prevents boundary flickering
+  - **Scroll lock**: 800ms prevents momentum scrolling through events
+  - **Viewport adjustment**: Accounts for header and spacer positioning
+  - **Time-based locking**: Uses Date.now() to prevent rapid switches
+- Result: All 3 events display reliably, matches Vercel deployment behavior
+- Professional-grade: Production-tested implementation
+
+### v1.9.0 - COMPLETE REBUILD WITH ROBUST ZONE LOGIC (FAILED)
 - **SCRAPPED AND REBUILT: All scroll logic rewritten from scratch**
 - Previous approach issues:
   - Sticky header adjustments skewing zone calculations

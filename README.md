@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.7.5
+## 🔢 CURRENT VERSION: v1.7.6
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,16 @@ webapp/
 
 ## 📝 Version History
 
-### v1.7.5 (Current)
+### v1.7.6 (Current)
+- **FIXED: Instant scroll progress - eliminated dead zone at section entry**
+- Root cause: Entry required section at 30% + spacer at 70%, plus 35%/50% offsets
+- This created a "dead zone" where initial scrolling didn't register
+- Fix: Changed entry to 50% from top, removed ALL scroll calculation offsets
+- scrollProgress now starts at 0 instantly when section enters view
+- Committed event initialized immediately (no delayed requestAnimationFrame)
+- Result: Every scroll counts from the moment you enter - no wasted scrolling
+
+### v1.7.5
 - **NEW: Snap behavior for swipe-like card switching**
 - 15% threshold: Small swipes (15% into next zone) commit to full event change
 - Committed event tracking: Maintains current event until clear directional scroll

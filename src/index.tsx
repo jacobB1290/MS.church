@@ -3332,15 +3332,13 @@ app.get('/', (c) => {
                 let currentEventIndex = 0;
                 const totalEvents = eventSlides.length;
                 
-                // Track if we're in the outreach section
-                let inOutreachSection = false;
+                // ====================================================================
+                // ROBUST EVENT CARD SCROLL SYSTEM
+                // Clean, simple, bulletproof approach using pure math
+                // ====================================================================
                 
-                // Discrete card navigation - each scroll gesture moves one card
-                let committedEventIndex = 0;
-                let lastEventScrollY = window.pageYOffset;
-                let scrollDirection = 0; // 1 = down, -1 = up, 0 = none
-                let isTransitioning = false; // Prevent multiple events during transition
-                let transitionTimeout = null;
+                let inOutreachSection = false;
+                let requestId = null; // For requestAnimationFrame
                 
                 // Update active nav link
                 function updateActiveNavLink() {
@@ -3362,136 +3360,114 @@ app.get('/', (c) => {
                     });
                 }
                 
-                // Smooth scroll handler
+                // Smooth scroll handler with ROBUST event switching
                 function handleScroll() {
-                    if (!outreachSection || !scrollSpacer) return;
+                    // Cancel any pending animation frame
+                    if (requestId) {
+                        cancelAnimationFrame(requestId);
+                    }
                     
-                    const outreachRect = outreachSection.getBoundingClientRect();
-                    const spacerRect = scrollSpacer.getBoundingClientRect();
-                    
-                    // Handle mobile nav compression
-                    handleMobileNav();
-                    
-                    // Update active nav link
-                    updateActiveNavLink();
-                    
-                    // Check if we're in the outreach section
-                    // Key insight: When header sticks (top <= 80px), Event 1 is already locked in
-                    if (outreachRect.top <= window.innerHeight * 0.5 && spacerRect.bottom > 0) {
-                        // Just entering the section
-                        if (!inOutreachSection) {
-                            inOutreachSection = true;
-                            // Start with Event 0, will immediately advance to Event 1 when header sticks
-                            committedEventIndex = 0;
-                            updateActiveEvent(0, false);
-                        }
+                    // Schedule update on next frame for smooth 60fps
+                    requestId = requestAnimationFrame(() => {
+                        if (!outreachSection || !scrollSpacer) return;
                         
-                        // NEW APPROACH: Header sticky position = Event 1 starts (33.3% base)
-                        // When header reaches sticky position (80px from top), that's when Event 1 locks in
-                        const headerIsSticky = outreachRect.top <= 80;
+                        const outreachRect = outreachSection.getBoundingClientRect();
+                        const spacerRect = scrollSpacer.getBoundingClientRect();
                         
-                        // Calculate scroll progress through spacer
-                        const spacerTop = spacerRect.top;
-                        const spacerHeight = spacerRect.height;
-                        let scrollProgress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
+                        // Handle mobile nav compression
+                        handleMobileNav();
                         
-                        // CRITICAL: When header is sticky, we START at 33.3% (Event 1 committed)
-                        // Then divide remaining 66.7% into 2 equal zones for Events 2 and 3
-                        if (headerIsSticky) {
-                            // Map 0-100% spacer scroll to 33.3-100% effective progress
-                            scrollProgress = 0.333 + (scrollProgress * 0.667);
-                        }
+                        // Update active nav link
+                        updateActiveNavLink();
                         
-                        // Fade out header after scrolling past last event (90%+)
-                        if (scrollProgress > 0.9) {
-                            const fadeProgress = Math.min(1, (scrollProgress - 0.9) / 0.1);
-                            const outreachHeader = document.querySelector('.outreach-header');
-                            if (outreachHeader) {
-                                outreachHeader.style.opacity = String(1 - fadeProgress);
-                                outreachHeader.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
+                        // Check if we're in the outreach section
+                        const sectionTop = outreachRect.top;
+                        const sectionBottom = outreachRect.bottom;
+                        const viewportHeight = window.innerHeight;
+                        
+                        // We're in the section when it's visible
+                        if (sectionTop < viewportHeight && sectionBottom > 0) {
+                            if (!inOutreachSection) {
+                                inOutreachSection = true;
+                                currentEventIndex = 0;
+                                updateActiveEvent(0, false);
+                            }
+                            
+                            // CLEAN CALCULATION: How far through the spacer have we scrolled?
+                            // spacerRect.top = distance from viewport top to spacer top
+                            // When spacer.top = 0, spacer is at top of viewport
+                            // When spacer.top = -spacerHeight, spacer has scrolled past
+                            
+                            const spacerTop = spacerRect.top;
+                            const spacerHeight = spacerRect.height;
+                            const spacerBottom = spacerRect.bottom;
+                            
+                            // Only process if spacer is in viewport
+                            if (spacerBottom > 0 && spacerTop < viewportHeight) {
+                                // Calculate raw scroll progress (0 to 1)
+                                // Progress = how much of spacer has scrolled past viewport top
+                                let rawProgress = -spacerTop / spacerHeight;
+                                
+                                // Clamp to 0-1 range
+                                rawProgress = Math.max(0, Math.min(1, rawProgress));
+                                
+                                // SIMPLE ZONE LOGIC: Divide into 3 equal parts
+                                // 0.00 - 0.33 = Event 0
+                                // 0.33 - 0.66 = Event 1
+                                // 0.66 - 1.00 = Event 2
+                                
+                                let targetIndex = 0;
+                                if (rawProgress < 0.33) {
+                                    targetIndex = 0;
+                                } else if (rawProgress < 0.66) {
+                                    targetIndex = 1;
+                                } else {
+                                    targetIndex = 2;
+                                }
+                                
+                                // Only update if changed
+                                if (targetIndex !== currentEventIndex) {
+                                    console.log(\`🎯 Event switch: \${(rawProgress * 100).toFixed(1)}% → Event \${targetIndex}\`);
+                                    currentEventIndex = targetIndex;
+                                    updateActiveEvent(currentEventIndex, false);
+                                }
+                                
+                                // Fade out header near end
+                                const outreachHeader = document.querySelector('.outreach-header');
+                                if (outreachHeader) {
+                                    if (rawProgress > 0.9) {
+                                        const fadeProgress = (rawProgress - 0.9) / 0.1;
+                                        outreachHeader.style.opacity = String(1 - fadeProgress);
+                                        outreachHeader.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
+                                    } else {
+                                        outreachHeader.style.opacity = '1';
+                                        outreachHeader.style.transform = 'translateY(0)';
+                                    }
+                                }
                             }
                         } else {
-                            // Reset opacity when scrolling back
-                            const outreachHeader = document.querySelector('.outreach-header');
-                            if (outreachHeader) {
-                                outreachHeader.style.opacity = '1';
-                                outreachHeader.style.transform = 'translateY(0)';
+                            // Outside the section
+                            if (inOutreachSection) {
+                                inOutreachSection = false;
+                                resetBackground();
                             }
-                        }
-                        
-                        // DISCRETE CARD NAVIGATION - PROFESSIONAL IMPLEMENTATION
-                        // One scroll gesture = exactly one card move
-                        // Lock prevents multi-card jumps during continuous scroll
-                        
-                        const currentScrollY = window.pageYOffset;
-                        const scrollDelta = currentScrollY - lastEventScrollY;
-                        
-                        // Trigger on ANY meaningful scroll (>30px) while not locked
-                        if (Math.abs(scrollDelta) > 30 && !isTransitioning) {
-                            const newDirection = scrollDelta > 0 ? 1 : -1;
                             
-                            let targetEventIndex = committedEventIndex;
-                            
-                            if (newDirection > 0) {
-                                // Scrolling DOWN - advance to next card
-                                if (committedEventIndex < totalEvents - 1) {
-                                    targetEventIndex = committedEventIndex + 1;
-                                }
-                            } else {
-                                // Scrolling UP - go to previous card
-                                if (committedEventIndex > 0) {
-                                    targetEventIndex = committedEventIndex - 1;
+                            // Reset to first event when scrolling back up
+                            if (sectionTop > viewportHeight * 0.5) {
+                                if (currentEventIndex !== 0) {
+                                    currentEventIndex = 0;
+                                    updateActiveEvent(0, true);
                                 }
                             }
-                            
-                            // Execute the card change
-                            if (targetEventIndex !== committedEventIndex) {
-                                console.log(\`🔄 Card change: E\${committedEventIndex} → E\${targetEventIndex} | locked: \${isTransitioning} | delta: \${scrollDelta}px\`);
-                                
-                                committedEventIndex = targetEventIndex;
-                                currentEventIndex = targetEventIndex;
-                                updateActiveEvent(currentEventIndex, false);
-                                
-                                // Lock for 800ms - long enough to complete one scroll gesture
-                                isTransitioning = true;
-                                clearTimeout(transitionTimeout);
-                                transitionTimeout = setTimeout(() => {
-                                    isTransitioning = false;
-                                    console.log('🔓 Lock released, ready for next card');
-                                }, 800);
-                            }
-                        } else if (Math.abs(scrollDelta) > 5) {
-                            // Log when scroll is detected but blocked
-                            if (isTransitioning) {
-                                console.log(\`⏳ Scroll blocked (locked) | delta: \${scrollDelta}px | current: E\${committedEventIndex}\`);
+                            // Keep last event when scrolled past
+                            else if (sectionBottom < 0) {
+                                if (currentEventIndex !== totalEvents - 1) {
+                                    currentEventIndex = totalEvents - 1;
+                                    updateActiveEvent(currentEventIndex, true);
+                                }
                             }
                         }
-                        
-                        lastEventScrollY = currentScrollY;
-                    } else {
-                        // Outside the outreach section - reset to default background
-                        if (inOutreachSection) {
-                            inOutreachSection = false;
-                            resetBackground();
-                        }
-                        
-                        // Reset to first event when before section
-                        if (outreachRect.top > window.innerHeight * 0.5) {
-                            if (currentEventIndex !== 0) {
-                                currentEventIndex = 0;
-                                committedEventIndex = 0;
-                                updateActiveEvent(0, true);
-                            }
-                        }
-                        // Keep last event when scrolled past
-                        else if (spacerRect.bottom <= 0) {
-                            if (currentEventIndex !== totalEvents - 1) {
-                                currentEventIndex = totalEvents - 1;
-                                committedEventIndex = totalEvents - 1;
-                                updateActiveEvent(currentEventIndex, true);
-                            }
-                        }
-                    }
+                    });
                 }
                 
                 function updateActiveEvent(index, skipBackground = false) {

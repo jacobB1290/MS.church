@@ -1139,6 +1139,62 @@ app.get('/', (c) => {
                 letter-spacing: 1px;
             }
             
+            /* Countdown Timer */
+            .countdown-container {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 16px;
+                margin: 8px 0;
+            }
+            
+            .countdown-label {
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+            }
+            
+            .countdown-timer {
+                display: flex;
+                gap: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .countdown-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+                min-width: 70px;
+            }
+            
+            .countdown-number {
+                font-size: 42px;
+                font-weight: 700;
+                color: #ffffff;
+                font-family: 'Playfair Display', serif;
+                line-height: 1;
+            }
+            
+            .countdown-label-small {
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                color: rgba(255, 255, 255, 0.6);
+            }
+            
+            /* Playlist Button */
+            .playlist-btn {
+                margin-top: 16px;
+                width: auto;
+                display: inline-flex;
+            }
+            
             .video-embed-wrapper {
                 position: relative;
                 width: 100%;
@@ -3185,44 +3241,51 @@ app.get('/', (c) => {
                     <div class="watch-header">
                         <span class="section-eyebrow">Watch</span>
                         <h2 class="section-heading">Join us live every Sunday.</h2>
-                        <p class="section-lead">Tune in from wherever you are to worship together online. Our stream goes live fifteen minutes before service begins.</p>
                     </div>
                     <div class="watch-card">
                         <div class="watch-main">
-                            <!-- Live Stream Status -->
+                            <!-- Live Stream Status with Countdown -->
                             <div class="live-stream-container">
                                 <span class="live-status"><span class="live-dot"></span>Live Soon</span>
+                                <div class="countdown-container">
+                                    <div class="countdown-label">Next service starts in:</div>
+                                    <div class="countdown-timer">
+                                        <div class="countdown-item">
+                                            <span class="countdown-number" id="days">0</span>
+                                            <span class="countdown-label-small">Days</span>
+                                        </div>
+                                        <div class="countdown-item">
+                                            <span class="countdown-number" id="hours">0</span>
+                                            <span class="countdown-label-small">Hours</span>
+                                        </div>
+                                        <div class="countdown-item">
+                                            <span class="countdown-number" id="minutes">0</span>
+                                            <span class="countdown-label-small">Minutes</span>
+                                        </div>
+                                        <div class="countdown-item">
+                                            <span class="countdown-number" id="seconds">0</span>
+                                            <span class="countdown-label-small">Seconds</span>
+                                        </div>
+                                    </div>
+                                </div>
                                 <p class="live-verse">"He heals the brokenhearted and binds up their wounds."<small>Psalm 147:3</small></p>
                                 
-                                <!-- Main Video Embed - Featured/Latest Video -->
-                                <!-- This will show the latest video from your playlist -->
+                                <!-- Main Video Embed - Latest Stream -->
                                 <div class="video-embed-wrapper">
                                     <iframe 
                                         class="youtube-embed"
                                         src="https://www.youtube.com/embed?listType=playlist&list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC&index=1"
-                                        title="YouTube video player" 
+                                        title="Latest Sunday Service" 
                                         frameborder="0" 
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                                         allowfullscreen>
                                     </iframe>
                                 </div>
-                            </div>
-                            
-                            <!-- YouTube Playlist Section -->
-                            <div class="playlist-section">
-                                <div class="past-streams-label">Previous Livestreams</div>
                                 
-                                <!-- YouTube Playlist Embed -->
-                                <div class="playlist-embed-wrapper">
-                                    <iframe 
-                                        class="youtube-playlist"
-                                        src="https://www.youtube.com/embed/videoseries?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC"
-                                        title="YouTube playlist" 
-                                        frameborder="0" 
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                        allowfullscreen>
-                                    </iframe>
-                                </div>
+                                <!-- Playlist Button -->
+                                <a href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" class="btn btn-outline playlist-btn">
+                                    View Full Playlist
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -4034,6 +4097,62 @@ app.get('/', (c) => {
                 setInterval(() => {
                     moveCarousel('event2', 1);
                 }, 5000);
+
+                // Countdown Timer to Next Sunday 9:00 AM Mountain Time
+                function updateCountdown() {
+                    const now = new Date();
+                    
+                    // Convert to Mountain Time (UTC-7 MST or UTC-6 MDT)
+                    // Using Intl API to handle DST automatically
+                    const mtNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Denver' }));
+                    
+                    // Calculate next Sunday at 9:00 AM MT
+                    let nextSunday = new Date(mtNow);
+                    nextSunday.setHours(9, 0, 0, 0); // Set to 9:00 AM
+                    
+                    // Get current day (0 = Sunday, 6 = Saturday)
+                    const currentDay = mtNow.getDay();
+                    
+                    if (currentDay === 0) {
+                        // Today is Sunday
+                        if (mtNow.getHours() >= 9) {
+                            // Already past 9 AM, go to next Sunday
+                            nextSunday.setDate(nextSunday.getDate() + 7);
+                        }
+                    } else {
+                        // Not Sunday, calculate days until next Sunday
+                        const daysUntilSunday = 7 - currentDay;
+                        nextSunday.setDate(nextSunday.getDate() + daysUntilSunday);
+                    }
+                    
+                    // Calculate time difference
+                    const diff = nextSunday - mtNow;
+                    
+                    if (diff <= 0) {
+                        // Service is happening now or just ended
+                        document.getElementById('days').textContent = '0';
+                        document.getElementById('hours').textContent = '0';
+                        document.getElementById('minutes').textContent = '0';
+                        document.getElementById('seconds').textContent = '0';
+                        return;
+                    }
+                    
+                    // Calculate time units
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    // Update DOM
+                    document.getElementById('days').textContent = days;
+                    document.getElementById('hours').textContent = hours;
+                    document.getElementById('minutes').textContent = minutes;
+                    document.getElementById('seconds').textContent = seconds;
+                }
+                
+                // Update countdown immediately and every second
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
             });
         </script>
         

@@ -3332,13 +3332,14 @@ app.get('/', (c) => {
                 let currentEventIndex = 0;
                 const totalEvents = eventSlides.length;
                 
-                // ====================================================================
-                // ROBUST EVENT CARD SCROLL SYSTEM
-                // Clean, simple, bulletproof approach using pure math
-                // ====================================================================
-                
+                // Track if we're in the outreach section
                 let inOutreachSection = false;
-                let requestId = null; // For requestAnimationFrame
+                
+                // Scroll lock mechanism to prevent momentum scrolling through events
+                let isScrollLocked = false;
+                let scrollLockTimer = null;
+                let lastEventChangeTime = 0;
+                const scrollLockDuration = 800; // Lock scroll for 800ms after event change
                 
                 // Update active nav link
                 function updateActiveNavLink() {
@@ -3360,114 +3361,126 @@ app.get('/', (c) => {
                     });
                 }
                 
-                // Smooth scroll handler with ROBUST event switching
+                // Smooth scroll handler
                 function handleScroll() {
-                    // Cancel any pending animation frame
-                    if (requestId) {
-                        cancelAnimationFrame(requestId);
-                    }
+                    if (!outreachSection || !scrollSpacer) return;
                     
-                    // Schedule update on next frame for smooth 60fps
-                    requestId = requestAnimationFrame(() => {
-                        if (!outreachSection || !scrollSpacer) return;
-                        
-                        const outreachRect = outreachSection.getBoundingClientRect();
-                        const spacerRect = scrollSpacer.getBoundingClientRect();
-                        
-                        // Handle mobile nav compression
-                        handleMobileNav();
-                        
-                        // Update active nav link
-                        updateActiveNavLink();
-                        
-                        // Check if we're in the outreach section
-                        const sectionTop = outreachRect.top;
-                        const sectionBottom = outreachRect.bottom;
-                        const viewportHeight = window.innerHeight;
-                        
-                        // We're in the section when it's visible
-                        if (sectionTop < viewportHeight && sectionBottom > 0) {
-                            if (!inOutreachSection) {
-                                inOutreachSection = true;
-                                currentEventIndex = 0;
-                                updateActiveEvent(0, false);
-                            }
-                            
-                            // CLEAN CALCULATION: How far through the spacer have we scrolled?
-                            // spacerRect.top = distance from viewport top to spacer top
-                            // When spacer.top = 0, spacer is at top of viewport
-                            // When spacer.top = -spacerHeight, spacer has scrolled past
-                            
-                            const spacerTop = spacerRect.top;
-                            const spacerHeight = spacerRect.height;
-                            const spacerBottom = spacerRect.bottom;
-                            
-                            // Only process if spacer is in viewport
-                            if (spacerBottom > 0 && spacerTop < viewportHeight) {
-                                // Calculate raw scroll progress (0 to 1)
-                                // Progress = how much of spacer has scrolled past viewport top
-                                let rawProgress = -spacerTop / spacerHeight;
-                                
-                                // Clamp to 0-1 range
-                                rawProgress = Math.max(0, Math.min(1, rawProgress));
-                                
-                                // SIMPLE ZONE LOGIC: Divide into 3 equal parts
-                                // 0.00 - 0.33 = Event 0
-                                // 0.33 - 0.66 = Event 1
-                                // 0.66 - 1.00 = Event 2
-                                
-                                let targetIndex = 0;
-                                if (rawProgress < 0.33) {
-                                    targetIndex = 0;
-                                } else if (rawProgress < 0.66) {
-                                    targetIndex = 1;
-                                } else {
-                                    targetIndex = 2;
-                                }
-                                
-                                // Only update if changed
-                                if (targetIndex !== currentEventIndex) {
-                                    console.log(\`🎯 Event switch: \${(rawProgress * 100).toFixed(1)}% → Event \${targetIndex}\`);
-                                    currentEventIndex = targetIndex;
+                    const outreachRect = outreachSection.getBoundingClientRect();
+                    const spacerRect = scrollSpacer.getBoundingClientRect();
+                    
+                    // Handle mobile nav compression
+                    handleMobileNav();
+                    
+                    // Update active nav link
+                    updateActiveNavLink();
+                    
+                    // Check if we're in the outreach section
+                    if (outreachRect.top <= window.innerHeight * 0.3 && spacerRect.bottom > window.innerHeight * 0.7) {
+                        // Just entering the section
+                        if (!inOutreachSection) {
+                            inOutreachSection = true;
+                            // Small delay to ensure CSS transition applies smoothly
+                            requestAnimationFrame(() => {
+                                requestAnimationFrame(() => {
                                     updateActiveEvent(currentEventIndex, false);
-                                }
-                                
-                                // Fade out header near end
-                                const outreachHeader = document.querySelector('.outreach-header');
-                                if (outreachHeader) {
-                                    if (rawProgress > 0.9) {
-                                        const fadeProgress = (rawProgress - 0.9) / 0.1;
-                                        outreachHeader.style.opacity = String(1 - fadeProgress);
-                                        outreachHeader.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
-                                    } else {
-                                        outreachHeader.style.opacity = '1';
-                                        outreachHeader.style.transform = 'translateY(0)';
-                                    }
-                                }
+                                });
+                            });
+                        }
+                        
+                        // Calculate scroll progress through the spacer
+                        const spacerTop = spacerRect.top - window.innerHeight * 0.35;
+                        const spacerHeight = spacerRect.height - window.innerHeight * 0.5;
+                        const scrollProgress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
+                        
+                        // Fade out header after scrolling past last event (90%+)
+                        if (scrollProgress > 0.9) {
+                            const fadeProgress = Math.min(1, (scrollProgress - 0.9) / 0.1);
+                            const outreachHeader = document.querySelector('.outreach-header');
+                            if (outreachHeader) {
+                                outreachHeader.style.opacity = String(1 - fadeProgress);
+                                outreachHeader.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
                             }
                         } else {
-                            // Outside the section
-                            if (inOutreachSection) {
-                                inOutreachSection = false;
-                                resetBackground();
-                            }
-                            
-                            // Reset to first event when scrolling back up
-                            if (sectionTop > viewportHeight * 0.5) {
-                                if (currentEventIndex !== 0) {
-                                    currentEventIndex = 0;
-                                    updateActiveEvent(0, true);
-                                }
-                            }
-                            // Keep last event when scrolled past
-                            else if (sectionBottom < 0) {
-                                if (currentEventIndex !== totalEvents - 1) {
-                                    currentEventIndex = totalEvents - 1;
-                                    updateActiveEvent(currentEventIndex, true);
-                                }
+                            // Reset opacity when scrolling back
+                            const outreachHeader = document.querySelector('.outreach-header');
+                            if (outreachHeader) {
+                                outreachHeader.style.opacity = '1';
+                                outreachHeader.style.transform = 'translateY(0)';
                             }
                         }
-                    });
+                        
+                        // Calculate which event should be shown with tighter boundaries
+                        // Much smaller zones to prevent scrolling through multiple events
+                        let newEventIndex;
+                        if (scrollProgress < 0.25) {
+                            newEventIndex = 0;
+                        } else if (scrollProgress < 0.65) {
+                            newEventIndex = 1;
+                        } else {
+                            newEventIndex = 2;
+                        }
+                        
+                        // Larger hysteresis to create "sticky" zones around each event
+                        const threshold = 0.12; // Increased from 0.05 to create stronger boundaries
+                        if (newEventIndex > currentEventIndex) {
+                            // Moving forward - require clear progress past boundary
+                            const boundary = newEventIndex === 1 ? 0.25 : newEventIndex === 2 ? 0.65 : 0;
+                            if (scrollProgress < boundary + threshold) {
+                                newEventIndex = currentEventIndex;
+                            }
+                        } else if (newEventIndex < currentEventIndex) {
+                            // Moving backward - require clear progress past boundary
+                            const boundary = currentEventIndex === 1 ? 0.25 : currentEventIndex === 2 ? 0.65 : 0;
+                            if (scrollProgress > boundary - threshold) {
+                                newEventIndex = currentEventIndex;
+                            }
+                        }
+                        
+                        const clampedIndex = Math.max(0, Math.min(totalEvents - 1, newEventIndex));
+                        
+                        // Update event if changed
+                        if (clampedIndex !== currentEventIndex) {
+                            const now = Date.now();
+                            // Only update if enough time has passed since last change (prevents rapid switching)
+                            if (!isScrollLocked || (now - lastEventChangeTime) > scrollLockDuration) {
+                                currentEventIndex = clampedIndex;
+                                updateActiveEvent(currentEventIndex, false);
+                                
+                                // Lock scrolling temporarily after event change
+                                isScrollLocked = true;
+                                lastEventChangeTime = now;
+                                
+                                clearTimeout(scrollLockTimer);
+                                scrollLockTimer = setTimeout(() => {
+                                    isScrollLocked = false;
+                                }, scrollLockDuration);
+                            }
+                        }
+                    } else {
+                        // Outside the outreach section - reset to default background
+                        if (inOutreachSection) {
+                            inOutreachSection = false;
+                            // Ensure smooth fade out by using requestAnimationFrame
+                            requestAnimationFrame(() => {
+                                resetBackground();
+                            });
+                        }
+                        
+                        // Still update event index for proper state
+                        if (spacerRect.bottom <= window.innerHeight * 0.7) {
+                            // Scrolled past - show last event
+                            if (currentEventIndex !== totalEvents - 1) {
+                                currentEventIndex = totalEvents - 1;
+                                updateActiveEvent(currentEventIndex, true);
+                            }
+                        } else if (outreachRect.top > window.innerHeight * 0.3) {
+                            // Before section - show first event
+                            if (currentEventIndex !== 0) {
+                                currentEventIndex = 0;
+                                updateActiveEvent(0, true);
+                            }
+                        }
+                    }
                 }
                 
                 function updateActiveEvent(index, skipBackground = false) {
@@ -3484,11 +3497,10 @@ app.get('/', (c) => {
                             body.classList.add(\`event-\${index + 1}-active\`);
                         }
                         
-                        // Update ALL indicator dots (in header and in each event card)
-                        const allDots = document.querySelectorAll('.event-dot');
-                        allDots.forEach((dot) => {
-                            const dotIndex = parseInt(dot.getAttribute('data-dot')) - 1;
-                            if (dotIndex === index) {
+                        // Update indicator dots
+                        const dots = document.querySelectorAll('.event-dot');
+                        dots.forEach((dot, i) => {
+                            if (i === index) {
                                 dot.classList.add('active');
                             } else {
                                 dot.classList.remove('active');
@@ -3939,7 +3951,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.0</div>
+        <div class="version-footer">v1.5.4-github</div>
     </body>
     </html>
   `)

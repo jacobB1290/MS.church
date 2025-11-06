@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.7.2
+## 🔢 CURRENT VERSION: v1.7.3
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,15 @@ webapp/
 
 ## 📝 Version History
 
-### v1.7.2 (Current)
+### v1.7.3 (Current)
+- **FIXED: Equal zone distribution for event scroll** - Each event now gets exactly 33.3% of scroll space
+- Bug fix: Previous version had first card at 41.3%, Event 2 at 33.4%, Event 3 at 25.3%
+- New algorithm: Pure zone-based calculation using `Math.floor(scrollProgress / zoneSize)`
+- Added 2% boundary threshold to prevent flickering at exact zone transitions
+- Resolves issue: "first card takes a lot to swipe and last card is almost nothing"
+- Result: Intuitive, predictable, production-ready scroll behavior
+
+### v1.7.2
 - **Adjusted image sizing to 10% reduction** - Max-width reduced from 500px to 450px desktop (was 400px in v1.7.1)
 - Better visual balance - 10% reduction provides optimal size
 - Updated all mobile breakpoints with 10% smaller dimensions:

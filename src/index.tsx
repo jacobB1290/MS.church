@@ -1641,7 +1641,7 @@ app.get('/', (c) => {
                 }
 
                 .sticky-wrapper {
-                    top: 8vh;
+                    top: 15vh;
                 }
                 
                 .scroll-spacer {
@@ -2303,7 +2303,7 @@ app.get('/', (c) => {
                 .sticky-wrapper {
                     height: auto;
                     min-height: 55vh;
-                    top: 10vh;
+                    top: 18vh;
                     gap: 0;
                     padding-bottom: 100px;
                     justify-content: flex-start;
@@ -3547,7 +3547,7 @@ app.get('/', (c) => {
                                 navOffset = 20; // Desktop - scroll much further for outreach
                                 
                                 if (window.innerWidth <= 960) {
-                                    navOffset = 10; // Mobile - scroll even further for outreach
+                                    navOffset = -50; // Mobile - negative offset to match sticky position
                                 }
                             } else {
                                 // Other sections - mobile adjustment

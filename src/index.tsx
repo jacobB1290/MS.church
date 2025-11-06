@@ -3372,22 +3372,32 @@ app.get('/', (c) => {
                     // Update active nav link
                     updateActiveNavLink();
                     
-                    // Check if we're in the outreach section - IMMEDIATE entry, no dead zone
-                    // Enter as soon as section reaches top 50% of viewport
+                    // Check if we're in the outreach section
+                    // Key insight: When header sticks (top <= 80px), Event 1 is already locked in
                     if (outreachRect.top <= window.innerHeight * 0.5 && spacerRect.bottom > 0) {
                         // Just entering the section
                         if (!inOutreachSection) {
                             inOutreachSection = true;
-                            // Initialize committed event immediately
+                            // Start with Event 0, will immediately advance to Event 1 when header sticks
                             committedEventIndex = 0;
                             updateActiveEvent(0, false);
                         }
                         
-                        // Calculate scroll progress - INSTANT START, no offsets or delays
-                        // As soon as section is in view, scrollProgress starts at 0
+                        // NEW APPROACH: Header sticky position = Event 1 starts (33.3% base)
+                        // When header reaches sticky position (80px from top), that's when Event 1 locks in
+                        const headerIsSticky = outreachRect.top <= 80;
+                        
+                        // Calculate scroll progress through spacer
                         const spacerTop = spacerRect.top;
                         const spacerHeight = spacerRect.height;
-                        const scrollProgress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
+                        let scrollProgress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
+                        
+                        // CRITICAL: When header is sticky, we START at 33.3% (Event 1 committed)
+                        // Then divide remaining 66.7% into 2 equal zones for Events 2 and 3
+                        if (headerIsSticky) {
+                            // Map 0-100% spacer scroll to 33.3-100% effective progress
+                            scrollProgress = 0.333 + (scrollProgress * 0.667);
+                        }
                         
                         // Fade out header after scrolling past last event (90%+)
                         if (scrollProgress > 0.9) {

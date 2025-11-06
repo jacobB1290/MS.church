@@ -3938,6 +3938,8 @@ app.get('/', (c) => {
                 function updateCarousel(carouselId) {
                     const state = carouselStates[carouselId];
                     const carousel = document.getElementById(carouselId + '-carousel');
+                    if (!carousel || !carousel.parentElement) return;
+                    
                     const dots = carousel.parentElement.querySelectorAll('.carousel-dot');
                     
                     // Update slides position

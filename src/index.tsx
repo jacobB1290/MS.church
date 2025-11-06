@@ -724,11 +724,11 @@ app.get('/', (c) => {
                 gap: 10px;
             }
             
-            /* Image Wrapper - Fixed 3:4 portrait aspect ratio */
+            /* Image Wrapper - Fixed 3:4 portrait aspect ratio, 20% smaller */
             .event-flyer-wrapper {
                 position: relative;
                 width: 100%;
-                max-width: 500px;
+                max-width: 400px;
                 aspect-ratio: 3/4;
                 display: flex;
                 align-items: center;
@@ -1878,7 +1878,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-meta-row {
-                    max-width: 450px;
+                    max-width: 360px;
                     padding: 0 20px;
                     margin-bottom: 16px;
                 }
@@ -1889,7 +1889,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 450px;
+                    max-width: 360px;
                     padding: 0 20px;
                     margin-bottom: 20px;
                 }
@@ -1905,7 +1905,7 @@ app.get('/', (c) => {
                 .event-cta {
                     padding: 0 20px;
                     margin-bottom: 20px;
-                    max-width: 450px;
+                    max-width: 360px;
                 }
                 
                 .event-cta .btn {
@@ -2061,7 +2061,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-meta-row {
-                    max-width: 400px;
+                    max-width: 320px;
                     padding: 0 16px;
                     margin-bottom: 14px;
                 }
@@ -2072,7 +2072,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 400px;
+                    max-width: 320px;
                     padding: 0 16px;
                     margin-bottom: 16px;
                 }
@@ -2088,7 +2088,7 @@ app.get('/', (c) => {
                 .event-cta {
                     padding: 0 16px;
                     margin-bottom: 16px;
-                    max-width: 400px;
+                    max-width: 320px;
                 }
                 
                 .event-cta .btn {
@@ -2729,7 +2729,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-meta-row {
-                    max-width: 360px;
+                    max-width: 288px;
                     padding: 0 12px;
                     margin-bottom: 12px;
                 }
@@ -2754,7 +2754,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 360px;
+                    max-width: 288px;
                     padding: 0 12px;
                     margin-bottom: 14px;
                 }
@@ -2770,7 +2770,7 @@ app.get('/', (c) => {
                 .event-cta {
                     padding: 0 12px;
                     margin-bottom: 14px;
-                    max-width: 360px;
+                    max-width: 288px;
                 }
                 
                 .event-cta .btn {
@@ -3503,10 +3503,11 @@ app.get('/', (c) => {
                             body.classList.add(\`event-\${index + 1}-active\`);
                         }
                         
-                        // Update indicator dots
-                        const dots = document.querySelectorAll('.event-dot');
-                        dots.forEach((dot, i) => {
-                            if (i === index) {
+                        // Update ALL indicator dots (in header and in each event card)
+                        const allDots = document.querySelectorAll('.event-dot');
+                        allDots.forEach((dot) => {
+                            const dotIndex = parseInt(dot.getAttribute('data-dot')) - 1;
+                            if (dotIndex === index) {
                                 dot.classList.add('active');
                             } else {
                                 dot.classList.remove('active');
@@ -3955,7 +3956,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.7.0</div>
+        <div class="version-footer">v1.7.1</div>
     </body>
     </html>
   `)

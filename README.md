@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.4
+## 🔢 CURRENT VERSION: v1.9.5
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,18 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.4 (Current) - FIXED SWIPE & GOLD DOT INDICATORS
+### v1.9.5 (Current) - REMOVED FORM CONTAINER
+- **REMOVED: White rounded container around JotForm**
+  - Removed `.contact-card` div wrapper from HTML structure
+  - JotForm now extends to edges of page instead of being boxed in
+  - No more padding, rounded corners, or box-shadow on form container
+  - Cleaner, more integrated look with website design
+- **Simplified HTML structure**:
+  - `.contact-container` → `.jotform-container` (direct)
+  - Form flows naturally without visual barriers
+- Result: Form appears as part of the page flow, not as a separate boxed element
+
+### v1.9.4 - FIXED SWIPE & GOLD DOT INDICATORS
 - **FIXED: Horizontal swipe navigation now works properly**
   - Simplified swipe detection logic
   - Lower threshold (40px) for easier detection

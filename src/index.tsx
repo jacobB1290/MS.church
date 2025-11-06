@@ -15,6 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
+    <!-- v1.9.5 - Form container removed, JotForm extends to edges -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3123,13 +3124,12 @@ app.get('/', (c) => {
                         <a href="#event-2" class="btn btn-secondary btn-more-info">More Info</a>
                     </div>
                     <div class="contact-container">
-                        <div class="contact-card">
-                            <div class="jotform-container">
-                                <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
-                            </div>
-                            
-                            <!-- Success State (Hidden by default) -->
-                            <div class="form-success" style="display: none;">
+                        <div class="jotform-container">
+                            <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
+                        </div>
+                        
+                        <!-- Success State (Hidden by default) -->
+                        <div class="form-success" style="display: none;">
                                 <div class="success-icon">🎁</div>
                                 <h3 class="success-heading">Request Submitted!</h3>
                                 <p class="success-message">You will receive a text message with more information.</p>
@@ -3238,7 +3238,6 @@ app.get('/', (c) => {
                                 
                                 <button type="submit" class="btn btn-primary btn-submit">Submit Request</button>
                             </form>
-                        </div>
                     </div>
                 </section>
             </main>

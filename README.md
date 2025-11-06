@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.19
+## 🔢 CURRENT VERSION: v1.9.20
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,21 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.19 (Current) - WATCH SECTION IMPROVEMENTS
+### v1.9.20 (Current) - COUNTDOWN TIMER REFINEMENTS
+- **Made countdown much smaller**
+  - Reduced countdown numbers from 42px to 24px
+  - Reduced item min-width from 70px to 45px
+  - Reduced gaps from 20px to 12px, 16px to 8px
+  - Smaller label font sizes (14px → 10px, 11px → 9px)
+  - More compact, less visually dominant design
+- **"Live Soon" now shows only 1 hour before service**
+  - "Live Soon" status only displays within 60 minutes of Sunday 9am MT
+  - Rest of the week: countdown visible, "Live Soon" hidden
+  - During service or after: both hidden
+  - Smart logic checks both time remaining AND day of week
+- Result: Cleaner, more compact countdown that shows "Live Soon" only when truly imminent
+
+### v1.9.19 - WATCH SECTION IMPROVEMENTS
 - **Removed copy text under heading**
   - Deleted the paragraph "Tune in from wherever you are..." under "Join us live every Sunday."
   - Cleaner, more focused watch section header

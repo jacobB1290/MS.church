@@ -2398,7 +2398,7 @@ app.get('/', (c) => {
                 }
 
                 .watch {
-                    margin-top: 80px;
+                    margin-top: 120px;
                 }
 
                 .watch-card {
@@ -2755,7 +2755,7 @@ app.get('/', (c) => {
                 /* Watch Section */
                 .watch {
                     gap: 12px;
-                    margin-top: 60px;
+                    margin-top: 100px;
                 }
                 
                 .watch-header {

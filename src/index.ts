@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { serveStatic } from '@hono/node-server/serve-static'
+import { serveStatic } from 'hono/cloudflare-workers'
 
 const app = new Hono()
 
@@ -30,6 +30,7 @@ app.get('/', (c) => {
                 --bg-event1: linear-gradient(135deg, #ffe8d6 0%, #ffd4d4 100%); /* Soft peach to light coral for Friendsgiving */
                 --bg-event2: linear-gradient(135deg, #ffd6e8 0%, #ffe5f0 100%); /* Soft pink to lighter pink for Clothes Drive */
                 --bg-event3: linear-gradient(135deg, #c8e6c8 0%, #ffe0e0 50%, #d4f0d4 100%); /* Vibrant green to soft red to vibrant green for Christmas */
+                --outreach-spacer: 160vh;
             }
 
             * {
@@ -484,6 +485,8 @@ app.get('/', (c) => {
             }
 
             /* Enhanced Outreach Section with Scroll Container */
+            #outreach { overscroll-behavior: contain; }
+
             .outreach {
                 min-height: 100vh;
                 display: flex;
@@ -491,14 +494,11 @@ app.get('/', (c) => {
             }
 
             .outreach-header {
-                margin-bottom: 8vh;
                 position: sticky;
                 top: 80px;
                 z-index: 10;
+                margin-bottom: 8vh;
                 text-align: left;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
             }
             
             .heading-wrapper {
@@ -547,34 +547,29 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 20vh;
-                height: 62vh;
+                top: 12vh;
+                height: 70vh;
                 display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: flex-start;
-                padding-bottom: 100px;
+                align-items: flex-start;
+                justify-content: center;
+                padding-top: 20px;
             }
 
-            .events-container {
-                width: 100%;
-                max-width: 1000px;
-                margin: 0 auto;
-                position: relative;
-            }
+            .outreach-scroll-container { position: relative; }
+            .events-container { position: relative; width: 100%; height: 100%; }
 
             .event-slide {
                 position: absolute;
-                top: 0;
-                left: 0;
+                inset: 0;
                 width: 100%;
                 opacity: 0;
                 visibility: hidden;
                 transform: translateY(30px) scale(0.95);
-                transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                            transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                            visibility 0s 0.4s;
+                transition: opacity 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+                            transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
                 pointer-events: none;
+                z-index: 0;
+                will-change: transform, opacity;
             }
 
             .event-slide.active {
@@ -582,16 +577,10 @@ app.get('/', (c) => {
                 visibility: visible;
                 transform: translateY(0) scale(1);
                 pointer-events: auto;
-                position: relative;
-                transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                            transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                            visibility 0s 0s;
+                z-index: 1;
             }
 
-            .scroll-spacer {
-                height: 100vh;  /* Reduced from 250vh for responsive swipe-like feel */
-                pointer-events: none;
-            }
+            .scroll-spacer { height: var(--outreach-spacer); pointer-events: none; }
             
             /* Scroll snap disabled - using manual zone calculation for precise control */
             
@@ -662,6 +651,11 @@ app.get('/', (c) => {
             @keyframes bounce {
                 0%, 100% { transform: translateY(0); }
                 50% { transform: translateY(-8px); }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .event-slide { transition: none; transform: none; }
+                .outreach-header { transition: none; }
             }
 
             /* ========================================
@@ -3298,17 +3292,19 @@ app.get('/', (c) => {
         </div>
 
         <script>
-            // Smooth scroll animation for events with background color change
             document.addEventListener('DOMContentLoaded', () => {
-                const eventSlides = document.querySelectorAll('.event-slide');
                 const body = document.body;
                 const outreachSection = document.querySelector('.outreach');
+                const outreachHeader = document.querySelector('.outreach-header');
                 const scrollSpacer = document.querySelector('.scroll-spacer');
+                const eventsContainer = document.querySelector('.events-container');
+                const eventSlides = document.querySelectorAll('.event-slide');
                 const navShell = document.querySelector('.nav-shell');
-                
-                // Get all sections and nav links
                 const sections = document.querySelectorAll('section[id]');
                 const navLinks = document.querySelectorAll('nav a[href^="#"]');
+                const dots = document.querySelectorAll('.event-dot');
+
+                if (!outreachSection || !scrollSpacer || !eventsContainer || !eventSlides.length) return;
                 
                 // Mobile nav compression on scroll
                 let lastNavScrollY = 0;
@@ -3335,11 +3331,10 @@ app.get('/', (c) => {
                 // Track if we're in the outreach section
                 let inOutreachSection = false;
                 
-                // Scroll lock mechanism to prevent momentum scrolling through events
-                let isScrollLocked = false;
-                let scrollLockTimer = null;
+                // Rate limiting mechanism for event changes
+                let isChangeRateLimited = false;
                 let lastEventChangeTime = 0;
-                const scrollLockDuration = 800; // Lock scroll for 800ms after event change
+                const changeCooldownMs = 800;
                 
                 // Update active nav link
                 function updateActiveNavLink() {
@@ -3361,232 +3356,148 @@ app.get('/', (c) => {
                     });
                 }
                 
-                // Smooth scroll handler
                 function handleScroll() {
-                    if (!outreachSection || !scrollSpacer) return;
-                    
                     const outreachRect = outreachSection.getBoundingClientRect();
                     const spacerRect = scrollSpacer.getBoundingClientRect();
-                    
-                    // Handle mobile nav compression
+                    const vh = window.innerHeight;
+
                     handleMobileNav();
-                    
-                    // Update active nav link
                     updateActiveNavLink();
-                    
-                    // Check if we're in the outreach section
-                    if (outreachRect.top <= window.innerHeight * 0.3 && spacerRect.bottom > window.innerHeight * 0.7) {
-                        // Just entering the section
+
+                    const inSection = (outreachRect.top <= vh * 0.3) && (spacerRect.bottom > vh * 0.7);
+
+                    if (inSection) {
                         if (!inOutreachSection) {
                             inOutreachSection = true;
-                            // Small delay to ensure CSS transition applies smoothly
-                            requestAnimationFrame(() => {
-                                requestAnimationFrame(() => {
-                                    updateActiveEvent(currentEventIndex, false);
-                                });
-                            });
+                            requestAnimationFrame(() => requestAnimationFrame(() => updateActiveEvent(currentEventIndex, false)));
                         }
-                        
-                        // Calculate scroll progress through the spacer
-                        const spacerTop = spacerRect.top - window.innerHeight * 0.35;
-                        const spacerHeight = spacerRect.height - window.innerHeight * 0.5;
-                        const scrollProgress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
-                        
-                        // Fade out header after scrolling past last event (90%+)
-                        if (scrollProgress > 0.9) {
-                            const fadeProgress = Math.min(1, (scrollProgress - 0.9) / 0.1);
-                            const outreachHeader = document.querySelector('.outreach-header');
-                            if (outreachHeader) {
-                                outreachHeader.style.opacity = String(1 - fadeProgress);
-                                outreachHeader.style.transform = \`translateY(\${-20 * fadeProgress}px)\`;
-                            }
-                        } else {
-                            // Reset opacity when scrolling back
-                            const outreachHeader = document.querySelector('.outreach-header');
-                            if (outreachHeader) {
+
+                        const spacerTop = spacerRect.top - vh * 0.35;
+                        const spacerHeightRaw = spacerRect.height - vh * 0.5;
+                        const spacerHeight = Math.max(spacerHeightRaw, 1);
+                        const progress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
+
+                        if (outreachHeader) {
+                            if (progress > 0.9) {
+                                const t = Math.min(1, (progress - 0.9) / 0.1);
+                                outreachHeader.style.opacity = String(1 - t);
+                                outreachHeader.style.transform = \`translateY(\${-20 * t}px)\`;
+                            } else {
                                 outreachHeader.style.opacity = '1';
                                 outreachHeader.style.transform = 'translateY(0)';
                             }
                         }
-                        
-                        // Calculate which event should be shown with tighter boundaries
-                        // Much smaller zones to prevent scrolling through multiple events
-                        let newEventIndex;
-                        if (scrollProgress < 0.25) {
-                            newEventIndex = 0;
-                        } else if (scrollProgress < 0.65) {
-                            newEventIndex = 1;
-                        } else {
-                            newEventIndex = 2;
+
+                        let newIndex = progress < 0.25 ? 0 : (progress < 0.65 ? 1 : 2);
+
+                        const now = Date.now();
+                        if (newIndex !== currentEventIndex &&
+                           (!isChangeRateLimited || (now - lastEventChangeTime) > changeCooldownMs)) {
+                            currentEventIndex = newIndex;
+                            updateActiveEvent(currentEventIndex, false);
+                            isChangeRateLimited = true;
+                            lastEventChangeTime = now;
+                            setTimeout(() => { isChangeRateLimited = false; }, changeCooldownMs);
                         }
-                        
-                        // Larger hysteresis to create "sticky" zones around each event
-                        const threshold = 0.12; // Increased from 0.05 to create stronger boundaries
-                        if (newEventIndex > currentEventIndex) {
-                            // Moving forward - require clear progress past boundary
-                            const boundary = newEventIndex === 1 ? 0.25 : newEventIndex === 2 ? 0.65 : 0;
-                            if (scrollProgress < boundary + threshold) {
-                                newEventIndex = currentEventIndex;
-                            }
-                        } else if (newEventIndex < currentEventIndex) {
-                            // Moving backward - require clear progress past boundary
-                            const boundary = currentEventIndex === 1 ? 0.25 : currentEventIndex === 2 ? 0.65 : 0;
-                            if (scrollProgress > boundary - threshold) {
-                                newEventIndex = currentEventIndex;
-                            }
-                        }
-                        
-                        const clampedIndex = Math.max(0, Math.min(totalEvents - 1, newEventIndex));
-                        
-                        // Update event if changed
-                        if (clampedIndex !== currentEventIndex) {
-                            const now = Date.now();
-                            // Only update if enough time has passed since last change (prevents rapid switching)
-                            if (!isScrollLocked || (now - lastEventChangeTime) > scrollLockDuration) {
-                                currentEventIndex = clampedIndex;
-                                updateActiveEvent(currentEventIndex, false);
-                                
-                                // Lock scrolling temporarily after event change
-                                isScrollLocked = true;
-                                lastEventChangeTime = now;
-                                
-                                clearTimeout(scrollLockTimer);
-                                scrollLockTimer = setTimeout(() => {
-                                    isScrollLocked = false;
-                                }, scrollLockDuration);
-                            }
-                        }
+
                     } else {
-                        // Outside the outreach section - reset to default background
                         if (inOutreachSection) {
                             inOutreachSection = false;
-                            // Ensure smooth fade out by using requestAnimationFrame
                             requestAnimationFrame(() => {
-                                resetBackground();
+                                body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
                             });
                         }
-                        
-                        // Still update event index for proper state
-                        if (spacerRect.bottom <= window.innerHeight * 0.7) {
-                            // Scrolled past - show last event
-                            if (currentEventIndex !== totalEvents - 1) {
-                                currentEventIndex = totalEvents - 1;
-                                updateActiveEvent(currentEventIndex, true);
-                            }
-                        } else if (outreachRect.top > window.innerHeight * 0.3) {
-                            // Before section - show first event
-                            if (currentEventIndex !== 0) {
-                                currentEventIndex = 0;
-                                updateActiveEvent(0, true);
-                            }
+                        if (spacerRect.bottom <= vh * 0.7 && currentEventIndex !== totalEvents - 1) {
+                            currentEventIndex = totalEvents - 1;
+                            updateActiveEvent(currentEventIndex, true);
+                        } else if (outreachRect.top > vh * 0.3 && currentEventIndex !== 0) {
+                            currentEventIndex = 0;
+                            updateActiveEvent(0, true);
                         }
                     }
                 }
                 
-                function updateActiveEvent(index, skipBackground = false) {
-                    // Remove active class from all events
-                    eventSlides.forEach(slide => slide.classList.remove('active'));
-                    
-                    // Add active class to current event
-                    if (eventSlides[index]) {
-                        eventSlides[index].classList.add('active');
-                        
-                        // Update body background based on event (only if in section)
-                        if (!skipBackground) {
-                            body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
-                            body.classList.add(\`event-\${index + 1}-active\`);
-                        }
-                        
-                        // Update indicator dots
-                        const dots = document.querySelectorAll('.event-dot');
-                        dots.forEach((dot, i) => {
-                            if (i === index) {
-                                dot.classList.add('active');
-                            } else {
-                                dot.classList.remove('active');
-                            }
-                        });
-                    }
+                function setAriaVisibility(index) {
+                    eventSlides.forEach((slide, i) => {
+                        slide.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+                        slide.inert = i !== index;
+                    });
                 }
-                
-                function resetBackground() {
-                    // Remove all event background classes to return to default
+
+                function updateDots(index) {
+                    if (!dots.length) return;
+                    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                }
+
+                function updateBodyBg(index, skip) {
+                    if (skip) return;
                     body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
+                    body.classList.add(\`event-\${index + 1}-active\`);
                 }
+
+                function updateActiveEvent(index, skipBackground) {
+                    eventSlides.forEach(s => s.classList.remove('active'));
+                    const active = eventSlides[index];
+                    if (!active) return;
+                    active.classList.add('active');
+                    setAriaVisibility(index);
+                    updateDots(index);
+                    updateBodyBg(index, skipBackground);
+                }
+
+                updateActiveEvent(0, true);
                 
-                // Touch/Swipe handling for events
-                let touchStartX = 0;
-                let touchStartY = 0;
-                let touchEndX = 0;
-                let touchEndY = 0;
+                let touchStartX = 0, touchStartY = 0;
                 let isSwipeActive = false;
-                let swipeDebounceTimer = null;
-                const swipeThreshold = 40; // Very small threshold for easy swiping
-                const swipeDebounceTime = 600; // Prevent accidental double-swipes
-                
-                const eventsContainer = document.querySelector('.events-container');
-                
+                let swipeTimer = null;
+                const swipeThreshold = 40;
+                const swipeCooldown = 600;
+
                 if (eventsContainer) {
-                    eventsContainer.addEventListener('touchstart', (e) => {
+                    eventsContainer.addEventListener('touchstart', e => {
                         if (isSwipeActive) return;
-                        touchStartX = e.changedTouches[0].screenX;
-                        touchStartY = e.changedTouches[0].screenY;
+                        const t = e.changedTouches[0];
+                        touchStartX = t.screenX;
+                        touchStartY = t.screenY;
                     }, { passive: true });
-                    
-                    eventsContainer.addEventListener('touchend', (e) => {
+
+                    eventsContainer.addEventListener('touchend', e => {
                         if (isSwipeActive) return;
-                        
-                        touchEndX = e.changedTouches[0].screenX;
-                        touchEndY = e.changedTouches[0].screenY;
-                        
-                        const deltaX = touchEndX - touchStartX;
-                        const deltaY = touchEndY - touchStartY;
-                        
-                        // Only process if horizontal swipe is dominant
-                        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+                        const t = e.changedTouches[0];
+                        const dx = t.screenX - touchStartX;
+                        const dy = t.screenY - touchStartY;
+                        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
                             isSwipeActive = true;
-                            
-                            if (deltaX > 0) {
-                                // Swipe right - go to previous event
-                                if (currentEventIndex > 0) {
-                                    currentEventIndex--;
-                                    updateActiveEvent(currentEventIndex, false);
-                                }
-                            } else {
-                                // Swipe left - go to next event
-                                if (currentEventIndex < totalEvents - 1) {
-                                    currentEventIndex++;
-                                    updateActiveEvent(currentEventIndex, false);
-                                }
+                            if (dx > 0 && currentEventIndex > 0) {
+                                currentEventIndex--;
+                                updateActiveEvent(currentEventIndex, false);
+                            } else if (dx < 0 && currentEventIndex < totalEvents - 1) {
+                                currentEventIndex++;
+                                updateActiveEvent(currentEventIndex, false);
                             }
-                            
-                            // Reset swipe lock after debounce time
-                            clearTimeout(swipeDebounceTimer);
-                            swipeDebounceTimer = setTimeout(() => {
-                                isSwipeActive = false;
-                            }, swipeDebounceTime);
+                            clearTimeout(swipeTimer);
+                            swipeTimer = setTimeout(() => { isSwipeActive = false; }, swipeCooldown);
                         }
                     }, { passive: true });
                 }
                 
-                // Throttle scroll events for performance
                 let ticking = false;
                 window.addEventListener('scroll', () => {
                     if (!ticking) {
+                        ticking = true;
                         window.requestAnimationFrame(() => {
                             handleScroll();
                             ticking = false;
                         });
-                        ticking = true;
                     }
-                });
+                }, { passive: true });
                 
                 // Initial check
                 handleScroll();
                 
-                // Handle window resize
                 window.addEventListener('resize', () => {
                     handleMobileNav();
+                    handleScroll();
                 });
                 
                 // Smooth scrolling for navigation links with offset for sticky nav
@@ -3951,7 +3862,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.1</div>
+        <div class="version-footer">v1.9.2</div>
     </body>
     </html>
   `)
@@ -4195,6 +4106,5 @@ app.get('/form', (c) => {
     </html>
   `)
 })
-
 
 export default app

@@ -570,26 +570,26 @@ app.get('/', (c) => {
                 width: 100%;
                 opacity: 0;
                 visibility: hidden;
-                transform: translateY(20px);
-                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-                            visibility 0s 0.5s;
+                transform: translateY(30px) scale(0.95);
+                transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                            transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                            visibility 0s 0.4s;
                 pointer-events: none;
             }
 
             .event-slide.active {
                 opacity: 1;
                 visibility: visible;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
                 pointer-events: auto;
                 position: relative;
-                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                            transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                             visibility 0s 0s;
             }
 
             .scroll-spacer {
-                height: 300vh; /* Reduced for tighter control */
+                height: 250vh;
                 pointer-events: none;
             }
             
@@ -688,17 +688,40 @@ app.get('/', (c) => {
                 flex-direction: column;
                 align-items: center;
                 justify-content: flex-start;
-                padding-top: 60px;
+                padding-top: 20px;
                 box-sizing: border-box;
             }
             
-            /* Hide date pill and dots */
-            .event-card > .event-date {
-                display: none !important;
+            /* Meta row with date and dots */
+            .event-meta-row {
+                width: 100%;
+                max-width: 500px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 24px;
+                margin-bottom: 20px;
+                box-sizing: border-box;
             }
             
-            .event-card > .event-indicators {
-                display: none !important;
+            /* Date pill styling */
+            .event-date {
+                padding: 8px 20px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                border-radius: 100px;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                color: #ffffff;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+            
+            /* Event indicators (dots) */
+            .event-indicators {
+                display: flex;
+                gap: 10px;
             }
             
             /* Image Wrapper - Fixed 3:4 portrait aspect ratio */
@@ -1851,7 +1874,18 @@ app.get('/', (c) => {
                     height: 90vh;
                     margin-left: 0;
                     width: 100vw;
-                    padding-top: 40px;
+                    padding-top: 16px;
+                }
+                
+                .event-meta-row {
+                    max-width: 450px;
+                    padding: 0 20px;
+                    margin-bottom: 16px;
+                }
+                
+                .event-date {
+                    padding: 7px 18px;
+                    font-size: 10px;
                 }
                 
                 .event-flyer-wrapper {
@@ -2023,7 +2057,18 @@ app.get('/', (c) => {
                 /* Mobile 480px Event Cards - Ultra clean */
                 .event-card {
                     height: 88vh;
-                    padding-top: 30px;
+                    padding-top: 14px;
+                }
+                
+                .event-meta-row {
+                    max-width: 400px;
+                    padding: 0 16px;
+                    margin-bottom: 14px;
+                }
+                
+                .event-date {
+                    padding: 6px 16px;
+                    font-size: 9px;
                 }
                 
                 .event-flyer-wrapper {
@@ -2050,21 +2095,6 @@ app.get('/', (c) => {
                     padding: 16px 32px;
                     font-size: 13px;
                     border-radius: 18px;
-                }
-                
-                /* Carousel adjustments */
-                .carousel-arrow {
-                    width: 40px;
-                    height: 40px;
-                    font-size: 18px;
-                }
-                
-                .carousel-arrow.prev {
-                    left: 16px;
-                }
-                
-                .carousel-arrow.next {
-                    right: 16px;
                 }
 
                 .brand-title {
@@ -2695,7 +2725,32 @@ app.get('/', (c) => {
                 /* Mobile 375px Event Cards - Compact */
                 .event-card {
                     height: 86vh;
-                    padding-top: 24px;
+                    padding-top: 12px;
+                }
+                
+                .event-meta-row {
+                    max-width: 360px;
+                    padding: 0 12px;
+                    margin-bottom: 12px;
+                }
+                
+                .event-date {
+                    padding: 6px 14px;
+                    font-size: 8px;
+                }
+                
+                .event-indicators {
+                    gap: 8px;
+                }
+                
+                .event-dot {
+                    width: 7px;
+                    height: 7px;
+                }
+                
+                .event-dot.active {
+                    width: 9px;
+                    height: 9px;
                 }
                 
                 .event-flyer-wrapper {
@@ -2722,25 +2777,6 @@ app.get('/', (c) => {
                     padding: 14px 28px;
                     font-size: 12px;
                     border-radius: 16px;
-                }
-                
-                /* Carousel adjustments */
-                .carousel-arrow {
-                    width: 36px;
-                    height: 36px;
-                    font-size: 16px;
-                }
-                
-                .carousel-arrow.prev {
-                    left: 12px;
-                }
-                
-                .carousel-arrow.next {
-                    right: 12px;
-                }
-                
-                .carousel-controls {
-                    bottom: 16px;
                 }
                 
                 .scroll-hint {
@@ -3018,11 +3054,13 @@ app.get('/', (c) => {
                                 <!-- Event 1: Community Thanksgiving Dinner -->
                                 <div class="event-slide active" data-event="1">
                                     <div class="event-card">
-                                        <span class="event-date">NOV 26</span>
-                                        <div class="event-indicators">
-                                            <div class="event-dot active" data-dot="1"></div>
-                                            <div class="event-dot" data-dot="2"></div>
-                                            <div class="event-dot" data-dot="3"></div>
+                                        <div class="event-meta-row">
+                                            <span class="event-date">NOV 26</span>
+                                            <div class="event-indicators">
+                                                <div class="event-dot active" data-dot="1"></div>
+                                                <div class="event-dot" data-dot="2"></div>
+                                                <div class="event-dot" data-dot="3"></div>
+                                            </div>
                                         </div>
                                         <div class="event-flyer-wrapper">
                                             <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
@@ -3036,32 +3074,17 @@ app.get('/', (c) => {
                                 <!-- Event 2: Christmas Clothes Drive -->
                                 <div class="event-slide" data-event="2" id="event-2">
                                     <div class="event-card">
-                                        <span class="event-date">DEC 6</span>
-                                        <div class="event-indicators">
-                                            <div class="event-dot active" data-dot="1"></div>
-                                            <div class="event-dot" data-dot="2"></div>
-                                            <div class="event-dot" data-dot="3"></div>
+                                        <div class="event-meta-row">
+                                            <span class="event-date">DEC 6</span>
+                                            <div class="event-indicators">
+                                                <div class="event-dot active" data-dot="1"></div>
+                                                <div class="event-dot" data-dot="2"></div>
+                                                <div class="event-dot" data-dot="3"></div>
+                                            </div>
                                         </div>
                                         <div class="event-flyer-wrapper">
-                                            <div class="carousel-container">
-                                                <div class="carousel-arrow prev" onclick="moveCarousel('event2', -1)">‹</div>
-                                                <div class="carousel-arrow next" onclick="moveCarousel('event2', 1)">›</div>
-                                                <div class="carousel-slides" id="event2-carousel">
-                                                    <!-- Slide 1: Placeholder Flyer -->
-                                                    <div class="carousel-slide">
-                                                        <div class="placeholder-flyer">
-                                                            Flyer Coming Soon
-                                                        </div>
-                                                    </div>
-                                                    <!-- Slide 2: Community Service Image -->
-                                                    <div class="carousel-slide">
-                                                        <img src="/static/community-service-1.jpg" alt="Community Service Day" class="flyer-image">
-                                                    </div>
-                                                </div>
-                                                <div class="carousel-controls">
-                                                    <div class="carousel-dot active" onclick="goToSlide('event2', 0)"></div>
-                                                    <div class="carousel-dot" onclick="goToSlide('event2', 1)"></div>
-                                                </div>
+                                            <div class="placeholder-flyer">
+                                                Flyer Coming Soon
                                             </div>
                                         </div>
                                         <div class="event-cta">
@@ -3073,11 +3096,13 @@ app.get('/', (c) => {
                                 <!-- Event 3: Christmas Eve Candlelight Service -->
                                 <div class="event-slide" data-event="3">
                                     <div class="event-card">
-                                        <span class="event-date">DEC 24</span>
-                                        <div class="event-indicators">
-                                            <div class="event-dot active" data-dot="1"></div>
-                                            <div class="event-dot" data-dot="2"></div>
-                                            <div class="event-dot" data-dot="3"></div>
+                                        <div class="event-meta-row">
+                                            <span class="event-date">DEC 24</span>
+                                            <div class="event-indicators">
+                                                <div class="event-dot active" data-dot="1"></div>
+                                                <div class="event-dot" data-dot="2"></div>
+                                                <div class="event-dot" data-dot="3"></div>
+                                            </div>
                                         </div>
                                         <div class="event-flyer-wrapper">
                                             <div class="placeholder-flyer">
@@ -3319,11 +3344,11 @@ app.get('/', (c) => {
                 // Track if we're in the outreach section
                 let inOutreachSection = false;
                 
-                // Scroll lock mechanism to prevent momentum scrolling through events
+                // Scroll lock mechanism for smooth, predictable transitions
                 let isScrollLocked = false;
                 let scrollLockTimer = null;
                 let lastEventChangeTime = 0;
-                const scrollLockDuration = 800; // Lock scroll for 800ms after event change
+                const scrollLockDuration = 300; // Reduced for snappier transitions
                 
                 // Update active nav link
                 function updateActiveNavLink() {
@@ -3393,28 +3418,27 @@ app.get('/', (c) => {
                             }
                         }
                         
-                        // Calculate which event should be shown with tighter boundaries
-                        // Much smaller zones to prevent scrolling through multiple events
+                        // Snappier event boundaries with clear separation
                         let newEventIndex;
-                        if (scrollProgress < 0.25) {
+                        if (scrollProgress < 0.33) {
                             newEventIndex = 0;
-                        } else if (scrollProgress < 0.65) {
+                        } else if (scrollProgress < 0.66) {
                             newEventIndex = 1;
                         } else {
                             newEventIndex = 2;
                         }
                         
-                        // Larger hysteresis to create "sticky" zones around each event
-                        const threshold = 0.12; // Increased from 0.05 to create stronger boundaries
+                        // Snappy threshold - smaller for quick transitions
+                        const threshold = 0.05;
                         if (newEventIndex > currentEventIndex) {
-                            // Moving forward - require clear progress past boundary
-                            const boundary = newEventIndex === 1 ? 0.25 : newEventIndex === 2 ? 0.65 : 0;
+                            // Moving forward
+                            const boundary = newEventIndex === 1 ? 0.33 : 0.66;
                             if (scrollProgress < boundary + threshold) {
                                 newEventIndex = currentEventIndex;
                             }
                         } else if (newEventIndex < currentEventIndex) {
-                            // Moving backward - require clear progress past boundary
-                            const boundary = currentEventIndex === 1 ? 0.25 : currentEventIndex === 2 ? 0.65 : 0;
+                            // Moving backward
+                            const boundary = currentEventIndex === 1 ? 0.33 : 0.66;
                             if (scrollProgress > boundary - threshold) {
                                 newEventIndex = currentEventIndex;
                             }
@@ -3422,22 +3446,20 @@ app.get('/', (c) => {
                         
                         const clampedIndex = Math.max(0, Math.min(totalEvents - 1, newEventIndex));
                         
-                        // Update event if changed
+                        // Update event with reduced lock duration for snappier feel
                         if (clampedIndex !== currentEventIndex) {
                             const now = Date.now();
-                            // Only update if enough time has passed since last change (prevents rapid switching)
-                            if (!isScrollLocked || (now - lastEventChangeTime) > scrollLockDuration) {
+                            if (!isScrollLocked || (now - lastEventChangeTime) > 300) {
                                 currentEventIndex = clampedIndex;
                                 updateActiveEvent(currentEventIndex, false);
                                 
-                                // Lock scrolling temporarily after event change
                                 isScrollLocked = true;
                                 lastEventChangeTime = now;
                                 
                                 clearTimeout(scrollLockTimer);
                                 scrollLockTimer = setTimeout(() => {
                                     isScrollLocked = false;
-                                }, scrollLockDuration);
+                                }, 300);
                             }
                         }
                     } else {
@@ -3933,7 +3955,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.6.3</div>
+        <div class="version-footer">v1.7.0</div>
     </body>
     </html>
   `)

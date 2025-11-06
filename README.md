@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.6.3
+## 🔢 CURRENT VERSION: v1.7.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -50,16 +50,18 @@
 - **Smooth Fading**: All colors are light pastels that fade smoothly between events
 - **Entry/Exit Animation**: Background color gradually fades in when entering and out when leaving section
 
-### 4. Event Cards - Clean Image Layout (v1.6.3)
-**Ultra-minimalist, refined layout with standard flyer proportions:**
+### 4. Event Cards - Clean Image Layout (v1.7.0)
+**Ultra-minimalist layout with metadata row and optimized scrolling:**
+- **Meta row below title** - Date pill on left, 3 indicator dots on right
 - **Fixed 3:4 portrait aspect ratio** - All images maintain standard flyer proportions
-- **Moved up positioning** - Images start higher on screen (60px desktop, 24-40px mobile padding-top)
+- **Date pill styling** - Gold gradient with rounded corners and shadow
+- **3 indicator dots** - Active dot highlighted in gold, clickable navigation
+- **Snappy scroll transitions** - Optimized 0.4s transitions with scale effect
+- **Predictable event switching** - Clear boundaries at 33% and 66% scroll progress
+- **Reduced scroll lock** - 300ms delay for responsive feel
 - **Elegant rounded corners** - 24px desktop, 16-20px mobile
-- **Matching rounded gold CTA button** - 24px border-radius positioned below image
-- **Subtle shadow effects** - Soft shadows on both image and button for depth
-- **No date pills, no dots, no decorations** - Pure image focus
+- **Matching rounded gold CTA button** - Positioned below image
 - **Responsive sizing** - Max-width 500px desktop, scales to 360-450px on mobile
-- **Carousel support** - Event 2 has image slider functionality with maintained aspect ratio
 
 ### 5. Current Events
 1. **Community Thanksgiving Dinner** (Nov 26)
@@ -242,7 +244,17 @@ webapp/
 
 ## 📝 Version History
 
-### v1.6.3 (Current)
+### v1.7.0 (Current)
+- **NEW: Meta row with date and dots** - Date pill on left, 3 indicator dots on right below "Upcoming Events" title
+- **Removed Event 2 carousel** - Simplified to placeholder only (removed community service image slider)
+- **Optimized scroll transitions** - Reduced from 0.5s to 0.4s with scale effect for snappier feel
+- **Improved event boundaries** - Clear 33%/66% boundaries instead of 25%/65% for predictable switching
+- **Reduced scroll lock** - Decreased from 800ms to 300ms for more responsive transitions
+- **Snappier threshold** - Reduced from 0.12 to 0.05 for quicker event changes
+- **Reduced scroll spacer** - Changed from 300vh to 250vh for tighter control
+- All mobile breakpoints updated with proper meta row styling
+
+### v1.6.3
 - **Fixed 3:4 aspect ratio** - All images now maintain standard flyer portrait proportions
 - **Moved images up** - Changed from flex-end to flex-start with padding-top (60px desktop, 24-40px mobile)
 - **Updated image fit** - Changed from contain to cover for consistent aspect ratio enforcement

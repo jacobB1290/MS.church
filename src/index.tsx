@@ -589,7 +589,7 @@ app.get('/', (c) => {
             }
 
             .scroll-spacer {
-                height: 250vh;
+                height: 100vh;  /* Reduced from 250vh for responsive swipe-like feel */
                 pointer-events: none;
             }
             

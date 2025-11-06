@@ -496,7 +496,7 @@ app.get('/', (c) => {
 
             .outreach-header {
                 position: sticky;
-                top: 80px;
+                top: 28px;
                 z-index: 10;
                 margin-bottom: 8vh;
                 text-align: left;
@@ -548,12 +548,12 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 12vh;
-                height: 70vh;
+                top: 5vh;
+                height: 75vh;
                 display: flex;
                 align-items: flex-start;
                 justify-content: center;
-                padding-top: 20px;
+                padding-top: 10px;
             }
 
             .outreach-scroll-container { position: relative; }
@@ -652,16 +652,9 @@ app.get('/', (c) => {
                 box-sizing: border-box;
             }
             
-            /* Meta row with date and dots */
+            /* Meta row with date and dots - HIDDEN, now overlaid on image */
             .event-meta-row {
-                width: 100%;
-                max-width: 500px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0 24px;
-                margin-bottom: 20px;
-                box-sizing: border-box;
+                display: none;
             }
             
             /* Date pill styling */
@@ -684,11 +677,11 @@ app.get('/', (c) => {
                 gap: 10px;
             }
             
-            /* Image Wrapper - Fixed 3:4 portrait aspect ratio, 10% smaller */
+            /* Image Wrapper - Fixed 3:4 portrait aspect ratio, 15% smaller */
             .event-flyer-wrapper {
                 position: relative;
                 width: 100%;
-                max-width: 450px;
+                max-width: 382px;
                 aspect-ratio: 3/4;
                 display: flex;
                 align-items: center;
@@ -699,13 +692,13 @@ app.get('/', (c) => {
                 box-sizing: border-box;
             }
             
-            /* Image styling - Enforces 3:4 aspect ratio */
+            /* Image styling - Enforces 3:4 aspect ratio, rounded corners match pill */
             .flyer-image {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 object-position: center;
-                border-radius: 24px;
+                border-radius: 32px;
                 box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             }
             
@@ -721,8 +714,24 @@ app.get('/', (c) => {
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                border-radius: 24px;
+                border-radius: 32px;
                 box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            }
+            
+            /* Date and Dots Overlaid on Image */
+            .event-flyer-wrapper .event-date {
+                position: absolute;
+                top: 16px;
+                left: 40px;
+                z-index: 20;
+                margin: 0;
+            }
+            
+            .event-flyer-wrapper .event-indicators {
+                position: absolute;
+                top: 16px;
+                right: 40px;
+                z-index: 20;
             }
             
             /* CTA Button - Below image */
@@ -2997,15 +3006,13 @@ app.get('/', (c) => {
                                 <!-- Event 1: Community Thanksgiving Dinner -->
                                 <div class="event-slide active" data-event="1">
                                     <div class="event-card">
-                                        <div class="event-meta-row">
+                                        <div class="event-flyer-wrapper">
                                             <span class="event-date">NOV 26</span>
                                             <div class="event-indicators">
                                                 <div class="event-dot active" data-dot="1"></div>
                                                 <div class="event-dot" data-dot="2"></div>
                                                 <div class="event-dot" data-dot="3"></div>
                                             </div>
-                                        </div>
-                                        <div class="event-flyer-wrapper">
                                             <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
                                         </div>
                                         <div class="event-cta">
@@ -3017,15 +3024,13 @@ app.get('/', (c) => {
                                 <!-- Event 2: Christmas Clothes Drive -->
                                 <div class="event-slide" data-event="2" id="event-2">
                                     <div class="event-card">
-                                        <div class="event-meta-row">
+                                        <div class="event-flyer-wrapper">
                                             <span class="event-date">DEC 6</span>
                                             <div class="event-indicators">
                                                 <div class="event-dot active" data-dot="1"></div>
                                                 <div class="event-dot" data-dot="2"></div>
                                                 <div class="event-dot" data-dot="3"></div>
                                             </div>
-                                        </div>
-                                        <div class="event-flyer-wrapper">
                                             <div class="placeholder-flyer">
                                                 Flyer Coming Soon
                                             </div>
@@ -3039,15 +3044,13 @@ app.get('/', (c) => {
                                 <!-- Event 3: Christmas Eve Candlelight Service -->
                                 <div class="event-slide" data-event="3">
                                     <div class="event-card">
-                                        <div class="event-meta-row">
+                                        <div class="event-flyer-wrapper">
                                             <span class="event-date">DEC 24</span>
                                             <div class="event-indicators">
                                                 <div class="event-dot active" data-dot="1"></div>
                                                 <div class="event-dot" data-dot="2"></div>
                                                 <div class="event-dot" data-dot="3"></div>
                                             </div>
-                                        </div>
-                                        <div class="event-flyer-wrapper">
                                             <div class="placeholder-flyer">
                                                 Flyer Coming Soon
                                             </div>

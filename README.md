@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.6.2
+## 🔢 CURRENT VERSION: v1.6.3
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -50,15 +50,16 @@
 - **Smooth Fading**: All colors are light pastels that fade smoothly between events
 - **Entry/Exit Animation**: Background color gradually fades in when entering and out when leaving section
 
-### 4. Event Cards - Clean Image Layout (v1.6.2)
-**Ultra-minimalist, refined layout:**
-- **Flyer image** at ~65% viewport height with elegant rounded corners (24px desktop, 16-20px mobile)
-- **Matching rounded gold CTA button** (24px border-radius) positioned below image
+### 4. Event Cards - Clean Image Layout (v1.6.3)
+**Ultra-minimalist, refined layout with standard flyer proportions:**
+- **Fixed 3:4 portrait aspect ratio** - All images maintain standard flyer proportions
+- **Moved up positioning** - Images start higher on screen (60px desktop, 24-40px mobile padding-top)
+- **Elegant rounded corners** - 24px desktop, 16-20px mobile
+- **Matching rounded gold CTA button** - 24px border-radius positioned below image
 - **Subtle shadow effects** - Soft shadows on both image and button for depth
-- **No date pills, no dots, no decorations** - pure image focus
-- **Centered, contained design** - Max-width 800px for optimal viewing
-- **Responsive breakpoints** - Optimized for iPhone 17 Pro Max down to iPhone SE
-- **Carousel support** - Event 2 has image slider functionality
+- **No date pills, no dots, no decorations** - Pure image focus
+- **Responsive sizing** - Max-width 500px desktop, scales to 360-450px on mobile
+- **Carousel support** - Event 2 has image slider functionality with maintained aspect ratio
 
 ### 5. Current Events
 1. **Community Thanksgiving Dinner** (Nov 26)
@@ -241,7 +242,14 @@ webapp/
 
 ## 📝 Version History
 
-### v1.6.2 (Current)
+### v1.6.3 (Current)
+- **Fixed 3:4 aspect ratio** - All images now maintain standard flyer portrait proportions
+- **Moved images up** - Changed from flex-end to flex-start with padding-top (60px desktop, 24-40px mobile)
+- **Updated image fit** - Changed from contain to cover for consistent aspect ratio enforcement
+- **Responsive sizing** - Max-width 500px desktop, scales to 360-450px mobile
+- All mobile breakpoints updated to maintain 3:4 aspect ratio across all screen sizes
+
+### v1.6.2
 - **Refined image sizing** - Reduced from full-screen to ~65vh for better balance
 - **Added matching rounded corners** - 24px border-radius on desktop, 16-20px on mobile
 - **Updated button styling** - Matching 24px border-radius to complement image

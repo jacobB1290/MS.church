@@ -687,8 +687,8 @@ app.get('/', (c) => {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: flex-end;
-                padding: 0;
+                justify-content: flex-start;
+                padding-top: 60px;
                 box-sizing: border-box;
             }
             
@@ -701,26 +701,26 @@ app.get('/', (c) => {
                 display: none !important;
             }
             
-            /* Image Wrapper - Takes up ~65% of viewport with padding */
+            /* Image Wrapper - Fixed 3:4 portrait aspect ratio */
             .event-flyer-wrapper {
                 position: relative;
                 width: 100%;
-                max-width: 800px;
-                height: auto;
+                max-width: 500px;
+                aspect-ratio: 3/4;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 z-index: 10;
                 margin-bottom: 24px;
                 padding: 0 24px;
+                box-sizing: border-box;
             }
             
-            /* Image styling */
+            /* Image styling - Enforces 3:4 aspect ratio */
             .flyer-image {
                 width: 100%;
-                height: auto;
-                max-height: 65vh;
-                object-fit: contain;
+                height: 100%;
+                object-fit: cover;
                 object-position: center;
                 border-radius: 24px;
                 box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
@@ -728,7 +728,7 @@ app.get('/', (c) => {
             
             .placeholder-flyer {
                 width: 100%;
-                height: 65vh;
+                height: 100%;
                 background: rgba(255, 255, 255, 0.95);
                 display: flex;
                 align-items: center;
@@ -1851,28 +1851,27 @@ app.get('/', (c) => {
                     height: 90vh;
                     margin-left: 0;
                     width: 100vw;
+                    padding-top: 40px;
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 90%;
+                    max-width: 450px;
                     padding: 0 20px;
                     margin-bottom: 20px;
                 }
                 
                 .flyer-image {
-                    max-height: 60vh;
                     border-radius: 20px;
                 }
                 
                 .placeholder-flyer {
-                    height: 60vh;
                     border-radius: 20px;
                 }
                 
                 .event-cta {
                     padding: 0 20px;
                     margin-bottom: 20px;
-                    max-width: 90%;
+                    max-width: 450px;
                 }
                 
                 .event-cta .btn {
@@ -2024,28 +2023,27 @@ app.get('/', (c) => {
                 /* Mobile 480px Event Cards - Ultra clean */
                 .event-card {
                     height: 88vh;
+                    padding-top: 30px;
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 92%;
+                    max-width: 400px;
                     padding: 0 16px;
                     margin-bottom: 16px;
                 }
                 
                 .flyer-image {
-                    max-height: 58vh;
                     border-radius: 18px;
                 }
                 
                 .placeholder-flyer {
-                    height: 58vh;
                     border-radius: 18px;
                 }
                 
                 .event-cta {
                     padding: 0 16px;
                     margin-bottom: 16px;
-                    max-width: 92%;
+                    max-width: 400px;
                 }
                 
                 .event-cta .btn {
@@ -2697,28 +2695,27 @@ app.get('/', (c) => {
                 /* Mobile 375px Event Cards - Compact */
                 .event-card {
                     height: 86vh;
+                    padding-top: 24px;
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 94%;
+                    max-width: 360px;
                     padding: 0 12px;
                     margin-bottom: 14px;
                 }
                 
                 .flyer-image {
-                    max-height: 56vh;
                     border-radius: 16px;
                 }
                 
                 .placeholder-flyer {
-                    height: 56vh;
                     border-radius: 16px;
                 }
                 
                 .event-cta {
                     padding: 0 12px;
                     margin-bottom: 14px;
-                    max-width: 94%;
+                    max-width: 360px;
                 }
                 
                 .event-cta .btn {

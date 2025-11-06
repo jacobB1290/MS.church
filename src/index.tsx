@@ -3311,7 +3311,7 @@ app.get('/', (c) => {
                 const navLinks = document.querySelectorAll('nav a[href^="#"]');
                 
                 // Mobile nav compression on scroll
-                let lastScrollY = 0;
+                let lastNavScrollY = 0;
                 let scrollThreshold = 50;
                 
                 function handleMobileNav() {
@@ -3326,7 +3326,7 @@ app.get('/', (c) => {
                         // Remove class on desktop
                         navShell.classList.remove('scrolled-mobile');
                     }
-                    lastScrollY = window.scrollY;
+                    lastNavScrollY = window.scrollY;
                 }
                 
                 let currentEventIndex = 0;
@@ -3337,7 +3337,7 @@ app.get('/', (c) => {
                 
                 // Discrete card navigation - each scroll gesture moves one card
                 let committedEventIndex = 0;
-                let lastScrollY = window.pageYOffset;
+                let lastEventScrollY = window.pageYOffset;
                 let scrollDirection = 0; // 1 = down, -1 = up, 0 = none
                 let isTransitioning = false; // Prevent multiple events during transition
                 let transitionTimeout = null;
@@ -3424,10 +3424,10 @@ app.get('/', (c) => {
                         // Lock prevents multi-card jumps during continuous scroll
                         
                         const currentScrollY = window.pageYOffset;
-                        const scrollDelta = currentScrollY - lastScrollY;
+                        const scrollDelta = currentScrollY - lastEventScrollY;
                         
-                        // Trigger on ANY meaningful scroll (>20px) while not locked
-                        if (Math.abs(scrollDelta) > 20 && !isTransitioning) {
+                        // Trigger on ANY meaningful scroll (>30px) while not locked
+                        if (Math.abs(scrollDelta) > 30 && !isTransitioning) {
                             const newDirection = scrollDelta > 0 ? 1 : -1;
                             
                             let targetEventIndex = committedEventIndex;
@@ -3446,20 +3446,28 @@ app.get('/', (c) => {
                             
                             // Execute the card change
                             if (targetEventIndex !== committedEventIndex) {
+                                console.log(\`🔄 Card change: E\${committedEventIndex} → E\${targetEventIndex} | locked: \${isTransitioning} | delta: \${scrollDelta}px\`);
+                                
                                 committedEventIndex = targetEventIndex;
                                 currentEventIndex = targetEventIndex;
                                 updateActiveEvent(currentEventIndex, false);
                                 
-                                // Lock for 600ms to ensure one card per gesture
+                                // Lock for 800ms - long enough to complete one scroll gesture
                                 isTransitioning = true;
                                 clearTimeout(transitionTimeout);
                                 transitionTimeout = setTimeout(() => {
                                     isTransitioning = false;
-                                }, 600);
+                                    console.log('🔓 Lock released, ready for next card');
+                                }, 800);
+                            }
+                        } else if (Math.abs(scrollDelta) > 5) {
+                            // Log when scroll is detected but blocked
+                            if (isTransitioning) {
+                                console.log(\`⏳ Scroll blocked (locked) | delta: \${scrollDelta}px | current: E\${committedEventIndex}\`);
                             }
                         }
                         
-                        lastScrollY = currentScrollY;
+                        lastEventScrollY = currentScrollY;
                     } else {
                         // Outside the outreach section - reset to default background
                         if (inOutreachSection) {

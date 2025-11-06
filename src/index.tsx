@@ -593,16 +593,7 @@ app.get('/', (c) => {
                 pointer-events: none;
             }
             
-            /* Scroll snap for controlled event transitions */
-            @supports (scroll-snap-type: y mandatory) {
-                .outreach-scroll-container {
-                    scroll-snap-type: y proximity;
-                }
-                
-                .scroll-spacer {
-                    scroll-snap-align: start;
-                }
-            }
+            /* Scroll snap disabled - using manual zone calculation for precise control */
             
             /* Event Indicator Dots */
             .event-indicators {
@@ -3344,12 +3335,6 @@ app.get('/', (c) => {
                 // Track if we're in the outreach section
                 let inOutreachSection = false;
                 
-                // Scroll lock mechanism for smooth, predictable transitions
-                let isScrollLocked = false;
-                let scrollLockTimer = null;
-                let lastEventChangeTime = 0;
-                const scrollLockDuration = 300; // Reduced for snappier transitions
-                
                 // Update active nav link
                 function updateActiveNavLink() {
                     let currentSection = '';
@@ -3418,53 +3403,21 @@ app.get('/', (c) => {
                             }
                         }
                         
-                        // TRULY EQUAL zones - each event gets exactly 1/3 of scroll space
-                        // Use midpoint-based switching instead of boundary + hysteresis
+                        // SIMPLE, CLEAN zone calculation - no artificial delays
+                        // Each event gets EXACTLY 1/3 of scroll space
                         const zoneSize = 1.0 / totalEvents; // 0.333 for 3 events
                         
-                        // Calculate which zone the scroll position falls into
-                        // Using floor ensures clean zone boundaries
-                        const targetZone = Math.floor(scrollProgress / zoneSize);
+                        // Calculate target event based purely on scroll position
+                        // Use simple division - let Math.floor handle boundaries naturally
+                        let targetEventIndex = Math.floor(scrollProgress / zoneSize);
                         
                         // Clamp to valid range [0, totalEvents-1]
-                        const newEventIndex = Math.min(Math.max(0, targetZone), totalEvents - 1);
+                        targetEventIndex = Math.min(Math.max(0, targetEventIndex), totalEvents - 1);
                         
-                        // Add small hysteresis ONLY at exact boundaries to prevent flickering
-                        // Only switch if we're clearly in a different zone (not right at boundary)
-                        const boundaryThreshold = 0.02; // 2% buffer at boundaries
-                        const positionInZone = (scrollProgress % zoneSize) / zoneSize; // 0 to 1 within current zone
-                        
-                        // Prevent switching if we're at the very edge of a zone (within 2% of boundary)
-                        let shouldSwitch = true;
-                        if (newEventIndex !== currentEventIndex) {
-                            // If moving forward and we're at the very start of new zone
-                            if (newEventIndex > currentEventIndex && positionInZone < boundaryThreshold) {
-                                shouldSwitch = false;
-                            }
-                            // If moving backward and we're at the very end of new zone
-                            else if (newEventIndex < currentEventIndex && positionInZone > (1 - boundaryThreshold)) {
-                                shouldSwitch = false;
-                            }
-                        }
-                        
-                        let finalEventIndex = shouldSwitch ? newEventIndex : currentEventIndex;
-                        
-                        // Update event only if changed
-                        if (finalEventIndex !== currentEventIndex) {
-                            const now = Date.now();
-                            // Reduced lock for responsive feel but prevent rapid switching
-                            if (!isScrollLocked || (now - lastEventChangeTime) > 250) {
-                                currentEventIndex = finalEventIndex;
-                                updateActiveEvent(currentEventIndex, false);
-                                
-                                isScrollLocked = true;
-                                lastEventChangeTime = now;
-                                
-                                clearTimeout(scrollLockTimer);
-                                scrollLockTimer = setTimeout(() => {
-                                    isScrollLocked = false;
-                                }, 250);
-                            }
+                        // Update immediately when zone changes - no locks, no delays, no thresholds
+                        if (targetEventIndex !== currentEventIndex) {
+                            currentEventIndex = targetEventIndex;
+                            updateActiveEvent(currentEventIndex, false);
                         }
                     } else {
                         // Outside the outreach section - reset to default background

@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.17
+## 🔢 CURRENT VERSION: v1.9.18
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,19 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.17 (Current) - RESTORED ORIGINAL CONTACT SECTION LAYOUT
+### v1.9.18 (Current) - MOBILE NAV GIFTS BUTTON IMPROVEMENTS
+- **Shifted GIFTS button right in compressed mobile nav**
+  - Added `margin-left: 8px` to `.nav-form-btn` when nav is compressed
+  - Better visual balance with nav links on the left
+  - Button no longer crowded with other nav items
+- **Made GIFTS button bold when active**
+  - Added `.nav-form-btn.active` class with `font-weight: 900`
+  - White background (`rgba(255, 255, 255, 1)`) when active
+  - Updated `updateActiveNavLink()` function to track contact section
+  - Button stays bold/highlighted when user is in gifts/contact section
+- Result: Better balanced mobile nav with clear active state indication
+
+### v1.9.17 - RESTORED ORIGINAL CONTACT SECTION LAYOUT
 - **Removed overlay styling from form**
   - Removed `contact-container` wrapper div
   - Restored `jotform-container` to original simple styling

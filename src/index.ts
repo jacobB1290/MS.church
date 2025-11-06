@@ -1145,21 +1145,21 @@ app.get('/', (c) => {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 16px;
-                margin: 8px 0;
+                gap: 8px;
+                margin: 6px 0;
             }
             
             .countdown-label {
                 color: rgba(255, 255, 255, 0.7);
-                font-size: 14px;
+                font-size: 10px;
                 font-weight: 600;
                 text-transform: uppercase;
-                letter-spacing: 2px;
+                letter-spacing: 1.5px;
             }
             
             .countdown-timer {
                 display: flex;
-                gap: 20px;
+                gap: 12px;
                 justify-content: center;
                 flex-wrap: wrap;
             }
@@ -1168,12 +1168,12 @@ app.get('/', (c) => {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 8px;
-                min-width: 70px;
+                gap: 4px;
+                min-width: 45px;
             }
             
             .countdown-number {
-                font-size: 42px;
+                font-size: 24px;
                 font-weight: 700;
                 color: #ffffff;
                 font-family: 'Playfair Display', serif;
@@ -1181,10 +1181,10 @@ app.get('/', (c) => {
             }
             
             .countdown-label-small {
-                font-size: 11px;
+                font-size: 9px;
                 font-weight: 600;
                 text-transform: uppercase;
-                letter-spacing: 1.5px;
+                letter-spacing: 1px;
                 color: rgba(255, 255, 255, 0.6);
             }
             
@@ -4128,13 +4128,26 @@ app.get('/', (c) => {
                     // Calculate time difference
                     const diff = nextSunday - mtNow;
                     
+                    // Get elements
+                    const liveStatus = document.querySelector('.live-status');
+                    const countdownContainer = document.querySelector('.countdown-container');
+                    
+                    // Check if we're within 1 hour (3600000 ms) of service start
+                    const oneHour = 3600000; // 1 hour in milliseconds
+                    
                     if (diff <= 0) {
-                        // Service is happening now or just ended
-                        document.getElementById('days').textContent = '0';
-                        document.getElementById('hours').textContent = '0';
-                        document.getElementById('minutes').textContent = '0';
-                        document.getElementById('seconds').textContent = '0';
+                        // Service is happening now or just ended - hide everything
+                        if (liveStatus) liveStatus.style.display = 'none';
+                        if (countdownContainer) countdownContainer.style.display = 'none';
                         return;
+                    } else if (diff <= oneHour && currentDay === 0) {
+                        // Within 1 hour of service on Sunday - show "Live Soon" and countdown
+                        if (liveStatus) liveStatus.style.display = 'inline-flex';
+                        if (countdownContainer) countdownContainer.style.display = 'flex';
+                    } else {
+                        // More than 1 hour away - hide "Live Soon", show countdown only
+                        if (liveStatus) liveStatus.style.display = 'none';
+                        if (countdownContainer) countdownContainer.style.display = 'flex';
                     }
                     
                     // Calculate time units

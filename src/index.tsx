@@ -547,11 +547,12 @@ app.get('/', (c) => {
 
             .sticky-wrapper {
                 position: sticky;
-                top: 20vh;
-                height: 62vh;
+                top: 12vh;
+                height: 70vh;
                 display: flex;
-                align-items: center;
-                justify-content: flex-start;
+                align-items: flex-start;
+                justify-content: center;
+                padding-top: 20px;
             }
 
             .outreach-scroll-container { position: relative; }
@@ -3861,7 +3862,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.1</div>
+        <div class="version-footer">v1.9.2</div>
     </body>
     </html>
   `)

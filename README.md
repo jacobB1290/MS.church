@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.1
+## 🔢 CURRENT VERSION: v1.9.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -244,7 +244,21 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.1 (Current) - IMPORTED WORKING SCROLL LOGIC FROM GITHUB
+### v1.9.2 (Current) - CARD POSITIONING FIX + REFINED SCROLL LOGIC
+- **Fixed event card positioning** - Cards were too low on screen
+- Adjusted sticky-wrapper: top from 20vh to 12vh, height from 62vh to 70vh
+- Changed alignment: flex-start instead of center for better vertical positioning
+- **Implemented clean scroll logic drop-in replacement**:
+  - Even zone distribution (0-25%, 25-65%, 65-100%)
+  - Removed skewing hysteresis for smoother transitions
+  - Added aria-hidden and inert support for accessibility
+  - Batched DOM updates for better performance
+  - Null-safe guards throughout
+  - Clamped math for edge cases
+  - Reduced-motion support
+- Result: Cards positioned correctly, smooth and accessible scrolling
+
+### v1.9.1 - IMPORTED WORKING SCROLL LOGIC FROM GITHUB
 - **SUCCESS: Used proven GitHub/Vercel implementation**
 - Previous v1.9.0 attempt failed - events still skipping
 - Solution: Imported working scroll logic from GitHub v1.5.4

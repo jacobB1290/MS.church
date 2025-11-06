@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.13
+## 🔢 CURRENT VERSION: v1.9.14
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,25 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.13 (Current) - DATE PILL POSITIONING & INDICATOR DOTS FIX
+### v1.9.14 (Current) - CONTACT SECTION REDESIGN WITH GIFT GALLERY
+- **Rewrote contact section copy**
+  - Clear explanation of personal gift packing process
+  - Details about what recipients can expect (shoes for adults, school/fun items for children)
+  - Mentions text message notification after form submission
+- **Added gift gallery with 3 images**
+  - Shows real examples: shoes, backpacks, and school supplies
+  - Responsive sizing: 200px (desktop), 140px (480px), 100px (375px)
+  - Hover effects with scale and shadow
+- **Updated button to "See Flyer"**
+  - Smaller, more subtle gold button styling
+  - Changed from "More Info" to "See Flyer"
+- **Repositioned JotForm**
+  - Desktop: Overlaid in upper right corner with shadow and border
+  - Mobile: Stacks below content for better accessibility
+  - Width: 450px desktop, full width mobile
+- Result: More informative, visually appealing contact section with clear gift examples
+
+### v1.9.13 - DATE PILL POSITIONING & INDICATOR DOTS FIX
 - **Adjusted date pill positioning**
   - Desktop: Moved from `top: 16px, left: 40px` to `top: 12px, left: 24px`
   - Mobile 480px: `top: 10px, left: 20px`

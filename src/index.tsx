@@ -2397,6 +2397,10 @@ app.get('/', (c) => {
                     border-radius: 20px;
                 }
 
+                .watch {
+                    margin-top: 80px;
+                }
+
                 .watch-card {
                     padding: 28px 20px;
                     border-radius: 24px;
@@ -2751,6 +2755,7 @@ app.get('/', (c) => {
                 /* Watch Section */
                 .watch {
                     gap: 12px;
+                    margin-top: 60px;
                 }
                 
                 .watch-header {

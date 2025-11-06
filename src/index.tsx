@@ -601,25 +601,28 @@ app.get('/', (c) => {
             }
             
             .event-dot {
-                width: 8px;
-                height: 8px;
+                width: 10px;
+                height: 10px;
                 border-radius: 50%;
-                background: rgba(26, 26, 46, 0.25);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                background: rgba(26, 26, 46, 0.3);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 cursor: pointer;
+                border: 2px solid transparent;
             }
             
             .event-dot.active {
-                width: 10px;
-                height: 10px;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                box-shadow: 0 2px 8px rgba(200, 152, 96, 0.5);
-                transform: scale(1);
+                width: 12px;
+                height: 12px;
+                background: #d4a574;
+                box-shadow: 0 0 12px rgba(212, 165, 116, 0.6),
+                            0 4px 8px rgba(212, 165, 116, 0.3);
+                border: 2px solid #d4a574;
+                transform: scale(1.1);
             }
             
-            .event-dot:hover {
-                background: rgba(26, 26, 46, 0.4);
-                transform: scale(1.15);
+            .event-dot:hover:not(.active) {
+                background: rgba(26, 26, 46, 0.5);
+                transform: scale(1.1);
             }
             
             /* Scroll hint removed - using dot indicators only */
@@ -3383,8 +3386,19 @@ app.get('/', (c) => {
                 }
 
                 function updateDots(index) {
-                    if (!dots.length) return;
-                    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+                    console.log('Updating dots for index:', index, 'Total dots:', dots.length);
+                    if (!dots.length) {
+                        console.warn('No dots found!');
+                        return;
+                    }
+                    dots.forEach((dot, i) => {
+                        if (i === index) {
+                            dot.classList.add('active');
+                            console.log('Dot', i, 'set to active (gold)');
+                        } else {
+                            dot.classList.remove('active');
+                        }
+                    });
                 }
 
                 function updateBodyBg(index, skip) {
@@ -3409,72 +3423,67 @@ app.get('/', (c) => {
                 // Both horizontal swipes and vertical scrolls update the same currentEventIndex
                 // This ensures consistency - if you swipe to event 2, scrolling continues from there
                 
-                let touchStartX = 0, touchStartY = 0;
-                let isSwipeActive = false;
+                let touchStartX = 0;
+                let touchStartY = 0;
+                let isSwiping = false;
                 let swipeTimer = null;
-                const swipeThreshold = 50; // Minimum pixels to register as swipe
-                const swipeCooldown = 400; // Debounce time between swipes
-                let lastSwipeTime = 0;
+                const swipeThreshold = 40; // Lower threshold for easier detection
+                const swipeCooldown = 500;
                 let manualSwipeOverride = false; // Flag to prevent scroll from overriding swipe
 
                 if (eventsContainer) {
                     eventsContainer.addEventListener('touchstart', e => {
-                        if (isSwipeActive) return;
                         const t = e.changedTouches[0];
                         touchStartX = t.clientX;
                         touchStartY = t.clientY;
+                        isSwiping = false;
                     }, { passive: true });
 
                     eventsContainer.addEventListener('touchmove', e => {
-                        // Detect horizontal swipe intent early to prevent vertical scroll
+                        if (isSwiping) return;
+                        
                         const t = e.changedTouches[0];
                         const dx = Math.abs(t.clientX - touchStartX);
                         const dy = Math.abs(t.clientY - touchStartY);
                         
-                        // If horizontal movement is dominant, we're swiping cards
-                        if (dx > dy && dx > 10) {
-                            // Don't prevent default - let both work together
-                            manualSwipeOverride = true;
+                        // Detect horizontal swipe early
+                        if (dx > dy && dx > 15) {
+                            isSwiping = true;
                         }
                     }, { passive: true });
 
                     eventsContainer.addEventListener('touchend', e => {
-                        if (isSwipeActive) return;
-                        
-                        const now = Date.now();
-                        if (now - lastSwipeTime < swipeCooldown) return;
-                        
                         const t = e.changedTouches[0];
                         const dx = t.clientX - touchStartX;
                         const dy = t.clientY - touchStartY;
                         
-                        // Only process as horizontal swipe if horizontal movement dominates
+                        // Check if this was a horizontal swipe
                         if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
-                            isSwipeActive = true;
-                            lastSwipeTime = now;
+                            console.log('Swipe detected! dx:', dx, 'currentIndex:', currentEventIndex);
                             
-                            // Swipe right (dx > 0) = go to previous event
-                            // Swipe left (dx < 0) = go to next event
-                            if (dx > 0 && currentEventIndex > 0) {
-                                currentEventIndex--;
+                            // Swipe left (dx < 0) = go to next event (forward)
+                            // Swipe right (dx > 0) = go to previous event (back)
+                            if (dx < 0 && currentEventIndex < totalEvents - 1) {
+                                currentEventIndex++;
+                                console.log('Swiped to next event:', currentEventIndex);
                                 updateActiveEvent(currentEventIndex, false);
                                 manualSwipeOverride = true;
-                            } else if (dx < 0 && currentEventIndex < totalEvents - 1) {
-                                currentEventIndex++;
+                            } else if (dx > 0 && currentEventIndex > 0) {
+                                currentEventIndex--;
+                                console.log('Swiped to previous event:', currentEventIndex);
                                 updateActiveEvent(currentEventIndex, false);
                                 manualSwipeOverride = true;
                             }
                             
-                            // Clear manual override after a short delay
+                            // Reset swipe override after cooldown
                             clearTimeout(swipeTimer);
                             swipeTimer = setTimeout(() => { 
-                                isSwipeActive = false;
                                 manualSwipeOverride = false;
+                                console.log('Manual override cleared');
                             }, swipeCooldown);
-                        } else {
-                            // Not a horizontal swipe, allow scroll to take over immediately
-                            manualSwipeOverride = false;
                         }
+                        
+                        isSwiping = false;
                     }, { passive: true });
                 }
                 
@@ -3877,7 +3886,7 @@ app.get('/', (c) => {
         </script>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.3</div>
+        <div class="version-footer">v1.9.4</div>
     </body>
     </html>
   `)

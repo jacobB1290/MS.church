@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.3
+## 🔢 CURRENT VERSION: v1.9.4
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,30 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.3 (Current) - UNIFIED SWIPE & SCROLL NAVIGATION
+### v1.9.4 (Current) - FIXED SWIPE & GOLD DOT INDICATORS
+- **FIXED: Horizontal swipe navigation now works properly**
+  - Simplified swipe detection logic
+  - Lower threshold (40px) for easier detection
+  - Added console logging for debugging
+  - Swipe left = next event, swipe right = previous event
+- **IMPROVED: Gold dot indicators are now highly visible**
+  - Active dot is solid gold (#d4a574)
+  - Larger size (12px vs 10px for inactive)
+  - Gold glow/shadow effect for active dot
+  - 2px gold border on active dot
+  - Smooth transitions between states
+- **Better visual feedback**:
+  - Current event always shows with bright gold dot
+  - Inactive dots are subtle gray
+  - Hover effect on inactive dots only
+- **Improved swipe reliability**:
+  - Detects horizontal vs vertical movement
+  - 500ms cooldown prevents double-triggers
+  - Manual override system prevents scroll interference
+  - Console logging helps debug issues
+- Result: Clear visual indicator of current event, working swipe navigation
+
+### v1.9.3 - UNIFIED SWIPE & SCROLL NAVIGATION
 - **NEW: Horizontal swipe navigation** - Swipe left/right to navigate between events
 - **NEW: Clickable dot indicators** - Tap any dot to jump directly to that event
 - **Unified navigation system** - Swipe and scroll work together seamlessly

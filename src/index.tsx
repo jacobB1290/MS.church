@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.16.0 - Desktop refinements: natural spacing, scroll offset fix, removed event dots, watch section side-by-side -->
+    <!-- v1.16.1 - Fixed missing video in desktop watch section (added height: 0 and position properties) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3667,13 +3667,23 @@ app.get('/', (c) => {
                 
                 .video-embed-wrapper {
                     grid-area: video;
+                    position: relative;  /* Needed for absolute positioning of iframe */
+                    width: 100%;
                     max-width: 100%;
-                    margin: 0;
+                    height: 0;  /* Critical for padding-bottom aspect ratio trick */
                     padding-bottom: 56.25%;  /* 16:9 aspect ratio */
+                    margin: 0;
+                    overflow: hidden;
+                    border-radius: 16px;
                 }
                 
                 .youtube-embed {
-                    max-height: none;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border: none;
                 }
                 
                 .playlist-btn {
@@ -4980,7 +4990,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.16.0</div>
+        <div class="version-footer">v1.16.1</div>
     </body>
     </html>
   `)

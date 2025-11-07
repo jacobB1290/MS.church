@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.16.1 - Fixed missing video in desktop watch section (added height: 0 and position properties) -->
+    <!-- v1.17.0 - Reverted watch section to original centered layout (removed side-by-side grid) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3612,15 +3612,15 @@ app.get('/', (c) => {
                     border-radius: 16px;
                 }
                 
-                /* Desktop Watch Section - Side-by-side layout */
+                /* Desktop Watch Section - Properly scaled (reverted to original centered layout) */
                 .watch {
-                    max-width: 1400px;  /* Wider container */
+                    max-width: 1200px;
                     margin: 0 auto;
                 }
                 
                 .watch-card {
                     padding: 48px 56px;
-                    max-width: 1400px;  /* Wider card */
+                    max-width: 1200px;
                     margin: 0 auto;
                 }
                 
@@ -3634,62 +3634,29 @@ app.get('/', (c) => {
                     padding: 40px;
                 }
                 
-                /* Side-by-side layout: text on left, video on right */
                 .live-stream-container {
-                    display: grid;
-                    grid-template-columns: 400px 1fr;  /* Fixed width for left content, flexible for video */
-                    grid-template-areas:
-                        "status video"
-                        "countdown video"
-                        "verse video"
-                        "button button";  /* Button spans both columns at bottom */
-                    gap: 40px;
-                    align-items: start;
-                    max-width: 100%;
-                    margin: 0;
-                }
-                
-                .live-status {
-                    grid-area: status;
-                }
-                
-                .countdown-container {
-                    grid-area: countdown;
-                    max-width: 100%;
-                    margin: 0;
-                }
-                
-                .live-verse {
-                    grid-area: verse;
-                    max-width: 100%;
-                    margin: 0;
+                    max-width: 900px;
+                    margin: 0 auto;
                 }
                 
                 .video-embed-wrapper {
-                    grid-area: video;
-                    position: relative;  /* Needed for absolute positioning of iframe */
-                    width: 100%;
-                    max-width: 100%;
-                    height: 0;  /* Critical for padding-bottom aspect ratio trick */
-                    padding-bottom: 56.25%;  /* 16:9 aspect ratio */
-                    margin: 0;
-                    overflow: hidden;
-                    border-radius: 16px;
+                    max-width: 900px;
+                    margin: 0 auto;
+                    padding-bottom: 50.625%;
                 }
                 
                 .youtube-embed {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    border: none;
+                    max-height: none;
                 }
                 
                 .playlist-btn {
-                    grid-area: button;
                     max-width: 300px;
-                    margin: 24px auto 0;
+                    margin: 16px auto 0;
+                }
+                
+                .countdown-container {
+                    max-width: 500px;
+                    margin: 8px auto;
                 }
                 
                 /* Desktop Contact Section */
@@ -4990,7 +4957,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.16.1</div>
+        <div class="version-footer">v1.17.0</div>
     </body>
     </html>
   `)

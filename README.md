@@ -245,21 +245,22 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.38 (Current) - RESTORED SIMPLE MOBILE NAV WITH SPACING FIXES
-- **Reverted to v1.9.34 mobile nav behavior**
-  - Restored simple `display: none` approach for hiding elements
-  - Removed complex opacity/visibility/transform animations
-  - Removed absolute positioning and layout flow management
-  - Back to straightforward nav compression/expansion
-- **Kept spacing improvements from v1.9.37**
-  - Nav-spacer: Desktop 120px, 480px 100px, 375px 80px
-  - Hero padding: Removed top padding on all breakpoints
-  - Clean, efficient vertical spacing maintained
-- **Simple, reliable nav transitions**
-  - No flickering or wrapping issues
-  - Straightforward display toggling
-  - Proven stable behavior from v1.9.34
-- Result: Classic mobile nav behavior with optimized spacing and layout
+### v1.9.38 (Current) - RESTORED ORIGINAL PADDING AND SPACING
+- **Restored original nav-spacer heights from v1.9.34**
+  - Desktop: 120px → 380px (restored original comfortable spacing)
+  - 480px mobile: 100px → 190px (restored original spacing)
+  - 375px mobile: 80px → 130px (restored original spacing)
+  - User requested original padding/spacing be restored
+- **Restored original hero section padding from v1.9.34**
+  - Desktop: `padding: 0 0 60px` → `padding: 60px 0` (original)
+  - 480px: `padding: 0 0 40px` → `padding: 20px 0 60px` (original)
+  - 375px: `padding: 0 0 20px` → `padding: 40px 0 20px` (original)
+  - Hero content has original comfortable top padding again
+- **Reverted spacing changes from v1.9.37**
+  - All nav-spacer and hero padding values match v1.9.34
+  - Comfortable, familiar spacing and layout
+  - User-preferred vertical rhythm restored
+- Result: Original comfortable spacing and layout from v1.9.34, keeping all other improvements
 
 ### v1.9.37 - FIXED NAV LAYOUT AND SPACING
 - **Nav no longer affects page layout**

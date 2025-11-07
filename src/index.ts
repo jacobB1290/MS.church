@@ -74,7 +74,7 @@ app.get('/', (c) => {
 
             /* Navigation Spacer - maintains layout when nav is fixed */
             .nav-spacer {
-                height: 120px;
+                height: 380px;
                 pointer-events: none;
             }
 
@@ -254,7 +254,7 @@ app.get('/', (c) => {
             .hero {
                 display: grid;
                 gap: 40px;
-                padding: 0 0 60px;
+                padding: 60px 0;
             }
             
             .hero-title {
@@ -2185,7 +2185,7 @@ app.get('/', (c) => {
                 }
 
                 .nav-spacer {
-                    height: 100px;
+                    height: 190px;
                 }
 
                 .nav-shell {
@@ -2345,7 +2345,7 @@ app.get('/', (c) => {
                 }
 
                 .hero {
-                    padding: 0 0 40px;
+                    padding: 20px 0 60px;
                     min-height: auto;
                     gap: 20px;
                     background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
@@ -2794,7 +2794,7 @@ app.get('/', (c) => {
                 
                 /* Navigation - More Compact */
                 .nav-spacer {
-                    height: 80px;
+                    height: 130px;
                 }
                 
                 .nav-shell {
@@ -2843,7 +2843,7 @@ app.get('/', (c) => {
                 
                 /* Hero Section - Add padding to push text down */
                 .hero {
-                    padding: 0 0 20px;
+                    padding: 40px 0 20px;
                     gap: 10px;
                 }
                 

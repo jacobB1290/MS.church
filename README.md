@@ -1,9 +1,27 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.16.0
+## 🔢 CURRENT VERSION: v1.17.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
-### v1.16.0 - Desktop Refinements: Spacing, Scroll, Dots, Watch Layout (Mobile Unchanged)
+### v1.17.0 - Reverted Watch Section to Original Layout (Desktop Only)
+**Removed side-by-side grid layout due to video display issues**
+
+**Changes:**
+- Reverted watch section to original centered/stacked layout
+- Video now displays correctly in centered 900px container
+- Kept all other improvements from v1.16.0:
+  - ✓ Natural spacing (nav-spacer 120px)
+  - ✓ Fixed outreach scroll offset
+  - ✓ Removed event dots on desktop
+
+**Watch Section Layout (Desktop):**
+- All content centered vertically
+- Max-width: 900px for optimal video viewing
+- Proper aspect ratio maintained
+
+---
+
+### v1.16.0 - Desktop Refinements: Spacing, Scroll, Dots (Mobile Unchanged)
 **Polish pass on desktop experience with multiple UX improvements**
 
 **Changes Made (Desktop ≥961px only, mobile completely untouched):**

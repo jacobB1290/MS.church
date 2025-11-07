@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.12.0 - Complete CSS architecture restructure: Mobile (≤960px) and Desktop (≥961px) fully separated -->
+    <!-- v1.12.1 - Fixed desktop hero grid-template-areas for proper 2-column layout -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3352,16 +3352,31 @@ app.get('/', (c) => {
                 .hero-body {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
+                    grid-template-rows: auto auto;
+                    grid-template-areas: 
+                        "content image"
+                        "buttons image";
                     max-width: 1200px;
                     margin: 0 auto;
-                    gap: 60px;
-                    align-items: center;
+                    column-gap: 60px;
+                    row-gap: 32px;
+                    align-items: start;
                 }
                 
                 .hero-content {
+                    grid-area: content;
                     max-width: 560px;
                     display: grid;
                     gap: 32px;
+                }
+                
+                .hero-image {
+                    grid-area: image;
+                    align-self: stretch;
+                }
+                
+                .hero-body .cta-group {
+                    grid-area: buttons;
                 }
                 
                 .hero-content p {
@@ -4886,7 +4901,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.12.0</div>
+        <div class="version-footer">v1.12.1</div>
     </body>
     </html>
   `)

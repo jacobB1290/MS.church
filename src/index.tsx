@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.14.0 - Desktop hero enhancements: reduced top spacing, larger title, larger image, larger copy, responsive scaling -->
+    <!-- v1.14.1 - Fixed g cutoff and reduced top spacing more aggressively on desktop -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3343,11 +3343,12 @@ app.get('/', (c) => {
                 .hero {
                     display: flex;
                     flex-direction: column;
-                    gap: clamp(16px, 2vw, 24px);  /* Responsive gap */
-                    padding: clamp(20px, 3vw, 30px) 0 clamp(50px, 6vw, 70px);  /* Reduced top padding */
+                    gap: clamp(8px, 1vw, 12px);  /* Much tighter gap */
+                    padding: clamp(10px, 1.5vw, 15px) 0 clamp(50px, 6vw, 70px);  /* Very minimal top padding */
                     max-width: 100%;
                     margin: 0;
                     min-height: auto;
+                    overflow: visible;  /* Allow descenders to show */
                 }
                 
                 .hero h1 {
@@ -3355,6 +3356,7 @@ app.get('/', (c) => {
                     margin: 0 auto;
                     width: 100%;
                     padding: 0 clamp(16px, 3vw, 32px);  /* Responsive side padding */
+                    overflow: visible;  /* Allow descenders like g to show */
                 }
                 
                 .hero-body {
@@ -3396,11 +3398,12 @@ app.get('/', (c) => {
                 
                 .hero h1 {
                     font-size: clamp(64px, 7vw, 110px);  /* Much larger title */
-                    line-height: 1.05;  /* Tighter line height, prevents cutoff */
+                    line-height: 1.15;  /* Slightly more breathing room for descenders */
                     letter-spacing: -0.02em;  /* Slight tightening for large text */
                     text-align: left;
-                    margin: 0 0 clamp(16px, 2vw, 24px) 0;  /* Responsive bottom margin */
+                    margin: 0 0 clamp(12px, 1.5vw, 18px) 0;  /* Tighter bottom margin */
                     overflow: visible;  /* Ensure letters don't get cut off */
+                    padding-bottom: 4px;  /* Extra space for descenders like g */
                 }
                 
                 .hero p {
@@ -4950,7 +4953,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.14.0</div>
+        <div class="version-footer">v1.14.1</div>
     </body>
     </html>
   `)

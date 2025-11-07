@@ -245,7 +245,20 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.42 (Current) - IMPROVED CONTENT HIERARCHY AND BUTTON STYLING
+### v1.9.42 (Current) - REPOSITIONED GIFT GALLERY IMAGES
+- **Moved gift gallery images above See Flyer button**
+  - Images now positioned between copy and button
+  - Flow: Copy → Images → Button → Bible Verse
+  - Better visual hierarchy showing gifts before call-to-action
+  - Images illustrate what recipients can expect
+- **Enhanced content flow**
+  - Copy explains the program
+  - Images provide visual proof
+  - Button offers next action
+  - Bible verse provides inspiration
+- Result: More logical visual flow with gift examples before action button
+
+### v1.9.41 - IMPROVED CONTENT HIERARCHY AND BUTTON STYLING
 - **Restructured content hierarchy**
   - "This Christmas, Morning Star..." now styled as subheader (h3)
   - 22px font, bold weight, proper heading treatment

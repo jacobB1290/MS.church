@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.34
+## 🔢 CURRENT VERSION: v1.9.35
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,30 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.34 (Current) - REFINED SCROLL & SWIPE COORDINATION
+### v1.9.35 (Current) - SMOOTH MOBILE NAV ANIMATIONS
+- **Eliminated flickering and resizing during nav transitions**
+  - Replaced `display: none` with `opacity` and `visibility` for smooth fade in/out
+  - Added GPU-accelerated transforms (translateX, scale) for element positioning
+  - All elements stay in DOM, preventing layout shifts
+  - Consistent 0.3-0.4s transition timing across all properties
+- **Precise animation choreography**
+  - Brand logo fades out with subtle scale down when compressing
+  - Full GIFTS button slides right and scales down as nav compacts
+  - Nav links smoothly shift left (translateX) when GIFTS button appears
+  - Compact GIFTS button slides in from left with scale up animation
+  - Border-radius morphs smoothly from rounded to pill shape
+- **GPU-optimized performance**
+  - Added `will-change` hints for all animating properties
+  - Transforms use GPU acceleration (translateX, scale) instead of margin/padding
+  - Single smooth cubic-bezier easing for natural motion
+  - No layout recalculation during transitions
+- **Mobile breakpoints enhanced**
+  - 960px breakpoint: Smooth GIFTS button shift with width/margin transitions
+  - 480px breakpoint: Coordinated nav links shift with GIFTS button fade in/out
+  - Font sizes and letter-spacing animate smoothly
+- Result: Buttery smooth, professional nav transitions without any flickering or janky resizing
+
+### v1.9.34 - REFINED SCROLL & SWIPE COORDINATION
 - **Reduced scroll distances by 25%**
   - Desktop: 416vh → 312vh (25% reduction)
   - 960px breakpoint: 910vh → 683vh (25% reduction)

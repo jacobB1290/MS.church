@@ -1,7 +1,43 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.12.1
+## 🔢 CURRENT VERSION: v1.14.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.14.0 - Desktop Hero Enhancements: Spacing, Sizing, Responsive Scaling
+**Comprehensive desktop hero improvements addressing all remaining issues**
+
+**Changes Made (Desktop ≥961px only, mobile untouched):**
+
+1. **Reduced Top Spacing:**
+   - Hero padding top: `40px → clamp(20px, 3vw, 30px)` (responsive)
+   - Hero gap: `20px → clamp(16px, 2vw, 24px)` (responsive)
+   - Hero-body row-gap: `20px → clamp(16px, 2vw, 24px)` (responsive)
+
+2. **Much Larger Title:**
+   - Font size: `clamp(48px, 4vw, 72px) → clamp(64px, 7vw, 110px)`
+   - Line height: `1.1 → 1.05` (prevents letter cutoff)
+   - Added `letter-spacing: -0.02em` for large text
+   - Added `overflow: visible` to prevent G cutoff
+
+3. **Larger Hero Image:**
+   - Height: `500px → clamp(550px, 55vh, 650px)` (responsive)
+   - Min-height: `400px → clamp(500px, 50vh, 650px)`
+   - Max-height: `500px → clamp(600px, 60vh, 700px)`
+
+4. **Larger Copy Text:**
+   - Paragraph font size: `18px → clamp(20px, 1.8vw, 24px)` (responsive)
+   - Line height: `1.7 → 1.6` (better readability)
+
+5. **Full Responsive Scaling:**
+   - All elements now use `clamp()` for smooth window resizing
+   - Hero-body max-width: `1200px → clamp(1100px, 90vw, 1300px)`
+   - Column gap: `60px → clamp(40px, 5vw, 70px)`
+   - Border radius: `24px → clamp(20px, 2vw, 28px)`
+   - Title container uses responsive padding
+
+**Result:** Desktop hero looks much more impactful with larger elements, better spacing, and smooth responsive behavior at all window sizes.
+
+---
 
 ### v1.12.1 - CRITICAL FIX: Hero Grid Template Areas
 **Fixed desktop hero section to display proper 2-column layout**

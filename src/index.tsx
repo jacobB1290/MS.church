@@ -96,9 +96,8 @@ app.get('/', (c) => {
                 transform: translateX(-50%);
                 z-index: 1000;
                 border: 1px solid rgba(255, 255, 255, 0.4);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                 width: min(1280px, 94%);
-                will-change: transform, padding, border-radius;
             }
             
             .nav-shell.scrolled-mobile {
@@ -106,34 +105,12 @@ app.get('/', (c) => {
                 top: 16px;
             }
             
-            .brand {
-                transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                            visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                will-change: opacity, visibility, transform;
-            }
-            
             .nav-shell.scrolled-mobile .brand {
-                opacity: 0;
-                visibility: hidden;
-                transform: scale(0.9);
-                pointer-events: none;
-                position: absolute;
-            }
-            
-            .nav-cta {
-                transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                            visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                will-change: opacity, visibility, transform;
+                display: none;
             }
             
             .nav-shell.scrolled-mobile .nav-cta {
-                opacity: 0;
-                visibility: hidden;
-                transform: translateX(20px) scale(0.9);
-                pointer-events: none;
-                position: absolute;
+                display: none;
             }
             
             /* Mobile-only form button for scrolled state */
@@ -1883,99 +1860,60 @@ app.get('/', (c) => {
                     margin: 20px auto 50px;
                     padding: 16px 20px;
                     top: 12px;
-                    transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                                border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                                gap 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                                top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: padding, border-radius, gap, top;
-                    position: relative;
                 }
                 
                 .nav-shell.scrolled-mobile {
                     border-radius: 100px;
                     padding: 8px 20px;
-                    gap: 12px;
+                    gap: 0;
                     margin-bottom: 30px;
                     top: 8px;
-                    flex-wrap: nowrap;
-                    justify-content: center;
                 }
 
-                nav {
-                    width: 100%;
-                    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                }
-                
-                .nav-shell.scrolled-mobile nav {
-                    width: auto;
-                    flex: 1;
-                }
-                
                 nav ul {
                     width: 100%;
                     justify-content: center;
                     flex-wrap: wrap;
                     row-gap: 10px;
                     gap: 18px;
-                    transition: gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: gap;
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {
                     gap: 16px;
                     row-gap: 0;
-                    flex-wrap: nowrap;
                 }
 
                 .nav-cta {
                     width: 100%;
                     padding: 10px 24px;
                     font-size: 10px;
-                    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                                visibility 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                                transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: opacity, visibility, transform;
                 }
                 
-                /* Full GIFTS button takes itself out of layout when hiding */
+                /* GIFTS button - shift right when compressed */
                 .nav-shell.scrolled-mobile .nav-cta {
-                    position: absolute;
-                    pointer-events: none;
+                    width: auto;
+                    margin-left: auto;
+                    padding: 8px 20px;
                 }
 
                 .brand {
                     align-items: center;
                     width: 100%;
-                    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                                visibility 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                                transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: opacity, visibility, transform;
-                }
-                
-                /* Brand takes itself out of layout flow when hiding */
-                .nav-shell.scrolled-mobile .brand {
-                    position: absolute;
-                    pointer-events: none;
                 }
 
                 .brand-title {
                     font-size: 16px;
                     letter-spacing: 2px;
-                    transition: font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 }
 
                 .brand-subtitle {
                     font-size: 9px;
                     letter-spacing: 3px;
-                    transition: font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 }
                 
                 nav a {
                     font-size: 10px;
                     letter-spacing: 2px;
-                    transition: font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                                letter-spacing 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: font-size, letter-spacing;
                 }
 
                 .hero h1 {
@@ -2255,40 +2193,21 @@ app.get('/', (c) => {
                     border-radius: 32px;
                     top: 10px;
                     width: 94%;
-                    transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                                border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                                top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: padding, border-radius, top;
-                    position: relative;
-                    flex-wrap: wrap;
+                    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
                 
                 .nav-shell.scrolled-mobile {
                     border-radius: 100px;
                     padding: 7px 18px;
                     top: 6px;
-                    flex-wrap: nowrap;
-                    justify-content: center;
-                    gap: 12px;
                 }
                 
-                /* Brand takes itself out of layout when hiding */
-                .nav-shell.scrolled-mobile .brand {
-                    position: absolute;
-                    pointer-events: none;
-                }
-                
-                /* Keep nav-cta in DOM but hide smoothly and remove from layout */
                 .nav-shell.scrolled-mobile .nav-cta {
-                    opacity: 0;
-                    visibility: hidden;
-                    transform: translateX(20px) scale(0.9);
-                    pointer-events: none;
-                    position: absolute;
+                    display: none;
                 }
                 
-                /* GIFTS button - always in DOM, animate in/out */
                 .nav-form-btn {
+                    display: none;
                     padding: 6px 14px;
                     border-radius: 100px;
                     background: rgba(255, 255, 255, 0.9);
@@ -2300,26 +2219,23 @@ app.get('/', (c) => {
                     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
                     backdrop-filter: blur(10px);
                     border: 1px solid rgba(255, 255, 255, 0.5);
-                    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                                visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                     align-items: center;
                     justify-content: center;
                     white-space: nowrap;
                     opacity: 0;
-                    visibility: hidden;
-                    transform: translateX(-10px) scale(0.9);
-                    pointer-events: none;
-                    will-change: opacity, visibility, transform;
-                    display: inline-flex;
-                    margin-left: 8px;
+                    transform: scale(0.85);
+                    position: absolute;
+                    right: 18px;
                 }
                 
                 .nav-shell.scrolled-mobile .nav-form-btn {
+                    display: inline-flex;
                     opacity: 1;
-                    visibility: visible;
-                    transform: translateX(0) scale(1);
-                    pointer-events: auto;
+                    transform: scale(1);
+                    position: relative;
+                    margin-left: 8px;
+                    right: auto;
                 }
                 
                 /* Active state for GIFTS button */
@@ -2383,46 +2299,33 @@ app.get('/', (c) => {
                     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                 }
 
-                nav {
-                    text-align: center;
-                    width: 100%;
-                    display: flex;
-                    justify-content: center;
-                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                                width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: transform, width;
-                }
-                
-                .nav-shell.scrolled-mobile nav {
-                    transform: translateX(-20px);
-                    width: auto;
-                    flex: 1;
-                }
-                
                 nav ul {
                     gap: 18px;
                     row-gap: 8px;
                     justify-content: center;
+                }
+                
+                nav {
+                    text-align: center;
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                }
+                
+                nav ul {
                     margin: 0;
                     padding: 0;
-                    flex-wrap: wrap;
-                    transition: gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: gap;
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {
                     gap: 16px;
                     row-gap: 0;
                     justify-content: center;
-                    flex-wrap: nowrap;
                 }
 
                 nav a {
                     font-size: 13px;
                     letter-spacing: 1.8px;
-                    transition: font-size 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                                letter-spacing 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: font-size, letter-spacing;
                 }
                 
                 .nav-shell.scrolled-mobile nav a {
@@ -2899,16 +2802,11 @@ app.get('/', (c) => {
                     border-radius: 20px;
                     top: 5px;
                     width: 94%;
-                    position: relative;
-                    flex-wrap: wrap;
                 }
                 
                 .nav-shell.scrolled-mobile {
                     padding: 4px 10px;
                     top: 2px;
-                    flex-wrap: nowrap;
-                    justify-content: center;
-                    gap: 10px;
                 }
                 
                 .brand-title {
@@ -2919,35 +2817,6 @@ app.get('/', (c) => {
                 .brand-subtitle {
                     font-size: 7px;
                     letter-spacing: 1.8px;
-                }
-                
-                /* Brand and nav-cta take themselves out of layout when hiding */
-                .nav-shell.scrolled-mobile .brand {
-                    position: absolute;
-                    pointer-events: none;
-                }
-                
-                .nav-shell.scrolled-mobile .nav-cta {
-                    position: absolute;
-                    pointer-events: none;
-                }
-                
-                nav {
-                    width: 100%;
-                    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                }
-                
-                .nav-shell.scrolled-mobile nav {
-                    width: auto;
-                    flex: 1;
-                }
-                
-                nav ul {
-                    flex-wrap: wrap;
-                }
-                
-                .nav-shell.scrolled-mobile nav ul {
-                    flex-wrap: nowrap;
                 }
                 
                 nav a {
@@ -4549,7 +4418,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.37</div>
+        <div class="version-footer">v1.9.38</div>
     </body>
     </html>
   `)

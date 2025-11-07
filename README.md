@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.37
+## 🔢 CURRENT VERSION: v1.9.38
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,23 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.37 (Current) - FIXED NAV LAYOUT AND SPACING
+### v1.9.38 (Current) - RESTORED SIMPLE MOBILE NAV WITH SPACING FIXES
+- **Reverted to v1.9.34 mobile nav behavior**
+  - Restored simple `display: none` approach for hiding elements
+  - Removed complex opacity/visibility/transform animations
+  - Removed absolute positioning and layout flow management
+  - Back to straightforward nav compression/expansion
+- **Kept spacing improvements from v1.9.37**
+  - Nav-spacer: Desktop 120px, 480px 100px, 375px 80px
+  - Hero padding: Removed top padding on all breakpoints
+  - Clean, efficient vertical spacing maintained
+- **Simple, reliable nav transitions**
+  - No flickering or wrapping issues
+  - Straightforward display toggling
+  - Proven stable behavior from v1.9.34
+- Result: Classic mobile nav behavior with optimized spacing and layout
+
+### v1.9.37 - FIXED NAV LAYOUT AND SPACING
 - **Nav no longer affects page layout**
   - Drastically reduced nav-spacer heights across all breakpoints
   - Desktop: 380px → 120px (68% reduction)

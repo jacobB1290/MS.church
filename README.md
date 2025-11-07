@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.24
+## 🔢 CURRENT VERSION: v1.9.25
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,19 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.24 (Current) - FIX FLYER STYLING ON MOBILE
+### v1.9.25 (Current) - INCREASE EVENT SCROLL DISTANCES
+- **Increased scroll distance for events 2 and 3**
+  - Event 1: 0-25% progress (unchanged)
+  - Event 2: 25-65% → 25-70% progress (5% increase)
+  - Event 3: 65-100% → 70-100% progress (5% later start)
+  - Users now need to scroll further to switch from event 2 to event 3
+  - Event 2 gets more scroll "real estate" making it easier to view
+- **Event 1 scroll distance unchanged**
+  - Still triggers at 0-25% as before
+  - No change to initial event viewing experience
+- Result: More scroll distance allocated to events 2 and 3 for better viewing control
+
+### v1.9.24 - FIX FLYER STYLING ON MOBILE
 - **Fixed flyer image rounded corners on mobile**
   - Desktop: 48px border-radius (unchanged)
   - 480px breakpoint: Increased from 10px → 24px border-radius

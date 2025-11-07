@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.32
+## 🔢 CURRENT VERSION: v1.9.33
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,24 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.32 (Current) - DOUBLE SCROLL DISTANCE & REMOVE LOCKS
+### v1.9.33 (Current) - SWIPE DETECTION ACROSS ENTIRE OUTREACH SECTION
+- **Expanded swipe detection area**
+  - Changed from `.events-container` to entire `.outreach` section
+  - Swipe listeners now cover much larger touch area
+  - Works anywhere within outreach section (heading, cards, background, spacer)
+- **Swipes work at all times**
+  - Before entering sticky state ✓
+  - During sticky state ✓
+  - After leaving sticky state ✓
+  - When cards barely visible ✓
+  - Anytime outreach section is on screen ✓
+- **Improved user experience**
+  - Larger touch target area
+  - More forgiving swipe detection
+  - No need to touch exact card location
+- Result: Swipes work consistently across entire outreach section at all scroll positions
+
+### v1.9.32 - DOUBLE SCROLL DISTANCE & REMOVE LOCKS
 - **Removed all cooldowns and locks**
   - Removed 1500ms swipe cooldown
   - Removed 800ms swipe debounce

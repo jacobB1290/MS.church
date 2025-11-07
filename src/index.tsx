@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.18.0 - Fixed narrow window layout: desktop now requires ≥1200px, narrow windows (961-1199px) use mobile layout -->
+    <!-- v1.18.1 - ACTUALLY fixed narrow window: changed ALL mobile queries from 960px to 1199px (CSS + JavaScript) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -1826,12 +1826,12 @@ app.get('/', (c) => {
             }
 
             /* ========================================
-               MOBILE STYLES (≤960px)
-               All mobile breakpoints wrapped together
-               Desktop will NOT inherit these
+               MOBILE STYLES (≤1199px - includes narrow windows)
+               All mobile breakpoints wrapped together (including narrow windows up to 1199px)
+               Desktop (≥1200px) will NOT inherit these
                ======================================== */
-            @media (max-width: 960px) {
-                /* Mobile Hero Section - Grid vertical layout */
+            @media (max-width: 1199px) {
+                /* Mobile Hero Section - Grid vertical layout (applies to mobile AND narrow windows) */
                 .hero {
                     display: grid;
                     gap: 40px;
@@ -1977,7 +1977,7 @@ app.get('/', (c) => {
                 }
             }
 
-            @media (max-width: 960px) {
+            @media (max-width: 1199px) {
                 .nav-shell {
                     flex-wrap: wrap;
                     border-radius: 40px;
@@ -3324,9 +3324,9 @@ app.get('/', (c) => {
             }
             
             /* ========================================
-               DESKTOP-ONLY STYLES (≥961px)
+               DESKTOP-ONLY STYLES (≥1200px)
                Complete independent desktop experience
-               Mobile styles are isolated in @media (max-width: 960px)
+               Mobile styles (including narrow windows) are isolated in @media (max-width: 1199px)
                ======================================== */
             @media (min-width: 1200px) {
                 /* Desktop container and layout - only for wide screens (≥1200px) */
@@ -4087,8 +4087,8 @@ app.get('/', (c) => {
                     const currentScrollY = window.scrollY;
                     const scrollThreshold = getScrollThreshold();
                     
-                    // Only apply on mobile (960px and below)
-                    if (window.innerWidth <= 960) {
+                    // Only apply on mobile and narrow windows (1199px and below)
+                    if (window.innerWidth <= 1199) {
                         // Detect scroll up when already at/near top
                         if (currentScrollY <= scrollThreshold && currentScrollY < lastNavScrollY) {
                             scrollUpAtTopCount++;
@@ -4410,8 +4410,8 @@ app.get('/', (c) => {
                                 top: 0,
                                 behavior: 'smooth'
                             });
-                            // Force expand nav on mobile
-                            if (window.innerWidth <= 960) {
+                            // Force expand nav on mobile and narrow windows
+                            if (window.innerWidth <= 1199) {
                                 navShell.classList.remove('scrolled-mobile');
                             }
                             return;
@@ -4427,13 +4427,13 @@ app.get('/', (c) => {
                             if (targetId === '#outreach') {
                                 navOffset = 60; // Desktop - just cover the pill, show the title
                                 
-                                if (window.innerWidth <= 960) {
-                                    navOffset = -50; // Mobile - negative offset to match sticky position
+                                if (window.innerWidth <= 1199) {
+                                    navOffset = -50; // Mobile/narrow - negative offset to match sticky position
                                 }
                             } else {
-                                // Other sections - mobile adjustment
-                                if (window.innerWidth <= 960) {
-                                    navOffset = 30; // Mobile - adjusted for smaller nav
+                                // Other sections - mobile/narrow adjustment
+                                if (window.innerWidth <= 1199) {
+                                    navOffset = 30; // Mobile/narrow - adjusted for smaller nav
                                 }
                             }
                             
@@ -4958,7 +4958,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.18.0</div>
+        <div class="version-footer">v1.18.1</div>
     </body>
     </html>
   `)

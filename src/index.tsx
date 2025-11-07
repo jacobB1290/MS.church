@@ -3797,6 +3797,28 @@ app.get('/', (c) => {
                     });
                 });
                 
+                // Special handler for "See Flyer" button - scroll to show event 2
+                const seeFlyerBtn = document.querySelector('.btn-see-flyer');
+                if (seeFlyerBtn) {
+                    seeFlyerBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Calculate scroll position to show event 2 (middle event)
+                        // Need to scroll into the middle of the scroll-spacer to trigger event 2
+                        const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
+                        const spacerHeight = scrollSpacer.offsetHeight;
+                        
+                        // Scroll to middle of spacer (50% progress = event 2)
+                        // Add some extra offset to ensure we're solidly in event 2 territory
+                        const targetScroll = outreachTop + (spacerHeight * 0.5);
+                        
+                        window.scrollTo({
+                            top: targetScroll,
+                            behavior: 'smooth'
+                        });
+                    });
+                }
+                
                 // Clothes Drive Form - Add/Remove Children
                 const addChildBtn = document.querySelector('.btn-add-child');
                 const childrenContainer = document.getElementById('children-container');

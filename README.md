@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.39
+## 🔢 CURRENT VERSION: v1.9.40
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,34 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.39 (Current) - NAV EXPANDS EARLIER ON SCROLL UP
+### v1.9.40 (Current) - ENHANCED CHRISTMAS EVENT WITH BIBLICAL FOUNDATION
+- **Added Bible verse (1 John 3:16-18) to show ministry purpose**
+  - Beautiful styled blockquote with gold accents
+  - Explains why: Jesus laid down His life, we lay down ours
+  - Points visitors to Christ as the foundation of giving
+  - Positioned after event description for clear context
+- **Updated event focus to Single Mothers & Widows**
+  - Changed from "Christmas Clothes Drive for Mothers"
+  - Now: "Christmas Gifts for Single Mothers & Widows"
+  - Recognizes these women working tirelessly to provide
+  - Emphasizes church's heart to support those in need
+- **Enhanced form copy with detailed gift explanation**
+  - "Handpick a special gift just for you and your family"
+  - Clear expectations: shoes for adults, school/play items for kids
+  - Emphasizes beautiful wrapping and Christmas tree ready
+  - Mentions text confirmation with pickup details
+- **Updated nav button for clarity**
+  - Changed: "Register for free gifts"
+  - Now: "Christmas Event: Register for Free Gifts"
+  - Helps visitors understand this is a special outreach program
+  - Not just ongoing free gifts, but a Christmas event
+- **All changes reversible**
+  - User requested ability to revert if needed
+  - Changes focused on Event 2 (Christmas outreach)
+  - External feedback carefully analyzed and implemented
+- Result: Christ-centered ministry with clear purpose, focused on single moms & widows, with detailed gift information
+
+### v1.9.39 - NAV EXPANDS EARLIER ON SCROLL UP
 - **Nav expands at 90% scroll up instead of 100%**
   - Changed from fixed 50px threshold to responsive 10% calculation
   - Nav now expands when within 10% of top (90% scrolled up)

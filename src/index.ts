@@ -3207,7 +3207,7 @@ app.get('/', (c) => {
                         <li><a href="#watch">Watch</a></li>
                     </ul>
                 </nav>
-                <a class="nav-cta" href="#contact">Register for free gifts</a>
+                <a class="nav-cta" href="#contact">Christmas Event: Register for Free Gifts</a>
                 <a class="nav-form-btn" href="#contact">Gifts</a>
             </header>
             <div class="nav-spacer"></div>
@@ -3390,11 +3390,18 @@ app.get('/', (c) => {
                 <section class="contact" id="contact" style="animation-delay: 0.5s">
                     <div class="contact-header">
                         <span class="section-eyebrow">Christmas Outreach</span>
-                        <h2 class="section-heading">Christmas Clothes Drive for Mothers</h2>
+                        <h2 class="section-heading">Christmas Gifts for Single Mothers & Widows</h2>
                         <a href="#event-2" class="btn btn-secondary btn-see-flyer">See Flyer</a>
                         <p class="section-lead form-message">
-                            Based on what you fill out on the form, our team will pack you a personal gift for you and your children. What you can expect is shoes for adults and an item related to school and outside fun for children. After the form is submitted, you'll receive a text message with more details.
+                            This Christmas, Morning Star Christian Church is giving back to the incredible single moms and widows in our community who are working tirelessly to provide for their families.
                         </p>
+                        <p class="section-lead form-message">
+                            Based on the information you share in the form, our team will handpick a special gift just for you and your family. You can look forward to a pair of shoes for the adults and something fun and useful for the kids, perfect for school and outdoor play. We'll wrap everything beautifully so it's ready to go right under your Christmas tree. Once you've submitted the form, you'll receive a text message confirming your submission and sharing all the pickup details.
+                        </p>
+                        <blockquote style="margin: 32px 0; padding: 24px; background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(212, 165, 116, 0.05) 100%); border-left: 4px solid #d4a574; border-radius: 12px; font-style: italic; line-height: 1.8; color: rgba(26, 26, 46, 0.85);">
+                            <p style="margin: 0 0 16px 0; font-size: 15px; font-weight: 600; color: #d4a574; letter-spacing: 0.5px;">1 John 3:16-18</p>
+                            <p style="margin: 0;">This is how we know what love is: Jesus Christ laid down his life for us. And we ought to lay down our lives for our brothers and sisters. If anyone has material possessions and sees a brother or sister in need but has no pity on them, how can the love of God be in that person? Dear children, let us not love with words or speech but with actions and in truth.</p>
+                        </blockquote>
                         
                         <!-- Image Gallery -->
                         <div class="gift-gallery">
@@ -4173,7 +4180,7 @@ app.get('/', (c) => {
                 const googleCalendarBtn = document.getElementById('google-calendar');
                 
                 // Event details
-                const eventTitle = 'Christmas Clothes Drive for Mothers';
+                const eventTitle = 'Christmas Gifts for Single Mothers & Widows';
                 const eventDescription = 'Christmas outreach program - drop off during office hours';
                 const eventLocation = '3080 N Wildwood St, Boise, Idaho';
                 const eventDate = '20251206'; // December 6, 2025 (YYYYMMDD)
@@ -4427,7 +4434,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.39</div>
+        <div class="version-footer">v1.9.40</div>
     </body>
     </html>
   `)

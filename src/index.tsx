@@ -221,6 +221,7 @@ app.get('/', (c) => {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
+                text-align: center;
             }
 
             .nav-cta:hover {
@@ -3206,7 +3207,7 @@ app.get('/', (c) => {
                         <li><a href="#watch">Watch</a></li>
                     </ul>
                 </nav>
-                <a class="nav-cta" href="#contact">Christmas Event: Register for Free Gifts</a>
+                <a class="nav-cta" href="#contact">Free Gifts for Mothers</a>
                 <a class="nav-form-btn" href="#contact">Gifts</a>
             </header>
             <div class="nav-spacer"></div>
@@ -4434,7 +4435,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.43</div>
+        <div class="version-footer">v1.9.44</div>
     </body>
     </html>
   `)

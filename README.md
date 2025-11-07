@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.43
+## 🔢 CURRENT VERSION: v1.9.44
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,7 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.43 (Current) - REPOSITIONED GIFT GALLERY IMAGES
+### v1.9.44 (Current) - REPOSITIONED GIFT GALLERY IMAGES
 - **Moved gift gallery images above See Flyer button**
   - Images now positioned between copy and button
   - Flow: Copy → Images → Button → Bible Verse

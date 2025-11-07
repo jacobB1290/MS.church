@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.22
+## 🔢 CURRENT VERSION: v1.9.23
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,15 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.22 (Current) - SCROLL TO TOP & NAV EXPANSION
+### v1.9.23 (Current) - FIX SEE FLYER BUTTON SCROLL
+- **Fixed "See Flyer" button scroll position**
+  - Button now properly scrolls to show Event 2 (Christmas Clothes Drive)
+  - Calculates scroll to middle of spacer (50% progress) to trigger event 2 display
+  - Uses smooth scroll animation for better UX
+  - Previously was not scrolling far enough into the outreach section
+- Result: Clicking "See Flyer" now correctly displays the event 2 card with flyer
+
+### v1.9.22 - SCROLL TO TOP & NAV EXPANSION
 - **HOME link scrolls to absolute top**
   - Clicking HOME in navigation scrolls to position 0 (very top of page)
   - Automatically expands navigation from compact to full on mobile

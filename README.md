@@ -1,7 +1,33 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.14.1
+## 🔢 CURRENT VERSION: v1.15.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.15.0 - CRITICAL FIX: Actually Reduced Top Spacing (Desktop Only)
+**Deep investigation revealed and fixed the REAL cause of excessive top spacing**
+
+**The Problem:**
+Previous attempts (v1.14.0, v1.14.1) tried to reduce `.hero` padding but spacing didn't change because:
+- Base CSS: `.nav-spacer { height: 380px }` (applies to ALL screens)
+- Mobile CSS: `.nav-spacer { height: 130px }` (overrides base)
+- **Desktop CSS: NO override!** ← Desktop was using base 380px!
+
+**Deep Investigation Process:**
+1. Analyzed HTML structure → Found `<div class="nav-spacer"></div>` between header and hero
+2. Searched CSS for `.nav-spacer` rules → Found 3 instances (base, mobile, disabled)
+3. Checked desktop media query (`@media (min-width: 961px)`) → **NO nav-spacer rule!**
+4. Confirmed JavaScript also referenced 380px for desktop threshold
+5. Root cause: Base 380px was never overridden for desktop
+
+**The Fix:**
+Added `.nav-spacer { height: 100px }` in desktop media query (line 3337)
+
+**Result:**
+- Desktop top spacing: **380px → 100px** (280px reduction = 74% less!)
+- Mobile completely untouched (still 130-190px as designed)
+- Hero now appears much closer to navigation on desktop
+
+---
 
 ### v1.14.1 - Fixed G Cutoff & Heavily Reduced Top Spacing (Desktop Only)
 **Critical fix for letter cutoff and much more aggressive spacing reduction**

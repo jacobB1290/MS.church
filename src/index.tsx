@@ -3236,39 +3236,72 @@ app.get('/', (c) => {
                     margin-bottom: 120px;
                 }
                 
-                /* Hero Section - Fixed desktop layout */
+                /* Hero Section - MUST override mobile flex layout */
                 .hero {
-                    padding: 60px 0 80px;
-                    max-width: 100%;
-                    margin: 0;
+                    padding: 60px 0 80px !important;
+                    max-width: 100% !important;
+                    margin: 0 !important;
+                    min-height: auto !important;
+                    gap: 40px !important;
+                    background: none !important;
+                    border-radius: 0 !important;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
                 }
                 
                 .hero-body {
+                    display: grid !important;
+                    grid-template-columns: 1fr 1fr !important;
                     max-width: 1200px;
                     margin: 0 auto;
-                    gap: 60px;
-                    grid-template-columns: 1fr 1fr;
-                    align-items: center;
+                    gap: 60px !important;
+                    align-items: center !important;
+                    flex-direction: initial !important;
                 }
                 
                 .hero-content {
                     max-width: 560px;
+                    order: initial !important;
+                    display: grid !important;
+                    gap: 32px !important;
+                }
+                
+                .hero-content p {
+                    text-align: left !important;
+                    margin: 0 !important;
                 }
                 
                 .hero h1 {
-                    font-size: clamp(48px, 4vw, 72px);
-                    line-height: 1.1;
+                    font-size: clamp(48px, 4vw, 72px) !important;
+                    line-height: 1.1 !important;
+                    text-align: left !important;
+                    margin: 0 0 20px 0 !important;
                 }
                 
                 .hero p {
-                    font-size: 18px;
+                    font-size: 18px !important;
                     line-height: 1.7;
+                    max-width: 100% !important;
                 }
                 
                 .hero-image {
-                    min-height: 400px;
-                    max-height: 500px;
+                    order: initial !important;
+                    min-height: 400px !important;
+                    max-height: 500px !important;
                     height: 500px;
+                    border-radius: 24px !important;
+                }
+                
+                .hero-body .cta-group {
+                    flex-direction: row !important;
+                    justify-content: flex-start !important;
+                    align-items: center !important;
+                    width: auto !important;
+                    margin-top: 0 !important;
+                }
+                
+                .hero-body .cta-group .btn {
+                    width: auto !important;
                 }
                 
                 /* Watch Section - Responsive & scalable */
@@ -3329,122 +3362,145 @@ app.get('/', (c) => {
                 
                 /* ========================================
                    OUTREACH SECTION - Desktop 3-in-row layout
-                   Events displayed horizontally with scroll-based enlargement
+                   MUST override mobile sticky/scroll behavior
                    ======================================== */
                 .outreach {
-                    max-width: 1400px;
-                    margin: 0 auto;
+                    max-width: 1400px !important;
+                    margin: 0 auto !important;
+                    width: min(1280px, 94%) !important;
+                    margin-left: auto !important;
+                    padding-top: 0 !important;
                 }
                 
                 .outreach-header {
-                    text-align: center;
-                    margin-bottom: 60px;
-                    position: static;
-                    top: auto;
+                    text-align: center !important;
+                    margin-bottom: 60px !important;
+                    position: static !important;
+                    top: auto !important;
+                    padding-bottom: 0 !important;
+                    width: 100% !important;
+                    margin-left: auto !important;
+                    margin-right: auto !important;
                 }
                 
                 .outreach-header .section-heading {
-                    margin-bottom: 16px;
+                    margin-bottom: 16px !important;
                 }
                 
                 .outreach-header .section-lead {
-                    display: block;
-                    max-width: 800px;
-                    margin: 0 auto;
+                    display: block !important;
+                    max-width: 800px !important;
+                    margin: 0 auto !important;
                 }
                 
                 .outreach-scroll-container {
-                    position: relative;
+                    position: relative !important;
+                    margin-top: 0 !important;
                 }
                 
                 /* Desktop: Show all 3 events in a row */
                 .sticky-wrapper {
-                    position: relative;
-                    top: 0;
-                    height: auto;
-                    padding: 0;
+                    position: relative !important;
+                    top: 0 !important;
+                    height: auto !important;
+                    min-height: auto !important;
+                    padding: 0 !important;
+                    padding-bottom: 0 !important;
+                    gap: 0 !important;
+                    justify-content: initial !important;
                 }
                 
                 .events-container {
-                    display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 32px;
+                    display: grid !important;
+                    grid-template-columns: repeat(3, 1fr) !important;
+                    gap: 32px !important;
                     padding: 0 20px;
+                    width: 100% !important;
+                    margin-top: 0 !important;
+                    flex: initial !important;
                 }
                 
                 /* Hide scroll spacer on desktop */
                 .scroll-spacer {
-                    display: none;
+                    display: none !important;
+                    height: 0 !important;
                 }
                 
                 /* Event slides always visible on desktop */
                 .event-slide {
-                    position: relative;
-                    opacity: 1;
-                    visibility: visible;
-                    transform: none;
-                    pointer-events: auto;
+                    position: relative !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    transform: none !important;
+                    pointer-events: auto !important;
                     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                                 box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    inset: initial !important;
+                    z-index: 1 !important;
                 }
                 
                 /* Event cards in row */
                 .event-card {
-                    height: auto;
-                    width: 100%;
-                    margin: 0;
-                    padding: clamp(16px, 2vw, 24px);
-                    background: rgba(255, 255, 255, 0.9);
-                    border-radius: 24px;
+                    height: auto !important;
+                    width: 100% !important;
+                    margin: 0 !important;
+                    margin-left: 0 !important;
+                    padding: clamp(16px, 2vw, 24px) !important;
+                    padding-top: clamp(16px, 2vw, 24px) !important;
+                    background: rgba(255, 255, 255, 0.9) !important;
+                    border-radius: 24px !important;
                     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
                     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 }
                 
                 .event-card:hover {
-                    transform: translateY(-8px) scale(1.02);
-                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+                    transform: translateY(-8px) scale(1.02) !important;
+                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12) !important;
                 }
                 
                 /* Event flyer wrapper - constrain size */
                 .event-flyer-wrapper {
-                    max-width: 100%;
-                    aspect-ratio: 3/4;
-                    margin-bottom: clamp(16px, 2vw, 20px);
-                    padding: 0;
-                    max-height: none;
+                    max-width: 100% !important;
+                    aspect-ratio: 3/4 !important;
+                    margin-bottom: clamp(16px, 2vw, 20px) !important;
+                    padding: 0 !important;
+                    max-height: none !important;
                 }
                 
                 .flyer-image,
                 .placeholder-flyer {
-                    border-radius: 16px;
-                    max-height: none;
+                    border-radius: 16px !important;
+                    max-height: none !important;
                     height: 100%;
+                    object-fit: cover !important;
                 }
                 
                 /* Event date positioning */
                 .event-flyer-wrapper .event-date {
-                    top: 12px;
-                    left: 12px;
-                    font-size: clamp(9px, 1vw, 10px);
-                    padding: clamp(5px, 0.8vw, 6px) clamp(12px, 1.5vw, 14px);
+                    top: 12px !important;
+                    left: 12px !important;
+                    font-size: clamp(9px, 1vw, 10px) !important;
+                    padding: clamp(5px, 0.8vw, 6px) clamp(12px, 1.5vw, 14px) !important;
                 }
                 
                 .event-flyer-wrapper .event-indicators {
-                    top: 12px;
-                    right: 12px;
+                    top: 12px !important;
+                    right: 12px !important;
                 }
                 
                 /* CTA button */
                 .event-cta {
-                    padding: 0;
-                    margin: 0;
-                    max-width: none;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    margin-bottom: 0 !important;
+                    max-width: none !important;
                 }
                 
                 .event-cta .btn {
                     width: 100%;
-                    padding: clamp(12px, 1.5vw, 14px) clamp(20px, 2.5vw, 24px);
-                    font-size: clamp(11px, 1.2vw, 12px);
+                    padding: clamp(12px, 1.5vw, 14px) clamp(20px, 2.5vw, 24px) !important;
+                    font-size: clamp(11px, 1.2vw, 12px) !important;
+                    border-radius: 16px !important;
                 }
             }
             

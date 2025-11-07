@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.18.1 - ACTUALLY fixed narrow window: changed ALL mobile queries from 960px to 1199px (CSS + JavaScript) -->
+    <!-- v1.19.0 - Fixed mobile outreach flyer cutoff: removed horizontal padding from event-flyer-wrapper, centered with auto margins -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -697,14 +697,14 @@ app.get('/', (c) => {
             .event-flyer-wrapper {
                 position: relative;
                 width: 100%;
-                max-width: 517px;
+                max-width: 469px;  /* Reduced from 517px to account for removed padding */
                 aspect-ratio: 3/4;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 z-index: 10;
-                margin-bottom: 24px;
-                padding: 0 24px;
+                margin: 0 auto 24px;  /* Center with auto margins, removed horizontal padding */
+                padding: 0;  /* Removed horizontal padding to prevent flyer cutoff */
                 box-sizing: border-box;
             }
             
@@ -2193,9 +2193,9 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 466px;
-                    padding: 0 20px;
-                    margin-bottom: 20px;
+                    max-width: 426px;  /* Reduced from 466px to account for removed padding */
+                    padding: 0;  /* Removed horizontal padding to prevent flyer cutoff */
+                    margin: 0 auto 20px;  /* Center with auto margins */
                 }
                 
                 .flyer-image {
@@ -2389,9 +2389,9 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: clamp(350px, 85vw, 414px);
-                    padding: 0 clamp(14px, 3.5vw, 16px);
-                    margin-bottom: clamp(14px, 3.2vw, 16px);
+                    max-width: clamp(322px, 78vw, 382px);  /* Reduced to account for removed padding */
+                    padding: 0;  /* Removed horizontal padding to prevent flyer cutoff */
+                    margin: 0 auto clamp(14px, 3.2vw, 16px);  /* Center with auto margins */
                     /* Reduce image height slightly on small screens to make room for button */
                     max-height: 68vh;
                 }
@@ -4958,7 +4958,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.18.1</div>
+        <div class="version-footer">v1.19.0</div>
     </body>
     </html>
   `)

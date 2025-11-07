@@ -1,7 +1,31 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.17.0
+## 🔢 CURRENT VERSION: v1.18.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.18.0 - Fixed Narrow Window Layout Issue
+**Changed desktop breakpoint to prevent weird stretched layout on thin windows**
+
+**Problem:**
+When resizing the desktop browser window to be narrow (961-1199px width), the site showed a weird stretched desktop layout that looked awkward and cramped.
+
+**Root Cause:**
+Desktop media query was `@media (min-width: 961px)` with no upper limit, so even very narrow windows above 961px got the desktop layout designed for wide screens.
+
+**Solution:**
+Changed desktop breakpoint from `961px` to `1200px`
+
+**New Breakpoint Behavior:**
+- **Mobile:** ≤960px (unchanged - all mobile devices)
+- **Narrow Windows:** 961-1199px (now uses mobile layout - looks better than stretched desktop)
+- **Desktop:** ≥1200px (desktop layout with proper spacing and two-column hero)
+
+**Result:**
+- Thin browser windows now show clean mobile layout instead of weird stretched desktop
+- Desktop features (two-column hero, three-column outreach, etc.) only appear on properly wide screens (≥1200px)
+- Mobile completely unchanged
+
+---
 
 ### v1.17.0 - Reverted Watch Section to Original Layout (Desktop Only)
 **Removed side-by-side grid layout due to video display issues**

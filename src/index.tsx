@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.17.0 - Reverted watch section to original centered layout (removed side-by-side grid) -->
+    <!-- v1.18.0 - Fixed narrow window layout: desktop now requires ≥1200px, narrow windows (961-1199px) use mobile layout -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3328,8 +3328,9 @@ app.get('/', (c) => {
                Complete independent desktop experience
                Mobile styles are isolated in @media (max-width: 960px)
                ======================================== */
-            @media (min-width: 961px) {
-                /* Desktop container and layout */
+            @media (min-width: 1200px) {
+                /* Desktop container and layout - only for wide screens (≥1200px) */
+                /* Narrow windows (961-1199px) will use mobile layout */
                 .page {
                     max-width: 1400px;
                 }
@@ -3689,8 +3690,8 @@ app.get('/', (c) => {
                 }
             }
             
-            /* Smaller Desktop Windows (961px - 1280px) */
-            @media (min-width: 961px) and (max-width: 1280px) {
+            /* Desktop Windows (1200px - 1280px) - slight adjustments */
+            @media (min-width: 1200px) and (max-width: 1280px) {
                 .page {
                     max-width: 1200px;
                 }
@@ -4957,7 +4958,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.17.0</div>
+        <div class="version-footer">v1.18.0</div>
     </body>
     </html>
   `)

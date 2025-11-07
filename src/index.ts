@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.9.9 - Event cards: moved higher (0vh), 15% larger (517px), extra rounded (48px) -->
+    <!-- v1.10.0 - Industry-standard responsive scaling for small phones (preserves 960px perfection) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -2177,29 +2177,31 @@ app.get('/', (c) => {
                 }
             }
 
+            /* Small Phones - Industry Standard Responsive Scaling (320px-480px) */
+            /* Uses clamp() with 960px values as MAX to preserve iPhone 17 Pro Max perfection */
             @media (max-width: 480px) {
                 .page {
                     width: 100%;
-                    padding: 0 5%;
+                    padding: 0 clamp(3%, 5vw, 5%);
                     box-sizing: border-box;
                 }
 
                 .nav-spacer {
-                    height: 190px;
+                    height: clamp(130px, 40vw, 190px);
                 }
 
                 .nav-shell {
-                    padding: 14px 18px;
-                    border-radius: 32px;
-                    top: 10px;
+                    padding: clamp(12px, 3.5vw, 16px) clamp(15px, 4.5vw, 20px);
+                    border-radius: clamp(32px, 8vw, 40px);
+                    top: clamp(8px, 2.5vw, 12px);
                     width: 94%;
                     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
                 
                 .nav-shell.scrolled-mobile {
                     border-radius: 100px;
-                    padding: 7px 18px;
-                    top: 6px;
+                    padding: clamp(6px, 1.8vw, 8px) clamp(15px, 4.5vw, 20px);
+                    top: clamp(6px, 1.8vw, 8px);
                 }
                 
                 .nav-shell.scrolled-mobile .nav-cta {
@@ -2288,14 +2290,14 @@ app.get('/', (c) => {
                 }
 
                 .brand-title {
-                    font-size: 18px;
-                    letter-spacing: 1.8px;
+                    font-size: clamp(14px, 4vw, 16px);
+                    letter-spacing: clamp(1.5px, 0.5vw, 2px);
                     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                 }
 
                 .brand-subtitle {
-                    font-size: 11px;
-                    letter-spacing: 2.8px;
+                    font-size: clamp(7px, 2.2vw, 9px);
+                    letter-spacing: clamp(2.5px, 0.7vw, 3px);
                     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                 }
 
@@ -2324,19 +2326,19 @@ app.get('/', (c) => {
                 }
 
                 nav a {
-                    font-size: 13px;
-                    letter-spacing: 1.8px;
+                    font-size: clamp(9px, 2.5vw, 10px);
+                    letter-spacing: clamp(1.5px, 0.5vw, 2px);
                 }
                 
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: 12px;
-                    letter-spacing: 1.5px;
+                    font-size: clamp(9px, 2.5vw, 10px);
+                    letter-spacing: clamp(1.5px, 0.5vw, 2px);
                 }
 
                 .nav-cta {
-                    padding: 10px 20px;
-                    font-size: 12px;
-                    letter-spacing: 1.5px;
+                    padding: clamp(8px, 2.5vw, 10px) clamp(18px, 5vw, 24px);
+                    font-size: clamp(9px, 2.5vw, 10px);
+                    letter-spacing: clamp(1.5px, 0.4vw, 2px);
                 }
 
                 main {
@@ -2785,8 +2787,9 @@ app.get('/', (c) => {
                 }
             }
             
-            /* Smaller Phones (iPhone X, iPhone SE, etc - 375px and below) */
-            @media (max-width: 375px) {
+            /* 375px breakpoint REMOVED - Using fluid clamp() scaling in 480px breakpoint instead */
+            /* This ensures smooth scaling from 320px to 960px with iPhone 17 Pro Max values as maximum */
+            @media (max-width: 0px) {
                 .page {
                     width: 100%;
                     padding: 0 3%;
@@ -4435,7 +4438,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.44</div>
+        <div class="version-footer">v1.10.0</div>
     </body>
     </html>
   `)

@@ -1,7 +1,26 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.14.0
+## 🔢 CURRENT VERSION: v1.14.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.14.1 - Fixed G Cutoff & Heavily Reduced Top Spacing (Desktop Only)
+**Critical fix for letter cutoff and much more aggressive spacing reduction**
+
+**Changes Made (Desktop ≥961px only, mobile untouched):**
+
+1. **Fixed "g" Cutoff in "Mending":**
+   - Line height: `1.05 → 1.15` (more room for descenders)
+   - Added `padding-bottom: 4px` to H1 (extra space for descenders)
+   - Added `overflow: visible` to both `.hero` and `.hero h1` containers
+
+2. **Heavily Reduced Top Spacing:**
+   - Hero top padding: `clamp(20px, 3vw, 30px) → clamp(10px, 1.5vw, 15px)` (50% reduction!)
+   - Hero gap (between title and body): `clamp(16px, 2vw, 24px) → clamp(8px, 1vw, 12px)` (50% reduction!)
+   - H1 bottom margin: `clamp(16px, 2vw, 24px) → clamp(12px, 1.5vw, 18px)` (25% reduction)
+
+**Result:** Desktop hero now has minimal white space at top, and "g" in "Mending" is fully visible.
+
+---
 
 ### v1.14.0 - Desktop Hero Enhancements: Spacing, Sizing, Responsive Scaling
 **Comprehensive desktop hero improvements addressing all remaining issues**

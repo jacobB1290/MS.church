@@ -3758,7 +3758,7 @@ app.get('/', (c) => {
                 let isSwiping = false;
                 let swipeTimer = null;
                 const swipeThreshold = 60; // Swipe distance needed to trigger event change
-                const swipeCooldown = 600;
+                const swipeCooldown = 1500; // Longer cooldown to prevent scroll momentum from triggering another event
                 let manualSwipeOverride = false; // Flag to prevent scroll from overriding swipe
                 let lastSwipeTime = 0;
 
@@ -3795,9 +3795,9 @@ app.get('/', (c) => {
                         
                         console.log('Touch end - dx:', dx, 'dy:', dy, 'isSwiping:', isSwiping, 'currentIndex:', currentEventIndex);
                         
-                        // Prevent rapid repeated swipes
-                        if (now - lastSwipeTime < 400) {
-                            console.log('Too soon after last swipe');
+                        // Prevent rapid repeated swipes - must wait for override to clear
+                        if (now - lastSwipeTime < 800) {
+                            console.log('Too soon after last swipe - preventing double swipe');
                             isSwiping = false;
                             return;
                         }

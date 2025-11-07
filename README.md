@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.29
+## 🔢 CURRENT VERSION: v1.9.30
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,24 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.29 (Current) - INCREASE SCROLL DISTANCE BY 30%
+### v1.9.30 (Current) - FIX SWIPE VELOCITY ISSUE
+- **Increased swipe cooldown to prevent double-swipe**
+  - Cooldown increased from 600ms → 1500ms
+  - Manual swipe override now lasts 1.5 seconds instead of 0.6 seconds
+  - Prevents scroll momentum from triggering additional event changes after swipe
+  - Blocks rapid repeated swipes that could skip multiple cards
+- **Increased swipe debounce time**
+  - Debounce increased from 400ms → 800ms
+  - Must wait longer between swipes
+  - Ensures each swipe gesture only changes one card
+- **How it fixes velocity issue**
+  - After swiping, the `manualSwipeOverride` flag stays active for 1.5 seconds
+  - During this time, scroll-based event changes are blocked
+  - Prevents scroll momentum from your swipe gesture triggering another card change
+  - Even fast/hard swipes will only change one card at a time
+- Result: Single swipe = single card change, no matter how fast you swipe
+
+### v1.9.29 - INCREASE SCROLL DISTANCE BY 30%
 - **Increased scroll spacer height across all breakpoints**
   - Desktop: 160vh → 208vh (+30%)
   - 960px breakpoint: 350vh → 455vh (+30%)

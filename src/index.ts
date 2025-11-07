@@ -3541,11 +3541,20 @@ app.get('/', (c) => {
                 
                 // Mobile nav compression on scroll
                 let lastNavScrollY = 0;
-                let scrollThreshold = 50;
+                // Expand nav when within 10% of scroll distance from top (90% scrolled up)
+                // Responsive thresholds based on screen size
+                function getScrollThreshold() {
+                    const width = window.innerWidth;
+                    if (width <= 375) return 130 * 0.10; // 10% of 130px nav-spacer
+                    if (width <= 480) return 190 * 0.10; // 10% of 190px nav-spacer
+                    if (width <= 960) return 190 * 0.10; // 10% of 190px nav-spacer
+                    return 380 * 0.10; // 10% of 380px nav-spacer
+                }
                 let scrollUpAtTopCount = 0;
                 
                 function handleMobileNav() {
                     const currentScrollY = window.scrollY;
+                    const scrollThreshold = getScrollThreshold();
                     
                     // Only apply on mobile (960px and below)
                     if (window.innerWidth <= 960) {
@@ -4418,7 +4427,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.38</div>
+        <div class="version-footer">v1.9.39</div>
     </body>
     </html>
   `)

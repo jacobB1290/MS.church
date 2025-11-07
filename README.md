@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.38
+## 🔢 CURRENT VERSION: v1.9.39
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,23 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.38 (Current) - RESTORED ORIGINAL PADDING AND SPACING
+### v1.9.39 (Current) - NAV EXPANDS EARLIER ON SCROLL UP
+- **Nav expands at 90% scroll up instead of 100%**
+  - Changed from fixed 50px threshold to responsive 10% calculation
+  - Nav now expands when within 10% of top (90% scrolled up)
+  - More intuitive and responsive feel when scrolling back up
+- **Responsive threshold based on screen size**
+  - 375px mobile: Expands at 13px from top (10% of 130px spacer)
+  - 480px mobile: Expands at 19px from top (10% of 190px spacer)
+  - 960px mobile: Expands at 19px from top (10% of 190px spacer)
+  - Desktop: Expands at 38px from top (10% of 380px spacer)
+- **Better UX for upward scrolling**
+  - Nav anticipates user intent to return to top
+  - Expands earlier for smoother transition
+  - Feels more responsive and natural
+- Result: Nav expands before reaching absolute top, making it feel more intuitive and responsive
+
+### v1.9.38 - RESTORED ORIGINAL PADDING AND SPACING
 - **Restored original nav-spacer heights from v1.9.34**
   - Desktop: 120px → 380px (restored original comfortable spacing)
   - 480px mobile: 100px → 190px (restored original spacing)

@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.41
+## 🔢 CURRENT VERSION: v1.9.42
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,7 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.41 (Current) - IMPROVED CONTENT HIERARCHY AND BUTTON STYLING
+### v1.9.42 (Current) - IMPROVED CONTENT HIERARCHY AND BUTTON STYLING
 - **Restructured content hierarchy**
   - "This Christmas, Morning Star..." now styled as subheader (h3)
   - 22px font, bold weight, proper heading treatment

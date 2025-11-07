@@ -31,7 +31,7 @@ app.get('/', (c) => {
                 --bg-event1: linear-gradient(135deg, #ffe8d6 0%, #ffd4d4 100%); /* Soft peach to light coral for Friendsgiving */
                 --bg-event2: linear-gradient(135deg, #ffd6e8 0%, #ffe5f0 100%); /* Soft pink to lighter pink for Clothes Drive */
                 --bg-event3: linear-gradient(135deg, #c8e6c8 0%, #ffe0e0 50%, #d4f0d4 100%); /* Vibrant green to soft red to vibrant green for Christmas */
-                --outreach-spacer: 160vh;
+                --outreach-spacer: 208vh;
             }
 
             * {
@@ -1848,7 +1848,7 @@ app.get('/', (c) => {
                 }
                 
                 .scroll-spacer {
-                    height: 350vh;
+                    height: 455vh;
                 }
             }
 
@@ -2527,7 +2527,7 @@ app.get('/', (c) => {
                 }
 
                 .scroll-spacer {
-                    height: 120vh;
+                    height: 156vh;
                 }
                 
                 .events-container {

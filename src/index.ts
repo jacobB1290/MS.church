@@ -1277,9 +1277,106 @@ app.get('/', (c) => {
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
             
+            .gift-image {
+                cursor: pointer;
+            }
+            
             .gift-image:hover {
                 transform: translateY(-4px) scale(1.05);
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            }
+            
+            /* Gift Gallery Lightbox */
+            .gift-lightbox {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 10000;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .gift-lightbox.active {
+                display: flex;
+            }
+            
+            .gift-lightbox-content {
+                position: relative;
+                max-width: 90%;
+                max-height: 90vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .gift-lightbox-image {
+                max-width: 100%;
+                max-height: 90vh;
+                object-fit: contain;
+                border-radius: 8px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
+            
+            .gift-lightbox-close {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                width: 48px;
+                height: 48px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 24px;
+                color: white;
+                transition: all 0.3s ease;
+                z-index: 10001;
+            }
+            
+            .gift-lightbox-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: scale(1.1);
+            }
+            
+            .gift-lightbox-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 56px;
+                height: 56px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 28px;
+                color: white;
+                transition: all 0.3s ease;
+                z-index: 10001;
+            }
+            
+            .gift-lightbox-arrow:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: translateY(-50%) scale(1.1);
+            }
+            
+            .gift-lightbox-arrow.prev {
+                left: 20px;
+            }
+            
+            .gift-lightbox-arrow.next {
+                right: 20px;
             }
             
             /* See Flyer Button - Small, below heading */
@@ -4152,6 +4249,81 @@ app.get('/', (c) => {
                     moveCarousel('event2', 1);
                 }, 5000);
 
+                // Gift Gallery Lightbox
+                const giftImages = document.querySelectorAll('.gift-image');
+                const giftLightbox = document.getElementById('gift-lightbox');
+                const giftLightboxImage = document.getElementById('gift-lightbox-image');
+                const giftLightboxClose = document.getElementById('gift-lightbox-close');
+                const giftLightboxPrev = document.getElementById('gift-lightbox-prev');
+                const giftLightboxNext = document.getElementById('gift-lightbox-next');
+                
+                let currentGiftIndex = 0;
+                const giftImagesSrcs = Array.from(giftImages).map(img => img.src);
+                
+                // Open lightbox when clicking on gift image
+                giftImages.forEach((img, index) => {
+                    img.addEventListener('click', () => {
+                        currentGiftIndex = index;
+                        openGiftLightbox();
+                    });
+                });
+                
+                function openGiftLightbox() {
+                    giftLightboxImage.src = giftImagesSrcs[currentGiftIndex];
+                    giftLightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                function closeGiftLightbox() {
+                    giftLightbox.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+                
+                function showPrevGift() {
+                    currentGiftIndex = (currentGiftIndex - 1 + giftImagesSrcs.length) % giftImagesSrcs.length;
+                    giftLightboxImage.src = giftImagesSrcs[currentGiftIndex];
+                }
+                
+                function showNextGift() {
+                    currentGiftIndex = (currentGiftIndex + 1) % giftImagesSrcs.length;
+                    giftLightboxImage.src = giftImagesSrcs[currentGiftIndex];
+                }
+                
+                // Event listeners
+                if (giftLightboxClose) {
+                    giftLightboxClose.addEventListener('click', closeGiftLightbox);
+                }
+                
+                if (giftLightboxPrev) {
+                    giftLightboxPrev.addEventListener('click', showPrevGift);
+                }
+                
+                if (giftLightboxNext) {
+                    giftLightboxNext.addEventListener('click', showNextGift);
+                }
+                
+                // Close on background click
+                if (giftLightbox) {
+                    giftLightbox.addEventListener('click', (e) => {
+                        if (e.target === giftLightbox) {
+                            closeGiftLightbox();
+                        }
+                    });
+                }
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (!giftLightbox.classList.contains('active')) return;
+                    
+                    if (e.key === 'Escape') {
+                        closeGiftLightbox();
+                    } else if (e.key === 'ArrowLeft') {
+                        showPrevGift();
+                    } else if (e.key === 'ArrowRight') {
+                        showNextGift();
+                    }
+                });
+
                 // Countdown Timer to Next Sunday 9:00 AM Mountain Time
                 function updateCountdown() {
                     const now = new Date();
@@ -4222,6 +4394,16 @@ app.get('/', (c) => {
                 setInterval(updateCountdown, 1000);
             });
         </script>
+        
+        <!-- Gift Gallery Lightbox -->
+        <div class="gift-lightbox" id="gift-lightbox">
+            <div class="gift-lightbox-close" id="gift-lightbox-close">×</div>
+            <div class="gift-lightbox-arrow prev" id="gift-lightbox-prev">‹</div>
+            <div class="gift-lightbox-content">
+                <img src="" alt="Gift" class="gift-lightbox-image" id="gift-lightbox-image">
+            </div>
+            <div class="gift-lightbox-arrow next" id="gift-lightbox-next">›</div>
+        </div>
         
         <!-- Version Number Footer -->
         <div class="version-footer">v1.9.25</div>

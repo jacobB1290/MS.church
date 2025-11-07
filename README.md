@@ -1,7 +1,41 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.12.0
+## 🔢 CURRENT VERSION: v1.12.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.12.1 - CRITICAL FIX: Hero Grid Template Areas
+**Fixed desktop hero section to display proper 2-column layout**
+
+**Deep Investigation Findings:**
+- Version number was updating but UI wasn't changing
+- CSS was being served correctly
+- BUT: Grid layout math was wrong
+
+**The Problem:**
+- `.hero-body` has **3 direct children**: `.hero-content`, `.hero-image`, `.cta-group`
+- Used `grid-template-columns: 1fr 1fr` (2 columns)
+- CSS Grid automatically placed:
+  - Row 1, Col 1: `.hero-content`
+  - Row 1, Col 2: `.hero-image`
+  - Row 2, Col 1: `.cta-group` (wrapped to new row!)
+- Result: Still looked vertical/stacked
+
+**The Fix:**
+Used `grid-template-areas` to explicitly control placement:
+```css
+grid-template-areas: 
+    "content image"
+    "buttons image";
+```
+
+**Now Creates:**
+- Left column: content (row 1) + buttons (row 2)
+- Right column: image (spans both rows)
+- TRUE 2-column appearance
+
+**Result:** Desktop hero finally shows content+buttons on left, image on right. Mobile completely unchanged.
+
+---
 
 ### v1.12.0 - COMPLETE CSS ARCHITECTURE RESTRUCTURE
 **CRITICAL BREAKTHROUGH: Fixed persistent desktop layout issues by completely restructuring CSS architecture**

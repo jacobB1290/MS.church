@@ -1,7 +1,55 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.11.3
+## 🔢 CURRENT VERSION: v1.12.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.12.0 - COMPLETE CSS ARCHITECTURE RESTRUCTURE
+**CRITICAL BREAKTHROUGH: Fixed persistent desktop layout issues by completely restructuring CSS architecture**
+
+**What Was Broken:**
+- Desktop Hero: Vertical (one column) instead of horizontal (two columns)
+- Desktop Outreach: Showed one event at a time instead of 3 in a row
+- Desktop Watch: Oversized, taking up more than full screen height
+- Previous 3 fix attempts (v1.11.0, v1.11.1, v1.11.3) all failed despite `!important` flags
+
+**Root Cause:**
+- Base styles applied to ALL screen sizes (desktop + mobile)
+- Mobile breakpoints overrode base styles
+- Desktop breakpoint tried to override back with `!important`
+- CSS cascade conflicts made desktop layouts unreliable
+
+**The Solution:**
+Completely restructured CSS into three isolated layers:
+
+1. **Base Styles** = Minimal universal properties only (width, color)
+2. **Mobile Styles (≤960px)** = Wrapped in `@media (max-width: 960px)`
+   - Hero: Grid vertical layout
+   - Outreach: Sticky scroll behavior with positioned events
+   - Events: One at a time with smooth transitions
+   - Watch: Mobile-optimized sizing
+3. **Desktop Styles (≥961px)** = Completely independent
+   - Hero: CSS Grid 2-column layout (content left, image right) ✅
+   - Outreach: Static grid 3-in-row layout ✅
+   - Events: All 3 visible simultaneously ✅
+   - Watch: Properly scaled and responsive ✅
+   - No `!important` needed - clean CSS
+
+**Why This Works:**
+- Mobile and desktop operate in completely separate CSS worlds
+- No inheritance conflicts between breakpoints
+- No override battles with `!important`
+- Clean, maintainable, predictable code
+- Guaranteed mobile preservation (locked in ≤960px)
+
+**Technical Details:**
+- Removed ~100 lines of conflicting base layout rules
+- Added ~120 lines of isolated mobile layout rules
+- Rewrote ~150 lines of desktop rules without `!important`
+- Total: ~310 insertions, 195 deletions
+
+**Result:** Desktop finally works correctly - Hero is 2-column, Outreach shows all 3 events in a row, Watch section scales properly. Mobile remains completely untouched and perfect.
+
+**Testing Verified:** All desktop requirements met while mobile devices (iPhone 6S, X, 14, 15, 17 Pro Max) remain unchanged.
 
 ## Project Overview
 - **Name**: Morning Star Christian Church

@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.36
+## 🔢 CURRENT VERSION: v1.9.37
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,27 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.36 (Current) - ELIMINATED NAV WRAPPING DURING TRANSITIONS
+### v1.9.37 (Current) - FIXED NAV LAYOUT AND SPACING
+- **Nav no longer affects page layout**
+  - Drastically reduced nav-spacer heights across all breakpoints
+  - Desktop: 380px → 120px (68% reduction)
+  - 480px mobile: 190px → 100px (47% reduction)
+  - 375px mobile: 130px → 80px (38% reduction)
+  - Nav is truly fixed/floating without pushing content down
+- **Eliminated excessive white space**
+  - Removed hero top padding on all breakpoints
+  - Desktop: `padding: 60px 0` → `padding: 0 0 60px`
+  - 480px: `padding: 20px 0 60px` → `padding: 0 0 40px`
+  - 375px: `padding: 40px 0 20px` → `padding: 0 0 20px`
+  - Hero content now sits naturally below nav
+- **Optimal spacing achieved**
+  - Nav floats above content with minimal spacer
+  - "Mending the Broken" heading positioned properly
+  - No unnecessary gaps or white space
+  - Content flows naturally from nav to hero
+- Result: Clean, professional layout with nav floating independently, proper vertical rhythm, and optimal use of screen space
+
+### v1.9.36 - ELIMINATED NAV WRAPPING DURING TRANSITIONS
 - **Fixed tabs briefly dropping to new row during compression**
   - Added `flex-wrap: nowrap` to compressed nav state
   - Brand and full GIFTS button use `position: absolute` when hiding

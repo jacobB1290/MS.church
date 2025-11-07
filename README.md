@@ -1,7 +1,53 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.18.0
+## 🔢 CURRENT VERSION: v1.19.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.19.0 - Fixed Mobile Outreach Event Flyer Cutoff
+**Resolved flyer images being cut off at edges on mobile devices**
+
+**Problem:**
+Event flyer images in the outreach section were being cut off at the left and right edges on mobile, showing only the center portion of the flyer.
+
+**Root Cause:**
+`.event-flyer-wrapper` had:
+- `width: 100%` with `aspect-ratio: 3/4`
+- Horizontal padding: `0 20-24px`
+- Result: Content box was reduced by padding, but image tried to fill 100% of that smaller space
+- The padding "squeezed" the image, causing edges to be cut off
+
+**Solution:**
+Removed horizontal padding from `.event-flyer-wrapper` and centered using `margin: 0 auto` instead
+
+**Changes Applied (3 Mobile Breakpoints):**
+
+1. **Base Mobile Styles:**
+   - ❌ Removed: `padding: 0 24px`
+   - ✅ Added: `margin: 0 auto` (centers without squeezing)
+   - ✅ Adjusted: `max-width: 517px → 469px` (compensates for removed padding)
+
+2. **Mobile ≤768px:**
+   - ❌ Removed: `padding: 0 20px`
+   - ✅ Added: `margin: 0 auto`
+   - ✅ Adjusted: `max-width: 466px → 426px`
+
+3. **Small Phones ≤480px:**
+   - ❌ Removed: `padding: 0 clamp(14px, 3.5vw, 16px)`
+   - ✅ Added: `margin: 0 auto`
+   - ✅ Adjusted: `max-width: clamp(350px, 85vw, 414px) → clamp(322px, 78vw, 382px)`
+
+**Result:**
+- Event flyers now display fully without edge cutoff
+- Images properly centered on screen
+- No more "squeezed" or cropped appearance
+- Works across all mobile device sizes
+
+---
+
+### v1.18.1 - ACTUALLY Fixed Narrow Window Layout (Comprehensive)
+(Previous version)
+
+---
 
 ### v1.18.0 - Fixed Narrow Window Layout Issue
 **Changed desktop breakpoint to prevent weird stretched layout on thin windows**

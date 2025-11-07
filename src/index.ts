@@ -3554,7 +3554,8 @@ app.get('/', (c) => {
 
                         // Calculate which event should be shown based on scroll progress
                         // But respect manual swipe overrides - don't fight the user!
-                        let newIndex = progress < 0.25 ? 0 : (progress < 0.65 ? 1 : 2);
+                        // Event 1: 0-25%, Event 2: 25-70%, Event 3: 70-100%
+                        let newIndex = progress < 0.25 ? 0 : (progress < 0.70 ? 1 : 2);
 
                         const now = Date.now();
                         

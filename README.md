@@ -1,7 +1,40 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.15.0
+## 🔢 CURRENT VERSION: v1.16.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.16.0 - Desktop Refinements: Spacing, Scroll, Dots, Watch Layout (Mobile Unchanged)
+**Polish pass on desktop experience with multiple UX improvements**
+
+**Changes Made (Desktop ≥961px only, mobile completely untouched):**
+
+1. **Natural Spacing:**
+   - Nav-spacer: `100px → 120px` (added back 20px for more natural feel)
+   - Result: Less cramped, better breathing room at top
+
+2. **Fixed Outreach Scroll Offset:**
+   - JavaScript navOffset: `20 → 60` for outreach section
+   - Result: Clicking "OUTREACH" now just covers the ribbon pill, shows the title
+   - No longer scrolls too far down
+
+3. **Removed Event Dots:**
+   - Hidden `.event-indicators` (3 dots) on desktop event cards
+   - Result: Cleaner card appearance on desktop
+   - Mobile still has dots for swipe indication
+
+4. **Watch Section Side-by-Side Layout:**
+   - Changed from stacked to grid layout
+   - Container: `1200px → 1400px` (wider)
+   - Grid: `400px` fixed left column for text, flexible right for video
+   - Layout areas:
+     - Left: Live status, countdown, verse
+     - Right: Video embed (spans 3 rows)
+     - Bottom: Playlist button (spans both columns)
+   - Result: More modern, efficient use of space on desktop
+
+**Mobile:** Completely untouched - all changes isolated to desktop media query only
+
+---
 
 ### v1.15.0 - CRITICAL FIX: Actually Reduced Top Spacing (Desktop Only)
 **Deep investigation revealed and fixed the REAL cause of excessive top spacing**

@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.26
+## 🔢 CURRENT VERSION: v1.9.27
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,34 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.26 (Current) - GIFT GALLERY FULL-SCREEN LIGHTBOX
+### v1.9.27 (Current) - ENHANCED MOBILE SWIPE NAVIGATION IN OUTREACH
+- **Improved swipe detection in sticky locked state**
+  - Swipe gestures now only activate when section is in sticky state (cards locked on screen)
+  - Detects horizontal swipes vs vertical scrolls more accurately
+  - Increased swipe threshold to 50px for more deliberate gestures
+  - Added 300ms debounce to prevent rapid repeated swipes
+  - Horizontal swipes (left/right) change events when cards are locked
+  - Vertical scrolls work normally to navigate through section
+- **Smart scroll-through after swiping to last event**
+  - When user swipes to Event 3 (last event), they can now scroll down to exit section
+  - Auto-releases manual swipe override when scroll progress reaches 85% on last event
+  - Smooth transition from Event 3 to Watch section
+  - No more getting "stuck" on the last event
+- **Enhanced swipe logic**
+  - Tracks touch start, current position, and end position
+  - Calculates swipe direction (left/right) based on horizontal distance
+  - Swipe left (dx < 0) → next event
+  - Swipe right (dx > 0) → previous event
+  - Requires clear horizontal movement (dx > dy) to trigger
+  - Only works in sticky state, doesn't interfere with normal scrolling
+- **Better state management**
+  - Added `isInStickyState()` helper function to check section state
+  - Manual swipe override flag prevents scroll from fighting user gesture
+  - 600ms cooldown after swipe before scroll can override
+  - Prevents scroll jank and provides smooth user experience
+- Result: Natural mobile swipe navigation that feels intuitive and responsive, with smooth exit from section after viewing last event
+
+### v1.9.26 - GIFT GALLERY FULL-SCREEN LIGHTBOX
 - **Added full-screen lightbox for gift gallery images**
   - Click any of the 3 gift images to open in full-screen view
   - Dark overlay (95% black) for maximum image focus

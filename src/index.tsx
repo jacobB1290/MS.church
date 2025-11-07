@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.11.3 - Fixed base styles conflicting with desktop (removed grid-template-columns from base) -->
+    <!-- v1.12.0 - Complete CSS architecture restructure: Mobile (≤960px) and Desktop (≥961px) fully separated -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -272,11 +272,9 @@ app.get('/', (c) => {
                 }
             }
 
-            /* Hero Section */
+            /* Hero Section - Base (minimal, universal only) */
             .hero {
-                display: grid;
-                gap: 40px;
-                padding: 60px 0;
+                width: 100%;
             }
             
             .hero-title {
@@ -284,14 +282,11 @@ app.get('/', (c) => {
             }
             
             .hero-body {
-                display: grid;
-                gap: 60px;
-                align-items: start;
+                width: 100%;
             }
             
             .hero-content {
-                display: grid;
-                gap: 32px;
+                width: 100%;
             }
             
             .hero-image {
@@ -1830,7 +1825,117 @@ app.get('/', (c) => {
                 line-height: 1.6;
             }
 
-            /* Responsive Design */
+            /* ========================================
+               MOBILE STYLES (≤960px)
+               All mobile breakpoints wrapped together
+               Desktop will NOT inherit these
+               ======================================== */
+            @media (max-width: 960px) {
+                /* Mobile Hero Section - Grid vertical layout */
+                .hero {
+                    display: grid;
+                    gap: 40px;
+                    padding: 60px 0;
+                }
+                
+                .hero-body {
+                    display: grid;
+                    gap: 60px;
+                    align-items: start;
+                }
+                
+                .hero-content {
+                    display: grid;
+                    gap: 32px;
+                }
+                
+                .hero-image {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    min-height: 450px;
+                    border-radius: 32px;
+                    overflow: hidden;
+                    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
+                }
+                
+                .hero-image img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                }
+                
+                /* Outreach Section - Mobile scroll behavior */
+                .outreach {
+                    min-height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                .outreach-scroll-container {
+                    position: relative;
+                    margin-top: 0;
+                }
+                
+                .sticky-wrapper {
+                    position: sticky;
+                    top: 0vh;
+                    height: 80vh;
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: center;
+                    padding-top: 5px;
+                }
+                
+                .events-container {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                }
+                
+                .event-slide {
+                    position: absolute;
+                    inset: 0;
+                    width: 100%;
+                    opacity: 0;
+                    visibility: hidden;
+                    transform: translateY(30px) scale(0.95);
+                    transition: opacity 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+                                transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+                    pointer-events: none;
+                    z-index: 0;
+                    will-change: transform, opacity;
+                }
+                
+                .event-slide.active {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateY(0) scale(1);
+                    pointer-events: auto;
+                    z-index: 1;
+                }
+                
+                .scroll-spacer {
+                    height: var(--outreach-spacer);
+                    pointer-events: none;
+                }
+                
+                /* Event cards - Mobile full-screen layout */
+                .event-card {
+                    position: relative;
+                    width: 100vw;
+                    height: 90vh;
+                    margin-left: calc(-50vw + 50%);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: flex-start;
+                    padding-top: 20px;
+                    box-sizing: border-box;
+                }
+            }
+            
             @media (max-width: 1024px) {
                 .event-content {
                     grid-template-columns: 1fr;
@@ -3219,91 +3324,244 @@ app.get('/', (c) => {
             }
             
             /* ========================================
-               DESKTOP-ONLY STYLES (961px and above)
-               Industry-standard desktop experience
-               Mobile styles (≤960px) remain UNTOUCHED
+               DESKTOP-ONLY STYLES (≥961px)
+               Complete independent desktop experience
+               Mobile styles are isolated in @media (max-width: 960px)
                ======================================== */
             @media (min-width: 961px) {
-                /* Container max-widths for better readability */
+                /* Desktop container and layout */
                 .page {
                     max-width: 1400px;
                 }
                 
-                /* Reduce excessive gaps between sections */
                 main {
                     gap: 120px;
                     margin-bottom: 120px;
                 }
                 
-                /* Hero Section - MUST override mobile flex layout */
+                /* Desktop Hero Section - TWO COLUMN GRID */
                 .hero {
-                    padding: 60px 0 80px !important;
-                    max-width: 100% !important;
-                    margin: 0 !important;
-                    min-height: auto !important;
-                    gap: 40px !important;
-                    background: none !important;
-                    border-radius: 0 !important;
-                    padding-left: 0 !important;
-                    padding-right: 0 !important;
+                    display: grid;
+                    gap: 40px;
+                    padding: 60px 0 80px;
+                    max-width: 100%;
+                    margin: 0;
+                    min-height: auto;
                 }
                 
                 .hero-body {
-                    display: grid !important;
-                    grid-template-columns: 1fr 1fr !important;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
                     max-width: 1200px;
                     margin: 0 auto;
-                    gap: 60px !important;
-                    align-items: center !important;
-                    flex-direction: initial !important;
+                    gap: 60px;
+                    align-items: center;
                 }
                 
                 .hero-content {
                     max-width: 560px;
-                    order: initial !important;
-                    display: grid !important;
-                    gap: 32px !important;
+                    display: grid;
+                    gap: 32px;
                 }
                 
                 .hero-content p {
-                    text-align: left !important;
-                    margin: 0 !important;
+                    text-align: left;
+                    margin: 0;
                 }
                 
                 .hero h1 {
-                    font-size: clamp(48px, 4vw, 72px) !important;
-                    line-height: 1.1 !important;
-                    text-align: left !important;
-                    margin: 0 0 20px 0 !important;
+                    font-size: clamp(48px, 4vw, 72px);
+                    line-height: 1.1;
+                    text-align: left;
+                    margin: 0 0 20px 0;
                 }
                 
                 .hero p {
-                    font-size: 18px !important;
+                    font-size: 18px;
                     line-height: 1.7;
-                    max-width: 100% !important;
+                    max-width: 100%;
                 }
                 
                 .hero-image {
-                    order: initial !important;
-                    min-height: 400px !important;
-                    max-height: 500px !important;
+                    position: relative;
+                    width: 100%;
+                    min-height: 400px;
+                    max-height: 500px;
                     height: 500px;
-                    border-radius: 24px !important;
+                    border-radius: 24px;
+                    overflow: hidden;
+                    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
+                }
+                
+                .hero-image img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
                 }
                 
                 .hero-body .cta-group {
-                    flex-direction: row !important;
-                    justify-content: flex-start !important;
-                    align-items: center !important;
-                    width: auto !important;
-                    margin-top: 0 !important;
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+                    width: auto;
+                    margin-top: 0;
                 }
                 
                 .hero-body .cta-group .btn {
-                    width: auto !important;
+                    width: auto;
                 }
                 
-                /* Watch Section - Responsive & scalable */
+                /* Desktop Outreach Section - 3-in-row grid */
+                .outreach {
+                    max-width: 1400px;
+                    margin: 0 auto;
+                    width: min(1280px, 94%);
+                    min-height: auto;
+                    display: block;
+                }
+                
+                .outreach-header {
+                    text-align: center;
+                    margin-bottom: 60px;
+                    position: static;
+                    top: auto;
+                    padding-bottom: 0;
+                    width: 100%;
+                }
+                
+                .outreach-header .section-heading {
+                    margin-bottom: 16px;
+                }
+                
+                .outreach-header .section-lead {
+                    display: block;
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                
+                .outreach-scroll-container {
+                    position: relative;
+                    margin-top: 0;
+                }
+                
+                /* Desktop: No sticky, no scroll spacer */
+                .sticky-wrapper {
+                    position: relative;
+                    top: 0;
+                    height: auto;
+                    min-height: auto;
+                    padding: 0;
+                    padding-bottom: 0;
+                    gap: 0;
+                    display: block;
+                }
+                
+                .scroll-spacer {
+                    display: none;
+                    height: 0;
+                }
+                
+                /* Desktop: Show all 3 events in grid */
+                .events-container {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 32px;
+                    padding: 0 20px;
+                    width: 100%;
+                    margin-top: 0;
+                    position: relative;
+                }
+                
+                /* Desktop: All events visible, no absolute positioning */
+                .event-slide {
+                    position: relative;
+                    opacity: 1;
+                    visibility: visible;
+                    transform: none;
+                    pointer-events: auto;
+                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    z-index: 1;
+                }
+                
+                /* Desktop: Event cards in columns */
+                .event-card {
+                    height: auto;
+                    width: 100%;
+                    margin: 0;
+                    margin-left: 0;
+                    padding: clamp(16px, 2vw, 24px);
+                    padding-top: clamp(16px, 2vw, 24px);
+                    background: rgba(255, 255, 255, 0.9);
+                    border-radius: 24px;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: flex-start;
+                }
+                
+                .event-card:hover {
+                    transform: translateY(-8px) scale(1.02);
+                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+                }
+                
+                /* Desktop: Event flyer sizing */
+                .event-flyer-wrapper {
+                    max-width: 100%;
+                    aspect-ratio: 3/4;
+                    margin-bottom: clamp(16px, 2vw, 20px);
+                    padding: 0;
+                    max-height: none;
+                    position: relative;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10;
+                }
+                
+                .flyer-image,
+                .placeholder-flyer {
+                    border-radius: 16px;
+                    max-height: none;
+                    height: 100%;
+                    width: 100%;
+                    object-fit: cover;
+                }
+                
+                .event-flyer-wrapper .event-date {
+                    top: 12px;
+                    left: 12px;
+                    font-size: clamp(9px, 1vw, 10px);
+                    padding: clamp(5px, 0.8vw, 6px) clamp(12px, 1.5vw, 14px);
+                }
+                
+                .event-flyer-wrapper .event-indicators {
+                    top: 12px;
+                    right: 12px;
+                }
+                
+                .event-cta {
+                    padding: 0;
+                    margin: 0;
+                    margin-bottom: 0;
+                    max-width: none;
+                    position: relative;
+                    width: 100%;
+                    z-index: 100;
+                }
+                
+                .event-cta .btn {
+                    width: 100%;
+                    padding: clamp(12px, 1.5vw, 14px) clamp(20px, 2.5vw, 24px);
+                    font-size: clamp(11px, 1.2vw, 12px);
+                    border-radius: 16px;
+                }
+                
+                /* Desktop Watch Section - Responsive & scalable */
                 .watch {
                     max-width: 1200px;
                     margin: 0 auto;
@@ -3330,7 +3588,7 @@ app.get('/', (c) => {
                     max-height: 60vh;
                 }
                 
-                /* Contact Section - Better desktop layout */
+                /* Desktop Contact Section */
                 .contact {
                     max-width: 1200px;
                     margin: 0 auto;
@@ -3341,7 +3599,7 @@ app.get('/', (c) => {
                     max-width: 1200px;
                 }
                 
-                /* Schedule Section */
+                /* Desktop Schedule Section */
                 .schedule-grid {
                     grid-template-columns: repeat(3, 1fr);
                     gap: 32px;
@@ -3349,7 +3607,7 @@ app.get('/', (c) => {
                     margin: 0 auto;
                 }
                 
-                /* Section headers - Better proportions */
+                /* Desktop Section typography */
                 .section-heading {
                     font-size: clamp(48px, 4vw, 64px);
                 }
@@ -3357,149 +3615,6 @@ app.get('/', (c) => {
                 .section-lead {
                     font-size: 20px;
                     max-width: 720px;
-                }
-                
-                /* ========================================
-                   OUTREACH SECTION - Desktop 3-in-row layout
-                   MUST override mobile sticky/scroll behavior
-                   ======================================== */
-                .outreach {
-                    max-width: 1400px !important;
-                    margin: 0 auto !important;
-                    width: min(1280px, 94%) !important;
-                    margin-left: auto !important;
-                    padding-top: 0 !important;
-                }
-                
-                .outreach-header {
-                    text-align: center !important;
-                    margin-bottom: 60px !important;
-                    position: static !important;
-                    top: auto !important;
-                    padding-bottom: 0 !important;
-                    width: 100% !important;
-                    margin-left: auto !important;
-                    margin-right: auto !important;
-                }
-                
-                .outreach-header .section-heading {
-                    margin-bottom: 16px !important;
-                }
-                
-                .outreach-header .section-lead {
-                    display: block !important;
-                    max-width: 800px !important;
-                    margin: 0 auto !important;
-                }
-                
-                .outreach-scroll-container {
-                    position: relative !important;
-                    margin-top: 0 !important;
-                }
-                
-                /* Desktop: Show all 3 events in a row */
-                .sticky-wrapper {
-                    position: relative !important;
-                    top: 0 !important;
-                    height: auto !important;
-                    min-height: auto !important;
-                    padding: 0 !important;
-                    padding-bottom: 0 !important;
-                    gap: 0 !important;
-                    justify-content: initial !important;
-                }
-                
-                .events-container {
-                    display: grid !important;
-                    grid-template-columns: repeat(3, 1fr) !important;
-                    gap: 32px !important;
-                    padding: 0 20px;
-                    width: 100% !important;
-                    margin-top: 0 !important;
-                    flex: initial !important;
-                }
-                
-                /* Hide scroll spacer on desktop */
-                .scroll-spacer {
-                    display: none !important;
-                    height: 0 !important;
-                }
-                
-                /* Event slides always visible on desktop */
-                .event-slide {
-                    position: relative !important;
-                    opacity: 1 !important;
-                    visibility: visible !important;
-                    transform: none !important;
-                    pointer-events: auto !important;
-                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                    inset: initial !important;
-                    z-index: 1 !important;
-                }
-                
-                /* Event cards in row */
-                .event-card {
-                    height: auto !important;
-                    width: 100% !important;
-                    margin: 0 !important;
-                    margin-left: 0 !important;
-                    padding: clamp(16px, 2vw, 24px) !important;
-                    padding-top: clamp(16px, 2vw, 24px) !important;
-                    background: rgba(255, 255, 255, 0.9) !important;
-                    border-radius: 24px !important;
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                }
-                
-                .event-card:hover {
-                    transform: translateY(-8px) scale(1.02) !important;
-                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12) !important;
-                }
-                
-                /* Event flyer wrapper - constrain size */
-                .event-flyer-wrapper {
-                    max-width: 100% !important;
-                    aspect-ratio: 3/4 !important;
-                    margin-bottom: clamp(16px, 2vw, 20px) !important;
-                    padding: 0 !important;
-                    max-height: none !important;
-                }
-                
-                .flyer-image,
-                .placeholder-flyer {
-                    border-radius: 16px !important;
-                    max-height: none !important;
-                    height: 100%;
-                    object-fit: cover !important;
-                }
-                
-                /* Event date positioning */
-                .event-flyer-wrapper .event-date {
-                    top: 12px !important;
-                    left: 12px !important;
-                    font-size: clamp(9px, 1vw, 10px) !important;
-                    padding: clamp(5px, 0.8vw, 6px) clamp(12px, 1.5vw, 14px) !important;
-                }
-                
-                .event-flyer-wrapper .event-indicators {
-                    top: 12px !important;
-                    right: 12px !important;
-                }
-                
-                /* CTA button */
-                .event-cta {
-                    padding: 0 !important;
-                    margin: 0 !important;
-                    margin-bottom: 0 !important;
-                    max-width: none !important;
-                }
-                
-                .event-cta .btn {
-                    width: 100%;
-                    padding: clamp(12px, 1.5vw, 14px) clamp(20px, 2.5vw, 24px) !important;
-                    font-size: clamp(11px, 1.2vw, 12px) !important;
-                    border-radius: 16px !important;
                 }
             }
             
@@ -4771,7 +4886,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.11.3</div>
+        <div class="version-footer">v1.12.0</div>
     </body>
     </html>
   `)

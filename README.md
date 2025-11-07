@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.30
+## 🔢 CURRENT VERSION: v1.9.32
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,32 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.30 (Current) - FIX SWIPE VELOCITY ISSUE
+### v1.9.32 (Current) - DOUBLE SCROLL DISTANCE & REMOVE LOCKS
+- **Removed all cooldowns and locks**
+  - Removed 1500ms swipe cooldown
+  - Removed 800ms swipe debounce
+  - Removed manualSwipeOverride flag and logic
+  - Removed swipeTimer functionality
+  - Swipes now respond instantly without artificial delays
+- **Doubled scroll distance for all breakpoints**
+  - Desktop: 208vh → 416vh (2x increase)
+  - 960px breakpoint: 455vh → 910vh (2x increase)
+  - 480px breakpoint: 156vh → 312vh (2x increase)
+  - Much longer scroll distance needed to navigate through events
+  - Natural scroll momentum has more space before triggering event changes
+- **Simplified swipe logic**
+  - Removed complex locking mechanisms
+  - Swipes simply increment/decrement event index
+  - No artificial blocks or overrides
+  - Cleaner, more straightforward code
+- Result: Longer scroll distances naturally prevent velocity issues - more space between events means scroll momentum dissipates before reaching next event threshold
+
+### v1.9.31 - LOCK EVENT INDEX AFTER SWIPE
+- Attempted to lock event index for 1.5 seconds after swipe
+- Too restrictive and caused laggy user experience
+- Replaced with simpler solution in v1.9.32
+
+### v1.9.30 - FIX SWIPE VELOCITY ISSUE
 - **Increased swipe cooldown to prevent double-swipe**
   - Cooldown increased from 600ms → 1500ms
   - Manual swipe override now lasts 1.5 seconds instead of 0.6 seconds

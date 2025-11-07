@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.23
+## 🔢 CURRENT VERSION: v1.9.24
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,20 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.23 (Current) - FIX SEE FLYER BUTTON SCROLL
+### v1.9.24 (Current) - FIX FLYER STYLING ON MOBILE
+- **Fixed flyer image rounded corners on mobile**
+  - Desktop: 48px border-radius (unchanged)
+  - 480px breakpoint: Increased from 10px → 24px border-radius
+  - 375px breakpoint: 48px border-radius (unchanged)
+  - Now shows proper rounded corners matching the date pill aesthetic
+- **Adjusted date pill positioning for better corner alignment**
+  - Desktop: Moved from `top: 12px, left: 24px` → `top: 16px, left: 32px`
+  - 480px: Moved from `top: 10px, left: 20px` → `top: 12px, left: 24px`
+  - 375px: Moved from `top: 8px, left: 16px` → `top: 12px, left: 20px`
+  - Date pill now positioned more consistently with rounded corners
+- Result: Flyer images have proper rounded corners on all mobile devices, date pill better aligned with image corners
+
+### v1.9.23 - FIX SEE FLYER BUTTON SCROLL
 - **Fixed "See Flyer" button scroll position**
   - Button now properly scrolls to show Event 2 (Christmas Clothes Drive)
   - Calculates scroll to middle of spacer (50% progress) to trigger event 2 display

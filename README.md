@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.33
+## 🔢 CURRENT VERSION: v1.9.34
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,29 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.33 (Current) - SWIPE DETECTION ACROSS ENTIRE OUTREACH SECTION
+### v1.9.34 (Current) - REFINED SCROLL & SWIPE COORDINATION
+- **Reduced scroll distances by 25%**
+  - Desktop: 416vh → 312vh (25% reduction)
+  - 960px breakpoint: 910vh → 683vh (25% reduction)
+  - 480px breakpoint: 312vh → 234vh (25% reduction)
+  - More responsive and easier to navigate through events
+  - Less scrolling required to switch events
+- **Fixed scroll overriding swipes**
+  - Added manual override flag that activates after swipe
+  - Scroll handler respects manual swipe for 1.5 seconds
+  - Prevents finicky behavior where swiping to event 3 then scrolling jumps back
+  - Swipe intent is now honored before scroll takes over
+- **Swipe boundaries enforced**
+  - Swipe left at event 3 does NOT loop to event 1
+  - Swipe right at event 1 does NOT loop to event 3
+  - Clear boundaries with `currentEventIndex < totalEvents - 1` and `currentEventIndex > 0`
+- **Enhanced user experience**
+  - Swipe and scroll work together smoothly
+  - Manual gestures respected over automatic scroll
+  - Intuitive, refined navigation through outreach section
+- Result: Highly intuitive outreach section with smooth swipe/scroll coordination
+
+### v1.9.33 - SWIPE DETECTION ACROSS ENTIRE OUTREACH SECTION
 - **Expanded swipe detection area**
   - Changed from `.events-container` to entire `.outreach` section
   - Swipe listeners now cover much larger touch area

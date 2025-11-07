@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.12.1 - Fixed desktop hero grid-template-areas for proper 2-column layout -->
+    <!-- v1.13.0 - Complete desktop fixes: hero spacing, outreach title, watch section sizing -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3341,12 +3341,19 @@ app.get('/', (c) => {
                 
                 /* Desktop Hero Section - TWO COLUMN GRID */
                 .hero {
-                    display: grid;
-                    gap: 40px;
-                    padding: 60px 0 80px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    padding: 40px 0 60px;
                     max-width: 100%;
                     margin: 0;
                     min-height: auto;
+                }
+                
+                .hero h1 {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    width: 100%;
                 }
                 
                 .hero-body {
@@ -3359,15 +3366,17 @@ app.get('/', (c) => {
                     max-width: 1200px;
                     margin: 0 auto;
                     column-gap: 60px;
-                    row-gap: 32px;
+                    row-gap: 20px;
                     align-items: start;
+                    width: 100%;
                 }
                 
                 .hero-content {
                     grid-area: content;
                     max-width: 560px;
-                    display: grid;
-                    gap: 32px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
                 }
                 
                 .hero-image {
@@ -3434,25 +3443,42 @@ app.get('/', (c) => {
                     width: min(1280px, 94%);
                     min-height: auto;
                     display: block;
+                    padding-top: 0;
                 }
                 
                 .outreach-header {
-                    text-align: center;
-                    margin-bottom: 60px;
+                    text-align: left;
+                    margin-bottom: 48px;
                     position: static;
                     top: auto;
                     padding-bottom: 0;
                     width: 100%;
                 }
                 
-                .outreach-header .section-heading {
+                .outreach-header .section-eyebrow {
+                    display: inline-flex;
                     margin-bottom: 16px;
+                }
+                
+                .outreach-header .section-heading {
+                    margin-bottom: 12px;
+                    text-align: left;
                 }
                 
                 .outreach-header .section-lead {
                     display: block;
-                    max-width: 800px;
-                    margin: 0 auto;
+                    max-width: 720px;
+                    margin: 0;
+                    text-align: left;
+                }
+                
+                .heading-wrapper {
+                    display: block;
+                    width: 100%;
+                }
+                
+                .heading-wrapper .event-indicators {
+                    display: none;
                 }
                 
                 .outreach-scroll-container {
@@ -3576,31 +3602,51 @@ app.get('/', (c) => {
                     border-radius: 16px;
                 }
                 
-                /* Desktop Watch Section - Responsive & scalable */
+                /* Desktop Watch Section - Properly scaled */
                 .watch {
                     max-width: 1200px;
                     margin: 0 auto;
                 }
                 
                 .watch-card {
-                    padding: clamp(40px, 4vw, 60px);
+                    padding: 48px 56px;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                
+                .watch-main {
+                    max-width: 100%;
                 }
                 
                 .preview-screen {
                     min-height: auto;
                     max-height: none;
-                    padding: clamp(32px, 3vw, 48px);
+                    padding: 40px;
                 }
                 
-                .video-embed-wrapper,
-                .playlist-embed-wrapper {
-                    max-height: 60vh;
-                    padding-bottom: 56.25%;
+                .live-stream-container {
+                    max-width: 900px;
+                    margin: 0 auto;
                 }
                 
-                .youtube-embed,
-                .youtube-playlist {
-                    max-height: 60vh;
+                .video-embed-wrapper {
+                    max-width: 900px;
+                    margin: 0 auto;
+                    padding-bottom: 50.625%;
+                }
+                
+                .youtube-embed {
+                    max-height: none;
+                }
+                
+                .playlist-btn {
+                    max-width: 300px;
+                    margin: 16px auto 0;
+                }
+                
+                .countdown-container {
+                    max-width: 500px;
+                    margin: 8px auto;
                 }
                 
                 /* Desktop Contact Section */
@@ -4901,7 +4947,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.12.1</div>
+        <div class="version-footer">v1.13.0</div>
     </body>
     </html>
   `)

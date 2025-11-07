@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.11.0 - Re-engineered desktop experience with industry standards (mobile locked) -->
+    <!-- v1.11.1 - Fixed desktop layout issues (hero, outreach, watch sections optimized) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3236,50 +3236,66 @@ app.get('/', (c) => {
                     margin-bottom: 120px;
                 }
                 
-                /* Hero Section - Better desktop proportions */
+                /* Hero Section - Fixed desktop layout */
                 .hero {
-                    padding: 80px 0;
-                    max-width: 1200px;
-                    margin: 0 auto;
-                }
-                
-                .hero h1 {
-                    font-size: clamp(64px, 5vw, 84px);
-                    max-width: 900px;
-                }
-                
-                .hero p {
-                    font-size: 20px;
-                    max-width: 640px;
+                    padding: 60px 0 80px;
+                    max-width: 100%;
+                    margin: 0;
                 }
                 
                 .hero-body {
-                    gap: 80px;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    gap: 60px;
+                    grid-template-columns: 1fr 1fr;
+                    align-items: center;
+                }
+                
+                .hero-content {
+                    max-width: 560px;
+                }
+                
+                .hero h1 {
+                    font-size: clamp(48px, 4vw, 72px);
+                    line-height: 1.1;
+                }
+                
+                .hero p {
+                    font-size: 18px;
+                    line-height: 1.7;
                 }
                 
                 .hero-image {
-                    min-height: 500px;
-                    max-height: 600px;
+                    min-height: 400px;
+                    max-height: 500px;
+                    height: 500px;
                 }
                 
-                /* Watch Section - Fix oversized issue */
+                /* Watch Section - Responsive & scalable */
                 .watch {
                     max-width: 1200px;
                     margin: 0 auto;
                 }
                 
                 .watch-card {
-                    padding: 60px;
+                    padding: clamp(40px, 4vw, 60px);
                 }
                 
                 .preview-screen {
-                    min-height: 400px;
-                    max-height: 500px;
-                    padding: 60px;
+                    min-height: auto;
+                    max-height: none;
+                    padding: clamp(32px, 3vw, 48px);
                 }
                 
-                .video-embed-wrapper {
-                    max-height: 500px;
+                .video-embed-wrapper,
+                .playlist-embed-wrapper {
+                    max-height: 60vh;
+                    padding-bottom: 56.25%;
+                }
+                
+                .youtube-embed,
+                .youtube-playlist {
+                    max-height: 60vh;
                 }
                 
                 /* Contact Section - Better desktop layout */
@@ -3323,6 +3339,18 @@ app.get('/', (c) => {
                 .outreach-header {
                     text-align: center;
                     margin-bottom: 60px;
+                    position: static;
+                    top: auto;
+                }
+                
+                .outreach-header .section-heading {
+                    margin-bottom: 16px;
+                }
+                
+                .outreach-header .section-lead {
+                    display: block;
+                    max-width: 800px;
+                    margin: 0 auto;
                 }
                 
                 .outreach-scroll-container {
@@ -3365,7 +3393,7 @@ app.get('/', (c) => {
                     height: auto;
                     width: 100%;
                     margin: 0;
-                    padding: 24px;
+                    padding: clamp(16px, 2vw, 24px);
                     background: rgba(255, 255, 255, 0.9);
                     border-radius: 24px;
                     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
@@ -3381,7 +3409,7 @@ app.get('/', (c) => {
                 .event-flyer-wrapper {
                     max-width: 100%;
                     aspect-ratio: 3/4;
-                    margin-bottom: 20px;
+                    margin-bottom: clamp(16px, 2vw, 20px);
                     padding: 0;
                     max-height: none;
                 }
@@ -3395,15 +3423,15 @@ app.get('/', (c) => {
                 
                 /* Event date positioning */
                 .event-flyer-wrapper .event-date {
-                    top: 16px;
-                    left: 16px;
-                    font-size: 10px;
-                    padding: 6px 14px;
+                    top: 12px;
+                    left: 12px;
+                    font-size: clamp(9px, 1vw, 10px);
+                    padding: clamp(5px, 0.8vw, 6px) clamp(12px, 1.5vw, 14px);
                 }
                 
                 .event-flyer-wrapper .event-indicators {
-                    top: 16px;
-                    right: 16px;
+                    top: 12px;
+                    right: 12px;
                 }
                 
                 /* CTA button */
@@ -3415,8 +3443,32 @@ app.get('/', (c) => {
                 
                 .event-cta .btn {
                     width: 100%;
-                    padding: 14px 24px;
-                    font-size: 12px;
+                    padding: clamp(12px, 1.5vw, 14px) clamp(20px, 2.5vw, 24px);
+                    font-size: clamp(11px, 1.2vw, 12px);
+                }
+            }
+            
+            /* Smaller Desktop Windows (961px - 1280px) */
+            @media (min-width: 961px) and (max-width: 1280px) {
+                .page {
+                    max-width: 1200px;
+                }
+                
+                main {
+                    gap: 100px;
+                }
+                
+                .events-container {
+                    gap: 24px;
+                    padding: 0 16px;
+                }
+                
+                .hero-body {
+                    gap: 48px;
+                }
+                
+                .contact-card {
+                    padding: 60px;
                 }
             }
         </style>
@@ -4664,7 +4716,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.11.0</div>
+        <div class="version-footer">v1.11.1</div>
     </body>
     </html>
   `)

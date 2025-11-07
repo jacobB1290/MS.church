@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.35
+## 🔢 CURRENT VERSION: v1.9.36
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,28 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.35 (Current) - SMOOTH MOBILE NAV ANIMATIONS
+### v1.9.36 (Current) - ELIMINATED NAV WRAPPING DURING TRANSITIONS
+- **Fixed tabs briefly dropping to new row during compression**
+  - Added `flex-wrap: nowrap` to compressed nav state
+  - Brand and full GIFTS button use `position: absolute` when hiding
+  - Elements removed from layout flow before wrapping can occur
+  - Nav links stay on single row throughout entire transition
+- **Layout flow management**
+  - Full state: `flex-wrap: wrap` allows natural multi-row layout
+  - Compressed state: `flex-wrap: nowrap` forces single-row layout
+  - Hiding elements become absolutely positioned (out of flow)
+  - Nav width transitions from `width: 100%` to `width: auto; flex: 1`
+- **Timing optimization**
+  - Brand fades out in 0.25s (faster exit before wrapping)
+  - Elements transition opacity before position changes
+  - Smooth handoff between full and compact states
+- **Applied to all mobile breakpoints**
+  - 960px breakpoint: Fixed wrapping with absolute positioning
+  - 480px breakpoint: Smooth single-row transition
+  - 375px breakpoint: Compact layout without wrapping
+- Result: Perfectly smooth nav transitions with tabs staying in line, no flickering or jumping to new rows
+
+### v1.9.35 - SMOOTH MOBILE NAV ANIMATIONS
 - **Eliminated flickering and resizing during nav transitions**
   - Replaced `display: none` with `opacity` and `visibility` for smooth fade in/out
   - Added GPU-accelerated transforms (translateX, scale) for element positioning

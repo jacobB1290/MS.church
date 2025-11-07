@@ -1888,16 +1888,29 @@ app.get('/', (c) => {
                                 gap 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                                 top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                     will-change: padding, border-radius, gap, top;
+                    position: relative;
                 }
                 
                 .nav-shell.scrolled-mobile {
                     border-radius: 100px;
                     padding: 8px 20px;
-                    gap: 0;
+                    gap: 12px;
                     margin-bottom: 30px;
                     top: 8px;
+                    flex-wrap: nowrap;
+                    justify-content: center;
                 }
 
+                nav {
+                    width: 100%;
+                    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                
+                .nav-shell.scrolled-mobile nav {
+                    width: auto;
+                    flex: 1;
+                }
+                
                 nav ul {
                     width: 100%;
                     justify-content: center;
@@ -1911,32 +1924,38 @@ app.get('/', (c) => {
                 .nav-shell.scrolled-mobile nav ul {
                     gap: 16px;
                     row-gap: 0;
+                    flex-wrap: nowrap;
                 }
 
                 .nav-cta {
                     width: 100%;
                     padding: 10px 24px;
                     font-size: 10px;
-                    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                                padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                                margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: width, padding, margin-left;
+                    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                                visibility 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                                transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                    will-change: opacity, visibility, transform;
                 }
                 
-                /* GIFTS button - shift right when compressed */
+                /* Full GIFTS button takes itself out of layout when hiding */
                 .nav-shell.scrolled-mobile .nav-cta {
-                    width: auto;
-                    margin-left: auto;
-                    padding: 8px 20px;
+                    position: absolute;
+                    pointer-events: none;
                 }
 
                 .brand {
                     align-items: center;
                     width: 100%;
-                    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                                visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                                visibility 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                                transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
                     will-change: opacity, visibility, transform;
+                }
+                
+                /* Brand takes itself out of layout flow when hiding */
+                .nav-shell.scrolled-mobile .brand {
+                    position: absolute;
+                    pointer-events: none;
                 }
 
                 .brand-title {
@@ -2240,20 +2259,32 @@ app.get('/', (c) => {
                                 border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                                 top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                     will-change: padding, border-radius, top;
+                    position: relative;
+                    flex-wrap: wrap;
                 }
                 
                 .nav-shell.scrolled-mobile {
                     border-radius: 100px;
                     padding: 7px 18px;
                     top: 6px;
+                    flex-wrap: nowrap;
+                    justify-content: center;
+                    gap: 12px;
                 }
                 
-                /* Keep nav-cta in DOM but hide smoothly */
+                /* Brand takes itself out of layout when hiding */
+                .nav-shell.scrolled-mobile .brand {
+                    position: absolute;
+                    pointer-events: none;
+                }
+                
+                /* Keep nav-cta in DOM but hide smoothly and remove from layout */
                 .nav-shell.scrolled-mobile .nav-cta {
                     opacity: 0;
                     visibility: hidden;
                     transform: translateX(20px) scale(0.9);
                     pointer-events: none;
+                    position: absolute;
                 }
                 
                 /* GIFTS button - always in DOM, animate in/out */
@@ -2354,11 +2385,18 @@ app.get('/', (c) => {
 
                 nav {
                     text-align: center;
-                    flex: 1;
+                    width: 100%;
                     display: flex;
                     justify-content: center;
-                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    will-change: transform;
+                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                                width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    will-change: transform, width;
+                }
+                
+                .nav-shell.scrolled-mobile nav {
+                    transform: translateX(-20px);
+                    width: auto;
+                    flex: 1;
                 }
                 
                 nav ul {
@@ -2367,18 +2405,16 @@ app.get('/', (c) => {
                     justify-content: center;
                     margin: 0;
                     padding: 0;
+                    flex-wrap: wrap;
                     transition: gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     will-change: gap;
-                }
-                
-                .nav-shell.scrolled-mobile nav {
-                    transform: translateX(-20px);
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {
                     gap: 16px;
                     row-gap: 0;
                     justify-content: center;
+                    flex-wrap: nowrap;
                 }
 
                 nav a {
@@ -2863,11 +2899,16 @@ app.get('/', (c) => {
                     border-radius: 20px;
                     top: 5px;
                     width: 94%;
+                    position: relative;
+                    flex-wrap: wrap;
                 }
                 
                 .nav-shell.scrolled-mobile {
                     padding: 4px 10px;
                     top: 2px;
+                    flex-wrap: nowrap;
+                    justify-content: center;
+                    gap: 10px;
                 }
                 
                 .brand-title {
@@ -2878,6 +2919,35 @@ app.get('/', (c) => {
                 .brand-subtitle {
                     font-size: 7px;
                     letter-spacing: 1.8px;
+                }
+                
+                /* Brand and nav-cta take themselves out of layout when hiding */
+                .nav-shell.scrolled-mobile .brand {
+                    position: absolute;
+                    pointer-events: none;
+                }
+                
+                .nav-shell.scrolled-mobile .nav-cta {
+                    position: absolute;
+                    pointer-events: none;
+                }
+                
+                nav {
+                    width: 100%;
+                    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                
+                .nav-shell.scrolled-mobile nav {
+                    width: auto;
+                    flex: 1;
+                }
+                
+                nav ul {
+                    flex-wrap: wrap;
+                }
+                
+                .nav-shell.scrolled-mobile nav ul {
+                    flex-wrap: nowrap;
                 }
                 
                 nav a {
@@ -4479,7 +4549,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.35</div>
+        <div class="version-footer">v1.9.36</div>
     </body>
     </html>
   `)

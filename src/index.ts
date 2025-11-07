@@ -3750,8 +3750,10 @@ app.get('/', (c) => {
                 let manualSwipeOverride = false; // Flag to prevent scroll from overriding swipe
                 let lastSwipeTime = 0;
 
-                if (eventsContainer) {
-                    eventsContainer.addEventListener('touchstart', e => {
+                // Attach swipe listeners to entire outreach section for broader detection
+                const swipeTarget = outreachSection || eventsContainer;
+                if (swipeTarget) {
+                    swipeTarget.addEventListener('touchstart', e => {
                         const t = e.changedTouches[0];
                         touchStartX = t.clientX;
                         touchStartY = t.clientY;
@@ -3761,7 +3763,7 @@ app.get('/', (c) => {
                         console.log('Touch start:', touchStartX, touchStartY);
                     }, { passive: true });
 
-                    eventsContainer.addEventListener('touchmove', e => {
+                    swipeTarget.addEventListener('touchmove', e => {
                         const t = e.changedTouches[0];
                         touchCurrentX = t.clientX;
                         touchCurrentY = t.clientY;
@@ -3776,7 +3778,7 @@ app.get('/', (c) => {
                         }
                     }, { passive: true });
 
-                    eventsContainer.addEventListener('touchend', e => {
+                    swipeTarget.addEventListener('touchend', e => {
                         const now = Date.now();
                         const dx = touchCurrentX - touchStartX;
                         const dy = touchCurrentY - touchStartY;

@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.10.2 - Aggressive event card scaling for iPhone 6S/X (prevents button cutoff) -->
+    <!-- v1.11.0 - Re-engineered desktop experience with industry standards (mobile locked) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3218,6 +3218,207 @@ app.get('/', (c) => {
                     padding: 3px 8px;
                 }
             }
+            
+            /* ========================================
+               DESKTOP-ONLY STYLES (961px and above)
+               Industry-standard desktop experience
+               Mobile styles (≤960px) remain UNTOUCHED
+               ======================================== */
+            @media (min-width: 961px) {
+                /* Container max-widths for better readability */
+                .page {
+                    max-width: 1400px;
+                }
+                
+                /* Reduce excessive gaps between sections */
+                main {
+                    gap: 120px;
+                    margin-bottom: 120px;
+                }
+                
+                /* Hero Section - Better desktop proportions */
+                .hero {
+                    padding: 80px 0;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                
+                .hero h1 {
+                    font-size: clamp(64px, 5vw, 84px);
+                    max-width: 900px;
+                }
+                
+                .hero p {
+                    font-size: 20px;
+                    max-width: 640px;
+                }
+                
+                .hero-body {
+                    gap: 80px;
+                }
+                
+                .hero-image {
+                    min-height: 500px;
+                    max-height: 600px;
+                }
+                
+                /* Watch Section - Fix oversized issue */
+                .watch {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                
+                .watch-card {
+                    padding: 60px;
+                }
+                
+                .preview-screen {
+                    min-height: 400px;
+                    max-height: 500px;
+                    padding: 60px;
+                }
+                
+                .video-embed-wrapper {
+                    max-height: 500px;
+                }
+                
+                /* Contact Section - Better desktop layout */
+                .contact {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                
+                .contact-card {
+                    padding: 72px 80px;
+                    max-width: 1200px;
+                }
+                
+                /* Schedule Section */
+                .schedule-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 32px;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                
+                /* Section headers - Better proportions */
+                .section-heading {
+                    font-size: clamp(48px, 4vw, 64px);
+                }
+                
+                .section-lead {
+                    font-size: 20px;
+                    max-width: 720px;
+                }
+                
+                /* ========================================
+                   OUTREACH SECTION - Desktop 3-in-row layout
+                   Events displayed horizontally with scroll-based enlargement
+                   ======================================== */
+                .outreach {
+                    max-width: 1400px;
+                    margin: 0 auto;
+                }
+                
+                .outreach-header {
+                    text-align: center;
+                    margin-bottom: 60px;
+                }
+                
+                .outreach-scroll-container {
+                    position: relative;
+                }
+                
+                /* Desktop: Show all 3 events in a row */
+                .sticky-wrapper {
+                    position: relative;
+                    top: 0;
+                    height: auto;
+                    padding: 0;
+                }
+                
+                .events-container {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 32px;
+                    padding: 0 20px;
+                }
+                
+                /* Hide scroll spacer on desktop */
+                .scroll-spacer {
+                    display: none;
+                }
+                
+                /* Event slides always visible on desktop */
+                .event-slide {
+                    position: relative;
+                    opacity: 1;
+                    visibility: visible;
+                    transform: none;
+                    pointer-events: auto;
+                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                
+                /* Event cards in row */
+                .event-card {
+                    height: auto;
+                    width: 100%;
+                    margin: 0;
+                    padding: 24px;
+                    background: rgba(255, 255, 255, 0.9);
+                    border-radius: 24px;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                
+                .event-card:hover {
+                    transform: translateY(-8px) scale(1.02);
+                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+                }
+                
+                /* Event flyer wrapper - constrain size */
+                .event-flyer-wrapper {
+                    max-width: 100%;
+                    aspect-ratio: 3/4;
+                    margin-bottom: 20px;
+                    padding: 0;
+                    max-height: none;
+                }
+                
+                .flyer-image,
+                .placeholder-flyer {
+                    border-radius: 16px;
+                    max-height: none;
+                    height: 100%;
+                }
+                
+                /* Event date positioning */
+                .event-flyer-wrapper .event-date {
+                    top: 16px;
+                    left: 16px;
+                    font-size: 10px;
+                    padding: 6px 14px;
+                }
+                
+                .event-flyer-wrapper .event-indicators {
+                    top: 16px;
+                    right: 16px;
+                }
+                
+                /* CTA button */
+                .event-cta {
+                    padding: 0;
+                    margin: 0;
+                    max-width: none;
+                }
+                
+                .event-cta .btn {
+                    width: 100%;
+                    padding: 14px 24px;
+                    font-size: 12px;
+                }
+            }
         </style>
     </head>
     <body>
@@ -4463,7 +4664,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.10.2</div>
+        <div class="version-footer">v1.11.0</div>
     </body>
     </html>
   `)

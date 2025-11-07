@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.14.1 - Fixed g cutoff and reduced top spacing more aggressively on desktop -->
+    <!-- v1.15.0 - CRITICAL FIX: Added nav-spacer override (100px) in desktop media query to actually reduce top spacing -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3334,6 +3334,11 @@ app.get('/', (c) => {
                     max-width: 1400px;
                 }
                 
+                /* Desktop Navigation Spacer - CRITICAL: Override base 380px */
+                .nav-spacer {
+                    height: 100px;  /* Much smaller for desktop */
+                }
+                
                 main {
                     gap: 120px;
                     margin-bottom: 120px;
@@ -4953,7 +4958,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.14.1</div>
+        <div class="version-footer">v1.15.0</div>
     </body>
     </html>
   `)

@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.27
+## 🔢 CURRENT VERSION: v1.9.29
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,29 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.27 (Current) - ENHANCED MOBILE SWIPE NAVIGATION IN OUTREACH
+### v1.9.29 (Current) - INCREASE SCROLL DISTANCE BY 30%
+- **Increased scroll spacer height across all breakpoints**
+  - Desktop: 160vh → 208vh (+30%)
+  - 960px breakpoint: 350vh → 455vh (+30%)
+  - 480px breakpoint: 120vh → 156vh (+30%)
+  - More scroll distance needed to navigate through all events
+  - Events stay on screen longer for better viewing
+- Result: Slower, more deliberate scroll pace through outreach events
+
+### v1.9.28 - FIX SWIPE DETECTION
+- **Removed sticky state requirement for swipes**
+  - Swipes now work anytime in outreach section, not just when locked
+  - Simplified detection logic for better reliability
+- **Increased swipe threshold to 60px**
+  - More deliberate gesture required to trigger event change
+  - Prevents accidental swipes during normal scrolling
+- **Added extensive console logging**
+  - Logs touch start, move, and end positions
+  - Logs swipe direction and event changes
+  - Helps debug swipe behavior
+- Result: Working swipe navigation with reliable detection
+
+### v1.9.27 - ENHANCED MOBILE SWIPE NAVIGATION IN OUTREACH
 - **Improved swipe detection in sticky locked state**
   - Swipe gestures now only activate when section is in sticky state (cards locked on screen)
   - Detects horizontal swipes vs vertical scrolls more accurately

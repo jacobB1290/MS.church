@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.13.0 - Complete desktop fixes: hero spacing, outreach title, watch section sizing -->
+    <!-- v1.14.0 - Desktop hero enhancements: reduced top spacing, larger title, larger image, larger copy, responsive scaling -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3343,17 +3343,18 @@ app.get('/', (c) => {
                 .hero {
                     display: flex;
                     flex-direction: column;
-                    gap: 20px;
-                    padding: 40px 0 60px;
+                    gap: clamp(16px, 2vw, 24px);  /* Responsive gap */
+                    padding: clamp(20px, 3vw, 30px) 0 clamp(50px, 6vw, 70px);  /* Reduced top padding */
                     max-width: 100%;
                     margin: 0;
                     min-height: auto;
                 }
                 
                 .hero h1 {
-                    max-width: 1200px;
+                    max-width: clamp(1100px, 90vw, 1300px);  /* Match hero-body max-width */
                     margin: 0 auto;
                     width: 100%;
+                    padding: 0 clamp(16px, 3vw, 32px);  /* Responsive side padding */
                 }
                 
                 .hero-body {
@@ -3363,20 +3364,20 @@ app.get('/', (c) => {
                     grid-template-areas: 
                         "content image"
                         "buttons image";
-                    max-width: 1200px;
+                    max-width: clamp(1100px, 90vw, 1300px);  /* Responsive max-width */
                     margin: 0 auto;
-                    column-gap: 60px;
-                    row-gap: 20px;
+                    column-gap: clamp(40px, 5vw, 70px);  /* Responsive gap */
+                    row-gap: clamp(16px, 2vw, 24px);  /* Responsive gap */
                     align-items: start;
                     width: 100%;
                 }
                 
                 .hero-content {
                     grid-area: content;
-                    max-width: 560px;
+                    max-width: 100%;  /* Let grid control width */
                     display: flex;
                     flex-direction: column;
-                    gap: 20px;
+                    gap: clamp(16px, 2vw, 24px);  /* Responsive gap */
                 }
                 
                 .hero-image {
@@ -3394,25 +3395,27 @@ app.get('/', (c) => {
                 }
                 
                 .hero h1 {
-                    font-size: clamp(48px, 4vw, 72px);
-                    line-height: 1.1;
+                    font-size: clamp(64px, 7vw, 110px);  /* Much larger title */
+                    line-height: 1.05;  /* Tighter line height, prevents cutoff */
+                    letter-spacing: -0.02em;  /* Slight tightening for large text */
                     text-align: left;
-                    margin: 0 0 20px 0;
+                    margin: 0 0 clamp(16px, 2vw, 24px) 0;  /* Responsive bottom margin */
+                    overflow: visible;  /* Ensure letters don't get cut off */
                 }
                 
                 .hero p {
-                    font-size: 18px;
-                    line-height: 1.7;
+                    font-size: clamp(20px, 1.8vw, 24px);  /* Larger, responsive copy */
+                    line-height: 1.6;
                     max-width: 100%;
                 }
                 
                 .hero-image {
                     position: relative;
                     width: 100%;
-                    min-height: 400px;
-                    max-height: 500px;
-                    height: 500px;
-                    border-radius: 24px;
+                    min-height: clamp(500px, 50vh, 650px);  /* Larger, responsive height */
+                    max-height: clamp(600px, 60vh, 700px);
+                    height: clamp(550px, 55vh, 650px);
+                    border-radius: clamp(20px, 2vw, 28px);  /* Responsive border radius */
                     overflow: hidden;
                     box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
                 }
@@ -4947,7 +4950,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.13.0</div>
+        <div class="version-footer">v1.14.0</div>
     </body>
     </html>
   `)

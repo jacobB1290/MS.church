@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.10.0 - Industry-standard responsive scaling for small phones (preserves 960px perfection) -->
+    <!-- v1.10.1 - Solid white fallback for older iOS devices without backdrop-filter support -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -38,6 +38,26 @@ app.get('/', (c) => {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
+            }
+            
+            /* Fallback for older iOS devices (iPhone 6S, iPhone X, etc.) that don't support backdrop-filter */
+            /* Replace frosted glass effect with solid white backgrounds */
+            @supports not (backdrop-filter: blur(1px)) {
+                .nav-shell,
+                .nav-cta,
+                .hero .eyebrow,
+                .section-eyebrow,
+                .section-card,
+                .schedule-item,
+                .btn-secondary,
+                .nav-form-btn,
+                .gift-lightbox-close,
+                .gift-lightbox-arrow,
+                .lightbox-instructions,
+                .contact-info-item {
+                    background: rgb(255, 255, 255) !important;
+                    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+                }
             }
 
             body {
@@ -81,6 +101,7 @@ app.get('/', (c) => {
             /* Enhanced Navigation */
             .nav-shell {
                 padding: 20px 40px;
+                background: rgb(255, 255, 255);
                 background: rgba(255, 255, 255, 0.75);
                 border-radius: 100px;
                 display: flex;
@@ -4438,7 +4459,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.10.0</div>
+        <div class="version-footer">v1.10.1</div>
     </body>
     </html>
   `)

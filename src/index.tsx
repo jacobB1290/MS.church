@@ -3814,22 +3814,33 @@ app.get('/', (c) => {
                                 updateActiveEvent(currentEventIndex, false);
                                 manualSwipeOverride = true;
                                 lastSwipeTime = now;
+                                
+                                // Lock this event index - don't allow changes until override clears
+                                const lockedIndex = currentEventIndex;
+                                clearTimeout(swipeTimer);
+                                swipeTimer = setTimeout(() => { 
+                                    manualSwipeOverride = false;
+                                    console.log('Manual override cleared, locked at index:', lockedIndex);
+                                }, swipeCooldown);
+                                
                             } else if (dx > 0 && currentEventIndex > 0) {
                                 currentEventIndex--;
                                 console.log('Swiped RIGHT to previous event:', currentEventIndex);
                                 updateActiveEvent(currentEventIndex, false);
                                 manualSwipeOverride = true;
                                 lastSwipeTime = now;
+                                
+                                // Lock this event index - don't allow changes until override clears
+                                const lockedIndex = currentEventIndex;
+                                clearTimeout(swipeTimer);
+                                swipeTimer = setTimeout(() => { 
+                                    manualSwipeOverride = false;
+                                    console.log('Manual override cleared, locked at index:', lockedIndex);
+                                }, swipeCooldown);
+                                
                             } else {
                                 console.log('Swipe ignored - at boundary or wrong direction');
                             }
-                            
-                            // Reset swipe override after cooldown
-                            clearTimeout(swipeTimer);
-                            swipeTimer = setTimeout(() => { 
-                                manualSwipeOverride = false;
-                                console.log('Manual override cleared');
-                            }, swipeCooldown);
                         } else {
                             console.log('Not a valid swipe - either not swiping, too vertical, or too short');
                         }

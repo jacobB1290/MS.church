@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.40
+## 🔢 CURRENT VERSION: v1.9.41
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,28 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.40 (Current) - ENHANCED CHRISTMAS EVENT WITH BIBLICAL FOUNDATION
+### v1.9.41 (Current) - IMPROVED CONTENT HIERARCHY AND BUTTON STYLING
+- **Restructured content hierarchy**
+  - "This Christmas, Morning Star..." now styled as subheader (h3)
+  - 22px font, bold weight, proper heading treatment
+  - Sets context before informational copy
+  - "Based on the information..." remains as regular copy
+- **Moved See Flyer button**
+  - Relocated: after copy, before Bible verse
+  - Better logical flow: description → action → inspiration
+  - Positioned between information and scripture
+- **Updated button to white styling**
+  - Changed from gold gradient to clean white
+  - Subtle border and shadow for elegance
+  - Better visual hierarchy - doesn't compete with content
+  - Hover: slight lift with enhanced shadow
+- **Enhanced visual flow**
+  - Clear hierarchy: Heading → Subheader → Copy → Button → Bible Verse
+  - White button provides visual break before scripture
+  - More polished, professional appearance
+- Result: Better content structure with clear hierarchy, white button for subtle elegance, improved visual flow
+
+### v1.9.40 - ENHANCED CHRISTMAS EVENT WITH BIBLICAL FOUNDATION
 - **Added Bible verse (1 John 3:16-18) to show ministry purpose**
   - Beautiful styled blockquote with gold accents
   - Explains why: Jesus laid down His life, we lay down ours

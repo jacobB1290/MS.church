@@ -1389,17 +1389,16 @@ app.get('/', (c) => {
                 font-weight: 600;
                 letter-spacing: 1.5px;
                 text-transform: uppercase;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: white;
                 border-radius: 100px;
-                box-shadow: 0 4px 12px rgba(200, 152, 96, 0.25);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 text-align: center;
             }
             
             .btn-see-flyer:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 6px 18px rgba(200, 152, 96, 0.35);
+                background: rgba(255, 255, 255, 1) !important;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+                border-color: rgba(26, 26, 46, 0.15) !important;
             }
             
             .contact-container {
@@ -3391,13 +3390,13 @@ app.get('/', (c) => {
                     <div class="contact-header">
                         <span class="section-eyebrow">Christmas Outreach</span>
                         <h2 class="section-heading">Christmas Gifts for Single Mothers & Widows</h2>
-                        <a href="#event-2" class="btn btn-secondary btn-see-flyer">See Flyer</a>
-                        <p class="section-lead form-message">
+                        <h3 style="font-size: 22px; font-weight: 600; line-height: 1.4; margin: 24px 0 20px; color: #1a1a2e; font-family: 'Inter', sans-serif;">
                             This Christmas, Morning Star Christian Church is giving back to the incredible single moms and widows in our community who are working tirelessly to provide for their families.
-                        </p>
+                        </h3>
                         <p class="section-lead form-message">
                             Based on the information you share in the form, our team will handpick a special gift just for you and your family. You can look forward to a pair of shoes for the adults and something fun and useful for the kids, perfect for school and outdoor play. We'll wrap everything beautifully so it's ready to go right under your Christmas tree. Once you've submitted the form, you'll receive a text message confirming your submission and sharing all the pickup details.
                         </p>
+                        <a href="#event-2" class="btn btn-secondary btn-see-flyer" style="background: rgba(255, 255, 255, 0.95); color: #1a1a2e; border: 2px solid rgba(26, 26, 46, 0.1); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); margin: 24px auto;">See Flyer</a>
                         <blockquote style="margin: 32px 0; padding: 24px; background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(212, 165, 116, 0.05) 100%); border-left: 4px solid #d4a574; border-radius: 12px; font-style: italic; line-height: 1.8; color: rgba(26, 26, 46, 0.85);">
                             <p style="margin: 0 0 16px 0; font-size: 15px; font-weight: 600; color: #d4a574; letter-spacing: 0.5px;">1 John 3:16-18</p>
                             <p style="margin: 0;">This is how we know what love is: Jesus Christ laid down his life for us. And we ought to lay down our lives for our brothers and sisters. If anyone has material possessions and sees a brother or sister in need but has no pity on them, how can the love of God be in that person? Dear children, let us not love with words or speech but with actions and in truth.</p>
@@ -4434,7 +4433,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.40</div>
+        <div class="version-footer">v1.9.41</div>
     </body>
     </html>
   `)

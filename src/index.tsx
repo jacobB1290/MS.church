@@ -721,8 +721,8 @@ app.get('/', (c) => {
             /* Date and Dots Overlaid on Image */
             .event-flyer-wrapper .event-date {
                 position: absolute;
-                top: 12px;
-                left: 24px;
+                top: 16px;
+                left: 32px;
                 z-index: 20;
                 margin: 0;
             }
@@ -2455,8 +2455,8 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper .event-date {
-                    top: 10px;
-                    left: 20px;
+                    top: 12px;
+                    left: 24px;
                 }
 
                 .event-title {
@@ -2513,13 +2513,13 @@ app.get('/', (c) => {
                 }
 
                 .flyer-image {
-                    border-radius: 10px;
+                    border-radius: 24px;
                 }
 
                 .placeholder-flyer {
                     font-size: 17px;
                     letter-spacing: 1.5px;
-                    border-radius: 20px;
+                    border-radius: 24px;
                 }
 
                 .watch {
@@ -2854,8 +2854,8 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper .event-date {
-                    top: 8px;
-                    left: 16px;
+                    top: 12px;
+                    left: 20px;
                 }
                 
                 .event-indicators {

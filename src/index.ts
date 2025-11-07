@@ -3749,7 +3749,7 @@ app.get('/', (c) => {
                 updateActiveEvent(0, true);
                 
                 // Enhanced swipe navigation system for mobile
-                // Horizontal swipes change events, vertical scrolling exits section
+                // Horizontal swipes change events anytime in outreach section
                 
                 let touchStartX = 0;
                 let touchStartY = 0;
@@ -3757,18 +3757,10 @@ app.get('/', (c) => {
                 let touchCurrentY = 0;
                 let isSwiping = false;
                 let swipeTimer = null;
-                const swipeThreshold = 50; // Swipe distance needed to trigger event change
+                const swipeThreshold = 60; // Swipe distance needed to trigger event change
                 const swipeCooldown = 600;
                 let manualSwipeOverride = false; // Flag to prevent scroll from overriding swipe
                 let lastSwipeTime = 0;
-
-                // Detect if we're in the sticky locked state
-                function isInStickyState() {
-                    if (!inOutreachSection) return false;
-                    const outreachRect = outreachSection.getBoundingClientRect();
-                    const vh = window.innerHeight;
-                    return (outreachRect.top <= vh * 0.3);
-                }
 
                 if (eventsContainer) {
                     eventsContainer.addEventListener('touchstart', e => {
@@ -3778,6 +3770,7 @@ app.get('/', (c) => {
                         touchCurrentX = t.clientX;
                         touchCurrentY = t.clientY;
                         isSwiping = false;
+                        console.log('Touch start:', touchStartX, touchStartY);
                     }, { passive: true });
 
                     eventsContainer.addEventListener('touchmove', e => {
@@ -3788,9 +3781,10 @@ app.get('/', (c) => {
                         const dx = Math.abs(touchCurrentX - touchStartX);
                         const dy = Math.abs(touchCurrentY - touchStartY);
                         
-                        // Only detect horizontal swipe when in sticky state
-                        if (isInStickyState() && dx > dy && dx > 20) {
+                        // Detect horizontal swipe (more horizontal than vertical)
+                        if (dx > dy && dx > 30) {
                             isSwiping = true;
+                            console.log('Horizontal swipe detected, dx:', dx, 'dy:', dy);
                         }
                     }, { passive: true });
 
@@ -3799,30 +3793,35 @@ app.get('/', (c) => {
                         const dx = touchCurrentX - touchStartX;
                         const dy = touchCurrentY - touchStartY;
                         
+                        console.log('Touch end - dx:', dx, 'dy:', dy, 'isSwiping:', isSwiping, 'currentIndex:', currentEventIndex);
+                        
                         // Prevent rapid repeated swipes
-                        if (now - lastSwipeTime < 300) {
+                        if (now - lastSwipeTime < 400) {
+                            console.log('Too soon after last swipe');
                             isSwiping = false;
                             return;
                         }
                         
-                        // Check if this was a horizontal swipe in sticky state
-                        if (isInStickyState() && isSwiping && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
-                            console.log('Swipe detected! dx:', dx, 'currentIndex:', currentEventIndex);
+                        // Check if this was a horizontal swipe
+                        if (isSwiping && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
+                            console.log('Valid swipe! dx:', dx, 'currentIndex:', currentEventIndex);
                             
                             // Swipe left (dx < 0) = go to next event (forward)
                             // Swipe right (dx > 0) = go to previous event (back)
                             if (dx < 0 && currentEventIndex < totalEvents - 1) {
                                 currentEventIndex++;
-                                console.log('Swiped to next event:', currentEventIndex);
+                                console.log('Swiped LEFT to next event:', currentEventIndex);
                                 updateActiveEvent(currentEventIndex, false);
                                 manualSwipeOverride = true;
                                 lastSwipeTime = now;
                             } else if (dx > 0 && currentEventIndex > 0) {
                                 currentEventIndex--;
-                                console.log('Swiped to previous event:', currentEventIndex);
+                                console.log('Swiped RIGHT to previous event:', currentEventIndex);
                                 updateActiveEvent(currentEventIndex, false);
                                 manualSwipeOverride = true;
                                 lastSwipeTime = now;
+                            } else {
+                                console.log('Swipe ignored - at boundary or wrong direction');
                             }
                             
                             // Reset swipe override after cooldown
@@ -3831,6 +3830,8 @@ app.get('/', (c) => {
                                 manualSwipeOverride = false;
                                 console.log('Manual override cleared');
                             }, swipeCooldown);
+                        } else {
+                            console.log('Not a valid swipe - either not swiping, too vertical, or too short');
                         }
                         
                         isSwiping = false;

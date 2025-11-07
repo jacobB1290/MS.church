@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.15.0 - CRITICAL FIX: Added nav-spacer override (100px) in desktop media query to actually reduce top spacing -->
+    <!-- v1.16.0 - Desktop refinements: natural spacing, scroll offset fix, removed event dots, watch section side-by-side -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3336,7 +3336,7 @@ app.get('/', (c) => {
                 
                 /* Desktop Navigation Spacer - CRITICAL: Override base 380px */
                 .nav-spacer {
-                    height: 100px;  /* Much smaller for desktop */
+                    height: 120px;  /* Natural spacing for desktop */
                 }
                 
                 main {
@@ -3592,8 +3592,7 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper .event-indicators {
-                    top: 12px;
-                    right: 12px;
+                    display: none;  /* Hide 3 dots on desktop event cards */
                 }
                 
                 .event-cta {
@@ -3613,15 +3612,15 @@ app.get('/', (c) => {
                     border-radius: 16px;
                 }
                 
-                /* Desktop Watch Section - Properly scaled */
+                /* Desktop Watch Section - Side-by-side layout */
                 .watch {
-                    max-width: 1200px;
+                    max-width: 1400px;  /* Wider container */
                     margin: 0 auto;
                 }
                 
                 .watch-card {
                     padding: 48px 56px;
-                    max-width: 1200px;
+                    max-width: 1400px;  /* Wider card */
                     margin: 0 auto;
                 }
                 
@@ -3635,15 +3634,42 @@ app.get('/', (c) => {
                     padding: 40px;
                 }
                 
+                /* Side-by-side layout: text on left, video on right */
                 .live-stream-container {
-                    max-width: 900px;
-                    margin: 0 auto;
+                    display: grid;
+                    grid-template-columns: 400px 1fr;  /* Fixed width for left content, flexible for video */
+                    grid-template-areas:
+                        "status video"
+                        "countdown video"
+                        "verse video"
+                        "button button";  /* Button spans both columns at bottom */
+                    gap: 40px;
+                    align-items: start;
+                    max-width: 100%;
+                    margin: 0;
+                }
+                
+                .live-status {
+                    grid-area: status;
+                }
+                
+                .countdown-container {
+                    grid-area: countdown;
+                    max-width: 100%;
+                    margin: 0;
+                }
+                
+                .live-verse {
+                    grid-area: verse;
+                    max-width: 100%;
+                    margin: 0;
                 }
                 
                 .video-embed-wrapper {
-                    max-width: 900px;
-                    margin: 0 auto;
-                    padding-bottom: 50.625%;
+                    grid-area: video;
+                    max-width: 100%;
+                    margin: 0;
+                    padding-bottom: 56.25%;  /* 16:9 aspect ratio */
                 }
                 
                 .youtube-embed {
@@ -3651,13 +3677,9 @@ app.get('/', (c) => {
                 }
                 
                 .playlist-btn {
+                    grid-area: button;
                     max-width: 300px;
-                    margin: 16px auto 0;
-                }
-                
-                .countdown-container {
-                    max-width: 500px;
-                    margin: 8px auto;
+                    margin: 24px auto 0;
                 }
                 
                 /* Desktop Contact Section */
@@ -4423,9 +4445,9 @@ app.get('/', (c) => {
                             let navOffset = 45; // Desktop - perfect balance
                             
                             // Special handling for outreach section (has sticky header + events)
-                            // Smaller offset = scrolls further down to hide pill
+                            // Adjusted offset to just cover the ribbon pill, not the title
                             if (targetId === '#outreach') {
-                                navOffset = 20; // Desktop - scroll much further for outreach
+                                navOffset = 60; // Desktop - just cover the pill, show the title
                                 
                                 if (window.innerWidth <= 960) {
                                     navOffset = -50; // Mobile - negative offset to match sticky position
@@ -4958,7 +4980,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.15.0</div>
+        <div class="version-footer">v1.16.0</div>
     </body>
     </html>
   `)

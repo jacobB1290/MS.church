@@ -31,7 +31,7 @@ app.get('/', (c) => {
                 --bg-event1: linear-gradient(135deg, #ffe8d6 0%, #ffd4d4 100%); /* Soft peach to light coral for Friendsgiving */
                 --bg-event2: linear-gradient(135deg, #ffd6e8 0%, #ffe5f0 100%); /* Soft pink to lighter pink for Clothes Drive */
                 --bg-event3: linear-gradient(135deg, #c8e6c8 0%, #ffe0e0 50%, #d4f0d4 100%); /* Vibrant green to soft red to vibrant green for Christmas */
-                --outreach-spacer: 208vh;
+                --outreach-spacer: 416vh;
             }
 
             * {
@@ -1848,7 +1848,7 @@ app.get('/', (c) => {
                 }
                 
                 .scroll-spacer {
-                    height: 455vh;
+                    height: 910vh;
                 }
             }
 
@@ -2527,7 +2527,7 @@ app.get('/', (c) => {
                 }
 
                 .scroll-spacer {
-                    height: 156vh;
+                    height: 312vh;
                 }
                 
                 .events-container {
@@ -3656,20 +3656,10 @@ app.get('/', (c) => {
 
                         const now = Date.now();
                         
-                        // Special handling: if user manually swiped to last event (3)
-                        // and scroll progress indicates we should still be on event 3,
-                        // allow scroll to continue past the section
-                        if (manualSwipeOverride && currentEventIndex === totalEvents - 1 && progress > 0.85) {
-                            // User swiped to event 3 and is scrolling down - let them exit
-                            manualSwipeOverride = false;
-                        }
-                        
                         // Only update from scroll if:
-                        // 1. Not currently being manually swiped
-                        // 2. Index actually changed
-                        // 3. Not rate limited
-                        if (!manualSwipeOverride && 
-                            newIndex !== currentEventIndex &&
+                        // 1. Index actually changed
+                        // 2. Not rate limited
+                        if (newIndex !== currentEventIndex &&
                            (!isChangeRateLimited || (now - lastEventChangeTime) > changeCooldownMs)) {
                             currentEventIndex = newIndex;
                             updateActiveEvent(currentEventIndex, false);
@@ -3756,9 +3746,7 @@ app.get('/', (c) => {
                 let touchCurrentX = 0;
                 let touchCurrentY = 0;
                 let isSwiping = false;
-                let swipeTimer = null;
                 const swipeThreshold = 60; // Swipe distance needed to trigger event change
-                const swipeCooldown = 1500; // Longer cooldown to prevent scroll momentum from triggering another event
                 let manualSwipeOverride = false; // Flag to prevent scroll from overriding swipe
                 let lastSwipeTime = 0;
 
@@ -3795,13 +3783,6 @@ app.get('/', (c) => {
                         
                         console.log('Touch end - dx:', dx, 'dy:', dy, 'isSwiping:', isSwiping, 'currentIndex:', currentEventIndex);
                         
-                        // Prevent rapid repeated swipes - must wait for override to clear
-                        if (now - lastSwipeTime < 800) {
-                            console.log('Too soon after last swipe - preventing double swipe');
-                            isSwiping = false;
-                            return;
-                        }
-                        
                         // Check if this was a horizontal swipe
                         if (isSwiping && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
                             console.log('Valid swipe! dx:', dx, 'currentIndex:', currentEventIndex);
@@ -3812,32 +3793,12 @@ app.get('/', (c) => {
                                 currentEventIndex++;
                                 console.log('Swiped LEFT to next event:', currentEventIndex);
                                 updateActiveEvent(currentEventIndex, false);
-                                manualSwipeOverride = true;
                                 lastSwipeTime = now;
-                                
-                                // Lock this event index - don't allow changes until override clears
-                                const lockedIndex = currentEventIndex;
-                                clearTimeout(swipeTimer);
-                                swipeTimer = setTimeout(() => { 
-                                    manualSwipeOverride = false;
-                                    console.log('Manual override cleared, locked at index:', lockedIndex);
-                                }, swipeCooldown);
-                                
                             } else if (dx > 0 && currentEventIndex > 0) {
                                 currentEventIndex--;
                                 console.log('Swiped RIGHT to previous event:', currentEventIndex);
                                 updateActiveEvent(currentEventIndex, false);
-                                manualSwipeOverride = true;
                                 lastSwipeTime = now;
-                                
-                                // Lock this event index - don't allow changes until override clears
-                                const lockedIndex = currentEventIndex;
-                                clearTimeout(swipeTimer);
-                                swipeTimer = setTimeout(() => { 
-                                    manualSwipeOverride = false;
-                                    console.log('Manual override cleared, locked at index:', lockedIndex);
-                                }, swipeCooldown);
-                                
                             } else {
                                 console.log('Swipe ignored - at boundary or wrong direction');
                             }

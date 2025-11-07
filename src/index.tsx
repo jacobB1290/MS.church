@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.10.1 - Solid white fallback for older iOS devices without backdrop-filter support -->
+    <!-- v1.10.2 - Aggressive event card scaling for iPhone 6S/X (prevents button cutoff) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -2267,47 +2267,51 @@ app.get('/', (c) => {
                     background: rgba(255, 255, 255, 1);
                 }
                 
-                /* Mobile 480px Event Cards - Ultra clean */
+                /* Mobile 480px Event Cards - Moderate scaling for small screens */
                 .event-card {
                     height: 88vh;
-                    padding-top: 14px;
+                    padding-top: clamp(10px, 2.5vw, 14px);
                 }
                 
                 .event-meta-row {
-                    max-width: 360px;
-                    padding: 0 16px;
-                    margin-bottom: 14px;
+                    max-width: clamp(340px, 80vw, 360px);
+                    padding: 0 clamp(14px, 3.5vw, 16px);
+                    margin-bottom: clamp(12px, 2.8vw, 14px);
                 }
                 
                 .event-date {
-                    padding: 6px 16px;
-                    font-size: 9px;
+                    padding: clamp(5px, 1.4vw, 6px) clamp(14px, 3.8vw, 16px);
+                    font-size: clamp(8px, 2.2vw, 9px);
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 414px;
-                    padding: 0 16px;
-                    margin-bottom: 16px;
+                    max-width: clamp(350px, 85vw, 414px);
+                    padding: 0 clamp(14px, 3.5vw, 16px);
+                    margin-bottom: clamp(14px, 3.2vw, 16px);
+                    /* Reduce image height slightly on small screens to make room for button */
+                    max-height: 68vh;
                 }
                 
                 .flyer-image {
-                    border-radius: 48px;
+                    border-radius: clamp(40px, 9vw, 48px);
+                    max-height: 68vh;
+                    object-fit: contain;
                 }
                 
                 .placeholder-flyer {
-                    border-radius: 48px;
+                    border-radius: clamp(40px, 9vw, 48px);
                 }
                 
                 .event-cta {
-                    padding: 0 16px;
-                    margin-bottom: 16px;
-                    max-width: 360px;
+                    padding: 0 clamp(14px, 3.5vw, 16px);
+                    margin-bottom: clamp(14px, 3.2vw, 16px);
+                    max-width: clamp(340px, 80vw, 360px);
                 }
                 
                 .event-cta .btn {
-                    padding: 16px 32px;
-                    font-size: 13px;
-                    border-radius: 18px;
+                    padding: clamp(15px, 3.8vw, 16px) clamp(28px, 7vw, 32px);
+                    font-size: clamp(12px, 3.2vw, 13px);
+                    border-radius: clamp(17px, 4.2vw, 18px);
                 }
 
                 .brand-title {
@@ -4459,7 +4463,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.10.1</div>
+        <div class="version-footer">v1.10.2</div>
     </body>
     </html>
   `)

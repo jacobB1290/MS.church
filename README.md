@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.9.25
+## 🔢 CURRENT VERSION: v1.9.26
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ## Project Overview
@@ -245,7 +245,32 @@ webapp/
 
 ## 📝 Version History
 
-### v1.9.25 (Current) - INCREASE EVENT SCROLL DISTANCES
+### v1.9.26 (Current) - GIFT GALLERY FULL-SCREEN LIGHTBOX
+- **Added full-screen lightbox for gift gallery images**
+  - Click any of the 3 gift images to open in full-screen view
+  - Dark overlay (95% black) for maximum image focus
+  - Images displayed with maximum size while maintaining aspect ratio
+  - Smooth rounded corners (8px) on lightbox images
+- **Navigation arrows for browsing images**
+  - Left/right arrow buttons on sides of lightbox
+  - Circular frosted glass buttons (56px) with smooth hover effects
+  - Previous arrow (‹) on left, next arrow (›) on right
+  - Navigate through all 3 images in sequence
+  - Wraps around (last image → first image)
+- **Multiple ways to control lightbox**
+  - Close button (×) in top-right corner (48px circular button)
+  - Click outside image (on dark background) to close
+  - Press Escape key to close
+  - Arrow keys (←/→) for navigation
+  - Touch-friendly button sizes
+- **User experience enhancements**
+  - Body scroll locked when lightbox open
+  - Cursor changes to pointer on gift images
+  - Smooth transitions on all interactions
+  - High z-index (10000) ensures lightbox always on top
+- Result: Professional image gallery experience for viewing gift examples
+
+### v1.9.25 - INCREASE EVENT SCROLL DISTANCES
 - **Increased scroll distance for events 2 and 3**
   - Event 1: 0-25% progress (unchanged)
   - Event 2: 25-65% → 25-70% progress (5% increase)

@@ -4406,7 +4406,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.9.25</div>
+        <div class="version-footer">v1.9.26</div>
     </body>
     </html>
   `)

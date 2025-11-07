@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.11.1 - Fixed desktop layout issues (hero, outreach, watch sections optimized) -->
+    <!-- v1.11.3 - Fixed base styles conflicting with desktop (removed grid-template-columns from base) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -285,7 +285,6 @@ app.get('/', (c) => {
             
             .hero-body {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
                 gap: 60px;
                 align-items: start;
             }
@@ -4772,7 +4771,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.11.1</div>
+        <div class="version-footer">v1.11.3</div>
     </body>
     </html>
   `)

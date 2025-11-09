@@ -630,10 +630,10 @@ app.get('/', (c) => {
             .event-dot.active {
                 width: 12px;
                 height: 12px;
-                background: #ffffff;
-                box-shadow: 0 0 16px rgba(255, 255, 255, 0.8),
-                            0 4px 12px rgba(255, 255, 255, 0.4);
-                border: 2px solid #ffffff;
+                background: #d4a574;
+                box-shadow: 0 0 16px rgba(212, 165, 116, 0.8),
+                            0 4px 12px rgba(212, 165, 116, 0.4);
+                border: 2px solid #d4a574;
                 transform: scale(1.1);
             }
             

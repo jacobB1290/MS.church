@@ -3308,111 +3308,13 @@ app.get('/', (c) => {
             
             
             /* ========================================
-               TABLET / NARROW DESKTOP STYLES (900px-1199px)
-               Extends desktop-style layouts to medium screens
-               Two-column layout optimized for tablets and narrow desktop windows
-               ======================================== */
-            @media (min-width: 900px) and (max-width: 1199px) {
-                /* Tablet navigation - keep it cleaner */
-                .nav-shell {
-                    padding: 16px 32px;
-                    gap: 24px;
-                    flex-wrap: nowrap;
-                }
-                
-                .brand {
-                    width: auto;
-                }
-                
-                nav ul {
-                    width: auto;
-                    flex-wrap: nowrap;
-                    gap: 24px;
-                }
-                
-                .nav-cta {
-                    width: auto;
-                }
-                
-                /* Tablet Hero - TWO COLUMN LAYOUT but more compact than desktop */
-                .hero {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 16px;
-                    padding: 20px 0 60px;
-                }
-                
-                .hero h1 {
-                    font-size: clamp(48px, 6vw, 72px);
-                    line-height: 1.1;
-                    text-align: left;
-                    margin-bottom: 16px;
-                }
-                
-                .hero-body {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    grid-template-rows: auto auto;
-                    grid-template-areas: 
-                        "content image"
-                        "buttons image";
-                    gap: 32px;
-                    align-items: start;
-                }
-                
-                .hero-content {
-                    grid-area: content;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 20px;
-                }
-                
-                .hero-image {
-                    grid-area: image;
-                    min-height: 400px;
-                    height: 450px;
-                }
-                
-                .hero-body .cta-group {
-                    grid-area: buttons;
-                    flex-direction: row;
-                    justify-content: flex-start;
-                }
-                
-                .hero p {
-                    font-size: 18px;
-                    text-align: left;
-                }
-                
-                /* Tablet Outreach Section - Keep scroll behavior but optimize spacing */
-                .outreach {
-                    min-height: 100vh;
-                }
-                
-                .sticky-wrapper {
-                    padding-top: 20px;
-                }
-                
-                /* Tablet Schedule - 2 columns */
-                .schedule-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                    gap: 32px;
-                }
-                
-                /* Tablet Contact - better spacing */
-                .contact {
-                    gap: 56px;
-                }
-            }
-
-            /* ========================================
-               DESKTOP-ONLY STYLES (≥1200px)
-               Full desktop experience with maximum spacing and sizing
+               DESKTOP STYLES (≥900px)
+               Two-column layout that scales responsively from tablets to full desktop
                Mobile styles (≤899px) are completely isolated
                ======================================== */
-            @media (min-width: 1200px) {
-                /* Desktop container and layout - only for wide screens (≥1200px) */
-                /* Narrow windows (961-1199px) will use mobile layout */
+            @media (min-width: 900px) {
+                /* Desktop two-column layout starts at 900px */
+                /* Scales responsively from tablets to full desktop screens */
                 .page {
                     max-width: 1400px;
                 }
@@ -3772,29 +3674,7 @@ app.get('/', (c) => {
                 }
             }
             
-            /* Desktop Windows (1200px - 1280px) - slight adjustments */
-            @media (min-width: 1200px) and (max-width: 1280px) {
-                .page {
-                    max-width: 1200px;
-                }
-                
-                main {
-                    gap: 100px;
-                }
-                
-                .events-container {
-                    gap: 24px;
-                    padding: 0 16px;
-                }
-                
-                .hero-body {
-                    gap: 48px;
-                }
-                
-                .contact-card {
-                    padding: 60px;
-                }
-            }
+
         </style>
     </head>
     <body>

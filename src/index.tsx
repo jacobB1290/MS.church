@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.20.10 - Fixed direct hash links to use same scroll offset as nav buttons -->
+    <!-- v1.20.11 - Fixed hash link timing by preventing browser default scroll first -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -4051,14 +4051,18 @@ app.get('/', (c) => {
                 if (!outreachSection || !scrollSpacer || !eventsContainer || !eventSlides.length) return;
                 
                 // Handle hash in URL on page load (e.g., ms.church/#contact)
+                // Prevent browser's default anchor scroll and apply our custom offset
                 if (window.location.hash) {
-                    // Prevent default browser scroll and use our custom offset
+                    // Scroll to top immediately to prevent browser's default scroll
+                    window.scrollTo(0, 0);
+                    
+                    // Then apply our custom scroll with proper offset
                     setTimeout(() => {
                         const hash = window.location.hash;
                         const target = document.querySelector(hash);
                         
                         if (target) {
-                            // Use same offset logic as navigation clicks
+                            // Use EXACT same offset logic as navigation clicks
                             let navOffset = 45; // Desktop default
                             
                             if (hash === '#outreach') {
@@ -4067,8 +4071,9 @@ app.get('/', (c) => {
                                     navOffset = -50; // Mobile outreach
                                 }
                             } else {
+                                // Other sections including #contact
                                 if (window.innerWidth <= 1199) {
-                                    navOffset = 30; // Mobile other sections
+                                    navOffset = 30; // Mobile/narrow - SAME as nav button click
                                 }
                             }
                             
@@ -4079,7 +4084,7 @@ app.get('/', (c) => {
                                 behavior: 'smooth'
                             });
                         }
-                    }, 100); // Small delay to ensure page is fully loaded
+                    }, 300); // Increased delay to ensure page layout is stable
                 }
                 
                 // Mobile nav compression on scroll

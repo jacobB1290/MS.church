@@ -3,6 +3,29 @@
 ## 🔢 CURRENT VERSION: v1.20.10
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
+### v1.20.11 - Fixed Hash Link Timing to Match Nav Button Exactly
+**Prevented browser default scroll, increased delay, ensuring exact same position as nav button**
+
+**Changes Made:**
+1. **Prevent browser's default anchor scroll**
+   - Added `window.scrollTo(0, 0)` immediately when hash detected
+   - Prevents browser from scrolling before our custom logic runs
+   - Ensures clean slate for custom offset calculation
+
+2. **Increased timeout for stable layout**
+   - Changed from 100ms to 300ms delay
+   - Ensures page layout is fully stable before calculating position
+   - Prevents timing race conditions
+
+3. **Verified exact offset matching**
+   - Mobile #contact: 30px offset (matches GIFTS nav button exactly)
+   - Desktop #contact: 45px offset
+   - Comments clarify this matches nav button behavior
+
+**Result:** `https://ms.church/#contact` now scrolls to **exactly** the same position as clicking GIFTS button on mobile.
+
+---
+
 ### v1.20.10 - Fixed Direct Hash Links Scroll Position
 **Direct links like ms.church/#contact now use same scroll offset as navigation buttons**
 

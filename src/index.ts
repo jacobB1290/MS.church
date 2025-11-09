@@ -3845,7 +3845,7 @@ app.get('/', (c) => {
                         <div class="watch-main">
                             <!-- Live Stream Status with Countdown -->
                             <div class="live-stream-container">
-                                <span class="live-status"><span class="live-dot"></span>Live Soon</span>
+                                <span class="live-status"><span class="live-dot"></span><span class="live-status-text">Live Soon</span></span>
                                 <div class="countdown-container">
                                     <div class="countdown-label">Next service starts in:</div>
                                     <div class="countdown-timer">
@@ -4964,7 +4964,7 @@ app.get('/', (c) => {
                     
                     // Get elements
                     const liveStatus = document.querySelector('.live-status');
-                    const liveStatusText = liveStatus ? liveStatus.querySelector('span:last-child') : null;
+                    const liveStatusText = document.querySelector('.live-status-text');
                     const countdownContainer = document.querySelector('.countdown-container');
                     
                     // Check if we're within 1 hour (3600000 ms) of service start

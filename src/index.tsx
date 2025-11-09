@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.20.6 - Fixed border-radius to 32px consistently across all breakpoints -->
+    <!-- v1.20.7 - Hidden version footer from UI -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -4963,7 +4963,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.20.6</div>
+        <div class="version-footer">v1.20.7</div>
     </body>
     </html>
   `)

@@ -1,7 +1,20 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.6
+## 🔢 CURRENT VERSION: v1.20.7
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.20.7 - Hidden Version Footer from UI
+**Added display: none to .version-footer to hide version tag from user interface**
+
+**Changes Made:**
+1. **Hidden version footer**
+   - Added `display: none;` to `.version-footer` CSS
+   - Version number no longer visible in bottom-right corner
+   - Version still tracked in HTML comment (Cloudflare) and footer element (for reference)
+
+**Result:** Clean UI without version number displayed to users.
+
+---
 
 ### v1.20.6 - Fixed Border Radius Consistency Across All Breakpoints
 **Ensured 32px border-radius on all flyer elements across all screen sizes**

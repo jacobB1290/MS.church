@@ -3,6 +3,20 @@
 ## 🔢 CURRENT VERSION: v1.20.8
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
+### v1.20.9 - HOME Button Immediately Expands Nav on Mobile
+**HOME button now expands navigation from compact to full instantly on click, before scrolling**
+
+**Changes Made:**
+1. **Reordered HOME link logic**
+   - Moved `navShell.classList.remove('scrolled-mobile')` before `window.scrollTo()`
+   - Navigation now expands immediately on HOME click
+   - Smooth scroll to top happens after nav expansion
+   - No more waiting for scroll to complete to see full nav
+
+**Result:** Clicking HOME on mobile instantly expands the navigation bar, providing immediate visual feedback.
+
+---
+
 ### v1.20.8 - Completely Removed Version Footer from UI
 **Removed version footer HTML element and CSS entirely from the website**
 

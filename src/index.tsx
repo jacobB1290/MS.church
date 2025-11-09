@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.20.8 - Completely removed version footer from HTML -->
+    <!-- v1.20.9 - HOME button immediately expands nav on mobile before scrolling -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -4384,16 +4384,17 @@ app.get('/', (c) => {
                         e.preventDefault();
                         const targetId = this.getAttribute('href');
                         
-                        // Special handling for HOME link - scroll to absolute top and expand nav
+                        // Special handling for HOME link - expand nav IMMEDIATELY, then scroll to top
                         if (targetId === '#home' || targetId === '#') {
+                            // Force expand nav IMMEDIATELY on mobile and narrow windows (before scrolling)
+                            if (window.innerWidth <= 1199) {
+                                navShell.classList.remove('scrolled-mobile');
+                            }
+                            // Then scroll to absolute top
                             window.scrollTo({
                                 top: 0,
                                 behavior: 'smooth'
                             });
-                            // Force expand nav on mobile and narrow windows
-                            if (window.innerWidth <= 1199) {
-                                navShell.classList.remove('scrolled-mobile');
-                            }
                             return;
                         }
                         

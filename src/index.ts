@@ -4276,14 +4276,14 @@ app.get('/', (c) => {
                 updateActiveEvent(0, true);
                 
                 // Enhanced swipe navigation system for mobile
-                // Horizontal swipes trigger scroll to next/previous event
+                // Horizontal swipes trigger instant scroll to next/previous event
                 
                 let touchStartX = 0;
                 let touchStartY = 0;
                 let touchCurrentX = 0;
                 let touchCurrentY = 0;
                 let isSwiping = false;
-                const swipeThreshold = 60; // Swipe distance needed to trigger event change
+                const swipeThreshold = 40; // Reduced for faster response
 
                 // Attach swipe listeners to entire outreach section for broader detection
                 const swipeTarget = outreachSection || eventsContainer;
@@ -4305,8 +4305,8 @@ app.get('/', (c) => {
                         const dx = Math.abs(touchCurrentX - touchStartX);
                         const dy = Math.abs(touchCurrentY - touchStartY);
                         
-                        // Detect horizontal swipe (more horizontal than vertical)
-                        if (dx > dy && dx > 30) {
+                        // Detect horizontal swipe (more horizontal than vertical, lower threshold)
+                        if (dx > dy && dx > 20) {
                             isSwiping = true;
                         }
                     }, { passive: true });
@@ -4319,17 +4319,36 @@ app.get('/', (c) => {
                         if (isSwiping && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
                             // Calculate target event based on swipe direction
                             let targetEventIndex = currentEventIndex;
+                            let scrollOutOfSection = false;
                             
                             // Swipe left (dx < 0) = go to next event (scroll down)
+                            if (dx < 0) {
+                                if (currentEventIndex < totalEvents - 1) {
+                                    targetEventIndex = currentEventIndex + 1;
+                                } else {
+                                    // Already at last event, scroll to Watch section
+                                    scrollOutOfSection = true;
+                                }
+                            }
                             // Swipe right (dx > 0) = go to previous event (scroll up)
-                            if (dx < 0 && currentEventIndex < totalEvents - 1) {
-                                targetEventIndex = currentEventIndex + 1;
-                            } else if (dx > 0 && currentEventIndex > 0) {
+                            else if (dx > 0 && currentEventIndex > 0) {
                                 targetEventIndex = currentEventIndex - 1;
                             }
                             
-                            // If target changed, scroll to that event's position
-                            if (targetEventIndex !== currentEventIndex) {
+                            // Execute scroll action immediately
+                            if (scrollOutOfSection) {
+                                // Scroll past outreach section to Watch section
+                                const watchSection = document.querySelector('#watch');
+                                if (watchSection) {
+                                    const watchTop = watchSection.getBoundingClientRect().top + window.pageYOffset;
+                                    const navOffset = 30; // Mobile nav offset
+                                    window.scrollTo({
+                                        top: watchTop - navOffset,
+                                        behavior: 'smooth'
+                                    });
+                                }
+                            } else if (targetEventIndex !== currentEventIndex) {
+                                // Scroll to target event position
                                 const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
                                 const spacerHeight = scrollSpacer.offsetHeight;
                                 
@@ -4339,11 +4358,11 @@ app.get('/', (c) => {
                                 // Event 3: 85% (middle of 70-100%)
                                 let targetProgress;
                                 if (targetEventIndex === 0) {
-                                    targetProgress = 0.125; // Middle of first event zone
+                                    targetProgress = 0.125;
                                 } else if (targetEventIndex === 1) {
-                                    targetProgress = 0.475; // Middle of second event zone
+                                    targetProgress = 0.475;
                                 } else {
-                                    targetProgress = 0.85; // Middle of third event zone
+                                    targetProgress = 0.85;
                                 }
                                 
                                 const targetScroll = outreachTop + (spacerHeight * targetProgress);

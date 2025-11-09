@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.20.11 - Fixed hash link timing by preventing browser default scroll first -->
+    <!-- v1.20.14 - Auto-play video during Sunday service (9am-9:45am MT) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -5015,6 +5015,48 @@ app.get('/', (c) => {
                 // Update countdown immediately and every second
                 updateCountdown();
                 setInterval(updateCountdown, 1000);
+                
+                // Auto-play video during Sunday service (9:00am - 9:45am MT)
+                function checkAutoPlay() {
+                    const mtNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
+                    const currentDay = mtNow.getDay(); // 0 = Sunday
+                    const currentHour = mtNow.getHours();
+                    const currentMinutes = mtNow.getMinutes();
+                    
+                    // Check if it's Sunday between 9:00-9:45 MT
+                    const isSundayServiceTime = currentDay === 0 && 
+                                                currentHour === 9 && 
+                                                currentMinutes >= 0 && 
+                                                currentMinutes < 45;
+                    
+                    if (isSundayServiceTime) {
+                        const youtubeEmbed = document.querySelector('.youtube-embed');
+                        if (youtubeEmbed) {
+                            const currentSrc = youtubeEmbed.getAttribute('src');
+                            // Add autoplay parameter if not already present
+                            if (currentSrc && !currentSrc.includes('autoplay=1')) {
+                                const newSrc = currentSrc + '&autoplay=1';
+                                youtubeEmbed.setAttribute('src', newSrc);
+                            }
+                        }
+                    }
+                }
+                
+                // Check autoplay when entering watch section
+                const watchSection = document.querySelector('#watch');
+                if (watchSection) {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                checkAutoPlay();
+                            }
+                        });
+                    }, {
+                        threshold: 0.3 // Trigger when 30% of watch section is visible
+                    });
+                    
+                    observer.observe(watchSection);
+                }
             });
         </script>
         

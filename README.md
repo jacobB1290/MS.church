@@ -1,7 +1,33 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.13
+## 🔢 CURRENT VERSION: v1.20.14
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.20.14 - Auto-Play Video During Sunday Service
+**YouTube video automatically plays when entering watch section during Sundays 9am-9:45am MT**
+
+**Changes Made:**
+1. **Auto-play functionality added**
+   - Checks current time in Mountain Time (America/Denver timezone)
+   - Detects if it's Sunday between 9:00am-9:45am MT
+   - Automatically adds `autoplay=1` parameter to YouTube iframe
+   - Only triggers when watch section becomes visible (30% threshold)
+
+2. **IntersectionObserver implementation**
+   - Monitors when user enters watch section
+   - Triggers auto-play check only when section is visible
+   - Prevents unnecessary iframe reloads
+   - Smooth user experience with no jarring transitions
+
+3. **Time window logic**
+   - Starts: Sunday 9:00am MT (when service begins)
+   - Ends: Sunday 9:45am MT (45 minutes into service)
+   - Outside this window: normal manual play behavior
+   - Timezone-aware using `America/Denver` for accurate MT detection
+
+**Result:** Video automatically starts playing when visitors enter the watch section during Sunday service time (9:00-9:45am MT), providing seamless live stream access.
+
+---
 
 ### v1.20.13 - Direct Links Now Trigger Nav Button Click
 **Programmatically clicks matching nav link after page loads for identical scroll behavior**

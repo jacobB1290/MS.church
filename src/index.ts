@@ -3813,7 +3813,7 @@ app.get('/', (c) => {
                                 <div class="event-slide" data-event="3">
                                     <div class="event-card">
                                         <div class="event-flyer-wrapper">
-                                            <span class="event-date">DEC 24</span>
+                                            <span class="event-date">DEC 21</span>
                                             <div class="event-indicators">
                                                 <div class="event-dot active" data-dot="1"></div>
                                                 <div class="event-dot" data-dot="2"></div>

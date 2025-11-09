@@ -3738,7 +3738,7 @@ app.get('/', (c) => {
                 <section class="schedule" id="schedule" style="animation-delay: 0.2s">
                     <span class="section-eyebrow">Weekly Schedule</span>
                     <h2 class="section-heading">Three simple touchpoints to connect every week.</h2>
-                    <address>3080 N Wildwood St · Boise, Idaho</address>
+                    <address><a href="https://maps.google.com/?q=3080+N+Wildwood+St,+Boise,+Idaho" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 4px; transition: text-decoration-color 0.3s ease;">3080 N Wildwood St · Boise, Idaho</a></address>
                     <div class="section-card">
                         <div class="schedule-grid">
                             <article class="schedule-item">
@@ -3914,7 +3914,7 @@ app.get('/', (c) => {
                             <p style="margin: 0;">This is how we know what love is: Jesus Christ laid down his life for us. And we ought to lay down our lives for our brothers and sisters. If anyone has material possessions and sees a brother or sister in need but has no pity on them, how can the love of God be in that person? Dear children, let us not love with words or speech but with actions and in truth.</p>
                         </blockquote>
                         
-                        <address>3080 N Wildwood St, Boise, Idaho</address>
+                        <address><a href="https://maps.google.com/?q=3080+N+Wildwood+St,+Boise,+Idaho" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 4px; transition: text-decoration-color 0.3s ease;">3080 N Wildwood St, Boise, Idaho</a></address>
                     </div>
                     <div class="jotform-container">
                         <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
@@ -3933,7 +3933,7 @@ app.get('/', (c) => {
                                     </div>
                                     <div class="detail-item">
                                         <span class="detail-label">📍 Location:</span>
-                                        <span class="detail-value">3080 N Wildwood St, Boise, Idaho</span>
+                                        <span class="detail-value"><a href="https://maps.google.com/?q=3080+N+Wildwood+St,+Boise,+Idaho" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 4px; transition: text-decoration-color 0.3s ease;">3080 N Wildwood St, Boise, Idaho</a></span>
                                     </div>
                                 </div>
                                 

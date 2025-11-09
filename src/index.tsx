@@ -28,9 +28,9 @@ app.get('/', (c) => {
             :root {
                 color-scheme: light;
                 --bg-default: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
-                --bg-event1: linear-gradient(135deg, #ffe8d6 0%, #ffd4d4 100%); /* Soft peach to light coral for Friendsgiving */
-                --bg-event2: linear-gradient(135deg, #ffd6e8 0%, #ffe5f0 100%); /* Soft pink to lighter pink for Clothes Drive */
-                --bg-event3: linear-gradient(135deg, #c8e6c8 0%, #ffe0e0 50%, #d4f0d4 100%); /* Vibrant green to soft red to vibrant green for Christmas */
+                --bg-event1: linear-gradient(135deg, #f5e6d8 0%, #f0d9c8 100%); /* Muted warm terracotta/orange from Friendsgiving flyer */
+                --bg-event2: linear-gradient(135deg, #e8ead8 0%, #dde0c8 100%); /* Muted olive/sage green from Project Christmas Cheer flyer */
+                --bg-event3: linear-gradient(135deg, #f5d8d8 0%, #f0c8c8 100%); /* Pleasant muted light red for Christmas */
                 --outreach-spacer: 312vh;
             }
 

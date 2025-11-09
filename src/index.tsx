@@ -4067,7 +4067,7 @@ app.get('/', (c) => {
                                 // Programmatically click the nav link to trigger exact same scroll behavior
                                 navLink.click();
                             }
-                        }, 100);
+                        }, 800);  // Wait 800ms for layout to fully settle before scrolling
                     }, { once: true });
                 }
                 

@@ -2374,7 +2374,10 @@ app.get('/', (c) => {
                 /* Active state for GIFTS button */
                 .nav-form-btn.active {
                     font-weight: 900;
-                    background: rgba(255, 255, 255, 1);
+                    background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                    color: #ffffff;
+                    box-shadow: 0 8px 24px rgba(212, 165, 116, 0.4),
+                                0 4px 12px rgba(212, 165, 116, 0.2);
                 }
                 
                 /* Mobile 480px Event Cards - Moderate scaling for small screens */

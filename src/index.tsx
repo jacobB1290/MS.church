@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.20.9 - HOME button immediately expands nav on mobile before scrolling -->
+    <!-- v1.20.10 - Fixed direct hash links to use same scroll offset as nav buttons -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -4049,6 +4049,38 @@ app.get('/', (c) => {
                 const dots = document.querySelectorAll('.heading-wrapper .event-dot');
 
                 if (!outreachSection || !scrollSpacer || !eventsContainer || !eventSlides.length) return;
+                
+                // Handle hash in URL on page load (e.g., ms.church/#contact)
+                if (window.location.hash) {
+                    // Prevent default browser scroll and use our custom offset
+                    setTimeout(() => {
+                        const hash = window.location.hash;
+                        const target = document.querySelector(hash);
+                        
+                        if (target) {
+                            // Use same offset logic as navigation clicks
+                            let navOffset = 45; // Desktop default
+                            
+                            if (hash === '#outreach') {
+                                navOffset = 60; // Desktop outreach
+                                if (window.innerWidth <= 1199) {
+                                    navOffset = -50; // Mobile outreach
+                                }
+                            } else {
+                                if (window.innerWidth <= 1199) {
+                                    navOffset = 30; // Mobile other sections
+                                }
+                            }
+                            
+                            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
+                            
+                            window.scrollTo({
+                                top: targetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }, 100); // Small delay to ensure page is fully loaded
+                }
                 
                 // Mobile nav compression on scroll
                 let lastNavScrollY = 0;

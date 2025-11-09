@@ -1,7 +1,22 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.8
+## 🔢 CURRENT VERSION: v1.20.10
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.20.10 - Fixed Direct Hash Links Scroll Position
+**Direct links like ms.church/#contact now use same scroll offset as navigation buttons**
+
+**Changes Made:**
+1. **Added hash handling on page load**
+   - Detects `window.location.hash` when page loads
+   - Applies same offset logic as navigation button clicks
+   - Uses 45px offset (desktop) or 30px offset (mobile) for most sections
+   - Special handling for outreach section
+   - Smooth scroll to correct position after 100ms delay
+
+**Result:** Direct links like `https://ms.church/#contact` now scroll to the same position as clicking the GIFTS button in navigation.
+
+---
 
 ### v1.20.9 - HOME Button Immediately Expands Nav on Mobile
 **HOME button now expands navigation from compact to full instantly on click, before scrolling**

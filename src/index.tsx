@@ -4469,6 +4469,24 @@ app.get('/', (c) => {
                     });
                 }
                 
+                // Explicit handler for Event 2 REQUEST ITEMS button
+                // Ensures button works on desktop where events are in grid layout
+                const requestItemsButtons = document.querySelectorAll('.event-slide[data-event="2"] .event-cta a[href="#contact"]');
+                requestItemsButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const contactSection = document.querySelector('#contact');
+                        if (contactSection) {
+                            const navOffset = window.innerWidth <= 1199 ? 30 : 45;
+                            const targetPosition = contactSection.getBoundingClientRect().top + window.pageYOffset - navOffset;
+                            window.scrollTo({
+                                top: targetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+                
                 // Clothes Drive Form - Add/Remove Children
                 const addChildBtn = document.querySelector('.btn-add-child');
                 const childrenContainer = document.getElementById('children-container');

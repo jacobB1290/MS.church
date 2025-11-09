@@ -4964,19 +4964,34 @@ app.get('/', (c) => {
                     
                     // Get elements
                     const liveStatus = document.querySelector('.live-status');
+                    const liveStatusText = liveStatus ? liveStatus.querySelector('span:last-child') : null;
                     const countdownContainer = document.querySelector('.countdown-container');
                     
                     // Check if we're within 1 hour (3600000 ms) of service start
                     const oneHour = 3600000; // 1 hour in milliseconds
                     
-                    if (diff <= 0) {
-                        // Service is happening now or just ended - hide everything
+                    // Check if service is currently live (Sunday 9am-10am MT)
+                    const isLiveNow = currentDay === 0 && mtNow.getHours() === 9;
+                    
+                    if (isLiveNow) {
+                        // Service is LIVE NOW (9am-10am on Sunday) - show "Live Now", hide countdown
+                        if (liveStatus) {
+                            liveStatus.style.display = 'inline-flex';
+                            if (liveStatusText) liveStatusText.textContent = 'Live Now';
+                        }
+                        if (countdownContainer) countdownContainer.style.display = 'none';
+                        return;
+                    } else if (diff <= 0) {
+                        // Service ended or past 10am - hide everything
                         if (liveStatus) liveStatus.style.display = 'none';
                         if (countdownContainer) countdownContainer.style.display = 'none';
                         return;
                     } else if (diff <= oneHour && currentDay === 0) {
                         // Within 1 hour of service on Sunday - show "Live Soon" and countdown
-                        if (liveStatus) liveStatus.style.display = 'inline-flex';
+                        if (liveStatus) {
+                            liveStatus.style.display = 'inline-flex';
+                            if (liveStatusText) liveStatusText.textContent = 'Live Soon';
+                        }
                         if (countdownContainer) countdownContainer.style.display = 'flex';
                     } else {
                         // More than 1 hour away - hide "Live Soon", show countdown only

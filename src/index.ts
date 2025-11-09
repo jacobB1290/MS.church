@@ -4196,10 +4196,8 @@ app.get('/', (c) => {
                         // Only update from scroll if:
                         // 1. Index actually changed
                         // 2. Not rate limited
-                        // 3. NOT overriding a recent manual swipe (respect user intent!)
                         if (newIndex !== currentEventIndex &&
-                           (!isChangeRateLimited || (now - lastEventChangeTime) > changeCooldownMs) &&
-                           !manualSwipeOverride) {
+                           (!isChangeRateLimited || (now - lastEventChangeTime) > changeCooldownMs)) {
                             currentEventIndex = newIndex;
                             updateActiveEvent(currentEventIndex, false);
                             isChangeRateLimited = true;
@@ -4278,7 +4276,7 @@ app.get('/', (c) => {
                 updateActiveEvent(0, true);
                 
                 // Enhanced swipe navigation system for mobile
-                // Horizontal swipes change events anytime in outreach section
+                // Horizontal swipes trigger scroll to next/previous event
                 
                 let touchStartX = 0;
                 let touchStartY = 0;
@@ -4286,8 +4284,6 @@ app.get('/', (c) => {
                 let touchCurrentY = 0;
                 let isSwiping = false;
                 const swipeThreshold = 60; // Swipe distance needed to trigger event change
-                let manualSwipeOverride = false; // Flag to prevent scroll from overriding swipe
-                let lastSwipeTime = 0;
 
                 // Attach swipe listeners to entire outreach section for broader detection
                 const swipeTarget = outreachSection || eventsContainer;
@@ -4299,7 +4295,6 @@ app.get('/', (c) => {
                         touchCurrentX = t.clientX;
                         touchCurrentY = t.clientY;
                         isSwiping = false;
-                        console.log('Touch start:', touchStartX, touchStartY);
                     }, { passive: true });
 
                     swipeTarget.addEventListener('touchmove', e => {
@@ -4313,44 +4308,51 @@ app.get('/', (c) => {
                         // Detect horizontal swipe (more horizontal than vertical)
                         if (dx > dy && dx > 30) {
                             isSwiping = true;
-                            console.log('Horizontal swipe detected, dx:', dx, 'dy:', dy);
                         }
                     }, { passive: true });
 
                     swipeTarget.addEventListener('touchend', e => {
-                        const now = Date.now();
                         const dx = touchCurrentX - touchStartX;
                         const dy = touchCurrentY - touchStartY;
                         
-                        console.log('Touch end - dx:', dx, 'dy:', dy, 'isSwiping:', isSwiping, 'currentIndex:', currentEventIndex);
-                        
                         // Check if this was a horizontal swipe
                         if (isSwiping && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
-                            console.log('Valid swipe! dx:', dx, 'currentIndex:', currentEventIndex);
+                            // Calculate target event based on swipe direction
+                            let targetEventIndex = currentEventIndex;
                             
-                            // Swipe left (dx < 0) = go to next event (forward)
-                            // Swipe right (dx > 0) = go to previous event (back)
+                            // Swipe left (dx < 0) = go to next event (scroll down)
+                            // Swipe right (dx > 0) = go to previous event (scroll up)
                             if (dx < 0 && currentEventIndex < totalEvents - 1) {
-                                currentEventIndex++;
-                                console.log('Swiped LEFT to next event:', currentEventIndex);
-                                updateActiveEvent(currentEventIndex, false);
-                                lastSwipeTime = now;
-                                // Set manual override to prevent scroll from interfering for 1.5s
-                                manualSwipeOverride = true;
-                                setTimeout(() => { manualSwipeOverride = false; }, 1500);
+                                targetEventIndex = currentEventIndex + 1;
                             } else if (dx > 0 && currentEventIndex > 0) {
-                                currentEventIndex--;
-                                console.log('Swiped RIGHT to previous event:', currentEventIndex);
-                                updateActiveEvent(currentEventIndex, false);
-                                lastSwipeTime = now;
-                                // Set manual override to prevent scroll from interfering for 1.5s
-                                manualSwipeOverride = true;
-                                setTimeout(() => { manualSwipeOverride = false; }, 1500);
-                            } else {
-                                console.log('Swipe ignored - at boundary or wrong direction');
+                                targetEventIndex = currentEventIndex - 1;
                             }
-                        } else {
-                            console.log('Not a valid swipe - either not swiping, too vertical, or too short');
+                            
+                            // If target changed, scroll to that event's position
+                            if (targetEventIndex !== currentEventIndex) {
+                                const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
+                                const spacerHeight = scrollSpacer.offsetHeight;
+                                
+                                // Calculate scroll position for target event
+                                // Event 1: 12.5% (middle of 0-25%)
+                                // Event 2: 47.5% (middle of 25-70%)
+                                // Event 3: 85% (middle of 70-100%)
+                                let targetProgress;
+                                if (targetEventIndex === 0) {
+                                    targetProgress = 0.125; // Middle of first event zone
+                                } else if (targetEventIndex === 1) {
+                                    targetProgress = 0.475; // Middle of second event zone
+                                } else {
+                                    targetProgress = 0.85; // Middle of third event zone
+                                }
+                                
+                                const targetScroll = outreachTop + (spacerHeight * targetProgress);
+                                
+                                window.scrollTo({
+                                    top: targetScroll,
+                                    behavior: 'smooth'
+                                });
+                            }
                         }
                         
                         isSwiping = false;

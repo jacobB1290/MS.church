@@ -4056,8 +4056,7 @@ app.get('/', (c) => {
                     // Scroll to top immediately to prevent browser's default scroll
                     window.scrollTo(0, 0);
                     
-                    // Then apply our custom scroll with proper offset
-                    setTimeout(() => {
+                    const performHashScroll = () => {
                         const hash = window.location.hash;
                         const target = document.querySelector(hash);
                         
@@ -4084,7 +4083,15 @@ app.get('/', (c) => {
                                 behavior: 'smooth'
                             });
                         }
-                    }, 300); // Increased delay to ensure page layout is stable
+                    };
+                    
+                    // First scroll after initial layout
+                    setTimeout(performHashScroll, 300);
+                    
+                    // Re-adjust after images and content fully loaded to prevent layout shift
+                    window.addEventListener('load', () => {
+                        setTimeout(performHashScroll, 100);
+                    }, { once: true });
                 }
                 
                 // Mobile nav compression on scroll

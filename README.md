@@ -1,7 +1,33 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.10
+## 🔢 CURRENT VERSION: v1.20.12
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.20.12 - Fixed Layout Shift After Direct Link Scroll
+**Double-adjustment approach compensates for images loading after initial scroll**
+
+**Changes Made:**
+1. **Extracted reusable scroll function**
+   - Created `performHashScroll()` to encapsulate all scroll logic
+   - Reusable function for both initial and post-load adjustments
+   - Same offset calculation logic used consistently
+
+2. **Initial scroll on page load**
+   - First call after 300ms (allows initial layout to stabilize)
+   - Scrolls to calculated position based on hash
+   - Uses standard offsets (30px mobile, 45px desktop)
+
+3. **Re-adjust after all content loads**
+   - Added window 'load' event listener (fires after images/CSS/all resources)
+   - Second scroll adjustment after 100ms (compensates for layout shift)
+   - Uses `{ once: true }` to prevent memory leaks
+   - Corrects position drift caused by images loading
+
+**Root Cause:** Direct links scrolled correctly initially but then automatically scrolled down as images/content loaded, causing layout shift and position drift.
+
+**Result:** `https://ms.church/#contact` now maintains exact same position as GIFTS button even after all images load.
+
+---
 
 ### v1.20.11 - Fixed Hash Link Timing to Match Nav Button Exactly
 **Prevented browser default scroll, increased delay, ensuring exact same position as nav button**

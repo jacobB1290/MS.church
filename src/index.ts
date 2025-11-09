@@ -3783,7 +3783,7 @@ app.get('/', (c) => {
                                                 <div class="event-dot" data-dot="2"></div>
                                                 <div class="event-dot" data-dot="3"></div>
                                             </div>
-                                            <img src="/static/friendsgiving-flyer.png" alt="Friendsgiving Lunch Flyer" class="flyer-image">
+                                            <img src="https://page.gensparksite.com/v1/base64_upload/2955ae3606d04a2080ff96434f906195" alt="Friendsgiving Lunch - Lunch with our local community" class="flyer-image">
                                         </div>
                                         <div class="event-cta">
                                             <a class="btn btn-primary" href="#contact">RSVP NOW</a>

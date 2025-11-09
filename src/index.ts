@@ -621,7 +621,7 @@ app.get('/', (c) => {
                 width: 10px;
                 height: 10px;
                 border-radius: 50%;
-                background: rgba(26, 26, 46, 0.3);
+                background: rgba(255, 255, 255, 0.7);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 cursor: pointer;
                 border: 2px solid transparent;
@@ -630,15 +630,15 @@ app.get('/', (c) => {
             .event-dot.active {
                 width: 12px;
                 height: 12px;
-                background: #d4a574;
-                box-shadow: 0 0 12px rgba(212, 165, 116, 0.6),
-                            0 4px 8px rgba(212, 165, 116, 0.3);
-                border: 2px solid #d4a574;
+                background: #ffffff;
+                box-shadow: 0 0 16px rgba(255, 255, 255, 0.8),
+                            0 4px 12px rgba(255, 255, 255, 0.4);
+                border: 2px solid #ffffff;
                 transform: scale(1.1);
             }
             
             .event-dot:hover:not(.active) {
-                background: rgba(26, 26, 46, 0.5);
+                background: rgba(255, 255, 255, 0.9);
                 transform: scale(1.1);
             }
             
@@ -748,9 +748,10 @@ app.get('/', (c) => {
             
             .event-flyer-wrapper .event-indicators {
                 position: absolute;
-                top: 16px;
+                top: 20px;
                 right: 40px;
                 z-index: 20;
+                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.3));
             }
             
             /* CTA Button - Below image */

@@ -4061,6 +4061,7 @@ app.get('/', (c) => {
                     return 380 * 0.10; // 10% of 380px nav-spacer
                 }
                 let scrollUpAtTopCount = 0;
+                let isNavigatingHome = false; // Flag to prevent nav compression during HOME click
                 
                 function handleMobileNav() {
                     const currentScrollY = window.scrollY;
@@ -4068,6 +4069,17 @@ app.get('/', (c) => {
                     
                     // Only apply on mobile and narrow windows (1199px and below)
                     if (window.innerWidth <= 1199) {
+                        // Skip nav compression logic if navigating home
+                        if (isNavigatingHome) {
+                            // Keep nav expanded during HOME navigation
+                            if (currentScrollY === 0) {
+                                // Reached top, clear flag
+                                isNavigatingHome = false;
+                            }
+                            lastNavScrollY = currentScrollY;
+                            return;
+                        }
+                        
                         // Detect scroll up when already at/near top
                         if (currentScrollY <= scrollThreshold && currentScrollY < lastNavScrollY) {
                             scrollUpAtTopCount++;
@@ -4409,6 +4421,7 @@ app.get('/', (c) => {
                             // Force expand nav IMMEDIATELY on mobile and narrow windows (before scrolling)
                             if (window.innerWidth <= 1199) {
                                 navShell.classList.remove('scrolled-mobile');
+                                isNavigatingHome = true; // Prevent scroll listener from re-compressing nav
                             }
                             // Then scroll to absolute top
                             window.scrollTo({

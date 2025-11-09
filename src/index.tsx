@@ -4446,21 +4446,36 @@ app.get('/', (c) => {
                             let navOffset = 45; // Desktop - perfect balance
                             
                             // Special handling for outreach section (has sticky header + events)
-                            // Adjusted offset to just cover the ribbon pill, not the title
                             if (targetId === '#outreach') {
-                                navOffset = 60; // Desktop - just cover the pill, show the title
+                                // Always scroll to the very beginning of outreach section to show Event 1
+                                const outreachRect = target.getBoundingClientRect();
+                                const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
                                 
                                 if (window.innerWidth <= 1199) {
-                                    navOffset = -50; // Mobile/narrow - negative offset to match sticky position
+                                    // Mobile: Always scroll to show Event 1 (top of section)
+                                    navOffset = -50; // Negative to show full header and start at Event 1
+                                } else {
+                                    // Desktop: Standard offset
+                                    navOffset = 60;
                                 }
-                            } else {
-                                // Other sections - mobile/narrow adjustment
-                                if (window.innerWidth <= 1199) {
-                                    navOffset = 30; // Mobile/narrow - adjusted for smaller nav
-                                }
+                                
+                                const targetPosition = outreachAbsoluteTop - navOffset;
+                                window.scrollTo({
+                                    top: targetPosition,
+                                    behavior: 'smooth'
+                                });
+                                return;
                             }
                             
-                            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
+                            // Other sections - standard handling
+                            if (window.innerWidth <= 1199) {
+                                navOffset = 30; // Mobile/narrow - adjusted for smaller nav
+                            }
+                            
+                            // Get absolute position: element's position relative to viewport + current scroll position
+                            const elementRect = target.getBoundingClientRect();
+                            const absoluteElementTop = elementRect.top + window.pageYOffset;
+                            const targetPosition = absoluteElementTop - navOffset;
                             
                             window.scrollTo({
                                 top: targetPosition,

@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.11.3 - Fixed base styles conflicting with desktop (removed grid-template-columns from base) -->
+    <!-- v1.19.0 - Fixed mobile outreach flyer cutoff: removed horizontal padding from event-flyer-wrapper, centered with auto margins -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -272,11 +272,9 @@ app.get('/', (c) => {
                 }
             }
 
-            /* Hero Section */
+            /* Hero Section - Base (minimal, universal only) */
             .hero {
-                display: grid;
-                gap: 40px;
-                padding: 60px 0;
+                width: 100%;
             }
             
             .hero-title {
@@ -284,14 +282,11 @@ app.get('/', (c) => {
             }
             
             .hero-body {
-                display: grid;
-                gap: 60px;
-                align-items: start;
+                width: 100%;
             }
             
             .hero-content {
-                display: grid;
-                gap: 32px;
+                width: 100%;
             }
             
             .hero-image {
@@ -702,14 +697,14 @@ app.get('/', (c) => {
             .event-flyer-wrapper {
                 position: relative;
                 width: 100%;
-                max-width: 517px;
+                max-width: 469px;  /* Reduced from 517px to account for removed padding */
                 aspect-ratio: 3/4;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 z-index: 10;
-                margin-bottom: 24px;
-                padding: 0 24px;
+                margin: 0 auto 24px;  /* Center with auto margins, removed horizontal padding */
+                padding: 0;  /* Removed horizontal padding to prevent flyer cutoff */
                 box-sizing: border-box;
             }
             
@@ -1830,7 +1825,117 @@ app.get('/', (c) => {
                 line-height: 1.6;
             }
 
-            /* Responsive Design */
+            /* ========================================
+               MOBILE STYLES (≤1199px - includes narrow windows)
+               All mobile breakpoints wrapped together (including narrow windows up to 1199px)
+               Desktop (≥1200px) will NOT inherit these
+               ======================================== */
+            @media (max-width: 1199px) {
+                /* Mobile Hero Section - Grid vertical layout (applies to mobile AND narrow windows) */
+                .hero {
+                    display: grid;
+                    gap: 40px;
+                    padding: 60px 0;
+                }
+                
+                .hero-body {
+                    display: grid;
+                    gap: 60px;
+                    align-items: start;
+                }
+                
+                .hero-content {
+                    display: grid;
+                    gap: 32px;
+                }
+                
+                .hero-image {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    min-height: 450px;
+                    border-radius: 32px;
+                    overflow: hidden;
+                    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
+                }
+                
+                .hero-image img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                }
+                
+                /* Outreach Section - Mobile scroll behavior */
+                .outreach {
+                    min-height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                .outreach-scroll-container {
+                    position: relative;
+                    margin-top: 0;
+                }
+                
+                .sticky-wrapper {
+                    position: sticky;
+                    top: 0vh;
+                    height: 80vh;
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: center;
+                    padding-top: 5px;
+                }
+                
+                .events-container {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                }
+                
+                .event-slide {
+                    position: absolute;
+                    inset: 0;
+                    width: 100%;
+                    opacity: 0;
+                    visibility: hidden;
+                    transform: translateY(30px) scale(0.95);
+                    transition: opacity 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+                                transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+                    pointer-events: none;
+                    z-index: 0;
+                    will-change: transform, opacity;
+                }
+                
+                .event-slide.active {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateY(0) scale(1);
+                    pointer-events: auto;
+                    z-index: 1;
+                }
+                
+                .scroll-spacer {
+                    height: var(--outreach-spacer);
+                    pointer-events: none;
+                }
+                
+                /* Event cards - Mobile full-screen layout */
+                .event-card {
+                    position: relative;
+                    width: 100vw;
+                    height: 90vh;
+                    margin-left: calc(-50vw + 50%);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: flex-start;
+                    padding-top: 20px;
+                    box-sizing: border-box;
+                }
+            }
+            
             @media (max-width: 1024px) {
                 .event-content {
                     grid-template-columns: 1fr;
@@ -1872,7 +1977,7 @@ app.get('/', (c) => {
                 }
             }
 
-            @media (max-width: 960px) {
+            @media (max-width: 1199px) {
                 .nav-shell {
                     flex-wrap: wrap;
                     border-radius: 40px;
@@ -2088,9 +2193,9 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: 466px;
-                    padding: 0 20px;
-                    margin-bottom: 20px;
+                    max-width: 426px;  /* Reduced from 466px to account for removed padding */
+                    padding: 0;  /* Removed horizontal padding to prevent flyer cutoff */
+                    margin: 0 auto 20px;  /* Center with auto margins */
                 }
                 
                 .flyer-image {
@@ -2284,9 +2389,9 @@ app.get('/', (c) => {
                 }
                 
                 .event-flyer-wrapper {
-                    max-width: clamp(350px, 85vw, 414px);
-                    padding: 0 clamp(14px, 3.5vw, 16px);
-                    margin-bottom: clamp(14px, 3.2vw, 16px);
+                    max-width: clamp(322px, 78vw, 382px);  /* Reduced to account for removed padding */
+                    padding: 0;  /* Removed horizontal padding to prevent flyer cutoff */
+                    margin: 0 auto clamp(14px, 3.2vw, 16px);  /* Center with auto margins */
                     /* Reduce image height slightly on small screens to make room for button */
                     max-height: 68vh;
                 }
@@ -3219,118 +3324,343 @@ app.get('/', (c) => {
             }
             
             /* ========================================
-               DESKTOP-ONLY STYLES (961px and above)
-               Industry-standard desktop experience
-               Mobile styles (≤960px) remain UNTOUCHED
+               DESKTOP-ONLY STYLES (≥1200px)
+               Complete independent desktop experience
+               Mobile styles (including narrow windows) are isolated in @media (max-width: 1199px)
                ======================================== */
-            @media (min-width: 961px) {
-                /* Container max-widths for better readability */
+            @media (min-width: 1200px) {
+                /* Desktop container and layout - only for wide screens (≥1200px) */
+                /* Narrow windows (961-1199px) will use mobile layout */
                 .page {
                     max-width: 1400px;
                 }
                 
-                /* Reduce excessive gaps between sections */
+                /* Desktop Navigation Spacer - CRITICAL: Override base 380px */
+                .nav-spacer {
+                    height: 120px;  /* Natural spacing for desktop */
+                }
+                
                 main {
                     gap: 120px;
                     margin-bottom: 120px;
                 }
                 
-                /* Hero Section - MUST override mobile flex layout */
+                /* Desktop Hero Section - TWO COLUMN GRID */
                 .hero {
-                    padding: 60px 0 80px !important;
-                    max-width: 100% !important;
-                    margin: 0 !important;
-                    min-height: auto !important;
-                    gap: 40px !important;
-                    background: none !important;
-                    border-radius: 0 !important;
-                    padding-left: 0 !important;
-                    padding-right: 0 !important;
-                }
-                
-                .hero-body {
-                    display: grid !important;
-                    grid-template-columns: 1fr 1fr !important;
-                    max-width: 1200px;
-                    margin: 0 auto;
-                    gap: 60px !important;
-                    align-items: center !important;
-                    flex-direction: initial !important;
-                }
-                
-                .hero-content {
-                    max-width: 560px;
-                    order: initial !important;
-                    display: grid !important;
-                    gap: 32px !important;
-                }
-                
-                .hero-content p {
-                    text-align: left !important;
-                    margin: 0 !important;
+                    display: flex;
+                    flex-direction: column;
+                    gap: clamp(8px, 1vw, 12px);  /* Much tighter gap */
+                    padding: clamp(10px, 1.5vw, 15px) 0 clamp(50px, 6vw, 70px);  /* Very minimal top padding */
+                    max-width: 100%;
+                    margin: 0;
+                    min-height: auto;
+                    overflow: visible;  /* Allow descenders to show */
                 }
                 
                 .hero h1 {
-                    font-size: clamp(48px, 4vw, 72px) !important;
-                    line-height: 1.1 !important;
-                    text-align: left !important;
-                    margin: 0 0 20px 0 !important;
+                    max-width: clamp(1100px, 90vw, 1300px);  /* Match hero-body max-width */
+                    margin: 0 auto;
+                    width: 100%;
+                    padding: 0 clamp(16px, 3vw, 32px);  /* Responsive side padding */
+                    overflow: visible;  /* Allow descenders like g to show */
                 }
                 
-                .hero p {
-                    font-size: 18px !important;
-                    line-height: 1.7;
-                    max-width: 100% !important;
+                .hero-body {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    grid-template-rows: auto auto;
+                    grid-template-areas: 
+                        "content image"
+                        "buttons image";
+                    max-width: clamp(1100px, 90vw, 1300px);  /* Responsive max-width */
+                    margin: 0 auto;
+                    column-gap: clamp(40px, 5vw, 70px);  /* Responsive gap */
+                    row-gap: clamp(16px, 2vw, 24px);  /* Responsive gap */
+                    align-items: start;
+                    width: 100%;
+                }
+                
+                .hero-content {
+                    grid-area: content;
+                    max-width: 100%;  /* Let grid control width */
+                    display: flex;
+                    flex-direction: column;
+                    gap: clamp(16px, 2vw, 24px);  /* Responsive gap */
                 }
                 
                 .hero-image {
-                    order: initial !important;
-                    min-height: 400px !important;
-                    max-height: 500px !important;
-                    height: 500px;
-                    border-radius: 24px !important;
+                    grid-area: image;
+                    align-self: stretch;
                 }
                 
                 .hero-body .cta-group {
-                    flex-direction: row !important;
-                    justify-content: flex-start !important;
-                    align-items: center !important;
-                    width: auto !important;
-                    margin-top: 0 !important;
+                    grid-area: buttons;
+                }
+                
+                .hero-content p {
+                    text-align: left;
+                    margin: 0;
+                }
+                
+                .hero h1 {
+                    font-size: clamp(64px, 7vw, 110px);  /* Much larger title */
+                    line-height: 1.15;  /* Slightly more breathing room for descenders */
+                    letter-spacing: -0.02em;  /* Slight tightening for large text */
+                    text-align: left;
+                    margin: 0 0 clamp(12px, 1.5vw, 18px) 0;  /* Tighter bottom margin */
+                    overflow: visible;  /* Ensure letters don't get cut off */
+                    padding-bottom: 4px;  /* Extra space for descenders like g */
+                }
+                
+                .hero p {
+                    font-size: clamp(20px, 1.8vw, 24px);  /* Larger, responsive copy */
+                    line-height: 1.6;
+                    max-width: 100%;
+                }
+                
+                .hero-image {
+                    position: relative;
+                    width: 100%;
+                    min-height: clamp(500px, 50vh, 650px);  /* Larger, responsive height */
+                    max-height: clamp(600px, 60vh, 700px);
+                    height: clamp(550px, 55vh, 650px);
+                    border-radius: clamp(20px, 2vw, 28px);  /* Responsive border radius */
+                    overflow: hidden;
+                    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
+                }
+                
+                .hero-image img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                }
+                
+                .hero-body .cta-group {
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+                    width: auto;
+                    margin-top: 0;
                 }
                 
                 .hero-body .cta-group .btn {
-                    width: auto !important;
+                    width: auto;
                 }
                 
-                /* Watch Section - Responsive & scalable */
+                /* Desktop Outreach Section - 3-in-row grid */
+                .outreach {
+                    max-width: 1400px;
+                    margin: 0 auto;
+                    width: min(1280px, 94%);
+                    min-height: auto;
+                    display: block;
+                    padding-top: 0;
+                }
+                
+                .outreach-header {
+                    text-align: left;
+                    margin-bottom: 48px;
+                    position: static;
+                    top: auto;
+                    padding-bottom: 0;
+                    width: 100%;
+                }
+                
+                .outreach-header .section-eyebrow {
+                    display: inline-flex;
+                    margin-bottom: 16px;
+                }
+                
+                .outreach-header .section-heading {
+                    margin-bottom: 12px;
+                    text-align: left;
+                }
+                
+                .outreach-header .section-lead {
+                    display: block;
+                    max-width: 720px;
+                    margin: 0;
+                    text-align: left;
+                }
+                
+                .heading-wrapper {
+                    display: block;
+                    width: 100%;
+                }
+                
+                .heading-wrapper .event-indicators {
+                    display: none;
+                }
+                
+                .outreach-scroll-container {
+                    position: relative;
+                    margin-top: 0;
+                }
+                
+                /* Desktop: No sticky, no scroll spacer */
+                .sticky-wrapper {
+                    position: relative;
+                    top: 0;
+                    height: auto;
+                    min-height: auto;
+                    padding: 0;
+                    padding-bottom: 0;
+                    gap: 0;
+                    display: block;
+                }
+                
+                .scroll-spacer {
+                    display: none;
+                    height: 0;
+                }
+                
+                /* Desktop: Show all 3 events in grid */
+                .events-container {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 32px;
+                    padding: 0 20px;
+                    width: 100%;
+                    margin-top: 0;
+                    position: relative;
+                }
+                
+                /* Desktop: All events visible, no absolute positioning */
+                .event-slide {
+                    position: relative;
+                    opacity: 1;
+                    visibility: visible;
+                    transform: none;
+                    pointer-events: auto;
+                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    z-index: 1;
+                }
+                
+                /* Desktop: Event cards in columns */
+                .event-card {
+                    height: auto;
+                    width: 100%;
+                    margin: 0;
+                    margin-left: 0;
+                    padding: clamp(16px, 2vw, 24px);
+                    padding-top: clamp(16px, 2vw, 24px);
+                    background: rgba(255, 255, 255, 0.9);
+                    border-radius: 24px;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: flex-start;
+                }
+                
+                .event-card:hover {
+                    transform: translateY(-8px) scale(1.02);
+                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+                }
+                
+                /* Desktop: Event flyer sizing */
+                .event-flyer-wrapper {
+                    max-width: 100%;
+                    aspect-ratio: 3/4;
+                    margin-bottom: clamp(16px, 2vw, 20px);
+                    padding: 0;
+                    max-height: none;
+                    position: relative;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10;
+                }
+                
+                .flyer-image,
+                .placeholder-flyer {
+                    border-radius: 16px;
+                    max-height: none;
+                    height: 100%;
+                    width: 100%;
+                    object-fit: cover;
+                }
+                
+                .event-flyer-wrapper .event-date {
+                    top: 12px;
+                    left: 12px;
+                    font-size: clamp(9px, 1vw, 10px);
+                    padding: clamp(5px, 0.8vw, 6px) clamp(12px, 1.5vw, 14px);
+                }
+                
+                .event-flyer-wrapper .event-indicators {
+                    display: none;  /* Hide 3 dots on desktop event cards */
+                }
+                
+                .event-cta {
+                    padding: 0;
+                    margin: 0;
+                    margin-bottom: 0;
+                    max-width: none;
+                    position: relative;
+                    width: 100%;
+                    z-index: 100;
+                }
+                
+                .event-cta .btn {
+                    width: 100%;
+                    padding: clamp(12px, 1.5vw, 14px) clamp(20px, 2.5vw, 24px);
+                    font-size: clamp(11px, 1.2vw, 12px);
+                    border-radius: 16px;
+                }
+                
+                /* Desktop Watch Section - Properly scaled (reverted to original centered layout) */
                 .watch {
                     max-width: 1200px;
                     margin: 0 auto;
                 }
                 
                 .watch-card {
-                    padding: clamp(40px, 4vw, 60px);
+                    padding: 48px 56px;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                
+                .watch-main {
+                    max-width: 100%;
                 }
                 
                 .preview-screen {
                     min-height: auto;
                     max-height: none;
-                    padding: clamp(32px, 3vw, 48px);
+                    padding: 40px;
                 }
                 
-                .video-embed-wrapper,
-                .playlist-embed-wrapper {
-                    max-height: 60vh;
-                    padding-bottom: 56.25%;
+                .live-stream-container {
+                    max-width: 900px;
+                    margin: 0 auto;
                 }
                 
-                .youtube-embed,
-                .youtube-playlist {
-                    max-height: 60vh;
+                .video-embed-wrapper {
+                    max-width: 900px;
+                    margin: 0 auto;
+                    padding-bottom: 50.625%;
                 }
                 
-                /* Contact Section - Better desktop layout */
+                .youtube-embed {
+                    max-height: none;
+                }
+                
+                .playlist-btn {
+                    max-width: 300px;
+                    margin: 16px auto 0;
+                }
+                
+                .countdown-container {
+                    max-width: 500px;
+                    margin: 8px auto;
+                }
+                
+                /* Desktop Contact Section */
                 .contact {
                     max-width: 1200px;
                     margin: 0 auto;
@@ -3341,7 +3671,7 @@ app.get('/', (c) => {
                     max-width: 1200px;
                 }
                 
-                /* Schedule Section */
+                /* Desktop Schedule Section */
                 .schedule-grid {
                     grid-template-columns: repeat(3, 1fr);
                     gap: 32px;
@@ -3349,7 +3679,7 @@ app.get('/', (c) => {
                     margin: 0 auto;
                 }
                 
-                /* Section headers - Better proportions */
+                /* Desktop Section typography */
                 .section-heading {
                     font-size: clamp(48px, 4vw, 64px);
                 }
@@ -3358,153 +3688,10 @@ app.get('/', (c) => {
                     font-size: 20px;
                     max-width: 720px;
                 }
-                
-                /* ========================================
-                   OUTREACH SECTION - Desktop 3-in-row layout
-                   MUST override mobile sticky/scroll behavior
-                   ======================================== */
-                .outreach {
-                    max-width: 1400px !important;
-                    margin: 0 auto !important;
-                    width: min(1280px, 94%) !important;
-                    margin-left: auto !important;
-                    padding-top: 0 !important;
-                }
-                
-                .outreach-header {
-                    text-align: center !important;
-                    margin-bottom: 60px !important;
-                    position: static !important;
-                    top: auto !important;
-                    padding-bottom: 0 !important;
-                    width: 100% !important;
-                    margin-left: auto !important;
-                    margin-right: auto !important;
-                }
-                
-                .outreach-header .section-heading {
-                    margin-bottom: 16px !important;
-                }
-                
-                .outreach-header .section-lead {
-                    display: block !important;
-                    max-width: 800px !important;
-                    margin: 0 auto !important;
-                }
-                
-                .outreach-scroll-container {
-                    position: relative !important;
-                    margin-top: 0 !important;
-                }
-                
-                /* Desktop: Show all 3 events in a row */
-                .sticky-wrapper {
-                    position: relative !important;
-                    top: 0 !important;
-                    height: auto !important;
-                    min-height: auto !important;
-                    padding: 0 !important;
-                    padding-bottom: 0 !important;
-                    gap: 0 !important;
-                    justify-content: initial !important;
-                }
-                
-                .events-container {
-                    display: grid !important;
-                    grid-template-columns: repeat(3, 1fr) !important;
-                    gap: 32px !important;
-                    padding: 0 20px;
-                    width: 100% !important;
-                    margin-top: 0 !important;
-                    flex: initial !important;
-                }
-                
-                /* Hide scroll spacer on desktop */
-                .scroll-spacer {
-                    display: none !important;
-                    height: 0 !important;
-                }
-                
-                /* Event slides always visible on desktop */
-                .event-slide {
-                    position: relative !important;
-                    opacity: 1 !important;
-                    visibility: visible !important;
-                    transform: none !important;
-                    pointer-events: auto !important;
-                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                    inset: initial !important;
-                    z-index: 1 !important;
-                }
-                
-                /* Event cards in row */
-                .event-card {
-                    height: auto !important;
-                    width: 100% !important;
-                    margin: 0 !important;
-                    margin-left: 0 !important;
-                    padding: clamp(16px, 2vw, 24px) !important;
-                    padding-top: clamp(16px, 2vw, 24px) !important;
-                    background: rgba(255, 255, 255, 0.9) !important;
-                    border-radius: 24px !important;
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                }
-                
-                .event-card:hover {
-                    transform: translateY(-8px) scale(1.02) !important;
-                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12) !important;
-                }
-                
-                /* Event flyer wrapper - constrain size */
-                .event-flyer-wrapper {
-                    max-width: 100% !important;
-                    aspect-ratio: 3/4 !important;
-                    margin-bottom: clamp(16px, 2vw, 20px) !important;
-                    padding: 0 !important;
-                    max-height: none !important;
-                }
-                
-                .flyer-image,
-                .placeholder-flyer {
-                    border-radius: 16px !important;
-                    max-height: none !important;
-                    height: 100%;
-                    object-fit: cover !important;
-                }
-                
-                /* Event date positioning */
-                .event-flyer-wrapper .event-date {
-                    top: 12px !important;
-                    left: 12px !important;
-                    font-size: clamp(9px, 1vw, 10px) !important;
-                    padding: clamp(5px, 0.8vw, 6px) clamp(12px, 1.5vw, 14px) !important;
-                }
-                
-                .event-flyer-wrapper .event-indicators {
-                    top: 12px !important;
-                    right: 12px !important;
-                }
-                
-                /* CTA button */
-                .event-cta {
-                    padding: 0 !important;
-                    margin: 0 !important;
-                    margin-bottom: 0 !important;
-                    max-width: none !important;
-                }
-                
-                .event-cta .btn {
-                    width: 100%;
-                    padding: clamp(12px, 1.5vw, 14px) clamp(20px, 2.5vw, 24px) !important;
-                    font-size: clamp(11px, 1.2vw, 12px) !important;
-                    border-radius: 16px !important;
-                }
             }
             
-            /* Smaller Desktop Windows (961px - 1280px) */
-            @media (min-width: 961px) and (max-width: 1280px) {
+            /* Desktop Windows (1200px - 1280px) - slight adjustments */
+            @media (min-width: 1200px) and (max-width: 1280px) {
                 .page {
                     max-width: 1200px;
                 }
@@ -3900,8 +4087,8 @@ app.get('/', (c) => {
                     const currentScrollY = window.scrollY;
                     const scrollThreshold = getScrollThreshold();
                     
-                    // Only apply on mobile (960px and below)
-                    if (window.innerWidth <= 960) {
+                    // Only apply on mobile and narrow windows (1199px and below)
+                    if (window.innerWidth <= 1199) {
                         // Detect scroll up when already at/near top
                         if (currentScrollY <= scrollThreshold && currentScrollY < lastNavScrollY) {
                             scrollUpAtTopCount++;
@@ -4223,8 +4410,8 @@ app.get('/', (c) => {
                                 top: 0,
                                 behavior: 'smooth'
                             });
-                            // Force expand nav on mobile
-                            if (window.innerWidth <= 960) {
+                            // Force expand nav on mobile and narrow windows
+                            if (window.innerWidth <= 1199) {
                                 navShell.classList.remove('scrolled-mobile');
                             }
                             return;
@@ -4236,17 +4423,17 @@ app.get('/', (c) => {
                             let navOffset = 45; // Desktop - perfect balance
                             
                             // Special handling for outreach section (has sticky header + events)
-                            // Smaller offset = scrolls further down to hide pill
+                            // Adjusted offset to just cover the ribbon pill, not the title
                             if (targetId === '#outreach') {
-                                navOffset = 20; // Desktop - scroll much further for outreach
+                                navOffset = 60; // Desktop - just cover the pill, show the title
                                 
-                                if (window.innerWidth <= 960) {
-                                    navOffset = -50; // Mobile - negative offset to match sticky position
+                                if (window.innerWidth <= 1199) {
+                                    navOffset = -50; // Mobile/narrow - negative offset to match sticky position
                                 }
                             } else {
-                                // Other sections - mobile adjustment
-                                if (window.innerWidth <= 960) {
-                                    navOffset = 30; // Mobile - adjusted for smaller nav
+                                // Other sections - mobile/narrow adjustment
+                                if (window.innerWidth <= 1199) {
+                                    navOffset = 30; // Mobile/narrow - adjusted for smaller nav
                                 }
                             }
                             
@@ -4771,7 +4958,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.11.3</div>
+        <div class="version-footer">v1.19.0</div>
     </body>
     </html>
   `)

@@ -4056,41 +4056,18 @@ app.get('/', (c) => {
                     // Scroll to top immediately to prevent browser's default scroll
                     window.scrollTo(0, 0);
                     
-                    const performHashScroll = () => {
-                        const hash = window.location.hash;
-                        const target = document.querySelector(hash);
-                        
-                        if (target) {
-                            // Use EXACT same offset logic as navigation clicks
-                            let navOffset = 45; // Desktop default
-                            
-                            if (hash === '#outreach') {
-                                navOffset = 60; // Desktop outreach
-                                if (window.innerWidth <= 1199) {
-                                    navOffset = -50; // Mobile outreach
-                                }
-                            } else {
-                                // Other sections including #contact
-                                if (window.innerWidth <= 1199) {
-                                    navOffset = 30; // Mobile/narrow - SAME as nav button click
-                                }
-                            }
-                            
-                            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
-                            
-                            window.scrollTo({
-                                top: targetPosition,
-                                behavior: 'smooth'
-                            });
-                        }
-                    };
+                    const hash = window.location.hash;
                     
-                    // First scroll after initial layout
-                    setTimeout(performHashScroll, 300);
-                    
-                    // Re-adjust after images and content fully loaded to prevent layout shift
+                    // After page fully loads, trigger the actual nav link click to ensure exact same behavior
                     window.addEventListener('load', () => {
-                        setTimeout(performHashScroll, 100);
+                        setTimeout(() => {
+                            // Find the nav link that matches this hash
+                            const navLink = document.querySelector('a[href="' + hash + '"]');
+                            if (navLink) {
+                                // Programmatically click the nav link to trigger exact same scroll behavior
+                                navLink.click();
+                            }
+                        }, 100);
                     }, { once: true });
                 }
                 

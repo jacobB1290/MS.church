@@ -1,31 +1,40 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.12
+## 🔢 CURRENT VERSION: v1.20.13
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
-### v1.20.12 - Fixed Layout Shift After Direct Link Scroll
-**Double-adjustment approach compensates for images loading after initial scroll**
+### v1.20.13 - Direct Links Now Trigger Nav Button Click
+**Programmatically clicks matching nav link after page loads for identical scroll behavior**
 
 **Changes Made:**
-1. **Extracted reusable scroll function**
-   - Created `performHashScroll()` to encapsulate all scroll logic
-   - Reusable function for both initial and post-load adjustments
-   - Same offset calculation logic used consistently
+1. **Simplified hash handling approach**
+   - Removed complex dual-scroll adjustment logic
+   - Instead, find the nav link matching the hash (e.g., `a[href="#contact"]`)
+   - Programmatically click it after page load
+   - This ensures EXACT same behavior as manually clicking the button
 
-2. **Initial scroll on page load**
-   - First call after 300ms (allows initial layout to stabilize)
-   - Scrolls to calculated position based on hash
-   - Uses standard offsets (30px mobile, 45px desktop)
+2. **Why this works better**
+   - Nav link click handler has all the precise offset logic
+   - No need to duplicate or maintain offset calculations
+   - Handles layout shifts naturally since it runs after full page load
+   - Single source of truth for scroll positioning
 
-3. **Re-adjust after all content loads**
-   - Added window 'load' event listener (fires after images/CSS/all resources)
-   - Second scroll adjustment after 100ms (compensates for layout shift)
-   - Uses `{ once: true }` to prevent memory leaks
-   - Corrects position drift caused by images loading
+3. **Timing**
+   - Wait for window 'load' event (all images/resources loaded)
+   - Then wait 100ms more for stable layout
+   - Then trigger nav link click
+   - Results in perfect positioning every time
 
-**Root Cause:** Direct links scrolled correctly initially but then automatically scrolled down as images/content loaded, causing layout shift and position drift.
+**Root Cause:** Direct links and nav button clicks used separate scroll logic, making them drift apart.
 
-**Result:** `https://ms.church/#contact` now maintains exact same position as GIFTS button even after all images load.
+**Result:** `https://ms.church/#contact` now **literally** triggers the GIFTS button click, guaranteeing identical scroll position.
+
+---
+
+### v1.20.12 - Fixed Layout Shift After Direct Link Scroll (REPLACED)
+**Double-adjustment approach compensates for images loading after initial scroll**
+
+This approach didn't fully work - replaced with simpler nav button click simulation in v1.20.13.
 
 ---
 

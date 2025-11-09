@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.20.7 - Hidden version footer from UI -->
+    <!-- v1.20.8 - Completely removed version footer from HTML -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -3302,32 +3302,7 @@ app.get('/', (c) => {
                 }
             }
             
-            /* Version Number Footer */
-            .version-footer {
-                position: fixed;
-                bottom: 10px;
-                right: 10px;
-                background: rgba(0, 0, 0, 0.7);
-                color: white;
-                padding: 4px 10px;
-                border-radius: 12px;
-                font-size: 10px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                z-index: 9999;
-                pointer-events: none;
-                font-family: 'Inter', monospace;
-            }
-            
-            @media (max-width: 768px) {
-                .version-footer {
-                    bottom: 8px;
-                    right: 8px;
-                    font-size: 9px;
-                    padding: 3px 8px;
-                }
-            }
-            
+
             /* ========================================
                DESKTOP-ONLY STYLES (≥1200px)
                Complete independent desktop experience
@@ -4961,9 +4936,6 @@ app.get('/', (c) => {
             </div>
             <div class="gift-lightbox-arrow next" id="gift-lightbox-next">›</div>
         </div>
-        
-        <!-- Version Number Footer -->
-        <div class="version-footer">v1.20.7</div>
     </body>
     </html>
   `)

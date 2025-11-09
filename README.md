@@ -1,7 +1,84 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.19.0
+## 🔢 CURRENT VERSION: v1.20.6
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.20.6 - Fixed Border Radius Consistency Across All Breakpoints
+**Ensured 32px border-radius on all flyer elements across all screen sizes**
+
+**Changes Made:**
+1. **Fixed inconsistent border-radius across breakpoints**
+   - Base styles: 32px ✓ (already correct)
+   - 480px mobile breakpoint: 24px → 32px (fixed)
+   - Desktop 1200px+ breakpoint: 16px → 32px (fixed)
+   - All flyer elements now consistently use 32px across all screen sizes
+   - Matches `.hero-image` and `.schedule-item` throughout
+
+2. **Verified aspect ratios are 3:4**
+   - Base: `aspect-ratio: 3/4` ✓
+   - 960px breakpoint: `aspect-ratio: 3/4` ✓
+   - 480px breakpoint: `aspect-ratio: 3/4` ✓
+   - Desktop 1200px+: `aspect-ratio: 3/4` ✓
+   - All event flyers maintain correct 3:4 portrait ratio
+
+**Result:** Event flyers display with consistent 32px rounded corners and 3:4 aspect ratio across all devices and screen sizes.
+
+---
+
+### v1.20.5 - Consistent Border Radius Across Site
+**Reduced flyer border-radius from 48px to 32px to match other site elements**
+
+**Changes Made:**
+1. **Standardized border-radius to 32px**
+   - Changed `.event-flyer-wrapper` from `border-radius: 48px` to `32px`
+   - Changed `.flyer-image` from `border-radius: 48px` to `32px`
+   - Changed `.placeholder-flyer` from `border-radius: 48px` to `32px`
+   - Now matches `.hero-image`, `.schedule-item`, and other site elements
+   - Consistent visual language across entire website
+
+**Result:** Event flyers now have the same rounded corner radius (32px) as hero images and schedule cards for a cohesive design.
+
+---
+
+### v1.20.4 - Fixed Rounded Corners Display
+**Removed transform scale, using width/height 101% to preserve rounded corners properly**
+
+**Changes Made:**
+1. **Fixed rounded corner visibility**
+   - Removed `transform: scale(1.01)` which was clipping rounded corners
+   - Changed to `width: 101%; height: 101%` with `margin: -0.5%` for centering
+   - Added `border-radius: 32px` directly to `.event-flyer-wrapper`
+   - Maintains `overflow: hidden` to clip slight oversizing
+   - Rounded corners now display correctly like placeholder
+   - All flyer content remains fully visible
+
+---
+
+### v1.20.3 - Balanced Image Scaling for Perfect Display
+**Reduced scaling to 1.01 to preserve rounded corners and full flyer content visibility**
+
+**Changes Made:**
+1. **Optimized image scaling for balance**
+   - Reduced `transform: scale(1.02)` to `scale(1.01)` (1% zoom instead of 2%)
+   - Maintains `overflow: hidden` on `.event-flyer-wrapper`
+   - Eliminates most side bars while preserving full flyer content
+   - Rounded corners (48px) remain visible and intact
+   - All important content (shoes, text, graphics) fully visible
+
+2. **Maintained 3:4 aspect ratio**
+   - Event flyer images display in portrait format (3:4 aspect ratio)
+   - Container and image aspect ratios match perfectly
+   - Consistent across all breakpoints: base, mobile (480px, 375px), and desktop (1200px+)
+
+3. **Kept buttons hidden for events 1 and 3**
+   - Event 1 (Friendsgiving): Button hidden
+   - Event 2 (Christmas Gifts): Button still visible ("REQUEST ITEMS")
+   - Event 3 (Christmas Candlelight): Button hidden
+   - Cleaner card appearance for events that don't need CTAs
+
+**Result:** Flyers display in full portrait format with minimal side bars, rounded corners visible, and all content (including shoes at bottom) fully visible. Only Event 2 shows the action button.
+
+---
 
 ### v1.19.0 - Fixed Mobile Outreach Event Flyer Cutoff
 **Resolved flyer images being cut off at edges on mobile devices**

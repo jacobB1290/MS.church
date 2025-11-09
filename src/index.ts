@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.19.0 - Fixed mobile outreach flyer cutoff: removed horizontal padding from event-flyer-wrapper, centered with auto margins -->
+    <!-- v1.20.6 - Fixed border-radius to 32px consistently across all breakpoints -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -693,7 +693,7 @@ app.get('/', (c) => {
                 gap: 10px;
             }
             
-            /* Image Wrapper - Fixed 3:4 portrait aspect ratio, increased by 15% */
+            /* Image Wrapper - Fixed 3:4 portrait aspect ratio for seamless display */
             .event-flyer-wrapper {
                 position: relative;
                 width: 100%;
@@ -706,16 +706,19 @@ app.get('/', (c) => {
                 margin: 0 auto 24px;  /* Center with auto margins, removed horizontal padding */
                 padding: 0;  /* Removed horizontal padding to prevent flyer cutoff */
                 box-sizing: border-box;
+                border-radius: 32px; /* Match other site elements (hero, schedule items) */
+                overflow: hidden; /* Clip any overflow while preserving rounded corners */
             }
             
-            /* Image styling - Enforces 3:4 aspect ratio, extra rounded corners to match pill */
+            /* Image styling - Enforces 3:4 aspect ratio, rounded corners match site elements */
             .flyer-image {
-                width: 100%;
-                height: 100%;
+                width: 101%;
+                height: 101%;
                 object-fit: cover;
                 object-position: center;
-                border-radius: 48px;
+                border-radius: 32px;
                 box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+                margin: -0.5%; /* Center the slightly oversized image */
             }
             
             .placeholder-flyer {
@@ -730,7 +733,7 @@ app.get('/', (c) => {
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                border-radius: 48px;
+                border-radius: 32px;
                 box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             }
             
@@ -758,6 +761,12 @@ app.get('/', (c) => {
                 padding: 0 24px;
                 margin-bottom: 24px;
                 z-index: 100;
+            }
+            
+            /* Hide buttons for events 1 and 3, show only for event 2 */
+            .event-slide[data-event="1"] .event-cta,
+            .event-slide[data-event="3"] .event-cta {
+                display: none;
             }
             
             .event-cta .btn {
@@ -2199,15 +2208,11 @@ app.get('/', (c) => {
                 }
                 
                 .flyer-image {
-                    border-radius: 48px;
+                    border-radius: 32px;
                 }
                 
                 .placeholder-flyer {
-                    border-radius: 48px;
-                }
-                
-                .placeholder-flyer {
-                    border-radius: 20px;
+                    border-radius: 32px;
                 }
                 
                 .event-cta {
@@ -2397,13 +2402,13 @@ app.get('/', (c) => {
                 }
                 
                 .flyer-image {
-                    border-radius: clamp(40px, 9vw, 48px);
+                    border-radius: 32px;
                     max-height: 68vh;
                     object-fit: contain;
                 }
                 
                 .placeholder-flyer {
-                    border-radius: clamp(40px, 9vw, 48px);
+                    border-radius: 32px;
                 }
                 
                 .event-cta {
@@ -2741,13 +2746,13 @@ app.get('/', (c) => {
                 }
 
                 .flyer-image {
-                    border-radius: 24px;
+                    border-radius: 32px;
                 }
 
                 .placeholder-flyer {
                     font-size: 17px;
                     letter-spacing: 1.5px;
-                    border-radius: 24px;
+                    border-radius: 32px;
                 }
 
                 .watch {
@@ -3108,11 +3113,11 @@ app.get('/', (c) => {
                 }
                 
                 .flyer-image {
-                    border-radius: 48px;
+                    border-radius: 32px;
                 }
                 
                 .placeholder-flyer {
-                    border-radius: 48px;
+                    border-radius: 32px;
                 }
                 
                 .event-cta {
@@ -3578,7 +3583,7 @@ app.get('/', (c) => {
                 
                 .flyer-image,
                 .placeholder-flyer {
-                    border-radius: 16px;
+                    border-radius: 32px;
                     max-height: none;
                     height: 100%;
                     width: 100%;
@@ -4958,7 +4963,7 @@ app.get('/', (c) => {
         </div>
         
         <!-- Version Number Footer -->
-        <div class="version-footer">v1.19.0</div>
+        <div class="version-footer">v1.20.6</div>
     </body>
     </html>
   `)

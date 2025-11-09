@@ -5033,9 +5033,10 @@ app.get('/', (c) => {
                         const youtubeEmbed = document.querySelector('.youtube-embed');
                         if (youtubeEmbed) {
                             const currentSrc = youtubeEmbed.getAttribute('src');
-                            // Add autoplay parameter if not already present
+                            // Add autoplay and mute parameters for browser compatibility
+                            // Chrome/Safari require mute=1 for autoplay to work
                             if (currentSrc && !currentSrc.includes('autoplay=1')) {
-                                const newSrc = currentSrc + '&autoplay=1';
+                                const newSrc = currentSrc + '&autoplay=1&mute=1';
                                 youtubeEmbed.setAttribute('src', newSrc);
                             }
                         }

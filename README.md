@@ -413,18 +413,198 @@ pm2 stop webapp
 ### File Structure
 ```
 webapp/
+├── api/
+│   └── index.ts           # Vercel serverless function entry point
 ├── src/
-│   └── index.tsx          # Main Hono application
+│   ├── index.tsx          # Cloudflare Pages version (primary development)
+│   └── index.ts           # Vercel version (synced copy with same content)
 ├── public/
 │   └── static/
 │       ├── friendsgiving-flyer.png
+│       ├── church-building.jpg
 │       └── style.css
-├── dist/                  # Build output
-├── ecosystem.config.cjs   # PM2 configuration
+├── dist/                  # Vite build output for Cloudflare
+├── ecosystem.config.cjs   # PM2 configuration for local dev
 ├── package.json
-├── vite.config.ts
-└── wrangler.jsonc        # Cloudflare configuration
+├── tsconfig.json          # TypeScript configuration
+├── vite.config.ts         # Vite build configuration (Cloudflare)
+├── vercel.json            # Vercel deployment configuration
+└── wrangler.jsonc         # Cloudflare Pages configuration
 ```
+
+## Dual-Platform Deployment Architecture
+
+### Overview
+This project deploys to **TWO platforms simultaneously** from a single codebase:
+- **Cloudflare Pages** (Development/Testing): Edge Workers runtime
+- **Vercel** (Production): Node.js serverless runtime
+
+### Why Two Files? (index.tsx vs index.ts)
+
+**The Challenge:**
+Different platforms require different runtime environments and build processes.
+
+**The Solution:**
+Maintain two versions of the main file with identical HTML/CSS/JavaScript but platform-specific imports.
+
+### File Purposes
+
+| File | Platform | Runtime | Purpose |
+|------|----------|---------|---------|
+| `src/index.tsx` | Cloudflare Pages | Cloudflare Workers (V8) | Primary development file |
+| `src/index.ts` | Vercel | Node.js | Synced copy for production |
+| `api/index.ts` | Vercel | Node.js | Serverless function wrapper |
+
+### How Each Platform Works
+
+#### Cloudflare Pages Build Flow
+```
+1. Vite build triggered
+   ↓
+2. src/index.tsx compiled by @hono/vite-build/cloudflare-pages
+   ↓
+3. Output: dist/_worker.js (Cloudflare Workers bundle)
+   ↓
+4. Deploy to Cloudflare Edge Network
+```
+
+#### Vercel Build Flow
+```
+1. npm install (includes typescript)
+   ↓
+2. TypeScript compiles src/index.ts → src/index.js
+   ↓
+3. api/index.ts imports '../src/index.js' (compiled output)
+   ↓
+4. api/index.ts wraps app with @hono/node-server/vercel adapter
+   ↓
+5. Deploy to Vercel as Node.js serverless function
+```
+
+### Critical Configuration Files
+
+#### api/index.ts (Vercel Entry Point)
+```typescript
+import { handle } from '@hono/node-server/vercel'
+import app from '../src/index.js'  // ✅ MUST import .js (compiled output)
+
+export default handle(app)
+```
+
+**⚠️ CRITICAL:** Must import `'../src/index.js'` (with `.js` extension)
+- NOT `'../src/index.ts'` ❌
+- NOT `'../src/index'` ❌
+- Vercel compiles TypeScript first, then imports the `.js` output
+
+#### vercel.json
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api"
+    }
+  ]
+}
+```
+
+#### package.json (Key Scripts)
+```json
+{
+  "scripts": {
+    "build": "vite build",           // For Cloudflare
+    "vercel-build": "vite build"     // For Vercel (same build)
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.6",  // Required for Vercel
+    "hono": "^4.10.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.x.x",          // ✅ REQUIRED for Vercel compilation
+    "@types/node": "^20.x.x"         // Node.js type definitions
+  }
+}
+```
+
+### Syncing Process (CRITICAL FOR DEPLOYMENT)
+
+**When you make changes to features/UI:**
+
+1. **Edit Primary File**: Make all changes in `src/index.tsx`
+   ```bash
+   # This is your main development file
+   vim src/index.tsx
+   ```
+
+2. **Sync to Vercel File**: Copy entire content to `src/index.ts`
+   ```bash
+   cp src/index.tsx src/index.ts
+   ```
+
+3. **Verify Both Files**: Ensure they're identical
+   ```bash
+   diff src/index.tsx src/index.ts
+   # Should output nothing (files are identical)
+   ```
+
+4. **Commit Both Files**:
+   ```bash
+   git add src/index.tsx src/index.ts
+   git commit -m "Feature: [description] (synced both files for Cloudflare + Vercel)"
+   ```
+
+5. **Push to GitHub**:
+   ```bash
+   git push origin main
+   ```
+
+**Result:**
+- Cloudflare Pages deploys automatically from `index.tsx`
+- Vercel deploys automatically from `index.ts`
+- Both platforms serve identical content ✅
+
+### Important Notes
+
+**❗ ALWAYS SYNC BOTH FILES:**
+- If you only update `index.tsx`, Vercel will deploy old code
+- If you only update `index.ts`, Cloudflare will deploy old code
+- Both must be updated together for consistent deployments
+
+**✅ Files Are Identical:**
+- Same HTML structure
+- Same CSS styles
+- Same JavaScript logic
+- Same imports (both use `'hono/cloudflare-workers'`)
+- The difference is handled at the build/deployment level
+
+**🔄 Automatic Deployments:**
+- Push to GitHub `main` branch triggers both platforms
+- Cloudflare Pages: Builds and deploys automatically
+- Vercel: Builds and deploys automatically
+- Both should complete within 2-5 minutes
+
+### Troubleshooting Deployment Issues
+
+**Vercel Build Fails:**
+1. Check `typescript` is in `devDependencies`
+2. Verify `api/index.ts` imports `'../src/index.js'` (with `.js`)
+3. Ensure `src/index.ts` is synced with `src/index.tsx`
+4. Check Vercel build logs for specific errors
+
+**Cloudflare Build Fails:**
+1. Check `@hono/vite-build` is installed
+2. Verify `vite.config.ts` has correct entry point
+3. Ensure `src/index.tsx` has no syntax errors
+
+**500 Error on Vercel:**
+- Usually means `src/index.ts` is out of sync
+- Copy `index.tsx` to `index.ts` and redeploy
+
+**Mismatched Features:**
+- One platform has features the other doesn't
+- Files weren't synced - copy and commit both files
 
 ## Design Enhancements Made
 

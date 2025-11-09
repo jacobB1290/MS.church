@@ -3801,9 +3801,7 @@ app.get('/', (c) => {
                                                 <div class="event-dot" data-dot="2"></div>
                                                 <div class="event-dot" data-dot="3"></div>
                                             </div>
-                                            <div class="placeholder-flyer">
-                                                Flyer Coming Soon
-                                            </div>
+                                            <img src="https://page.gensparksite.com/v1/base64_upload/f9499299e0229e4c70835962b6b6d11e" alt="Project Christmas Cheer - A Gift for you and your loved ones" class="flyer-image" />
                                         </div>
                                         <div class="event-cta">
                                             <a class="btn btn-primary" href="#contact">REQUEST ITEMS</a>

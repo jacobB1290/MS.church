@@ -4052,11 +4052,11 @@ app.get('/', (c) => {
                 
                 // Handle hash in URL on page load (e.g., ms.church/#contact)
                 // Prevent browser's default anchor scroll and apply our custom offset
-                if (window.location.hash) {
+                if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '') {
+                    const hash = window.location.hash;
+                    
                     // Scroll to top immediately to prevent browser's default scroll
                     window.scrollTo(0, 0);
-                    
-                    const hash = window.location.hash;
                     
                     // After page fully loads, trigger the actual nav link click to ensure exact same behavior
                     window.addEventListener('load', () => {

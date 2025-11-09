@@ -3819,9 +3819,7 @@ app.get('/', (c) => {
                                                 <div class="event-dot" data-dot="2"></div>
                                                 <div class="event-dot" data-dot="3"></div>
                                             </div>
-                                            <div class="placeholder-flyer">
-                                                Flyer Coming Soon
-                                            </div>
+                                            <img src="https://page.gensparksite.com/v1/base64_upload/eef229dd6db6c99d20bfafeb27252557" alt="Together in Song - A festive family Christmas event" class="flyer-image" />
                                         </div>
                                         <div class="event-cta">
                                             <a class="btn btn-primary" href="#contact">RESERVE YOUR SEAT</a>

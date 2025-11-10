@@ -25,36 +25,48 @@ app.get('/', (c) => {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         
-        <!-- Vercel Analytics (disabled with ?notrack=true parameter) -->
+        <!-- Vercel Analytics & Speed Insights (disabled with ?notrack=true parameter) -->
         <script>
             // Check if notrack parameter is present in URL
             const urlParams = new URLSearchParams(window.location.search);
             const noTrack = urlParams.get('notrack') === 'true';
             
             if (!noTrack) {
-                // Only load analytics if notrack is not set
+                // Load Analytics
                 window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+                const analyticsScript = document.createElement('script');
+                analyticsScript.defer = true;
+                analyticsScript.src = 'https://cdn.vercel-insights.com/v1/script.js';
+                document.head.appendChild(analyticsScript);
                 
-                // Dynamically load analytics script
-                const script = document.createElement('script');
-                script.defer = true;
-                script.src = 'https://cdn.vercel-insights.com/v1/script.js';
-                document.head.appendChild(script);
+                // Load Speed Insights
+                const speedInsightsScript = document.createElement('script');
+                speedInsightsScript.defer = true;
+                speedInsightsScript.src = 'https://cdn.vercel-insights.com/v1/speed-insights/script.js';
+                speedInsightsScript.onload = function() {
+                    if (window.si) {
+                        window.si('start');
+                    }
+                };
+                document.head.appendChild(speedInsightsScript);
             } else {
-                // Block analytics tracking
-                console.log('🚫 Analytics tracking disabled via ?notrack=true parameter');
+                // Block all tracking
+                console.log('🚫 Analytics & Speed Insights tracking disabled via ?notrack=true parameter');
                 
-                // Override analytics functions to prevent tracking
+                // Override analytics functions
                 window.va = function() { 
                     console.log('Analytics call blocked'); 
                 };
+                window.si = function() {
+                    console.log('Speed Insights call blocked');
+                };
                 
-                // Block Web Analytics beacon (if enabled)
+                // Block Web Analytics and Speed Insights beacons
                 if (window.navigator && window.navigator.sendBeacon) {
                     const originalSendBeacon = window.navigator.sendBeacon.bind(window.navigator);
                     window.navigator.sendBeacon = function(url, data) {
-                        if (url && (url.includes('vercel') || url.includes('analytics'))) {
-                            console.log('Blocked analytics beacon to:', url);
+                        if (url && (url.includes('vercel') || url.includes('analytics') || url.includes('speed-insights'))) {
+                            console.log('Blocked Vercel beacon to:', url);
                             return true;
                         }
                         return originalSendBeacon(url, data);
@@ -5339,36 +5351,48 @@ app.get('/form', (c) => {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;7&display=swap" rel="stylesheet">
         
-        <!-- Vercel Analytics (disabled with ?notrack=true parameter) -->
+        <!-- Vercel Analytics & Speed Insights (disabled with ?notrack=true parameter) -->
         <script>
             // Check if notrack parameter is present in URL
             const urlParams = new URLSearchParams(window.location.search);
             const noTrack = urlParams.get('notrack') === 'true';
             
             if (!noTrack) {
-                // Only load analytics if notrack is not set
+                // Load Analytics
                 window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+                const analyticsScript = document.createElement('script');
+                analyticsScript.defer = true;
+                analyticsScript.src = 'https://cdn.vercel-insights.com/v1/script.js';
+                document.head.appendChild(analyticsScript);
                 
-                // Dynamically load analytics script
-                const script = document.createElement('script');
-                script.defer = true;
-                script.src = 'https://cdn.vercel-insights.com/v1/script.js';
-                document.head.appendChild(script);
+                // Load Speed Insights
+                const speedInsightsScript = document.createElement('script');
+                speedInsightsScript.defer = true;
+                speedInsightsScript.src = 'https://cdn.vercel-insights.com/v1/speed-insights/script.js';
+                speedInsightsScript.onload = function() {
+                    if (window.si) {
+                        window.si('start');
+                    }
+                };
+                document.head.appendChild(speedInsightsScript);
             } else {
-                // Block analytics tracking
-                console.log('🚫 Analytics tracking disabled via ?notrack=true parameter');
+                // Block all tracking
+                console.log('🚫 Analytics & Speed Insights tracking disabled via ?notrack=true parameter');
                 
-                // Override analytics functions to prevent tracking
+                // Override analytics functions
                 window.va = function() { 
                     console.log('Analytics call blocked'); 
                 };
+                window.si = function() {
+                    console.log('Speed Insights call blocked');
+                };
                 
-                // Block Web Analytics beacon (if enabled)
+                // Block Web Analytics and Speed Insights beacons
                 if (window.navigator && window.navigator.sendBeacon) {
                     const originalSendBeacon = window.navigator.sendBeacon.bind(window.navigator);
                     window.navigator.sendBeacon = function(url, data) {
-                        if (url && (url.includes('vercel') || url.includes('analytics'))) {
-                            console.log('Blocked analytics beacon to:', url);
+                        if (url && (url.includes('vercel') || url.includes('analytics') || url.includes('speed-insights'))) {
+                            console.log('Blocked Vercel beacon to:', url);
                             return true;
                         }
                         return originalSendBeacon(url, data);

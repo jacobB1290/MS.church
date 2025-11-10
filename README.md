@@ -1,7 +1,35 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.16
+## 🔢 CURRENT VERSION: v1.20.17
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.20.17 - Speed Insights Integration
+**Added Vercel Speed Insights to track performance metrics alongside analytics**
+
+**Changes Made:**
+1. **Installed @vercel/speed-insights package**
+   - Tracks Core Web Vitals (LCP, FID, CLS, FCP, TTFB)
+   - Monitors real user performance metrics
+   - Provides insights into page load speeds
+   
+2. **Integrated with existing notrack parameter**
+   - Speed Insights respects `?notrack=true` parameter
+   - Both Analytics and Speed Insights disabled when testing
+   - Single parameter controls all Vercel tracking
+   
+3. **Enhanced beacon blocking**
+   - Blocks both analytics and speed-insights beacons
+   - Console logs show which tracking is blocked
+   - Complete tracking prevention when `?notrack=true` is used
+   
+**Features:**
+- **Analytics**: Page views, visitor data, referrers
+- **Speed Insights**: Performance metrics, Core Web Vitals
+- **Testing Mode**: Add `?notrack=true` to disable both
+
+**Result:** Comprehensive tracking of both visitor behavior and site performance, with easy disable option for testing.
+
+---
 
 ### v1.20.16 - Analytics Tracking Disable Parameter
 **Added URL parameter to disable analytics tracking for testing without skewing statistics**

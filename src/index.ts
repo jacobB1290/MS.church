@@ -3518,45 +3518,26 @@ app.get('/', (c) => {
                     align-self: stretch;
                 }
                 
-                /* Service info and buttons container */
+                /* Buttons container aligned to bottom */
                 .hero-body .service-info-buttons {
                     grid-area: info-buttons;
                     display: flex;
                     flex-direction: column;
-                    gap: 24px;
                     align-self: end;  /* Align with bottom of image */
-                    text-align: center;
                     align-items: center;
                 }
                 
-                /* Service info box styling */
-                .service-info {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-                    padding: 20px 28px;
-                    background: rgba(255, 255, 255, 0.7);
-                    border-radius: 20px;
-                    backdrop-filter: blur(10px);
-                    border: 1px solid rgba(255, 255, 255, 0.5);
-                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-                }
-                
-                .service-info .service-time {
-                    font-size: 18px;
-                    font-weight: 600;
-                    color: #1a1a2e;
-                    letter-spacing: 0.5px;
-                }
-                
-                .service-info .service-address {
-                    font-size: 15px;
-                    color: rgba(26, 26, 46, 0.7);
+                /* Hero address styling */
+                .hero-address {
+                    font-style: normal;
+                    font-size: 16px;
+                    color: rgba(26, 26, 46, 0.6);
                     font-weight: 500;
+                    margin-top: 8px;
                 }
                 
                 .hero-body .cta-group {
-                    grid-area: info-buttons;  /* Part of info-buttons area */
+                    /* Nested inside service-info-buttons */
                 }
                 
                 .hero-content p {
@@ -3880,16 +3861,13 @@ app.get('/', (c) => {
                     <h1 class="hero-title">Mending the Broken.</h1>
                     <div class="hero-body">
                         <div class="hero-content">
-                            <p>Join us every Sunday as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
+                            <p>Join us every Sunday at 9:00 AM as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
+                            <address class="hero-address">3080 N Wildwood St · Boise, Idaho</address>
                         </div>
                         <div class="hero-image">
                             <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building">
                         </div>
                         <div class="service-info-buttons">
-                            <div class="service-info">
-                                <div class="service-time">🙏 Join us Sundays at 9:00 AM</div>
-                                <div class="service-address">3080 N Wildwood St · Boise, Idaho</div>
-                            </div>
                             <div class="cta-group">
                                 <a class="btn btn-primary" href="#contact">From the radio? - Press here</a>
                                 <a class="btn btn-secondary" href="#watch">Watch live stream</a>

@@ -4,7 +4,7 @@
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ### v1.20.18 - Desktop Hero Layout Redesign
-**Centered hero text with service info above buttons aligned to image bottom (desktop only)**
+**Centered hero text with integrated service info and buttons aligned to image bottom (desktop only)**
 
 **Changes Made:**
 1. **Centered hero text and content (desktop only)**
@@ -13,31 +13,32 @@
    - Better visual hierarchy with centered alignment
    - Mobile layouts completely unchanged
    
-2. **Added service information box**
-   - New frosted glass info card above buttons
-   - Shows "🙏 Join us Sundays at 9:00 AM"
-   - Displays church address: "3080 N Wildwood St · Boise, Idaho"
-   - Elegant glassmorphism styling consistent with site design
+2. **Integrated service time and address into copy**
+   - Updated paragraph: "Join us every Sunday at 9:00 AM..."
+   - Address displayed below paragraph: "3080 N Wildwood St · Boise, Idaho"
+   - Clean, minimal styling for address line
+   - Natural flow without separate info boxes
    
 3. **Repositioned buttons to align with image bottom**
    - Buttons now at same vertical position as bottom of hero image
    - Creates visual balance and professional layout
-   - Service info sits naturally above CTAs
    - Better use of vertical space
+   - Centered button group
    
 4. **Enhanced grid structure**
-   - Three-row grid: content, spacer, info+buttons
-   - Service info and buttons grouped together
+   - Three-row grid: content, spacer, buttons
+   - Content includes paragraph + address
    - Image spans all rows for clean alignment
    - Follows UX best practices for visual hierarchy
    
 **UX Improvements:**
-- Clear call-to-action with service time and location prominent
+- Service time naturally integrated into welcoming message
+- Address clearly visible but not overpowering
 - Centered text creates formal, welcoming impression
 - Buttons aligned with image create visual anchors
-- Information hierarchy: headline → description → service details → actions
+- Information hierarchy: headline → description with time → address → actions
 
-**Result:** More polished, professional desktop hero with better information hierarchy and visual balance. Mobile experience unchanged.
+**Result:** More polished, professional desktop hero with natural information flow and visual balance. Mobile experience unchanged.
 
 ---
 

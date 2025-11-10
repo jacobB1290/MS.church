@@ -2671,10 +2671,12 @@ app.get('/', (c) => {
                     flex-direction: column;
                     gap: 12px;
                     align-items: center;
+                    justify-content: center;
                 }
                 
                 .hero-body .cta-group .btn {
-                    width: 100%;
+                    width: auto;
+                    min-width: 280px;  /* Ensure buttons have sufficient width */
                 }
 
                 .hero .eyebrow {
@@ -2701,10 +2703,12 @@ app.get('/', (c) => {
                     flex-direction: column;
                     gap: 12px;
                     width: 100%;
+                    align-items: center;
                 }
 
                 .btn {
-                    width: 100%;
+                    width: auto;
+                    min-width: 280px;
                     padding: 16px 32px;
                     font-size: 14px;
                     letter-spacing: 2px;

@@ -3791,7 +3791,7 @@ app.get('/', (c) => {
                             <p>Join us every Sunday as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
                         </div>
                         <div class="hero-image">
-                            <img src="https://page.gensparksite.com/v1/base64_upload/c7ac4d880c17976d0bef5eaab073245a" alt="Morning Star Christian Church building">
+                            <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building">
                         </div>
                         <div class="cta-group">
                             <a class="btn btn-primary" href="#contact">From the radio? - Press here</a>

@@ -3950,7 +3950,7 @@ app.get('/', (c) => {
                                         </div>
                                     </div>
                                 </div>
-                                <p class="live-verse">"He heals the brokenhearted and binds up their wounds."<small>Psalm 147:3</small></p>
+                                <p class="live-verse">"Consequently, faith comes from hearing the message, and the message is heard through the word about Christ."<small>Romans 10:17</small></p>
                                 
                                 <!-- Main Video Embed - Latest Stream -->
                                 <div class="video-embed-wrapper">

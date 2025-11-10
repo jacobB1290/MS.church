@@ -2637,6 +2637,9 @@ app.get('/', (c) => {
                     display: flex;
                     flex-direction: column;
                     gap: 24px;
+                    width: 100%;
+                    margin: 0;
+                    padding: 0;
                 }
                 
                 .hero-content {
@@ -2665,18 +2668,28 @@ app.get('/', (c) => {
                     object-position: center;
                 }
                 
+                .service-info-buttons {
+                    width: 100%;
+                    margin: 0;
+                    padding: 0;
+                }
+                
                 .hero-body .cta-group {
-                    margin-top: 4px;
+                    margin: 4px 0 0 0 !important;
+                    padding: 0 !important;
                     display: flex;
                     flex-direction: column;
                     gap: 12px;
-                    align-items: stretch;  /* Stretch to fill container */
+                    align-items: stretch;
                     justify-content: center;
+                    width: 100%;
                 }
                 
                 .hero-body .cta-group .btn {
-                    width: 100% !important;  /* Full width to match image */
-                    padding: 16px 32px;
+                    width: 100% !important;
+                    margin: 0 !important;
+                    padding: 16px 32px !important;
+                    box-sizing: border-box;
                 }
 
                 .hero .eyebrow {

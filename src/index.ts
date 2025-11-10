@@ -3467,47 +3467,50 @@ app.get('/', (c) => {
                     margin-bottom: 120px;
                 }
                 
-                /* Desktop Hero Section - TWO COLUMN GRID */
+                /* Desktop Hero Section - TWO COLUMN GRID WITH CENTERED TEXT */
                 .hero {
                     display: flex;
                     flex-direction: column;
-                    gap: clamp(8px, 1vw, 12px);  /* Much tighter gap */
-                    padding: clamp(10px, 1.5vw, 15px) 0 clamp(50px, 6vw, 70px);  /* Very minimal top padding */
+                    gap: clamp(8px, 1vw, 12px);
+                    padding: clamp(10px, 1.5vw, 15px) 0 clamp(50px, 6vw, 70px);
                     max-width: 100%;
                     margin: 0;
                     min-height: auto;
-                    overflow: visible;  /* Allow descenders to show */
+                    overflow: visible;
                 }
                 
                 .hero h1 {
-                    max-width: clamp(1100px, 90vw, 1300px);  /* Match hero-body max-width */
+                    max-width: clamp(1100px, 90vw, 1300px);
                     margin: 0 auto;
                     width: 100%;
-                    padding: 0 clamp(16px, 3vw, 32px);  /* Responsive side padding */
-                    overflow: visible;  /* Allow descenders like g to show */
+                    padding: 0 clamp(16px, 3vw, 32px);
+                    overflow: visible;
                 }
                 
                 .hero-body {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
-                    grid-template-rows: auto auto;
+                    grid-template-rows: auto 1fr auto;
                     grid-template-areas: 
                         "content image"
-                        "buttons image";
-                    max-width: clamp(1100px, 90vw, 1300px);  /* Responsive max-width */
+                        "spacer image"
+                        "info-buttons image";
+                    max-width: clamp(1100px, 90vw, 1300px);
                     margin: 0 auto;
-                    column-gap: clamp(40px, 5vw, 70px);  /* Responsive gap */
-                    row-gap: clamp(16px, 2vw, 24px);  /* Responsive gap */
+                    column-gap: clamp(40px, 5vw, 70px);
+                    row-gap: 0;
                     align-items: start;
                     width: 100%;
                 }
                 
                 .hero-content {
                     grid-area: content;
-                    max-width: 100%;  /* Let grid control width */
+                    max-width: 100%;
                     display: flex;
                     flex-direction: column;
-                    gap: clamp(16px, 2vw, 24px);  /* Responsive gap */
+                    gap: clamp(16px, 2vw, 24px);
+                    text-align: center;  /* Center all text */
+                    align-items: center;  /* Center child elements */
                 }
                 
                 .hero-image {
@@ -3515,27 +3518,65 @@ app.get('/', (c) => {
                     align-self: stretch;
                 }
                 
+                /* Service info and buttons container */
+                .hero-body .service-info-buttons {
+                    grid-area: info-buttons;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 24px;
+                    align-self: end;  /* Align with bottom of image */
+                    text-align: center;
+                    align-items: center;
+                }
+                
+                /* Service info box styling */
+                .service-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    padding: 20px 28px;
+                    background: rgba(255, 255, 255, 0.7);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+                }
+                
+                .service-info .service-time {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #1a1a2e;
+                    letter-spacing: 0.5px;
+                }
+                
+                .service-info .service-address {
+                    font-size: 15px;
+                    color: rgba(26, 26, 46, 0.7);
+                    font-weight: 500;
+                }
+                
                 .hero-body .cta-group {
-                    grid-area: buttons;
+                    grid-area: info-buttons;  /* Part of info-buttons area */
                 }
                 
                 .hero-content p {
-                    text-align: left;
+                    text-align: center;  /* Center paragraph text */
                     margin: 0;
+                    max-width: 90%;  /* Slightly constrain width for readability */
                 }
                 
                 .hero h1 {
-                    font-size: clamp(64px, 7vw, 110px);  /* Much larger title */
-                    line-height: 1.15;  /* Slightly more breathing room for descenders */
-                    letter-spacing: -0.02em;  /* Slight tightening for large text */
-                    text-align: left;
-                    margin: 0 0 clamp(12px, 1.5vw, 18px) 0;  /* Tighter bottom margin */
-                    overflow: visible;  /* Ensure letters don't get cut off */
-                    padding-bottom: 4px;  /* Extra space for descenders like g */
+                    font-size: clamp(64px, 7vw, 110px);
+                    line-height: 1.15;
+                    letter-spacing: -0.02em;
+                    text-align: center;  /* Center heading */
+                    margin: 0 0 clamp(12px, 1.5vw, 18px) 0;
+                    overflow: visible;
+                    padding-bottom: 4px;
                 }
                 
                 .hero p {
-                    font-size: clamp(20px, 1.8vw, 24px);  /* Larger, responsive copy */
+                    font-size: clamp(20px, 1.8vw, 24px);
                     line-height: 1.6;
                     max-width: 100%;
                 }
@@ -3543,10 +3584,10 @@ app.get('/', (c) => {
                 .hero-image {
                     position: relative;
                     width: 100%;
-                    min-height: clamp(500px, 50vh, 650px);  /* Larger, responsive height */
+                    min-height: clamp(500px, 50vh, 650px);
                     max-height: clamp(600px, 60vh, 700px);
                     height: clamp(550px, 55vh, 650px);
-                    border-radius: clamp(20px, 2vw, 28px);  /* Responsive border radius */
+                    border-radius: clamp(20px, 2vw, 28px);
                     overflow: hidden;
                     box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
                 }
@@ -3560,9 +3601,9 @@ app.get('/', (c) => {
                 
                 .hero-body .cta-group {
                     flex-direction: row;
-                    justify-content: flex-start;
+                    justify-content: center;  /* Center buttons */
                     align-items: center;
-                    width: auto;
+                    width: 100%;
                     margin-top: 0;
                 }
                 
@@ -3844,9 +3885,15 @@ app.get('/', (c) => {
                         <div class="hero-image">
                             <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building">
                         </div>
-                        <div class="cta-group">
-                            <a class="btn btn-primary" href="#contact">From the radio? - Press here</a>
-                            <a class="btn btn-secondary" href="#watch">Watch live stream</a>
+                        <div class="service-info-buttons">
+                            <div class="service-info">
+                                <div class="service-time">🙏 Join us Sundays at 9:00 AM</div>
+                                <div class="service-address">3080 N Wildwood St · Boise, Idaho</div>
+                            </div>
+                            <div class="cta-group">
+                                <a class="btn btn-primary" href="#contact">From the radio? - Press here</a>
+                                <a class="btn btn-secondary" href="#watch">Watch live stream</a>
+                            </div>
                         </div>
                     </div>
                 </section>

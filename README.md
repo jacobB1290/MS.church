@@ -1,7 +1,45 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.17
+## 🔢 CURRENT VERSION: v1.20.18
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.20.18 - Desktop Hero Layout Redesign
+**Centered hero text with service info above buttons aligned to image bottom (desktop only)**
+
+**Changes Made:**
+1. **Centered hero text and content (desktop only)**
+   - H1 "Mending the Broken" now centered
+   - Paragraph text centered with constrained width for readability
+   - Better visual hierarchy with centered alignment
+   - Mobile layouts completely unchanged
+   
+2. **Added service information box**
+   - New frosted glass info card above buttons
+   - Shows "🙏 Join us Sundays at 9:00 AM"
+   - Displays church address: "3080 N Wildwood St · Boise, Idaho"
+   - Elegant glassmorphism styling consistent with site design
+   
+3. **Repositioned buttons to align with image bottom**
+   - Buttons now at same vertical position as bottom of hero image
+   - Creates visual balance and professional layout
+   - Service info sits naturally above CTAs
+   - Better use of vertical space
+   
+4. **Enhanced grid structure**
+   - Three-row grid: content, spacer, info+buttons
+   - Service info and buttons grouped together
+   - Image spans all rows for clean alignment
+   - Follows UX best practices for visual hierarchy
+   
+**UX Improvements:**
+- Clear call-to-action with service time and location prominent
+- Centered text creates formal, welcoming impression
+- Buttons aligned with image create visual anchors
+- Information hierarchy: headline → description → service details → actions
+
+**Result:** More polished, professional desktop hero with better information hierarchy and visual balance. Mobile experience unchanged.
+
+---
 
 ### v1.20.17 - Speed Insights Integration
 **Added Vercel Speed Insights to track performance metrics alongside analytics**

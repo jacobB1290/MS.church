@@ -439,6 +439,80 @@ app.get('/', (c) => {
                 margin-bottom: 48px;
                 font-weight: 600;
             }
+            
+            /* Address Dropdown Menu */
+            .address-dropdown-wrapper {
+                position: relative;
+                display: inline-block;
+            }
+            
+            .address-trigger {
+                cursor: pointer;
+                color: inherit;
+                text-decoration: underline;
+                text-decoration-color: rgba(212, 165, 116, 0.5);
+                text-underline-offset: 4px;
+                transition: text-decoration-color 0.3s ease;
+                background: none;
+                border: none;
+                font: inherit;
+                padding: 0;
+                letter-spacing: inherit;
+                text-transform: inherit;
+            }
+            
+            .address-trigger:hover {
+                text-decoration-color: rgba(212, 165, 116, 0.8);
+            }
+            
+            .address-dropdown {
+                position: absolute;
+                top: calc(100% + 8px);
+                left: 50%;
+                transform: translateX(-50%);
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 
+                            0 2px 8px rgba(0, 0, 0, 0.1);
+                padding: 8px;
+                min-width: 200px;
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateX(-50%) translateY(-8px);
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .address-dropdown.active {
+                opacity: 1;
+                visibility: visible;
+                transform: translateX(-50%) translateY(0);
+            }
+            
+            .address-dropdown-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background 0.2s ease;
+                text-decoration: none;
+                color: #1a1a2e;
+                font-size: 14px;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+                text-transform: none;
+            }
+            
+            .address-dropdown-item:hover {
+                background: rgba(212, 165, 116, 0.1);
+            }
+            
+            .address-dropdown-icon {
+                font-size: 18px;
+                flex-shrink: 0;
+            }
 
             /* Schedule Section */
             .section-card {
@@ -3716,7 +3790,25 @@ app.get('/', (c) => {
                 <section class="schedule" id="schedule" style="animation-delay: 0.2s">
                     <span class="section-eyebrow">Weekly Schedule</span>
                     <h2 class="section-heading">Three simple touchpoints to connect every week.</h2>
-                    <address><a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 4px; transition: text-decoration-color 0.3s ease;">3080 N Wildwood St · Boise, Idaho</a></address>
+                    <address>
+                        <div class="address-dropdown-wrapper">
+                            <button class="address-trigger" data-address="3080 N Wildwood St, Boise, Idaho">3080 N Wildwood St · Boise, Idaho</button>
+                            <div class="address-dropdown">
+                                <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
+                                    <span class="address-dropdown-icon">🍎</span>
+                                    <span>Apple Maps</span>
+                                </a>
+                                <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
+                                    <span class="address-dropdown-icon">🗺️</span>
+                                    <span>Google Maps</span>
+                                </a>
+                                <button class="address-dropdown-item copy-address" data-address="3080 N Wildwood St, Boise, Idaho">
+                                    <span class="address-dropdown-icon">📋</span>
+                                    <span>Copy Address</span>
+                                </button>
+                            </div>
+                        </div>
+                    </address>
                     <div class="section-card">
                         <div class="schedule-grid">
                             <article class="schedule-item">
@@ -3892,7 +3984,25 @@ app.get('/', (c) => {
                             <p style="margin: 0;">This is how we know what love is: Jesus Christ laid down his life for us. And we ought to lay down our lives for our brothers and sisters. If anyone has material possessions and sees a brother or sister in need but has no pity on them, how can the love of God be in that person? Dear children, let us not love with words or speech but with actions and in truth.</p>
                         </blockquote>
                         
-                        <address><a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 4px; transition: text-decoration-color 0.3s ease;">3080 N Wildwood St, Boise, Idaho</a></address>
+                        <address>
+                            <div class="address-dropdown-wrapper">
+                                <button class="address-trigger" data-address="3080 N Wildwood St, Boise, Idaho">3080 N Wildwood St, Boise, Idaho</button>
+                                <div class="address-dropdown">
+                                    <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
+                                        <span class="address-dropdown-icon">🍎</span>
+                                        <span>Apple Maps</span>
+                                    </a>
+                                    <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
+                                        <span class="address-dropdown-icon">🗺️</span>
+                                        <span>Google Maps</span>
+                                    </a>
+                                    <button class="address-dropdown-item copy-address" data-address="3080 N Wildwood St, Boise, Idaho">
+                                        <span class="address-dropdown-icon">📋</span>
+                                        <span>Copy Address</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </address>
                     </div>
                     <div class="jotform-container" id="gift-form">
                         <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
@@ -3911,7 +4021,25 @@ app.get('/', (c) => {
                                     </div>
                                     <div class="detail-item">
                                         <span class="detail-label">📍 Location:</span>
-                                        <span class="detail-value"><a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 4px; transition: text-decoration-color 0.3s ease;">3080 N Wildwood St, Boise, Idaho</a></span>
+                                        <span class="detail-value">
+                                            <div class="address-dropdown-wrapper" style="display: inline-block;">
+                                                <button class="address-trigger" data-address="3080 N Wildwood St, Boise, Idaho" style="font-size: 14px; letter-spacing: 0.5px;">3080 N Wildwood St, Boise, Idaho</button>
+                                                <div class="address-dropdown">
+                                                    <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
+                                                        <span class="address-dropdown-icon">🍎</span>
+                                                        <span>Apple Maps</span>
+                                                    </a>
+                                                    <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
+                                                        <span class="address-dropdown-icon">🗺️</span>
+                                                        <span>Google Maps</span>
+                                                    </a>
+                                                    <button class="address-dropdown-item copy-address" data-address="3080 N Wildwood St, Boise, Idaho">
+                                                        <span class="address-dropdown-icon">📋</span>
+                                                        <span>Copy Address</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </span>
                                     </div>
                                 </div>
                                 
@@ -4824,6 +4952,67 @@ app.get('/', (c) => {
                         document.body.removeChild(link);
                     });
                 }
+                
+                // Address Dropdown Functionality
+                const addressTriggers = document.querySelectorAll('.address-trigger');
+                const addressDropdowns = document.querySelectorAll('.address-dropdown');
+                
+                // Toggle dropdown on address click
+                addressTriggers.forEach((trigger, index) => {
+                    trigger.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const dropdown = addressDropdowns[index];
+                        const isActive = dropdown.classList.contains('active');
+                        
+                        // Close all dropdowns
+                        addressDropdowns.forEach(d => d.classList.remove('active'));
+                        
+                        // Toggle current dropdown
+                        if (!isActive) {
+                            dropdown.classList.add('active');
+                        }
+                    });
+                });
+                
+                // Copy address functionality
+                const copyButtons = document.querySelectorAll('.copy-address');
+                copyButtons.forEach(button => {
+                    button.addEventListener('click', async function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const address = this.getAttribute('data-address');
+                        
+                        try {
+                            await navigator.clipboard.writeText(address);
+                            const originalText = this.querySelector('span:last-child').textContent;
+                            this.querySelector('span:last-child').textContent = 'Copied!';
+                            
+                            setTimeout(() => {
+                                this.querySelector('span:last-child').textContent = originalText;
+                                // Close dropdown after copying
+                                this.closest('.address-dropdown').classList.remove('active');
+                            }, 1500);
+                        } catch (err) {
+                            console.error('Failed to copy address:', err);
+                        }
+                    });
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.address-dropdown-wrapper')) {
+                        addressDropdowns.forEach(d => d.classList.remove('active'));
+                    }
+                });
+                
+                // Close dropdown when clicking on Apple/Google Maps links
+                document.querySelectorAll('.address-dropdown-item[href]').forEach(link => {
+                    link.addEventListener('click', function() {
+                        setTimeout(() => {
+                            addressDropdowns.forEach(d => d.classList.remove('active'));
+                        }, 300);
+                    });
+                });
 
                 // Carousel functionality
                 const carouselStates = {

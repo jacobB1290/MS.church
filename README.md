@@ -1,7 +1,33 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.14
+## 🔢 CURRENT VERSION: v1.20.15
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.20.15 - Vercel Analytics Integration
+**Added Vercel Analytics to track page views and visitor behavior on production deployment**
+
+**Changes Made:**
+1. **Installed @vercel/analytics package**
+   - Added npm package for Vercel's analytics tracking
+   - Enables page view tracking and visitor analytics on Vercel deployment
+   
+2. **Integrated analytics script on all pages**
+   - Added Vercel Analytics script to main landing page (/)
+   - Added analytics to form/contact page (/form)
+   - Script loads asynchronously with `defer` attribute for optimal performance
+   
+3. **Dual-platform consideration**
+   - Analytics fully functional on Vercel production (https://ms-church.vercel.app)
+   - May have limited functionality on Cloudflare Pages development environment
+   - Primary tracking occurs on production where it matters most
+   
+4. **Updated both deployment files**
+   - Synced changes across src/index.tsx (Cloudflare) and src/index.ts (Vercel)
+   - Ensures consistent analytics tracking across both platforms
+   
+**Result:** Production website now tracks visitor analytics via Vercel Analytics dashboard. No impact on page performance due to deferred script loading.
+
+---
 
 ### v1.20.14 - Auto-Play Video During Sunday Service
 **YouTube video automatically plays when entering watch section during Sundays 9am-9:45am MT**

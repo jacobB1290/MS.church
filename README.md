@@ -1,7 +1,29 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.18
+## 🔢 CURRENT VERSION: v1.20.19
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.20.19 - Centered Mobile Hero Buttons
+**Mobile hero buttons now centered with auto-width instead of full-width**
+
+**Changes Made:**
+1. **Changed button width from 100% to auto**
+   - Buttons no longer stretch full width on mobile
+   - Added min-width of 280px for consistent sizing
+   - Maintains readability and touch-friendliness
+   
+2. **Enhanced centering**
+   - Added justify-content: center to cta-group
+   - Buttons visually centered in hero section
+   - Better visual balance on mobile devices
+   
+3. **Consistent across all mobile breakpoints**
+   - Updated both hero-specific and general button styles
+   - Ensures consistency across entire mobile experience
+   
+**Result:** Mobile hero buttons are now centered and properly sized instead of stretching edge-to-edge.
+
+---
 
 ### v1.20.18 - Desktop Hero Layout Redesign
 **Centered hero text with integrated service info and buttons aligned to image bottom (desktop only)**

@@ -3876,7 +3876,7 @@ app.get('/', (c) => {
                             This Christmas, Morning Star Christian Church is giving back to the incredible single moms and widows in our community who are working tirelessly to provide for their families.
                         </h3>
                         <p class="section-lead form-message">
-                            Based on the information you share in the <a href="#gift-form" style="color: #d4a574; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 3px; transition: all 0.3s ease; font-weight: 600;">form</a>, our team will handpick a special gift just for you and your family. You can look forward to a pair of shoes for the adults and something fun and useful for the kids, perfect for school and outdoor play. We'll wrap everything beautifully so it's ready to go right under your Christmas tree. Once you've submitted the <a href="#gift-form" style="color: #d4a574; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 3px; transition: all 0.3s ease; font-weight: 600;">form</a>, you'll receive a text message confirming your submission and sharing all the pickup details.
+                            Based on the information you share in the <a href="#gift-form" style="color: inherit; text-decoration: underline; text-underline-offset: 3px; transition: opacity 0.3s ease; font-weight: 700;">form</a>, our team will handpick a special gift just for you and your family. You can look forward to a pair of shoes for the adults and something fun and useful for the kids, perfect for school and outdoor play. We'll wrap everything beautifully so it's ready to go right under your Christmas tree. Once you've submitted the <a href="#gift-form" style="color: inherit; text-decoration: underline; text-underline-offset: 3px; transition: opacity 0.3s ease; font-weight: 700;">form</a>, you'll receive a text message confirming your submission and sharing all the pickup details.
                         </p>
                         
                         <!-- Image Gallery -->
@@ -4458,8 +4458,27 @@ app.get('/', (c) => {
                                 return;
                             }
                             
+                            // Special handling for gift form - less offset to keep form visible
+                            if (targetId === '#gift-form') {
+                                if (window.innerWidth <= 899) {
+                                    navOffset = 100; // Mobile - more offset to account for header
+                                } else {
+                                    navOffset = 150; // Desktop - keep form header visible
+                                }
+                                
+                                const elementRect = target.getBoundingClientRect();
+                                const absoluteElementTop = elementRect.top + window.pageYOffset;
+                                const targetPosition = absoluteElementTop - navOffset;
+                                
+                                window.scrollTo({
+                                    top: targetPosition,
+                                    behavior: 'smooth'
+                                });
+                                return;
+                            }
+                            
                             // Other sections - standard handling
-                            if (window.innerWidth <= 1199) {
+                            if (window.innerWidth <= 899) {
                                 navOffset = 30; // Mobile/narrow - adjusted for smaller nav
                             }
                             

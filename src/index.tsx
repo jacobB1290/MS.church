@@ -25,11 +25,25 @@ app.get('/', (c) => {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         
-        <!-- Vercel Analytics -->
+        <!-- Vercel Analytics (disabled with ?notrack=true parameter) -->
         <script>
-            window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+            // Check if notrack parameter is present in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const noTrack = urlParams.get('notrack') === 'true';
+            
+            if (!noTrack) {
+                // Only load analytics if notrack is not set
+                window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+                
+                // Dynamically load analytics script
+                const script = document.createElement('script');
+                script.defer = true;
+                script.src = 'https://cdn.vercel-insights.com/v1/script.js';
+                document.head.appendChild(script);
+            } else {
+                console.log('🚫 Analytics tracking disabled via ?notrack=true parameter');
+            }
         </script>
-        <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
         
         <style>
             :root {
@@ -5307,11 +5321,25 @@ app.get('/form', (c) => {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;7&display=swap" rel="stylesheet">
         
-        <!-- Vercel Analytics -->
+        <!-- Vercel Analytics (disabled with ?notrack=true parameter) -->
         <script>
-            window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+            // Check if notrack parameter is present in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const noTrack = urlParams.get('notrack') === 'true';
+            
+            if (!noTrack) {
+                // Only load analytics if notrack is not set
+                window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+                
+                // Dynamically load analytics script
+                const script = document.createElement('script');
+                script.defer = true;
+                script.src = 'https://cdn.vercel-insights.com/v1/script.js';
+                document.head.appendChild(script);
+            } else {
+                console.log('🚫 Analytics tracking disabled via ?notrack=true parameter');
+            }
         </script>
-        <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
         
         <style>
             * {

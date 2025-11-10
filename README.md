@@ -1,7 +1,35 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.15
+## 🔢 CURRENT VERSION: v1.20.16
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.20.16 - Analytics Tracking Disable Parameter
+**Added URL parameter to disable analytics tracking for testing without skewing statistics**
+
+**Changes Made:**
+1. **Implemented ?notrack=true parameter**
+   - Visit `https://ms.church/?notrack=true` to disable analytics tracking
+   - Also works on form page: `https://ms.church/form?notrack=true`
+   - Perfect for testing changes without affecting visitor statistics
+   
+2. **Smart conditional loading**
+   - Analytics script only loads when `notrack` parameter is NOT present
+   - JavaScript checks URL parameters before initializing tracking
+   - Dynamically loads analytics script only when needed
+   
+3. **Developer-friendly console message**
+   - When tracking is disabled, logs: "🚫 Analytics tracking disabled via ?notrack=true parameter"
+   - Check browser console to confirm tracking status
+   - Helps verify the feature is working correctly
+   
+**Usage:**
+- **Normal visitors**: `https://ms.church` (tracking enabled)
+- **Testing/development**: `https://ms.church/?notrack=true` (tracking disabled)
+- **Form page testing**: `https://ms.church/form?notrack=true` (tracking disabled)
+
+**Result:** Admin/developers can test website changes freely without skewing analytics data. Simply add `?notrack=true` to any URL.
+
+---
 
 ### v1.20.15 - Vercel Analytics Integration
 **Added Vercel Analytics to track page views and visitor behavior on production deployment**

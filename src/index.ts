@@ -3876,7 +3876,7 @@ app.get('/', (c) => {
                             This Christmas, Morning Star Christian Church is giving back to the incredible single moms and widows in our community who are working tirelessly to provide for their families.
                         </h3>
                         <p class="section-lead form-message">
-                            Based on the information you share in the form, our team will handpick a special gift just for you and your family. You can look forward to a pair of shoes for the adults and something fun and useful for the kids, perfect for school and outdoor play. We'll wrap everything beautifully so it's ready to go right under your Christmas tree. Once you've submitted the form, you'll receive a text message confirming your submission and sharing all the pickup details.
+                            Based on the information you share in the <a href="#gift-form" style="color: #d4a574; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 3px; transition: all 0.3s ease; font-weight: 600;">form</a>, our team will handpick a special gift just for you and your family. You can look forward to a pair of shoes for the adults and something fun and useful for the kids, perfect for school and outdoor play. We'll wrap everything beautifully so it's ready to go right under your Christmas tree. Once you've submitted the <a href="#gift-form" style="color: #d4a574; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 3px; transition: all 0.3s ease; font-weight: 600;">form</a>, you'll receive a text message confirming your submission and sharing all the pickup details.
                         </p>
                         
                         <!-- Image Gallery -->
@@ -3894,7 +3894,7 @@ app.get('/', (c) => {
                         
                         <address><a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline; text-decoration-color: rgba(212, 165, 116, 0.5); text-underline-offset: 4px; transition: text-decoration-color 0.3s ease;">3080 N Wildwood St, Boise, Idaho</a></address>
                     </div>
-                    <div class="jotform-container">
+                    <div class="jotform-container" id="gift-form">
                         <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
                     </div>
                         

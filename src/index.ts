@@ -2672,11 +2672,13 @@ app.get('/', (c) => {
                     gap: 12px;
                     align-items: center;
                     justify-content: center;
+                    padding: 0 20px;  /* Add horizontal padding to container */
                 }
                 
                 .hero-body .cta-group .btn {
-                    width: auto;
-                    min-width: 280px;  /* Ensure buttons have sufficient width */
+                    width: auto !important;  /* Force auto width */
+                    max-width: 320px;
+                    padding: 16px 32px;
                 }
 
                 .hero .eyebrow {
@@ -2704,11 +2706,12 @@ app.get('/', (c) => {
                     gap: 12px;
                     width: 100%;
                     align-items: center;
+                    padding: 0 20px;
                 }
 
                 .btn {
-                    width: auto;
-                    min-width: 280px;
+                    width: auto !important;
+                    max-width: 320px;
                     padding: 16px 32px;
                     font-size: 14px;
                     letter-spacing: 2px;

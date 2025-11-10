@@ -41,7 +41,25 @@ app.get('/', (c) => {
                 script.src = 'https://cdn.vercel-insights.com/v1/script.js';
                 document.head.appendChild(script);
             } else {
+                // Block analytics tracking
                 console.log('🚫 Analytics tracking disabled via ?notrack=true parameter');
+                
+                // Override analytics functions to prevent tracking
+                window.va = function() { 
+                    console.log('Analytics call blocked'); 
+                };
+                
+                // Block Web Analytics beacon (if enabled)
+                if (window.navigator && window.navigator.sendBeacon) {
+                    const originalSendBeacon = window.navigator.sendBeacon.bind(window.navigator);
+                    window.navigator.sendBeacon = function(url, data) {
+                        if (url && (url.includes('vercel') || url.includes('analytics'))) {
+                            console.log('Blocked analytics beacon to:', url);
+                            return true;
+                        }
+                        return originalSendBeacon(url, data);
+                    };
+                }
             }
         </script>
         
@@ -5337,7 +5355,25 @@ app.get('/form', (c) => {
                 script.src = 'https://cdn.vercel-insights.com/v1/script.js';
                 document.head.appendChild(script);
             } else {
+                // Block analytics tracking
                 console.log('🚫 Analytics tracking disabled via ?notrack=true parameter');
+                
+                // Override analytics functions to prevent tracking
+                window.va = function() { 
+                    console.log('Analytics call blocked'); 
+                };
+                
+                // Block Web Analytics beacon (if enabled)
+                if (window.navigator && window.navigator.sendBeacon) {
+                    const originalSendBeacon = window.navigator.sendBeacon.bind(window.navigator);
+                    window.navigator.sendBeacon = function(url, data) {
+                        if (url && (url.includes('vercel') || url.includes('analytics'))) {
+                            console.log('Blocked analytics beacon to:', url);
+                            return true;
+                        }
+                        return originalSendBeacon(url, data);
+                    };
+                }
             }
         </script>
         

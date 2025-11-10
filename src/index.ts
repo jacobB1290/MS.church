@@ -19,7 +19,7 @@ app.get('/', (c) => {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>Morning Star Christian Church</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1722,6 +1722,19 @@ app.get('/', (c) => {
                 width: 100%;
                 border: none;
                 min-height: 800px;
+            }
+            
+            /* Prevent zoom on form inputs - Mobile Safari Fix */
+            input, select, textarea, button {
+                font-size: 16px !important;
+            }
+            
+            /* Ensure JotForm inputs don't trigger zoom */
+            .jotform-container input,
+            .jotform-container select,
+            .jotform-container textarea,
+            .jotform-container button {
+                font-size: 16px !important;
             }
             
             /* Form Success State */
@@ -5281,7 +5294,7 @@ app.get('/form', (c) => {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>Contact - Morning Star Christian Church</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

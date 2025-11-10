@@ -2670,14 +2670,12 @@ app.get('/', (c) => {
                     display: flex;
                     flex-direction: column;
                     gap: 12px;
-                    align-items: center;
+                    align-items: stretch;  /* Stretch to fill container */
                     justify-content: center;
-                    padding: 0 20px;  /* Add horizontal padding to container */
                 }
                 
                 .hero-body .cta-group .btn {
-                    width: auto !important;  /* Force auto width */
-                    max-width: 320px;
+                    width: 100% !important;  /* Full width to match image */
                     padding: 16px 32px;
                 }
 
@@ -2705,13 +2703,11 @@ app.get('/', (c) => {
                     flex-direction: column;
                     gap: 12px;
                     width: 100%;
-                    align-items: center;
-                    padding: 0 20px;
+                    align-items: stretch;
                 }
 
                 .btn {
-                    width: auto !important;
-                    max-width: 320px;
+                    width: 100% !important;
                     padding: 16px 32px;
                     font-size: 14px;
                     letter-spacing: 2px;

@@ -4644,114 +4644,81 @@ app.get('/', (c) => {
 
                 updateActiveEvent(0, true);
                 
-                // Enhanced swipe navigation system for mobile
-                // Horizontal swipes trigger instant scroll to next/previous event
-                
+                // SIMPLE SWIPE DETECTION - Just scroll to next/prev card
                 let touchStartX = 0;
                 let touchStartY = 0;
-                let touchCurrentX = 0;
-                let touchCurrentY = 0;
-                let isSwiping = false;
-                const swipeThreshold = 40; // Reduced for faster response
+                const swipeThreshold = 50; // Pixels needed for swipe
 
-                // Attach swipe listeners to entire outreach section for broader detection
+                // Attach swipe listeners to entire outreach section
                 const swipeTarget = outreachSection || eventsContainer;
                 if (swipeTarget) {
                     swipeTarget.addEventListener('touchstart', e => {
-                        const t = e.changedTouches[0];
-                        touchStartX = t.clientX;
-                        touchStartY = t.clientY;
-                        touchCurrentX = t.clientX;
-                        touchCurrentY = t.clientY;
-                        isSwiping = false;
-                    }, { passive: true });
-
-                    swipeTarget.addEventListener('touchmove', e => {
-                        const t = e.changedTouches[0];
-                        touchCurrentX = t.clientX;
-                        touchCurrentY = t.clientY;
-                        
-                        const dx = Math.abs(touchCurrentX - touchStartX);
-                        const dy = Math.abs(touchCurrentY - touchStartY);
-                        
-                        // Detect horizontal swipe (more horizontal than vertical, lower threshold)
-                        if (dx > dy && dx > 20) {
-                            isSwiping = true;
-                        }
+                        touchStartX = e.touches[0].clientX;
+                        touchStartY = e.touches[0].clientY;
                     }, { passive: true });
 
                     swipeTarget.addEventListener('touchend', e => {
-                        const dx = touchCurrentX - touchStartX;
-                        const dy = touchCurrentY - touchStartY;
+                        if (!e.changedTouches || !e.changedTouches[0]) return;
                         
-                        // Check if this was a horizontal swipe
-                        if (isSwiping && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
-                            // Calculate target event based on swipe direction
-                            let targetEventIndex = currentEventIndex;
-                            let scrollOutOfSection = false;
-                            
-                            // Swipe left (dx < 0) = go to next event (scroll down)
-                            if (dx < 0) {
-                                if (currentEventIndex < totalEvents - 1) {
-                                    targetEventIndex = currentEventIndex + 1;
-                                } else {
-                                    // Already at last event, scroll to Watch section
-                                    scrollOutOfSection = true;
-                                }
-                            }
-                            // Swipe right (dx > 0) = go to previous event (scroll up)
-                            else if (dx > 0 && currentEventIndex > 0) {
-                                targetEventIndex = currentEventIndex - 1;
-                            }
-                            
-                            // Execute scroll action immediately
-                            if (scrollOutOfSection) {
-                                // Scroll past outreach section to Watch section
+                        const touchEndX = e.changedTouches[0].clientX;
+                        const touchEndY = e.changedTouches[0].clientY;
+                        
+                        const dx = touchEndX - touchStartX;
+                        const dy = touchEndY - touchStartY;
+                        
+                        // Only count as swipe if horizontal movement > vertical movement
+                        if (Math.abs(dx) < Math.abs(dy)) return;
+                        if (Math.abs(dx) < swipeThreshold) return;
+                        
+                        // Determine target event index
+                        let targetIndex = currentEventIndex;
+                        
+                        if (dx < 0) {
+                            // Swipe LEFT = next card (scroll down)
+                            if (currentEventIndex < totalEvents - 1) {
+                                targetIndex = currentEventIndex + 1;
+                            } else {
+                                // At last card, exit to next section
                                 const watchSection = document.querySelector('#watch');
                                 if (watchSection) {
-                                    const watchTop = watchSection.getBoundingClientRect().top + window.pageYOffset;
-                                    const navOffset = 30; // Mobile nav offset
                                     window.scrollTo({
-                                        top: watchTop - navOffset,
+                                        top: watchSection.offsetTop - 30,
                                         behavior: 'smooth'
                                     });
                                 }
-                            } else if (targetEventIndex !== currentEventIndex) {
-                                // Set manual override to prevent scroll handler from interfering
-                                manualSwipeOverride = true;
-                                
-                                // Calculate scroll position for target event
-                                const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
-                                const spacerHeight = scrollSpacer.offsetHeight;
-                                
-                                // Event 1: 12.5% (middle of 0-25%)
-                                // Event 2: 47.5% (middle of 25-70%)
-                                // Event 3: 85% (middle of 70-100%)
-                                let targetProgress;
-                                if (targetEventIndex === 0) {
-                                    targetProgress = 0.125;
-                                } else if (targetEventIndex === 1) {
-                                    targetProgress = 0.475;
-                                } else {
-                                    targetProgress = 0.85;
-                                }
-                                
-                                const targetScroll = outreachTop + (spacerHeight * targetProgress);
-                                
-                                // Scroll smoothly - handleScroll will update the card when scroll completes
-                                window.scrollTo({
-                                    top: targetScroll,
-                                    behavior: 'smooth'
-                                });
-                                
-                                // Release override after scroll animation completes (smooth scroll takes ~500ms)
-                                setTimeout(() => { 
-                                    manualSwipeOverride = false; 
-                                }, 800);
+                                return;
+                            }
+                        } else {
+                            // Swipe RIGHT = previous card (scroll up)
+                            if (currentEventIndex > 0) {
+                                targetIndex = currentEventIndex - 1;
+                            } else {
+                                return; // Already at first card, do nothing
                             }
                         }
                         
-                        isSwiping = false;
+                        // Calculate scroll position for target card
+                        const outreachTop = outreachSection.offsetTop;
+                        const spacerHeight = scrollSpacer.offsetHeight;
+                        
+                        // Map target index to scroll progress
+                        const progressMap = [0.125, 0.475, 0.85]; // Event 1, 2, 3 positions
+                        const targetProgress = progressMap[targetIndex];
+                        const targetScroll = outreachTop + (spacerHeight * targetProgress);
+                        
+                        // Set override flag to prevent scroll handler interference
+                        manualSwipeOverride = true;
+                        
+                        // Scroll to target position
+                        window.scrollTo({
+                            top: targetScroll,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Release override after smooth scroll completes
+                        setTimeout(() => { 
+                            manualSwipeOverride = false; 
+                        }, 600);
                     }, { passive: true });
                 }
                 

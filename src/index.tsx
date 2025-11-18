@@ -2042,93 +2042,67 @@ app.get('/', (c) => {
                 .events-container {
                     position: relative;
                     width: 100%;
-                    height: 75vh;
-                    perspective: 1200px;
+                    height: 100%;
                 }
                 
-                /* MOBILE STACKED CARDS - All cards visible */
+                /* MOBILE STACKED CARDS - Clean and refined */
                 .event-slide {
                     position: absolute !important;
                     top: 0;
                     left: 50%;
-                    width: 88%;
-                    max-width: 420px;
-                    height: auto;
-                    /* Make all cards visible */
+                    width: 85%;
+                    max-width: 400px;
                     opacity: 1 !important;
                     visibility: visible !important;
-                    pointer-events: auto !important;
-                    transition: transform 0.5s cubic-bezier(0.34, 1.26, 0.64, 1),
-                                filter 0.4s ease;
+                    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                                filter 0.3s ease;
                 }
                 
-                /* Stack positioning - cards 2 and 3 peek out from behind card 1 */
-                .event-slide[data-event="1"]:not(.active) {
-                    z-index: 30;
-                    transform: translateX(-50%) translateY(0) scale(1);
-                    filter: brightness(1);
-                }
-                
-                .event-slide[data-event="2"]:not(.active) {
-                    z-index: 20;
-                    transform: translateX(-50%) translateY(50px) scale(0.95);
-                    filter: brightness(0.88);
-                }
-                
-                .event-slide[data-event="3"]:not(.active) {
-                    z-index: 10;
-                    transform: translateX(-50%) translateY(100px) scale(0.90);
-                    filter: brightness(0.76);
-                }
-                
-                /* Active card comes to front */
+                /* Active card always on top */
                 .event-slide.active {
-                    z-index: 40 !important;
+                    z-index: 30 !important;
                     transform: translateX(-50%) translateY(0) scale(1) !important;
-                    filter: brightness(1) !important;
+                }
+                
+                /* First card behind active */
+                .event-slide.stack-position-1 {
+                    z-index: 20;
+                    transform: translateX(-50%) translateY(20px) scale(0.96);
+                }
+                
+                /* Second card behind active */
+                .event-slide.stack-position-2 {
+                    z-index: 10;
+                    transform: translateX(-50%) translateY(40px) scale(0.92);
+                }
+                
+                /* Only active card interactive */
+                .event-slide.active {
                     pointer-events: auto !important;
                 }
                 
-                /* Swiping animations */
-                .event-slide.swiping-out {
-                    animation: cardFlipOut 0.5s cubic-bezier(0.34, 1.26, 0.64, 1) forwards;
+                .event-slide:not(.active) {
+                    pointer-events: none !important;
+                    overflow: hidden;
                 }
                 
-                .event-slide.swiping-in {
-                    animation: cardFlipIn 0.5s cubic-bezier(0.34, 1.26, 0.64, 1) forwards;
+                /* Hide UI on stacked cards */
+                .event-slide:not(.active) .event-date,
+                .event-slide:not(.active) .event-indicators,
+                .event-slide:not(.active) .event-cta {
+                    opacity: 0;
+                    visibility: hidden;
                 }
                 
-                @keyframes cardFlipOut {
-                    0% {
-                        transform: translateX(-50%) translateY(0) scale(1) rotateY(0deg);
-                        filter: brightness(1);
-                    }
-                    50% {
-                        transform: translateX(-50%) translateY(-20px) scale(1.05) rotateY(90deg);
-                        filter: brightness(0.5);
-                    }
-                    100% {
-                        transform: translateX(-50%) translateY(100px) scale(0.90) rotateY(90deg);
-                        filter: brightness(0.3);
-                        z-index: 5;
-                    }
+                /* Depth shadows */
+                .event-slide:not(.active) .event-flyer-wrapper {
+                    filter: brightness(0.92);
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
                 }
                 
-                @keyframes cardFlipIn {
-                    0% {
-                        transform: translateX(-50%) translateY(50px) scale(0.95) rotateY(-90deg);
-                        filter: brightness(0.5);
-                        z-index: 5;
-                    }
-                    50% {
-                        transform: translateX(-50%) translateY(-10px) scale(1.02) rotateY(0deg);
-                        filter: brightness(0.8);
-                    }
-                    100% {
-                        transform: translateX(-50%) translateY(0) scale(1) rotateY(0deg);
-                        filter: brightness(1);
-                        z-index: 40;
-                    }
+                .event-slide.active .event-flyer-wrapper {
+                    filter: brightness(1);
+                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
                 }
                 
                 .scroll-spacer {
@@ -2585,137 +2559,86 @@ app.get('/', (c) => {
                                 0 4px 12px rgba(212, 165, 116, 0.2);
                 }
                 
-                /* Mobile 480px Event Cards - Stacked card design */
+                /* Mobile 480px Event Cards - Clean Stacked Design */
                 
-                /* Sticky wrapper with more height for stack effect */
                 .sticky-wrapper {
-                    height: 85vh;
-                    padding-top: 5vh;
-                    display: flex;
-                    align-items: flex-start;
-                    justify-content: center;
+                    height: 90vh;
+                    padding-top: 2vh;
                 }
                 
-                /* Events container for stacking */
                 .events-container {
                     position: relative;
                     width: 100%;
-                    height: 75vh;
-                    perspective: 1200px;
+                    height: 100%;
                 }
                 
-                /* Base event slide - ALL VISIBLE, positioned for stacking */
+                /* All cards visible and stacked */
                 .event-slide {
                     position: absolute !important;
                     top: 0;
                     left: 50%;
-                    width: 88%;
-                    max-width: 380px;
-                    height: auto;
-                    /* CRITICAL: Make all cards visible */
+                    width: 85%;
+                    max-width: 360px;
                     opacity: 1 !important;
                     visibility: visible !important;
-                    pointer-events: auto !important;
-                    transition: transform 0.5s cubic-bezier(0.34, 1.26, 0.64, 1),
-                                filter 0.4s ease,
-                                z-index 0s;
+                    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                                filter 0.3s ease;
                 }
                 
-                /* Stack positioning - Show bottom edges of cards 2 and 3 beneath card 1 */
-                .event-slide[data-event="1"]:not(.active) {
-                    z-index: 30;
-                    transform: translateX(-50%) translateY(0) scale(1);
-                    filter: brightness(1);
-                }
-                
-                .event-slide[data-event="2"]:not(.active) {
-                    z-index: 20;
-                    transform: translateX(-50%) translateY(50px) scale(0.95);
-                    filter: brightness(0.88);
-                }
-                
-                .event-slide[data-event="3"]:not(.active) {
-                    z-index: 10;
-                    transform: translateX(-50%) translateY(100px) scale(0.90);
-                    filter: brightness(0.76);
-                }
-                
-                /* Active state - bring card to front with full visibility */
+                /* Active card always on top */
                 .event-slide.active {
-                    z-index: 40 !important;
+                    z-index: 30 !important;
                     transform: translateX(-50%) translateY(0) scale(1) !important;
-                    filter: brightness(1) !important;
+                }
+                
+                /* First card behind active */
+                .event-slide.stack-position-1 {
+                    z-index: 20;
+                    transform: translateX(-50%) translateY(20px) scale(0.96);
+                }
+                
+                /* Second card behind active */
+                .event-slide.stack-position-2 {
+                    z-index: 10;
+                    transform: translateX(-50%) translateY(40px) scale(0.92);
+                }
+                
+                /* Active card gets pointer events */
+                .event-slide.active {
                     pointer-events: auto !important;
                 }
                 
-                /* When card 2 is active, restack others */
-                .event-slide[data-event="1"].active ~ .event-slide[data-event="2"],
-                .event-slide[data-event="2"].active {
-                    z-index: 40;
+                /* Non-active cards: disable interactions and hide UI elements */
+                .event-slide:not(.active) {
+                    pointer-events: none !important;
+                    overflow: hidden;
                 }
                 
-                .event-slide[data-event="2"].active ~ .event-slide[data-event="3"] {
-                    z-index: 20;
-                    transform: translateX(-50%) translateY(50px) scale(0.95);
-                    filter: brightness(0.88);
+                /* Hide date badge, dots, and buttons on stacked cards */
+                .event-slide:not(.active) .event-date,
+                .event-slide:not(.active) .event-indicators,
+                .event-slide:not(.active) .event-cta {
+                    opacity: 0;
+                    visibility: hidden;
                 }
                 
-                /* When card 3 is active, card 1 and 2 should be behind */
-                .event-slide[data-event="3"].active {
-                    z-index: 40;
+                /* Add subtle shadow to show depth */
+                .event-slide:not(.active) .event-flyer-wrapper {
+                    filter: brightness(0.92);
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
                 }
                 
-                /* Swiping states with card flip animation */
-                .event-slide.swiping-out {
-                    animation: cardFlipOut 0.5s cubic-bezier(0.34, 1.26, 0.64, 1) forwards;
+                .event-slide.active .event-flyer-wrapper {
+                    filter: brightness(1);
+                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
                 }
                 
-                .event-slide.swiping-in {
-                    animation: cardFlipIn 0.5s cubic-bezier(0.34, 1.26, 0.64, 1) forwards;
-                }
-                
-                /* Card flip keyframes */
-                @keyframes cardFlipOut {
-                    0% {
-                        transform: translateX(-50%) translateY(0) scale(1) rotateY(0deg);
-                        filter: brightness(1);
-                    }
-                    50% {
-                        transform: translateX(-50%) translateY(-20px) scale(1.05) rotateY(90deg);
-                        filter: brightness(0.5);
-                    }
-                    100% {
-                        transform: translateX(-50%) translateY(100px) scale(0.90) rotateY(90deg);
-                        filter: brightness(0.3);
-                        z-index: 5;
-                    }
-                }
-                
-                @keyframes cardFlipIn {
-                    0% {
-                        transform: translateX(-50%) translateY(50px) scale(0.95) rotateY(-90deg);
-                        filter: brightness(0.5);
-                        z-index: 5;
-                    }
-                    50% {
-                        transform: translateX(-50%) translateY(-10px) scale(1.02) rotateY(0deg);
-                        filter: brightness(0.8);
-                    }
-                    100% {
-                        transform: translateX(-50%) translateY(0) scale(1) rotateY(0deg);
-                        filter: brightness(1);
-                        z-index: 40;
-                    }
-                }
-                
-                /* Adjust event card to fit within slide */
+                /* Adjust event card */
                 .event-card {
                     height: auto;
-                    padding-top: clamp(10px, 2.5vw, 14px);
                     width: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
+                    padding: 0;
+                    margin: 0;
                 }
                 
                 .event-meta-row {
@@ -4673,41 +4596,28 @@ app.get('/', (c) => {
                 }
 
                 function updateActiveEvent(index, skipBackground, fromSwipe = false) {
-                    // Mobile stacked card animation (only on smaller screens)
                     const isMobile = window.innerWidth <= 960;
                     
-                    if (isMobile && fromSwipe) {
-                        // Get current active card (to swipe out)
-                        const currentActive = document.querySelector('.event-slide.active');
-                        const newActive = eventSlides[index];
+                    // Update active class
+                    eventSlides.forEach(s => s.classList.remove('active'));
+                    const active = eventSlides[index];
+                    if (active) active.classList.add('active');
+                    
+                    // Mobile: Update stack positions for other cards
+                    if (isMobile) {
+                        // Remove all stack position classes first
+                        eventSlides.forEach(s => {
+                            s.classList.remove('stack-position-1', 'stack-position-2');
+                        });
                         
-                        if (currentActive && newActive && currentActive !== newActive) {
-                            // Add swipe out animation to current card
-                            currentActive.classList.add('swiping-out');
-                            
-                            // Add swipe in animation to new card
-                            newActive.classList.add('swiping-in');
-                            
-                            // Remove active class from current after a brief delay
-                            setTimeout(() => {
-                                currentActive.classList.remove('active', 'swiping-out');
-                            }, 250);
-                            
-                            // Add active class to new card and clean up animations
-                            setTimeout(() => {
-                                newActive.classList.add('active');
-                                newActive.classList.remove('swiping-in');
-                            }, 250);
-                        } else {
-                            // Fallback to instant switch
-                            eventSlides.forEach(s => s.classList.remove('active'));
-                            if (newActive) newActive.classList.add('active');
-                        }
-                    } else {
-                        // Desktop or non-swipe: use original instant switch
-                        eventSlides.forEach(s => s.classList.remove('active'));
-                        const active = eventSlides[index];
-                        if (active) active.classList.add('active');
+                        // Assign stack positions to non-active cards
+                        let stackPos = 1;
+                        eventSlides.forEach((slide, slideIndex) => {
+                            if (slideIndex !== index) {
+                                slide.classList.add(\`stack-position-\${stackPos}\`);
+                                stackPos++;
+                            }
+                        });
                     }
                     
                     setAriaVisibility(index);

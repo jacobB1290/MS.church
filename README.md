@@ -3,38 +3,39 @@
 ## 🔢 CURRENT VERSION: v1.21.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
-### v1.21.0 - Mobile Stacked Card Interface for Outreach Section
-**Elegant stacked card design with smooth flip animations for mobile devices**
+### v1.21.0 - Production-Ready Mobile Stacked Card Interface
+**Clean, refined stacked card design for mobile outreach section**
 
 **Changes Made:**
-1. **Stacked card visual effect**
-   - Cards appear stacked beneath the active card
-   - Bottom edges of upcoming cards visible below active card
-   - Progressive scaling: active (100%), next (94%), third (88%)
-   - Progressive positioning: cards offset by 60px and 120px
-   - Progressive opacity and brightness for depth effect
+1. **Clean stacked visual**
+   - Active card displayed at full size in front
+   - Two cards stacked beneath showing clean bottom edges
+   - Minimal 20px/40px offset for subtle depth
+   - Scaling: 100% (active), 96% (1st behind), 92% (2nd behind)
+   - Professional depth with shadows and brightness filters
 
-2. **Smooth card flip animation when swiping**
-   - Cards flip with 3D rotation effect (rotateY)
-   - Outgoing card: flips 90deg and moves down to stack
-   - Incoming card: flips from -90deg while rising to front
-   - Elastic easing curve (cubic-bezier 0.34, 1.26, 0.64, 1) for refined feel
-   - 500ms animation duration for smooth, elegant transitions
+2. **Hidden UI on stacked cards**
+   - Date badges hidden on background cards
+   - Indicator dots hidden on background cards
+   - CTA buttons hidden on background cards
+   - Prevents visual clutter and overlap
+   - Only active card shows complete UI
 
-3. **Enhanced mobile UX**
-   - Perspective effect (1200px) for realistic 3D depth
-   - Cards properly centered and sized for mobile viewports
-   - Swipe detection triggers card flip animation
-   - Stack updates automatically as you swipe through events
-   - All three cards always visible with clear visual hierarchy
+3. **Smooth stack transitions**
+   - Cards smoothly reorder as you swipe
+   - Active card always comes to front
+   - Non-active cards slide behind in order
+   - 0.4s transition with smooth easing
+   - JavaScript-managed stack positions
 
-4. **Responsive design preserved**
-   - Only applies to mobile screens (≤960px width)
-   - Desktop version unchanged (maintains original layout)
-   - Works across all mobile breakpoints (480px and smaller)
-   - Touch-friendly with optimized swipe thresholds
+4. **Production-quality UX**
+   - Only active card is interactive
+   - Background cards non-interactive (pointer-events: none)
+   - Clear visual hierarchy at all times
+   - Works flawlessly on all mobile devices ≤960px
+   - Desktop unchanged (single-card display)
 
-**Result:** Refined, user-friendly mobile interface with elegant stacked card design. Cards feel physical and interactive with smooth flip transitions between events.
+**Result:** Polished, production-ready stacked card interface with no UI overlap, clean visual hierarchy, and smooth transitions.
 
 ---
 

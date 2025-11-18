@@ -1,7 +1,42 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.20.19
+## 🔢 CURRENT VERSION: v1.21.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.21.0 - Mobile Stacked Card Interface for Outreach Section
+**Elegant stacked card design with smooth flip animations for mobile devices**
+
+**Changes Made:**
+1. **Stacked card visual effect**
+   - Cards appear stacked beneath the active card
+   - Bottom edges of upcoming cards visible below active card
+   - Progressive scaling: active (100%), next (94%), third (88%)
+   - Progressive positioning: cards offset by 60px and 120px
+   - Progressive opacity and brightness for depth effect
+
+2. **Smooth card flip animation when swiping**
+   - Cards flip with 3D rotation effect (rotateY)
+   - Outgoing card: flips 90deg and moves down to stack
+   - Incoming card: flips from -90deg while rising to front
+   - Elastic easing curve (cubic-bezier 0.34, 1.26, 0.64, 1) for refined feel
+   - 500ms animation duration for smooth, elegant transitions
+
+3. **Enhanced mobile UX**
+   - Perspective effect (1200px) for realistic 3D depth
+   - Cards properly centered and sized for mobile viewports
+   - Swipe detection triggers card flip animation
+   - Stack updates automatically as you swipe through events
+   - All three cards always visible with clear visual hierarchy
+
+4. **Responsive design preserved**
+   - Only applies to mobile screens (≤960px width)
+   - Desktop version unchanged (maintains original layout)
+   - Works across all mobile breakpoints (480px and smaller)
+   - Touch-friendly with optimized swipe thresholds
+
+**Result:** Refined, user-friendly mobile interface with elegant stacked card design. Cards feel physical and interactive with smooth flip transitions between events.
+
+---
 
 ### v1.20.19 - Centered Mobile Hero Buttons
 **Mobile hero buttons now centered with auto-width instead of full-width**

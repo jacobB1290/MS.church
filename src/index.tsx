@@ -2518,10 +2518,129 @@ app.get('/', (c) => {
                                 0 4px 12px rgba(212, 165, 116, 0.2);
                 }
                 
-                /* Mobile 480px Event Cards - Moderate scaling for small screens */
+                /* Mobile 480px Event Cards - Stacked card design */
+                
+                /* Sticky wrapper with more height for stack effect */
+                .sticky-wrapper {
+                    height: 85vh;
+                    padding-top: 0;
+                }
+                
+                /* Events container for stacking */
+                .events-container {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    perspective: 1200px;
+                }
+                
+                /* Base event slide - positioned for stacking */
+                .event-slide {
+                    position: absolute;
+                    top: 0;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 90%;
+                    max-width: 400px;
+                    height: auto;
+                    transition: transform 0.6s cubic-bezier(0.34, 1.26, 0.64, 1),
+                                opacity 0.6s ease,
+                                filter 0.6s ease,
+                                z-index 0s 0.6s;
+                }
+                
+                /* Stack positioning - cards appear below active card */
+                .event-slide[data-event="1"] {
+                    z-index: 30;
+                    transform: translateX(-50%) translateY(0px) scale(1);
+                    opacity: 1;
+                    filter: brightness(1);
+                }
+                
+                .event-slide[data-event="2"] {
+                    z-index: 20;
+                    transform: translateX(-50%) translateY(60px) scale(0.94);
+                    opacity: 0.7;
+                    filter: brightness(0.85);
+                }
+                
+                .event-slide[data-event="3"] {
+                    z-index: 10;
+                    transform: translateX(-50%) translateY(120px) scale(0.88);
+                    opacity: 0.5;
+                    filter: brightness(0.7);
+                }
+                
+                /* Active state - bring card to front with full visibility */
+                .event-slide.active[data-event="1"] {
+                    z-index: 30;
+                    transform: translateX(-50%) translateY(0) scale(1);
+                    opacity: 1;
+                    filter: brightness(1);
+                }
+                
+                .event-slide.active[data-event="2"] {
+                    z-index: 30;
+                    transform: translateX(-50%) translateY(0) scale(1);
+                    opacity: 1;
+                    filter: brightness(1);
+                }
+                
+                .event-slide.active[data-event="3"] {
+                    z-index: 30;
+                    transform: translateX(-50%) translateY(0) scale(1);
+                    opacity: 1;
+                    filter: brightness(1);
+                }
+                
+                /* Swiping states with card flip animation */
+                .event-slide.swiping-out {
+                    animation: cardFlipOut 0.5s cubic-bezier(0.34, 1.26, 0.64, 1) forwards;
+                }
+                
+                .event-slide.swiping-in {
+                    animation: cardFlipIn 0.5s cubic-bezier(0.34, 1.26, 0.64, 1) forwards;
+                }
+                
+                /* Card flip keyframes */
+                @keyframes cardFlipOut {
+                    0% {
+                        transform: translateX(-50%) translateY(0) scale(1) rotateY(0deg);
+                        opacity: 1;
+                    }
+                    50% {
+                        transform: translateX(-50%) translateY(-20px) scale(1.05) rotateY(90deg);
+                        opacity: 0;
+                    }
+                    100% {
+                        transform: translateX(-50%) translateY(120px) scale(0.88) rotateY(90deg);
+                        opacity: 0;
+                    }
+                }
+                
+                @keyframes cardFlipIn {
+                    0% {
+                        transform: translateX(-50%) translateY(60px) scale(0.94) rotateY(-90deg);
+                        opacity: 0;
+                    }
+                    50% {
+                        transform: translateX(-50%) translateY(-10px) scale(1.02) rotateY(0deg);
+                        opacity: 0.7;
+                    }
+                    100% {
+                        transform: translateX(-50%) translateY(0) scale(1) rotateY(0deg);
+                        opacity: 1;
+                    }
+                }
+                
+                /* Adjust event card to fit within slide */
                 .event-card {
-                    height: 88vh;
+                    height: auto;
                     padding-top: clamp(10px, 2.5vw, 14px);
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
                 }
                 
                 .event-meta-row {
@@ -4478,11 +4597,44 @@ app.get('/', (c) => {
                     body.classList.add(\`event-\${index + 1}-active\`);
                 }
 
-                function updateActiveEvent(index, skipBackground) {
-                    eventSlides.forEach(s => s.classList.remove('active'));
-                    const active = eventSlides[index];
-                    if (!active) return;
-                    active.classList.add('active');
+                function updateActiveEvent(index, skipBackground, fromSwipe = false) {
+                    // Mobile stacked card animation (only on smaller screens)
+                    const isMobile = window.innerWidth <= 960;
+                    
+                    if (isMobile && fromSwipe) {
+                        // Get current active card (to swipe out)
+                        const currentActive = document.querySelector('.event-slide.active');
+                        const newActive = eventSlides[index];
+                        
+                        if (currentActive && newActive && currentActive !== newActive) {
+                            // Add swipe out animation to current card
+                            currentActive.classList.add('swiping-out');
+                            
+                            // Add swipe in animation to new card
+                            newActive.classList.add('swiping-in');
+                            
+                            // Remove active class from current after a brief delay
+                            setTimeout(() => {
+                                currentActive.classList.remove('active', 'swiping-out');
+                            }, 250);
+                            
+                            // Add active class to new card and clean up animations
+                            setTimeout(() => {
+                                newActive.classList.add('active');
+                                newActive.classList.remove('swiping-in');
+                            }, 250);
+                        } else {
+                            // Fallback to instant switch
+                            eventSlides.forEach(s => s.classList.remove('active'));
+                            if (newActive) newActive.classList.add('active');
+                        }
+                    } else {
+                        // Desktop or non-swipe: use original instant switch
+                        eventSlides.forEach(s => s.classList.remove('active'));
+                        const active = eventSlides[index];
+                        if (active) active.classList.add('active');
+                    }
+                    
                     setAriaVisibility(index);
                     updateDots(index);
                     updateBodyBg(index, skipBackground);
@@ -4575,6 +4727,14 @@ app.get('/', (c) => {
                                     });
                                 }
                             } else if (targetEventIndex !== currentEventIndex) {
+                                // Trigger card flip animation on mobile
+                                const isMobile = window.innerWidth <= 960;
+                                if (isMobile) {
+                                    // Update event with animation
+                                    currentEventIndex = targetEventIndex;
+                                    updateActiveEvent(currentEventIndex, false, true);
+                                }
+                                
                                 // Scroll to target event position
                                 const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
                                 const spacerHeight = scrollSpacer.offsetHeight;

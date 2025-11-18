@@ -4626,14 +4626,17 @@ app.get('/', (c) => {
                             s.classList.remove('stack-position-1', 'stack-position-2');
                         });
                         
-                        // Assign stack positions to non-active cards
+                        // Assign stack positions in visual order (next card closer than previous)
+                        // When viewing card 2: card 3 should be position-1 (closer), card 1 should be position-2 (further)
+                        const totalCards = eventSlides.length;
                         let stackPos = 1;
-                        eventSlides.forEach((slide, slideIndex) => {
-                            if (slideIndex !== index) {
-                                slide.classList.add(\`stack-position-\${stackPos}\`);
-                                stackPos++;
-                            }
-                        });
+                        
+                        // Start from next card after active, wrap around
+                        for (let i = 1; i < totalCards; i++) {
+                            const cardIndex = (index + i) % totalCards;
+                            eventSlides[cardIndex].classList.add(\`stack-position-\${stackPos}\`);
+                            stackPos++;
+                        }
                     }
                     
                     setAriaVisibility(index);

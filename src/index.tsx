@@ -890,6 +890,12 @@ app.get('/', (c) => {
                 padding: 0 24px;
                 margin-bottom: 24px;
                 z-index: 100;
+                pointer-events: auto; /* Ensure button is always clickable */
+            }
+            
+            .event-cta .btn {
+                pointer-events: auto; /* Force button to be clickable */
+                cursor: pointer;
             }
             
             /* Hide buttons for events 1 and 3, show only for event 2 */
@@ -4869,22 +4875,41 @@ app.get('/', (c) => {
                 }
                 
                 // Explicit handler for Event 2 REQUEST ITEMS button
-                // Ensures button works on desktop where events are in grid layout
-                const requestItemsButtons = document.querySelectorAll('.event-slide[data-event="2"] .event-cta a[href="#contact"]');
-                requestItemsButtons.forEach(button => {
-                    button.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const contactSection = document.querySelector('#contact');
-                        if (contactSection) {
-                            const navOffset = window.innerWidth <= 1199 ? 30 : 45;
-                            const targetPosition = contactSection.getBoundingClientRect().top + window.pageYOffset - navOffset;
-                            window.scrollTo({
-                                top: targetPosition,
-                                behavior: 'smooth'
-                            });
-                        }
+                // Ensures button works on desktop AND mobile
+                // Use setTimeout to ensure DOM is ready
+                setTimeout(() => {
+                    const requestItemsButtons = document.querySelectorAll('.event-slide[data-event="2"] .event-cta a[href="#contact"]');
+                    console.log('Found REQUEST ITEMS buttons:', requestItemsButtons.length);
+                    
+                    if (requestItemsButtons.length === 0) {
+                        console.warn('No REQUEST ITEMS buttons found! Trying alternate selector...');
+                        // Try alternate selector
+                        const allButtons = document.querySelectorAll('a[href="#contact"]');
+                        console.log('All contact links found:', allButtons.length);
+                    }
+                    
+                    requestItemsButtons.forEach((button, index) => {
+                        console.log('Attaching click handler to button', index);
+                        button.addEventListener('click', function(e) {
+                            console.log('REQUEST ITEMS button clicked!');
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            const contactSection = document.querySelector('#contact');
+                            if (contactSection) {
+                                const navOffset = window.innerWidth <= 1199 ? 30 : 45;
+                                const targetPosition = contactSection.getBoundingClientRect().top + window.pageYOffset - navOffset;
+                                console.log('Scrolling to contact section at:', targetPosition);
+                                window.scrollTo({
+                                    top: targetPosition,
+                                    behavior: 'smooth'
+                                });
+                            } else {
+                                console.error('Contact section not found!');
+                            }
+                        }, true); // Use capture phase
                     });
-                });
+                }, 500); // Wait 500ms for DOM to be fully ready
                 
                 // Clothes Drive Form - Add/Remove Children
                 const addChildBtn = document.querySelector('.btn-add-child');

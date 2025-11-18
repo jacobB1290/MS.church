@@ -4468,6 +4468,9 @@ app.get('/', (c) => {
                 let lastEventChangeTime = 0;
                 const changeCooldownMs = 800;
                 
+                // Manual swipe override - prevents scroll from fighting swipe gestures
+                let manualSwipeOverride = false;
+                
                 // Update active nav link
                 function updateActiveNavLink() {
                     let currentSection = '';
@@ -4540,7 +4543,9 @@ app.get('/', (c) => {
                         // Only update from scroll if:
                         // 1. Index actually changed
                         // 2. Not rate limited
-                        if (newIndex !== currentEventIndex &&
+                        // 3. NOT during manual swipe override (let swipe complete first)
+                        if (!manualSwipeOverride &&
+                            newIndex !== currentEventIndex &&
                            (!isChangeRateLimited || (now - lastEventChangeTime) > changeCooldownMs)) {
                             currentEventIndex = newIndex;
                             updateActiveEvent(currentEventIndex, false);
@@ -4712,19 +4717,13 @@ app.get('/', (c) => {
                                     });
                                 }
                             } else if (targetEventIndex !== currentEventIndex) {
-                                // Trigger card flip animation on mobile
-                                const isMobile = window.innerWidth <= 960;
-                                if (isMobile) {
-                                    // Update event with animation
-                                    currentEventIndex = targetEventIndex;
-                                    updateActiveEvent(currentEventIndex, false, true);
-                                }
+                                // Set manual override to prevent scroll handler from interfering
+                                manualSwipeOverride = true;
                                 
-                                // Scroll to target event position
+                                // Calculate scroll position for target event
                                 const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
                                 const spacerHeight = scrollSpacer.offsetHeight;
                                 
-                                // Calculate scroll position for target event
                                 // Event 1: 12.5% (middle of 0-25%)
                                 // Event 2: 47.5% (middle of 25-70%)
                                 // Event 3: 85% (middle of 70-100%)
@@ -4739,10 +4738,16 @@ app.get('/', (c) => {
                                 
                                 const targetScroll = outreachTop + (spacerHeight * targetProgress);
                                 
+                                // Scroll smoothly - handleScroll will update the card when scroll completes
                                 window.scrollTo({
                                     top: targetScroll,
                                     behavior: 'smooth'
                                 });
+                                
+                                // Release override after scroll animation completes (smooth scroll takes ~500ms)
+                                setTimeout(() => { 
+                                    manualSwipeOverride = false; 
+                                }, 800);
                             }
                         }
                         

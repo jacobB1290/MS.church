@@ -4644,13 +4644,14 @@ app.get('/', (c) => {
 
                 updateActiveEvent(0, true);
                 
-                // SIMPLE SWIPE DETECTION - Just scroll to next/prev card
+                // SWIPE TO SCROLL - Works exactly like nav buttons
                 let touchStartX = 0;
                 let touchStartY = 0;
-                const swipeThreshold = 50; // Pixels needed for swipe
 
-                // Attach swipe listeners to entire outreach section
-                const swipeTarget = outreachSection || eventsContainer;
+                // Fixed scroll positions for each card (as % progress through spacer)
+                const cardPositions = [0.125, 0.475, 0.85]; // Card 1, 2, 3
+
+                const swipeTarget = eventsContainer;
                 if (swipeTarget) {
                     swipeTarget.addEventListener('touchstart', e => {
                         touchStartX = e.touches[0].clientX;
@@ -4666,59 +4667,33 @@ app.get('/', (c) => {
                         const dx = touchEndX - touchStartX;
                         const dy = touchEndY - touchStartY;
                         
-                        // Only count as swipe if horizontal movement > vertical movement
+                        // Only horizontal swipes
                         if (Math.abs(dx) < Math.abs(dy)) return;
-                        if (Math.abs(dx) < swipeThreshold) return;
+                        if (Math.abs(dx) < 50) return;
                         
-                        // Determine target event index
-                        let targetIndex = currentEventIndex;
-                        
+                        // Determine target card
+                        let targetCard = currentEventIndex;
                         if (dx < 0) {
-                            // Swipe LEFT = next card (scroll down)
-                            if (currentEventIndex < totalEvents - 1) {
-                                targetIndex = currentEventIndex + 1;
-                            } else {
-                                // At last card, exit to next section
-                                const watchSection = document.querySelector('#watch');
-                                if (watchSection) {
-                                    window.scrollTo({
-                                        top: watchSection.offsetTop - 30,
-                                        behavior: 'smooth'
-                                    });
-                                }
-                                return;
-                            }
+                            // Swipe LEFT = next
+                            targetCard = Math.min(currentEventIndex + 1, totalEvents - 1);
                         } else {
-                            // Swipe RIGHT = previous card (scroll up)
-                            if (currentEventIndex > 0) {
-                                targetIndex = currentEventIndex - 1;
-                            } else {
-                                return; // Already at first card, do nothing
-                            }
+                            // Swipe RIGHT = previous
+                            targetCard = Math.max(currentEventIndex - 1, 0);
                         }
                         
-                        // Calculate scroll position for target card
-                        const outreachTop = outreachSection.offsetTop;
+                        // No change? Do nothing
+                        if (targetCard === currentEventIndex) return;
+                        
+                        // Calculate scroll position (like nav buttons do)
+                        const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
                         const spacerHeight = scrollSpacer.offsetHeight;
+                        const targetScroll = outreachTop + (spacerHeight * cardPositions[targetCard]);
                         
-                        // Map target index to scroll progress
-                        const progressMap = [0.125, 0.475, 0.85]; // Event 1, 2, 3 positions
-                        const targetProgress = progressMap[targetIndex];
-                        const targetScroll = outreachTop + (spacerHeight * targetProgress);
-                        
-                        // Set override flag to prevent scroll handler interference
-                        manualSwipeOverride = true;
-                        
-                        // Scroll to target position
+                        // Scroll there - scroll handler will update the card
                         window.scrollTo({
                             top: targetScroll,
                             behavior: 'smooth'
                         });
-                        
-                        // Release override after smooth scroll completes
-                        setTimeout(() => { 
-                            manualSwipeOverride = false; 
-                        }, 600);
                     }, { passive: true });
                 }
                 

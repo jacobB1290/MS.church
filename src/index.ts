@@ -700,26 +700,29 @@ app.get('/', (c) => {
             .outreach-scroll-container { position: relative; }
             .events-container { position: relative; width: 100%; height: 100%; }
 
-            .event-slide {
-                position: absolute;
-                inset: 0;
-                width: 100%;
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(30px) scale(0.95);
-                transition: opacity 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
-                            transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
-                pointer-events: none;
-                z-index: 0;
-                will-change: transform, opacity;
-            }
+            /* Desktop: Hide non-active slides completely */
+            @media (min-width: 961px) {
+                .event-slide {
+                    position: absolute;
+                    inset: 0;
+                    width: 100%;
+                    opacity: 0;
+                    visibility: hidden;
+                    transform: translateY(30px) scale(0.95);
+                    transition: opacity 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+                                transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+                    pointer-events: none;
+                    z-index: 0;
+                    will-change: transform, opacity;
+                }
 
-            .event-slide.active {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0) scale(1);
-                pointer-events: auto;
-                z-index: 1;
+                .event-slide.active {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateY(0) scale(1);
+                    pointer-events: auto;
+                    z-index: 1;
+                }
             }
 
             .scroll-spacer { height: var(--outreach-spacer); pointer-events: none; }
@@ -2029,39 +2032,103 @@ app.get('/', (c) => {
                 .sticky-wrapper {
                     position: sticky;
                     top: 0vh;
-                    height: 80vh;
+                    height: 85vh;
                     display: flex;
                     align-items: flex-start;
                     justify-content: center;
-                    padding-top: 5px;
+                    padding-top: 5vh;
                 }
                 
                 .events-container {
                     position: relative;
                     width: 100%;
-                    height: 100%;
+                    height: 75vh;
+                    perspective: 1200px;
                 }
                 
+                /* MOBILE STACKED CARDS - All cards visible */
                 .event-slide {
-                    position: absolute;
-                    inset: 0;
-                    width: 100%;
-                    opacity: 0;
-                    visibility: hidden;
-                    transform: translateY(30px) scale(0.95);
-                    transition: opacity 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
-                                transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
-                    pointer-events: none;
-                    z-index: 0;
-                    will-change: transform, opacity;
+                    position: absolute !important;
+                    top: 0;
+                    left: 50%;
+                    width: 88%;
+                    max-width: 420px;
+                    height: auto;
+                    /* Make all cards visible */
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    pointer-events: auto !important;
+                    transition: transform 0.5s cubic-bezier(0.34, 1.26, 0.64, 1),
+                                filter 0.4s ease;
                 }
                 
+                /* Stack positioning - cards 2 and 3 peek out from behind card 1 */
+                .event-slide[data-event="1"]:not(.active) {
+                    z-index: 30;
+                    transform: translateX(-50%) translateY(0) scale(1);
+                    filter: brightness(1);
+                }
+                
+                .event-slide[data-event="2"]:not(.active) {
+                    z-index: 20;
+                    transform: translateX(-50%) translateY(50px) scale(0.95);
+                    filter: brightness(0.88);
+                }
+                
+                .event-slide[data-event="3"]:not(.active) {
+                    z-index: 10;
+                    transform: translateX(-50%) translateY(100px) scale(0.90);
+                    filter: brightness(0.76);
+                }
+                
+                /* Active card comes to front */
                 .event-slide.active {
-                    opacity: 1;
-                    visibility: visible;
-                    transform: translateY(0) scale(1);
-                    pointer-events: auto;
-                    z-index: 1;
+                    z-index: 40 !important;
+                    transform: translateX(-50%) translateY(0) scale(1) !important;
+                    filter: brightness(1) !important;
+                    pointer-events: auto !important;
+                }
+                
+                /* Swiping animations */
+                .event-slide.swiping-out {
+                    animation: cardFlipOut 0.5s cubic-bezier(0.34, 1.26, 0.64, 1) forwards;
+                }
+                
+                .event-slide.swiping-in {
+                    animation: cardFlipIn 0.5s cubic-bezier(0.34, 1.26, 0.64, 1) forwards;
+                }
+                
+                @keyframes cardFlipOut {
+                    0% {
+                        transform: translateX(-50%) translateY(0) scale(1) rotateY(0deg);
+                        filter: brightness(1);
+                    }
+                    50% {
+                        transform: translateX(-50%) translateY(-20px) scale(1.05) rotateY(90deg);
+                        filter: brightness(0.5);
+                    }
+                    100% {
+                        transform: translateX(-50%) translateY(100px) scale(0.90) rotateY(90deg);
+                        filter: brightness(0.3);
+                        z-index: 5;
+                    }
+                }
+                
+                @keyframes cardFlipIn {
+                    0% {
+                        transform: translateX(-50%) translateY(50px) scale(0.95) rotateY(-90deg);
+                        filter: brightness(0.5);
+                        z-index: 5;
+                    }
+                    50% {
+                        transform: translateX(-50%) translateY(-10px) scale(1.02) rotateY(0deg);
+                        filter: brightness(0.8);
+                    }
+                    100% {
+                        transform: translateX(-50%) translateY(0) scale(1) rotateY(0deg);
+                        filter: brightness(1);
+                        z-index: 40;
+                    }
                 }
                 
                 .scroll-spacer {
@@ -2523,74 +2590,79 @@ app.get('/', (c) => {
                 /* Sticky wrapper with more height for stack effect */
                 .sticky-wrapper {
                     height: 85vh;
-                    padding-top: 0;
+                    padding-top: 5vh;
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: center;
                 }
                 
                 /* Events container for stacking */
                 .events-container {
                     position: relative;
                     width: 100%;
-                    height: 100%;
+                    height: 75vh;
                     perspective: 1200px;
                 }
                 
-                /* Base event slide - positioned for stacking */
+                /* Base event slide - ALL VISIBLE, positioned for stacking */
                 .event-slide {
-                    position: absolute;
+                    position: absolute !important;
                     top: 0;
                     left: 50%;
-                    transform: translateX(-50%);
-                    width: 90%;
-                    max-width: 400px;
+                    width: 88%;
+                    max-width: 380px;
                     height: auto;
-                    transition: transform 0.6s cubic-bezier(0.34, 1.26, 0.64, 1),
-                                opacity 0.6s ease,
-                                filter 0.6s ease,
-                                z-index 0s 0.6s;
+                    /* CRITICAL: Make all cards visible */
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    pointer-events: auto !important;
+                    transition: transform 0.5s cubic-bezier(0.34, 1.26, 0.64, 1),
+                                filter 0.4s ease,
+                                z-index 0s;
                 }
                 
-                /* Stack positioning - cards appear below active card */
-                .event-slide[data-event="1"] {
+                /* Stack positioning - Show bottom edges of cards 2 and 3 beneath card 1 */
+                .event-slide[data-event="1"]:not(.active) {
                     z-index: 30;
-                    transform: translateX(-50%) translateY(0px) scale(1);
-                    opacity: 1;
+                    transform: translateX(-50%) translateY(0) scale(1);
                     filter: brightness(1);
                 }
                 
-                .event-slide[data-event="2"] {
+                .event-slide[data-event="2"]:not(.active) {
                     z-index: 20;
-                    transform: translateX(-50%) translateY(60px) scale(0.94);
-                    opacity: 0.7;
-                    filter: brightness(0.85);
+                    transform: translateX(-50%) translateY(50px) scale(0.95);
+                    filter: brightness(0.88);
                 }
                 
-                .event-slide[data-event="3"] {
+                .event-slide[data-event="3"]:not(.active) {
                     z-index: 10;
-                    transform: translateX(-50%) translateY(120px) scale(0.88);
-                    opacity: 0.5;
-                    filter: brightness(0.7);
+                    transform: translateX(-50%) translateY(100px) scale(0.90);
+                    filter: brightness(0.76);
                 }
                 
                 /* Active state - bring card to front with full visibility */
-                .event-slide.active[data-event="1"] {
-                    z-index: 30;
-                    transform: translateX(-50%) translateY(0) scale(1);
-                    opacity: 1;
-                    filter: brightness(1);
+                .event-slide.active {
+                    z-index: 40 !important;
+                    transform: translateX(-50%) translateY(0) scale(1) !important;
+                    filter: brightness(1) !important;
+                    pointer-events: auto !important;
                 }
                 
-                .event-slide.active[data-event="2"] {
-                    z-index: 30;
-                    transform: translateX(-50%) translateY(0) scale(1);
-                    opacity: 1;
-                    filter: brightness(1);
+                /* When card 2 is active, restack others */
+                .event-slide[data-event="1"].active ~ .event-slide[data-event="2"],
+                .event-slide[data-event="2"].active {
+                    z-index: 40;
                 }
                 
-                .event-slide.active[data-event="3"] {
-                    z-index: 30;
-                    transform: translateX(-50%) translateY(0) scale(1);
-                    opacity: 1;
-                    filter: brightness(1);
+                .event-slide[data-event="2"].active ~ .event-slide[data-event="3"] {
+                    z-index: 20;
+                    transform: translateX(-50%) translateY(50px) scale(0.95);
+                    filter: brightness(0.88);
+                }
+                
+                /* When card 3 is active, card 1 and 2 should be behind */
+                .event-slide[data-event="3"].active {
+                    z-index: 40;
                 }
                 
                 /* Swiping states with card flip animation */
@@ -2606,30 +2678,33 @@ app.get('/', (c) => {
                 @keyframes cardFlipOut {
                     0% {
                         transform: translateX(-50%) translateY(0) scale(1) rotateY(0deg);
-                        opacity: 1;
+                        filter: brightness(1);
                     }
                     50% {
                         transform: translateX(-50%) translateY(-20px) scale(1.05) rotateY(90deg);
-                        opacity: 0;
+                        filter: brightness(0.5);
                     }
                     100% {
-                        transform: translateX(-50%) translateY(120px) scale(0.88) rotateY(90deg);
-                        opacity: 0;
+                        transform: translateX(-50%) translateY(100px) scale(0.90) rotateY(90deg);
+                        filter: brightness(0.3);
+                        z-index: 5;
                     }
                 }
                 
                 @keyframes cardFlipIn {
                     0% {
-                        transform: translateX(-50%) translateY(60px) scale(0.94) rotateY(-90deg);
-                        opacity: 0;
+                        transform: translateX(-50%) translateY(50px) scale(0.95) rotateY(-90deg);
+                        filter: brightness(0.5);
+                        z-index: 5;
                     }
                     50% {
                         transform: translateX(-50%) translateY(-10px) scale(1.02) rotateY(0deg);
-                        opacity: 0.7;
+                        filter: brightness(0.8);
                     }
                     100% {
                         transform: translateX(-50%) translateY(0) scale(1) rotateY(0deg);
-                        opacity: 1;
+                        filter: brightness(1);
+                        z-index: 40;
                     }
                 }
                 

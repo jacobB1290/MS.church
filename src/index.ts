@@ -898,6 +898,11 @@ app.get('/', (c) => {
                 display: none;
             }
             
+            /* Event 2 button: add more space above */
+            .event-slide[data-event="2"] .event-cta {
+                margin-top: 16px;
+            }
+            
             .event-cta .btn {
                 width: 100%;
                 padding: 20px 40px;
@@ -4673,12 +4678,33 @@ app.get('/', (c) => {
                         
                         // Determine target card
                         let targetCard = currentEventIndex;
+                        let scrollToWatch = false;
+                        
                         if (dx < 0) {
                             // Swipe LEFT = next
-                            targetCard = Math.min(currentEventIndex + 1, totalEvents - 1);
+                            if (currentEventIndex === totalEvents - 1) {
+                                // At last card, swipe left goes to Watch section
+                                scrollToWatch = true;
+                            } else {
+                                targetCard = currentEventIndex + 1;
+                            }
                         } else {
                             // Swipe RIGHT = previous
                             targetCard = Math.max(currentEventIndex - 1, 0);
+                        }
+                        
+                        // Handle scroll to Watch section
+                        if (scrollToWatch) {
+                            const watchSection = document.querySelector('#watch');
+                            if (watchSection) {
+                                const watchTop = watchSection.getBoundingClientRect().top + window.pageYOffset;
+                                const navOffset = 30; // Mobile nav offset
+                                window.scrollTo({
+                                    top: watchTop - navOffset,
+                                    behavior: 'smooth'
+                                });
+                            }
+                            return;
                         }
                         
                         // No change? Do nothing

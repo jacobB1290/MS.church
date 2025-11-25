@@ -1988,18 +1988,239 @@ app.get('/', (c) => {
             }
 
             /* ========================================
-               MOBILE STYLES (≤960px - phones and tablets)
-               All mobile breakpoints wrapped together
-               Desktop (≥961px) uses desktop-style layouts
-               This matches JavaScript isMobile threshold (window.innerWidth <= 960)
+               TABLET STYLES (481px - 960px)
+               Desktop-like layout with 3-column events grid
+               But with single-column hero for space
                ======================================== */
-            @media (max-width: 960px) {
-                /* CRITICAL: Override base 380px nav-spacer for mobile */
+            @media (min-width: 481px) and (max-width: 960px) {
+                /* Tablet nav-spacer */
+                .nav-spacer {
+                    height: 140px;
+                }
+                
+                /* Tablet Nav - Desktop-like horizontal layout */
+                .nav-shell {
+                    flex-wrap: nowrap;
+                    justify-content: space-between;
+                    border-radius: 100px;
+                    padding: 12px 24px;
+                    gap: 20px;
+                    top: 16px;
+                }
+                
+                .brand {
+                    display: none;  /* Hide brand to save space */
+                }
+                
+                nav ul {
+                    display: flex;
+                    gap: 24px;
+                    width: auto;
+                    justify-content: center;
+                }
+                
+                nav a {
+                    font-size: 11px;
+                    letter-spacing: 1.5px;
+                }
+                
+                .nav-cta {
+                    width: auto;
+                    padding: 10px 20px;
+                    font-size: 10px;
+                    white-space: nowrap;
+                }
+                
+                /* Hide mobile-only form button */
+                .nav-form-btn {
+                    display: none !important;
+                }
+                
+                /* Tablet Hero - Single column but with better spacing */
+                .hero {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 32px;
+                    padding: 40px 0;
+                }
+                
+                .hero-body {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 32px;
+                }
+                
+                .hero h1 {
+                    font-size: clamp(36px, 6vw, 48px);
+                    text-align: center;
+                }
+                
+                .hero p {
+                    font-size: 16px;
+                    text-align: center;
+                    max-width: 600px;
+                    margin: 0 auto;
+                }
+                
+                .hero-address {
+                    text-align: center;
+                }
+                
+                .hero-image {
+                    max-width: 500px;
+                    margin: 0 auto;
+                    min-height: 350px;
+                    border-radius: 24px;
+                }
+                
+                .cta-group {
+                    justify-content: center;
+                }
+                
+                /* TABLET OUTREACH - Desktop-style 3-column grid, NO sticky scroll */
+                .outreach {
+                    min-height: auto;
+                    width: 100%;
+                    padding: 0 4%;
+                }
+                
+                .outreach-header {
+                    text-align: center;
+                    margin-bottom: 32px;
+                }
+                
+                .outreach-scroll-container {
+                    position: relative;
+                }
+                
+                /* NO sticky wrapper for tablet */
+                .sticky-wrapper {
+                    position: relative;
+                    top: auto;
+                    height: auto;
+                    padding: 0;
+                }
+                
+                /* Hide scroll spacer on tablet */
+                .scroll-spacer {
+                    display: none;
+                    height: 0;
+                }
+                
+                /* 3-column grid for events */
+                .events-container {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 16px;
+                    width: 100%;
+                    max-width: 100%;
+                }
+                
+                /* Reset event slide positioning for grid */
+                .event-slide {
+                    position: relative !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    transform: none !important;
+                    left: auto;
+                    top: auto;
+                    width: 100%;
+                    max-width: none;
+                    pointer-events: auto !important;
+                }
+                
+                .event-slide.active,
+                .event-slide.stack-position-1,
+                .event-slide.stack-position-2 {
+                    transform: none !important;
+                    z-index: 1;
+                }
+                
+                /* Show all UI on all cards */
+                .event-slide .event-date,
+                .event-slide .event-indicators,
+                .event-slide .event-cta {
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                }
+                
+                .event-slide .event-flyer-wrapper {
+                    filter: none !important;
+                }
+                
+                /* Hide indicator dots on tablet (not needed with grid) */
+                .event-indicators {
+                    display: none;
+                }
+                
+                /* Event card styling for tablet grid */
+                .event-card {
+                    height: auto;
+                    width: 100%;
+                    margin: 0;
+                    padding: 12px;
+                    background: rgba(255, 255, 255, 0.9);
+                    border-radius: 16px;
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+                }
+                
+                .event-flyer-wrapper {
+                    max-width: 100%;
+                    margin-bottom: 12px;
+                }
+                
+                .flyer-image,
+                .placeholder-flyer {
+                    border-radius: 12px;
+                }
+                
+                .event-cta .btn {
+                    padding: 10px 16px;
+                    font-size: 10px;
+                    border-radius: 12px;
+                }
+                
+                /* Schedule grid - 3 columns on tablet */
+                .schedule-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 16px;
+                }
+                
+                .schedule-item {
+                    padding: 20px;
+                }
+                
+                .schedule-item h3 {
+                    font-size: 16px;
+                }
+                
+                .schedule-item p {
+                    font-size: 13px;
+                }
+                
+                /* Section headings */
+                .section-heading {
+                    font-size: clamp(28px, 5vw, 36px);
+                    text-align: center;
+                }
+                
+                .section-lead {
+                    font-size: 15px;
+                    text-align: center;
+                }
+            }
+            
+            /* ========================================
+               MOBILE STYLES (≤480px - phones only)
+               Stacked card layout with scroll behavior
+               ======================================== */
+            @media (max-width: 480px) {
+                /* Phone nav-spacer */
                 .nav-spacer {
                     height: 190px;
                 }
                 
-                /* Mobile Hero Section - Grid vertical layout (applies to mobile AND narrow windows) */
+                /* Mobile Hero Section - Grid vertical layout */
                 .hero {
                     display: grid;
                     gap: 40px;
@@ -4729,7 +4950,9 @@ app.get('/', (c) => {
                 }
 
                 function updateActiveEvent(index, skipBackground, fromSwipe = false) {
-                    const isMobile = window.innerWidth <= 960;
+                    // Only phones (≤480px) get stacked card behavior
+                    // Tablets (481-960px) show all 3 cards in grid
+                    const isMobile = window.innerWidth <= 480;
                     
                     // Update active class
                     eventSlides.forEach(s => s.classList.remove('active'));

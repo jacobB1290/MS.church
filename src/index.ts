@@ -1988,11 +1988,11 @@ app.get('/', (c) => {
             }
 
             /* ========================================
-               MOBILE STYLES (≤899px - phone and small tablets only)
-               All mobile breakpoints wrapped together (up to 899px)
-               Tablet/Desktop (≥900px) will use desktop-style layouts
+               MOBILE STYLES (≤767px - phones only)
+               All mobile breakpoints wrapped together
+               Tablet (768px-1199px) and Desktop (≥1200px) use desktop-style layouts
                ======================================== */
-            @media (max-width: 899px) {
+            @media (max-width: 767px) {
                 /* Mobile Hero Section - Grid vertical layout (applies to mobile AND narrow windows) */
                 .hero {
                     display: grid;
@@ -2136,7 +2136,7 @@ app.get('/', (c) => {
                 }
             }
             
-            @media (max-width: 899px) {
+            @media (max-width: 767px) {
                 .event-content {
                     grid-template-columns: 1fr;
                     gap: 0;
@@ -2177,7 +2177,7 @@ app.get('/', (c) => {
                 }
             }
 
-            @media (max-width: 899px) {
+            @media (max-width: 767px) {
                 .nav-shell {
                     flex-wrap: wrap;
                     border-radius: 40px;
@@ -3590,11 +3590,12 @@ app.get('/', (c) => {
             
             
             /* ========================================
-               DESKTOP STYLES (≥900px)
+               DESKTOP/TABLET STYLES (≥768px)
                Two-column layout that scales responsively from tablets to full desktop
-               Mobile styles (≤899px) are completely isolated
+               Mobile styles (≤767px) are completely isolated
+               This ensures narrow desktop windows still show desktop-style layouts
                ======================================== */
-            @media (min-width: 900px) {
+            @media (min-width: 768px) {
                 /* Desktop two-column layout starts at 900px */
                 /* Scales responsively from tablets to full desktop screens */
                 .page {

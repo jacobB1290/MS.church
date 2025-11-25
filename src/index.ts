@@ -1994,6 +1994,11 @@ app.get('/', (c) => {
                This matches JavaScript isMobile threshold (window.innerWidth <= 960)
                ======================================== */
             @media (max-width: 960px) {
+                /* CRITICAL: Override base 380px nav-spacer for mobile */
+                .nav-spacer {
+                    height: 190px;
+                }
+                
                 /* Mobile Hero Section - Grid vertical layout (applies to mobile AND narrow windows) */
                 .hero {
                     display: grid;

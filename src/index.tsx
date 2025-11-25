@@ -2054,12 +2054,17 @@ app.get('/', (c) => {
                     align-items: flex-start;
                     justify-content: center;
                     padding-top: 5vh;
+                    width: 100%;
+                    max-width: 100%;
+                    margin: 0 auto;
                 }
                 
                 .events-container {
                     position: relative;
                     width: 100%;
+                    max-width: 500px;  /* Constrain width for better centering */
                     height: 100%;
+                    margin: 0 auto;
                 }
                 
                 /* MOBILE STACKED CARDS - Clean and refined */
@@ -2127,18 +2132,45 @@ app.get('/', (c) => {
                     pointer-events: none;
                 }
                 
-                /* Event cards - Mobile full-screen layout */
+                /* Event cards - Mobile/Tablet centered layout */
                 .event-card {
                     position: relative;
-                    width: 100vw;
+                    width: 100%;
+                    max-width: 100vw;
                     height: 90vh;
-                    margin-left: calc(-50vw + 50%);
+                    margin: 0 auto;  /* Center horizontally */
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: flex-start;
                     padding-top: 20px;
                     box-sizing: border-box;
+                }
+                
+                /* Ensure outreach section is properly contained */
+                .outreach {
+                    width: 100%;
+                    max-width: 100vw;
+                    overflow-x: hidden;
+                    margin: 0;
+                }
+                
+                .outreach-header {
+                    width: 92%;
+                    max-width: 600px;
+                    margin: 0 auto 40px;
+                    text-align: center;
+                }
+                
+                .outreach-header .section-eyebrow,
+                .outreach-header .section-heading {
+                    text-align: center;
+                }
+                
+                .events-container {
+                    display: flex;
+                    justify-content: center;
+                    width: 100%;
                 }
             }
             
@@ -2184,8 +2216,10 @@ app.get('/', (c) => {
             }
 
             @media (max-width: 960px) {
+                /* NAV - Centered layout matching mobile design */
                 .nav-shell {
                     flex-wrap: wrap;
+                    justify-content: center;  /* Center all nav content */
                     border-radius: 40px;
                     gap: 16px;
                     margin: 20px auto 50px;
@@ -2203,10 +2237,11 @@ app.get('/', (c) => {
 
                 nav ul {
                     width: 100%;
-                    justify-content: center;
+                    justify-content: center;  /* Center nav links */
                     flex-wrap: wrap;
                     row-gap: 10px;
                     gap: 18px;
+                    order: 1;  /* Nav links first */
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {
@@ -2214,10 +2249,19 @@ app.get('/', (c) => {
                     row-gap: 0;
                 }
 
+                .brand {
+                    align-items: center;
+                    width: 100%;
+                    text-align: center;
+                    order: 0;  /* Brand at top */
+                }
+
                 .nav-cta {
                     width: 100%;
                     padding: 10px 24px;
                     font-size: 10px;
+                    text-align: center;
+                    order: 2;  /* CTA button last */
                 }
                 
                 /* GIFTS button - shift right when compressed */
@@ -2225,11 +2269,6 @@ app.get('/', (c) => {
                     width: auto;
                     margin-left: auto;
                     padding: 8px 20px;
-                }
-
-                .brand {
-                    align-items: center;
-                    width: 100%;
                 }
 
                 .brand-title {
@@ -2352,38 +2391,47 @@ app.get('/', (c) => {
                 }
                 
                 .outreach {
-                    width: 100vw;
-                    margin-left: calc(-50vw + 50%);
+                    width: 100%;
+                    max-width: 100vw;
+                    margin: 0 auto;
+                    overflow-x: hidden;
                 }
                 
                 .outreach-header {
                     margin-bottom: 40px;
                     padding-bottom: 0;
                     width: 92%;
+                    max-width: 600px;
                     margin-left: auto;
                     margin-right: auto;
+                    text-align: center;
                 }
                 
                 .outreach-header .section-heading {
                     margin-bottom: 16px;
+                    text-align: center;
                 }
                 
                 .outreach-header .section-eyebrow {
                     margin-bottom: 16px;
                 }
 
-                /* Mobile Event Cards - Clean layout */
+                /* Mobile/Tablet Event Cards - Centered layout */
                 .events-container,
                 .sticky-wrapper {
-                    width: 100vw;
+                    width: 100%;
+                    max-width: 100vw;
                     padding: 0;
                     box-sizing: border-box;
+                    display: flex;
+                    justify-content: center;
                 }
                 
                 .event-card {
                     height: 90vh;
-                    margin-left: 0;
-                    width: 100vw;
+                    margin: 0 auto;
+                    width: 100%;
+                    max-width: 500px;
                     padding-top: 16px;
                 }
                 

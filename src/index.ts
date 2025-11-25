@@ -3979,6 +3979,68 @@ app.get('/', (c) => {
                 }
             }
             
+            /* ========================================
+               INTERMEDIATE BREAKPOINT (768px - 1199px)
+               Ensures desktop layout scales properly for narrow windows
+               Prevents awkward proportions when resizing
+               ======================================== */
+            @media (min-width: 768px) and (max-width: 1199px) {
+                /* Scale down hero for intermediate widths */
+                .hero h1 {
+                    font-size: clamp(48px, 5.5vw, 72px);
+                }
+                
+                .hero p {
+                    font-size: clamp(16px, 1.6vw, 20px);
+                }
+                
+                .hero-body {
+                    column-gap: clamp(24px, 3vw, 40px);
+                }
+                
+                .hero-image {
+                    min-height: clamp(350px, 40vh, 450px);
+                    max-height: clamp(400px, 50vh, 500px);
+                    height: clamp(380px, 45vh, 480px);
+                }
+                
+                /* Scale down event grid for intermediate widths */
+                .events-container {
+                    gap: clamp(16px, 2vw, 24px);
+                    padding: 0 12px;
+                }
+                
+                .event-card {
+                    padding: clamp(12px, 1.5vw, 18px);
+                    border-radius: 20px;
+                }
+                
+                .event-cta .btn {
+                    padding: clamp(10px, 1.2vw, 12px) clamp(16px, 2vw, 20px);
+                    font-size: clamp(10px, 1vw, 11px);
+                }
+                
+                /* Scale down watch section */
+                .watch-card {
+                    padding: 32px 40px;
+                }
+                
+                /* Scale down contact section */
+                .contact-card {
+                    padding: 48px 56px;
+                }
+                
+                /* Scale down schedule grid */
+                .schedule-grid {
+                    gap: clamp(16px, 2vw, 24px);
+                }
+                
+                /* Adjust main gaps */
+                main {
+                    gap: 80px;
+                    margin-bottom: 80px;
+                }
+            }
 
         </style>
     </head>

@@ -649,7 +649,7 @@ app.get('/', (c) => {
                 width: auto;
             }
             
-            @media (max-width: 768px) {
+            @media (max-width: 960px) {
                 .heading-wrapper {
                     width: 100%;
                     display: block;
@@ -662,7 +662,7 @@ app.get('/', (c) => {
             }
             
             /* Desktop-only reduced gap */
-            @media (min-width: 769px) {
+            @media (min-width: 961px) {
                 .outreach-header {
                     margin-bottom: 8vh;
                 }
@@ -1988,11 +1988,12 @@ app.get('/', (c) => {
             }
 
             /* ========================================
-               MOBILE STYLES (≤767px - phones only)
+               MOBILE STYLES (≤960px - phones and tablets)
                All mobile breakpoints wrapped together
-               Tablet (768px-1199px) and Desktop (≥1200px) use desktop-style layouts
+               Desktop (≥961px) uses desktop-style layouts
+               This matches JavaScript isMobile threshold (window.innerWidth <= 960)
                ======================================== */
-            @media (max-width: 767px) {
+            @media (max-width: 960px) {
                 /* Mobile Hero Section - Grid vertical layout (applies to mobile AND narrow windows) */
                 .hero {
                     display: grid;
@@ -2136,7 +2137,7 @@ app.get('/', (c) => {
                 }
             }
             
-            @media (max-width: 767px) {
+            @media (max-width: 960px) {
                 .event-content {
                     grid-template-columns: 1fr;
                     gap: 0;
@@ -2177,7 +2178,7 @@ app.get('/', (c) => {
                 }
             }
 
-            @media (max-width: 767px) {
+            @media (max-width: 960px) {
                 .nav-shell {
                     flex-wrap: wrap;
                     border-radius: 40px;
@@ -2268,7 +2269,7 @@ app.get('/', (c) => {
                 }
             }
 
-            @media (max-width: 768px) {
+            @media (max-width: 960px) {
                 .page {
                     width: 92%;
                 }
@@ -2366,7 +2367,7 @@ app.get('/', (c) => {
                     margin-bottom: 16px;
                 }
 
-                /* Mobile 768px Event Cards - Clean layout */
+                /* Mobile Event Cards - Clean layout */
                 .events-container,
                 .sticky-wrapper {
                     width: 100vw;
@@ -3590,14 +3591,14 @@ app.get('/', (c) => {
             
             
             /* ========================================
-               DESKTOP/TABLET STYLES (≥768px)
-               Two-column layout that scales responsively from tablets to full desktop
-               Mobile styles (≤767px) are completely isolated
-               This ensures narrow desktop windows still show desktop-style layouts
+               DESKTOP STYLES (≥961px)
+               Two-column layout for desktop screens
+               Mobile styles (≤960px) are completely isolated
+               This matches JavaScript isMobile threshold (window.innerWidth <= 960)
                ======================================== */
-            @media (min-width: 768px) {
-                /* Desktop two-column layout starts at 900px */
-                /* Scales responsively from tablets to full desktop screens */
+            @media (min-width: 961px) {
+                /* Desktop two-column layout for screens 961px and wider */
+                /* Scales responsively from small desktop to full desktop screens */
                 .page {
                     max-width: 1400px;
                 }
@@ -3980,11 +3981,11 @@ app.get('/', (c) => {
             }
             
             /* ========================================
-               INTERMEDIATE BREAKPOINT (768px - 1199px)
-               Ensures desktop layout scales properly for narrow windows
+               INTERMEDIATE BREAKPOINT (961px - 1199px)
+               Ensures desktop layout scales properly for narrow desktop windows
                Prevents awkward proportions when resizing
                ======================================== */
-            @media (min-width: 768px) and (max-width: 1199px) {
+            @media (min-width: 961px) and (max-width: 1199px) {
                 /* Scale down hero for intermediate widths */
                 .hero h1 {
                     font-size: clamp(48px, 5.5vw, 72px);

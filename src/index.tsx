@@ -967,12 +967,39 @@ app.get('/', (c) => {
                 overflow: hidden;
             }
             
-            /* When Stay Tuned is the only card (no sticky wrapper needed) */
+            /* ========================================
+               STAY TUNED ONLY MODE
+               When no upcoming events - clean static layout
+               ======================================== */
+            .stay-tuned-only {
+                /* Remove excessive gap between sections */
+                margin-bottom: 0 !important;
+            }
+            
+            .stay-tuned-only .outreach-header {
+                /* Left align headers properly */
+                text-align: left;
+                margin-bottom: 24px;
+            }
+            
+            .stay-tuned-only .outreach-header .section-eyebrow,
+            .stay-tuned-only .outreach-header .section-heading,
+            .stay-tuned-only .outreach-header .section-lead {
+                text-align: left;
+            }
+            
+            .stay-tuned-only .outreach-scroll-container {
+                margin-top: 0;
+            }
+            
             .stay-tuned-only .sticky-wrapper {
                 position: relative !important;
                 height: auto !important;
                 min-height: auto !important;
                 padding-top: 0 !important;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
             }
             
             .stay-tuned-only .scroll-spacer {
@@ -983,6 +1010,11 @@ app.get('/', (c) => {
             .stay-tuned-only .events-container {
                 position: relative;
                 height: auto;
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                max-width: 400px;
+                margin: 0 auto;
             }
             
             .stay-tuned-only .event-slide {
@@ -990,18 +1022,25 @@ app.get('/', (c) => {
                 transform: none !important;
                 opacity: 1 !important;
                 visibility: visible !important;
+                width: 100%;
             }
             
             .stay-tuned-only .event-card {
                 height: auto !important;
-                min-height: 400px;
+                min-height: auto;
                 max-height: none;
+                width: 100%;
+                max-width: 340px;
+                margin: 0 auto;
+                padding: 0;
             }
             
             .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
                 aspect-ratio: auto;
-                min-height: 400px;
-                max-height: 500px;
+                min-height: 380px;
+                max-height: 450px;
+                width: 100%;
+                margin: 0 auto;
             }
             
             .stay-tuned-badge {
@@ -3158,6 +3197,75 @@ app.get('/', (c) => {
                     margin-top: 12px;
                     padding: 8px 16px;
                     font-size: 9px;
+                }
+                
+                /* ========================================
+                   MOBILE STAY-TUNED-ONLY OVERRIDES
+                   Clean static layout when no upcoming events
+                   ======================================== */
+                .stay-tuned-only {
+                    margin-bottom: 40px !important;
+                }
+                
+                .stay-tuned-only .outreach-header {
+                    text-align: left;
+                    padding-left: 5%;
+                    margin-bottom: 20px;
+                }
+                
+                .stay-tuned-only .outreach-header .section-eyebrow {
+                    margin-left: 0;
+                }
+                
+                .stay-tuned-only .outreach-header .section-heading {
+                    text-align: left;
+                }
+                
+                .stay-tuned-only .outreach-header .section-lead {
+                    text-align: left;
+                    display: none; /* Hide on mobile for cleaner look */
+                }
+                
+                .stay-tuned-only .outreach-scroll-container {
+                    margin-top: 0;
+                }
+                
+                .stay-tuned-only .sticky-wrapper {
+                    position: relative !important;
+                    height: auto !important;
+                    padding-top: 0 !important;
+                    display: flex;
+                    justify-content: center;
+                }
+                
+                .stay-tuned-only .events-container {
+                    position: relative !important;
+                    width: 88%;
+                    max-width: 340px;
+                    margin: 0 auto;
+                    height: auto !important;
+                }
+                
+                .stay-tuned-only .event-slide {
+                    position: relative !important;
+                    left: 0 !important;
+                    top: 0 !important;
+                    width: 100% !important;
+                    max-width: none !important;
+                    transform: none !important;
+                }
+                
+                .stay-tuned-only .event-card {
+                    width: 100%;
+                    max-width: none;
+                    height: auto !important;
+                    min-height: auto;
+                }
+                
+                .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
+                    min-height: 360px;
+                    max-height: 420px;
+                    aspect-ratio: auto;
                 }
                 
                 /* Mobile Past Event styling */

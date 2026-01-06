@@ -449,6 +449,30 @@ app.get('/', (c) => {
                 background: #fff;
             }
 
+            /* Hero CTA Buttons - Contact (white) and Watch (gold) */
+            .btn-contact {
+                background: rgba(255, 255, 255, 0.95) !important;
+                color: #1a1a2e !important;
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1) !important;
+                border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            }
+            
+            .btn-contact:hover {
+                background: #fff !important;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15) !important;
+            }
+            
+            .btn-watch-gold {
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%) !important;
+                color: #fff !important;
+                box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35) !important;
+                border: none !important;
+            }
+            
+            .btn-watch-gold:hover {
+                box-shadow: 0 20px 50px rgba(200, 152, 96, 0.45) !important;
+            }
+
             /* Section Headers */
             .section-eyebrow {
                 display: inline-flex;
@@ -2736,7 +2760,7 @@ app.get('/', (c) => {
                     order: 2;  /* CTA button last */
                 }
                 
-                /* GIFTS button - shift right when compressed */
+                /* Contact button - shift right when compressed */
                 .nav-shell.scrolled-mobile .nav-cta {
                     width: auto;
                     margin-left: auto;
@@ -3087,7 +3111,7 @@ app.get('/', (c) => {
                     right: auto;
                 }
                 
-                /* Active state for GIFTS button */
+                /* Active state for Contact button */
                 .nav-form-btn.active {
                     font-weight: 900;
                     background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
@@ -4716,8 +4740,8 @@ app.get('/', (c) => {
                         <li><a href="#watch">Watch</a></li>
                     </ul>
                 </nav>
-                <a class="nav-cta" href="#contact">Free Gifts for Mothers</a>
-                <a class="nav-form-btn" href="#contact">Gifts</a>
+                <a class="nav-cta" href="#contact">Contact</a>
+                <a class="nav-form-btn" href="#contact">Contact</a>
             </header>
             <div class="nav-spacer"></div>
             <main>
@@ -4733,8 +4757,8 @@ app.get('/', (c) => {
                         </div>
                         <div class="service-info-buttons">
                             <div class="cta-group">
-                                <a class="btn btn-primary" href="#contact">From the radio? - Press here</a>
-                                <a class="btn btn-secondary" href="#watch">Watch live stream</a>
+                                <a class="btn btn-primary btn-contact" href="#contact">Contact</a>
+                                <a class="btn btn-secondary btn-watch-gold" href="#watch">Watch Livestream</a>
                             </div>
                         </div>
                     </div>
@@ -4919,27 +4943,11 @@ app.get('/', (c) => {
                 
                 <section class="contact" id="contact" style="animation-delay: 0.5s">
                     <div class="contact-header">
-                        <span class="section-eyebrow">Christmas Outreach</span>
-                        <h2 class="section-heading">Christmas Gifts for Single Mothers & Widows</h2>
-                        <h3 style="font-size: 22px; font-weight: 600; line-height: 1.4; margin: 24px 0 20px; color: #1a1a2e; font-family: 'Inter', sans-serif;">
-                            This Christmas, Morning Star Christian Church is giving back to the incredible single moms and widows in our community who are working tirelessly to provide for their families.
-                        </h3>
-                        <p class="section-lead form-message">
-                            Based on the information you share in the <a href="#gift-form" style="color: inherit; text-decoration: underline; text-underline-offset: 3px; transition: opacity 0.3s ease; font-weight: 700;">form</a>, our team will handpick a special gift just for you and your family. You can look forward to a pair of shoes for the adults and something fun and useful for the kids, perfect for school and outdoor play. We'll wrap everything beautifully so it's ready to go right under your Christmas tree. Once you've submitted the <a href="#gift-form" style="color: inherit; text-decoration: underline; text-underline-offset: 3px; transition: opacity 0.3s ease; font-weight: 700;">form</a>, you'll receive a text message confirming your submission and sharing all the pickup details.
+                        <span class="section-eyebrow">Get In Touch</span>
+                        <h2 class="section-heading">Contact Us</h2>
+                        <p class="section-lead">
+                            We'd love to hear from you! Whether you have questions, prayer requests, or just want to connect, fill out the form below and someone from our team will get back to you.
                         </p>
-                        
-                        <!-- Image Gallery -->
-                        <div class="gift-gallery">
-                            <img src="https://page.gensparksite.com/v1/base64_upload/5c1a4fbfd958bc5aeb993b48c261bc94" alt="Shoes display" class="gift-image">
-                            <img src="https://page.gensparksite.com/v1/base64_upload/8baf94a4a4ec4b77e4f2d6f455046d00" alt="Backpacks" class="gift-image">
-                            <img src="https://page.gensparksite.com/v1/base64_upload/fdac7f790dc8cbb99902308e71533891" alt="School supplies" class="gift-image">
-                        </div>
-                        
-                        <a href="#event-2" class="btn btn-secondary btn-see-flyer" style="background: rgba(255, 255, 255, 0.95); color: #1a1a2e; border: 2px solid rgba(26, 26, 46, 0.1); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); margin: 12px auto 24px;">See Flyer</a>
-                        <blockquote style="margin: 32px 0; padding: 24px; background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(212, 165, 116, 0.05) 100%); border-left: 4px solid #d4a574; border-radius: 12px; font-style: italic; line-height: 1.8; color: rgba(26, 26, 46, 0.85);">
-                            <p style="margin: 0 0 16px 0; font-size: 15px; font-weight: 600; color: #d4a574; letter-spacing: 0.5px;">1 John 3:16-18</p>
-                            <p style="margin: 0;">This is how we know what love is: Jesus Christ laid down his life for us. And we ought to lay down our lives for our brothers and sisters. If anyone has material possessions and sees a brother or sister in need but has no pity on them, how can the love of God be in that person? Dear children, let us not love with words or speech but with actions and in truth.</p>
-                        </blockquote>
                         
                         <address>
                             <div class="address-dropdown-wrapper">
@@ -4961,138 +4969,8 @@ app.get('/', (c) => {
                             </div>
                         </address>
                     </div>
-                    <div class="jotform-container" id="gift-form">
+                    <div class="jotform-container" id="contact-form">
                         <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
-                    </div>
-                        
-                        <!-- Success State (Hidden by default) -->
-                        <div class="form-success" style="display: none;">
-                                <div class="success-icon">🎁</div>
-                                <h3 class="success-heading">Request Submitted!</h3>
-                                <p class="success-message">You will receive a text message with more information.</p>
-                                
-                                <div class="success-details">
-                                    <div class="detail-item">
-                                        <span class="detail-label">📅 Date:</span>
-                                        <span class="detail-value">December 6, 2025</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <span class="detail-label">📍 Location:</span>
-                                        <span class="detail-value">
-                                            <div class="address-dropdown-wrapper" style="display: inline-block;">
-                                                <button class="address-trigger" data-address="3080 N Wildwood St, Boise, Idaho" style="font-size: 14px; letter-spacing: 0.5px;">3080 N Wildwood St, Boise, Idaho</button>
-                                                <div class="address-dropdown">
-                                                    <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
-                                                        <span class="address-dropdown-icon">🍎</span>
-                                                        <span>Apple Maps</span>
-                                                    </a>
-                                                    <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
-                                                        <span class="address-dropdown-icon">🗺️</span>
-                                                        <span>Google Maps</span>
-                                                    </a>
-                                                    <button class="address-dropdown-item copy-address" data-address="3080 N Wildwood St, Boise, Idaho">
-                                                        <span class="address-dropdown-icon">📋</span>
-                                                        <span>Copy Address</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </span>
-                                    </div>
-                                </div>
-                                
-                                <div class="calendar-buttons">
-                                    <a href="#" class="btn btn-calendar" id="apple-calendar">
-                                        <span class="calendar-icon">🍎</span>
-                                        <span>Add to Apple Calendar</span>
-                                    </a>
-                                    <a href="#" class="btn btn-calendar" id="google-calendar" target="_blank" rel="noopener">
-                                        <span class="calendar-icon">📅</span>
-                                        <span>Add to Google Calendar</span>
-                                    </a>
-                                </div>
-                            </div>
-                            <form class="contact-form clothes-drive-form" style="display: none;">
-                                <!-- Parent/Guardian Information -->
-                                <div class="form-section">
-                                    <h3 class="form-section-title">Parent/Guardian Information</h3>
-                                    
-                                    <div class="form-group">
-                                        <label for="parent-name">Full Name *</label>
-                                        <input type="text" id="parent-name" name="parent-name" required placeholder="Jane Doe">
-                                    </div>
-                                    
-                                    <div class="form-row form-row-3">
-                                        <div class="form-group">
-                                            <label for="parent-gender">Gender *</label>
-                                            <select id="parent-gender" name="parent-gender" required>
-                                                <option value="">Select</option>
-                                                <option value="F">Female</option>
-                                                <option value="M">Male</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="parent-age">Age *</label>
-                                            <input type="number" id="parent-age" name="parent-age" required placeholder="30" min="18" max="120">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="parent-shoe">Shoe Size *</label>
-                                            <input type="text" id="parent-shoe" name="parent-shoe" required placeholder="8">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="parent-phone">Phone Number *</label>
-                                        <input type="tel" id="parent-phone" name="parent-phone" required placeholder="(208) 555-1234">
-                                    </div>
-                                </div>
-                                
-                                <!-- Children Information Container -->
-                                <div class="form-section">
-                                    <h3 class="form-section-title">Children Information</h3>
-                                    
-                                    <div id="children-container">
-                                        <!-- Child 1 (Default) -->
-                                        <div class="child-form" data-child-number="1">
-                                            <div class="child-header">
-                                                <h4 class="child-number">Child 1</h4>
-                                            </div>
-                                            
-                                            <div class="form-group">
-                                                <label for="child-1-name">Child's Name *</label>
-                                                <input type="text" id="child-1-name" name="child-1-name" required placeholder="John Doe">
-                                            </div>
-                                            
-                                            <div class="form-row form-row-3">
-                                                <div class="form-group">
-                                                    <label for="child-1-age">Age *</label>
-                                                    <input type="number" id="child-1-age" name="child-1-age" required placeholder="8" min="0" max="18">
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="child-1-gender">Gender *</label>
-                                                    <select id="child-1-gender" name="child-1-gender" required>
-                                                        <option value="">Select</option>
-                                                        <option value="F">Female</option>
-                                                        <option value="M">Male</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="child-1-shoe">Shoe Size *</label>
-                                                    <input type="text" id="child-1-shoe" name="child-1-shoe" required placeholder="2">
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="form-group">
-                                                <label for="child-1-interests">Interests (Optional)</label>
-                                                <input type="text" id="child-1-interests" name="child-1-interests" placeholder="Sports, art, music...">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <button type="button" class="btn btn-secondary btn-add-child">+ Add Another Child</button>
-                                </div>
-                                
-                                <button type="submit" class="btn btn-primary btn-submit">Submit Request</button>
-                            </form>
                     </div>
                 </section>
             </main>
@@ -5533,13 +5411,13 @@ app.get('/', (c) => {
                         }
                     });
                     
-                    // Update GIFTS button active state
-                    const giftsBtn = document.querySelector('.nav-form-btn');
-                    if (giftsBtn) {
+                    // Update Contact button active state
+                    const contactBtn = document.querySelector('.nav-form-btn');
+                    if (contactBtn) {
                         if (currentSection === 'contact') {
-                            giftsBtn.classList.add('active');
+                            contactBtn.classList.add('active');
                         } else {
-                            giftsBtn.classList.remove('active');
+                            contactBtn.classList.remove('active');
                         }
                     }
                 }
@@ -6207,66 +6085,6 @@ app.get('/', (c) => {
                     }
                 }
                 
-                // Calendar Integration
-                const appleCalendarBtn = document.getElementById('apple-calendar');
-                const googleCalendarBtn = document.getElementById('google-calendar');
-                
-                // Event details
-                const eventTitle = 'Christmas Gifts for Single Mothers & Widows';
-                const eventDescription = 'Christmas outreach program - drop off during office hours';
-                const eventLocation = '3080 N Wildwood St, Boise, Idaho';
-                const eventDate = '20251206'; // December 6, 2025 (YYYYMMDD)
-                const eventStartTime = '20251206T090000'; // 9:00 AM
-                const eventEndTime = '20251206T170000'; // 5:00 PM
-                
-                // Google Calendar URL
-                if (googleCalendarBtn) {
-                    const googleUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
-                        '&text=' + encodeURIComponent(eventTitle) +
-                        '&dates=' + eventStartTime + '/' + eventEndTime +
-                        '&details=' + encodeURIComponent(eventDescription) +
-                        '&location=' + encodeURIComponent(eventLocation) +
-                        '&sf=true&output=xml';
-                    
-                    googleCalendarBtn.href = googleUrl;
-                }
-                
-                // Apple Calendar (ICS download)
-                if (appleCalendarBtn) {
-                    appleCalendarBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        
-                        const icsContent = [
-                            'BEGIN:VCALENDAR',
-                            'VERSION:2.0',
-                            'PRODID:-//Morning Star Christian Church//EN',
-                            'BEGIN:VEVENT',
-                            'UID:' + Date.now() + '@morningstarchurch.com',
-                            'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
-                            'DTSTART:' + eventStartTime,
-                            'DTEND:' + eventEndTime,
-                            'SUMMARY:' + eventTitle,
-                            'DESCRIPTION:' + eventDescription,
-                            'LOCATION:' + eventLocation,
-                            'BEGIN:VALARM',
-                            'TRIGGER:-PT24H',
-                            'ACTION:DISPLAY',
-                            'DESCRIPTION:Reminder: ' + eventTitle + ' tomorrow',
-                            'END:VALARM',
-                            'END:VEVENT',
-                            'END:VCALENDAR'
-                        ].join('\\r\\n');
-                        
-                        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-                        const link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = 'christmas-clothes-drive.ics';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    });
-                }
-                
                 // Address Dropdown Functionality
                 const addressTriggers = document.querySelectorAll('.address-trigger');
                 const addressDropdowns = document.querySelectorAll('.address-dropdown');
@@ -6369,81 +6187,6 @@ app.get('/', (c) => {
                 setInterval(() => {
                     moveCarousel('event2', 1);
                 }, 5000);
-
-                // Gift Gallery Lightbox
-                const giftImages = document.querySelectorAll('.gift-image');
-                const giftLightbox = document.getElementById('gift-lightbox');
-                const giftLightboxImage = document.getElementById('gift-lightbox-image');
-                const giftLightboxClose = document.getElementById('gift-lightbox-close');
-                const giftLightboxPrev = document.getElementById('gift-lightbox-prev');
-                const giftLightboxNext = document.getElementById('gift-lightbox-next');
-                
-                let currentGiftIndex = 0;
-                const giftImagesSrcs = Array.from(giftImages).map(img => img.src);
-                
-                // Open lightbox when clicking on gift image
-                giftImages.forEach((img, index) => {
-                    img.addEventListener('click', () => {
-                        currentGiftIndex = index;
-                        openGiftLightbox();
-                    });
-                });
-                
-                function openGiftLightbox() {
-                    giftLightboxImage.src = giftImagesSrcs[currentGiftIndex];
-                    giftLightbox.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                }
-                
-                function closeGiftLightbox() {
-                    giftLightbox.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-                
-                function showPrevGift() {
-                    currentGiftIndex = (currentGiftIndex - 1 + giftImagesSrcs.length) % giftImagesSrcs.length;
-                    giftLightboxImage.src = giftImagesSrcs[currentGiftIndex];
-                }
-                
-                function showNextGift() {
-                    currentGiftIndex = (currentGiftIndex + 1) % giftImagesSrcs.length;
-                    giftLightboxImage.src = giftImagesSrcs[currentGiftIndex];
-                }
-                
-                // Event listeners
-                if (giftLightboxClose) {
-                    giftLightboxClose.addEventListener('click', closeGiftLightbox);
-                }
-                
-                if (giftLightboxPrev) {
-                    giftLightboxPrev.addEventListener('click', showPrevGift);
-                }
-                
-                if (giftLightboxNext) {
-                    giftLightboxNext.addEventListener('click', showNextGift);
-                }
-                
-                // Close on background click
-                if (giftLightbox) {
-                    giftLightbox.addEventListener('click', (e) => {
-                        if (e.target === giftLightbox) {
-                            closeGiftLightbox();
-                        }
-                    });
-                }
-                
-                // Keyboard navigation
-                document.addEventListener('keydown', (e) => {
-                    if (!giftLightbox.classList.contains('active')) return;
-                    
-                    if (e.key === 'Escape') {
-                        closeGiftLightbox();
-                    } else if (e.key === 'ArrowLeft') {
-                        showPrevGift();
-                    } else if (e.key === 'ArrowRight') {
-                        showNextGift();
-                    }
-                });
 
                 // Countdown Timer to Next Sunday 9:00 AM Mountain Time
                 function updateCountdown() {
@@ -6573,16 +6316,6 @@ app.get('/', (c) => {
                 }
             });
         </script>
-        
-        <!-- Gift Gallery Lightbox -->
-        <div class="gift-lightbox" id="gift-lightbox">
-            <div class="gift-lightbox-close" id="gift-lightbox-close">×</div>
-            <div class="gift-lightbox-arrow prev" id="gift-lightbox-prev">‹</div>
-            <div class="gift-lightbox-content">
-                <img src="" alt="Gift" class="gift-lightbox-image" id="gift-lightbox-image">
-            </div>
-            <div class="gift-lightbox-arrow next" id="gift-lightbox-next">›</div>
-        </div>
     </body>
     </html>
   `)

@@ -1896,9 +1896,10 @@ app.get('/', (c) => {
             }
             
             .contact-header {
-                text-align: center;
+                text-align: left;
                 max-width: 800px;
                 margin: 0 auto;
+                padding: 0 5%;
             }
             
             /* Gift Gallery - Images always in a row, scale to fit */
@@ -3231,19 +3232,20 @@ app.get('/', (c) => {
                    Clean static layout when no upcoming events
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: -100px !important; /* Pull Watch section closer */
+                    margin-bottom: -180px !important; /* Pull Watch section much closer */
                 }
                 
                 .stay-tuned-only .outreach-header {
                     text-align: left;
                     padding-left: 5%;
-                    margin-bottom: 16px; /* Space between header and card */
+                    margin-bottom: 8px; /* Minimal space between header and card */
                     padding-bottom: 0;
+                    padding-top: 20px; /* Push Events header down */
                 }
                 
                 .stay-tuned-only .outreach-header .section-eyebrow {
                     margin-left: 0;
-                    margin-bottom: 8px;
+                    margin-bottom: 4px;
                 }
                 
                 .stay-tuned-only .outreach-header .section-heading {
@@ -3257,7 +3259,7 @@ app.get('/', (c) => {
                 }
                 
                 .stay-tuned-only .outreach-scroll-container {
-                    margin-top: 0;
+                    margin-top: -10px; /* Pull card up closer to header */
                     padding-top: 0;
                 }
                 
@@ -3779,6 +3781,17 @@ app.get('/', (c) => {
                 /* Contact Section Mobile */
                 .contact {
                     gap: 32px;
+                }
+                
+                .contact-header {
+                    text-align: left;
+                    padding: 0 5%;
+                }
+                
+                .contact-header .section-eyebrow,
+                .contact-header .section-heading,
+                .contact-header .section-lead {
+                    text-align: left;
                 }
                 
                 /* Gift Gallery Mobile - Keep in row, smaller gap */
@@ -4750,7 +4763,7 @@ app.get('/', (c) => {
                     <div class="hero-body">
                         <div class="hero-content">
                             <p>Join us every Sunday at 9:00 AM as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
-                            <address class="hero-address">3080 N Wildwood St · Boise, Idaho</address>
+                            <address class="hero-address">3080 Wildwood St · Boise, Idaho</address>
                         </div>
                         <div class="hero-image">
                             <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building">
@@ -4769,7 +4782,7 @@ app.get('/', (c) => {
                     <h2 class="section-heading">Three simple touchpoints to connect every week.</h2>
                     <address>
                         <div class="address-dropdown-wrapper">
-                            <button class="address-trigger" data-address="3080 N Wildwood St, Boise, Idaho">3080 N Wildwood St · Boise, Idaho</button>
+                            <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St · Boise, Idaho</button>
                             <div class="address-dropdown">
                                 <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
                                     <span class="address-dropdown-icon">🍎</span>
@@ -4779,7 +4792,7 @@ app.get('/', (c) => {
                                     <span class="address-dropdown-icon">🗺️</span>
                                     <span>Google Maps</span>
                                 </a>
-                                <button class="address-dropdown-item copy-address" data-address="3080 N Wildwood St, Boise, Idaho">
+                                <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
                                     <span class="address-dropdown-icon">📋</span>
                                     <span>Copy Address</span>
                                 </button>
@@ -4951,7 +4964,7 @@ app.get('/', (c) => {
                         
                         <address>
                             <div class="address-dropdown-wrapper">
-                                <button class="address-trigger" data-address="3080 N Wildwood St, Boise, Idaho">3080 N Wildwood St, Boise, Idaho</button>
+                                <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St, Boise, Idaho</button>
                                 <div class="address-dropdown">
                                     <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
                                         <span class="address-dropdown-icon">🍎</span>
@@ -4961,7 +4974,7 @@ app.get('/', (c) => {
                                         <span class="address-dropdown-icon">🗺️</span>
                                         <span>Google Maps</span>
                                     </a>
-                                    <button class="address-dropdown-item copy-address" data-address="3080 N Wildwood St, Boise, Idaho">
+                                    <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
                                         <span class="address-dropdown-icon">📋</span>
                                         <span>Copy Address</span>
                                     </button>

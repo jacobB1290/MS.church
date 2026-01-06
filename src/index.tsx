@@ -3208,7 +3208,7 @@ app.get('/', (c) => {
                    Clean static layout when no upcoming events
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: -120px !important; /* Pull Watch section extremely close */
+                    margin-bottom: -150px !important; /* Pull Watch section as close as possible */
                 }
                 
                 .stay-tuned-only .outreach-header {
@@ -5858,7 +5858,7 @@ app.get('/', (c) => {
                                 
                                 if (window.innerWidth <= 899) {
                                     // Mobile: OUTREACH pill directly under compressed nav
-                                    navOffset = 20; // Extremely tight
+                                    navOffset = 5; // Near zero
                                 } else if (window.innerWidth <= 1199) {
                                     // Tablet
                                     navOffset = 75;

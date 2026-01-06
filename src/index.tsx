@@ -986,7 +986,7 @@ app.get('/', (c) => {
             
             /* When Stay Tuned card is inside event-flyer-wrapper */
             .event-flyer-wrapper.stay-tuned-card {
-                aspect-ratio: 3/4;
+                aspect-ratio: 4/3 !important; /* 4:3 wide card */
                 width: 100%;
                 overflow: hidden;
             }
@@ -3299,8 +3299,8 @@ app.get('/', (c) => {
                 
                 /* Stay Tuned card - 4:3 aspect ratio, fills screen width naturally */
                 .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                    aspect-ratio: 4 / 3;
-                    min-height: 220px; /* Minimum height for small screens */
+                    aspect-ratio: 4 / 3 !important;
+                    min-height: 200px;
                     max-height: none;
                     width: 100%;
                     margin-bottom: 0;

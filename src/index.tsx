@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.20.14 - Auto-play video during Sunday service (9am-9:45am MT) -->
+    <!-- v1.23.0 - Dynamic Event Framework with Auto-Archiving -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -79,10 +79,14 @@ app.get('/', (c) => {
             :root {
                 color-scheme: light;
                 --bg-default: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
-                --bg-event1: linear-gradient(135deg, #f5e6d8 0%, #f0d9c8 100%); /* Muted warm terracotta/orange from Friendsgiving flyer */
-                --bg-event2: linear-gradient(135deg, #e8ead8 0%, #dde0c8 100%); /* Muted olive/sage green from Project Christmas Cheer flyer */
-                --bg-event3: linear-gradient(135deg, #f5d8d8 0%, #f0c8c8 100%); /* Pleasant muted light red for Christmas */
-                --outreach-spacer: 312vh;
+                --bg-stay-tuned: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%); /* Matches default - seamless */
+                /* Event backgrounds - warm palette matching site */
+                --bg-event1: linear-gradient(135deg, #f5e6d8 0%, #f0d9c8 100%); /* Muted warm terracotta */
+                --bg-event2: linear-gradient(135deg, #e8ead8 0%, #dde0c8 100%); /* Muted olive/sage */
+                --bg-event3: linear-gradient(135deg, #f5d8d8 0%, #f0c8c8 100%); /* Pleasant muted red */
+                --bg-event4: linear-gradient(135deg, #e6e8f5 0%, #d8dcf0 100%); /* Soft blue-gray */
+                --bg-event5: linear-gradient(135deg, #f0e6f5 0%, #e8d8f0 100%); /* Soft lavender */
+                --outreach-spacer: 100vh; /* Default for single card - JS adjusts dynamically */
             }
 
             * {
@@ -121,16 +125,16 @@ app.get('/', (c) => {
                 transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            body.event-1-active {
-                background: var(--bg-event1);
-            }
-
-            body.event-2-active {
-                background: var(--bg-event2);
-            }
-
-            body.event-3-active {
-                background: var(--bg-event3);
+            body.event-1-active { background: var(--bg-event1); }
+            body.event-2-active { background: var(--bg-event2); }
+            body.event-3-active { background: var(--bg-event3); }
+            body.event-4-active { background: var(--bg-event4); }
+            body.event-5-active { background: var(--bg-event5); }
+            body.stay-tuned-active { background: var(--bg-stay-tuned); }
+            
+            /* Modal open - prevent body scroll */
+            body.modal-open {
+                overflow: hidden;
             }
 
             a {
@@ -934,6 +938,373 @@ app.get('/', (c) => {
             .event-content,
             .event-description {
                 display: none !important;
+            }
+            
+            /* ========================================
+               STAY TUNED CARD - Future Events Placeholder
+               Uses site colors (gold/warm tones matching the church brand)
+               ======================================== */
+            .stay-tuned-card {
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(252, 248, 243, 0.98) 100%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 48px 32px;
+                box-shadow: 0 20px 60px rgba(212, 165, 116, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
+                border: 1px solid rgba(212, 165, 116, 0.15);
+                min-height: 400px;
+                border-radius: 32px;
+                position: relative;
+            }
+            
+            /* When Stay Tuned card is inside event-flyer-wrapper */
+            .event-flyer-wrapper.stay-tuned-card {
+                aspect-ratio: 3/4;
+                width: 100%;
+            }
+            
+            .stay-tuned-badge {
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%) !important;
+                box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35) !important;
+                position: absolute;
+                top: 16px;
+                left: 16px;
+            }
+            
+            .stay-tuned-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 16px;
+                width: 100%;
+                padding: 20px 0;
+            }
+            
+            .stay-tuned-icon {
+                font-size: 56px;
+                animation: sparkle 2.5s ease-in-out infinite;
+            }
+            
+            @keyframes sparkle {
+                0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+                50% { transform: scale(1.08) rotate(3deg); opacity: 0.9; }
+            }
+            
+            .stay-tuned-title {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(28px, 5vw, 38px);
+                font-weight: 700;
+                margin: 0;
+                color: #1a1a2e;
+            }
+            
+            .stay-tuned-text {
+                font-size: clamp(14px, 3.5vw, 16px);
+                color: rgba(26, 26, 46, 0.65);
+                line-height: 1.7;
+                margin: 0;
+                max-width: 260px;
+            }
+            
+            .stay-tuned-decoration {
+                display: flex;
+                gap: 20px;
+                font-size: 24px;
+                margin-top: 12px;
+            }
+            
+            .stay-tuned-decoration span {
+                animation: float 3s ease-in-out infinite;
+            }
+            
+            .stay-tuned-decoration span:nth-child(2) {
+                animation-delay: 0.4s;
+            }
+            
+            .stay-tuned-decoration span:nth-child(3) {
+                animation-delay: 0.8s;
+            }
+            
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-6px); }
+            }
+            
+            /* View Past Events Button - subtle, not too prominent */
+            .btn-view-past-events {
+                margin-top: 28px;
+                padding: 12px 24px;
+                background: transparent;
+                border: 1.5px solid rgba(26, 26, 46, 0.2);
+                border-radius: 100px;
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                color: rgba(26, 26, 46, 0.55);
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .btn-view-past-events:hover {
+                background: rgba(26, 26, 46, 0.05);
+                border-color: rgba(26, 26, 46, 0.3);
+                color: rgba(26, 26, 46, 0.75);
+                transform: translateY(-1px);
+            }
+            
+            /* Hide button if no past events */
+            .btn-view-past-events.hidden {
+                display: none;
+            }
+
+            /* ========================================
+               PAST EVENTS MODAL - Overlay Carousel
+               Appears above all content (z-index 10000)
+               ======================================== */
+            .past-events-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 10000;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                padding: 20px;
+            }
+            
+            .past-events-modal.active {
+                display: flex;
+                opacity: 1;
+            }
+            
+            .past-events-modal-content {
+                position: relative;
+                width: 100%;
+                max-width: 480px;
+                max-height: 90vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .past-events-modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                margin-bottom: 24px;
+                padding: 0 8px;
+            }
+            
+            .past-events-modal-title {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(22px, 5vw, 28px);
+                font-weight: 600;
+                color: #ffffff;
+                margin: 0;
+            }
+            
+            .past-events-modal-close {
+                width: 40px;
+                height: 40px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 22px;
+                color: rgba(255, 255, 255, 0.8);
+                transition: all 0.3s ease;
+            }
+            
+            .past-events-modal-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                transform: scale(1.05);
+            }
+            
+            /* Past Events Carousel */
+            .past-events-carousel {
+                position: relative;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .past-events-slides {
+                position: relative;
+                width: 100%;
+                max-width: 380px;
+                aspect-ratio: 3/4;
+                overflow: hidden;
+                border-radius: 20px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            }
+            
+            .past-event-slide {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            
+            .past-event-slide.active {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            
+            .past-event-slide.prev {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            
+            .past-event-slide img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 20px;
+            }
+            
+            .past-event-slide-info {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 20px;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+                border-radius: 0 0 20px 20px;
+            }
+            
+            .past-event-slide-date {
+                display: inline-block;
+                padding: 5px 12px;
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(8px);
+                border-radius: 100px;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 1.5px;
+                color: rgba(255, 255, 255, 0.9);
+                text-transform: uppercase;
+                margin-bottom: 8px;
+            }
+            
+            .past-event-slide-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 16px;
+                font-weight: 600;
+                color: #ffffff;
+                margin: 0;
+                line-height: 1.4;
+            }
+            
+            /* Carousel Navigation Arrows */
+            .past-events-nav {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 44px;
+                height: 44px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 22px;
+                color: rgba(255, 255, 255, 0.8);
+                transition: all 0.3s ease;
+                z-index: 10;
+            }
+            
+            .past-events-nav:hover {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                transform: translateY(-50%) scale(1.08);
+            }
+            
+            .past-events-nav.prev { left: -56px; }
+            .past-events-nav.next { right: -56px; }
+            
+            /* Carousel Dots */
+            .past-events-dots {
+                display: flex;
+                gap: 12px;
+                justify-content: center;
+                margin-top: 24px;
+            }
+            
+            .past-events-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.25);
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .past-events-dot.active {
+                background: #d4a574;
+                transform: scale(1.3);
+                box-shadow: 0 0 10px rgba(212, 165, 116, 0.5);
+            }
+            
+            .past-events-dot:hover:not(.active) {
+                background: rgba(255, 255, 255, 0.45);
+            }
+            
+            /* Mobile adjustments for modal */
+            @media (max-width: 520px) {
+                .past-events-modal { padding: 16px; }
+                .past-events-modal-content { max-width: 100%; }
+                .past-events-slides { max-width: 100%; }
+                
+                .past-events-nav.prev { left: 8px; }
+                .past-events-nav.next { right: 8px; }
+                
+                .past-events-nav {
+                    width: 36px;
+                    height: 36px;
+                    font-size: 18px;
+                    background: rgba(0, 0, 0, 0.6);
+                }
+            }
+            
+            /* Empty state when no past events */
+            .past-events-empty {
+                text-align: center;
+                padding: 40px 20px;
+                color: rgba(255, 255, 255, 0.7);
+            }
+            
+            .past-events-empty-icon {
+                font-size: 48px;
+                margin-bottom: 16px;
+                opacity: 0.6;
+            }
+            
+            .past-events-empty-text {
+                font-size: 16px;
+                line-height: 1.6;
             }
 
             /* ========================================
@@ -2105,6 +2476,12 @@ app.get('/', (c) => {
                     transform: translateX(-50%) translateY(40px) scale(0.92);
                 }
                 
+                /* Third card behind active (for 4-card layout) */
+                .event-slide.stack-position-3 {
+                    z-index: 5;
+                    transform: translateX(-50%) translateY(60px) scale(0.88);
+                }
+                
                 /* Only active card interactive */
                 .event-slide.active {
                     pointer-events: auto !important;
@@ -2118,7 +2495,8 @@ app.get('/', (c) => {
                 /* Hide UI on stacked cards */
                 .event-slide:not(.active) .event-date,
                 .event-slide:not(.active) .event-indicators,
-                .event-slide:not(.active) .event-cta {
+                .event-slide:not(.active) .event-cta,
+                .event-slide:not(.active) .past-event-label {
                     opacity: 0;
                     visibility: hidden;
                 }
@@ -2675,6 +3053,12 @@ app.get('/', (c) => {
                     transform: translateX(-50%) translateY(40px) scale(0.92);
                 }
                 
+                /* Third card behind active (for 4-card layout) */
+                .event-slide.stack-position-3 {
+                    z-index: 5;
+                    transform: translateX(-50%) translateY(60px) scale(0.88);
+                }
+                
                 /* Active card gets pointer events */
                 .event-slide.active {
                     pointer-events: auto !important;
@@ -2686,12 +3070,44 @@ app.get('/', (c) => {
                     overflow: hidden;
                 }
                 
-                /* Hide date badge, dots, and buttons on stacked cards */
+                /* Hide date badge, dots, buttons, and past event labels on stacked cards */
                 .event-slide:not(.active) .event-date,
                 .event-slide:not(.active) .event-indicators,
-                .event-slide:not(.active) .event-cta {
+                .event-slide:not(.active) .event-cta,
+                .event-slide:not(.active) .past-event-label {
                     opacity: 0;
                     visibility: hidden;
+                }
+                
+                /* Mobile Stay Tuned Card styling */
+                .stay-tuned-card {
+                    padding: 30px 24px;
+                }
+                
+                .stay-tuned-icon {
+                    font-size: 48px;
+                }
+                
+                .stay-tuned-title {
+                    font-size: clamp(28px, 7vw, 36px);
+                }
+                
+                .stay-tuned-text {
+                    font-size: clamp(14px, 3.5vw, 16px);
+                    max-width: 260px;
+                }
+                
+                .stay-tuned-decoration {
+                    font-size: 24px;
+                    gap: 12px;
+                }
+                
+                /* Mobile Past Event styling */
+                .past-event-label {
+                    top: 12px;
+                    right: 24px;
+                    padding: 5px 12px;
+                    font-size: 8px;
                 }
                 
                 /* Add subtle shadow to show depth */
@@ -4191,77 +4607,81 @@ app.get('/', (c) => {
                     <div class="outreach-header">
                         <span class="section-eyebrow">Outreach</span>
                         <div class="heading-wrapper">
-                            <h2 class="section-heading">Upcoming Events</h2>
-                            <div class="event-indicators">
-                                <div class="event-dot active" data-dot="1"></div>
-                                <div class="event-dot" data-dot="2"></div>
-                                <div class="event-dot" data-dot="3"></div>
+                            <h2 class="section-heading">Events</h2>
+                            <!-- Dots for upcoming events only - hidden when showing Stay Tuned -->
+                            <div class="event-indicators" id="upcoming-event-dots" style="display: none;">
+                                <!-- Dots will be dynamically generated based on upcoming event count -->
                             </div>
                         </div>
                         <p class="section-lead">We are called to be the hands and feet of Jesus by serving our local community and growing in fellowship. Here's how you can get involved.</p>
                     </div>
                     
+                    <!-- Event Data Store (JavaScript will parse this for automatic date-based filtering) -->
+                    <script type="application/json" id="events-data">
+                    {
+                        "events": [
+                            {
+                                "id": "friendsgiving-2025",
+                                "title": "Friendsgiving Lunch",
+                                "description": "Lunch with our local community",
+                                "date": "2025-11-26",
+                                "displayDate": "NOV 26",
+                                "image": "https://page.gensparksite.com/v1/base64_upload/2955ae3606d04a2080ff96434f906195",
+                                "cta": { "text": "RSVP NOW", "link": "#contact" }
+                            },
+                            {
+                                "id": "christmas-cheer-2025",
+                                "title": "Project Christmas Cheer",
+                                "description": "A Gift for you and your loved ones",
+                                "date": "2025-12-06",
+                                "displayDate": "DEC 6",
+                                "image": "https://page.gensparksite.com/v1/base64_upload/f9499299e0229e4c70835962b6b6d11e",
+                                "cta": { "text": "REQUEST ITEMS", "link": "#contact" }
+                            },
+                            {
+                                "id": "together-in-song-2025",
+                                "title": "Together in Song",
+                                "description": "A festive family Christmas event",
+                                "date": "2025-12-21",
+                                "displayDate": "DEC 21",
+                                "image": "https://page.gensparksite.com/v1/base64_upload/eef229dd6db6c99d20bfafeb27252557",
+                                "cta": { "text": "RESERVE YOUR SEAT", "link": "#contact" }
+                            }
+                        ]
+                    }
+                    </script>
+                    
                     <div class="outreach-scroll-container">
                         <div class="sticky-wrapper">
-                            <div class="events-container">
-                                <!-- Event 1: Community Thanksgiving Dinner -->
-                                <div class="event-slide active" data-event="1">
-                                    <div class="event-card">
-                                        <div class="event-flyer-wrapper">
-                                            <span class="event-date">NOV 26</span>
-                                            <div class="event-indicators">
-                                                <div class="event-dot active" data-dot="1"></div>
-                                                <div class="event-dot" data-dot="2"></div>
-                                                <div class="event-dot" data-dot="3"></div>
-                                            </div>
-                                            <img src="https://page.gensparksite.com/v1/base64_upload/2955ae3606d04a2080ff96434f906195" alt="Friendsgiving Lunch - Lunch with our local community" class="flyer-image">
-                                        </div>
-                                        <div class="event-cta">
-                                            <a class="btn btn-primary" href="#contact">RSVP NOW</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Event 2: Christmas Clothes Drive -->
-                                <div class="event-slide" data-event="2" id="event-2">
-                                    <div class="event-card">
-                                        <div class="event-flyer-wrapper">
-                                            <span class="event-date">DEC 6</span>
-                                            <div class="event-indicators">
-                                                <div class="event-dot active" data-dot="1"></div>
-                                                <div class="event-dot" data-dot="2"></div>
-                                                <div class="event-dot" data-dot="3"></div>
-                                            </div>
-                                            <img src="https://page.gensparksite.com/v1/base64_upload/f9499299e0229e4c70835962b6b6d11e" alt="Project Christmas Cheer - A Gift for you and your loved ones" class="flyer-image" />
-                                        </div>
-                                        <div class="event-cta">
-                                            <a class="btn btn-primary" href="#contact">REQUEST ITEMS</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Event 3: Christmas Eve Candlelight Service -->
-                                <div class="event-slide" data-event="3">
-                                    <div class="event-card">
-                                        <div class="event-flyer-wrapper">
-                                            <span class="event-date">DEC 21</span>
-                                            <div class="event-indicators">
-                                                <div class="event-dot active" data-dot="1"></div>
-                                                <div class="event-dot" data-dot="2"></div>
-                                                <div class="event-dot" data-dot="3"></div>
-                                            </div>
-                                            <img src="https://page.gensparksite.com/v1/base64_upload/eef229dd6db6c99d20bfafeb27252557" alt="Together in Song - A festive family Christmas event" class="flyer-image" />
-                                        </div>
-                                        <div class="event-cta">
-                                            <a class="btn btn-primary" href="#contact">RESERVE YOUR SEAT</a>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="events-container" id="events-container">
+                                <!-- Events will be dynamically rendered here by JavaScript -->
+                                <!-- If no upcoming events: Shows Stay Tuned card -->
+                                <!-- If upcoming events exist: Shows event cards with carousel -->
                             </div>
                         </div>
                         <div class="scroll-spacer"></div>
                     </div>
                 </section>
+                
+                <!-- Past Events Modal - Overlay Carousel (outside normal page flow) -->
+                <div class="past-events-modal" id="past-events-modal">
+                    <div class="past-events-modal-content">
+                        <div class="past-events-modal-header">
+                            <h3 class="past-events-modal-title">Past Events</h3>
+                            <button class="past-events-modal-close" id="close-past-events" aria-label="Close past events">&times;</button>
+                        </div>
+                        <div class="past-events-carousel">
+                            <button class="past-events-nav prev" id="past-prev" aria-label="Previous event">&#8249;</button>
+                            <div class="past-events-slides" id="past-events-slides">
+                                <!-- Past event slides will be dynamically generated -->
+                            </div>
+                            <button class="past-events-nav next" id="past-next" aria-label="Next event">&#8250;</button>
+                        </div>
+                        <div class="past-events-dots" id="past-events-dots">
+                            <!-- Dots will be dynamically generated -->
+                        </div>
+                    </div>
+                </div>
                 
                 <section class="watch" id="watch" style="animation-delay: 0.4s">
                     <div class="watch-header">
@@ -4505,13 +4925,298 @@ app.get('/', (c) => {
                 const outreachHeader = document.querySelector('.outreach-header');
                 const scrollSpacer = document.querySelector('.scroll-spacer');
                 const eventsContainer = document.querySelector('.events-container');
-                const eventSlides = document.querySelectorAll('.event-slide');
                 const navShell = document.querySelector('.nav-shell');
                 const sections = document.querySelectorAll('section[id]');
                 const navLinks = document.querySelectorAll('nav a[href^="#"]');
-                const dots = document.querySelectorAll('.heading-wrapper .event-dot');
+                const pastEventsModal = document.getElementById('past-events-modal');
+                const pastEventsSlides = document.getElementById('past-events-slides');
+                const pastEventsDots = document.getElementById('past-events-dots');
+                const upcomingEventDots = document.getElementById('upcoming-event-dots');
 
-                if (!outreachSection || !scrollSpacer || !eventsContainer || !eventSlides.length) return;
+                // ========================================
+                // DYNAMIC EVENT MANAGER
+                // Auto-archives past events, handles 0-3+ upcoming events
+                // ========================================
+                
+                function initializeEvents() {
+                    // Parse event data from JSON
+                    const eventsDataEl = document.getElementById('events-data');
+                    if (!eventsDataEl) {
+                        console.error('Events data not found');
+                        return { upcoming: [], past: [] };
+                    }
+                    
+                    let allEvents;
+                    try {
+                        const data = JSON.parse(eventsDataEl.textContent);
+                        allEvents = data.events || [];
+                    } catch (e) {
+                        console.error('Failed to parse events data:', e);
+                        return { upcoming: [], past: [] };
+                    }
+                    
+                    // Get today's date (start of day for proper comparison)
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    // Sort events by date
+                    allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    
+                    // Categorize events as upcoming or past
+                    const upcoming = [];
+                    const past = [];
+                    
+                    allEvents.forEach(event => {
+                        const eventDate = new Date(event.date);
+                        eventDate.setHours(23, 59, 59, 999); // End of event day
+                        
+                        if (eventDate >= today) {
+                            upcoming.push(event);
+                        } else {
+                            past.push(event);
+                        }
+                    });
+                    
+                    // Sort past events in reverse chronological order (most recent first)
+                    past.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    
+                    return { upcoming, past };
+                }
+                
+                function renderStayTunedCard(hasPastEvents) {
+                    return \`
+                        <div class="event-slide active" data-event="0">
+                            <div class="event-card">
+                                <div class="event-flyer-wrapper stay-tuned-card">
+                                    <span class="event-date stay-tuned-badge">COMING SOON</span>
+                                    <div class="stay-tuned-content">
+                                        <div class="stay-tuned-icon">✨</div>
+                                        <h3 class="stay-tuned-title">Stay Tuned</h3>
+                                        <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
+                                        <div class="stay-tuned-decoration">
+                                            <span>🤝</span>
+                                            <span>❤️</span>
+                                            <span>🙏</span>
+                                        </div>
+                                        \${hasPastEvents ? '<button class="btn-view-past-events" id="btn-view-past-events">View Past Events</button>' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    \`;
+                }
+                
+                function renderUpcomingEventCard(event, index, totalUpcoming) {
+                    // Generate dots for this card
+                    const dotsHTML = Array.from({ length: totalUpcoming }, (_, i) => 
+                        \`<span class="event-dot \${i === index ? 'active' : ''}"></span>\`
+                    ).join('');
+                    
+                    return \`
+                        <div class="event-slide \${index === 0 ? 'active' : ''}" data-event="\${index + 1}">
+                            <div class="event-card">
+                                <div class="event-flyer-wrapper">
+                                    <img src="\${event.image}" alt="\${event.title}" class="flyer-image">
+                                    <span class="event-date">\${event.displayDate}</span>
+                                    <div class="event-indicators">
+                                        \${dotsHTML}
+                                    </div>
+                                </div>
+                                <div class="event-cta">
+                                    <a href="\${event.cta.link}" class="btn btn-primary">\${event.cta.text}</a>
+                                </div>
+                            </div>
+                        </div>
+                    \`;
+                }
+                
+                function renderPastEventSlide(event, index, isActive) {
+                    return \`
+                        <div class="past-event-slide \${isActive ? 'active' : ''}" data-past-index="\${index}">
+                            <img src="\${event.image}" alt="\${event.title}">
+                            <div class="past-event-slide-info">
+                                <span class="past-event-slide-date">\${event.displayDate}</span>
+                                <h4 class="past-event-slide-title">\${event.title}</h4>
+                            </div>
+                        </div>
+                    \`;
+                }
+                
+                function updateScrollSpacer(upcomingCount) {
+                    // Adjust scroll spacer height based on number of upcoming events
+                    // 0 events (Stay Tuned only): 100vh - minimal scroll
+                    // 1 event: 150vh
+                    // 2 events: 250vh
+                    // 3+ events: 312vh (original)
+                    let spacerHeight;
+                    if (upcomingCount === 0) {
+                        spacerHeight = '100vh';
+                    } else if (upcomingCount === 1) {
+                        spacerHeight = '150vh';
+                    } else if (upcomingCount === 2) {
+                        spacerHeight = '250vh';
+                    } else {
+                        spacerHeight = '312vh';
+                    }
+                    scrollSpacer.style.height = spacerHeight;
+                }
+                
+                // Initialize and render events
+                const { upcoming, past } = initializeEvents();
+                console.log('Event Manager:', { upcoming: upcoming.length, past: past.length });
+                
+                // Render events in main container
+                if (upcoming.length === 0) {
+                    // No upcoming events - show Stay Tuned card
+                    eventsContainer.innerHTML = renderStayTunedCard(past.length > 0);
+                    body.classList.add('stay-tuned-active');
+                    
+                    // Hide upcoming event dots
+                    if (upcomingEventDots) upcomingEventDots.style.display = 'none';
+                } else {
+                    // Render upcoming events
+                    eventsContainer.innerHTML = upcoming.map((event, i) => 
+                        renderUpcomingEventCard(event, i, upcoming.length)
+                    ).join('');
+                    
+                    // Show and populate upcoming event dots
+                    if (upcomingEventDots) {
+                        upcomingEventDots.style.display = 'flex';
+                        upcomingEventDots.innerHTML = upcoming.map((_, i) => 
+                            \`<span class="event-dot \${i === 0 ? 'active' : ''}"></span>\`
+                        ).join('');
+                    }
+                }
+                
+                // Render past events in modal
+                if (past.length > 0 && pastEventsSlides && pastEventsDots) {
+                    pastEventsSlides.innerHTML = past.map((event, i) => 
+                        renderPastEventSlide(event, i, i === 0)
+                    ).join('');
+                    
+                    pastEventsDots.innerHTML = past.map((_, i) => 
+                        \`<span class="past-events-dot \${i === 0 ? 'active' : ''}"></span>\`
+                    ).join('');
+                }
+                
+                // Update scroll spacer based on event count
+                updateScrollSpacer(upcoming.length);
+                
+                // Re-query event slides after dynamic rendering
+                const eventSlides = document.querySelectorAll('.event-slide');
+                const dots = document.querySelectorAll('.heading-wrapper .event-dot, #upcoming-event-dots .event-dot');
+
+                // ========================================
+                // PAST EVENTS MODAL CONTROLS
+                // ========================================
+                
+                let currentPastIndex = 0;
+                const pastSlides = document.querySelectorAll('.past-event-slide');
+                const pastDots = document.querySelectorAll('.past-events-dot');
+                
+                function updatePastEventSlide(index) {
+                    currentPastIndex = index;
+                    pastSlides.forEach((slide, i) => {
+                        slide.classList.remove('active', 'prev');
+                        if (i === index) {
+                            slide.classList.add('active');
+                        } else if (i < index) {
+                            slide.classList.add('prev');
+                        }
+                    });
+                    pastDots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === index);
+                    });
+                }
+                
+                // Open past events modal
+                const viewPastEventsBtn = document.getElementById('btn-view-past-events');
+                if (viewPastEventsBtn && pastEventsModal && past.length > 0) {
+                    viewPastEventsBtn.addEventListener('click', () => {
+                        pastEventsModal.classList.add('active');
+                        body.classList.add('modal-open');
+                        updatePastEventSlide(0);
+                    });
+                }
+                
+                // Close past events modal
+                const closePastEventsBtn = document.getElementById('close-past-events');
+                if (closePastEventsBtn && pastEventsModal) {
+                    const closeModal = () => {
+                        pastEventsModal.classList.remove('active');
+                        body.classList.remove('modal-open');
+                    };
+                    
+                    closePastEventsBtn.addEventListener('click', closeModal);
+                    
+                    // Close on background click
+                    pastEventsModal.addEventListener('click', (e) => {
+                        if (e.target === pastEventsModal) closeModal();
+                    });
+                    
+                    // Close on ESC key
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && pastEventsModal.classList.contains('active')) {
+                            closeModal();
+                        }
+                    });
+                }
+                
+                // Past events navigation
+                const pastPrevBtn = document.getElementById('past-prev');
+                const pastNextBtn = document.getElementById('past-next');
+                
+                if (pastPrevBtn) {
+                    pastPrevBtn.addEventListener('click', () => {
+                        const newIndex = (currentPastIndex - 1 + past.length) % past.length;
+                        updatePastEventSlide(newIndex);
+                    });
+                }
+                
+                if (pastNextBtn) {
+                    pastNextBtn.addEventListener('click', () => {
+                        const newIndex = (currentPastIndex + 1) % past.length;
+                        updatePastEventSlide(newIndex);
+                    });
+                }
+                
+                // Past events dot navigation
+                pastDots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        updatePastEventSlide(index);
+                    });
+                });
+                
+                // Swipe support for past events modal
+                if (pastEventsSlides && past.length > 1) {
+                    let pastTouchStartX = 0;
+                    pastEventsSlides.addEventListener('touchstart', e => {
+                        pastTouchStartX = e.touches[0].clientX;
+                    }, { passive: true });
+                    
+                    pastEventsSlides.addEventListener('touchend', e => {
+                        if (!e.changedTouches[0]) return;
+                        const dx = pastTouchStartX - e.changedTouches[0].clientX;
+                        if (Math.abs(dx) > 50) {
+                            if (dx > 0) {
+                                // Swipe left - next
+                                updatePastEventSlide((currentPastIndex + 1) % past.length);
+                            } else {
+                                // Swipe right - previous
+                                updatePastEventSlide((currentPastIndex - 1 + past.length) % past.length);
+                            }
+                        }
+                    }, { passive: true });
+                }
+
+                // ========================================
+                // MAIN EVENT CAROUSEL (only if upcoming events exist)
+                // ========================================
+                
+                if (!outreachSection || !scrollSpacer || !eventsContainer || !eventSlides.length) {
+                    console.log('Outreach section not fully initialized - likely Stay Tuned only mode');
+                    // Still set up the rest of the page even without events
+                }
                 
                 // Handle hash in URL on page load (e.g., ms.church/#contact)
                 // Prevent browser's default anchor scroll and apply our custom offset
@@ -4670,8 +5375,19 @@ app.get('/', (c) => {
 
                         // Calculate which event should be shown based on scroll progress
                         // But respect manual swipe overrides - don't fight the user!
-                        // Event 1: 0-25%, Event 2: 25-70%, Event 3: 70-100%
-                        let newIndex = progress < 0.25 ? 0 : (progress < 0.70 ? 1 : 2);
+                        // Dynamic calculation based on actual event count
+                        let newIndex;
+                        if (totalEvents === 1) {
+                            newIndex = 0; // Only one card (Stay Tuned)
+                        } else if (totalEvents === 2) {
+                            newIndex = progress < 0.5 ? 0 : 1;
+                        } else if (totalEvents === 3) {
+                            newIndex = progress < 0.33 ? 0 : (progress < 0.67 ? 1 : 2);
+                        } else {
+                            // 4+ events: distribute evenly
+                            const segmentSize = 1 / totalEvents;
+                            newIndex = Math.min(Math.floor(progress / segmentSize), totalEvents - 1);
+                        }
 
                         const now = Date.now();
                         
@@ -4693,7 +5409,7 @@ app.get('/', (c) => {
                         if (inOutreachSection) {
                             inOutreachSection = false;
                             requestAnimationFrame(() => {
-                                body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
+                                body.classList.remove('event-1-active', 'event-2-active', 'event-3-active', 'event-4-active');
                             });
                         }
                         if (spacerRect.bottom <= vh * 0.7 && currentEventIndex !== totalEvents - 1) {
@@ -4731,8 +5447,15 @@ app.get('/', (c) => {
 
                 function updateBodyBg(index, skip) {
                     if (skip) return;
-                    body.classList.remove('event-1-active', 'event-2-active', 'event-3-active');
-                    body.classList.add(\`event-\${index + 1}-active\`);
+                    body.classList.remove('event-1-active', 'event-2-active', 'event-3-active', 'event-4-active', 'stay-tuned-active');
+                    
+                    // If we're showing the Stay Tuned card (index 0 with no upcoming events)
+                    const isStayTuned = eventSlides[index]?.classList.contains('stay-tuned-card');
+                    if (isStayTuned) {
+                        body.classList.add('stay-tuned-active');
+                    } else {
+                        body.classList.add(\`event-\${index + 1}-active\`);
+                    }
                 }
 
                 function updateActiveEvent(index, skipBackground, fromSwipe = false) {
@@ -4749,7 +5472,7 @@ app.get('/', (c) => {
                     if (isMobile) {
                         // Remove all stack position classes first
                         eventSlides.forEach(s => {
-                            s.classList.remove('stack-position-1', 'stack-position-2');
+                            s.classList.remove('stack-position-1', 'stack-position-2', 'stack-position-3');
                         });
                         
                         // Assign stack positions in visual order (next card closer than previous)
@@ -4757,8 +5480,8 @@ app.get('/', (c) => {
                         const totalCards = eventSlides.length;
                         let stackPos = 1;
                         
-                        // Start from next card after active, wrap around
-                        for (let i = 1; i < totalCards; i++) {
+                        // Start from next card after active, wrap around (max 3 stack positions)
+                        for (let i = 1; i < totalCards && stackPos <= 3; i++) {
                             const cardIndex = (index + i) % totalCards;
                             eventSlides[cardIndex].classList.add(\`stack-position-\${stackPos}\`);
                             stackPos++;
@@ -4788,8 +5511,16 @@ app.get('/', (c) => {
                 let touchStartX = 0;
                 let touchStartY = 0;
 
-                // Fixed scroll positions for each card (as % progress through spacer)
-                const cardPositions = [0.125, 0.475, 0.85]; // Card 1, 2, 3
+                // Dynamic scroll positions for each card based on event count
+                function getCardPositions() {
+                    const count = eventSlides.length;
+                    if (count === 1) return [0.5]; // Single card
+                    if (count === 2) return [0.25, 0.75];
+                    if (count === 3) return [0.17, 0.5, 0.83];
+                    // 4+ cards: distribute evenly
+                    return Array.from({ length: count }, (_, i) => (i + 0.5) / count);
+                }
+                const cardPositions = getCardPositions();
 
                 const swipeTarget = eventsContainer;
                 if (swipeTarget) {

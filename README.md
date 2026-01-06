@@ -1,7 +1,82 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.21.0
+## 🔢 CURRENT VERSION: v1.23.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.23.0 - Dynamic Event Framework with Auto-Archiving
+**Intelligent event system that automatically handles past/upcoming events based on dates**
+
+**New Event Framework Features:**
+
+1. **Automatic Date-Based Event Detection**
+   - Events are automatically categorized as "upcoming" or "past" based on current date
+   - Past events move to a separate modal overlay (not in main page flow)
+   - No manual intervention needed - just update event dates
+
+2. **Stay Tuned Card (Shows when NO upcoming events)**
+   - Only appears when there are zero upcoming events
+   - Beautiful animated card with sparkle icon and floating decorations
+   - "COMING SOON" badge with warm gold styling
+   - "View Past Events" button (only shows if past events exist)
+   - Seamless background matching site default
+
+3. **Past Events Modal Overlay**
+   - Full-screen overlay carousel (z-index: 10000)
+   - Triggered by "View Past Events" button
+   - Swipe/click navigation between past events
+   - Dot indicators for navigation
+   - Close via X button, background click, or ESC key
+   - Prevents body scroll when open
+
+4. **Handles All Scenarios Gracefully**
+   - **0 upcoming**: Shows Stay Tuned + past events in modal
+   - **1 upcoming**: Shows single event card
+   - **2 upcoming**: Shows 2 event cards with carousel
+   - **3+ upcoming**: Shows full carousel with dot navigation
+   - Scroll spacer dynamically adjusts based on event count
+
+**How to Add New Events:**
+
+1. Find the `#events-data` JSON script tag in the HTML
+2. Add a new event object to the `events` array:
+
+\`\`\`json
+{
+    "id": "event-unique-id",
+    "title": "Event Title",
+    "description": "Short description",
+    "date": "2026-02-15",
+    "displayDate": "FEB 15",
+    "image": "https://your-image-url.com/flyer.jpg",
+    "cta": { "text": "REGISTER NOW", "link": "#contact" }
+}
+\`\`\`
+
+3. That's it! The framework automatically:
+   - Sorts events by date
+   - Shows upcoming events in main carousel
+   - Archives past events to the modal
+   - Adjusts dots, scroll spacer, and background colors
+
+**Event Data Location:**
+- Look for `<script type="application/json" id="events-data">` in the outreach section
+- Events are stored as JSON for easy editing
+
+**Technical Details:**
+- CSS: Stay Tuned card with warm gold/cream styling
+- CSS: Past events modal with carousel animations
+- JS: `initializeEvents()` parses JSON and categorizes by date
+- JS: Dynamic rendering based on upcoming event count
+- JS: Modal with swipe, keyboard, and touch support
+
+**Result:** Self-managing event system that requires minimal maintenance. Just add events with future dates - the framework handles everything else.
+
+---
+
+### v1.22.0 - Stay Tuned Card & Past Events Redesign (Superseded by v1.23.0)
+**Note: This version has been superseded by the dynamic event framework in v1.23.0**
+
+---
 
 ### v1.21.0 - Production-Ready Mobile Stacked Card Interface
 **Clean, refined stacked card design for mobile outreach section**

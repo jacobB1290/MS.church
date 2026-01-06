@@ -979,13 +979,17 @@ app.get('/', (c) => {
             .stay-tuned-only .outreach-header {
                 /* Left align headers properly */
                 text-align: left;
-                margin-bottom: 24px;
+                margin-bottom: 16px; /* Tight spacing before card */
             }
             
             .stay-tuned-only .outreach-header .section-eyebrow,
             .stay-tuned-only .outreach-header .section-heading,
             .stay-tuned-only .outreach-header .section-lead {
                 text-align: left;
+            }
+            
+            .stay-tuned-only .outreach-header .section-lead {
+                display: none; /* Hide paragraph for cleaner look */
             }
             
             .stay-tuned-only .outreach-scroll-container {
@@ -1013,7 +1017,7 @@ app.get('/', (c) => {
                 display: flex;
                 justify-content: center;
                 width: 100%;
-                max-width: 400px;
+                max-width: 340px;
                 margin: 0 auto;
             }
             
@@ -1036,9 +1040,9 @@ app.get('/', (c) => {
             }
             
             .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                aspect-ratio: auto;
-                min-height: 380px;
-                max-height: 450px;
+                aspect-ratio: 3 / 4; /* Match event flyer aspect ratio */
+                min-height: auto;
+                max-height: none;
                 width: 100%;
                 margin: 0 auto;
             }
@@ -3204,25 +3208,26 @@ app.get('/', (c) => {
                    Clean static layout when no upcoming events
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: 40px !important;
+                    margin-bottom: 0 !important;
                 }
                 
                 .stay-tuned-only .outreach-header {
                     text-align: left;
                     padding-left: 5%;
-                    margin-bottom: 20px;
+                    margin-bottom: 16px; /* Reduced from 20px */
                 }
                 
                 .stay-tuned-only .outreach-header .section-eyebrow {
                     margin-left: 0;
+                    margin-bottom: 8px;
                 }
                 
                 .stay-tuned-only .outreach-header .section-heading {
                     text-align: left;
+                    margin-bottom: 0;
                 }
                 
                 .stay-tuned-only .outreach-header .section-lead {
-                    text-align: left;
                     display: none; /* Hide on mobile for cleaner look */
                 }
                 
@@ -3240,8 +3245,8 @@ app.get('/', (c) => {
                 
                 .stay-tuned-only .events-container {
                     position: relative !important;
-                    width: 88%;
-                    max-width: 340px;
+                    width: 85%;
+                    max-width: 320px;
                     margin: 0 auto;
                     height: auto !important;
                 }
@@ -3260,12 +3265,15 @@ app.get('/', (c) => {
                     max-width: none;
                     height: auto !important;
                     min-height: auto;
+                    padding: 0;
                 }
                 
+                /* Stay Tuned card - 3:4 aspect ratio like event flyers */
                 .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                    min-height: 360px;
-                    max-height: 420px;
-                    aspect-ratio: auto;
+                    aspect-ratio: 3 / 4;
+                    min-height: auto;
+                    max-height: none;
+                    width: 100%;
                 }
                 
                 /* Mobile Past Event styling */
@@ -5844,16 +5852,16 @@ app.get('/', (c) => {
                             
                             // Special handling for outreach section (has sticky header + events)
                             if (targetId === '#outreach') {
-                                // Scroll so nav aligns over outreach header
+                                // Scroll so OUTREACH pill is right below nav bar
                                 const outreachRect = target.getBoundingClientRect();
                                 const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
                                 
                                 if (window.innerWidth <= 899) {
-                                    // Mobile: Align nav just above the outreach header
-                                    navOffset = 100; // Positive offset to show header below nav
+                                    // Mobile: OUTREACH pill should be right below compressed nav (~55px)
+                                    navOffset = 70; // Tighter - pill closer to nav
                                 } else if (window.innerWidth <= 1199) {
                                     // Tablet
-                                    navOffset = 80;
+                                    navOffset = 75;
                                 } else {
                                     // Desktop: Standard offset
                                     navOffset = 60;

@@ -282,7 +282,7 @@ app.get('/', (c) => {
             }
 
             .nav-cta {
-                padding: 14px 32px;
+                padding: 12px 20px;
                 border-radius: 100px;
                 background: rgba(255, 255, 255, 0.9);
                 color: #1a1a2e;
@@ -1058,13 +1058,13 @@ app.get('/', (c) => {
                 min-height: auto;
                 max-height: none;
                 width: 100%;
-                max-width: 340px;
+                max-width: 480px;
                 margin: 0 auto;
                 padding: 0;
             }
             
             .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                aspect-ratio: 3 / 4; /* Match event flyer aspect ratio */
+                aspect-ratio: 4 / 3; /* Wide card aspect ratio */
                 min-height: auto;
                 max-height: none;
                 width: 100%;
@@ -3238,18 +3238,18 @@ app.get('/', (c) => {
                 .stay-tuned-only .outreach-header {
                     text-align: left;
                     padding-left: 5%;
-                    margin-bottom: -30px; /* Strong negative to pull card up */
+                    margin-bottom: 20px; /* Space between header and card */
                     padding-bottom: 0;
                 }
                 
                 .stay-tuned-only .outreach-header .section-eyebrow {
                     margin-left: 0;
-                    margin-bottom: -8px;
+                    margin-bottom: 8px;
                 }
                 
                 .stay-tuned-only .outreach-header .section-heading {
                     text-align: left;
-                    margin-bottom: -15px; /* Strong negative to pull card closer */
+                    margin-bottom: 0;
                     padding-bottom: 0;
                 }
                 
@@ -3258,7 +3258,7 @@ app.get('/', (c) => {
                 }
                 
                 .stay-tuned-only .outreach-scroll-container {
-                    margin-top: -20px; /* Pull container up */
+                    margin-top: 0;
                     padding-top: 0;
                 }
                 
@@ -3272,9 +3272,9 @@ app.get('/', (c) => {
                 
                 .stay-tuned-only .events-container {
                     position: relative !important;
-                    width: 85%;
-                    max-width: 300px;
-                    margin: -10px auto 0; /* Pull up with negative margin */
+                    width: 90%;
+                    max-width: 380px;
+                    margin: 0 auto;
                     height: auto !important;
                     padding: 0;
                 }
@@ -3297,11 +3297,11 @@ app.get('/', (c) => {
                     margin: 0;
                 }
                 
-                /* Stay Tuned card - 3:4 aspect ratio like event flyers */
+                /* Stay Tuned card - 4:3 aspect ratio, larger and responsive */
                 .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                    aspect-ratio: 3 / 4;
+                    aspect-ratio: 4 / 3;
                     min-height: auto;
-                    max-height: 380px; /* Cap max height */
+                    max-height: none;
                     width: 100%;
                     margin-bottom: 0;
                 }
@@ -3421,9 +3421,9 @@ app.get('/', (c) => {
                 }
 
                 .nav-cta {
-                    padding: clamp(8px, 2.5vw, 10px) clamp(18px, 5vw, 24px);
-                    font-size: clamp(9px, 2.5vw, 10px);
-                    letter-spacing: clamp(1.5px, 0.4vw, 2px);
+                    padding: clamp(6px, 2vw, 8px) clamp(12px, 3.5vw, 16px);
+                    font-size: clamp(8px, 2.2vw, 9px);
+                    letter-spacing: clamp(1px, 0.3vw, 1.5px);
                 }
 
                 main {
@@ -4970,7 +4970,7 @@ app.get('/', (c) => {
                         </address>
                     </div>
                     <div class="jotform-container" id="contact-form">
-                        <script type="text/javascript" src="https://form.jotform.com/jsform/253084343168054"></script>
+                        <script type="text/javascript" src="https://form.jotform.com/jsform/260056249984062"></script>
                     </div>
                 </section>
             </main>

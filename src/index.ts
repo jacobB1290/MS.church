@@ -3208,23 +3208,25 @@ app.get('/', (c) => {
                    Clean static layout when no upcoming events
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: -200px !important; /* Pull Watch section very close */
+                    margin-bottom: -280px !important; /* Pull Watch section VERY close */
                 }
                 
                 .stay-tuned-only .outreach-header {
                     text-align: left;
                     padding-left: 5%;
-                    margin-bottom: -10px; /* Negative to pull card up */
+                    margin-bottom: -30px; /* Strong negative to pull card up */
+                    padding-bottom: 0;
                 }
                 
                 .stay-tuned-only .outreach-header .section-eyebrow {
                     margin-left: 0;
-                    margin-bottom: -4px;
+                    margin-bottom: -8px;
                 }
                 
                 .stay-tuned-only .outreach-header .section-heading {
                     text-align: left;
-                    margin-bottom: -8px; /* Negative to pull card closer */
+                    margin-bottom: -15px; /* Strong negative to pull card closer */
+                    padding-bottom: 0;
                 }
                 
                 .stay-tuned-only .outreach-header .section-lead {
@@ -3232,7 +3234,8 @@ app.get('/', (c) => {
                 }
                 
                 .stay-tuned-only .outreach-scroll-container {
-                    margin-top: 0;
+                    margin-top: -20px; /* Pull container up */
+                    padding-top: 0;
                 }
                 
                 .stay-tuned-only .sticky-wrapper {
@@ -3246,9 +3249,10 @@ app.get('/', (c) => {
                 .stay-tuned-only .events-container {
                     position: relative !important;
                     width: 85%;
-                    max-width: 320px;
-                    margin: 0 auto;
+                    max-width: 300px;
+                    margin: -10px auto 0; /* Pull up with negative margin */
                     height: auto !important;
+                    padding: 0;
                 }
                 
                 .stay-tuned-only .event-slide {
@@ -3266,14 +3270,16 @@ app.get('/', (c) => {
                     height: auto !important;
                     min-height: auto;
                     padding: 0;
+                    margin: 0;
                 }
                 
                 /* Stay Tuned card - 3:4 aspect ratio like event flyers */
                 .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
                     aspect-ratio: 3 / 4;
                     min-height: auto;
-                    max-height: none;
+                    max-height: 380px; /* Cap max height */
                     width: 100%;
+                    margin-bottom: 0;
                 }
                 
                 /* Mobile Past Event styling */

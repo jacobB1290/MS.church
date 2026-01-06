@@ -790,13 +790,13 @@ app.get('/', (c) => {
             .event-card {
                 position: relative;
                 width: 100vw;
-                height: 90vh;
+                height: 85vh;
                 margin-left: calc(-50vw + 50%);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: flex-start;
-                padding-top: 20px;
+                padding-top: 10px;
                 box-sizing: border-box;
             }
             
@@ -951,18 +951,57 @@ app.get('/', (c) => {
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                padding: 48px 32px;
+                padding: 60px 32px 40px;
                 box-shadow: 0 20px 60px rgba(212, 165, 116, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
                 border: 1px solid rgba(212, 165, 116, 0.15);
                 min-height: 400px;
                 border-radius: 32px;
                 position: relative;
+                overflow: visible;
             }
             
             /* When Stay Tuned card is inside event-flyer-wrapper */
             .event-flyer-wrapper.stay-tuned-card {
                 aspect-ratio: 3/4;
                 width: 100%;
+                overflow: hidden;
+            }
+            
+            /* When Stay Tuned is the only card (no sticky wrapper needed) */
+            .stay-tuned-only .sticky-wrapper {
+                position: relative !important;
+                height: auto !important;
+                min-height: auto !important;
+                padding-top: 0 !important;
+            }
+            
+            .stay-tuned-only .scroll-spacer {
+                display: none !important;
+                height: 0 !important;
+            }
+            
+            .stay-tuned-only .events-container {
+                position: relative;
+                height: auto;
+            }
+            
+            .stay-tuned-only .event-slide {
+                position: relative !important;
+                transform: none !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            
+            .stay-tuned-only .event-card {
+                height: auto !important;
+                min-height: 400px;
+                max-height: none;
+            }
+            
+            .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
+                aspect-ratio: auto;
+                min-height: 400px;
+                max-height: 500px;
             }
             
             .stay-tuned-badge {
@@ -978,14 +1017,17 @@ app.get('/', (c) => {
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 16px;
+                gap: 12px;
                 width: 100%;
-                padding: 20px 0;
+                padding: 10px 0;
+                overflow: visible;
             }
             
             .stay-tuned-icon {
-                font-size: 56px;
+                font-size: 48px;
                 animation: sparkle 2.5s ease-in-out infinite;
+                line-height: 1;
+                margin-top: 10px;
             }
             
             @keyframes sparkle {
@@ -995,25 +1037,25 @@ app.get('/', (c) => {
             
             .stay-tuned-title {
                 font-family: 'Playfair Display', serif;
-                font-size: clamp(28px, 5vw, 38px);
+                font-size: clamp(26px, 5vw, 36px);
                 font-weight: 700;
                 margin: 0;
                 color: #1a1a2e;
             }
             
             .stay-tuned-text {
-                font-size: clamp(14px, 3.5vw, 16px);
+                font-size: clamp(13px, 3.5vw, 15px);
                 color: rgba(26, 26, 46, 0.65);
-                line-height: 1.7;
+                line-height: 1.6;
                 margin: 0;
-                max-width: 260px;
+                max-width: 240px;
             }
             
             .stay-tuned-decoration {
                 display: flex;
-                gap: 20px;
-                font-size: 24px;
-                margin-top: 12px;
+                gap: 16px;
+                font-size: 22px;
+                margin-top: 8px;
             }
             
             .stay-tuned-decoration span {
@@ -1030,23 +1072,24 @@ app.get('/', (c) => {
             
             @keyframes float {
                 0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-6px); }
+                50% { transform: translateY(-5px); }
             }
             
             /* View Past Events Button - subtle, not too prominent */
             .btn-view-past-events {
-                margin-top: 28px;
-                padding: 12px 24px;
+                margin-top: 16px;
+                padding: 10px 20px;
                 background: transparent;
                 border: 1.5px solid rgba(26, 26, 46, 0.2);
                 border-radius: 100px;
-                font-size: 11px;
+                font-size: 10px;
                 font-weight: 600;
-                letter-spacing: 1.5px;
+                letter-spacing: 1.2px;
                 text-transform: uppercase;
                 color: rgba(26, 26, 46, 0.55);
                 cursor: pointer;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                flex-shrink: 0;
             }
             
             .btn-view-past-events:hover {
@@ -2427,11 +2470,11 @@ app.get('/', (c) => {
                 .sticky-wrapper {
                     position: sticky;
                     top: 0vh;
-                    height: 85vh;
+                    height: 80vh;
                     display: flex;
                     align-items: flex-start;
                     justify-content: center;
-                    padding-top: 5vh;
+                    padding-top: 3vh;
                     width: 100%;
                     max-width: 100%;
                     margin: 0 auto;
@@ -2522,13 +2565,13 @@ app.get('/', (c) => {
                     position: relative;
                     width: 100%;
                     max-width: 100vw;
-                    height: 90vh;
+                    height: 75vh;
                     margin: 0 auto;  /* Center horizontally */
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: flex-start;
-                    padding-top: 20px;
+                    padding-top: 10px;
                     box-sizing: border-box;
                 }
                 
@@ -2544,12 +2587,13 @@ app.get('/', (c) => {
                     width: 92%;
                     max-width: 600px;
                     margin: 0 auto 40px;
-                    text-align: center;
+                    text-align: left;
+                    padding-left: 4%;
                 }
                 
                 .outreach-header .section-eyebrow,
                 .outreach-header .section-heading {
-                    text-align: center;
+                    text-align: left;
                 }
                 
                 .events-container {
@@ -3081,25 +3125,39 @@ app.get('/', (c) => {
                 
                 /* Mobile Stay Tuned Card styling */
                 .stay-tuned-card {
-                    padding: 30px 24px;
+                    padding: 50px 24px 30px;
+                }
+                
+                .stay-tuned-content {
+                    gap: 10px;
+                    padding: 5px 0;
                 }
                 
                 .stay-tuned-icon {
-                    font-size: 48px;
+                    font-size: 40px;
+                    margin-top: 5px;
                 }
                 
                 .stay-tuned-title {
-                    font-size: clamp(28px, 7vw, 36px);
+                    font-size: clamp(24px, 6vw, 32px);
                 }
                 
                 .stay-tuned-text {
-                    font-size: clamp(14px, 3.5vw, 16px);
-                    max-width: 260px;
+                    font-size: clamp(13px, 3.2vw, 15px);
+                    max-width: 220px;
+                    line-height: 1.5;
                 }
                 
                 .stay-tuned-decoration {
-                    font-size: 24px;
+                    font-size: 20px;
                     gap: 12px;
+                    margin-top: 6px;
+                }
+                
+                .btn-view-past-events {
+                    margin-top: 12px;
+                    padding: 8px 16px;
+                    font-size: 9px;
                 }
                 
                 /* Mobile Past Event styling */
@@ -5044,21 +5102,44 @@ app.get('/', (c) => {
                 
                 function updateScrollSpacer(upcomingCount) {
                     // Adjust scroll spacer height based on number of upcoming events
-                    // 0 events (Stay Tuned only): 100vh - minimal scroll
-                    // 1 event: 150vh
-                    // 2 events: 250vh
+                    // 0 events (Stay Tuned only): no scroll mechanism needed
+                    // 1 event: 100vh
+                    // 2 events: 200vh
                     // 3+ events: 312vh (original)
-                    let spacerHeight;
+                    
+                    const stickyWrapper = document.querySelector('.sticky-wrapper');
+                    
                     if (upcomingCount === 0) {
-                        spacerHeight = '100vh';
-                    } else if (upcomingCount === 1) {
-                        spacerHeight = '150vh';
-                    } else if (upcomingCount === 2) {
-                        spacerHeight = '250vh';
+                        // No upcoming events - disable sticky scroll mechanism entirely
+                        scrollSpacer.style.height = '0';
+                        scrollSpacer.style.display = 'none';
+                        if (stickyWrapper) {
+                            stickyWrapper.style.position = 'relative';
+                            stickyWrapper.style.height = 'auto';
+                            stickyWrapper.style.minHeight = 'auto';
+                        }
+                        // Add class for CSS override
+                        outreachSection.classList.add('stay-tuned-only');
                     } else {
-                        spacerHeight = '312vh';
+                        // Remove class if it was previously added
+                        outreachSection.classList.remove('stay-tuned-only');
+                        // Upcoming events exist - use sticky scroll mechanism
+                        scrollSpacer.style.display = 'block';
+                        if (stickyWrapper) {
+                            stickyWrapper.style.position = 'sticky';
+                            stickyWrapper.style.height = '80vh';
+                        }
+                        
+                        let spacerHeight;
+                        if (upcomingCount === 1) {
+                            spacerHeight = '100vh';
+                        } else if (upcomingCount === 2) {
+                            spacerHeight = '200vh';
+                        } else {
+                            spacerHeight = '312vh';
+                        }
+                        scrollSpacer.style.height = spacerHeight;
                     }
-                    scrollSpacer.style.height = spacerHeight;
                 }
                 
                 // Initialize and render events
@@ -5655,13 +5736,16 @@ app.get('/', (c) => {
                             
                             // Special handling for outreach section (has sticky header + events)
                             if (targetId === '#outreach') {
-                                // Always scroll to the very beginning of outreach section to show Event 1
+                                // Scroll so nav aligns over outreach header
                                 const outreachRect = target.getBoundingClientRect();
                                 const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
                                 
-                                if (window.innerWidth <= 1199) {
-                                    // Mobile: Always scroll to show Event 1 (top of section)
-                                    navOffset = -50; // Negative to show full header and start at Event 1
+                                if (window.innerWidth <= 899) {
+                                    // Mobile: Align nav just above the outreach header
+                                    navOffset = 100; // Positive offset to show header below nav
+                                } else if (window.innerWidth <= 1199) {
+                                    // Tablet
+                                    navOffset = 80;
                                 } else {
                                     // Desktop: Standard offset
                                     navOffset = 60;

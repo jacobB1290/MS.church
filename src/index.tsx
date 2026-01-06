@@ -2734,15 +2734,13 @@ app.get('/', (c) => {
                 nav ul {
                     width: 100%;
                     justify-content: center;  /* Center nav links */
-                    flex-wrap: wrap;
-                    row-gap: 10px;
-                    gap: 18px;
+                    flex-wrap: nowrap; /* Prevent wrapping */
+                    gap: clamp(8px, 3vw, 18px); /* Responsive gap */
                     order: 1;  /* Nav links first */
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: 16px;
-                    row-gap: 0;
+                    gap: clamp(8px, 3vw, 16px);
                 }
 
                 .brand {
@@ -2778,8 +2776,9 @@ app.get('/', (c) => {
                 }
                 
                 nav a {
-                    font-size: 10px;
-                    letter-spacing: 2px;
+                    font-size: clamp(8px, 2.5vw, 10px);
+                    letter-spacing: clamp(1px, 0.4vw, 2px);
+                    white-space: nowrap;
                 }
 
                 .hero h1 {
@@ -3272,8 +3271,8 @@ app.get('/', (c) => {
                 
                 .stay-tuned-only .events-container {
                     position: relative !important;
-                    width: 75%; /* Portrait card - narrower width */
-                    max-width: 320px;
+                    width: clamp(280px, 70vw, 380px); /* Scales with viewport */
+                    max-width: 380px;
                     margin: 0 auto;
                     height: auto !important;
                     padding: 0;
@@ -3300,8 +3299,8 @@ app.get('/', (c) => {
                 /* Stay Tuned card - 3:4 portrait aspect ratio, scales to screen */
                 .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
                     aspect-ratio: 3 / 4;
-                    min-height: auto;
-                    max-height: 60vh; /* Cap at 60% of viewport on mobile */
+                    min-height: clamp(350px, 55vh, 500px); /* Larger min-height that scales */
+                    max-height: 65vh;
                     width: 100%;
                     margin-bottom: 0;
                 }
@@ -3387,8 +3386,8 @@ app.get('/', (c) => {
                 }
 
                 nav ul {
-                    gap: 18px;
-                    row-gap: 8px;
+                    gap: clamp(6px, 2.5vw, 14px);
+                    flex-wrap: nowrap;
                     justify-content: center;
                 }
                 
@@ -3405,19 +3404,20 @@ app.get('/', (c) => {
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: 16px;
-                    row-gap: 0;
+                    gap: clamp(6px, 2.5vw, 12px);
+                    flex-wrap: nowrap;
                     justify-content: center;
                 }
 
                 nav a {
-                    font-size: clamp(9px, 2.5vw, 10px);
-                    letter-spacing: clamp(1.5px, 0.5vw, 2px);
+                    font-size: clamp(8px, 2.2vw, 10px);
+                    letter-spacing: clamp(0.8px, 0.3vw, 1.5px);
+                    white-space: nowrap;
                 }
                 
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: clamp(9px, 2.5vw, 10px);
-                    letter-spacing: clamp(1.5px, 0.5vw, 2px);
+                    font-size: clamp(8px, 2.2vw, 10px);
+                    letter-spacing: clamp(0.8px, 0.3vw, 1.5px);
                 }
 
                 .nav-cta {

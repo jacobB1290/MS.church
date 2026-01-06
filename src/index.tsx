@@ -1040,8 +1040,8 @@ app.get('/', (c) => {
                 height: auto;
                 display: flex;
                 justify-content: center;
-                width: 100%;
-                max-width: 340px;
+                width: 90%;
+                max-width: 600px; /* Match event-card max-width */
                 margin: 0 auto;
             }
             
@@ -1058,14 +1058,14 @@ app.get('/', (c) => {
                 min-height: auto;
                 max-height: none;
                 width: 100%;
-                max-width: 480px;
+                max-width: 600px; /* Larger for desktop */
                 margin: 0 auto;
                 padding: 0;
             }
             
             .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
                 aspect-ratio: 4 / 3; /* Wide card aspect ratio */
-                min-height: auto;
+                min-height: 280px; /* Minimum height */
                 max-height: none;
                 width: 100%;
                 margin: 0 auto;
@@ -3232,13 +3232,13 @@ app.get('/', (c) => {
                    Clean static layout when no upcoming events
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: -280px !important; /* Pull Watch section VERY close */
+                    margin-bottom: -100px !important; /* Pull Watch section closer */
                 }
                 
                 .stay-tuned-only .outreach-header {
                     text-align: left;
                     padding-left: 5%;
-                    margin-bottom: 20px; /* Space between header and card */
+                    margin-bottom: 16px; /* Space between header and card */
                     padding-bottom: 0;
                 }
                 
@@ -3272,8 +3272,8 @@ app.get('/', (c) => {
                 
                 .stay-tuned-only .events-container {
                     position: relative !important;
-                    width: 90%;
-                    max-width: 380px;
+                    width: 92%;
+                    max-width: 500px; /* Larger max-width */
                     margin: 0 auto;
                     height: auto !important;
                     padding: 0;
@@ -3297,10 +3297,10 @@ app.get('/', (c) => {
                     margin: 0;
                 }
                 
-                /* Stay Tuned card - 4:3 aspect ratio, larger and responsive */
+                /* Stay Tuned card - 4:3 aspect ratio, fills screen width naturally */
                 .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
                     aspect-ratio: 4 / 3;
-                    min-height: auto;
+                    min-height: 220px; /* Minimum height for small screens */
                     max-height: none;
                     width: 100%;
                     margin-bottom: 0;

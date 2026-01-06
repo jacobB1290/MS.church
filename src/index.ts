@@ -986,7 +986,7 @@ app.get('/', (c) => {
             
             /* When Stay Tuned card is inside event-flyer-wrapper */
             .event-flyer-wrapper.stay-tuned-card {
-                aspect-ratio: 4/3 !important; /* 4:3 wide card */
+                aspect-ratio: 3/4; /* 3:4 portrait card */
                 width: 100%;
                 overflow: hidden;
             }
@@ -1040,8 +1040,8 @@ app.get('/', (c) => {
                 height: auto;
                 display: flex;
                 justify-content: center;
-                width: 90%;
-                max-width: 600px; /* Match event-card max-width */
+                width: 100%;
+                max-width: 400px; /* Portrait card width for desktop */
                 margin: 0 auto;
             }
             
@@ -1058,15 +1058,15 @@ app.get('/', (c) => {
                 min-height: auto;
                 max-height: none;
                 width: 100%;
-                max-width: 600px; /* Larger for desktop */
+                max-width: 400px; /* Portrait card width */
                 margin: 0 auto;
                 padding: 0;
             }
             
             .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                aspect-ratio: 4 / 3; /* Wide card aspect ratio */
-                min-height: 280px; /* Minimum height */
-                max-height: none;
+                aspect-ratio: 3 / 4; /* Portrait card aspect ratio */
+                min-height: auto;
+                max-height: 70vh; /* Cap at 70% of viewport height */
                 width: 100%;
                 margin: 0 auto;
             }
@@ -3272,8 +3272,8 @@ app.get('/', (c) => {
                 
                 .stay-tuned-only .events-container {
                     position: relative !important;
-                    width: 92%;
-                    max-width: 500px; /* Larger max-width */
+                    width: 75%; /* Portrait card - narrower width */
+                    max-width: 320px;
                     margin: 0 auto;
                     height: auto !important;
                     padding: 0;
@@ -3297,11 +3297,11 @@ app.get('/', (c) => {
                     margin: 0;
                 }
                 
-                /* Stay Tuned card - 4:3 aspect ratio, fills screen width naturally */
+                /* Stay Tuned card - 3:4 portrait aspect ratio, scales to screen */
                 .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                    aspect-ratio: 4 / 3 !important;
-                    min-height: 200px;
-                    max-height: none;
+                    aspect-ratio: 3 / 4;
+                    min-height: auto;
+                    max-height: 60vh; /* Cap at 60% of viewport on mobile */
                     width: 100%;
                     margin-bottom: 0;
                 }

@@ -1896,10 +1896,9 @@ app.get('/', (c) => {
             }
             
             .contact-header {
-                text-align: left;
+                text-align: center; /* Centered on desktop like other sections */
                 max-width: 800px;
                 margin: 0 auto;
-                padding: 0 5%;
             }
             
             /* Gift Gallery - Images always in a row, scale to fit */
@@ -3784,14 +3783,21 @@ app.get('/', (c) => {
                 }
                 
                 .contact-header {
-                    text-align: left;
+                    text-align: left !important;
                     padding: 0 5%;
+                    margin-left: 0;
+                    margin-right: auto;
                 }
                 
-                .contact-header .section-eyebrow,
+                .contact-header .section-eyebrow {
+                    text-align: left !important;
+                    margin-left: 0 !important;
+                    margin-right: auto;
+                }
+                
                 .contact-header .section-heading,
                 .contact-header .section-lead {
-                    text-align: left;
+                    text-align: left !important;
                 }
                 
                 /* Gift Gallery Mobile - Keep in row, smaller gap */
@@ -5754,8 +5760,8 @@ app.get('/', (c) => {
                                 const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
                                 
                                 if (window.innerWidth <= 899) {
-                                    // Mobile: OUTREACH pill directly under compressed nav
-                                    navOffset = 5; // Near zero
+                                    // Mobile: Nav overlaps outreach section slightly
+                                    navOffset = -30; // Negative to scroll past, nav covers outreach text
                                 } else if (window.innerWidth <= 1199) {
                                     // Tablet
                                     navOffset = 75;

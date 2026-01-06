@@ -3208,23 +3208,23 @@ app.get('/', (c) => {
                    Clean static layout when no upcoming events
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: -80px !important; /* Pull Watch section much closer */
+                    margin-bottom: -100px !important; /* Pull Watch section very close */
                 }
                 
                 .stay-tuned-only .outreach-header {
                     text-align: left;
                     padding-left: 5%;
-                    margin-bottom: 0; /* No gap before card */
+                    margin-bottom: 0;
                 }
                 
                 .stay-tuned-only .outreach-header .section-eyebrow {
                     margin-left: 0;
-                    margin-bottom: 2px;
+                    margin-bottom: 0;
                 }
                 
                 .stay-tuned-only .outreach-header .section-heading {
                     text-align: left;
-                    margin-bottom: 12px; /* Small gap to card */
+                    margin-bottom: 6px; /* Minimal gap to card */
                 }
                 
                 .stay-tuned-only .outreach-header .section-lead {
@@ -5857,8 +5857,8 @@ app.get('/', (c) => {
                                 const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
                                 
                                 if (window.innerWidth <= 899) {
-                                    // Mobile: OUTREACH pill right below compressed nav
-                                    navOffset = 50; // Minimal gap - pill nearly touching nav
+                                    // Mobile: OUTREACH pill directly under compressed nav
+                                    navOffset = 35; // Tight - pill directly under nav
                                 } else if (window.innerWidth <= 1199) {
                                     // Tablet
                                     navOffset = 75;

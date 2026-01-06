@@ -3208,18 +3208,18 @@ app.get('/', (c) => {
                    Clean static layout when no upcoming events
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: 0 !important;
+                    margin-bottom: -60px !important; /* Pull Watch section closer */
                 }
                 
                 .stay-tuned-only .outreach-header {
                     text-align: left;
                     padding-left: 5%;
-                    margin-bottom: 16px; /* Reduced from 20px */
+                    margin-bottom: 8px; /* Tight spacing before card */
                 }
                 
                 .stay-tuned-only .outreach-header .section-eyebrow {
                     margin-left: 0;
-                    margin-bottom: 8px;
+                    margin-bottom: 4px;
                 }
                 
                 .stay-tuned-only .outreach-header .section-heading {
@@ -5857,8 +5857,8 @@ app.get('/', (c) => {
                                 const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
                                 
                                 if (window.innerWidth <= 899) {
-                                    // Mobile: OUTREACH pill should be right below compressed nav (~55px)
-                                    navOffset = 70; // Tighter - pill closer to nav
+                                    // Mobile: OUTREACH pill right below compressed nav
+                                    navOffset = 60; // Very tight - pill adjacent to nav
                                 } else if (window.innerWidth <= 1199) {
                                     // Tablet
                                     navOffset = 75;

@@ -3208,23 +3208,23 @@ app.get('/', (c) => {
                    Clean static layout when no upcoming events
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: -150px !important; /* Pull Watch section as close as possible */
+                    margin-bottom: -200px !important; /* Pull Watch section very close */
                 }
                 
                 .stay-tuned-only .outreach-header {
                     text-align: left;
                     padding-left: 5%;
-                    margin-bottom: 0;
+                    margin-bottom: -10px; /* Negative to pull card up */
                 }
                 
                 .stay-tuned-only .outreach-header .section-eyebrow {
                     margin-left: 0;
-                    margin-bottom: 0;
+                    margin-bottom: -4px;
                 }
                 
                 .stay-tuned-only .outreach-header .section-heading {
                     text-align: left;
-                    margin-bottom: 0; /* No gap to card */
+                    margin-bottom: -8px; /* Negative to pull card closer */
                 }
                 
                 .stay-tuned-only .outreach-header .section-lead {

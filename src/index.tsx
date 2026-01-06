@@ -3208,7 +3208,7 @@ app.get('/', (c) => {
                    Clean static layout when no upcoming events
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: -100px !important; /* Pull Watch section very close */
+                    margin-bottom: -120px !important; /* Pull Watch section extremely close */
                 }
                 
                 .stay-tuned-only .outreach-header {
@@ -3224,7 +3224,7 @@ app.get('/', (c) => {
                 
                 .stay-tuned-only .outreach-header .section-heading {
                     text-align: left;
-                    margin-bottom: 6px; /* Minimal gap to card */
+                    margin-bottom: 0; /* No gap to card */
                 }
                 
                 .stay-tuned-only .outreach-header .section-lead {
@@ -5858,7 +5858,7 @@ app.get('/', (c) => {
                                 
                                 if (window.innerWidth <= 899) {
                                     // Mobile: OUTREACH pill directly under compressed nav
-                                    navOffset = 35; // Tight - pill directly under nav
+                                    navOffset = 20; // Extremely tight
                                 } else if (window.innerWidth <= 1199) {
                                     // Tablet
                                     navOffset = 75;

@@ -3208,23 +3208,23 @@ app.get('/', (c) => {
                    Clean static layout when no upcoming events
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: -60px !important; /* Pull Watch section closer */
+                    margin-bottom: -80px !important; /* Pull Watch section much closer */
                 }
                 
                 .stay-tuned-only .outreach-header {
                     text-align: left;
                     padding-left: 5%;
-                    margin-bottom: 8px; /* Tight spacing before card */
+                    margin-bottom: 0; /* No gap before card */
                 }
                 
                 .stay-tuned-only .outreach-header .section-eyebrow {
                     margin-left: 0;
-                    margin-bottom: 4px;
+                    margin-bottom: 2px;
                 }
                 
                 .stay-tuned-only .outreach-header .section-heading {
                     text-align: left;
-                    margin-bottom: 0;
+                    margin-bottom: 12px; /* Small gap to card */
                 }
                 
                 .stay-tuned-only .outreach-header .section-lead {
@@ -5858,7 +5858,7 @@ app.get('/', (c) => {
                                 
                                 if (window.innerWidth <= 899) {
                                     // Mobile: OUTREACH pill right below compressed nav
-                                    navOffset = 60; // Very tight - pill adjacent to nav
+                                    navOffset = 50; // Minimal gap - pill nearly touching nav
                                 } else if (window.innerWidth <= 1199) {
                                     // Tablet
                                     navOffset = 75;

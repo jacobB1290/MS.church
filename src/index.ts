@@ -5699,7 +5699,7 @@ app.get('/', (c) => {
                                 
                                 if (window.innerWidth <= 899) {
                                     // Mobile: Scroll less so nav covers pill more
-                                    navOffset = 140; // Higher positive = scroll even less
+                                    navOffset = 30; // Higher positive = scroll even less
                                 } else if (window.innerWidth <= 1199) {
                                     // Tablet
                                     navOffset = -20;

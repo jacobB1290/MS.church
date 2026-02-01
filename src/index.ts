@@ -101,9 +101,10 @@ app.get('/', (c) => {
                 box-sizing: border-box;
             }
             
-            /* Safari iOS - extend background to safe areas (status bar, home indicator) */
+            /* Safari iOS - extend background to safe areas (status bar, home indicator) 
+               Use bottom color for overscroll bounce effect */
             html {
-                background-color: var(--safe-area-color-top);
+                background-color: var(--safe-area-color-bottom);
                 /* Ensure background fills entire viewport including safe areas */
                 min-height: 100%;
                 min-height: -webkit-fill-available;
@@ -131,25 +132,28 @@ app.get('/', (c) => {
 
             body {
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: var(--bg-default);
-                /* Safari iOS - set solid background-color for safe areas (status bar, home indicator) */
-                background-color: var(--safe-area-color-top);
+                /* Safari iOS overscroll fix: background-color shows during rubber-band bounce
+                   Use bottom gradient color (#e9ecf5) so overscroll at bottom matches the page */
+                background-color: var(--safe-area-color-bottom);
+                background-image: var(--bg-default);
                 color: #1a1a2e;
                 min-height: 100vh;
                 min-height: -webkit-fill-available;
                 line-height: 1.6;
                 overflow-x: hidden;
-                transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: background-color 1.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                            background-image 1.8s cubic-bezier(0.4, 0, 0.2, 1);
                 /* Safari iOS safe area insets for landscape mode and home indicator */
                 padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
-            body.event-1-active { background: var(--bg-event1); }
-            body.event-2-active { background: var(--bg-event2); }
-            body.event-3-active { background: var(--bg-event3); }
-            body.event-4-active { background: var(--bg-event4); }
-            body.event-5-active { background: var(--bg-event5); }
-            body.stay-tuned-active { background: var(--bg-stay-tuned); }
+            /* Event backgrounds with overscroll colors (use gradient end color for background-color) */
+            body.event-1-active { background-image: var(--bg-event1); background-color: #f0d9c8; }
+            body.event-2-active { background-image: var(--bg-event2); background-color: #dde0c8; }
+            body.event-3-active { background-image: var(--bg-event3); background-color: #f0c8c8; }
+            body.event-4-active { background-image: var(--bg-event4); background-color: #d8dcf0; }
+            body.event-5-active { background-image: var(--bg-event5); background-color: #e8d8f0; }
+            body.stay-tuned-active { background-image: var(--bg-stay-tuned); background-color: #e9ecf5; }
             
             /* Modal open - prevent body scroll */
             body.modal-open {

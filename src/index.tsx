@@ -146,14 +146,34 @@ app.get('/', (c) => {
                 /* Safari iOS safe area insets for landscape mode and home indicator */
                 padding-bottom: env(safe-area-inset-bottom, 0px);
             }
+            
+            /* Safari iOS top overscroll fix: fixed pseudo-element covers top overscroll area
+               This shows the top gradient color when pulling down past the top of the page */
+            body::before {
+                content: '';
+                position: fixed;
+                top: -100vh;
+                left: 0;
+                right: 0;
+                height: 100vh;
+                background-color: var(--safe-area-color-top);
+                z-index: -1;
+                pointer-events: none;
+            }
 
             /* Event backgrounds with overscroll colors (use gradient end color for background-color) */
             body.event-1-active { background-image: var(--bg-event1); background-color: #f0d9c8; }
+            body.event-1-active::before { background-color: #f5e6d8; }
             body.event-2-active { background-image: var(--bg-event2); background-color: #dde0c8; }
+            body.event-2-active::before { background-color: #e8ead8; }
             body.event-3-active { background-image: var(--bg-event3); background-color: #f0c8c8; }
+            body.event-3-active::before { background-color: #f5d8d8; }
             body.event-4-active { background-image: var(--bg-event4); background-color: #d8dcf0; }
+            body.event-4-active::before { background-color: #e6e8f5; }
             body.event-5-active { background-image: var(--bg-event5); background-color: #e8d8f0; }
+            body.event-5-active::before { background-color: #f0e6f5; }
             body.stay-tuned-active { background-image: var(--bg-stay-tuned); background-color: #e9ecf5; }
+            body.stay-tuned-active::before { background-color: #f8f9fd; }
             
             /* Modal open - prevent body scroll */
             body.modal-open {

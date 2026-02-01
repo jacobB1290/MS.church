@@ -6728,7 +6728,7 @@ app.get('/privacy', (c) => {
                     <li><strong>Phone Number</strong> – to contact you if requested or necessary</li>
                     <li><strong>Message Content</strong> – any additional information you choose to share</li>
                 </ul>
-                <p>This information is collected solely for the purpose of responding to your inquiries and facilitating communication regarding church activities, services, or prayer requests.</p>
+                <p>This information is collected for the purpose of responding to your inquiries, facilitating communication regarding church activities, services, or prayer requests, and sending you promotional materials about our church including newsletters, event announcements, and ministry updates.</p>
                 
                 <h3>2. Automatically Collected Information (Analytics)</h3>
                 <p>We use <strong>Vercel Analytics</strong> and <strong>Vercel Speed Insights</strong> to understand how visitors use our Site. These services collect anonymized, aggregated data only and <strong>do not use cookies</strong>. The data collected includes:</p>

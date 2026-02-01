@@ -19,7 +19,10 @@ app.get('/', (c) => {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+        <!-- Safari iOS theme-color for status bar and tab bar background -->
+        <meta name="theme-color" content="#f8f9fd">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
         <title>Morning Star Christian Church</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,6 +82,9 @@ app.get('/', (c) => {
             :root {
                 color-scheme: light;
                 --bg-default: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
+                /* Safari iOS safe-area colors - matches gradient endpoints */
+                --safe-area-color-top: #f8f9fd;
+                --safe-area-color-bottom: #e9ecf5;
                 --bg-stay-tuned: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%); /* Matches default - seamless */
                 /* Event backgrounds - warm palette matching site */
                 --bg-event1: linear-gradient(135deg, #f5e6d8 0%, #f0d9c8 100%); /* Muted warm terracotta */
@@ -93,6 +99,14 @@ app.get('/', (c) => {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
+            }
+            
+            /* Safari iOS - extend background to safe areas (status bar, home indicator) */
+            html {
+                background-color: var(--safe-area-color-top);
+                /* Ensure background fills entire viewport including safe areas */
+                min-height: 100%;
+                min-height: -webkit-fill-available;
             }
             
             /* Fallback for older iOS devices (iPhone 6S, iPhone X, etc.) that don't support backdrop-filter */
@@ -118,11 +132,16 @@ app.get('/', (c) => {
             body {
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 background: var(--bg-default);
+                /* Safari iOS - set solid background-color for safe areas (status bar, home indicator) */
+                background-color: var(--safe-area-color-top);
                 color: #1a1a2e;
                 min-height: 100vh;
+                min-height: -webkit-fill-available;
                 line-height: 1.6;
                 overflow-x: hidden;
                 transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+                /* Safari iOS safe area insets for landscape mode and home indicator */
+                padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
             body.event-1-active { background: var(--bg-event1); }
@@ -4678,7 +4697,11 @@ app.get('/', (c) => {
                ======================================== */
             .site-footer {
                 background: transparent;
+                /* Safari iOS - set background color for home indicator area */
+                background-color: var(--safe-area-color-bottom);
                 padding: 60px 0 40px;
+                /* Safari iOS safe area - add extra padding for home indicator */
+                padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
                 margin-top: 40px;
                 border-top: 1px solid #d4a574;
             }
@@ -4783,6 +4806,8 @@ app.get('/', (c) => {
             @media (max-width: 480px) {
                 .site-footer {
                     padding: 48px 0 32px;
+                    /* Safari iOS safe area - add extra padding for home indicator on mobile */
+                    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
                     margin-top: 24px;
                 }
                 
@@ -7027,7 +7052,10 @@ app.get('/form', (c) => {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+        <!-- Safari iOS theme-color for status bar and tab bar background -->
+        <meta name="theme-color" content="#f8f9fd">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
         <title>Contact - Morning Star Christian Church</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

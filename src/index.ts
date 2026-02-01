@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.24.5 - Find Us Button: Thinner Long Pill -->
+    <!-- v1.24.6 - Nav Bar Moved Up: Less Space Above -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -149,7 +149,7 @@ app.get('/', (c) => {
 
             /* Navigation Spacer - maintains layout when nav is fixed */
             .nav-spacer {
-                height: 380px;
+                height: 320px;
                 pointer-events: none;
             }
 
@@ -167,7 +167,7 @@ app.get('/', (c) => {
                             0 8px 20px rgba(0, 0, 0, 0.04);
                 backdrop-filter: blur(20px);
                 position: fixed;
-                top: 32px;
+                top: 16px;
                 left: 50%;
                 transform: translateX(-50%);
                 z-index: 1000;
@@ -4385,9 +4385,9 @@ app.get('/', (c) => {
                     max-width: 1400px;
                 }
                 
-                /* Desktop Navigation Spacer - CRITICAL: Override base 380px */
+                /* Desktop Navigation Spacer - CRITICAL: Override base 320px */
                 .nav-spacer {
-                    height: 120px;  /* Natural spacing for desktop */
+                    height: 100px;  /* Natural spacing for desktop - nav moved up */
                 }
                 
                 main {
@@ -5428,7 +5428,7 @@ app.get('/', (c) => {
                     if (width <= 375) return 130 * 0.10; // 10% of 130px nav-spacer
                     if (width <= 480) return 190 * 0.10; // 10% of 190px nav-spacer
                     if (width <= 960) return 190 * 0.10; // 10% of 190px nav-spacer
-                    return 380 * 0.10; // 10% of 380px nav-spacer
+                    return 320 * 0.10; // 10% of 320px nav-spacer (nav moved up)
                 }
                 let scrollUpAtTopCount = 0;
                 let isNavigatingHome = false; // Flag to prevent nav compression during HOME click

@@ -81,17 +81,16 @@ app.get('/', (c) => {
         <style>
             :root {
                 color-scheme: light;
-                --bg-default: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
-                /* Safari iOS safe-area colors - matches gradient endpoints */
-                --safe-area-color-top: #f8f9fd;
-                --safe-area-color-bottom: #e9ecf5;
-                --bg-stay-tuned: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%); /* Matches default - seamless */
-                /* Event backgrounds - warm palette matching site */
-                --bg-event1: linear-gradient(135deg, #f5e6d8 0%, #f0d9c8 100%); /* Muted warm terracotta */
-                --bg-event2: linear-gradient(135deg, #e8ead8 0%, #dde0c8 100%); /* Muted olive/sage */
-                --bg-event3: linear-gradient(135deg, #f5d8d8 0%, #f0c8c8 100%); /* Pleasant muted red */
-                --bg-event4: linear-gradient(135deg, #e6e8f5 0%, #d8dcf0 100%); /* Soft blue-gray */
-                --bg-event5: linear-gradient(135deg, #f0e6f5 0%, #e8d8f0 100%); /* Soft lavender */
+                /* Solid background color for seamless Safari iOS overscroll */
+                --bg-color: #f8f9fd;
+                --bg-default: #f8f9fd;
+                --bg-stay-tuned: #f8f9fd;
+                /* Event backgrounds - solid colors for seamless overscroll */
+                --bg-event1: #f5e6d8; /* Muted warm terracotta */
+                --bg-event2: #e8ead8; /* Muted olive/sage */
+                --bg-event3: #f5d8d8; /* Pleasant muted red */
+                --bg-event4: #e6e8f5; /* Soft blue-gray */
+                --bg-event5: #f0e6f5; /* Soft lavender */
                 --outreach-spacer: 100vh; /* Default for single card - JS adjusts dynamically */
             }
 
@@ -101,11 +100,9 @@ app.get('/', (c) => {
                 box-sizing: border-box;
             }
             
-            /* Safari iOS - extend background to safe areas (status bar, home indicator) 
-               Use bottom color for overscroll bounce effect */
+            /* Safari iOS - solid background color for seamless overscroll in both directions */
             html {
-                background-color: var(--safe-area-color-bottom);
-                /* Ensure background fills entire viewport including safe areas */
+                background-color: var(--bg-color);
                 min-height: 100%;
                 min-height: -webkit-fill-available;
             }
@@ -132,48 +129,26 @@ app.get('/', (c) => {
 
             body {
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                /* Safari iOS overscroll fix: background-color shows during rubber-band bounce
-                   Use bottom gradient color (#e9ecf5) so overscroll at bottom matches the page */
-                background-color: var(--safe-area-color-bottom);
-                background-image: var(--bg-default);
+                /* Solid background color for seamless Safari iOS overscroll */
+                background-color: var(--bg-color);
+                background: var(--bg-default);
                 color: #1a1a2e;
                 min-height: 100vh;
                 min-height: -webkit-fill-available;
                 line-height: 1.6;
                 overflow-x: hidden;
-                transition: background-color 1.8s cubic-bezier(0.4, 0, 0.2, 1), 
-                            background-image 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1);
                 /* Safari iOS safe area insets for landscape mode and home indicator */
                 padding-bottom: env(safe-area-inset-bottom, 0px);
             }
-            
-            /* Safari iOS top overscroll fix: fixed pseudo-element covers top overscroll area
-               This shows the top gradient color when pulling down past the top of the page */
-            body::before {
-                content: '';
-                position: fixed;
-                top: -100vh;
-                left: 0;
-                right: 0;
-                height: 100vh;
-                background-color: var(--safe-area-color-top);
-                z-index: -1;
-                pointer-events: none;
-            }
 
-            /* Event backgrounds with overscroll colors (use gradient end color for background-color) */
-            body.event-1-active { background-image: var(--bg-event1); background-color: #f0d9c8; }
-            body.event-1-active::before { background-color: #f5e6d8; }
-            body.event-2-active { background-image: var(--bg-event2); background-color: #dde0c8; }
-            body.event-2-active::before { background-color: #e8ead8; }
-            body.event-3-active { background-image: var(--bg-event3); background-color: #f0c8c8; }
-            body.event-3-active::before { background-color: #f5d8d8; }
-            body.event-4-active { background-image: var(--bg-event4); background-color: #d8dcf0; }
-            body.event-4-active::before { background-color: #e6e8f5; }
-            body.event-5-active { background-image: var(--bg-event5); background-color: #e8d8f0; }
-            body.event-5-active::before { background-color: #f0e6f5; }
-            body.stay-tuned-active { background-image: var(--bg-stay-tuned); background-color: #e9ecf5; }
-            body.stay-tuned-active::before { background-color: #f8f9fd; }
+            /* Event backgrounds - solid colors for seamless overscroll */
+            body.event-1-active { background: var(--bg-event1); }
+            body.event-2-active { background: var(--bg-event2); }
+            body.event-3-active { background: var(--bg-event3); }
+            body.event-4-active { background: var(--bg-event4); }
+            body.event-5-active { background: var(--bg-event5); }
+            body.stay-tuned-active { background: var(--bg-stay-tuned); }
             
             /* Modal open - prevent body scroll */
             body.modal-open {
@@ -4721,8 +4696,6 @@ app.get('/', (c) => {
                ======================================== */
             .site-footer {
                 background: transparent;
-                /* Safari iOS - set background color for home indicator area */
-                background-color: var(--safe-area-color-bottom);
                 padding: 60px 0 40px;
                 /* Safari iOS safe area - add extra padding for home indicator */
                 padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));

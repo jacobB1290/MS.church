@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.26.0 - Added footer with social links -->
+    <!-- v1.26.2 - Privacy Policy page with footer link -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -4735,6 +4735,22 @@ app.get('/', (c) => {
                 background: rgba(255, 255, 255, 0.1);
             }
             
+            .footer-links {
+                display: flex;
+                gap: 24px;
+            }
+            
+            .footer-link {
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.5);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+            
+            .footer-link:hover {
+                color: #d4a574;
+            }
+            
             .footer-copyright {
                 font-size: 13px;
                 color: rgba(255, 255, 255, 0.4);
@@ -5059,6 +5075,10 @@ app.get('/', (c) => {
                     </div>
                     
                     <div class="footer-divider"></div>
+                    
+                    <div class="footer-links">
+                        <a href="/privacy" class="footer-link">Privacy Policy</a>
+                    </div>
                     
                     <p class="footer-copyright">© 2025 Morning Star Christian Church. All rights reserved.</p>
                 </div>
@@ -5638,7 +5658,7 @@ app.get('/', (c) => {
                     if (isStayTuned) {
                         body.classList.add('stay-tuned-active');
                     } else {
-                        body.classList.add(\`event-\${index + 1}-active\`);
+                        body.classList.add('event-' + (index + 1) + '-active');
                     }
                 }
 
@@ -5667,7 +5687,7 @@ app.get('/', (c) => {
                         // Start from next card after active, wrap around (max 3 stack positions)
                         for (let i = 1; i < totalCards && stackPos <= 3; i++) {
                             const cardIndex = (index + i) % totalCards;
-                            eventSlides[cardIndex].classList.add(\`stack-position-\${stackPos}\`);
+                            eventSlides[cardIndex].classList.add('stack-position-' + stackPos);
                             stackPos++;
                         }
                     }
@@ -6016,7 +6036,7 @@ app.get('/', (c) => {
                     childrenContainer.addEventListener('click', (e) => {
                         if (e.target.classList.contains('btn-remove-child')) {
                             const childNumber = e.target.getAttribute('data-child');
-                            const childForm = childrenContainer.querySelector(\`[data-child-number="\${childNumber}"]\`);
+                            const childForm = childrenContainer.querySelector('[data-child-number="' + childNumber + '"]');
                             if (childForm) {
                                 childForm.remove();
                             }
@@ -6422,6 +6442,269 @@ app.get('/', (c) => {
     </body>
     </html>
   `)
+})
+
+// Privacy Policy page
+app.get('/privacy', (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Privacy Policy - Morning Star Christian Church</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
+                color: #1a1a2e;
+                line-height: 1.7;
+                min-height: 100vh;
+            }
+            
+            .privacy-container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 60px 24px 80px;
+            }
+            
+            .back-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: #d4a574;
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 500;
+                margin-bottom: 40px;
+                transition: opacity 0.3s ease;
+            }
+            
+            .back-link:hover {
+                opacity: 0.7;
+            }
+            
+            .privacy-header {
+                margin-bottom: 48px;
+            }
+            
+            .privacy-header h1 {
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(32px, 6vw, 48px);
+                color: #1a1a2e;
+                margin-bottom: 16px;
+                font-weight: 700;
+            }
+            
+            .privacy-header .last-updated {
+                font-size: 14px;
+                color: rgba(26, 26, 46, 0.5);
+            }
+            
+            .privacy-content {
+                background: rgba(255, 255, 255, 0.85);
+                border-radius: 32px;
+                padding: 48px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+            }
+            
+            .privacy-content h2 {
+                font-family: 'Playfair Display', serif;
+                font-size: 24px;
+                color: #1a1a2e;
+                margin: 32px 0 16px;
+                font-weight: 600;
+            }
+            
+            .privacy-content h2:first-child {
+                margin-top: 0;
+            }
+            
+            .privacy-content h3 {
+                font-size: 18px;
+                color: #1a1a2e;
+                margin: 24px 0 12px;
+                font-weight: 600;
+            }
+            
+            .privacy-content p {
+                color: rgba(26, 26, 46, 0.75);
+                margin-bottom: 16px;
+                font-size: 15px;
+            }
+            
+            .privacy-content ul {
+                margin: 16px 0;
+                padding-left: 24px;
+                color: rgba(26, 26, 46, 0.75);
+            }
+            
+            .privacy-content li {
+                margin-bottom: 8px;
+                font-size: 15px;
+            }
+            
+            .privacy-content a {
+                color: #d4a574;
+                text-decoration: none;
+            }
+            
+            .privacy-content a:hover {
+                text-decoration: underline;
+            }
+            
+            .privacy-content strong {
+                color: #1a1a2e;
+                font-weight: 600;
+            }
+            
+            .contact-box {
+                background: rgba(212, 165, 116, 0.1);
+                border-radius: 16px;
+                padding: 24px;
+                margin-top: 32px;
+            }
+            
+            .contact-box h3 {
+                margin-top: 0;
+                color: #1a1a2e;
+            }
+            
+            @media (max-width: 600px) {
+                .privacy-container {
+                    padding: 40px 16px 60px;
+                }
+                
+                .privacy-content {
+                    padding: 32px 24px;
+                    border-radius: 24px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="privacy-container">
+            <a href="/" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+            
+            <div class="privacy-header">
+                <h1>Privacy Policy</h1>
+                <p class="last-updated">Last Updated: February 1, 2025</p>
+            </div>
+            
+            <div class="privacy-content">
+                <h2>Introduction</h2>
+                <p>Morning Star Christian Church ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website ms.church (the "Site"). Please read this privacy policy carefully. By using the Site, you consent to the practices described in this policy.</p>
+                
+                <h2>Information We Collect</h2>
+                
+                <h3>1. Information You Provide Voluntarily</h3>
+                <p>When you use our contact form (powered by Jotform), you may voluntarily provide us with personal information, including but not limited to:</p>
+                <ul>
+                    <li><strong>Full Name</strong> – to identify and address you personally</li>
+                    <li><strong>Email Address</strong> – to respond to your inquiries and communicate with you</li>
+                    <li><strong>Phone Number</strong> – to contact you if requested or necessary</li>
+                    <li><strong>Message Content</strong> – any additional information you choose to share</li>
+                </ul>
+                <p>This information is collected solely for the purpose of responding to your inquiries and facilitating communication regarding church activities, services, or prayer requests.</p>
+                
+                <h3>2. Automatically Collected Information (Analytics)</h3>
+                <p>We use <strong>Vercel Analytics</strong> and <strong>Vercel Speed Insights</strong> to understand how visitors use our Site. These services collect anonymized, aggregated data only and <strong>do not use cookies</strong>. The data collected includes:</p>
+                <ul>
+                    <li><strong>Page Views</strong> – which pages are visited</li>
+                    <li><strong>Referrer Information</strong> – how you arrived at our Site</li>
+                    <li><strong>Device Information</strong> – browser type, operating system, and device category (desktop/mobile)</li>
+                    <li><strong>Geographic Location</strong> – country-level location only (not precise location)</li>
+                    <li><strong>Performance Metrics</strong> – page load times and web vitals</li>
+                </ul>
+                <p><strong>Important:</strong> Vercel Analytics does not collect or store any information that would enable us to personally identify you or reconstruct your browsing session. No personal data, IP addresses, or cross-site tracking information is collected through our analytics.</p>
+                
+                <h2>How We Use Your Information</h2>
+                <p>We use the information we collect for the following purposes:</p>
+                <ul>
+                    <li>To respond to your inquiries and prayer requests</li>
+                    <li>To provide information about church services, events, and activities</li>
+                    <li>To improve our website and user experience based on aggregated analytics</li>
+                    <li>To maintain the security and functionality of our Site</li>
+                </ul>
+                <p>We <strong>do not</strong> use your information for marketing purposes unless you explicitly opt-in to receive such communications.</p>
+                
+                <h2>Third-Party Services</h2>
+                
+                <h3>Jotform (Contact Form)</h3>
+                <p>Our contact form is powered by Jotform. When you submit information through our form, it is processed and stored by Jotform in accordance with their privacy practices. Jotform is GDPR-compliant and maintains industry-standard security measures. For more information, please review <a href="https://www.jotform.com/privacy/" target="_blank" rel="noopener">Jotform's Privacy Policy</a>.</p>
+                
+                <h3>Vercel (Hosting and Analytics)</h3>
+                <p>Our website is hosted on Vercel, which provides privacy-focused analytics. Vercel Analytics is designed to be GDPR-compliant and does not require cookie consent banners as it does not use cookies or collect personally identifiable information. For more information, please review <a href="https://vercel.com/docs/analytics/privacy-policy" target="_blank" rel="noopener">Vercel's Analytics Privacy Policy</a>.</p>
+                
+                <h3>YouTube (Embedded Videos)</h3>
+                <p>Our Site may contain embedded YouTube videos. When you view these videos, YouTube may collect information in accordance with their privacy policy. For more information, please review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
+                
+                <h2>Data Retention</h2>
+                <p>Form submissions are retained in Jotform for as long as necessary to respond to your inquiry and maintain records of communications. Analytics data is retained in accordance with Vercel's data retention policies and is used solely for aggregated statistical purposes.</p>
+                
+                <h2>Data Security</h2>
+                <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. This includes:</p>
+                <ul>
+                    <li>SSL/TLS encryption for all data transmitted to and from our Site</li>
+                    <li>Secure form submission through Jotform's encrypted platform</li>
+                    <li>Limited access to personal information on a need-to-know basis</li>
+                </ul>
+                <p>However, please be aware that no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
+                
+                <h2>Your Rights</h2>
+                <p>Depending on your location, you may have certain rights regarding your personal information, including:</p>
+                <ul>
+                    <li><strong>Right to Access</strong> – request a copy of the personal information we hold about you</li>
+                    <li><strong>Right to Rectification</strong> – request correction of inaccurate information</li>
+                    <li><strong>Right to Erasure</strong> – request deletion of your personal information</li>
+                    <li><strong>Right to Restrict Processing</strong> – request limitation of how we use your data</li>
+                    <li><strong>Right to Data Portability</strong> – request transfer of your data in a structured format</li>
+                </ul>
+                <p>To exercise any of these rights, please contact us using the information provided below.</p>
+                
+                <h2>Children's Privacy</h2>
+                <p>Our Site is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately so we can delete such information.</p>
+                
+                <h2>Changes to This Privacy Policy</h2>
+                <p>We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Privacy Policy on this page with an updated "Last Updated" date. We encourage you to review this Privacy Policy periodically.</p>
+                
+                <h2>California Privacy Rights</h2>
+                <p>If you are a California resident, you may have additional rights under the California Consumer Privacy Act (CCPA). We do not sell personal information to third parties. For more information about your California privacy rights, please contact us.</p>
+                
+                <h2>International Users</h2>
+                <p>If you are accessing our Site from outside the United States, please be aware that your information may be transferred to, stored, and processed in the United States where our servers are located. By using our Site, you consent to such transfer.</p>
+                
+                <div class="contact-box">
+                    <h3>Contact Us</h3>
+                    <p>If you have any questions about this Privacy Policy or our data practices, please contact us at:</p>
+                    <p>
+                        <strong>Morning Star Christian Church</strong><br>
+                        3080 Wildwood St<br>
+                        Boise, Idaho<br>
+                        <br>
+                        Or use our <a href="/#contact">contact form</a> on the main website.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+  `);
 })
 
 // Other routes remain the same

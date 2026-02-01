@@ -6729,7 +6729,7 @@ app.get('/privacy', (c) => {
                     <li><strong>Phone Number</strong> – to contact you if requested or necessary</li>
                     <li><strong>Message Content</strong> – any additional information you choose to share</li>
                 </ul>
-                <p>This information is collected for the purpose of responding to your inquiries, facilitating communication regarding church activities, services, or prayer requests, and if you opt in, sending you promotional materials about our church including newsletters, event announcements, and ministry updates.</p>
+                <p>This information is collected for the purpose of responding to your inquiries, facilitating communication regarding church activities, services, or prayer requests, and sending you promotional materials about our church including newsletters, event announcements, and ministry updates via email and text message.</p>
                 <p><strong>Sensitive Information Warning:</strong> Please do not submit sensitive personal information (such as medical details, financial information, or other confidential data) through our contact form unless you choose to share it. If you include such information (for example, in a prayer request), you understand it may be viewed by church staff and volunteers who handle these requests.</p>
                 <p><strong>Who Receives Your Information:</strong> When you submit information through our contact form, it is stored in Jotform, emailed to church staff at our church email address, and may be accessed by authorized church members and volunteers for the purpose of responding to your inquiry or fulfilling ministry-related activities (such as outreach drives).</p>
                 
@@ -6750,11 +6750,16 @@ app.get('/privacy', (c) => {
                 <ul>
                     <li>To respond to your inquiries and prayer requests</li>
                     <li>To provide information about church services, events, and activities</li>
-                    <li>If you opt in, to send promotional materials about our church, including newsletters, event announcements, and ministry updates</li>
+                    <li>To send promotional materials about our church, including newsletters, event announcements, and ministry updates via email and/or text message</li>
                     <li>To improve our website and user experience based on aggregated analytics</li>
                     <li>To maintain the security and functionality of our Site</li>
                 </ul>
-                <p><strong>Consent and Opt-Out:</strong> By submitting your contact information through our form and agreeing to our policies, you consent to receiving communications from Morning Star Christian Church. You may opt-out of promotional communications at any time by emailing us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> with "Unsubscribe" in the subject line. All promotional emails will include an unsubscribe option.</p>
+                <p><strong>Consent:</strong> Our contact form requires you to agree to receive church updates by email and text message before submission. By checking the required consent boxes and submitting the form, you expressly consent to receiving communications from Morning Star Christian Church at the email address and phone number you provide. Standard message and data rates may apply to text messages.</p>
+                <p><strong>Opt-Out:</strong> You may opt-out of communications at any time by:</p>
+                <ul>
+                    <li><strong>Text messages:</strong> Reply STOP to any text message. Reply HELP for assistance.</li>
+                    <li><strong>Email:</strong> Click the unsubscribe link in any email, or email us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> with "Unsubscribe" in the subject line.</li>
+                </ul>
                 <p><strong>Access Controls:</strong> Access to your personal information is limited to church staff and authorized volunteers who need it to respond to your inquiry or fulfill ministry-related activities.</p>
                 
                 <h2>Third-Party Services</h2>

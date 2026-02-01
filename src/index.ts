@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.24.6 - Nav Bar Moved Up: Less Space Above -->
+    <!-- v1.24.7 - Outreach Section: Matches Schedule Layout -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -721,49 +721,18 @@ app.get('/', (c) => {
                 flex-direction: column;
             }
 
-            .outreach-header {
-                position: sticky;
-                top: 28px;
-                z-index: 10;
-                margin-bottom: 8vh;
-                text-align: left;
-            }
-            
-            .heading-wrapper {
-                position: relative;
-                display: inline-block;
-                width: auto;
-            }
-            
-            @media (max-width: 899px) {
-                .heading-wrapper {
-                    width: 100%;
-                    display: block;
-                }
-            }
-            
-            .outreach-header .section-heading {
-                position: relative;
-                margin: 0;
-            }
-            
-            /* Desktop-only reduced gap */
-            @media (min-width: 961px) {
-                .outreach-header {
-                    margin-bottom: 8vh;
-                }
-            }
-
-            .outreach-header .section-eyebrow {
+            /* Outreach section header - same layout as Schedule */
+            .outreach .section-eyebrow {
                 display: inline-flex;
+                margin-bottom: 10px;
             }
-
-            .outreach-header .section-lead {
-                display: none;
+            
+            .outreach .section-heading {
+                margin-bottom: 32px;
             }
-
-            .outreach-header .section-heading {
-                text-align: left;
+            
+            .event-indicators {
+                margin-bottom: 20px;
             }
 
             /* Removed sticky title - now using sticky header instead */
@@ -860,7 +829,6 @@ app.get('/', (c) => {
 
             @media (prefers-reduced-motion: reduce) {
                 .event-slide { transition: none; transform: none; }
-                .outreach-header { transition: none; }
             }
 
             /* ========================================
@@ -1027,19 +995,22 @@ app.get('/', (c) => {
                Uses site colors (gold/warm tones matching the church brand)
                ======================================== */
             .stay-tuned-card {
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(252, 248, 243, 0.98) 100%);
+                background: rgba(255, 255, 255, 0.85); /* Match section-card */
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                padding: 60px 32px 40px;
-                box-shadow: 0 20px 60px rgba(212, 165, 116, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
-                border: 1px solid rgba(212, 165, 116, 0.15);
-                min-height: 400px;
-                border-radius: 32px;
+                padding: 56px 64px; /* Match section-card */
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
+                            0 12px 32px rgba(0, 0, 0, 0.04); /* Match section-card */
+                border: 1px solid rgba(255, 255, 255, 0.6); /* Match section-card */
+                backdrop-filter: blur(20px); /* Match section-card */
+                min-height: auto;
+                border-radius: 48px; /* Match section-card */
                 position: relative;
                 overflow: visible;
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Match section-card */
             }
             
             /* When Stay Tuned card is inside event-flyer-wrapper */
@@ -1058,20 +1029,8 @@ app.get('/', (c) => {
                 margin-bottom: 0 !important;
             }
             
-            .stay-tuned-only .outreach-header {
-                /* Left align headers properly */
-                text-align: left;
-                margin-bottom: 16px; /* Tight spacing before card */
-            }
-            
-            .stay-tuned-only .outreach-header .section-eyebrow,
-            .stay-tuned-only .outreach-header .section-heading,
-            .stay-tuned-only .outreach-header .section-lead {
-                text-align: left;
-            }
-            
-            .stay-tuned-only .outreach-header .section-lead {
-                display: none; /* Hide paragraph for cleaner look */
+            .stay-tuned-only .section-heading {
+                margin-bottom: 24px; /* Spacing before card */
             }
             
             .stay-tuned-only .outreach-scroll-container {
@@ -1099,8 +1058,8 @@ app.get('/', (c) => {
                 display: flex;
                 justify-content: center;
                 width: 100%;
-                max-width: 400px; /* Portrait card width for desktop */
-                margin: 0 auto;
+                max-width: 100%; /* Full width like schedule section-card */
+                margin: 0;
             }
             
             .stay-tuned-only .event-slide {
@@ -1116,17 +1075,19 @@ app.get('/', (c) => {
                 min-height: auto;
                 max-height: none;
                 width: 100%;
-                max-width: 400px; /* Portrait card width */
-                margin: 0 auto;
+                max-width: 100%; /* Full width like schedule */
+                margin: 0;
                 padding: 0;
             }
             
             .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                aspect-ratio: 3 / 4; /* Portrait card aspect ratio */
+                aspect-ratio: auto; /* Remove portrait aspect ratio */
                 min-height: auto;
-                max-height: 70vh; /* Cap at 70% of viewport height */
+                max-height: none;
                 width: 100%;
-                margin: 0 auto;
+                margin: 0;
+                border-radius: 48px; /* Match section-card */
+                padding: 56px 64px; /* Match section-card padding */
             }
             
             .stay-tuned-badge {
@@ -2708,16 +2669,9 @@ app.get('/', (c) => {
                     margin: 0;
                 }
                 
-                .outreach-header {
-                    width: 92%;
-                    max-width: 600px;
-                    margin: 0 auto 40px;
-                    text-align: left;
-                    padding-left: 4%;
-                }
-                
-                .outreach-header .section-eyebrow,
-                .outreach-header .section-heading {
+                /* Outreach header elements align left like schedule */
+                .outreach .section-eyebrow,
+                .outreach .section-heading {
                     text-align: left;
                 }
                 
@@ -2950,23 +2904,13 @@ app.get('/', (c) => {
                     overflow-x: hidden;
                 }
                 
-                .outreach-header {
-                    margin-bottom: 40px;
-                    padding-bottom: 0;
-                    width: 92%;
-                    max-width: 600px;
-                    margin-left: auto;
-                    margin-right: auto;
-                    text-align: center;
+                /* Mobile outreach section - left aligned like schedule */
+                .outreach .section-heading {
+                    margin-bottom: 24px;
                 }
                 
-                .outreach-header .section-heading {
-                    margin-bottom: 16px;
-                    text-align: center;
-                }
-                
-                .outreach-header .section-eyebrow {
-                    margin-bottom: 16px;
+                .outreach .section-eyebrow {
+                    margin-bottom: 12px;
                 }
 
                 /* Mobile/Tablet Event Cards - Centered layout */
@@ -3287,36 +3231,18 @@ app.get('/', (c) => {
                 /* ========================================
                    MOBILE STAY-TUNED-ONLY OVERRIDES
                    Clean static layout when no upcoming events
+                   Matches schedule section-card layout
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: -180px !important; /* Pull Watch section much closer */
+                    margin-bottom: 0 !important;
                 }
                 
-                .stay-tuned-only .outreach-header {
-                    text-align: left;
-                    padding-left: 5%;
-                    margin-bottom: 8px; /* Minimal space between header and card */
-                    padding-bottom: 0;
-                    padding-top: 20px; /* Push Events header down */
-                }
-                
-                .stay-tuned-only .outreach-header .section-eyebrow {
-                    margin-left: 0;
-                    margin-bottom: 4px;
-                }
-                
-                .stay-tuned-only .outreach-header .section-heading {
-                    text-align: left;
-                    margin-bottom: 0;
-                    padding-bottom: 0;
-                }
-                
-                .stay-tuned-only .outreach-header .section-lead {
-                    display: none; /* Hide on mobile for cleaner look */
+                .stay-tuned-only .section-heading {
+                    margin-bottom: 20px;
                 }
                 
                 .stay-tuned-only .outreach-scroll-container {
-                    margin-top: -10px; /* Pull card up closer to header */
+                    margin-top: 0;
                     padding-top: 0;
                 }
                 
@@ -3324,15 +3250,14 @@ app.get('/', (c) => {
                     position: relative !important;
                     height: auto !important;
                     padding-top: 0 !important;
-                    display: flex;
-                    justify-content: center;
+                    display: block;
                 }
                 
                 .stay-tuned-only .events-container {
                     position: relative !important;
-                    width: clamp(280px, 70vw, 380px); /* Scales with viewport */
-                    max-width: 380px;
-                    margin: 0 auto;
+                    width: 100%;
+                    max-width: 100%;
+                    margin: 0;
                     height: auto !important;
                     padding: 0;
                 }
@@ -3355,13 +3280,15 @@ app.get('/', (c) => {
                     margin: 0;
                 }
                 
-                /* Stay Tuned card - 3:4 portrait aspect ratio, scales to screen */
+                /* Stay Tuned card - full width like section-card */
                 .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                    aspect-ratio: 3 / 4;
-                    min-height: clamp(350px, 55vh, 500px); /* Larger min-height that scales */
-                    max-height: 65vh;
+                    aspect-ratio: auto;
+                    min-height: auto;
+                    max-height: none;
                     width: 100%;
                     margin-bottom: 0;
+                    padding: 32px 24px;
+                    border-radius: 24px;
                 }
                 
                 /* Mobile Past Event styling */
@@ -3670,16 +3597,12 @@ app.get('/', (c) => {
                     font-size: clamp(26px, 5vw, 34px);
                 }
                 
-                .outreach-header {
+                /* Outreach section spacing */
+                .outreach .section-heading {
                     margin-bottom: 24px;
-                    padding-bottom: 0;
                 }
                 
-                .outreach-header .section-heading {
-                    margin-bottom: 8px;
-                }
-                
-                .outreach-header .section-eyebrow {
+                .outreach .section-eyebrow {
                     margin-bottom: 10px;
                 }
                 
@@ -4515,39 +4438,19 @@ app.get('/', (c) => {
                     padding-top: 0;
                 }
                 
-                .outreach-header {
-                    text-align: left;
-                    margin-bottom: 48px;
-                    position: static;
-                    top: auto;
-                    padding-bottom: 0;
-                    width: 100%;
-                }
-                
-                .outreach-header .section-eyebrow {
+                /* Desktop outreach - same layout as schedule */
+                .outreach .section-eyebrow {
                     display: inline-flex;
                     margin-bottom: 16px;
                 }
                 
-                .outreach-header .section-heading {
-                    margin-bottom: 12px;
+                .outreach .section-heading {
+                    margin-bottom: 32px;
                     text-align: left;
                 }
                 
-                .outreach-header .section-lead {
-                    display: block;
-                    max-width: 720px;
-                    margin: 0;
-                    text-align: left;
-                }
-                
-                .heading-wrapper {
-                    display: block;
-                    width: 100%;
-                }
-                
-                .heading-wrapper .event-indicators {
-                    display: none;
+                .event-indicators {
+                    display: none; /* Hide dots on desktop */
                 }
                 
                 .outreach-scroll-container {
@@ -4907,16 +4810,10 @@ app.get('/', (c) => {
                 </section>
                 
                 <section class="outreach" id="outreach" style="animation-delay: 0.3s">
-                    <div class="outreach-header">
-                        <span class="section-eyebrow">Outreach</span>
-                        <div class="heading-wrapper">
-                            <h2 class="section-heading">Events</h2>
-                            <!-- Dots for upcoming events only - hidden when showing Stay Tuned -->
-                            <div class="event-indicators" id="upcoming-event-dots" style="display: none;">
-                                <!-- Dots will be dynamically generated based on upcoming event count -->
-                            </div>
-                        </div>
-                        <p class="section-lead">We are called to be the hands and feet of Jesus by serving our local community and growing in fellowship. Here's how you can get involved.</p>
+                    <span class="section-eyebrow">Outreach</span>
+                    <h2 class="section-heading">Serving our community with love and purpose.</h2>
+                    <div class="event-indicators" id="upcoming-event-dots" style="display: none;">
+                        <!-- Dots will be dynamically generated based on upcoming event count -->
                     </div>
                     
                     <!-- Event Data Store (JavaScript will parse this for automatic date-based filtering) -->
@@ -5079,7 +4976,6 @@ app.get('/', (c) => {
             document.addEventListener('DOMContentLoaded', () => {
                 const body = document.body;
                 const outreachSection = document.querySelector('.outreach');
-                const outreachHeader = document.querySelector('.outreach-header');
                 const scrollSpacer = document.querySelector('.scroll-spacer');
                 const eventsContainer = document.querySelector('.events-container');
                 const navShell = document.querySelector('.nav-shell');

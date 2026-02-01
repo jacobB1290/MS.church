@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.24.1 - Find Us Button: Full-width, Thinner, No Emoji -->
+    <!-- v1.24.2 - Find Us Button: Frosted Glass Pill Matching Nav Bar -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -593,44 +593,47 @@ app.get('/', (c) => {
                 flex-shrink: 0;
             }
             
-            /* Find Us Button - Hero Section Frosted Glass Button */
+            /* Find Us Button - Hero Section Frosted Glass Pill (matches nav bar style) */
             .find-us-wrapper {
                 position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%);
                 z-index: 100;
             }
             
             .find-us-btn {
-                display: flex;
+                display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                width: 100%;
-                padding: 14px 32px;
-                background: rgba(255, 255, 255, 0.2);
+                padding: 14px 36px;
+                background: rgb(255, 255, 255);
+                background: rgba(255, 255, 255, 0.75);
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
-                border: none;
-                border-top: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 0 0 32px 32px;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                border-radius: 100px;
                 font-size: 12px;
                 font-weight: 700;
-                letter-spacing: 2.5px;
+                letter-spacing: 2px;
                 text-transform: uppercase;
-                color: #ffffff;
+                color: #1a1a2e;
                 cursor: pointer;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 
+                            0 8px 20px rgba(0, 0, 0, 0.04);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             }
             
             .find-us-btn:hover {
-                background: rgba(255, 255, 255, 0.3);
+                background: rgba(255, 255, 255, 0.85);
+                transform: translateY(-3px);
+                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1), 
+                            0 10px 24px rgba(0, 0, 0, 0.05);
             }
             
             /* Find Us Dropdown - positioned above button */
             .find-us-wrapper .address-dropdown {
-                bottom: calc(100% + 8px);
+                bottom: calc(100% + 12px);
                 top: auto;
                 left: 50%;
                 transform: translateX(-50%) translateY(8px);
@@ -643,8 +646,8 @@ app.get('/', (c) => {
             /* Fallback for older devices without backdrop-filter */
             @supports not (backdrop-filter: blur(1px)) {
                 .find-us-btn {
-                    background: rgba(26, 26, 46, 0.75);
-                    color: #ffffff;
+                    background: rgb(255, 255, 255) !important;
+                    border: 1px solid rgba(0, 0, 0, 0.08) !important;
                 }
             }
 
@@ -3533,11 +3536,14 @@ app.get('/', (c) => {
                     object-position: center;
                 }
                 
-                /* Find Us Button - Match 24px corner radius on mobile */
+                /* Find Us Button - Smaller on mobile */
                 .find-us-btn {
-                    border-radius: 0 0 24px 24px;
-                    padding: 12px 24px;
+                    padding: 12px 28px;
                     font-size: 11px;
+                }
+                
+                .find-us-wrapper {
+                    bottom: 20px;
                 }
                 
                 .service-info-buttons {
@@ -4055,12 +4061,15 @@ app.get('/', (c) => {
                     border-radius: 16px;
                 }
                 
-                /* Find Us Button - Match 16px corner radius on small phones */
+                /* Find Us Button - Smaller on small phones */
                 .find-us-btn {
-                    border-radius: 0 0 16px 16px;
-                    padding: 10px 20px;
+                    padding: 10px 24px;
                     font-size: 10px;
-                    letter-spacing: 2px;
+                    letter-spacing: 1.5px;
+                }
+                
+                .find-us-wrapper {
+                    bottom: 16px;
                 }
                 
                 .btn {
@@ -4478,11 +4487,6 @@ app.get('/', (c) => {
                     height: 100%;
                     object-fit: cover;
                     display: block;
-                }
-                
-                /* Find Us Button - Match responsive corner radius on desktop */
-                .find-us-btn {
-                    border-radius: 0 0 clamp(20px, 2vw, 28px) clamp(20px, 2vw, 28px);
                 }
                 
                 .hero-body .cta-group {

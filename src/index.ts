@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.24.3 - Find Us Button: Overlapping Bottom Edge of Hero Image -->
+    <!-- v1.24.4 - Find Us Button: Long Pill Spanning Bottom of Hero Image -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -344,11 +344,6 @@ app.get('/', (c) => {
                 width: 100%;
             }
             
-            .hero-image-wrapper {
-                position: relative;
-                width: 100%;
-            }
-            
             .hero-image {
                 position: relative;
                 width: 100%;
@@ -598,20 +593,20 @@ app.get('/', (c) => {
                 flex-shrink: 0;
             }
             
-            /* Find Us Button - Hero Section Frosted Glass Pill (matches nav bar style) */
-            /* Positioned to overlap bottom edge of hero image */
+            /* Find Us Button - Long frosted glass pill at bottom of hero image */
             .find-us-wrapper {
                 position: absolute;
-                bottom: 0;
-                left: 50%;
-                transform: translateX(-50%) translateY(50%);
+                bottom: 16px;
+                left: 16px;
+                right: 16px;
                 z-index: 100;
             }
             
             .find-us-btn {
-                display: inline-flex;
+                display: flex;
                 align-items: center;
                 justify-content: center;
+                width: 100%;
                 padding: 14px 40px;
                 background: rgb(255, 255, 255);
                 background: rgba(255, 255, 255, 0.75);
@@ -625,16 +620,15 @@ app.get('/', (c) => {
                 text-transform: uppercase;
                 color: #1a1a2e;
                 cursor: pointer;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 
-                            0 8px 20px rgba(0, 0, 0, 0.04);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
+                            0 4px 12px rgba(0, 0, 0, 0.05);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
             
             .find-us-btn:hover {
                 background: rgba(255, 255, 255, 0.85);
-                transform: translateY(-3px);
-                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1), 
-                            0 10px 24px rgba(0, 0, 0, 0.05);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 
+                            0 6px 16px rgba(0, 0, 0, 0.06);
             }
             
             /* Find Us Dropdown - positioned above button */
@@ -3542,7 +3536,13 @@ app.get('/', (c) => {
                     object-position: center;
                 }
                 
-                /* Find Us Button - Smaller on mobile */
+                /* Find Us Button - Smaller padding on mobile */
+                .find-us-wrapper {
+                    bottom: 12px;
+                    left: 12px;
+                    right: 12px;
+                }
+                
                 .find-us-btn {
                     padding: 12px 32px;
                     font-size: 11px;
@@ -4064,8 +4064,14 @@ app.get('/', (c) => {
                 }
                 
                 /* Find Us Button - Smaller on small phones */
+                .find-us-wrapper {
+                    bottom: 10px;
+                    left: 10px;
+                    right: 10px;
+                }
+                
                 .find-us-btn {
-                    padding: 10px 28px;
+                    padding: 10px 24px;
                     font-size: 10px;
                     letter-spacing: 1.5px;
                 }
@@ -4433,7 +4439,7 @@ app.get('/', (c) => {
                     align-items: center;  /* Center child elements */
                 }
                 
-                .hero-image-wrapper {
+                .hero-image {
                     grid-area: image;
                     align-self: stretch;
                 }
@@ -4833,11 +4839,9 @@ app.get('/', (c) => {
                             <p>Join us every Sunday at 9:00 AM as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
                             <address class="hero-address">3080 Wildwood St · Boise, Idaho</address>
                         </div>
-                        <div class="hero-image-wrapper">
-                            <div class="hero-image">
-                                <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building">
-                            </div>
-                            <!-- Find Us Button - Frosted glass pill overlapping bottom edge of image -->
+                        <div class="hero-image">
+                            <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building">
+                            <!-- Find Us Button - Long frosted glass pill at bottom of image -->
                             <div class="find-us-wrapper address-dropdown-wrapper">
                                 <button class="find-us-btn address-trigger" data-address="3080 Wildwood St, Boise, Idaho">Find Us</button>
                                 <div class="address-dropdown">

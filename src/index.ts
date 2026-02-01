@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.27.3 - Reduced gap between contact form and footer -->
+    <!-- v1.27.4 - Dynamic copyright year in footer -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -5107,7 +5107,8 @@ app.get('/', (c) => {
                         <a href="/privacy#accessibility" class="footer-link">Accessibility</a>
                     </div>
                     
-                    <p class="footer-copyright">© 2026 Morning Star Christian Church. All rights reserved.</p>
+                    <p class="footer-copyright">© <span id="copyright-year"></span> Morning Star Christian Church. All rights reserved.</p>
+                    <script>document.getElementById('copyright-year').textContent = new Date().getFullYear();</script>
                 </div>
             </footer>
         </div>

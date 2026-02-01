@@ -5079,7 +5079,7 @@ app.get('/', (c) => {
                         <a href="/privacy" class="footer-link">Privacy Policy</a>
                     </div>
                     
-                    <p class="footer-copyright">© 2025 Morning Star Christian Church. All rights reserved.</p>
+                    <p class="footer-copyright">© 2026 Morning Star Christian Church. All rights reserved.</p>
                 </div>
             </footer>
         </div>
@@ -6602,7 +6602,7 @@ app.get('/privacy', (c) => {
             
             <div class="privacy-header">
                 <h1>Privacy Policy</h1>
-                <p class="last-updated">Last Updated: February 1, 2025</p>
+                <p class="last-updated">Last Updated: February 1, 2026</p>
             </div>
             
             <div class="privacy-content">

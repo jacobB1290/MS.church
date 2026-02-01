@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.25.8 - Hero title floating shadow effect -->
+    <!-- v1.25.9 - Hero image flat (no shadow) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -351,7 +351,6 @@ app.get('/', (c) => {
                 min-height: 450px;
                 border-radius: 32px;
                 overflow: hidden;
-                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
             }
             
             .hero-image img {
@@ -2497,7 +2496,6 @@ app.get('/', (c) => {
                     min-height: 450px;
                     border-radius: 32px;
                     overflow: hidden;
-                    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
                 }
                 
                 .hero-image img {

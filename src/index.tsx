@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.25.4 - Mobile outreach scroll opposite direction -->
+    <!-- v1.25.6 - Find Us button thinner, lighter font -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -607,15 +607,15 @@ app.get('/', (c) => {
                 align-items: center;
                 justify-content: center;
                 width: 100%;
-                padding: 10px 40px;
+                padding: 8px 40px;
                 background: rgb(255, 255, 255);
                 background: rgba(255, 255, 255, 0.75);
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
                 border: 1px solid rgba(255, 255, 255, 0.4);
                 border-radius: 100px;
-                font-size: 11px;
-                font-weight: 700;
+                font-size: 12px;
+                font-weight: 500;
                 letter-spacing: 2px;
                 text-transform: uppercase;
                 color: #1a1a2e;
@@ -3409,8 +3409,9 @@ app.get('/', (c) => {
                 }
                 
                 .find-us-btn {
-                    padding: 9px 28px;
-                    font-size: 10px;
+                    padding: 7px 28px;
+                    font-size: 11px;
+                    font-weight: 500;
                 }
                 
                 .service-info-buttons {
@@ -3935,8 +3936,9 @@ app.get('/', (c) => {
                 }
                 
                 .find-us-btn {
-                    padding: 8px 20px;
-                    font-size: 9px;
+                    padding: 6px 20px;
+                    font-size: 10px;
+                    font-weight: 500;
                     letter-spacing: 1.5px;
                 }
                 

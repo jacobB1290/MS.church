@@ -6511,7 +6511,7 @@ app.get('/privacy', (c) => {
             
             body {
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
+                background: #f8f9fd;
                 color: #1a1a2e;
                 line-height: 1.7;
                 min-height: 100vh;

@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.25.1 - Outreach pill fit-content, reduced spacing -->
+    <!-- v1.25.2 - Adjusted outreach scroll position -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -5693,19 +5693,19 @@ app.get('/', (c) => {
                             
                             // Special handling for outreach section (has sticky header + events)
                             if (targetId === '#outreach') {
-                                // Scroll so OUTREACH pill is right below nav bar
+                                // Scroll so OUTREACH pill is covered by nav bar (like schedule)
                                 const outreachRect = target.getBoundingClientRect();
                                 const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
                                 
                                 if (window.innerWidth <= 899) {
-                                    // Mobile: Nav overlaps outreach section slightly
-                                    navOffset = -30; // Negative to scroll past, nav covers outreach text
+                                    // Mobile: Nav overlaps outreach pill completely
+                                    navOffset = -80; // More negative = scroll further, nav covers pill
                                 } else if (window.innerWidth <= 1199) {
                                     // Tablet
-                                    navOffset = 75;
+                                    navOffset = -20;
                                 } else {
                                     // Desktop: Standard offset
-                                    navOffset = 60;
+                                    navOffset = -10;
                                 }
                                 
                                 const targetPosition = outreachAbsoluteTop - navOffset;

@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.26.6 - Footer redesign: transparent background with gold separator -->
+    <!-- v1.26.7 - Accessibility Statement with religious exemption documentation -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -4750,6 +4750,11 @@ app.get('/', (c) => {
                 color: #d4a574;
             }
             
+            .footer-link-separator {
+                color: rgba(26, 26, 46, 0.3);
+                font-size: 13px;
+            }
+            
             .footer-copyright {
                 font-size: 13px;
                 color: rgba(26, 26, 46, 0.5);
@@ -5077,6 +5082,8 @@ app.get('/', (c) => {
                     
                     <div class="footer-links">
                         <a href="/privacy" class="footer-link">Privacy Policy</a>
+                        <span class="footer-link-separator">|</span>
+                        <a href="/privacy#accessibility" class="footer-link">Accessibility</a>
                     </div>
                     
                     <p class="footer-copyright">© 2026 Morning Star Christian Church. All rights reserved.</p>
@@ -6726,6 +6733,35 @@ app.get('/privacy', (c) => {
                 
                 <h3>Severability</h3>
                 <p>If any provision of this Privacy Policy or Disclaimer is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.</p>
+                
+                <h2 id="accessibility">Accessibility Statement</h2>
+                
+                <h3>Religious Organization Exemption</h3>
+                <p>Morning Star Christian Church is a religious organization. Under <strong>Title III of the Americans with Disabilities Act (ADA)</strong>, religious entities are completely exempt from ADA requirements. This exemption applies to all facilities, programs, activities, and digital properties of religious organizations, whether religious or secular in nature, as established by the ADA National Network and affirmed by the U.S. Department of Justice.</p>
+                <p>This exemption is rooted in the First Amendment to the United States Constitution, which protects the free exercise of religion and limits government interference with religious organizations.</p>
+                
+                <h3>Our Voluntary Commitment to Accessibility</h3>
+                <p>While Morning Star Christian Church is legally exempt from ADA compliance requirements, we are committed to making our website as accessible as possible to all visitors, including those with disabilities. This commitment reflects our core values of love, inclusion, and service to our community.</p>
+                <p>We voluntarily strive to follow the principles of the <strong>Web Content Accessibility Guidelines (WCAG) 2.1</strong> where practical, recognizing that digital accessibility aligns with our mission to welcome all people.</p>
+                
+                <h3>Accessibility Features</h3>
+                <p>We have made efforts to include the following accessibility considerations on our website:</p>
+                <ul>
+                    <li>Semantic HTML structure for screen reader compatibility</li>
+                    <li>Descriptive alt text for images where applicable</li>
+                    <li>Clear navigation and logical page structure</li>
+                    <li>Readable fonts and text sizing</li>
+                    <li>ARIA labels on interactive elements</li>
+                </ul>
+                
+                <h3>Known Limitations</h3>
+                <p>As a volunteer-operated religious organization with limited resources, some areas of our website may not fully meet all accessibility standards. We are continually working to improve the accessibility of our site as resources permit.</p>
+                
+                <h3>Third-Party Content</h3>
+                <p>Our website may include embedded content from third-party services (such as YouTube videos, Jotform contact forms, and social media platforms). We do not control the accessibility features of these external services, and their accessibility practices are governed by their respective providers.</p>
+                
+                <h3>Feedback and Assistance</h3>
+                <p>We welcome feedback on the accessibility of our website. If you encounter any accessibility barriers or need assistance accessing any content, please contact us using the information below. We will make reasonable efforts to provide the information you need in an accessible format.</p>
                 
                 <div class="contact-box">
                     <h3>Contact Us</h3>

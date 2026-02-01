@@ -6716,7 +6716,8 @@ app.get('/privacy', (c) => {
                 <h1 class="section-title">Privacy Policy</h1>
                 
                 <h2>Introduction</h2>
-                <p>Morning Star Christian Church ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website ms.church (the "Site"). Please read this privacy policy carefully. By using the Site, you consent to the practices described in this policy.</p>
+                <p>Morning Star Christian Church ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website ms.church (the "Site"). This policy applies only to information collected through this website and does not apply to information collected offline or through in-person church activities.</p>
+                <p>Please read this privacy policy carefully. By using the Site and submitting information through our contact form, you consent to the practices described in this policy.</p>
                 
                 <h2>Information We Collect</h2>
                 
@@ -6728,37 +6729,41 @@ app.get('/privacy', (c) => {
                     <li><strong>Phone Number</strong> – to contact you if requested or necessary</li>
                     <li><strong>Message Content</strong> – any additional information you choose to share</li>
                 </ul>
-                <p>This information is collected for the purpose of responding to your inquiries, facilitating communication regarding church activities, services, or prayer requests, and sending you promotional materials about our church including newsletters, event announcements, and ministry updates.</p>
+                <p>This information is collected for the purpose of responding to your inquiries, facilitating communication regarding church activities, services, or prayer requests, and if you opt in, sending you promotional materials about our church including newsletters, event announcements, and ministry updates.</p>
+                <p><strong>Sensitive Information Warning:</strong> Please do not submit sensitive personal information (such as medical details, financial information, or other confidential data) through our contact form unless you choose to share it. If you include such information (for example, in a prayer request), you understand it may be viewed by church staff and volunteers who handle these requests.</p>
+                <p><strong>Who Receives Your Information:</strong> When you submit information through our contact form, it is stored in Jotform, emailed to church staff at our church email address, and may be accessed by authorized church members and volunteers for the purpose of responding to your inquiry or fulfilling ministry-related activities (such as outreach drives).</p>
                 
                 <h3>2. Automatically Collected Information (Analytics)</h3>
-                <p>We use <strong>Vercel Analytics</strong> and <strong>Vercel Speed Insights</strong> to understand how visitors use our Site. These services collect anonymized, aggregated data only and <strong>do not use cookies</strong>. The data collected includes:</p>
+                <p>We use <strong>Vercel Web Analytics</strong> and <strong>Vercel Speed Insights</strong> to understand overall traffic and website performance. These services are designed to be privacy-focused. The data collected may include:</p>
                 <ul>
-                    <li><strong>Page Views</strong> – which pages are visited</li>
+                    <li><strong>Page Views</strong> – which pages/URLs are visited</li>
                     <li><strong>Referrer Information</strong> – how you arrived at our Site</li>
                     <li><strong>Device Information</strong> – browser type, operating system, and device category (desktop/mobile)</li>
-                    <li><strong>Geographic Location</strong> – country-level location only (not precise location)</li>
+                    <li><strong>Geographic Location</strong> – general location (which may include country, state, or city)</li>
                     <li><strong>Performance Metrics</strong> – page load times and web vitals</li>
                 </ul>
-                <p><strong>Important:</strong> Vercel Analytics does not collect or store any information that would enable us to personally identify you or reconstruct your browsing session. No personal data, IP addresses, or cross-site tracking information is collected through our analytics.</p>
+                <p>Vercel states that these analytics tools are designed so recorded data points are anonymous and not tied to an individual visitor or IP address, and they do not enable reconstruction of a person's browsing session across pages. Sessions are short-lived and discarded after 24 hours. For more details, please review <a href="https://vercel.com/docs/analytics/privacy-policy" target="_blank" rel="noopener">Vercel's Analytics Privacy Policy</a>.</p>
+                <p><strong>Note on Cookies:</strong> While Vercel Analytics does not use cookies, our Site may include third-party embedded content (such as YouTube videos) that may set their own cookies when loaded. See the "Third-Party Services" section below for more information.</p>
                 
                 <h2>How We Use Your Information</h2>
                 <p>We use the information we collect for the following purposes:</p>
                 <ul>
                     <li>To respond to your inquiries and prayer requests</li>
                     <li>To provide information about church services, events, and activities</li>
-                    <li>To send promotional materials about our church, including newsletters, event announcements, and ministry updates</li>
+                    <li>If you opt in, to send promotional materials about our church, including newsletters, event announcements, and ministry updates</li>
                     <li>To improve our website and user experience based on aggregated analytics</li>
                     <li>To maintain the security and functionality of our Site</li>
                 </ul>
-                <p>By submitting your contact information through our form, you consent to receiving communications from Morning Star Christian Church. You may opt-out of promotional communications at any time by contacting us directly.</p>
+                <p><strong>Consent and Opt-Out:</strong> By submitting your contact information through our form and agreeing to our policies, you consent to receiving communications from Morning Star Christian Church. You may opt-out of promotional communications at any time by emailing us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> with "Unsubscribe" in the subject line. All promotional emails will include an unsubscribe option.</p>
+                <p><strong>Access Controls:</strong> Access to your personal information is limited to church staff and authorized volunteers who need it to respond to your inquiry or fulfill ministry-related activities.</p>
                 
                 <h2>Third-Party Services</h2>
                 
                 <h3>Jotform (Contact Form)</h3>
-                <p>Our contact form is powered by Jotform. When you submit information through our form, it is processed and stored by Jotform in accordance with their privacy practices. Jotform is GDPR-compliant and maintains industry-standard security measures. For more information, please review <a href="https://www.jotform.com/privacy/" target="_blank" rel="noopener">Jotform's Privacy Policy</a>.</p>
+                <p>Our contact form is powered by Jotform. Jotform processes form submissions on our behalf. When you submit information through our form, it is stored by Jotform and also emailed to our church staff. Jotform maintains industry-standard security measures. For more information, please review <a href="https://www.jotform.com/privacy/" target="_blank" rel="noopener">Jotform's Privacy Policy</a>.</p>
                 
                 <h3>Vercel (Hosting and Analytics)</h3>
-                <p>Our website is hosted on Vercel, which provides privacy-focused analytics. Vercel Analytics is designed to be GDPR-compliant and does not require cookie consent banners as it does not use cookies or collect personally identifiable information. For more information, please review <a href="https://vercel.com/docs/analytics/privacy-policy" target="_blank" rel="noopener">Vercel's Analytics Privacy Policy</a>.</p>
+                <p>Our website is hosted on Vercel, which also provides our analytics services. Vercel Web Analytics is designed to be privacy-focused and does not use cookies. For more information, please review <a href="https://vercel.com/docs/analytics/privacy-policy" target="_blank" rel="noopener">Vercel's Analytics Privacy Policy</a>.</p>
                 
                 <h3>YouTube (Embedded Videos)</h3>
                 <p>Our Site may contain embedded YouTube videos. When you view these videos, YouTube may collect information and set cookies in accordance with their privacy policy. <strong>Please note:</strong> While our website analytics (Vercel) do not use cookies, embedded YouTube videos may set their own cookies and trackers when loaded. Where possible, we utilize YouTube's privacy-enhanced embed mode to minimize tracking. For more information, please review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
@@ -6773,7 +6778,9 @@ app.get('/privacy', (c) => {
                 <p>We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.</p>
                 
                 <h2>Data Retention</h2>
-                <p>Form submissions are retained in Jotform for as long as necessary to respond to your inquiry and maintain records of communications. Analytics data is retained in accordance with Vercel's data retention policies and is used solely for aggregated statistical purposes.</p>
+                <p><strong>Contact Form Submissions:</strong> Form submissions are retained in Jotform and our email records indefinitely, or until we determine they are no longer needed for church records and communications. If you would like your information deleted, please contact us using the information below.</p>
+                <p><strong>Analytics Data:</strong> Analytics data is retained in accordance with Vercel's data retention policies and is used solely for aggregated statistical purposes.</p>
+                <p><strong>Backups:</strong> Please note that your information may also exist in routine backups, which are retained for operational and security purposes.</p>
                 
                 <h2>Data Security</h2>
                 <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. This includes:</p>
@@ -6785,7 +6792,7 @@ app.get('/privacy', (c) => {
                 <p>However, please be aware that no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
                 
                 <h2>Your Rights</h2>
-                <p>Depending on your location, you may have certain rights regarding your personal information, including:</p>
+                <p>Depending on your location and applicable law, you may have certain rights regarding your personal information, including:</p>
                 <ul>
                     <li><strong>Right to Access</strong> – request a copy of the personal information we hold about you</li>
                     <li><strong>Right to Rectification</strong> – request correction of inaccurate information</li>
@@ -6793,7 +6800,7 @@ app.get('/privacy', (c) => {
                     <li><strong>Right to Restrict Processing</strong> – request limitation of how we use your data</li>
                     <li><strong>Right to Data Portability</strong> – request transfer of your data in a structured format</li>
                 </ul>
-                <p>To exercise any of these rights, please contact us using the information provided below.</p>
+                <p><strong>To Exercise Your Rights:</strong> Please email us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> with your request. To protect your privacy, we may need to verify your identity before processing your request. We will respond to valid requests within 30 days.</p>
                 
                 <h2>Children's Privacy</h2>
                 <p>Our Site is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately so we can delete such information.</p>
@@ -6802,7 +6809,7 @@ app.get('/privacy', (c) => {
                 <p>We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Privacy Policy on this page with an updated "Last Updated" date. We encourage you to review this Privacy Policy periodically.</p>
                 
                 <h2>California Privacy Rights</h2>
-                <p>If you are a California resident, you may have additional rights under the California Consumer Privacy Act (CCPA). We do not sell personal information to third parties. For more information about your California privacy rights, please contact us.</p>
+                <p>As a nonprofit religious organization, we are generally not subject to the California Consumer Privacy Act (CCPA). However, we are committed to transparency and will respond to privacy-related questions from California residents. We do not sell personal information to third parties. If you have questions about your privacy rights, please contact us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a>.</p>
                 
                 <h2>International Users</h2>
                 <p>If you are accessing our Site from outside the United States, please be aware that your information may be transferred to, stored, and processed in the United States where our servers are located. By using our Site, you consent to such transfer.</p>
@@ -6812,8 +6819,11 @@ app.get('/privacy', (c) => {
                     <p>If you have any questions about this Privacy Policy or our data practices, please contact us at:</p>
                     <p>
                         <strong>Morning Star Christian Church</strong><br>
+                        Attn: Privacy<br>
                         3080 Wildwood St<br>
                         Boise, Idaho<br>
+                        <br>
+                        <strong>Email:</strong> <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a><br>
                         <br>
                         Or use our <a href="/#contact">contact form</a> on the main website.
                     </p>
@@ -6848,11 +6858,13 @@ app.get('/privacy', (c) => {
                 </ul>
                 
                 <h2>User Conduct</h2>
-                <p>By using this website, you agree to conduct yourself in a manner consistent with the values and mission of Morning Star Christian Church. You agree not to engage in any activity that could harm the Site, its content, or other users. This includes, but is not limited to:</p>
+                <p>By using this website, you agree to conduct yourself in a manner consistent with the values and mission of Morning Star Christian Church. When using our contact form or otherwise interacting with the Site, you agree not to:</p>
                 <ul>
-                    <li>Posting or transmitting any content that is unlawful, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, or otherwise objectionable</li>
-                    <li>Impersonating any person or entity or falsely stating or misrepresenting your affiliation with a person or entity</li>
-                    <li>Engaging in any conduct that restricts or inhibits anyone's use or enjoyment of the Site</li>
+                    <li>Submit any content that is unlawful, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, or otherwise objectionable</li>
+                    <li>Impersonate any person or entity or falsely state or misrepresent your affiliation with a person or entity</li>
+                    <li>Attempt to gain unauthorized access to any portion of the Site or its systems</li>
+                    <li>Use the contact form for spam, advertising, or any commercial purpose unrelated to legitimate church inquiries</li>
+                    <li>Attempt to attack, disrupt, or compromise the security of the Site</li>
                 </ul>
                 
                 <h2>Disclaimer of Warranties</h2>
@@ -6904,6 +6916,8 @@ app.get('/privacy', (c) => {
                         3080 Wildwood St<br>
                         Boise, Idaho<br>
                         <br>
+                        <strong>Email:</strong> <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a><br>
+                        <br>
                         Or use our <a href="/#contact">contact form</a> on the main website.
                     </p>
                 </div>
@@ -6914,8 +6928,8 @@ app.get('/privacy', (c) => {
                 <h1 class="section-title">Accessibility Statement</h1>
                 
                 <h2>Religious Organization Exemption</h2>
-                <p>Morning Star Christian Church is a religious organization. Under <strong>Title III of the Americans with Disabilities Act (ADA)</strong>, religious entities are completely exempt from ADA requirements. This exemption applies to all facilities, programs, activities, and digital properties of religious organizations, whether religious or secular in nature, as established by the ADA National Network and affirmed by the U.S. Department of Justice.</p>
-                <p>This exemption is rooted in the First Amendment to the United States Constitution, which protects the free exercise of religion and limits government interference with religious organizations.</p>
+                <p>Morning Star Christian Church is a religious organization. As a religious entity, we are generally exempt from Title III of the Americans with Disabilities Act (ADA). This exemption is recognized by the ADA National Network and is rooted in the First Amendment to the United States Constitution, which protects the free exercise of religion.</p>
+                <p>Even so, we want our website to be as accessible and welcoming as practical for all visitors.</p>
                 
                 <h2>Our Voluntary Commitment to Accessibility</h2>
                 <p>While Morning Star Christian Church is legally exempt from ADA compliance requirements, we are committed to making our website as accessible as possible to all visitors, including those with disabilities. This commitment reflects our core values of love, inclusion, and service to our community.</p>
@@ -6976,6 +6990,8 @@ app.get('/privacy', (c) => {
                         <strong>Morning Star Christian Church</strong><br>
                         3080 Wildwood St<br>
                         Boise, Idaho<br>
+                        <br>
+                        <strong>Email:</strong> <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a><br>
                         <br>
                         Or use our <a href="/#contact">contact form</a> on the main website.
                     </p>

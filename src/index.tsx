@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.25.7 - Hero title floating animation -->
+    <!-- v1.25.8 - Hero title floating shadow effect -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -391,16 +391,8 @@ app.get('/', (c) => {
                 letter-spacing: -2px;
                 color: #1a1a2e;
                 font-weight: 700;
-                background: linear-gradient(135deg, #1a1a2e 0%, #4a4a6e 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                animation: heroFloat 4s ease-in-out infinite;
-            }
-            
-            @keyframes heroFloat {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-8px); }
+                text-shadow: 0 8px 24px rgba(26, 26, 46, 0.15),
+                             0 4px 8px rgba(26, 26, 46, 0.1);
             }
 
             .hero p {

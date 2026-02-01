@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.27.1 - Jotform branding covered with gradient overlay -->
+    <!-- v1.27.2 - Jotform branding overlay uses exact page background color -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -2256,8 +2256,8 @@ app.get('/', (c) => {
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 60px;
-                background: linear-gradient(to bottom, transparent 0%, #f8f9fd 30%, #f8f9fd 100%);
+                height: 65px;
+                background: #e9ecf5;
                 pointer-events: none;
                 z-index: 10;
             }
@@ -4171,8 +4171,8 @@ app.get('/', (c) => {
                 }
                 
                 .jotform-container::after {
-                    height: 55px;
-                    background: linear-gradient(to bottom, transparent 0%, #e9ecf5 25%, #e9ecf5 100%);
+                    height: 60px;
+                    background: #e9ecf5;
                 }
                 
                 .jotform-container iframe {

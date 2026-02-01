@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.26.7 - Accessibility Statement with religious exemption documentation -->
+    <!-- v1.27.0 - Legal page restructured: 3 separate sections (Privacy, ToS, Accessibility) -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -5081,7 +5081,9 @@ app.get('/', (c) => {
                     <div class="footer-divider"></div>
                     
                     <div class="footer-links">
-                        <a href="/privacy" class="footer-link">Privacy Policy</a>
+                        <a href="/privacy#privacy" class="footer-link">Privacy Policy</a>
+                        <span class="footer-link-separator">|</span>
+                        <a href="/privacy#terms" class="footer-link">Terms of Service</a>
                         <span class="footer-link-separator">|</span>
                         <a href="/privacy#accessibility" class="footer-link">Accessibility</a>
                     </div>
@@ -6450,7 +6452,7 @@ app.get('/', (c) => {
   `)
 })
 
-// Privacy Policy page
+// Legal Pages - Privacy Policy, Terms of Service, Accessibility
 app.get('/privacy', (c) => {
   return c.html(`
     <!DOCTYPE html>
@@ -6458,7 +6460,7 @@ app.get('/privacy', (c) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Privacy Policy - Morning Star Christian Church</title>
+        <title>Legal - Morning Star Christian Church</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -6477,8 +6479,8 @@ app.get('/privacy', (c) => {
                 min-height: 100vh;
             }
             
-            .privacy-container {
-                max-width: 800px;
+            .legal-container {
+                max-width: 900px;
                 margin: 0 auto;
                 padding: 60px 24px 80px;
             }
@@ -6499,11 +6501,12 @@ app.get('/privacy', (c) => {
                 opacity: 0.7;
             }
             
-            .privacy-header {
+            .page-header {
                 margin-bottom: 48px;
+                text-align: center;
             }
             
-            .privacy-header h1 {
+            .page-header h1 {
                 font-family: 'Playfair Display', serif;
                 font-size: clamp(32px, 6vw, 48px);
                 color: #1a1a2e;
@@ -6511,65 +6514,108 @@ app.get('/privacy', (c) => {
                 font-weight: 700;
             }
             
-            .privacy-header .last-updated {
+            .page-header .last-updated {
                 font-size: 14px;
                 color: rgba(26, 26, 46, 0.5);
             }
             
-            .privacy-content {
+            .nav-tabs {
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                margin-bottom: 40px;
+                flex-wrap: wrap;
+            }
+            
+            .nav-tab {
+                padding: 12px 24px;
+                border-radius: 50px;
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.6);
+                color: rgba(26, 26, 46, 0.7);
+                border: 1px solid rgba(26, 26, 46, 0.1);
+            }
+            
+            .nav-tab:hover {
+                background: rgba(255, 255, 255, 0.9);
+                color: #1a1a2e;
+            }
+            
+            .nav-tab.active {
+                background: #d4a574;
+                color: #ffffff;
+                border-color: #d4a574;
+            }
+            
+            .legal-section {
                 background: rgba(255, 255, 255, 0.85);
                 border-radius: 32px;
                 padding: 48px;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
                 border: 1px solid rgba(255, 255, 255, 0.6);
+                margin-bottom: 40px;
+                scroll-margin-top: 20px;
             }
             
-            .privacy-content h2 {
+            .section-title {
                 font-family: 'Playfair Display', serif;
-                font-size: 24px;
+                font-size: 28px;
+                color: #1a1a2e;
+                margin-bottom: 24px;
+                font-weight: 700;
+                padding-bottom: 16px;
+                border-bottom: 2px solid #d4a574;
+            }
+            
+            .legal-section h2 {
+                font-family: 'Playfair Display', serif;
+                font-size: 22px;
                 color: #1a1a2e;
                 margin: 32px 0 16px;
                 font-weight: 600;
             }
             
-            .privacy-content h2:first-child {
+            .legal-section h2:first-of-type {
                 margin-top: 0;
             }
             
-            .privacy-content h3 {
-                font-size: 18px;
+            .legal-section h3 {
+                font-size: 17px;
                 color: #1a1a2e;
                 margin: 24px 0 12px;
                 font-weight: 600;
             }
             
-            .privacy-content p {
+            .legal-section p {
                 color: rgba(26, 26, 46, 0.75);
                 margin-bottom: 16px;
                 font-size: 15px;
             }
             
-            .privacy-content ul {
+            .legal-section ul {
                 margin: 16px 0;
                 padding-left: 24px;
                 color: rgba(26, 26, 46, 0.75);
             }
             
-            .privacy-content li {
+            .legal-section li {
                 margin-bottom: 8px;
                 font-size: 15px;
             }
             
-            .privacy-content a {
+            .legal-section a {
                 color: #d4a574;
                 text-decoration: none;
             }
             
-            .privacy-content a:hover {
+            .legal-section a:hover {
                 text-decoration: underline;
             }
             
-            .privacy-content strong {
+            .legal-section strong {
                 color: #1a1a2e;
                 font-weight: 600;
             }
@@ -6587,19 +6633,28 @@ app.get('/privacy', (c) => {
             }
             
             @media (max-width: 600px) {
-                .privacy-container {
+                .legal-container {
                     padding: 40px 16px 60px;
                 }
                 
-                .privacy-content {
+                .legal-section {
                     padding: 32px 24px;
                     border-radius: 24px;
+                }
+                
+                .nav-tabs {
+                    gap: 8px;
+                }
+                
+                .nav-tab {
+                    padding: 10px 16px;
+                    font-size: 13px;
                 }
             }
         </style>
     </head>
     <body>
-        <div class="privacy-container">
+        <div class="legal-container">
             <a href="/" class="back-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -6607,12 +6662,21 @@ app.get('/privacy', (c) => {
                 Back to Home
             </a>
             
-            <div class="privacy-header">
-                <h1>Privacy Policy</h1>
+            <div class="page-header">
+                <h1>Legal Information</h1>
                 <p class="last-updated">Last Updated: February 1, 2026</p>
             </div>
             
-            <div class="privacy-content">
+            <nav class="nav-tabs">
+                <a href="#privacy" class="nav-tab">Privacy Policy</a>
+                <a href="#terms" class="nav-tab">Terms of Service</a>
+                <a href="#accessibility" class="nav-tab">Accessibility</a>
+            </nav>
+            
+            <!-- ==================== PRIVACY POLICY ==================== -->
+            <section id="privacy" class="legal-section">
+                <h1 class="section-title">Privacy Policy</h1>
+                
                 <h2>Introduction</h2>
                 <p>Morning Star Christian Church ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website ms.church (the "Site"). Please read this privacy policy carefully. By using the Site, you consent to the practices described in this policy.</p>
                 
@@ -6696,7 +6760,7 @@ app.get('/privacy', (c) => {
                 <h2>Children's Privacy</h2>
                 <p>Our Site is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately so we can delete such information.</p>
                 
-                <h2>Changes to This Privacy Policy</h2>
+                <h2>Changes to This Policy</h2>
                 <p>We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Privacy Policy on this page with an updated "Last Updated" date. We encourage you to review this Privacy Policy periodically.</p>
                 
                 <h2>California Privacy Rights</h2>
@@ -6705,66 +6769,8 @@ app.get('/privacy', (c) => {
                 <h2>International Users</h2>
                 <p>If you are accessing our Site from outside the United States, please be aware that your information may be transferred to, stored, and processed in the United States where our servers are located. By using our Site, you consent to such transfer.</p>
                 
-                <h2>Website Disclaimer</h2>
-                
-                <h3>General Information Only</h3>
-                <p>The content on this website is provided for general informational and spiritual encouragement purposes only. It is not intended to be a substitute for professional advice, including but not limited to legal, financial, medical, or counseling advice. Always seek the guidance of qualified professionals for specific concerns.</p>
-                
-                <h3>No Warranties</h3>
-                <p>This website and its content are provided "as is" without warranties of any kind, either express or implied. Morning Star Christian Church makes no representations or warranties regarding the accuracy, completeness, reliability, or availability of any information on this Site. We strive to keep information current and accurate, but we make no guarantees that the content is error-free or up-to-date.</p>
-                
-                <h3>Limitation of Liability</h3>
-                <p>To the fullest extent permitted by applicable law, Morning Star Christian Church, its staff, volunteers, and website operators shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising out of your access to, use of, or inability to use this website, or any errors or omissions in its content. This limitation applies regardless of whether such damages arise from contract, tort, negligence, strict liability, or any other legal theory.</p>
-                
-                <h3>External Links</h3>
-                <p>This website may contain links to third-party websites, including social media platforms, for your convenience and reference. These links do not constitute an endorsement or approval of the content, products, services, or opinions expressed on those external sites. Morning Star Christian Church has no control over and assumes no responsibility for the content, privacy policies, or practices of any third-party websites. You access external links at your own risk.</p>
-                
-                <h3>Intellectual Property</h3>
-                <p>All content on this website, including but not limited to text, graphics, logos, images, audio, video, and software, is the property of Morning Star Christian Church or its content suppliers and is protected by United States and international copyright laws. You may not reproduce, distribute, modify, display, or create derivative works from any content on this Site without prior written permission, except for personal, non-commercial use such as printing a page for your own reference.</p>
-                
-                <h3>User Conduct</h3>
-                <p>By using this website, you agree not to engage in any activity that could harm the Site, its content, or other users. This includes, but is not limited to, attempting to gain unauthorized access, transmitting harmful code, or using the Site for any unlawful purpose.</p>
-                
-                <h3>Indemnification</h3>
-                <p>You agree to indemnify and hold harmless Morning Star Christian Church, its staff, volunteers, and website operators from any claims, damages, losses, or expenses (including reasonable attorney fees) arising from your use of this website or violation of these terms.</p>
-                
-                <h3>Governing Law</h3>
-                <p>This Privacy Policy and Disclaimer shall be governed by and construed in accordance with the laws of the State of Idaho, United States, without regard to its conflict of law provisions. Any disputes arising from or relating to this website shall be resolved in the courts of Ada County, Idaho.</p>
-                
-                <h3>Severability</h3>
-                <p>If any provision of this Privacy Policy or Disclaimer is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.</p>
-                
-                <h2 id="accessibility">Accessibility Statement</h2>
-                
-                <h3>Religious Organization Exemption</h3>
-                <p>Morning Star Christian Church is a religious organization. Under <strong>Title III of the Americans with Disabilities Act (ADA)</strong>, religious entities are completely exempt from ADA requirements. This exemption applies to all facilities, programs, activities, and digital properties of religious organizations, whether religious or secular in nature, as established by the ADA National Network and affirmed by the U.S. Department of Justice.</p>
-                <p>This exemption is rooted in the First Amendment to the United States Constitution, which protects the free exercise of religion and limits government interference with religious organizations.</p>
-                
-                <h3>Our Voluntary Commitment to Accessibility</h3>
-                <p>While Morning Star Christian Church is legally exempt from ADA compliance requirements, we are committed to making our website as accessible as possible to all visitors, including those with disabilities. This commitment reflects our core values of love, inclusion, and service to our community.</p>
-                <p>We voluntarily strive to follow the principles of the <strong>Web Content Accessibility Guidelines (WCAG) 2.1</strong> where practical, recognizing that digital accessibility aligns with our mission to welcome all people.</p>
-                
-                <h3>Accessibility Features</h3>
-                <p>We have made efforts to include the following accessibility considerations on our website:</p>
-                <ul>
-                    <li>Semantic HTML structure for screen reader compatibility</li>
-                    <li>Descriptive alt text for images where applicable</li>
-                    <li>Clear navigation and logical page structure</li>
-                    <li>Readable fonts and text sizing</li>
-                    <li>ARIA labels on interactive elements</li>
-                </ul>
-                
-                <h3>Known Limitations</h3>
-                <p>As a volunteer-operated religious organization with limited resources, some areas of our website may not fully meet all accessibility standards. We are continually working to improve the accessibility of our site as resources permit.</p>
-                
-                <h3>Third-Party Content</h3>
-                <p>Our website may include embedded content from third-party services (such as YouTube videos, Jotform contact forms, and social media platforms). We do not control the accessibility features of these external services, and their accessibility practices are governed by their respective providers.</p>
-                
-                <h3>Feedback and Assistance</h3>
-                <p>We welcome feedback on the accessibility of our website. If you encounter any accessibility barriers or need assistance accessing any content, please contact us using the information below. We will make reasonable efforts to provide the information you need in an accessible format.</p>
-                
                 <div class="contact-box">
-                    <h3>Contact Us</h3>
+                    <h3>Contact Us About Privacy</h3>
                     <p>If you have any questions about this Privacy Policy or our data practices, please contact us at:</p>
                     <p>
                         <strong>Morning Star Christian Church</strong><br>
@@ -6774,8 +6780,221 @@ app.get('/privacy', (c) => {
                         Or use our <a href="/#contact">contact form</a> on the main website.
                     </p>
                 </div>
-            </div>
+            </section>
+            
+            <!-- ==================== TERMS OF SERVICE ==================== -->
+            <section id="terms" class="legal-section">
+                <h1 class="section-title">Terms of Service</h1>
+                
+                <h2>Agreement to Terms</h2>
+                <p>By accessing and using the Morning Star Christian Church website at ms.church (the "Site"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use the Site. We reserve the right to modify these Terms at any time, and such modifications will be effective immediately upon posting. Your continued use of the Site constitutes acceptance of the modified Terms.</p>
+                
+                <h2>Use of the Site</h2>
+                <p>This Site is provided by Morning Star Christian Church for informational and spiritual purposes. You may use this Site for lawful purposes only and in accordance with these Terms. You agree not to:</p>
+                <ul>
+                    <li>Use the Site in any way that violates any applicable federal, state, local, or international law or regulation</li>
+                    <li>Attempt to gain unauthorized access to any portion of the Site, other accounts, computer systems, or networks connected to the Site</li>
+                    <li>Use any robot, spider, or other automatic device, process, or means to access the Site for any purpose</li>
+                    <li>Introduce any viruses, Trojan horses, worms, logic bombs, or other material that is malicious or technologically harmful</li>
+                    <li>Interfere with or disrupt the Site or servers or networks connected to the Site</li>
+                    <li>Use the Site to transmit any advertising or promotional material without our prior written consent</li>
+                </ul>
+                
+                <h2>Intellectual Property Rights</h2>
+                <p>All content on this website, including but not limited to text, graphics, logos, images, audio clips, video clips, digital downloads, data compilations, and software, is the property of Morning Star Christian Church or its content suppliers and is protected by United States and international copyright laws.</p>
+                <p>You may not reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, or transmit any of the material on our Site, except as follows:</p>
+                <ul>
+                    <li>Your computer may temporarily store copies of such materials in RAM incidental to your accessing and viewing those materials</li>
+                    <li>You may store files that are automatically cached by your web browser for display enhancement purposes</li>
+                    <li>You may print or download one copy of a reasonable number of pages of the Site for your own personal, non-commercial use and not for further reproduction, publication, or distribution</li>
+                </ul>
+                
+                <h2>User Conduct</h2>
+                <p>By using this website, you agree to conduct yourself in a manner consistent with the values and mission of Morning Star Christian Church. You agree not to engage in any activity that could harm the Site, its content, or other users. This includes, but is not limited to:</p>
+                <ul>
+                    <li>Posting or transmitting any content that is unlawful, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, or otherwise objectionable</li>
+                    <li>Impersonating any person or entity or falsely stating or misrepresenting your affiliation with a person or entity</li>
+                    <li>Engaging in any conduct that restricts or inhibits anyone's use or enjoyment of the Site</li>
+                </ul>
+                
+                <h2>Disclaimer of Warranties</h2>
+                <p>THE SITE AND ALL CONTENT, MATERIALS, INFORMATION, AND SERVICES PROVIDED ON THE SITE ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. MORNING STAR CHRISTIAN CHURCH DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.</p>
+                <p>Morning Star Christian Church does not warrant that the Site will be uninterrupted, error-free, or free of viruses or other harmful components. The content on this Site is provided for general informational and spiritual encouragement purposes only and is not intended to be a substitute for professional advice, including but not limited to legal, financial, medical, or counseling advice.</p>
+                
+                <h2>Limitation of Liability</h2>
+                <p>TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, MORNING STAR CHRISTIAN CHURCH, ITS STAFF, VOLUNTEERS, AND WEBSITE OPERATORS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA, OR OTHER INTANGIBLE LOSSES, ARISING OUT OF OR IN CONNECTION WITH:</p>
+                <ul>
+                    <li>Your access to, use of, or inability to use the Site</li>
+                    <li>Any conduct or content of any third party on the Site</li>
+                    <li>Any content obtained from the Site</li>
+                    <li>Unauthorized access, use, or alteration of your transmissions or content</li>
+                </ul>
+                <p>This limitation applies regardless of whether such damages arise from contract, tort, negligence, strict liability, or any other legal theory, even if Morning Star Christian Church has been advised of the possibility of such damages.</p>
+                
+                <h2>Indemnification</h2>
+                <p>You agree to defend, indemnify, and hold harmless Morning Star Christian Church, its staff, volunteers, and website operators from and against any and all claims, damages, obligations, losses, liabilities, costs, or debt, and expenses (including but not limited to attorney's fees) arising from:</p>
+                <ul>
+                    <li>Your use of and access to the Site</li>
+                    <li>Your violation of any term of these Terms</li>
+                    <li>Your violation of any third-party right, including without limitation any copyright, property, or privacy right</li>
+                    <li>Any claim that your use of the Site caused damage to a third party</li>
+                </ul>
+                
+                <h2>External Links</h2>
+                <p>This website may contain links to third-party websites, including social media platforms, for your convenience and reference. These links do not constitute an endorsement or approval of the content, products, services, or opinions expressed on those external sites. Morning Star Christian Church has no control over and assumes no responsibility for the content, privacy policies, or practices of any third-party websites. You access external links at your own risk and subject to the terms and conditions of those sites.</p>
+                
+                <h2>Third-Party Services</h2>
+                <p>Our Site uses third-party services including but not limited to Jotform (contact forms), Vercel (hosting and analytics), and YouTube (embedded videos). Your use of these services is subject to their respective terms of service and privacy policies. We are not responsible for the practices of these third-party services.</p>
+                
+                <h2>Governing Law and Jurisdiction</h2>
+                <p>These Terms shall be governed by and construed in accordance with the laws of the State of Idaho, United States, without regard to its conflict of law provisions. Any legal action or proceeding arising out of or relating to these Terms or your use of the Site shall be brought exclusively in the state or federal courts located in Ada County, Idaho, and you consent to the personal jurisdiction of such courts.</p>
+                
+                <h2>Severability</h2>
+                <p>If any provision of these Terms is found to be unenforceable or invalid by a court of competent jurisdiction, that provision shall be limited or eliminated to the minimum extent necessary so that these Terms shall otherwise remain in full force and effect and enforceable.</p>
+                
+                <h2>Entire Agreement</h2>
+                <p>These Terms, together with our Privacy Policy and Accessibility Statement, constitute the entire agreement between you and Morning Star Christian Church regarding your use of the Site and supersede all prior and contemporaneous understandings, agreements, representations, and warranties.</p>
+                
+                <h2>Waiver</h2>
+                <p>The failure of Morning Star Christian Church to enforce any right or provision of these Terms will not be deemed a waiver of such right or provision. Any waiver of any provision of these Terms will be effective only if in writing and signed by Morning Star Christian Church.</p>
+                
+                <div class="contact-box">
+                    <h3>Contact Us About Terms</h3>
+                    <p>If you have any questions about these Terms of Service, please contact us at:</p>
+                    <p>
+                        <strong>Morning Star Christian Church</strong><br>
+                        3080 Wildwood St<br>
+                        Boise, Idaho<br>
+                        <br>
+                        Or use our <a href="/#contact">contact form</a> on the main website.
+                    </p>
+                </div>
+            </section>
+            
+            <!-- ==================== ACCESSIBILITY STATEMENT ==================== -->
+            <section id="accessibility" class="legal-section">
+                <h1 class="section-title">Accessibility Statement</h1>
+                
+                <h2>Religious Organization Exemption</h2>
+                <p>Morning Star Christian Church is a religious organization. Under <strong>Title III of the Americans with Disabilities Act (ADA)</strong>, religious entities are completely exempt from ADA requirements. This exemption applies to all facilities, programs, activities, and digital properties of religious organizations, whether religious or secular in nature, as established by the ADA National Network and affirmed by the U.S. Department of Justice.</p>
+                <p>This exemption is rooted in the First Amendment to the United States Constitution, which protects the free exercise of religion and limits government interference with religious organizations.</p>
+                
+                <h2>Our Voluntary Commitment to Accessibility</h2>
+                <p>While Morning Star Christian Church is legally exempt from ADA compliance requirements, we are committed to making our website as accessible as possible to all visitors, including those with disabilities. This commitment reflects our core values of love, inclusion, and service to our community.</p>
+                <p>We voluntarily strive to follow the principles of the <strong>Web Content Accessibility Guidelines (WCAG) 2.1</strong> where practical, recognizing that digital accessibility aligns with our mission to welcome all people.</p>
+                
+                <h2>Accessibility Features</h2>
+                <p>We have made efforts to include the following accessibility considerations on our website:</p>
+                <ul>
+                    <li>Semantic HTML structure for screen reader compatibility</li>
+                    <li>Descriptive alt text for images where applicable</li>
+                    <li>Clear navigation and logical page structure</li>
+                    <li>Readable fonts and text sizing</li>
+                    <li>ARIA labels on interactive elements</li>
+                    <li>Sufficient color contrast for text readability</li>
+                    <li>Keyboard-navigable interface elements</li>
+                </ul>
+                
+                <h2>Known Limitations</h2>
+                <p>As a volunteer-operated religious organization with limited resources, some areas of our website may not fully meet all accessibility standards. We are continually working to improve the accessibility of our site as resources permit. Known limitations may include:</p>
+                <ul>
+                    <li>Some older content may not have complete alt text descriptions</li>
+                    <li>Certain interactive elements may have limited keyboard accessibility</li>
+                    <li>Video content may not have closed captions in all cases</li>
+                </ul>
+                
+                <h2>Third-Party Content</h2>
+                <p>Our website may include embedded content from third-party services (such as YouTube videos, Jotform contact forms, and social media platforms). We do not control the accessibility features of these external services, and their accessibility practices are governed by their respective providers:</p>
+                <ul>
+                    <li><strong>YouTube</strong> – <a href="https://support.google.com/youtube/answer/189278" target="_blank" rel="noopener">YouTube Accessibility Features</a></li>
+                    <li><strong>Jotform</strong> – <a href="https://www.jotform.com/accessibility/" target="_blank" rel="noopener">Jotform Accessibility</a></li>
+                </ul>
+                
+                <h2>Assistive Technologies</h2>
+                <p>Our website is designed to be compatible with the following assistive technologies:</p>
+                <ul>
+                    <li>Screen readers (such as JAWS, NVDA, VoiceOver)</li>
+                    <li>Screen magnification software</li>
+                    <li>Speech recognition software</li>
+                    <li>Keyboard-only navigation</li>
+                </ul>
+                
+                <h2>Feedback and Assistance</h2>
+                <p>We welcome feedback on the accessibility of our website. If you encounter any accessibility barriers or need assistance accessing any content, please contact us. We will make reasonable efforts to provide the information you need in an accessible format.</p>
+                <p>When contacting us about accessibility, please include:</p>
+                <ul>
+                    <li>The web address (URL) of the content you were trying to access</li>
+                    <li>A description of the accessibility problem you encountered</li>
+                    <li>Your preferred format for receiving the information (e.g., large print, audio, etc.)</li>
+                </ul>
+                
+                <h2>Continuous Improvement</h2>
+                <p>We are committed to continuously improving the accessibility of our website. We periodically review our site for accessibility issues and work to address them as resources allow. If you have suggestions for improving accessibility, we welcome your input.</p>
+                
+                <div class="contact-box">
+                    <h3>Contact Us About Accessibility</h3>
+                    <p>If you need assistance or want to report an accessibility issue, please contact us at:</p>
+                    <p>
+                        <strong>Morning Star Christian Church</strong><br>
+                        3080 Wildwood St<br>
+                        Boise, Idaho<br>
+                        <br>
+                        Or use our <a href="/#contact">contact form</a> on the main website.
+                    </p>
+                </div>
+            </section>
         </div>
+        
+        <script>
+            // Smooth scroll and active tab highlighting
+            document.addEventListener('DOMContentLoaded', function() {
+                const tabs = document.querySelectorAll('.nav-tab');
+                const sections = document.querySelectorAll('.legal-section');
+                
+                // Update active tab based on scroll position
+                function updateActiveTab() {
+                    let current = '';
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop;
+                        if (scrollY >= sectionTop - 100) {
+                            current = section.getAttribute('id');
+                        }
+                    });
+                    
+                    tabs.forEach(tab => {
+                        tab.classList.remove('active');
+                        if (tab.getAttribute('href') === '#' + current) {
+                            tab.classList.add('active');
+                        }
+                    });
+                }
+                
+                window.addEventListener('scroll', updateActiveTab);
+                updateActiveTab();
+                
+                // Smooth scroll on tab click
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href').substring(1);
+                        const targetSection = document.getElementById(targetId);
+                        if (targetSection) {
+                            targetSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+                });
+                
+                // Check URL hash on load
+                if (window.location.hash) {
+                    const targetSection = document.querySelector(window.location.hash);
+                    if (targetSection) {
+                        setTimeout(() => {
+                            targetSection.scrollIntoView({ behavior: 'smooth' });
+                        }, 100);
+                    }
+                }
+            });
+        </script>
     </body>
     </html>
   `);

@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.24.9 - Stay Tuned: Fixed spacing and pill width -->
+    <!-- v1.25.0 - Outreach pill shrunk, reduced spacing below card -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -723,12 +723,18 @@ app.get('/', (c) => {
 
             /* Outreach section header - same layout as Schedule */
             .outreach .section-eyebrow {
-                display: inline-flex;
+                display: inline-flex !important;
+                width: auto !important;
                 margin-bottom: 10px;
             }
             
             .outreach .section-heading {
-                margin-bottom: 32px;
+                margin-bottom: 24px;
+            }
+            
+            /* Stay Tuned container - reduce space below */
+            .stay-tuned-container {
+                margin-bottom: 0;
             }
             
             .event-indicators {
@@ -1042,8 +1048,12 @@ app.get('/', (c) => {
             }
             
             .stay-tuned-only .section-eyebrow {
-                display: inline-flex; /* Ensure pill fits text only */
-                width: auto;
+                display: inline-flex !important; /* Ensure pill fits text only */
+                width: auto !important;
+            }
+            
+            .stay-tuned-only .stay-tuned-container {
+                margin-bottom: 0;
             }
             
             .stay-tuned-badge {
@@ -2626,7 +2636,12 @@ app.get('/', (c) => {
                 }
                 
                 /* Outreach header elements align left like schedule */
-                .outreach .section-eyebrow,
+                .outreach .section-eyebrow {
+                    display: inline-flex !important;
+                    width: auto !important;
+                    text-align: left;
+                }
+                
                 .outreach .section-heading {
                     text-align: left;
                 }
@@ -2866,6 +2881,8 @@ app.get('/', (c) => {
                 }
                 
                 .outreach .section-eyebrow {
+                    display: inline-flex !important;
+                    width: auto !important;
                     margin-bottom: 12px;
                 }
 
@@ -3190,17 +3207,21 @@ app.get('/', (c) => {
                    Card is now in stay-tuned-container (outside scroll container)
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: 0 !important;
+                    margin-bottom: -60px !important; /* Pull Watch section closer */
                     min-height: auto !important; /* Remove 100vh min-height */
                 }
                 
                 .stay-tuned-only .section-eyebrow {
-                    display: inline-flex; /* Ensure pill fits text only */
-                    width: auto;
+                    display: inline-flex !important; /* Ensure pill fits text only */
+                    width: auto !important;
                 }
                 
                 .stay-tuned-only .section-heading {
                     margin-bottom: 16px;
+                }
+                
+                .stay-tuned-only .stay-tuned-container {
+                    margin-bottom: 0;
                 }
                 
                 /* Mobile Past Event styling */
@@ -3515,6 +3536,8 @@ app.get('/', (c) => {
                 }
                 
                 .outreach .section-eyebrow {
+                    display: inline-flex !important;
+                    width: auto !important;
                     margin-bottom: 10px;
                 }
                 

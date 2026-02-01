@@ -1030,7 +1030,7 @@ app.get('/', (c) => {
             }
             
             .stay-tuned-only .section-heading {
-                margin-bottom: 24px; /* Spacing before card */
+                margin-bottom: 16px; /* Reduced spacing before card */
             }
             
             .stay-tuned-only .outreach-scroll-container {
@@ -1081,13 +1081,13 @@ app.get('/', (c) => {
             }
             
             .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                aspect-ratio: auto; /* Remove portrait aspect ratio */
+                aspect-ratio: 3/4; /* Portrait card like event flyers */
                 min-height: auto;
                 max-height: none;
                 width: 100%;
                 margin: 0;
-                border-radius: 48px; /* Match section-card */
-                padding: 56px 64px; /* Match section-card padding */
+                border-radius: 32px;
+                padding: 40px 32px;
             }
             
             .stay-tuned-badge {
@@ -3230,15 +3230,20 @@ app.get('/', (c) => {
                 
                 /* ========================================
                    MOBILE STAY-TUNED-ONLY OVERRIDES
-                   Clean static layout when no upcoming events
-                   Matches schedule section-card layout
+                   Full width card with 3:4 aspect ratio
                    ======================================== */
                 .stay-tuned-only {
                     margin-bottom: 0 !important;
                 }
                 
+                .stay-tuned-only .section-eyebrow {
+                    display: inline-flex; /* Fit to text width */
+                    width: auto;
+                    margin-bottom: 8px;
+                }
+                
                 .stay-tuned-only .section-heading {
-                    margin-bottom: 20px;
+                    margin-bottom: 16px; /* Reduced spacing */
                 }
                 
                 .stay-tuned-only .outreach-scroll-container {
@@ -3280,15 +3285,15 @@ app.get('/', (c) => {
                     margin: 0;
                 }
                 
-                /* Stay Tuned card - full width like section-card */
+                /* Stay Tuned card - full width with 3:4 aspect ratio */
                 .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                    aspect-ratio: auto;
+                    aspect-ratio: 3/4; /* Portrait card like event flyers */
                     min-height: auto;
                     max-height: none;
                     width: 100%;
                     margin-bottom: 0;
-                    padding: 32px 24px;
-                    border-radius: 24px;
+                    padding: 40px 24px;
+                    border-radius: 32px;
                 }
                 
                 /* Mobile Past Event styling */

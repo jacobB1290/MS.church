@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.27.0 - Legal page restructured: 3 separate sections (Privacy, ToS, Accessibility) -->
+    <!-- v1.27.1 - Jotform branding covered with gradient overlay -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -2246,6 +2246,20 @@ app.get('/', (c) => {
                 background: transparent;
                 border-radius: 20px;
                 overflow: hidden;
+                position: relative;
+            }
+            
+            /* Cover Jotform branding at bottom */
+            .jotform-container::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                background: linear-gradient(to bottom, transparent 0%, #f8f9fd 30%, #f8f9fd 100%);
+                pointer-events: none;
+                z-index: 10;
             }
             
             .jotform-container iframe {
@@ -4154,6 +4168,11 @@ app.get('/', (c) => {
                 
                 .jotform-container {
                     min-height: 600px;
+                }
+                
+                .jotform-container::after {
+                    height: 55px;
+                    background: linear-gradient(to bottom, transparent 0%, #e9ecf5 25%, #e9ecf5 100%);
                 }
                 
                 .jotform-container iframe {

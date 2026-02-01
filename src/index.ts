@@ -6750,11 +6750,11 @@ app.get('/privacy', (c) => {
                 <ul>
                     <li>To respond to your inquiries and prayer requests</li>
                     <li>To provide information about church services, events, and activities</li>
-                    <li>To send promotional materials about our church, including newsletters, event announcements, and ministry updates via email and/or text message</li>
+                    <li>To send church updates and ministry communications, including newsletters, event announcements, and ministry updates via email and/or text message</li>
                     <li>To improve our website and user experience based on aggregated analytics</li>
                     <li>To maintain the security and functionality of our Site</li>
                 </ul>
-                <p><strong>Consent:</strong> Our contact form requires you to agree to receive church updates by email and text message before submission. By checking the required consent boxes and submitting the form, you expressly consent to receiving communications from Morning Star Christian Church at the email address and phone number you provide. Standard message and data rates may apply to text messages.</p>
+                <p><strong>Consent:</strong> Our contact form requires you to agree to receive church updates by email and text message before submission. By checking the required consent boxes and submitting the form, you expressly consent to receiving communications from Morning Star Christian Church at the email address and phone number you provide. Standard message and data rates may apply to text messages. Message frequency varies. <strong>Consent to receive messages is not a condition of attending church services or receiving ministry support.</strong></p>
                 <p><strong>Opt-Out:</strong> You may opt-out of communications at any time by:</p>
                 <ul>
                     <li><strong>Text messages:</strong> Reply STOP to any text message. Reply HELP for assistance.</li>
@@ -6782,10 +6782,21 @@ app.get('/privacy', (c) => {
                 </ul>
                 <p>We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.</p>
                 
+                <p><strong>Important:</strong> Even though our own analytics do not use cookies, third-party embedded content (such as YouTube videos and the Jotform contact form) may collect data and set cookies independently. We cannot control or monitor this third-party data collection.</p>
+                
                 <h2>Data Retention</h2>
-                <p><strong>Contact Form Submissions:</strong> Form submissions are retained in Jotform and our email records indefinitely, or until we determine they are no longer needed for church records and communications. If you would like your information deleted, please contact us using the information below.</p>
+                <p><strong>Contact Form Submissions:</strong> Form submissions are retained in Jotform and our email records for as long as needed for ministry purposes and church recordkeeping. We periodically review stored data and delete or anonymize information when it is no longer needed. If you would like your information deleted sooner, please contact us using the information below.</p>
                 <p><strong>Analytics Data:</strong> Analytics data is retained in accordance with Vercel's data retention policies and is used solely for aggregated statistical purposes.</p>
                 <p><strong>Backups:</strong> Please note that your information may also exist in routine backups, which are retained for operational and security purposes.</p>
+                
+                <h2>Legal Requirements and Disclosures</h2>
+                <p>We may disclose your personal information if required to do so by law or in response to valid requests by public authorities (e.g., a court order, subpoena, or government request). We may also disclose information when we believe in good faith that disclosure is necessary to:</p>
+                <ul>
+                    <li>Comply with a legal obligation</li>
+                    <li>Protect and defend the rights or property of Morning Star Christian Church</li>
+                    <li>Prevent or investigate possible wrongdoing in connection with the Site</li>
+                    <li>Protect the personal safety of users of the Site or the public</li>
+                </ul>
                 
                 <h2>Data Security</h2>
                 <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. This includes:</p>
@@ -6812,6 +6823,9 @@ app.get('/privacy', (c) => {
                 
                 <h2>Changes to This Policy</h2>
                 <p>We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Privacy Policy on this page with an updated "Last Updated" date. We encourage you to review this Privacy Policy periodically.</p>
+                
+                <h2>Do Not Track Signals</h2>
+                <p>Some web browsers have a "Do Not Track" feature that signals to websites that you do not want your online activity tracked. Our Site does not currently respond to Do Not Track signals, as there is no industry standard for how to handle such requests. However, as noted above, our analytics are already designed to be privacy-focused and do not track individual users across sites.</p>
                 
                 <h2>California Privacy Rights</h2>
                 <p>As a nonprofit religious organization, we are generally not subject to the California Consumer Privacy Act (CCPA). However, we are committed to transparency and will respond to privacy-related questions from California residents. We do not sell personal information to third parties. If you have questions about your privacy rights, please contact us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a>.</p>
@@ -6862,6 +6876,9 @@ app.get('/privacy', (c) => {
                     <li>You may print or download one copy of a reasonable number of pages of the Site for your own personal, non-commercial use and not for further reproduction, publication, or distribution</li>
                 </ul>
                 
+                <h2>Copyright Complaints (DMCA)</h2>
+                <p>If you believe that any content on our Site infringes your copyright, please contact us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> with the subject line "Copyright Complaint." Please include a description of the copyrighted work, the location of the allegedly infringing material on our Site, and your contact information. We will review and respond to valid copyright complaints in accordance with applicable law.</p>
+                
                 <h2>User Conduct</h2>
                 <p>By using this website, you agree to conduct yourself in a manner consistent with the values and mission of Morning Star Christian Church. When using our contact form or otherwise interacting with the Site, you agree not to:</p>
                 <ul>
@@ -6871,6 +6888,13 @@ app.get('/privacy', (c) => {
                     <li>Use the contact form for spam, advertising, or any commercial purpose unrelated to legitimate church inquiries</li>
                     <li>Attempt to attack, disrupt, or compromise the security of the Site</li>
                 </ul>
+                <p><strong>Termination of Access:</strong> We reserve the right to block access to the Site or refuse form submissions from any user who violates these Terms or misuses the Site, without prior notice.</p>
+                
+                <h2>Contact Form Submissions</h2>
+                <p>Submitting a message through our contact form does not guarantee a response. We make reasonable efforts to respond to legitimate inquiries, but we reserve the right not to respond to messages that appear to be spam, abusive, or outside the scope of church-related matters.</p>
+                
+                <h2>Changes to the Site</h2>
+                <p>We may change, suspend, or discontinue any part of the Site at any time, including the availability of any feature, content, or service, without prior notice. We will not be liable if any part of the Site is unavailable at any time or for any period.</p>
                 
                 <h2>Disclaimer of Warranties</h2>
                 <p>THE SITE AND ALL CONTENT, MATERIALS, INFORMATION, AND SERVICES PROVIDED ON THE SITE ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. MORNING STAR CHRISTIAN CHURCH DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.</p>
@@ -6932,9 +6956,9 @@ app.get('/privacy', (c) => {
             <section id="accessibility" class="legal-section">
                 <h1 class="section-title">Accessibility Statement</h1>
                 
-                <h2>Religious Organization Exemption</h2>
-                <p>Morning Star Christian Church is a religious organization. As a religious entity, we are generally exempt from Title III of the Americans with Disabilities Act (ADA). This exemption is recognized by the ADA National Network and is rooted in the First Amendment to the United States Constitution, which protects the free exercise of religion.</p>
-                <p>Even so, we want our website to be as accessible and welcoming as practical for all visitors.</p>
+                <h2>Religious Organization Status</h2>
+                <p>Morning Star Christian Church is a religious organization. As a religious entity, we are generally exempt from Title III of the Americans with Disabilities Act (ADA). This exemption is recognized by the ADA National Network and is rooted in the First Amendment to the United States Constitution, which protects the free exercise of religion. However, we recognize that laws and requirements can vary by situation and jurisdiction.</p>
+                <p>Regardless of any legal exemptions, we want our website to be as accessible and welcoming as practical for all visitors. Our commitment to accessibility reflects our values of inclusion and service to our community.</p>
                 
                 <h2>Our Voluntary Commitment to Accessibility</h2>
                 <p>While Morning Star Christian Church is legally exempt from ADA compliance requirements, we are committed to making our website as accessible as possible to all visitors, including those with disabilities. This commitment reflects our core values of love, inclusion, and service to our community.</p>
@@ -6975,6 +6999,15 @@ app.get('/privacy', (c) => {
                     <li>Speech recognition software</li>
                     <li>Keyboard-only navigation</li>
                 </ul>
+                
+                <h2>Alternative Formats</h2>
+                <p>If you need information from our website in an alternative format, we are happy to help. Upon request, we can provide key information in formats such as:</p>
+                <ul>
+                    <li>Large print documents</li>
+                    <li>Information read aloud over the phone</li>
+                    <li>Plain text versions of content</li>
+                </ul>
+                <p>Please contact us using the information below to request an alternative format.</p>
                 
                 <h2>Feedback and Assistance</h2>
                 <p>We welcome feedback on the accessibility of our website. If you encounter any accessibility barriers or need assistance accessing any content, please contact us. We will make reasonable efforts to provide the information you need in an accessible format.</p>

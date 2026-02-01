@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.26.4 - Removed 'All rights reserved' copyright claim -->
+    <!-- v1.26.5 - Full legal protection: copyright, disclaimer, liability limits -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -5080,7 +5080,7 @@ app.get('/', (c) => {
                         <a href="/privacy" class="footer-link">Privacy Policy</a>
                     </div>
                     
-                    <p class="footer-copyright">© 2025 Morning Star Christian Church</p>
+                    <p class="footer-copyright">© 2025 Morning Star Christian Church. All rights reserved.</p>
                 </div>
             </footer>
         </div>
@@ -6698,6 +6698,35 @@ app.get('/privacy', (c) => {
                 
                 <h2>International Users</h2>
                 <p>If you are accessing our Site from outside the United States, please be aware that your information may be transferred to, stored, and processed in the United States where our servers are located. By using our Site, you consent to such transfer.</p>
+                
+                <h2>Website Disclaimer</h2>
+                
+                <h3>General Information Only</h3>
+                <p>The content on this website is provided for general informational and spiritual encouragement purposes only. It is not intended to be a substitute for professional advice, including but not limited to legal, financial, medical, or counseling advice. Always seek the guidance of qualified professionals for specific concerns.</p>
+                
+                <h3>No Warranties</h3>
+                <p>This website and its content are provided "as is" without warranties of any kind, either express or implied. Morning Star Christian Church makes no representations or warranties regarding the accuracy, completeness, reliability, or availability of any information on this Site. We strive to keep information current and accurate, but we make no guarantees that the content is error-free or up-to-date.</p>
+                
+                <h3>Limitation of Liability</h3>
+                <p>To the fullest extent permitted by applicable law, Morning Star Christian Church, its staff, volunteers, and website operators shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising out of your access to, use of, or inability to use this website, or any errors or omissions in its content. This limitation applies regardless of whether such damages arise from contract, tort, negligence, strict liability, or any other legal theory.</p>
+                
+                <h3>External Links</h3>
+                <p>This website may contain links to third-party websites, including social media platforms, for your convenience and reference. These links do not constitute an endorsement or approval of the content, products, services, or opinions expressed on those external sites. Morning Star Christian Church has no control over and assumes no responsibility for the content, privacy policies, or practices of any third-party websites. You access external links at your own risk.</p>
+                
+                <h3>Intellectual Property</h3>
+                <p>All content on this website, including but not limited to text, graphics, logos, images, audio, video, and software, is the property of Morning Star Christian Church or its content suppliers and is protected by United States and international copyright laws. You may not reproduce, distribute, modify, display, or create derivative works from any content on this Site without prior written permission, except for personal, non-commercial use such as printing a page for your own reference.</p>
+                
+                <h3>User Conduct</h3>
+                <p>By using this website, you agree not to engage in any activity that could harm the Site, its content, or other users. This includes, but is not limited to, attempting to gain unauthorized access, transmitting harmful code, or using the Site for any unlawful purpose.</p>
+                
+                <h3>Indemnification</h3>
+                <p>You agree to indemnify and hold harmless Morning Star Christian Church, its staff, volunteers, and website operators from any claims, damages, losses, or expenses (including reasonable attorney fees) arising from your use of this website or violation of these terms.</p>
+                
+                <h3>Governing Law</h3>
+                <p>This Privacy Policy and Disclaimer shall be governed by and construed in accordance with the laws of the State of Idaho, United States, without regard to its conflict of law provisions. Any disputes arising from or relating to this website shall be resolved in the courts of Ada County, Idaho.</p>
+                
+                <h3>Severability</h3>
+                <p>If any provision of this Privacy Policy or Disclaimer is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.</p>
                 
                 <div class="contact-box">
                     <h3>Contact Us</h3>

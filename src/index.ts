@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.25.2 - Adjusted outreach scroll position -->
+    <!-- v1.25.3 - Mobile outreach scroll reduced -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -5698,8 +5698,8 @@ app.get('/', (c) => {
                                 const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
                                 
                                 if (window.innerWidth <= 899) {
-                                    // Mobile: Nav overlaps outreach pill completely
-                                    navOffset = -80; // More negative = scroll further, nav covers pill
+                                    // Mobile: Nav overlaps outreach pill slightly
+                                    navOffset = 20; // Positive = scroll less, pill visible below nav
                                 } else if (window.innerWidth <= 1199) {
                                     // Tablet
                                     navOffset = -20;

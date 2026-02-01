@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.26.2 - Privacy Policy page with footer link -->
+    <!-- v1.26.3 - Privacy Policy updated with promotional use and social links -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -6638,10 +6638,11 @@ app.get('/privacy', (c) => {
                 <ul>
                     <li>To respond to your inquiries and prayer requests</li>
                     <li>To provide information about church services, events, and activities</li>
+                    <li>To send promotional materials about our church, including newsletters, event announcements, and ministry updates</li>
                     <li>To improve our website and user experience based on aggregated analytics</li>
                     <li>To maintain the security and functionality of our Site</li>
                 </ul>
-                <p>We <strong>do not</strong> use your information for marketing purposes unless you explicitly opt-in to receive such communications.</p>
+                <p>By submitting your contact information through our form, you consent to receiving communications from Morning Star Christian Church. You may opt-out of promotional communications at any time by contacting us directly.</p>
                 
                 <h2>Third-Party Services</h2>
                 
@@ -6653,6 +6654,15 @@ app.get('/privacy', (c) => {
                 
                 <h3>YouTube (Embedded Videos)</h3>
                 <p>Our Site may contain embedded YouTube videos. When you view these videos, YouTube may collect information in accordance with their privacy policy. For more information, please review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
+                
+                <h3>Social Media Platforms</h3>
+                <p>Our Site contains links to third-party social media platforms. When you click on these links, you will be directed to external websites that are not operated by us. We encourage you to review the privacy policies of these platforms:</p>
+                <ul>
+                    <li><strong>Instagram</strong> – <a href="https://privacycenter.instagram.com/policy" target="_blank" rel="noopener">Instagram Privacy Policy</a></li>
+                    <li><strong>Facebook</strong> – <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener">Facebook Privacy Policy</a></li>
+                    <li><strong>YouTube</strong> – <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">YouTube/Google Privacy Policy</a></li>
+                </ul>
+                <p>We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.</p>
                 
                 <h2>Data Retention</h2>
                 <p>Form submissions are retained in Jotform for as long as necessary to respond to your inquiry and maintain records of communications. Analytics data is retained in accordance with Vercel's data retention policies and is used solely for aggregated statistical purposes.</p>

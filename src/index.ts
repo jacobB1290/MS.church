@@ -5042,7 +5042,7 @@ app.get('/', (c) => {
                                 <div class="video-embed-wrapper">
                                     <iframe 
                                         class="youtube-embed"
-                                        src="https://www.youtube.com/embed?listType=playlist&list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC&index=1"
+                                        src="https://www.youtube-nocookie.com/embed?listType=playlist&list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC&index=1"
                                         title="Latest Sunday Service" 
                                         frameborder="0" 
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -6761,7 +6761,7 @@ app.get('/privacy', (c) => {
                 <p>Our website is hosted on Vercel, which provides privacy-focused analytics. Vercel Analytics is designed to be GDPR-compliant and does not require cookie consent banners as it does not use cookies or collect personally identifiable information. For more information, please review <a href="https://vercel.com/docs/analytics/privacy-policy" target="_blank" rel="noopener">Vercel's Analytics Privacy Policy</a>.</p>
                 
                 <h3>YouTube (Embedded Videos)</h3>
-                <p>Our Site may contain embedded YouTube videos. When you view these videos, YouTube may collect information in accordance with their privacy policy. For more information, please review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
+                <p>Our Site may contain embedded YouTube videos. When you view these videos, YouTube may collect information and set cookies in accordance with their privacy policy. <strong>Please note:</strong> While our website analytics (Vercel) do not use cookies, embedded YouTube videos may set their own cookies and trackers when loaded. Where possible, we utilize YouTube's privacy-enhanced embed mode to minimize tracking. For more information, please review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
                 
                 <h3>Social Media Platforms</h3>
                 <p>Our Site contains links to third-party social media platforms. When you click on these links, you will be directed to external websites that are not operated by us. We encourage you to review the privacy policies of these platforms:</p>

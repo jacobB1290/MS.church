@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.24.4 - Find Us Button: Long Pill Spanning Bottom of Hero Image -->
+    <!-- v1.24.5 - Find Us Button: Thinner Long Pill -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -607,14 +607,14 @@ app.get('/', (c) => {
                 align-items: center;
                 justify-content: center;
                 width: 100%;
-                padding: 14px 40px;
+                padding: 10px 40px;
                 background: rgb(255, 255, 255);
                 background: rgba(255, 255, 255, 0.75);
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
                 border: 1px solid rgba(255, 255, 255, 0.4);
                 border-radius: 100px;
-                font-size: 12px;
+                font-size: 11px;
                 font-weight: 700;
                 letter-spacing: 2px;
                 text-transform: uppercase;
@@ -3544,8 +3544,8 @@ app.get('/', (c) => {
                 }
                 
                 .find-us-btn {
-                    padding: 12px 32px;
-                    font-size: 11px;
+                    padding: 9px 28px;
+                    font-size: 10px;
                 }
                 
                 .service-info-buttons {
@@ -4071,8 +4071,8 @@ app.get('/', (c) => {
                 }
                 
                 .find-us-btn {
-                    padding: 10px 24px;
-                    font-size: 10px;
+                    padding: 8px 20px;
+                    font-size: 9px;
                     letter-spacing: 1.5px;
                 }
                 

@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.25.0 - Outreach pill shrunk, reduced spacing below card -->
+    <!-- v1.25.1 - Outreach pill fit-content, reduced spacing -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -724,7 +724,8 @@ app.get('/', (c) => {
             /* Outreach section header - same layout as Schedule */
             .outreach .section-eyebrow {
                 display: inline-flex !important;
-                width: auto !important;
+                width: fit-content !important;
+                max-width: fit-content !important;
                 margin-bottom: 10px;
             }
             
@@ -1049,7 +1050,8 @@ app.get('/', (c) => {
             
             .stay-tuned-only .section-eyebrow {
                 display: inline-flex !important; /* Ensure pill fits text only */
-                width: auto !important;
+                width: fit-content !important;
+                max-width: fit-content !important;
             }
             
             .stay-tuned-only .stay-tuned-container {
@@ -2638,7 +2640,8 @@ app.get('/', (c) => {
                 /* Outreach header elements align left like schedule */
                 .outreach .section-eyebrow {
                     display: inline-flex !important;
-                    width: auto !important;
+                    width: fit-content !important;
+                    max-width: fit-content !important;
                     text-align: left;
                 }
                 
@@ -2882,7 +2885,8 @@ app.get('/', (c) => {
                 
                 .outreach .section-eyebrow {
                     display: inline-flex !important;
-                    width: auto !important;
+                    width: fit-content !important;
+                    max-width: fit-content !important;
                     margin-bottom: 12px;
                 }
 
@@ -3207,13 +3211,14 @@ app.get('/', (c) => {
                    Card is now in stay-tuned-container (outside scroll container)
                    ======================================== */
                 .stay-tuned-only {
-                    margin-bottom: -60px !important; /* Pull Watch section closer */
+                    margin-bottom: -100px !important; /* Pull Watch section much closer */
                     min-height: auto !important; /* Remove 100vh min-height */
                 }
                 
                 .stay-tuned-only .section-eyebrow {
                     display: inline-flex !important; /* Ensure pill fits text only */
-                    width: auto !important;
+                    width: fit-content !important;
+                    max-width: fit-content !important;
                 }
                 
                 .stay-tuned-only .section-heading {
@@ -3537,7 +3542,8 @@ app.get('/', (c) => {
                 
                 .outreach .section-eyebrow {
                     display: inline-flex !important;
-                    width: auto !important;
+                    width: fit-content !important;
+                    max-width: fit-content !important;
                     margin-bottom: 10px;
                 }
                 
@@ -4375,7 +4381,9 @@ app.get('/', (c) => {
                 
                 /* Desktop outreach - same layout as schedule */
                 .outreach .section-eyebrow {
-                    display: inline-flex;
+                    display: inline-flex !important;
+                    width: fit-content !important;
+                    max-width: fit-content !important;
                     margin-bottom: 16px;
                 }
                 

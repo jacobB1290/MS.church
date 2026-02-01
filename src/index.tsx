@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.25.9 - Hero image flat (no shadow) -->
+    <!-- v1.26.0 - Added footer with social links -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -4653,6 +4653,122 @@ app.get('/', (c) => {
                     margin-bottom: 80px;
                 }
             }
+            
+            /* ========================================
+               FOOTER
+               ======================================== */
+            .site-footer {
+                background: #1a1a2e;
+                padding: 60px 0 40px;
+                margin-top: 80px;
+            }
+            
+            .footer-content {
+                max-width: 1280px;
+                margin: 0 auto;
+                padding: 0 5%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 32px;
+            }
+            
+            .footer-brand {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                line-height: 1;
+                text-align: center;
+            }
+            
+            .footer-brand-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 24px;
+                font-weight: 700;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+                color: #ffffff;
+            }
+            
+            .footer-brand-subtitle {
+                font-size: 11px;
+                letter-spacing: 4px;
+                text-transform: uppercase;
+                color: rgba(255, 255, 255, 0.5);
+                font-weight: 600;
+                margin-top: 4px;
+            }
+            
+            .footer-social {
+                display: flex;
+                gap: 24px;
+                align-items: center;
+            }
+            
+            .footer-social a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+                color: #ffffff;
+                transition: all 0.3s ease;
+            }
+            
+            .footer-social a:hover {
+                background: #d4a574;
+                transform: translateY(-3px);
+            }
+            
+            .footer-social svg {
+                width: 20px;
+                height: 20px;
+                fill: currentColor;
+            }
+            
+            .footer-divider {
+                width: 100%;
+                max-width: 200px;
+                height: 1px;
+                background: rgba(255, 255, 255, 0.1);
+            }
+            
+            .footer-copyright {
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.4);
+                text-align: center;
+            }
+            
+            @media (max-width: 480px) {
+                .site-footer {
+                    padding: 48px 0 32px;
+                    margin-top: 60px;
+                }
+                
+                .footer-content {
+                    gap: 24px;
+                }
+                
+                .footer-brand-title {
+                    font-size: 20px;
+                }
+                
+                .footer-social {
+                    gap: 16px;
+                }
+                
+                .footer-social a {
+                    width: 40px;
+                    height: 40px;
+                }
+                
+                .footer-social svg {
+                    width: 18px;
+                    height: 18px;
+                }
+            }
 
         </style>
     </head>
@@ -4915,6 +5031,38 @@ app.get('/', (c) => {
                     </div>
                 </section>
             </main>
+            
+            <!-- Footer -->
+            <footer class="site-footer">
+                <div class="footer-content">
+                    <div class="footer-brand">
+                        <span class="footer-brand-title">Morning Star</span>
+                        <span class="footer-brand-subtitle">Christian Church</span>
+                    </div>
+                    
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/mschurchboise" target="_blank" rel="noopener" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.facebook.com/61564924058156/" target="_blank" rel="noopener" aria-label="Facebook">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                        </a>
+                        <a href="https://youtube.com/@morningstarboise" target="_blank" rel="noopener" aria-label="YouTube">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    
+                    <div class="footer-divider"></div>
+                    
+                    <p class="footer-copyright">© 2025 Morning Star Christian Church. All rights reserved.</p>
+                </div>
+            </footer>
         </div>
 
         <script>

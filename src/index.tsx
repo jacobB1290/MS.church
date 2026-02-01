@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.24.8 - Stay Tuned Card: Outside Scroll Container -->
+    <!-- v1.24.9 - Stay Tuned: Fixed spacing and pill width -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -1034,10 +1034,16 @@ app.get('/', (c) => {
             .stay-tuned-only {
                 /* Remove excessive gap between sections */
                 margin-bottom: 0 !important;
+                min-height: auto !important; /* Remove 100vh min-height */
             }
             
             .stay-tuned-only .section-heading {
                 margin-bottom: 24px; /* Spacing before card */
+            }
+            
+            .stay-tuned-only .section-eyebrow {
+                display: inline-flex; /* Ensure pill fits text only */
+                width: auto;
             }
             
             .stay-tuned-badge {
@@ -3185,6 +3191,12 @@ app.get('/', (c) => {
                    ======================================== */
                 .stay-tuned-only {
                     margin-bottom: 0 !important;
+                    min-height: auto !important; /* Remove 100vh min-height */
+                }
+                
+                .stay-tuned-only .section-eyebrow {
+                    display: inline-flex; /* Ensure pill fits text only */
+                    width: auto;
                 }
                 
                 .stay-tuned-only .section-heading {

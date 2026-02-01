@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.24.7 - Outreach Section: Matches Schedule Layout -->
+    <!-- v1.24.8 - Stay Tuned Card: Outside Scroll Container -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -994,6 +994,11 @@ app.get('/', (c) => {
                STAY TUNED CARD - Future Events Placeholder
                Uses site colors (gold/warm tones matching the church brand)
                ======================================== */
+            /* Stay Tuned Container - sits outside scroll container, same width as section-card */
+            .stay-tuned-container {
+                width: 100%;
+            }
+            
             .stay-tuned-card {
                 background: rgba(255, 255, 255, 0.85); /* Match section-card */
                 display: flex;
@@ -1011,18 +1016,20 @@ app.get('/', (c) => {
                 position: relative;
                 overflow: visible;
                 transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Match section-card */
+                aspect-ratio: 3/4; /* Portrait card */
+                width: 100%;
             }
             
-            /* When Stay Tuned card is inside event-flyer-wrapper */
-            .event-flyer-wrapper.stay-tuned-card {
-                aspect-ratio: 3/4; /* 3:4 portrait card */
-                width: 100%;
-                overflow: hidden;
+            .stay-tuned-card:hover {
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
+                            0 16px 40px rgba(0, 0, 0, 0.05);
+                transform: translateY(-4px);
             }
             
             /* ========================================
                STAY TUNED ONLY MODE
                When no upcoming events - clean static layout
+               Card is now rendered in stay-tuned-container (outside scroll container)
                ======================================== */
             .stay-tuned-only {
                 /* Remove excessive gap between sections */
@@ -1030,64 +1037,7 @@ app.get('/', (c) => {
             }
             
             .stay-tuned-only .section-heading {
-                margin-bottom: 16px; /* Reduced spacing before card */
-            }
-            
-            .stay-tuned-only .outreach-scroll-container {
-                margin-top: 0;
-            }
-            
-            .stay-tuned-only .sticky-wrapper {
-                position: relative !important;
-                height: auto !important;
-                min-height: auto !important;
-                padding-top: 0 !important;
-                display: flex;
-                justify-content: center;
-                align-items: flex-start;
-            }
-            
-            .stay-tuned-only .scroll-spacer {
-                display: none !important;
-                height: 0 !important;
-            }
-            
-            .stay-tuned-only .events-container {
-                position: relative;
-                height: auto;
-                display: flex;
-                justify-content: center;
-                width: 100%;
-                max-width: 100%; /* Full width like schedule section-card */
-                margin: 0;
-            }
-            
-            .stay-tuned-only .event-slide {
-                position: relative !important;
-                transform: none !important;
-                opacity: 1 !important;
-                visibility: visible !important;
-                width: 100%;
-            }
-            
-            .stay-tuned-only .event-card {
-                height: auto !important;
-                min-height: auto;
-                max-height: none;
-                width: 100%;
-                max-width: 100%; /* Full width like schedule */
-                margin: 0;
-                padding: 0;
-            }
-            
-            .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                aspect-ratio: 3/4; /* Portrait card like event flyers */
-                min-height: auto;
-                max-height: none;
-                width: 100%;
-                margin: 0;
-                border-radius: 32px;
-                padding: 40px 32px;
+                margin-bottom: 24px; /* Spacing before card */
             }
             
             .stay-tuned-badge {
@@ -3193,7 +3143,8 @@ app.get('/', (c) => {
                 
                 /* Mobile Stay Tuned Card styling */
                 .stay-tuned-card {
-                    padding: 50px 24px 30px;
+                    padding: 40px 24px;
+                    border-radius: 32px;
                 }
                 
                 .stay-tuned-content {
@@ -3230,70 +3181,14 @@ app.get('/', (c) => {
                 
                 /* ========================================
                    MOBILE STAY-TUNED-ONLY OVERRIDES
-                   Full width card with 3:4 aspect ratio
+                   Card is now in stay-tuned-container (outside scroll container)
                    ======================================== */
                 .stay-tuned-only {
                     margin-bottom: 0 !important;
                 }
                 
-                .stay-tuned-only .section-eyebrow {
-                    display: inline-flex; /* Fit to text width */
-                    width: auto;
-                    margin-bottom: 8px;
-                }
-                
                 .stay-tuned-only .section-heading {
-                    margin-bottom: 16px; /* Reduced spacing */
-                }
-                
-                .stay-tuned-only .outreach-scroll-container {
-                    margin-top: 0;
-                    padding-top: 0;
-                }
-                
-                .stay-tuned-only .sticky-wrapper {
-                    position: relative !important;
-                    height: auto !important;
-                    padding-top: 0 !important;
-                    display: block;
-                }
-                
-                .stay-tuned-only .events-container {
-                    position: relative !important;
-                    width: 100%;
-                    max-width: 100%;
-                    margin: 0;
-                    height: auto !important;
-                    padding: 0;
-                }
-                
-                .stay-tuned-only .event-slide {
-                    position: relative !important;
-                    left: 0 !important;
-                    top: 0 !important;
-                    width: 100% !important;
-                    max-width: none !important;
-                    transform: none !important;
-                }
-                
-                .stay-tuned-only .event-card {
-                    width: 100%;
-                    max-width: none;
-                    height: auto !important;
-                    min-height: auto;
-                    padding: 0;
-                    margin: 0;
-                }
-                
-                /* Stay Tuned card - full width with 3:4 aspect ratio */
-                .stay-tuned-only .event-flyer-wrapper.stay-tuned-card {
-                    aspect-ratio: 3/4; /* Portrait card like event flyers */
-                    min-height: auto;
-                    max-height: none;
-                    width: 100%;
-                    margin-bottom: 0;
-                    padding: 40px 24px;
-                    border-radius: 32px;
+                    margin-bottom: 16px;
                 }
                 
                 /* Mobile Past Event styling */
@@ -4856,11 +4751,15 @@ app.get('/', (c) => {
                     }
                     </script>
                     
-                    <div class="outreach-scroll-container">
+                    <!-- Stay Tuned Card - rendered outside scroll container when no upcoming events -->
+                    <div class="stay-tuned-container" id="stay-tuned-container" style="display: none;">
+                        <!-- Will be populated by JavaScript when no upcoming events -->
+                    </div>
+                    
+                    <div class="outreach-scroll-container" id="outreach-scroll-container">
                         <div class="sticky-wrapper">
                             <div class="events-container" id="events-container">
                                 <!-- Events will be dynamically rendered here by JavaScript -->
-                                <!-- If no upcoming events: Shows Stay Tuned card -->
                                 <!-- If upcoming events exist: Shows event cards with carousel -->
                             </div>
                         </div>
@@ -5043,22 +4942,18 @@ app.get('/', (c) => {
                 
                 function renderStayTunedCard(hasPastEvents) {
                     return \`
-                        <div class="event-slide active" data-event="0">
-                            <div class="event-card">
-                                <div class="event-flyer-wrapper stay-tuned-card">
-                                    <span class="event-date stay-tuned-badge">COMING SOON</span>
-                                    <div class="stay-tuned-content">
-                                        <div class="stay-tuned-icon">✨</div>
-                                        <h3 class="stay-tuned-title">Stay Tuned</h3>
-                                        <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
-                                        <div class="stay-tuned-decoration">
-                                            <span>🤝</span>
-                                            <span>❤️</span>
-                                            <span>🙏</span>
-                                        </div>
-                                        \${hasPastEvents ? '<button class="btn-view-past-events" id="btn-view-past-events">View Past Events</button>' : ''}
-                                    </div>
+                        <div class="stay-tuned-card">
+                            <span class="event-date stay-tuned-badge">COMING SOON</span>
+                            <div class="stay-tuned-content">
+                                <div class="stay-tuned-icon">✨</div>
+                                <h3 class="stay-tuned-title">Stay Tuned</h3>
+                                <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
+                                <div class="stay-tuned-decoration">
+                                    <span>🤝</span>
+                                    <span>❤️</span>
+                                    <span>🙏</span>
                                 </div>
+                                \${hasPastEvents ? '<button class="btn-view-past-events" id="btn-view-past-events">View Past Events</button>' : ''}
                             </div>
                         </div>
                     \`;
@@ -5146,15 +5041,34 @@ app.get('/', (c) => {
                 const { upcoming, past } = initializeEvents();
                 console.log('Event Manager:', { upcoming: upcoming.length, past: past.length });
                 
+                // Get the stay-tuned container and scroll container
+                const stayTunedContainer = document.getElementById('stay-tuned-container');
+                const outreachScrollContainer = document.getElementById('outreach-scroll-container');
+                
                 // Render events in main container
                 if (upcoming.length === 0) {
-                    // No upcoming events - show Stay Tuned card
-                    eventsContainer.innerHTML = renderStayTunedCard(past.length > 0);
+                    // No upcoming events - show Stay Tuned card in separate container
+                    if (stayTunedContainer) {
+                        stayTunedContainer.innerHTML = renderStayTunedCard(past.length > 0);
+                        stayTunedContainer.style.display = 'block';
+                    }
+                    // Hide the scroll container entirely
+                    if (outreachScrollContainer) {
+                        outreachScrollContainer.style.display = 'none';
+                    }
                     body.classList.add('stay-tuned-active');
                     
                     // Hide upcoming event dots
                     if (upcomingEventDots) upcomingEventDots.style.display = 'none';
                 } else {
+                    // Hide stay-tuned container, show scroll container
+                    if (stayTunedContainer) {
+                        stayTunedContainer.style.display = 'none';
+                    }
+                    if (outreachScrollContainer) {
+                        outreachScrollContainer.style.display = 'block';
+                    }
+                    
                     // Render upcoming events
                     eventsContainer.innerHTML = upcoming.map((event, i) => 
                         renderUpcomingEventCard(event, i, upcoming.length)

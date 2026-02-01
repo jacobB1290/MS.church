@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.24.0 - Hero Find Us Button with Frosted Glass Effect -->
+    <!-- v1.24.1 - Find Us Button: Full-width, Thinner, No Emoji -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -596,51 +596,41 @@ app.get('/', (c) => {
             /* Find Us Button - Hero Section Frosted Glass Button */
             .find-us-wrapper {
                 position: absolute;
-                bottom: 32px;
-                left: 50%;
-                transform: translateX(-50%);
+                bottom: 0;
+                left: 0;
+                right: 0;
                 z-index: 100;
             }
             
             .find-us-btn {
-                display: inline-flex;
+                display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 10px;
-                padding: 16px 32px;
-                background: rgba(255, 255, 255, 0.25);
+                width: 100%;
+                padding: 14px 32px;
+                background: rgba(255, 255, 255, 0.2);
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.4);
-                border-radius: 100px;
-                font-size: 13px;
+                border: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 0 0 32px 32px;
+                font-size: 12px;
                 font-weight: 700;
-                letter-spacing: 2px;
+                letter-spacing: 2.5px;
                 text-transform: uppercase;
                 color: #ffffff;
                 cursor: pointer;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15),
-                            0 4px 16px rgba(0, 0, 0, 0.1),
-                            inset 0 1px 0 rgba(255, 255, 255, 0.2);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             }
             
             .find-us-btn:hover {
-                background: rgba(255, 255, 255, 0.35);
-                transform: translateY(-3px);
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2),
-                            0 6px 20px rgba(0, 0, 0, 0.15),
-                            inset 0 1px 0 rgba(255, 255, 255, 0.3);
-            }
-            
-            .find-us-btn .pin-icon {
-                font-size: 16px;
+                background: rgba(255, 255, 255, 0.3);
             }
             
             /* Find Us Dropdown - positioned above button */
             .find-us-wrapper .address-dropdown {
-                bottom: calc(100% + 12px);
+                bottom: calc(100% + 8px);
                 top: auto;
                 left: 50%;
                 transform: translateX(-50%) translateY(8px);
@@ -653,7 +643,7 @@ app.get('/', (c) => {
             /* Fallback for older devices without backdrop-filter */
             @supports not (backdrop-filter: blur(1px)) {
                 .find-us-btn {
-                    background: rgba(26, 26, 46, 0.85);
+                    background: rgba(26, 26, 46, 0.75);
                     color: #ffffff;
                 }
             }
@@ -3543,6 +3533,13 @@ app.get('/', (c) => {
                     object-position: center;
                 }
                 
+                /* Find Us Button - Match 24px corner radius on mobile */
+                .find-us-btn {
+                    border-radius: 0 0 24px 24px;
+                    padding: 12px 24px;
+                    font-size: 11px;
+                }
+                
                 .service-info-buttons {
                     width: 100%;
                     margin: 0;
@@ -4058,6 +4055,14 @@ app.get('/', (c) => {
                     border-radius: 16px;
                 }
                 
+                /* Find Us Button - Match 16px corner radius on small phones */
+                .find-us-btn {
+                    border-radius: 0 0 16px 16px;
+                    padding: 10px 20px;
+                    font-size: 10px;
+                    letter-spacing: 2px;
+                }
+                
                 .btn {
                     padding: 11px 22px;
                     font-size: 10px;
@@ -4475,6 +4480,11 @@ app.get('/', (c) => {
                     display: block;
                 }
                 
+                /* Find Us Button - Match responsive corner radius on desktop */
+                .find-us-btn {
+                    border-radius: 0 0 clamp(20px, 2vw, 28px) clamp(20px, 2vw, 28px);
+                }
+                
                 .hero-body .cta-group {
                     flex-direction: row;
                     justify-content: center;  /* Center buttons */
@@ -4825,10 +4835,7 @@ app.get('/', (c) => {
                             <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building">
                             <!-- Find Us Button - Frosted glass effect overlaid on hero image -->
                             <div class="find-us-wrapper address-dropdown-wrapper">
-                                <button class="find-us-btn address-trigger" data-address="3080 Wildwood St, Boise, Idaho">
-                                    <span class="pin-icon">📍</span>
-                                    <span>Find Us</span>
-                                </button>
+                                <button class="find-us-btn address-trigger" data-address="3080 Wildwood St, Boise, Idaho">Find Us</button>
                                 <div class="address-dropdown">
                                     <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
                                         <span class="address-dropdown-icon">🍎</span>

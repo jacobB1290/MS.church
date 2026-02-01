@@ -2275,7 +2275,7 @@ app.get('/', (c) => {
                 left: 0;
                 right: 0;
                 height: 65px;
-                background: #e9ecf5;
+                background: #f8f9fd;
                 pointer-events: none;
                 z-index: 10;
             }
@@ -4190,7 +4190,7 @@ app.get('/', (c) => {
                 
                 .jotform-container::after {
                     height: 60px;
-                    background: #e9ecf5;
+                    background: #f8f9fd;
                 }
                 
                 .jotform-container iframe {

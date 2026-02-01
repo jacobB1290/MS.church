@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.26.5 - Full legal protection: copyright, disclaimer, liability limits -->
+    <!-- v1.26.6 - Footer redesign: transparent background with gold separator -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -4658,9 +4658,10 @@ app.get('/', (c) => {
                FOOTER
                ======================================== */
             .site-footer {
-                background: #1a1a2e;
+                background: transparent;
                 padding: 60px 0 40px;
                 margin-top: 80px;
+                border-top: 1px solid #d4a574;
             }
             
             .footer-content {
@@ -4687,14 +4688,14 @@ app.get('/', (c) => {
                 font-weight: 700;
                 letter-spacing: 3px;
                 text-transform: uppercase;
-                color: #ffffff;
+                color: #1a1a2e;
             }
             
             .footer-brand-subtitle {
                 font-size: 11px;
                 letter-spacing: 4px;
                 text-transform: uppercase;
-                color: rgba(255, 255, 255, 0.5);
+                color: rgba(26, 26, 46, 0.5);
                 font-weight: 600;
                 margin-top: 4px;
             }
@@ -4712,13 +4713,14 @@ app.get('/', (c) => {
                 width: 44px;
                 height: 44px;
                 border-radius: 50%;
-                background: rgba(255, 255, 255, 0.1);
-                color: #ffffff;
+                background: rgba(26, 26, 46, 0.08);
+                color: #1a1a2e;
                 transition: all 0.3s ease;
             }
             
             .footer-social a:hover {
                 background: #d4a574;
+                color: #ffffff;
                 transform: translateY(-3px);
             }
             
@@ -4729,10 +4731,7 @@ app.get('/', (c) => {
             }
             
             .footer-divider {
-                width: 100%;
-                max-width: 200px;
-                height: 1px;
-                background: rgba(255, 255, 255, 0.1);
+                display: none;
             }
             
             .footer-links {
@@ -4742,7 +4741,7 @@ app.get('/', (c) => {
             
             .footer-link {
                 font-size: 13px;
-                color: rgba(255, 255, 255, 0.5);
+                color: rgba(26, 26, 46, 0.6);
                 text-decoration: none;
                 transition: color 0.3s ease;
             }
@@ -4753,7 +4752,7 @@ app.get('/', (c) => {
             
             .footer-copyright {
                 font-size: 13px;
-                color: rgba(255, 255, 255, 0.4);
+                color: rgba(26, 26, 46, 0.5);
                 text-align: center;
             }
             

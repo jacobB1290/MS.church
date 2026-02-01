@@ -5122,11 +5122,7 @@ app.get('/', (c) => {
                     <div class="footer-divider"></div>
                     
                     <div class="footer-links">
-                        <a href="/privacy#privacy" class="footer-link">Privacy Policy</a>
-                        <span class="footer-link-separator">|</span>
-                        <a href="/privacy#terms" class="footer-link">Terms of Service</a>
-                        <span class="footer-link-separator">|</span>
-                        <a href="/privacy#accessibility" class="footer-link">Accessibility</a>
+                        <a href="/privacy" class="footer-link">Legal</a>
                     </div>
                     
                     <p class="footer-copyright">© <span id="copyright-year"></span> Morning Star Christian Church. All rights reserved.</p>

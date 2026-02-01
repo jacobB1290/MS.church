@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.27.2 - Jotform branding overlay uses exact page background color -->
+    <!-- v1.27.3 - Reduced gap between contact form and footer -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -4679,7 +4679,7 @@ app.get('/', (c) => {
             .site-footer {
                 background: transparent;
                 padding: 60px 0 40px;
-                margin-top: 80px;
+                margin-top: 40px;
                 border-top: 1px solid #d4a574;
             }
             
@@ -4783,7 +4783,7 @@ app.get('/', (c) => {
             @media (max-width: 480px) {
                 .site-footer {
                     padding: 48px 0 32px;
-                    margin-top: 60px;
+                    margin-top: 24px;
                 }
                 
                 .footer-content {

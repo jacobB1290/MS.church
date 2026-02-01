@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.24.2 - Find Us Button: Frosted Glass Pill Matching Nav Bar -->
+    <!-- v1.24.3 - Find Us Button: Overlapping Bottom Edge of Hero Image -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -344,6 +344,11 @@ app.get('/', (c) => {
                 width: 100%;
             }
             
+            .hero-image-wrapper {
+                position: relative;
+                width: 100%;
+            }
+            
             .hero-image {
                 position: relative;
                 width: 100%;
@@ -594,11 +599,12 @@ app.get('/', (c) => {
             }
             
             /* Find Us Button - Hero Section Frosted Glass Pill (matches nav bar style) */
+            /* Positioned to overlap bottom edge of hero image */
             .find-us-wrapper {
                 position: absolute;
-                bottom: 24px;
+                bottom: 0;
                 left: 50%;
-                transform: translateX(-50%);
+                transform: translateX(-50%) translateY(50%);
                 z-index: 100;
             }
             
@@ -606,7 +612,7 @@ app.get('/', (c) => {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                padding: 14px 36px;
+                padding: 14px 40px;
                 background: rgb(255, 255, 255);
                 background: rgba(255, 255, 255, 0.75);
                 backdrop-filter: blur(20px);
@@ -3538,12 +3544,8 @@ app.get('/', (c) => {
                 
                 /* Find Us Button - Smaller on mobile */
                 .find-us-btn {
-                    padding: 12px 28px;
+                    padding: 12px 32px;
                     font-size: 11px;
-                }
-                
-                .find-us-wrapper {
-                    bottom: 20px;
                 }
                 
                 .service-info-buttons {
@@ -4063,13 +4065,9 @@ app.get('/', (c) => {
                 
                 /* Find Us Button - Smaller on small phones */
                 .find-us-btn {
-                    padding: 10px 24px;
+                    padding: 10px 28px;
                     font-size: 10px;
                     letter-spacing: 1.5px;
-                }
-                
-                .find-us-wrapper {
-                    bottom: 16px;
                 }
                 
                 .btn {
@@ -4435,7 +4433,7 @@ app.get('/', (c) => {
                     align-items: center;  /* Center child elements */
                 }
                 
-                .hero-image {
+                .hero-image-wrapper {
                     grid-area: image;
                     align-self: stretch;
                 }
@@ -4835,9 +4833,11 @@ app.get('/', (c) => {
                             <p>Join us every Sunday at 9:00 AM as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
                             <address class="hero-address">3080 Wildwood St · Boise, Idaho</address>
                         </div>
-                        <div class="hero-image">
-                            <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building">
-                            <!-- Find Us Button - Frosted glass effect overlaid on hero image -->
+                        <div class="hero-image-wrapper">
+                            <div class="hero-image">
+                                <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building">
+                            </div>
+                            <!-- Find Us Button - Frosted glass pill overlapping bottom edge of image -->
                             <div class="find-us-wrapper address-dropdown-wrapper">
                                 <button class="find-us-btn address-trigger" data-address="3080 Wildwood St, Boise, Idaho">Find Us</button>
                                 <div class="address-dropdown">

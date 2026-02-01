@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.23.0 - Dynamic Event Framework with Auto-Archiving -->
+    <!-- v1.24.0 - Hero Find Us Button with Frosted Glass Effect -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -591,6 +591,71 @@ app.get('/', (c) => {
             .address-dropdown-icon {
                 font-size: 18px;
                 flex-shrink: 0;
+            }
+            
+            /* Find Us Button - Hero Section Frosted Glass Button */
+            .find-us-wrapper {
+                position: absolute;
+                bottom: 32px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 100;
+            }
+            
+            .find-us-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                padding: 16px 32px;
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                border-radius: 100px;
+                font-size: 13px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                color: #ffffff;
+                cursor: pointer;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15),
+                            0 4px 16px rgba(0, 0, 0, 0.1),
+                            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            }
+            
+            .find-us-btn:hover {
+                background: rgba(255, 255, 255, 0.35);
+                transform: translateY(-3px);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2),
+                            0 6px 20px rgba(0, 0, 0, 0.15),
+                            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            }
+            
+            .find-us-btn .pin-icon {
+                font-size: 16px;
+            }
+            
+            /* Find Us Dropdown - positioned above button */
+            .find-us-wrapper .address-dropdown {
+                bottom: calc(100% + 12px);
+                top: auto;
+                left: 50%;
+                transform: translateX(-50%) translateY(8px);
+            }
+            
+            .find-us-wrapper .address-dropdown.active {
+                transform: translateX(-50%) translateY(0);
+            }
+            
+            /* Fallback for older devices without backdrop-filter */
+            @supports not (backdrop-filter: blur(1px)) {
+                .find-us-btn {
+                    background: rgba(26, 26, 46, 0.85);
+                    color: #ffffff;
+                }
             }
 
             /* Schedule Section */
@@ -4335,16 +4400,14 @@ app.get('/', (c) => {
                 .hero-body {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
-                    grid-template-rows: auto 1fr auto;
+                    grid-template-rows: 1fr;
                     grid-template-areas: 
-                        "content image"
-                        "spacer image"
-                        "info-buttons image";
+                        "content image";
                     max-width: clamp(1100px, 90vw, 1300px);
                     margin: 0 auto;
                     column-gap: clamp(40px, 5vw, 70px);
                     row-gap: 0;
-                    align-items: start;
+                    align-items: center;
                     width: 100%;
                 }
                 
@@ -4363,15 +4426,6 @@ app.get('/', (c) => {
                     align-self: stretch;
                 }
                 
-                /* Buttons container aligned to bottom */
-                .hero-body .service-info-buttons {
-                    grid-area: info-buttons;
-                    display: flex;
-                    flex-direction: column;
-                    align-self: end;  /* Align with bottom of image */
-                    align-items: center;
-                }
-                
                 /* Hero address styling */
                 .hero-address {
                     font-style: normal;
@@ -4379,10 +4433,6 @@ app.get('/', (c) => {
                     color: rgba(26, 26, 46, 0.6);
                     font-weight: 500;
                     margin-top: 8px;
-                }
-                
-                .hero-body .cta-group {
-                    /* Nested inside service-info-buttons */
                 }
                 
                 .hero-content p {
@@ -4773,11 +4823,26 @@ app.get('/', (c) => {
                         </div>
                         <div class="hero-image">
                             <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building">
-                        </div>
-                        <div class="service-info-buttons">
-                            <div class="cta-group">
-                                <a class="btn btn-primary btn-contact" href="#contact">Contact</a>
-                                <a class="btn btn-secondary btn-watch-gold" href="#watch">Watch Livestream</a>
+                            <!-- Find Us Button - Frosted glass effect overlaid on hero image -->
+                            <div class="find-us-wrapper address-dropdown-wrapper">
+                                <button class="find-us-btn address-trigger" data-address="3080 Wildwood St, Boise, Idaho">
+                                    <span class="pin-icon">📍</span>
+                                    <span>Find Us</span>
+                                </button>
+                                <div class="address-dropdown">
+                                    <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
+                                        <span class="address-dropdown-icon">🍎</span>
+                                        <span>Apple Maps</span>
+                                    </a>
+                                    <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
+                                        <span class="address-dropdown-icon">🗺️</span>
+                                        <span>Google Maps</span>
+                                    </a>
+                                    <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
+                                        <span class="address-dropdown-icon">📋</span>
+                                        <span>Copy Address</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

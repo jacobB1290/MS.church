@@ -1,7 +1,40 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.23.0
+## 🔢 CURRENT VERSION: v1.24.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.24.0 - Hero Find Us Button with Frosted Glass Effect
+**Replaced hero CTA buttons with a single "Find Us" button overlaid on the hero image**
+
+**Changes Made:**
+
+1. **Removed Hero CTA Buttons**
+   - Removed "Contact" button from hero section
+   - Removed "Watch Livestream" button from hero section
+   - Simplified hero layout to focus on the image
+
+2. **Added "Find Us" Frosted Glass Button**
+   - New button positioned at bottom center of hero image
+   - Frosted glass effect with backdrop blur for modern look
+   - Pin icon (📍) with "Find Us" text
+   - Semi-transparent white background with subtle border
+   - Smooth hover animation with lift effect
+   - Works on all devices (fallback for older browsers)
+
+3. **Integrated Address Dropdown**
+   - Uses existing address dropdown system throughout the site
+   - Dropdown opens above the button (inverted position)
+   - Options: Apple Maps, Google Maps, Copy Address
+   - Same functionality as schedule section address trigger
+
+4. **Updated Desktop Grid Layout**
+   - Simplified hero-body grid from 3 rows to 1 row
+   - Content and image now centered side-by-side
+   - Cleaner visual hierarchy
+
+**Result:** Hero section now features a clean, elegant frosted glass "Find Us" button that seamlessly integrates with the hero image and provides quick access to navigation options.
+
+---
 
 ### v1.23.0 - Dynamic Event Framework with Auto-Archiving
 **Intelligent event system that automatically handles past/upcoming events based on dates**

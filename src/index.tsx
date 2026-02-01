@@ -15,7 +15,7 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.26.3 - Privacy Policy updated with promotional use and social links -->
+    <!-- v1.26.4 - Removed 'All rights reserved' copyright claim -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -5080,7 +5080,7 @@ app.get('/', (c) => {
                         <a href="/privacy" class="footer-link">Privacy Policy</a>
                     </div>
                     
-                    <p class="footer-copyright">© 2025 Morning Star Christian Church. All rights reserved.</p>
+                    <p class="footer-copyright">© 2025 Morning Star Christian Church</p>
                 </div>
             </footer>
         </div>

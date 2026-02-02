@@ -5588,8 +5588,8 @@ app.get('/', (c) => {
                         // Desktop: Two card layout - Upcoming + Past Events
                         // Using inline styles to GUARANTEE side-by-side layout
                         return \`
-                            <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 32px; justify-content: center; align-items: flex-start; width: 100%; max-width: 600px; margin: 0 auto;">
-                                <div class="stay-tuned-card" style="flex: 0 0 260px; width: 260px; max-width: 260px; aspect-ratio: 3/4; border-radius: 32px;">
+                            <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 40px; justify-content: center; align-items: flex-start; width: 100%; max-width: 750px; margin: 0 auto;">
+                                <div class="stay-tuned-card" style="flex: 0 0 320px; width: 320px; max-width: 320px; aspect-ratio: 3/4; border-radius: 36px;">
                                     <span class="event-date stay-tuned-badge">COMING SOON</span>
                                     <div class="stay-tuned-content">
                                         <div class="stay-tuned-icon">✨</div>
@@ -5602,7 +5602,7 @@ app.get('/', (c) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 260px; width: 260px; max-width: 260px; aspect-ratio: 3/4; border-radius: 32px;">
+                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 320px; width: 320px; max-width: 320px; aspect-ratio: 3/4; border-radius: 36px;">
                                     <span class="past-card-badge">MEMORIES</span>
                                     <div class="past-card-icon">📸</div>
                                     <h3 class="past-card-title">Past Events</h3>
@@ -6345,8 +6345,8 @@ app.get('/', (c) => {
                                     // Tablet
                                     navOffset = -20;
                                 } else {
-                                    // Desktop: Scroll position 40
-                                    navOffset = 40;
+                                    // Desktop: Scroll position 60
+                                    navOffset = 60;
                                 }
                                 
                                 const targetPosition = outreachAbsoluteTop - navOffset;

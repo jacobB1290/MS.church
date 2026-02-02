@@ -5492,9 +5492,6 @@ app.get('/', (c) => {
                     <div class="jotform-container" id="contact-form">
                         <script type="text/javascript" src="https://form.jotform.com/jsform/260056249984062"></script>
                     </div>
-                    <p style="font-size: 12px; color: rgba(26, 26, 46, 0.45); text-align: center; margin-top: 16px; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.5;">
-                        By submitting this form, you acknowledge that we are under no obligation to respond. See our <a href="/privacy#terms" style="color: #d4a574;">Terms of Service</a> for details.
-                    </p>
                 </section>
             </main>
             

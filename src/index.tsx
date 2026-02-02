@@ -2649,24 +2649,40 @@ app.get('/', (c) => {
                 min-height: 800px;
                 background: transparent;
                 border-radius: 20px;
-                overflow: visible; /* Changed from hidden - allows shadows to render naturally */
+                overflow: visible;
                 position: relative;
             }
             
-            /* Fade out Jotform branding at bottom with gradient */
+            /* 
+             * Jotform logo cover - sits below the form, hugs the rounded corners
+             * Uses box-shadow trick to create inverted rounded corners
+             */
+            .jotform-container::before {
+                content: '';
+                position: absolute;
+                bottom: 70px; /* Higher up - right at bottom of form card */
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(100% - 40px); /* Match form card width */
+                height: 24px;
+                background: transparent;
+                border-radius: 0 0 24px 24px; /* Round bottom corners */
+                box-shadow: 0 80px 0 0 #f8f9fd; /* Taller shadow to cover more */
+                pointer-events: none;
+                z-index: 10;
+            }
+            
+            /* Solid cover for the Jotform branding area - extends full width */
             .jotform-container::after {
                 content: '';
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 80px;
-                background: linear-gradient(to bottom, 
-                    rgba(248, 249, 253, 0) 0%,
-                    rgba(248, 249, 253, 0.7) 40%,
-                    rgba(248, 249, 253, 1) 100%);
+                height: 70px; /* Taller to meet the ::before */
+                background: #f8f9fd;
                 pointer-events: none;
-                z-index: 10;
+                z-index: 9;
             }
             
             .jotform-container iframe {
@@ -4593,12 +4609,16 @@ app.get('/', (c) => {
                     min-height: 600px;
                 }
                 
+                .jotform-container::before {
+                    bottom: 85px; /* Higher up on mobile */
+                    width: calc(100% - 28px); /* Match mobile form card width */
+                    height: 20px;
+                    border-radius: 0 0 20px 20px;
+                    box-shadow: 0 95px 0 0 #f8f9fd; /* Taller shadow */
+                }
+                
                 .jotform-container::after {
-                    height: 70px;
-                    background: linear-gradient(to bottom, 
-                        rgba(248, 249, 253, 0) 0%,
-                        rgba(248, 249, 253, 0.7) 40%,
-                        rgba(248, 249, 253, 1) 100%);
+                    height: 85px; /* Taller to meet the ::before */
                 }
                 
                 .jotform-container iframe {

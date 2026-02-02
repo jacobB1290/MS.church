@@ -2649,19 +2649,22 @@ app.get('/', (c) => {
                 min-height: 800px;
                 background: transparent;
                 border-radius: 20px;
-                overflow: hidden;
+                overflow: visible; /* Changed from hidden - allows shadows to render naturally */
                 position: relative;
             }
             
-            /* Cover Jotform branding at bottom */
+            /* Fade out Jotform branding at bottom with gradient */
             .jotform-container::after {
                 content: '';
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 72px;
-                background: #f8f9fd;
+                height: 80px;
+                background: linear-gradient(to bottom, 
+                    rgba(248, 249, 253, 0) 0%,
+                    rgba(248, 249, 253, 0.7) 40%,
+                    rgba(248, 249, 253, 1) 100%);
                 pointer-events: none;
                 z-index: 10;
             }
@@ -4591,8 +4594,11 @@ app.get('/', (c) => {
                 }
                 
                 .jotform-container::after {
-                    height: 40px; /* Reduced from 68px - less aggressive logo cover */
-                    background: #f8f9fd;
+                    height: 70px;
+                    background: linear-gradient(to bottom, 
+                        rgba(248, 249, 253, 0) 0%,
+                        rgba(248, 249, 253, 0.7) 40%,
+                        rgba(248, 249, 253, 1) 100%);
                 }
                 
                 .jotform-container iframe {

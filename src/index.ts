@@ -960,6 +960,148 @@ app.get('/', (c) => {
                 margin-bottom: 0;
             }
             
+            /* ========================================
+               DESKTOP STAY TUNED - Two Card Layout
+               Only applies to screens >= 961px
+               ======================================== */
+            @media (min-width: 961px) {
+                .stay-tuned-container {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 24px;
+                    justify-content: center;
+                    align-items: stretch;
+                    max-width: 800px;
+                    margin: 0 auto;
+                }
+                
+                .stay-tuned-card {
+                    aspect-ratio: auto !important;
+                    min-height: 320px !important;
+                    max-height: 380px !important;
+                    flex: 1;
+                    padding: 32px 28px !important;
+                }
+                
+                .stay-tuned-card .stay-tuned-icon {
+                    font-size: 36px;
+                    margin-top: 0;
+                }
+                
+                .stay-tuned-card .stay-tuned-title {
+                    font-size: 24px !important;
+                }
+                
+                .stay-tuned-card .stay-tuned-text {
+                    font-size: 14px !important;
+                    line-height: 1.5;
+                }
+                
+                .stay-tuned-card .stay-tuned-decoration {
+                    font-size: 20px;
+                    gap: 12px;
+                }
+                
+                .stay-tuned-card .stay-tuned-badge {
+                    font-size: 10px !important;
+                    padding: 6px 12px !important;
+                    top: 12px;
+                    left: 12px;
+                }
+                
+                .stay-tuned-card .btn-view-past-events {
+                    font-size: 13px !important;
+                    padding: 10px 20px !important;
+                }
+                
+                /* Past Events Card - Desktop */
+                .past-events-card {
+                    background: rgba(255, 255, 255, 0.85);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    padding: 32px 28px;
+                    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
+                                0 12px 32px rgba(0, 0, 0, 0.04);
+                    border: 1px solid rgba(255, 255, 255, 0.6);
+                    backdrop-filter: blur(20px);
+                    min-height: 320px;
+                    max-height: 380px;
+                    border-radius: 48px;
+                    position: relative;
+                    overflow: visible;
+                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    flex: 1;
+                    cursor: pointer;
+                }
+                
+                .past-events-card:hover {
+                    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
+                                0 16px 40px rgba(0, 0, 0, 0.05);
+                    transform: translateY(-4px);
+                }
+                
+                .past-events-card .past-card-badge {
+                    background: linear-gradient(135deg, #8b9dc3 0%, #7189b0 100%);
+                    box-shadow: 0 4px 16px rgba(113, 137, 176, 0.35);
+                    position: absolute;
+                    top: 12px;
+                    left: 12px;
+                    color: white;
+                    font-size: 10px;
+                    font-weight: 700;
+                    padding: 6px 12px;
+                    border-radius: 20px;
+                    letter-spacing: 0.5px;
+                }
+                
+                .past-events-card .past-card-icon {
+                    font-size: 36px;
+                    margin-bottom: 8px;
+                }
+                
+                .past-events-card .past-card-title {
+                    font-family: 'Playfair Display', serif;
+                    font-size: 24px;
+                    font-weight: 700;
+                    margin: 0 0 8px 0;
+                    color: #1a1a2e;
+                }
+                
+                .past-events-card .past-card-text {
+                    font-size: 14px;
+                    color: rgba(26, 26, 46, 0.7);
+                    line-height: 1.5;
+                    margin-bottom: 16px;
+                }
+                
+                .past-events-card .past-card-btn {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    background: transparent;
+                    border: 2px solid #d4a574;
+                    color: #d4a574;
+                    border-radius: 30px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                
+                .past-events-card .past-card-btn:hover {
+                    background: #d4a574;
+                    color: white;
+                }
+                
+                /* Reduce outreach section scroll on desktop when Stay Tuned only */
+                .outreach.stay-tuned-only {
+                    min-height: auto !important;
+                    padding-bottom: 60px !important;
+                }
+            }
+            
             .event-indicators {
                 margin-bottom: 20px;
             }
@@ -5403,22 +5545,52 @@ app.get('/', (c) => {
                 }
                 
                 function renderStayTunedCard(hasPastEvents) {
-                    return \`
-                        <div class="stay-tuned-card">
-                            <span class="event-date stay-tuned-badge">COMING SOON</span>
-                            <div class="stay-tuned-content">
-                                <div class="stay-tuned-icon">✨</div>
-                                <h3 class="stay-tuned-title">Stay Tuned</h3>
-                                <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
-                                <div class="stay-tuned-decoration">
-                                    <span>🤝</span>
-                                    <span>❤️</span>
-                                    <span>🙏</span>
+                    // Check if desktop (>= 961px)
+                    const isDesktop = window.innerWidth >= 961;
+                    
+                    if (isDesktop && hasPastEvents) {
+                        // Desktop: Two card layout - Upcoming + Past Events
+                        return \`
+                            <div class="stay-tuned-card">
+                                <span class="event-date stay-tuned-badge">COMING SOON</span>
+                                <div class="stay-tuned-content">
+                                    <div class="stay-tuned-icon">✨</div>
+                                    <h3 class="stay-tuned-title">Stay Tuned</h3>
+                                    <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
+                                    <div class="stay-tuned-decoration">
+                                        <span>🤝</span>
+                                        <span>❤️</span>
+                                        <span>🙏</span>
+                                    </div>
                                 </div>
-                                \${hasPastEvents ? '<button class="btn-view-past-events" id="btn-view-past-events">View Past Events</button>' : ''}
                             </div>
-                        </div>
-                    \`;
+                            <div class="past-events-card" id="btn-view-past-events-desktop">
+                                <span class="past-card-badge">MEMORIES</span>
+                                <div class="past-card-icon">📸</div>
+                                <h3 class="past-card-title">Past Events</h3>
+                                <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
+                                <span class="past-card-btn">View Gallery</span>
+                            </div>
+                        \`;
+                    } else {
+                        // Mobile: Single card with button inside
+                        return \`
+                            <div class="stay-tuned-card">
+                                <span class="event-date stay-tuned-badge">COMING SOON</span>
+                                <div class="stay-tuned-content">
+                                    <div class="stay-tuned-icon">✨</div>
+                                    <h3 class="stay-tuned-title">Stay Tuned</h3>
+                                    <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
+                                    <div class="stay-tuned-decoration">
+                                        <span>🤝</span>
+                                        <span>❤️</span>
+                                        <span>🙏</span>
+                                    </div>
+                                    \${hasPastEvents ? '<button class="btn-view-past-events" id="btn-view-past-events">View Past Events</button>' : ''}
+                                </div>
+                            </div>
+                        \`;
+                    }
                 }
                 
                 function renderUpcomingEventCard(event, index, totalUpcoming) {
@@ -5588,12 +5760,23 @@ app.get('/', (c) => {
                 
                 // Open past events modal
                 const viewPastEventsBtn = document.getElementById('btn-view-past-events');
-                if (viewPastEventsBtn && pastEventsModal && past.length > 0) {
-                    viewPastEventsBtn.addEventListener('click', () => {
+                const viewPastEventsBtnDesktop = document.getElementById('btn-view-past-events-desktop');
+                
+                const openPastEventsModal = () => {
+                    if (pastEventsModal && past.length > 0) {
                         pastEventsModal.classList.add('active');
                         body.classList.add('modal-open');
                         updatePastEventSlide(0);
-                    });
+                    }
+                };
+                
+                if (viewPastEventsBtn && pastEventsModal && past.length > 0) {
+                    viewPastEventsBtn.addEventListener('click', openPastEventsModal);
+                }
+                
+                // Desktop past events card click handler
+                if (viewPastEventsBtnDesktop && pastEventsModal && past.length > 0) {
+                    viewPastEventsBtnDesktop.addEventListener('click', openPastEventsModal);
                 }
                 
                 // Close past events modal

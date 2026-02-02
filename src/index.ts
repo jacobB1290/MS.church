@@ -6702,7 +6702,7 @@ app.get('/privacy', (c) => {
             
             <div class="page-header">
                 <h1>Legal Information</h1>
-                <p class="last-updated">Last Updated: February 1, 2026</p>
+                <p class="last-updated">Last Updated: February 2, 2026</p>
             </div>
             
             <nav class="nav-tabs">
@@ -6755,11 +6755,7 @@ app.get('/privacy', (c) => {
                     <li>To maintain the security and functionality of our Site</li>
                 </ul>
                 <p><strong>Consent:</strong> Our contact form requires you to agree to receive church updates by email and text message before submission. By checking the required consent boxes and submitting the form, you expressly consent to receiving communications from Morning Star Christian Church at the email address and phone number you provide. Standard message and data rates may apply to text messages. Message frequency varies. <strong>Consent to receive messages is not a condition of attending church services or receiving ministry support.</strong></p>
-                <p><strong>Opt-Out:</strong> You may opt-out of communications at any time by:</p>
-                <ul>
-                    <li><strong>Text messages:</strong> Reply STOP to any text message. Reply HELP for assistance.</li>
-                    <li><strong>Email:</strong> Click the unsubscribe link in any email, or email us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> with "Unsubscribe" in the subject line.</li>
-                </ul>
+                <p><strong>Opt-Out:</strong> You may opt out of communications at any time. See the "Your Rights" section below for opt-out instructions. Reply HELP to any text message for assistance.</p>
                 <p><strong>Access Controls:</strong> Access to your personal information is limited to church staff and authorized volunteers who need it to respond to your inquiry or fulfill ministry-related activities.</p>
                 
                 <h2>Third-Party Services</h2>
@@ -6771,7 +6767,17 @@ app.get('/privacy', (c) => {
                 <p>Our website is hosted on Vercel, which also provides our analytics services. Vercel Web Analytics is designed to be privacy-focused and does not use cookies. For more information, please review <a href="https://vercel.com/docs/analytics/privacy-policy" target="_blank" rel="noopener">Vercel's Analytics Privacy Policy</a>.</p>
                 
                 <h3>YouTube (Embedded Videos)</h3>
-                <p>Our Site may contain embedded YouTube videos. When you view these videos, YouTube may collect information and set cookies in accordance with their privacy policy. <strong>Please note:</strong> While our website analytics (Vercel) do not use cookies, embedded YouTube videos may set their own cookies and trackers when loaded. Where possible, we utilize YouTube's privacy-enhanced embed mode to minimize tracking. For more information, please review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
+                <p>Our Site contains embedded YouTube videos. <strong>Please note:</strong> Our website is designed to automatically display and play YouTube videos at scheduled times during the week (for example, during our regular service times). When these videos load or play—whether automatically or by your interaction—YouTube may collect information and set cookies in accordance with their privacy policy.</p>
+                <p><strong>YouTube Data Collection:</strong> When YouTube videos are loaded on our Site, YouTube/Google may collect:</p>
+                <ul>
+                    <li>IP address and general location information</li>
+                    <li>Device and browser information</li>
+                    <li>Viewing history and interactions with the video player</li>
+                    <li>Cookies and similar tracking technologies</li>
+                </ul>
+                <p><strong>Privacy-Enhanced Mode:</strong> Where possible, we utilize YouTube's privacy-enhanced embed mode (youtube-nocookie.com) to minimize tracking. In this mode, YouTube states that it does not store information about visitors on your website unless they play the video. However, once a video is played, standard YouTube data collection applies.</p>
+                <p><strong>Your Controls:</strong> You can manage YouTube/Google cookies and tracking through your browser settings or by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener">Google's Ad Settings</a>. You may also use browser extensions that block third-party cookies or trackers. Note that blocking cookies may affect video playback functionality.</p>
+                <p>While our website analytics (Vercel) do not use cookies, embedded YouTube videos may set their own cookies and trackers when loaded. For more information, please review <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
                 
                 <h3>Social Media Platforms</h3>
                 <p>Our Site contains links to third-party social media platforms. When you click on these links, you will be directed to external websites that are not operated by us. We encourage you to review the privacy policies of these platforms:</p>
@@ -6816,7 +6822,35 @@ app.get('/privacy', (c) => {
                     <li><strong>Right to Restrict Processing</strong> – request limitation of how we use your data</li>
                     <li><strong>Right to Data Portability</strong> – request transfer of your data in a structured format</li>
                 </ul>
-                <p><strong>To Exercise Your Rights:</strong> Please email us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> with your request. To protect your privacy, we may need to verify your identity before processing your request. We will respond to valid requests within 30 days.</p>
+                
+                <h3>Formal Requests by Mail</h3>
+                <p>To help protect your privacy and prevent fraud, we require formal privacy requests (such as requests to access, correct, or delete personal information) to be submitted in writing by mail to:</p>
+                <p style="margin-left: 20px;">
+                    <strong>Morning Star Christian Church</strong><br>
+                    Attn: Privacy Request<br>
+                    3080 Wildwood St<br>
+                    Boise, Idaho 83713
+                </p>
+                <p>Please include in your written request:</p>
+                <ul>
+                    <li>Your full name and contact information</li>
+                    <li>A clear description of the information or action you are requesting</li>
+                    <li>Sufficient information to verify your identity (such as the email address or phone number you provided when contacting us)</li>
+                </ul>
+                
+                <h3>Email as a Convenience</h3>
+                <p>We may accept privacy requests submitted by email to <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> as a convenience. However, please be aware that this email inbox may not be monitored regularly, and submitting a request by email does not guarantee a response. If you do not receive a response to an email request within a reasonable time, please submit your request by mail to the address above.</p>
+                
+                <h3>Opt-Out Requests</h3>
+                <p><strong>Exception for Opt-Out:</strong> Opt-out requests do not require a mailed letter. You can opt out of communications at any time by:</p>
+                <ul>
+                    <li><strong>Text messages:</strong> Reply STOP to any text message.</li>
+                    <li><strong>Email:</strong> Click the unsubscribe link in any email, or email us with "Unsubscribe" in the subject line.</li>
+                </ul>
+                
+                <h3>Response Timing</h3>
+                <p>If we receive a valid privacy request, we will make reasonable efforts to respond within a reasonable time. Response times may vary depending on the nature of the request, the need to verify your identity, and the availability of staff and volunteers. As a religious organization operated primarily by volunteers, we appreciate your patience.</p>
+                <p>To protect your privacy, we may need to verify your identity before processing your request.</p>
                 
                 <h2>Children's Privacy</h2>
                 <p>Our Site is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately so we can delete such information.</p>

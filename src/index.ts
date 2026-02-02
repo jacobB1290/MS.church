@@ -966,52 +966,59 @@ app.get('/', (c) => {
                ======================================== */
             @media (min-width: 961px) {
                 .stay-tuned-container {
-                    display: flex;
-                    flex-direction: row;
+                    display: flex !important;
+                    flex-direction: row !important;
+                    flex-wrap: nowrap !important;
                     gap: 24px;
                     justify-content: center;
                     align-items: stretch;
-                    max-width: 800px;
+                    max-width: 700px;
                     margin: 0 auto;
+                    width: 100%;
                 }
                 
-                .stay-tuned-card {
-                    aspect-ratio: auto !important;
-                    min-height: 320px !important;
-                    max-height: 380px !important;
-                    flex: 1;
-                    padding: 32px 28px !important;
+                .stay-tuned-card,
+                .past-events-card {
+                    aspect-ratio: 3/4 !important;
+                    width: 280px !important;
+                    max-width: 280px !important;
+                    min-width: 280px !important;
+                    height: auto !important;
+                    min-height: unset !important;
+                    max-height: unset !important;
+                    flex: 0 0 280px !important;
+                    padding: 32px 24px !important;
                 }
                 
                 .stay-tuned-card .stay-tuned-icon {
-                    font-size: 36px;
+                    font-size: 32px;
                     margin-top: 0;
                 }
                 
                 .stay-tuned-card .stay-tuned-title {
-                    font-size: 24px !important;
+                    font-size: 22px !important;
                 }
                 
                 .stay-tuned-card .stay-tuned-text {
-                    font-size: 14px !important;
+                    font-size: 13px !important;
                     line-height: 1.5;
                 }
                 
                 .stay-tuned-card .stay-tuned-decoration {
-                    font-size: 20px;
-                    gap: 12px;
+                    font-size: 18px;
+                    gap: 10px;
                 }
                 
                 .stay-tuned-card .stay-tuned-badge {
-                    font-size: 10px !important;
-                    padding: 6px 12px !important;
+                    font-size: 9px !important;
+                    padding: 5px 10px !important;
                     top: 12px;
                     left: 12px;
                 }
                 
                 .stay-tuned-card .btn-view-past-events {
-                    font-size: 13px !important;
-                    padding: 10px 20px !important;
+                    font-size: 12px !important;
+                    padding: 8px 16px !important;
                 }
                 
                 /* Past Events Card - Desktop */
@@ -1022,18 +1029,14 @@ app.get('/', (c) => {
                     align-items: center;
                     justify-content: center;
                     text-align: center;
-                    padding: 32px 28px;
                     box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
                                 0 12px 32px rgba(0, 0, 0, 0.04);
                     border: 1px solid rgba(255, 255, 255, 0.6);
                     backdrop-filter: blur(20px);
-                    min-height: 320px;
-                    max-height: 380px;
-                    border-radius: 48px;
+                    border-radius: 40px;
                     position: relative;
                     overflow: visible;
                     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-                    flex: 1;
                     cursor: pointer;
                 }
                 
@@ -1043,6 +1046,10 @@ app.get('/', (c) => {
                     transform: translateY(-4px);
                 }
                 
+                .stay-tuned-card {
+                    border-radius: 40px;
+                }
+                
                 .past-events-card .past-card-badge {
                     background: linear-gradient(135deg, #8b9dc3 0%, #7189b0 100%);
                     box-shadow: 0 4px 16px rgba(113, 137, 176, 0.35);
@@ -1050,41 +1057,41 @@ app.get('/', (c) => {
                     top: 12px;
                     left: 12px;
                     color: white;
-                    font-size: 10px;
+                    font-size: 9px;
                     font-weight: 700;
-                    padding: 6px 12px;
+                    padding: 5px 10px;
                     border-radius: 20px;
                     letter-spacing: 0.5px;
                 }
                 
                 .past-events-card .past-card-icon {
-                    font-size: 36px;
-                    margin-bottom: 8px;
+                    font-size: 32px;
+                    margin-bottom: 6px;
                 }
                 
                 .past-events-card .past-card-title {
                     font-family: 'Playfair Display', serif;
-                    font-size: 24px;
+                    font-size: 22px;
                     font-weight: 700;
-                    margin: 0 0 8px 0;
+                    margin: 0 0 6px 0;
                     color: #1a1a2e;
                 }
                 
                 .past-events-card .past-card-text {
-                    font-size: 14px;
+                    font-size: 13px;
                     color: rgba(26, 26, 46, 0.7);
                     line-height: 1.5;
-                    margin-bottom: 16px;
+                    margin-bottom: 12px;
                 }
                 
                 .past-events-card .past-card-btn {
                     display: inline-block;
-                    padding: 10px 20px;
+                    padding: 8px 16px;
                     background: transparent;
                     border: 2px solid #d4a574;
                     color: #d4a574;
                     border-radius: 30px;
-                    font-size: 13px;
+                    font-size: 12px;
                     font-weight: 600;
                     cursor: pointer;
                     transition: all 0.3s ease;
@@ -1387,8 +1394,37 @@ app.get('/', (c) => {
                 position: relative;
                 overflow: visible;
                 transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Match section-card */
-                aspect-ratio: 3/4; /* Portrait card */
-                width: 100%;
+                aspect-ratio: 3/4; /* Portrait card - mobile */
+                width: 100%; /* Mobile: full width */
+            }
+            
+            /* DESKTOP OVERRIDE - Two cards side by side with 3:4 portrait ratio */
+            @media (min-width: 961px) {
+                .stay-tuned-container {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    flex-wrap: nowrap !important;
+                    gap: 32px !important;
+                    justify-content: center !important;
+                    align-items: flex-start !important;
+                    max-width: 620px !important;
+                    margin: 0 auto !important;
+                    width: 100% !important;
+                }
+                
+                .stay-tuned-container > .stay-tuned-card,
+                .stay-tuned-container > .past-events-card {
+                    aspect-ratio: 3/4 !important;
+                    width: 260px !important;
+                    max-width: 260px !important;
+                    min-width: 260px !important;
+                    flex: 0 0 260px !important;
+                    height: auto !important;
+                    min-height: unset !important;
+                    max-height: unset !important;
+                    padding: 28px 20px !important;
+                    border-radius: 32px !important;
+                }
             }
             
             .stay-tuned-card:hover {
@@ -5550,26 +5586,29 @@ app.get('/', (c) => {
                     
                     if (isDesktop && hasPastEvents) {
                         // Desktop: Two card layout - Upcoming + Past Events
+                        // Using inline styles to GUARANTEE side-by-side layout
                         return \`
-                            <div class="stay-tuned-card">
-                                <span class="event-date stay-tuned-badge">COMING SOON</span>
-                                <div class="stay-tuned-content">
-                                    <div class="stay-tuned-icon">✨</div>
-                                    <h3 class="stay-tuned-title">Stay Tuned</h3>
-                                    <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
-                                    <div class="stay-tuned-decoration">
-                                        <span>🤝</span>
-                                        <span>❤️</span>
-                                        <span>🙏</span>
+                            <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 32px; justify-content: center; align-items: flex-start; width: 100%; max-width: 600px; margin: 0 auto;">
+                                <div class="stay-tuned-card" style="flex: 0 0 260px; width: 260px; max-width: 260px; aspect-ratio: 3/4; border-radius: 32px;">
+                                    <span class="event-date stay-tuned-badge">COMING SOON</span>
+                                    <div class="stay-tuned-content">
+                                        <div class="stay-tuned-icon">✨</div>
+                                        <h3 class="stay-tuned-title">Stay Tuned</h3>
+                                        <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
+                                        <div class="stay-tuned-decoration">
+                                            <span>🤝</span>
+                                            <span>❤️</span>
+                                            <span>🙏</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="past-events-card" id="btn-view-past-events-desktop">
-                                <span class="past-card-badge">MEMORIES</span>
-                                <div class="past-card-icon">📸</div>
-                                <h3 class="past-card-title">Past Events</h3>
-                                <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
-                                <span class="past-card-btn">View Gallery</span>
+                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 260px; width: 260px; max-width: 260px; aspect-ratio: 3/4; border-radius: 32px;">
+                                    <span class="past-card-badge">MEMORIES</span>
+                                    <div class="past-card-icon">📸</div>
+                                    <h3 class="past-card-title">Past Events</h3>
+                                    <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
+                                    <span class="past-card-btn">View Gallery</span>
+                                </div>
                             </div>
                         \`;
                     } else {
@@ -6306,8 +6345,8 @@ app.get('/', (c) => {
                                     // Tablet
                                     navOffset = -20;
                                 } else {
-                                    // Desktop: Standard offset
-                                    navOffset = -10;
+                                    // Desktop: Scroll position 30
+                                    navOffset = 30;
                                 }
                                 
                                 const targetPosition = outreachAbsoluteTop - navOffset;

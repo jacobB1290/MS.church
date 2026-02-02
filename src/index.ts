@@ -5492,6 +5492,9 @@ app.get('/', (c) => {
                     <div class="jotform-container" id="contact-form">
                         <script type="text/javascript" src="https://form.jotform.com/jsform/260056249984062"></script>
                     </div>
+                    <p style="font-size: 12px; color: rgba(26, 26, 46, 0.45); text-align: center; margin-top: 16px; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+                        By submitting this form, you acknowledge that we are under no obligation to respond. See our <a href="/privacy#terms" style="color: #d4a574;">Terms of Service</a> for details.
+                    </p>
                 </section>
             </main>
             
@@ -7195,7 +7198,7 @@ app.get('/privacy', (c) => {
                     <li><strong>Phone Number</strong> – to contact you if requested or necessary</li>
                     <li><strong>Message Content</strong> – any additional information you choose to share</li>
                 </ul>
-                <p>This information is collected for the purpose of responding to your inquiries, facilitating communication regarding church activities, services, or prayer requests, and sending you promotional materials about our church including newsletters, event announcements, and ministry updates via email and text message.</p>
+                <p>This information is collected for the purpose of potentially responding to your inquiries, facilitating communication regarding church activities, services, or prayer requests, and sending you promotional materials about our church including newsletters, event announcements, and ministry updates via email and text message. <strong>Please note:</strong> Submitting information through our contact form does not obligate us to respond or take any action. See our Terms of Service for details.</p>
                 <p><strong>Sensitive Information Warning:</strong> Please do not submit sensitive personal information (such as medical details, financial information, or other confidential data) through our contact form unless you choose to share it. If you include such information (for example, in a prayer request), you understand it may be viewed by church staff and volunteers who handle these requests.</p>
                 <p><strong>Who Receives Your Information:</strong> When you submit information through our contact form, it is stored in Jotform, emailed to church staff at our church email address, and may be accessed by authorized church members and volunteers for the purpose of responding to your inquiry or fulfilling ministry-related activities (such as outreach drives).</p>
                 
@@ -7346,6 +7349,7 @@ app.get('/privacy', (c) => {
                         <br>
                         Or use our <a href="/#contact">contact form</a> on the main website.
                     </p>
+                    <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 12px;"><em>Note: We are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                 </div>
             </section>
             
@@ -7391,7 +7395,17 @@ app.get('/privacy', (c) => {
                 <p><strong>Termination of Access:</strong> We reserve the right to block access to the Site or refuse form submissions from any user who violates these Terms or misuses the Site, without prior notice.</p>
                 
                 <h2>Contact Form Submissions</h2>
-                <p>Submitting a message through our contact form does not guarantee a response. We make reasonable efforts to respond to legitimate inquiries, but we reserve the right not to respond to messages that appear to be spam, abusive, or outside the scope of church-related matters.</p>
+                <p><strong>No Obligation to Respond:</strong> Morning Star Christian Church is under no obligation to respond to any message, inquiry, or submission received through our contact form, email, or any other communication channel. Submitting information through our contact form or otherwise contacting us does not create any relationship, duty, or obligation on our part to respond, acknowledge, or take action on your submission.</p>
+                <p>While we endeavor to respond to legitimate inquiries as time and resources permit, we expressly reserve the right to:</p>
+                <ul>
+                    <li>Not respond to any message for any reason or no reason at all</li>
+                    <li>Not respond to messages that appear to be spam, solicitations, or unrelated to church matters</li>
+                    <li>Not respond to messages that are abusive, inappropriate, or inconsistent with our mission</li>
+                    <li>Delay response indefinitely based on staff and volunteer availability</li>
+                    <li>Delete or discard messages without response or notification</li>
+                </ul>
+                <p><strong>No Confidentiality:</strong> Unless you have a pre-existing confidential relationship with Morning Star Christian Church, any information you submit through our contact form or other communication channels shall be deemed non-confidential. We have no obligation to keep such information confidential, though we will handle personal information in accordance with our Privacy Policy.</p>
+                <p><strong>As a volunteer-operated religious organization</strong>, our ability to respond to communications is limited and dependent on the availability of volunteers. Your patience and understanding are appreciated.</p>
                 
                 <h2>Changes to the Site</h2>
                 <p>We may change, suspend, or discontinue any part of the Site at any time, including the availability of any feature, content, or service, without prior notice. We will not be liable if any part of the Site is unavailable at any time or for any period.</p>
@@ -7449,6 +7463,7 @@ app.get('/privacy', (c) => {
                         <br>
                         Or use our <a href="/#contact">contact form</a> on the main website.
                     </p>
+                    <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 12px;"><em>Note: We are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                 </div>
             </section>
             
@@ -7533,6 +7548,7 @@ app.get('/privacy', (c) => {
                         <br>
                         Or use our <a href="/#contact">contact form</a> on the main website.
                     </p>
+                    <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 12px;"><em>Note: We are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                 </div>
             </section>
         </div>

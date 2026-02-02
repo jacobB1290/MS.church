@@ -3627,6 +3627,7 @@ app.get('/', (c) => {
                 .stay-tuned-only {
                     margin-bottom: -100px !important; /* Pull Watch section much closer */
                     min-height: auto !important; /* Remove 100vh min-height */
+                    overflow: visible !important; /* CRITICAL: Allow shadows to render without clipping */
                 }
                 
                 .stay-tuned-only .section-eyebrow {
@@ -3641,6 +3642,21 @@ app.get('/', (c) => {
                 
                 .stay-tuned-only .stay-tuned-container {
                     margin-bottom: 0;
+                    /* Add padding to give shadow room to render */
+                    padding: 40px 20px 60px 20px; /* top, right, bottom, left */
+                    margin-left: -20px; /* Compensate for padding to keep card centered */
+                    margin-right: -20px;
+                    width: calc(100% + 40px); /* Account for negative margins */
+                    box-sizing: border-box;
+                    display: flex;
+                    justify-content: center;
+                }
+                
+                /* Mobile Stay Tuned card sizing - constrain width for cleaner look */
+                .stay-tuned-only .stay-tuned-card {
+                    width: 85%;
+                    max-width: 380px;
+                    margin: 0 auto;
                 }
                 
                 /* Mobile Past Event styling */

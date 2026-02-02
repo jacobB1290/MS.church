@@ -2283,9 +2283,10 @@ app.get('/', (c) => {
             }
             
             .contact-header {
-                text-align: center; /* Centered on desktop like other sections */
+                text-align: left; /* Left aligned on desktop like other sections */
                 max-width: 800px;
-                margin: 0 auto;
+                margin: 0;
+                padding: 0 5%;
             }
             
             /* Gift Gallery - Images always in a row, scale to fit */

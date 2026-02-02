@@ -6345,8 +6345,8 @@ app.get('/', (c) => {
                                     // Tablet
                                     navOffset = -20;
                                 } else {
-                                    // Desktop: Scroll position 30
-                                    navOffset = 30;
+                                    // Desktop: Scroll position 40
+                                    navOffset = 40;
                                 }
                                 
                                 const targetPosition = outreachAbsoluteTop - navOffset;

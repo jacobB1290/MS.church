@@ -3782,7 +3782,7 @@ app.get('/', (c) => {
 
                 main {
                     gap: 100px;
-                    margin-bottom: 80px;
+                    margin-bottom: 20px; /* Reduced from 80px - contact section sits closer to footer */
                 }
 
                 .hero {
@@ -4591,7 +4591,7 @@ app.get('/', (c) => {
                 }
                 
                 .jotform-container::after {
-                    height: 68px;
+                    height: 40px; /* Reduced from 68px - less aggressive logo cover */
                     background: #f8f9fd;
                 }
                 
@@ -5207,7 +5207,7 @@ app.get('/', (c) => {
                     padding: 48px 0 32px;
                     /* Safari iOS safe area - add extra padding for home indicator on mobile */
                     padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
-                    margin-top: 24px;
+                    margin-top: 0; /* Reduced from 24px - footer sits right against jotform */
                 }
                 
                 .footer-content {

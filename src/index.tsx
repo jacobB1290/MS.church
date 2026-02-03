@@ -11,6 +11,187 @@ app.use('/api/*', cors())
 app.use('/static/*', serveStatic({ root: './public' }))
 app.use('/favicon.ico', serveStatic({ root: './public' }))
 
+// ========================================
+// GOOGLE CALENDAR API CONFIGURATION
+// ========================================
+// SETUP INSTRUCTIONS:
+// 
+// 1. CREATE A PUBLIC GOOGLE CALENDAR:
+//    - Go to Google Calendar → Settings → Calendar Settings
+//    - Under "Access permissions for events", check "Make available to public"
+//    - Get the Calendar ID from "Integrate calendar" section
+//      (looks like: abc123xyz@group.calendar.google.com)
+//
+// 2. CONFIGURE API KEY IN GOOGLE CLOUD CONSOLE:
+//    - Go to https://console.cloud.google.com/apis/credentials
+//    - For the API key, set:
+//      a) Application restrictions: "None" (for server-side) OR "HTTP referrers" with your domains
+//      b) API restrictions: "Google Calendar API" only
+//    - If using HTTP referrer restrictions, add:
+//      - ms.church/*
+//      - *.sandbox.novita.ai/*  (for testing)
+//
+// 3. CREATE EVENTS WITH IMAGES:
+//    - Create event in Google Calendar
+//    - Click "Add attachment" → Select image from Google Drive
+//    - The image must be shared publicly (Anyone with the link)
+//    - Add CTA in description: [CTA: BUTTON TEXT | #contact]
+//
+const GOOGLE_CALENDAR_CONFIG = {
+  API_KEY: 'AIzaSyBa2FQQolaJ0iM3vYSCCJd55vXkzmPA6Jg',
+  CALENDAR_ID: '', // Set your calendar ID here, e.g., 'abc123@group.calendar.google.com'
+  MAX_RESULTS: 20,
+  TIME_ZONE: 'America/Boise'
+};
+
+// ========================================
+// GOOGLE CALENDAR API ENDPOINT
+// Fetches events from a public Google Calendar
+// Returns events with Drive file attachments as images
+// ========================================
+app.get('/api/calendar/events', async (c) => {
+  try {
+    const calendarId = GOOGLE_CALENDAR_CONFIG.CALENDAR_ID || c.req.query('calendarId');
+    
+    if (!calendarId) {
+      return c.json({
+        success: false,
+        error: 'Calendar ID not configured. Please set CALENDAR_ID in GOOGLE_CALENDAR_CONFIG or pass calendarId query parameter.',
+        events: []
+      }, 400);
+    }
+    
+    // Build the Google Calendar API URL
+    const apiUrl = new URL(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`);
+    
+    // Add query parameters
+    apiUrl.searchParams.set('key', GOOGLE_CALENDAR_CONFIG.API_KEY);
+    apiUrl.searchParams.set('singleEvents', 'true');
+    apiUrl.searchParams.set('orderBy', 'startTime');
+    apiUrl.searchParams.set('maxResults', String(GOOGLE_CALENDAR_CONFIG.MAX_RESULTS));
+    apiUrl.searchParams.set('timeZone', GOOGLE_CALENDAR_CONFIG.TIME_ZONE);
+    
+    // Request attachments with supportsAttachments=true
+    // Note: This returns the attachments array if files are attached
+    
+    // Fetch all events (we'll filter into upcoming/past on the frontend)
+    // This allows us to show both upcoming events AND past events gallery
+    const response = await fetch(apiUrl.toString());
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Google Calendar API error:', errorData);
+      return c.json({
+        success: false,
+        error: `Google Calendar API error: ${errorData.error?.message || 'Unknown error'}`,
+        details: errorData.error,
+        events: []
+      }, response.status);
+    }
+    
+    const data = await response.json();
+    
+    // Transform Google Calendar events to our event format
+    const events = (data.items || []).map((gcalEvent: any) => {
+      // Get the event date
+      const startDate = gcalEvent.start?.date || gcalEvent.start?.dateTime;
+      const eventDate = new Date(startDate);
+      
+      // Format display date (e.g., "DEC 21")
+      const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+      const displayDate = `${months[eventDate.getMonth()]} ${eventDate.getDate()}`;
+      
+      // Get image from attachments (first attachment that's an image)
+      // Google Drive attachments have fileUrl and mimeType
+      let imageUrl = '';
+      let driveFileLink = '';
+      
+      if (gcalEvent.attachments && gcalEvent.attachments.length > 0) {
+        // Find image attachment
+        const imageAttachment = gcalEvent.attachments.find((att: any) => 
+          att.mimeType && att.mimeType.startsWith('image/')
+        );
+        
+        if (imageAttachment) {
+          // Convert Drive file URL to direct image URL
+          // Drive URLs like: https://drive.google.com/file/d/FILE_ID/view
+          // Need to convert to: https://drive.google.com/uc?export=view&id=FILE_ID
+          // Or use: https://lh3.googleusercontent.com/d/FILE_ID (for public files)
+          const fileId = imageAttachment.fileId;
+          if (fileId) {
+            // Use the public Drive thumbnail/image URL
+            imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+            driveFileLink = imageAttachment.fileUrl || `https://drive.google.com/file/d/${fileId}/view`;
+          }
+        }
+        
+        // If no image found, check first attachment (might be any file type)
+        if (!imageUrl && gcalEvent.attachments[0]?.fileId) {
+          const firstAtt = gcalEvent.attachments[0];
+          driveFileLink = firstAtt.fileUrl || `https://drive.google.com/file/d/${firstAtt.fileId}/view`;
+          // Try to use it as an image anyway (for flyer PDFs converted to images, etc.)
+          imageUrl = `https://drive.google.com/uc?export=view&id=${firstAtt.fileId}`;
+        }
+      }
+      
+      // Extract CTA from description if provided
+      // Format: [CTA: Button Text | URL]
+      // Example: [CTA: RESERVE YOUR SEAT | #contact]
+      let ctaText = 'LEARN MORE';
+      let ctaLink = '#contact';
+      
+      if (gcalEvent.description) {
+        const ctaMatch = gcalEvent.description.match(/\[CTA:\s*([^|]+)\s*\|\s*([^\]]+)\]/);
+        if (ctaMatch) {
+          ctaText = ctaMatch[1].trim();
+          ctaLink = ctaMatch[2].trim();
+        }
+      }
+      
+      return {
+        id: gcalEvent.id,
+        title: gcalEvent.summary || 'Untitled Event',
+        description: gcalEvent.description?.replace(/\[CTA:[^\]]+\]/, '').trim() || '',
+        date: eventDate.toISOString().split('T')[0], // YYYY-MM-DD format
+        displayDate: displayDate,
+        image: imageUrl,
+        driveFileLink: driveFileLink,
+        location: gcalEvent.location || '',
+        cta: {
+          text: ctaText,
+          link: ctaLink
+        },
+        // Include original Google Calendar event data for debugging
+        _gcal: {
+          htmlLink: gcalEvent.htmlLink,
+          status: gcalEvent.status,
+          updated: gcalEvent.updated
+        }
+      };
+    });
+    
+    // Filter out events with no image (if required)
+    // const eventsWithImages = events.filter(e => e.image);
+    
+    return c.json({
+      success: true,
+      calendarId: calendarId,
+      calendarName: data.summary || '',
+      timezone: data.timeZone || GOOGLE_CALENDAR_CONFIG.TIME_ZONE,
+      events: events,
+      totalEvents: events.length
+    });
+    
+  } catch (error) {
+    console.error('Calendar API error:', error);
+    return c.json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      events: []
+    }, 500);
+  }
+});
+
 // Main landing page with enhanced scroll animations
 app.get('/', (c) => {
   return c.html(`
@@ -5362,7 +5543,28 @@ app.get('/', (c) => {
                         <!-- Dots will be dynamically generated based on upcoming event count -->
                     </div>
                     
-                    <!-- Event Data Store (JavaScript will parse this for automatic date-based filtering) -->
+                    <!--
+                    ================================================
+                    EVENT DATA STORE
+                    ================================================
+                    Events can come from TWO sources:
+                    
+                    1. STATIC (Default) - The JSON below is used
+                    2. GOOGLE CALENDAR API - When CALENDAR_CONFIG.useGoogleCalendar is true
+                    
+                    For Google Calendar Integration:
+                    - Calendar must be PUBLIC (Settings → Access permissions → Make available to public)
+                    - Attach image flyers as Google Drive files to the event
+                    - Add CTA in description: [CTA: BUTTON TEXT | #contact] or [CTA: RSVP NOW | /form]
+                    - Event title (summary) becomes the event name
+                    - Event date is automatically formatted (e.g., "DEC 21")
+                    - First image attachment becomes the event flyer
+                    
+                    To enable Google Calendar:
+                    - Set CALENDAR_CONFIG.useGoogleCalendar = true in JavaScript
+                    - Set CALENDAR_CONFIG.calendarId = 'your-calendar-id@group.calendar.google.com'
+                    ================================================
+                    -->
                     <script type="application/json" id="events-data">
                     {
                         "events": [
@@ -5576,25 +5778,80 @@ app.get('/', (c) => {
                 // ========================================
                 // DYNAMIC EVENT MANAGER
                 // Auto-archives past events, handles 0-3+ upcoming events
+                // Supports Google Calendar API integration with static fallback
                 // ========================================
                 
-                function initializeEvents() {
-                    // Parse event data from JSON
+                // Configuration for Google Calendar integration
+                const CALENDAR_CONFIG = {
+                    // Set to true to enable Google Calendar API fetching
+                    // Set to false to use static JSON data only
+                    useGoogleCalendar: false,
+                    
+                    // Your public Google Calendar ID
+                    // Find this in Google Calendar → Settings → Calendar Settings → Integrate Calendar
+                    calendarId: '',
+                    
+                    // Cache duration in milliseconds (5 minutes default)
+                    cacheDuration: 5 * 60 * 1000,
+                    
+                    // Fallback to static data if API fails
+                    fallbackToStatic: true
+                };
+                
+                // Cache for API responses
+                let calendarCache = {
+                    data: null,
+                    timestamp: 0
+                };
+                
+                // Fetch events from Google Calendar API
+                async function fetchGoogleCalendarEvents() {
+                    // Check cache first
+                    const now = Date.now();
+                    if (calendarCache.data && (now - calendarCache.timestamp) < CALENDAR_CONFIG.cacheDuration) {
+                        console.log('Using cached calendar data');
+                        return calendarCache.data;
+                    }
+                    
+                    try {
+                        const response = await fetch(\`/api/calendar/events?calendarId=\${encodeURIComponent(CALENDAR_CONFIG.calendarId)}\`);
+                        const result = await response.json();
+                        
+                        if (result.success && result.events) {
+                            // Update cache
+                            calendarCache.data = result.events;
+                            calendarCache.timestamp = now;
+                            console.log(\`Fetched \${result.events.length} events from Google Calendar\`);
+                            return result.events;
+                        } else {
+                            console.warn('Google Calendar API returned no events:', result.error);
+                            return null;
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch Google Calendar events:', error);
+                        return null;
+                    }
+                }
+                
+                // Parse static event data from JSON script tag
+                function parseStaticEvents() {
                     const eventsDataEl = document.getElementById('events-data');
                     if (!eventsDataEl) {
                         console.error('Events data not found');
-                        return { upcoming: [], past: [] };
+                        return [];
                     }
                     
-                    let allEvents;
                     try {
                         const data = JSON.parse(eventsDataEl.textContent);
-                        allEvents = data.events || [];
+                        return data.events || [];
                     } catch (e) {
                         console.error('Failed to parse events data:', e);
-                        return { upcoming: [], past: [] };
+                        return [];
                     }
-                    
+                }
+                
+                // Categorize events into upcoming and past
+                function categorizeEvents(allEvents) {
                     // Get today's date (start of day for proper comparison)
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
@@ -5621,6 +5878,41 @@ app.get('/', (c) => {
                     past.sort((a, b) => new Date(b.date) - new Date(a.date));
                     
                     return { upcoming, past };
+                }
+                
+                // Main initialization function (supports async for API calls)
+                async function initializeEventsAsync() {
+                    let allEvents = [];
+                    
+                    // Try Google Calendar API if enabled
+                    if (CALENDAR_CONFIG.useGoogleCalendar && CALENDAR_CONFIG.calendarId) {
+                        const gcalEvents = await fetchGoogleCalendarEvents();
+                        if (gcalEvents && gcalEvents.length > 0) {
+                            allEvents = gcalEvents;
+                        } else if (CALENDAR_CONFIG.fallbackToStatic) {
+                            console.log('Falling back to static event data');
+                            allEvents = parseStaticEvents();
+                        }
+                    } else {
+                        // Use static data
+                        allEvents = parseStaticEvents();
+                    }
+                    
+                    return categorizeEvents(allEvents);
+                }
+                
+                // Synchronous wrapper for backward compatibility
+                function initializeEvents() {
+                    // If Google Calendar is enabled, this returns a promise
+                    // Otherwise, it returns the categorized events directly
+                    if (CALENDAR_CONFIG.useGoogleCalendar && CALENDAR_CONFIG.calendarId) {
+                        // For async, we'll need to handle this differently
+                        // This is a fallback that uses static data synchronously
+                        console.log('Note: For Google Calendar, use initializeEventsAsync()');
+                    }
+                    
+                    const allEvents = parseStaticEvents();
+                    return categorizeEvents(allEvents);
                 }
                 
                 function renderStayTunedCard(hasPastEvents) {
@@ -5754,7 +6046,9 @@ app.get('/', (c) => {
                 }
                 
                 // Initialize and render events
-                const { upcoming, past } = initializeEvents();
+                // Using an async IIFE to support Google Calendar API fetching
+                (async () => {
+                const { upcoming, past } = await initializeEventsAsync();
                 console.log('Event Manager:', { upcoming: upcoming.length, past: past.length });
                 
                 // Get the stay-tuned container and scroll container
@@ -5930,6 +6224,8 @@ app.get('/', (c) => {
                         }
                     }, { passive: true });
                 }
+                
+                })(); // End of async event initialization IIFE
 
                 // ========================================
                 // MAIN EVENT CAROUSEL (only if upcoming events exist)

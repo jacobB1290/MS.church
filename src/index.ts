@@ -6082,11 +6082,19 @@ app.get('/', (c) => {
                         \`<span class="event-dot \${i === index ? 'active' : ''}"></span>\`
                     ).join('');
                     
+                    // Debug: Log the event being rendered
+                    console.log('Rendering event card:', event.title, 'Image URL:', event.image);
+                    
+                    // If no image, show a placeholder
+                    const imageHtml = event.image 
+                        ? \`<img src="\${event.image}" alt="\${event.title}" class="flyer-image" onerror="console.error('Image failed to load:', this.src); this.style.display='none';">\`
+                        : \`<div class="flyer-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,#d4a574,#c89860);display:flex;align-items:center;justify-content:center;"><span style="font-size:48px;">📅</span></div>\`;
+                    
                     return \`
                         <div class="event-slide \${index === 0 ? 'active' : ''}" data-event="\${index + 1}">
                             <div class="event-card">
                                 <div class="event-flyer-wrapper">
-                                    <img src="\${event.image}" alt="\${event.title}" class="flyer-image">
+                                    \${imageHtml}
                                     <span class="event-date">\${event.displayDate}</span>
                                     <div class="event-indicators">
                                         \${dotsHTML}

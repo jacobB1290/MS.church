@@ -7194,7 +7194,7 @@ app.get('/privacy', (c) => {
             
             <div class="page-header">
                 <h1>Legal Information</h1>
-                <p class="last-updated">Last Updated: February 2, 2026</p>
+                <p class="last-updated">Last Updated: February 3, 2026</p>
             </div>
             
             <nav class="nav-tabs">
@@ -7283,7 +7283,7 @@ app.get('/privacy', (c) => {
                 <p><strong>Important:</strong> Even though our own analytics do not use cookies, third-party embedded content (such as YouTube videos and the Jotform contact form) may collect data and set cookies independently. We cannot control or monitor this third-party data collection.</p>
                 
                 <h2>Data Retention</h2>
-                <p><strong>Contact Form Submissions:</strong> Form submissions are retained in Jotform and our email records for as long as needed for ministry purposes and church recordkeeping. We periodically review stored data and delete or anonymize information when it is no longer needed. If you would like your information deleted sooner, please contact us using the information below.</p>
+                <p><strong>Contact Form Submissions:</strong> Form submissions are retained in Jotform and our email records for as long as needed for ministry purposes and church recordkeeping. We periodically review stored data and delete or anonymize information when it is no longer needed. If you would like your information deleted sooner, please submit a written request by mail as described in the "Your Rights" section below.</p>
                 <p><strong>Analytics Data:</strong> Analytics data is retained in accordance with Vercel's data retention policies and is used solely for aggregated statistical purposes.</p>
                 <p><strong>Backups:</strong> Please note that your information may also exist in routine backups, which are retained for operational and security purposes.</p>
                 
@@ -7345,7 +7345,7 @@ app.get('/privacy', (c) => {
                 <p>To protect your privacy, we may need to verify your identity before processing your request.</p>
                 
                 <h2>Children's Privacy</h2>
-                <p>Our Site is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately so we can delete such information.</p>
+                <p>Our Site is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately by mail or email (see "How to Contact Us" below) so we can delete such information.</p>
                 
                 <h2>Changes to This Policy</h2>
                 <p>We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Privacy Policy on this page with an updated "Last Updated" date. We encourage you to review this Privacy Policy periodically.</p>
@@ -7354,25 +7354,26 @@ app.get('/privacy', (c) => {
                 <p>Some web browsers have a "Do Not Track" feature that signals to websites that you do not want your online activity tracked. Our Site does not currently respond to Do Not Track signals, as there is no industry standard for how to handle such requests. However, as noted above, our analytics are already designed to be privacy-focused and do not track individual users across sites.</p>
                 
                 <h2>California Privacy Rights</h2>
-                <p>As a nonprofit religious organization, we are generally not subject to the California Consumer Privacy Act (CCPA). However, we are committed to transparency and will respond to privacy-related questions from California residents. We do not sell personal information to third parties. If you have questions about your privacy rights, please contact us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a>.</p>
+                <p>As a nonprofit religious organization, we are generally not subject to the California Consumer Privacy Act (CCPA). However, we are committed to transparency and will endeavor to respond to privacy-related questions from California residents as time permits. We do not sell personal information to third parties. If you have questions about your privacy rights, please contact us by mail or email as described in "How to Contact Us" below.</p>
                 
                 <h2>International Users</h2>
                 <p>If you are accessing our Site from outside the United States, please be aware that your information may be transferred to, stored, and processed in the United States where our servers are located. By using our Site, you consent to such transfer.</p>
                 
+                <h2>How to Contact Us</h2>
+                <p>If you have any questions about this Privacy Policy or our data practices, you may contact us using the methods below.</p>
+                
                 <div class="contact-box">
-                    <h3>Contact Us About Privacy</h3>
-                    <p>If you have any questions about this Privacy Policy or our data practices, please contact us at:</p>
-                    <p>
-                        <strong>Morning Star Christian Church</strong><br>
+                    <h3>Contact Information</h3>
+                    <p><strong>By Mail (Primary Method):</strong></p>
+                    <p style="margin-left: 20px;">
+                        Morning Star Christian Church<br>
                         Attn: Privacy<br>
                         3080 Wildwood St<br>
-                        Boise, Idaho<br>
-                        <br>
-                        <strong>Email:</strong> <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a><br>
-                        <br>
-                        Or use our <a href="/#contact">contact form</a> on the main website.
+                        Boise, Idaho 83713
                     </p>
-                    <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 12px;"><em>Note: We are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
+                    <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
+                    <p>You may also reach us by email at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response. For formal requests requiring a response, please contact us by mail.</p>
+                    <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                 </div>
             </section>
             
@@ -7404,7 +7405,14 @@ app.get('/privacy', (c) => {
                 </ul>
                 
                 <h2>Copyright Complaints (DMCA)</h2>
-                <p>If you believe that any content on our Site infringes your copyright, please contact us at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> with the subject line "Copyright Complaint." Please include a description of the copyrighted work, the location of the allegedly infringing material on our Site, and your contact information. We will review and respond to valid copyright complaints in accordance with applicable law.</p>
+                <p>If you believe that any content on our Site infringes your copyright, please submit a written notice by mail to:</p>
+                <p style="margin-left: 20px;">
+                    Morning Star Christian Church<br>
+                    Attn: Copyright Complaint<br>
+                    3080 Wildwood St<br>
+                    Boise, Idaho 83713
+                </p>
+                <p>You may also submit a notice by email to <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> with the subject line "Copyright Complaint" as a convenience, though mail is preferred. Please include a description of the copyrighted work, the location (URL) of the allegedly infringing material on our Site, and your contact information. We will review and respond to valid copyright complaints in accordance with applicable law.</p>
                 
                 <h2>User Conduct</h2>
                 <p>By using this website, you agree to conduct yourself in a manner consistent with the values and mission of Morning Star Christian Church. When using our contact form or otherwise interacting with the Site, you agree not to:</p>
@@ -7474,19 +7482,21 @@ app.get('/privacy', (c) => {
                 <h2>Waiver</h2>
                 <p>The failure of Morning Star Christian Church to enforce any right or provision of these Terms will not be deemed a waiver of such right or provision. Any waiver of any provision of these Terms will be effective only if in writing and signed by Morning Star Christian Church.</p>
                 
+                <h2>How to Contact Us</h2>
+                <p>If you have any questions about these Terms of Service, you may contact us using the methods below.</p>
+                
                 <div class="contact-box">
-                    <h3>Contact Us About Terms</h3>
-                    <p>If you have any questions about these Terms of Service, please contact us at:</p>
-                    <p>
-                        <strong>Morning Star Christian Church</strong><br>
+                    <h3>Contact Information</h3>
+                    <p><strong>By Mail (Primary Method):</strong></p>
+                    <p style="margin-left: 20px;">
+                        Morning Star Christian Church<br>
+                        Attn: Terms Inquiry<br>
                         3080 Wildwood St<br>
-                        Boise, Idaho<br>
-                        <br>
-                        <strong>Email:</strong> <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a><br>
-                        <br>
-                        Or use our <a href="/#contact">contact form</a> on the main website.
+                        Boise, Idaho 83713
                     </p>
-                    <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 12px;"><em>Note: We are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
+                    <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
+                    <p>You may also reach us by email at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
+                    <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                 </div>
             </section>
             
@@ -7539,16 +7549,16 @@ app.get('/privacy', (c) => {
                 </ul>
                 
                 <h2>Alternative Formats</h2>
-                <p>If you need information from our website in an alternative format, we are happy to help. Upon request, we can provide key information in formats such as:</p>
+                <p>If you need information from our website in an alternative format, we are happy to help as resources permit. Upon request, we can provide key information in formats such as:</p>
                 <ul>
                     <li>Large print documents</li>
                     <li>Information read aloud over the phone</li>
                     <li>Plain text versions of content</li>
                 </ul>
-                <p>Please contact us using the information below to request an alternative format.</p>
+                <p>Please contact us using the methods described in "How to Contact Us" below to request an alternative format.</p>
                 
                 <h2>Feedback and Assistance</h2>
-                <p>We welcome feedback on the accessibility of our website. If you encounter any accessibility barriers or need assistance accessing any content, please contact us. We will make reasonable efforts to provide the information you need in an accessible format.</p>
+                <p>We welcome feedback on the accessibility of our website. If you encounter any accessibility barriers or need assistance accessing any content, please contact us using the methods described in "How to Contact Us" below. We will make reasonable efforts to provide the information you need in an accessible format.</p>
                 <p>When contacting us about accessibility, please include:</p>
                 <ul>
                     <li>The web address (URL) of the content you were trying to access</li>
@@ -7559,19 +7569,21 @@ app.get('/privacy', (c) => {
                 <h2>Continuous Improvement</h2>
                 <p>We are committed to continuously improving the accessibility of our website. We periodically review our site for accessibility issues and work to address them as resources allow. If you have suggestions for improving accessibility, we welcome your input.</p>
                 
+                <h2>How to Contact Us</h2>
+                <p>If you need assistance, want to report an accessibility issue, or have suggestions for improvement, you may contact us using the methods below.</p>
+                
                 <div class="contact-box">
-                    <h3>Contact Us About Accessibility</h3>
-                    <p>If you need assistance or want to report an accessibility issue, please contact us at:</p>
-                    <p>
-                        <strong>Morning Star Christian Church</strong><br>
+                    <h3>Contact Information</h3>
+                    <p><strong>By Mail (Primary Method):</strong></p>
+                    <p style="margin-left: 20px;">
+                        Morning Star Christian Church<br>
+                        Attn: Accessibility<br>
                         3080 Wildwood St<br>
-                        Boise, Idaho<br>
-                        <br>
-                        <strong>Email:</strong> <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a><br>
-                        <br>
-                        Or use our <a href="/#contact">contact form</a> on the main website.
+                        Boise, Idaho 83713
                     </p>
-                    <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 12px;"><em>Note: We are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
+                    <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
+                    <p>You may also reach us by email at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
+                    <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability. We will make reasonable efforts to assist with accessibility needs as resources permit.</em></p>
                 </div>
             </section>
         </div>

@@ -2,6 +2,8 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { serveStatic } from 'hono/cloudflare-workers'
 
+// Version: 1.29.17 - Image loading fix with lh3.googleusercontent.com
+
 const app = new Hono()
 
 // Enable CORS for API routes
@@ -5884,24 +5886,23 @@ app.get('/', (c) => {
                                     );
                                     
                                     if (imageAttachment && imageAttachment.fileId) {
-                                        // Use drive.google.com/thumbnail for public image loading
-                                        // This works better for images that haven't been explicitly shared
-                                        imageUrl = \`https://drive.google.com/thumbnail?id=\${imageAttachment.fileId}&sz=w1000\`;
+                                        // Use lh3.googleusercontent.com with size parameter for reliable public image loading
+                                        imageUrl = \`https://lh3.googleusercontent.com/d/\${imageAttachment.fileId}=w1000\`;
                                         driveFileLink = imageAttachment.fileUrl || \`https://drive.google.com/file/d/\${imageAttachment.fileId}/view\`;
                                         console.log('Image URL (from mimeType match):', imageUrl);
                                     } else if (gcalEvent.attachments[0]?.fileId) {
                                         const firstAtt = gcalEvent.attachments[0];
-                                        // Use drive.google.com/thumbnail for public image loading
-                                        imageUrl = \`https://drive.google.com/thumbnail?id=\${firstAtt.fileId}&sz=w1000\`;
+                                        // Use lh3.googleusercontent.com with size parameter
+                                        imageUrl = \`https://lh3.googleusercontent.com/d/\${firstAtt.fileId}=w1000\`;
                                         driveFileLink = firstAtt.fileUrl || \`https://drive.google.com/file/d/\${firstAtt.fileId}/view\`;
                                         console.log('Image URL (from first attachment):', imageUrl);
                                     } else if (gcalEvent.attachments[0]?.fileUrl) {
                                         // If no fileId, try to extract from fileUrl
                                         const fileUrl = gcalEvent.attachments[0].fileUrl;
-                                        const fileIdMatch = fileUrl.match(/\\/d\\/([a-zA-Z0-9_-]+)|\\/id=([a-zA-Z0-9_-]+)/);
+                                        const fileIdMatch = fileUrl.match(/\\/d\\/([a-zA-Z0-9_-]+)|[?&]id=([a-zA-Z0-9_-]+)/);
                                         if (fileIdMatch) {
                                             const extractedId = fileIdMatch[1] || fileIdMatch[2];
-                                            imageUrl = \`https://drive.google.com/thumbnail?id=\${extractedId}&sz=w1000\`;
+                                            imageUrl = \`https://lh3.googleusercontent.com/d/\${extractedId}=w1000\`;
                                             driveFileLink = fileUrl;
                                             console.log('Image URL (extracted from fileUrl):', imageUrl);
                                         }

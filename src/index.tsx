@@ -2,6 +2,8 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { serveStatic } from 'hono/cloudflare-workers'
 
+// Version: 1.29.17 - Image loading fix with lh3.googleusercontent.com
+
 const app = new Hono()
 
 // Enable CORS for API routes

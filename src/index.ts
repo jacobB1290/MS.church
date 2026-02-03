@@ -39,8 +39,8 @@ app.use('/favicon.ico', serveStatic({ root: './public' }))
 //
 const GOOGLE_CALENDAR_CONFIG = {
   API_KEY: 'AIzaSyBa2FQQolaJ0iM3vYSCCJd55vXkzmPA6Jg',
-  CALENDAR_ID: '', // Set your calendar ID here, e.g., 'abc123@group.calendar.google.com'
-  MAX_RESULTS: 20,
+  CALENDAR_ID: 'morningstarchurchboise@gmail.com', // Morning Star Church calendar
+  MAX_RESULTS: 50, // Fetch more to include past events for gallery
   TIME_ZONE: 'America/Boise'
 };
 
@@ -48,6 +48,7 @@ const GOOGLE_CALENDAR_CONFIG = {
 // GOOGLE CALENDAR API ENDPOINT
 // Fetches events from a public Google Calendar
 // Returns events with Drive file attachments as images
+// Filters out holidays and only includes user-created events
 // ========================================
 app.get('/api/calendar/events', async (c) => {
   try {
@@ -71,11 +72,18 @@ app.get('/api/calendar/events', async (c) => {
     apiUrl.searchParams.set('maxResults', String(GOOGLE_CALENDAR_CONFIG.MAX_RESULTS));
     apiUrl.searchParams.set('timeZone', GOOGLE_CALENDAR_CONFIG.TIME_ZONE);
     
-    // Request attachments with supportsAttachments=true
-    // Note: This returns the attachments array if files are attached
+    // Only fetch "default" event types - this excludes holidays, birthdays, etc.
+    // eventTypes: "default" = regular events you create
+    // This filters OUT: birthday, focusTime, fromGmail, outOfOffice, workingLocation
+    apiUrl.searchParams.set('eventTypes', 'default');
     
-    // Fetch all events (we'll filter into upcoming/past on the frontend)
-    // This allows us to show both upcoming events AND past events gallery
+    // Set time range to include past year for gallery + future events
+    // This allows us to show past events in the Past Events modal
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    apiUrl.searchParams.set('timeMin', oneYearAgo.toISOString());
+    
+    // Fetch events
     const response = await fetch(apiUrl.toString());
     
     if (!response.ok) {
@@ -92,86 +100,102 @@ app.get('/api/calendar/events', async (c) => {
     const data = await response.json();
     
     // Transform Google Calendar events to our event format
-    const events = (data.items || []).map((gcalEvent: any) => {
-      // Get the event date
-      const startDate = gcalEvent.start?.date || gcalEvent.start?.dateTime;
-      const eventDate = new Date(startDate);
-      
-      // Format display date (e.g., "DEC 21")
-      const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-      const displayDate = `${months[eventDate.getMonth()]} ${eventDate.getDate()}`;
-      
-      // Get image from attachments (first attachment that's an image)
-      // Google Drive attachments have fileUrl and mimeType
-      let imageUrl = '';
-      let driveFileLink = '';
-      
-      if (gcalEvent.attachments && gcalEvent.attachments.length > 0) {
-        // Find image attachment
-        const imageAttachment = gcalEvent.attachments.find((att: any) => 
-          att.mimeType && att.mimeType.startsWith('image/')
-        );
+    // Filter out events that look like holidays (no creator or from holiday calendars)
+    const events = (data.items || [])
+      .filter((gcalEvent: any) => {
+        // Only include events that:
+        // 1. Have eventType "default" (regular events)
+        // 2. Are NOT from holiday calendars (check creator email)
+        // 3. Have status "confirmed" (not cancelled)
         
-        if (imageAttachment) {
-          // Convert Drive file URL to direct image URL
-          // Drive URLs like: https://drive.google.com/file/d/FILE_ID/view
-          // Need to convert to: https://drive.google.com/uc?export=view&id=FILE_ID
-          // Or use: https://lh3.googleusercontent.com/d/FILE_ID (for public files)
-          const fileId = imageAttachment.fileId;
-          if (fileId) {
+        if (gcalEvent.status === 'cancelled') return false;
+        
+        // Skip events from Google's holiday calendars
+        const creatorEmail = gcalEvent.creator?.email || '';
+        if (creatorEmail.includes('holiday@group.v.calendar.google.com')) return false;
+        if (creatorEmail.includes('#holiday@group.v.calendar.google.com')) return false;
+        
+        // Only include "default" event type (regular events)
+        if (gcalEvent.eventType && gcalEvent.eventType !== 'default') return false;
+        
+        return true;
+      })
+      .map((gcalEvent: any) => {
+        // Get the event date
+        const startDate = gcalEvent.start?.date || gcalEvent.start?.dateTime;
+        const eventDate = new Date(startDate);
+        
+        // Format display date (e.g., "DEC 21")
+        const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+        const displayDate = `${months[eventDate.getMonth()]} ${eventDate.getDate()}`;
+        
+        // Get image from attachments (first attachment that's an image)
+        // Google Drive attachments have fileUrl and mimeType
+        let imageUrl = '';
+        let driveFileLink = '';
+        
+        if (gcalEvent.attachments && gcalEvent.attachments.length > 0) {
+          // Find image attachment
+          const imageAttachment = gcalEvent.attachments.find((att: any) => 
+            att.mimeType && att.mimeType.startsWith('image/')
+          );
+          
+          if (imageAttachment) {
+            // Convert Drive file URL to direct image URL
             // Use the public Drive thumbnail/image URL
-            imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-            driveFileLink = imageAttachment.fileUrl || `https://drive.google.com/file/d/${fileId}/view`;
+            const fileId = imageAttachment.fileId;
+            if (fileId) {
+              imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+              driveFileLink = imageAttachment.fileUrl || `https://drive.google.com/file/d/${fileId}/view`;
+            }
+          }
+          
+          // If no image found, check first attachment (might be any file type)
+          if (!imageUrl && gcalEvent.attachments[0]?.fileId) {
+            const firstAtt = gcalEvent.attachments[0];
+            driveFileLink = firstAtt.fileUrl || `https://drive.google.com/file/d/${firstAtt.fileId}/view`;
+            // Try to use it as an image anyway
+            imageUrl = `https://drive.google.com/uc?export=view&id=${firstAtt.fileId}`;
           }
         }
         
-        // If no image found, check first attachment (might be any file type)
-        if (!imageUrl && gcalEvent.attachments[0]?.fileId) {
-          const firstAtt = gcalEvent.attachments[0];
-          driveFileLink = firstAtt.fileUrl || `https://drive.google.com/file/d/${firstAtt.fileId}/view`;
-          // Try to use it as an image anyway (for flyer PDFs converted to images, etc.)
-          imageUrl = `https://drive.google.com/uc?export=view&id=${firstAtt.fileId}`;
+        // Extract CTA from description if provided
+        // Format: [CTA: Button Text | URL]
+        // Example: [CTA: RESERVE YOUR SEAT | #contact]
+        let ctaText = 'LEARN MORE';
+        let ctaLink = '#contact';
+        
+        if (gcalEvent.description) {
+          const ctaMatch = gcalEvent.description.match(/\[CTA:\s*([^|]+)\s*\|\s*([^\]]+)\]/);
+          if (ctaMatch) {
+            ctaText = ctaMatch[1].trim();
+            ctaLink = ctaMatch[2].trim();
+          }
         }
-      }
-      
-      // Extract CTA from description if provided
-      // Format: [CTA: Button Text | URL]
-      // Example: [CTA: RESERVE YOUR SEAT | #contact]
-      let ctaText = 'LEARN MORE';
-      let ctaLink = '#contact';
-      
-      if (gcalEvent.description) {
-        const ctaMatch = gcalEvent.description.match(/\[CTA:\s*([^|]+)\s*\|\s*([^\]]+)\]/);
-        if (ctaMatch) {
-          ctaText = ctaMatch[1].trim();
-          ctaLink = ctaMatch[2].trim();
-        }
-      }
-      
-      return {
-        id: gcalEvent.id,
-        title: gcalEvent.summary || 'Untitled Event',
-        description: gcalEvent.description?.replace(/\[CTA:[^\]]+\]/, '').trim() || '',
-        date: eventDate.toISOString().split('T')[0], // YYYY-MM-DD format
-        displayDate: displayDate,
-        image: imageUrl,
-        driveFileLink: driveFileLink,
-        location: gcalEvent.location || '',
-        cta: {
-          text: ctaText,
-          link: ctaLink
-        },
-        // Include original Google Calendar event data for debugging
-        _gcal: {
-          htmlLink: gcalEvent.htmlLink,
-          status: gcalEvent.status,
-          updated: gcalEvent.updated
-        }
-      };
-    });
-    
-    // Filter out events with no image (if required)
-    // const eventsWithImages = events.filter(e => e.image);
+        
+        return {
+          id: gcalEvent.id,
+          title: gcalEvent.summary || 'Untitled Event',
+          description: gcalEvent.description?.replace(/\[CTA:[^\]]+\]/, '').trim() || '',
+          date: eventDate.toISOString().split('T')[0], // YYYY-MM-DD format
+          displayDate: displayDate,
+          image: imageUrl,
+          driveFileLink: driveFileLink,
+          location: gcalEvent.location || '',
+          cta: {
+            text: ctaText,
+            link: ctaLink
+          },
+          // Include original Google Calendar event data for debugging
+          _gcal: {
+            htmlLink: gcalEvent.htmlLink,
+            status: gcalEvent.status,
+            updated: gcalEvent.updated,
+            eventType: gcalEvent.eventType,
+            creator: gcalEvent.creator?.email
+          }
+        };
+      });
     
     return c.json({
       success: true,
@@ -5545,57 +5569,30 @@ app.get('/', (c) => {
                     
                     <!--
                     ================================================
-                    EVENT DATA STORE
+                    GOOGLE CALENDAR POWERED EVENTS
                     ================================================
-                    Events can come from TWO sources:
+                    Events are pulled EXCLUSIVELY from Google Calendar:
+                    Calendar: morningstarchurchboise@gmail.com
                     
-                    1. STATIC (Default) - The JSON below is used
-                    2. GOOGLE CALENDAR API - When CALENDAR_CONFIG.useGoogleCalendar is true
+                    HOW TO ADD EVENTS:
+                    1. Create an event in Google Calendar
+                    2. Attach a flyer image from Google Drive (must be shared publicly)
+                    3. Optionally add CTA in description: [CTA: BUTTON TEXT | #contact]
+                       Examples: [CTA: RSVP NOW | #contact] or [CTA: LEARN MORE | /form]
                     
-                    For Google Calendar Integration:
-                    - Calendar must be PUBLIC (Settings → Access permissions → Make available to public)
-                    - Attach image flyers as Google Drive files to the event
-                    - Add CTA in description: [CTA: BUTTON TEXT | #contact] or [CTA: RSVP NOW | /form]
-                    - Event title (summary) becomes the event name
-                    - Event date is automatically formatted (e.g., "DEC 21")
-                    - First image attachment becomes the event flyer
+                    The website will:
+                    - Pull the event title (summary)
+                    - Pull the event date and format it (e.g., "DEC 21")
+                    - Pull the attached Google Drive image
+                    - Auto-sort into Upcoming vs Past events
+                    - Show "Stay Tuned" when no upcoming events exist
                     
-                    To enable Google Calendar:
-                    - Set CALENDAR_CONFIG.useGoogleCalendar = true in JavaScript
-                    - Set CALENDAR_CONFIG.calendarId = 'your-calendar-id@group.calendar.google.com'
+                    Events from subscribed holiday calendars are automatically filtered out.
                     ================================================
                     -->
                     <script type="application/json" id="events-data">
                     {
-                        "events": [
-                            {
-                                "id": "friendsgiving-2025",
-                                "title": "Friendsgiving Lunch",
-                                "description": "Lunch with our local community",
-                                "date": "2025-11-26",
-                                "displayDate": "NOV 26",
-                                "image": "https://page.gensparksite.com/v1/base64_upload/2955ae3606d04a2080ff96434f906195",
-                                "cta": { "text": "RSVP NOW", "link": "#contact" }
-                            },
-                            {
-                                "id": "christmas-cheer-2025",
-                                "title": "Project Christmas Cheer",
-                                "description": "A Gift for you and your loved ones",
-                                "date": "2025-12-06",
-                                "displayDate": "DEC 6",
-                                "image": "https://page.gensparksite.com/v1/base64_upload/f9499299e0229e4c70835962b6b6d11e",
-                                "cta": { "text": "REQUEST ITEMS", "link": "#contact" }
-                            },
-                            {
-                                "id": "together-in-song-2025",
-                                "title": "Together in Song",
-                                "description": "A festive family Christmas event",
-                                "date": "2025-12-21",
-                                "displayDate": "DEC 21",
-                                "image": "https://page.gensparksite.com/v1/base64_upload/eef229dd6db6c99d20bfafeb27252557",
-                                "cta": { "text": "RESERVE YOUR SEAT", "link": "#contact" }
-                            }
-                        ]
+                        "events": []
                     }
                     </script>
                     
@@ -5774,6 +5771,10 @@ app.get('/', (c) => {
                 const pastEventsSlides = document.getElementById('past-events-slides');
                 const pastEventsDots = document.getElementById('past-events-dots');
                 const upcomingEventDots = document.getElementById('upcoming-event-dots');
+                
+                // Event slides and dots - will be populated after async event loading
+                let eventSlides = [];
+                let dots = [];
 
                 // ========================================
                 // DYNAMIC EVENT MANAGER
@@ -5783,19 +5784,20 @@ app.get('/', (c) => {
                 
                 // Configuration for Google Calendar integration
                 const CALENDAR_CONFIG = {
-                    // Set to true to enable Google Calendar API fetching
-                    // Set to false to use static JSON data only
-                    useGoogleCalendar: false,
+                    // Google Calendar is now the PRIMARY data source
+                    useGoogleCalendar: true,
                     
-                    // Your public Google Calendar ID
-                    // Find this in Google Calendar → Settings → Calendar Settings → Integrate Calendar
-                    calendarId: '',
+                    // Morning Star Church Google Calendar
+                    calendarId: 'morningstarchurchboise@gmail.com',
+                    
+                    // Google Calendar API Key
+                    apiKey: 'AIzaSyBa2FQQolaJ0iM3vYSCCJd55vXkzmPA6Jg',
                     
                     // Cache duration in milliseconds (5 minutes default)
                     cacheDuration: 5 * 60 * 1000,
                     
-                    // Fallback to static data if API fails
-                    fallbackToStatic: true
+                    // Timezone for the calendar
+                    timeZone: 'America/Boise'
                 };
                 
                 // Cache for API responses
@@ -5804,7 +5806,8 @@ app.get('/', (c) => {
                     timestamp: 0
                 };
                 
-                // Fetch events from Google Calendar API
+                // Fetch events DIRECTLY from Google Calendar API
+                // This is called from the browser so the referrer header is set correctly
                 async function fetchGoogleCalendarEvents() {
                     // Check cache first
                     const now = Date.now();
@@ -5814,19 +5817,103 @@ app.get('/', (c) => {
                     }
                     
                     try {
-                        const response = await fetch(\`/api/calendar/events?calendarId=\${encodeURIComponent(CALENDAR_CONFIG.calendarId)}\`);
-                        const result = await response.json();
+                        // Build Google Calendar API URL
+                        const calendarId = encodeURIComponent(CALENDAR_CONFIG.calendarId);
+                        const apiUrl = new URL(\`https://www.googleapis.com/calendar/v3/calendars/\${calendarId}/events\`);
                         
-                        if (result.success && result.events) {
-                            // Update cache
-                            calendarCache.data = result.events;
-                            calendarCache.timestamp = now;
-                            console.log(\`Fetched \${result.events.length} events from Google Calendar\`);
-                            return result.events;
-                        } else {
-                            console.warn('Google Calendar API returned no events:', result.error);
+                        // Add query parameters
+                        apiUrl.searchParams.set('key', CALENDAR_CONFIG.apiKey);
+                        apiUrl.searchParams.set('singleEvents', 'true');
+                        apiUrl.searchParams.set('orderBy', 'startTime');
+                        apiUrl.searchParams.set('maxResults', '50');
+                        apiUrl.searchParams.set('timeZone', CALENDAR_CONFIG.timeZone);
+                        apiUrl.searchParams.set('eventTypes', 'default'); // Only user-created events, not holidays
+                        
+                        // Include past year for gallery + future events
+                        const oneYearAgo = new Date();
+                        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+                        apiUrl.searchParams.set('timeMin', oneYearAgo.toISOString());
+                        
+                        console.log('Fetching from Google Calendar API...');
+                        const response = await fetch(apiUrl.toString());
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            console.error('Google Calendar API error:', errorData);
                             return null;
                         }
+                        
+                        const data = await response.json();
+                        
+                        // Transform Google Calendar events to our format
+                        const events = (data.items || [])
+                            .filter(gcalEvent => {
+                                // Filter out holidays and cancelled events
+                                if (gcalEvent.status === 'cancelled') return false;
+                                const creatorEmail = gcalEvent.creator?.email || '';
+                                if (creatorEmail.includes('holiday@group.v.calendar.google.com')) return false;
+                                if (gcalEvent.eventType && gcalEvent.eventType !== 'default') return false;
+                                return true;
+                            })
+                            .map(gcalEvent => {
+                                // Get the event date
+                                const startDate = gcalEvent.start?.date || gcalEvent.start?.dateTime;
+                                const eventDate = new Date(startDate);
+                                
+                                // Format display date (e.g., "DEC 21")
+                                const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                                const displayDate = \`\${months[eventDate.getMonth()]} \${eventDate.getDate()}\`;
+                                
+                                // Get image from attachments
+                                let imageUrl = '';
+                                let driveFileLink = '';
+                                
+                                if (gcalEvent.attachments && gcalEvent.attachments.length > 0) {
+                                    const imageAttachment = gcalEvent.attachments.find(att => 
+                                        att.mimeType && att.mimeType.startsWith('image/')
+                                    );
+                                    
+                                    if (imageAttachment && imageAttachment.fileId) {
+                                        imageUrl = \`https://drive.google.com/uc?export=view&id=\${imageAttachment.fileId}\`;
+                                        driveFileLink = imageAttachment.fileUrl || \`https://drive.google.com/file/d/\${imageAttachment.fileId}/view\`;
+                                    } else if (gcalEvent.attachments[0]?.fileId) {
+                                        const firstAtt = gcalEvent.attachments[0];
+                                        imageUrl = \`https://drive.google.com/uc?export=view&id=\${firstAtt.fileId}\`;
+                                        driveFileLink = firstAtt.fileUrl || \`https://drive.google.com/file/d/\${firstAtt.fileId}/view\`;
+                                    }
+                                }
+                                
+                                // Extract CTA from description
+                                let ctaText = 'LEARN MORE';
+                                let ctaLink = '#contact';
+                                
+                                if (gcalEvent.description) {
+                                    const ctaMatch = gcalEvent.description.match(/\\[CTA:\\s*([^|]+)\\s*\\|\\s*([^\\]]+)\\]/);
+                                    if (ctaMatch) {
+                                        ctaText = ctaMatch[1].trim();
+                                        ctaLink = ctaMatch[2].trim();
+                                    }
+                                }
+                                
+                                return {
+                                    id: gcalEvent.id,
+                                    title: gcalEvent.summary || 'Untitled Event',
+                                    description: gcalEvent.description?.replace(/\\[CTA:[^\\]]+\\]/, '').trim() || '',
+                                    date: eventDate.toISOString().split('T')[0],
+                                    displayDate: displayDate,
+                                    image: imageUrl,
+                                    driveFileLink: driveFileLink,
+                                    location: gcalEvent.location || '',
+                                    cta: { text: ctaText, link: ctaLink }
+                                };
+                            });
+                        
+                        // Update cache
+                        calendarCache.data = events;
+                        calendarCache.timestamp = now;
+                        console.log(\`Fetched \${events.length} events from Google Calendar\`);
+                        return events;
+                        
                     } catch (error) {
                         console.error('Failed to fetch Google Calendar events:', error);
                         return null;
@@ -5884,35 +5971,31 @@ app.get('/', (c) => {
                 async function initializeEventsAsync() {
                     let allEvents = [];
                     
-                    // Try Google Calendar API if enabled
+                    // Google Calendar is the PRIMARY and ONLY data source
                     if (CALENDAR_CONFIG.useGoogleCalendar && CALENDAR_CONFIG.calendarId) {
                         const gcalEvents = await fetchGoogleCalendarEvents();
                         if (gcalEvents && gcalEvents.length > 0) {
                             allEvents = gcalEvents;
-                        } else if (CALENDAR_CONFIG.fallbackToStatic) {
-                            console.log('Falling back to static event data');
-                            allEvents = parseStaticEvents();
+                            console.log('Loaded events from Google Calendar:', allEvents.length);
+                        } else {
+                            // No events found - this is okay, will show Stay Tuned card
+                            console.log('No events in Google Calendar - showing Stay Tuned');
+                            allEvents = [];
                         }
                     } else {
-                        // Use static data
-                        allEvents = parseStaticEvents();
+                        // Google Calendar not configured - show error in console
+                        console.error('Google Calendar not configured! Set CALENDAR_CONFIG.calendarId');
+                        allEvents = [];
                     }
                     
                     return categorizeEvents(allEvents);
                 }
                 
-                // Synchronous wrapper for backward compatibility
+                // Synchronous wrapper - NOT USED when Google Calendar is enabled
                 function initializeEvents() {
-                    // If Google Calendar is enabled, this returns a promise
-                    // Otherwise, it returns the categorized events directly
-                    if (CALENDAR_CONFIG.useGoogleCalendar && CALENDAR_CONFIG.calendarId) {
-                        // For async, we'll need to handle this differently
-                        // This is a fallback that uses static data synchronously
-                        console.log('Note: For Google Calendar, use initializeEventsAsync()');
-                    }
-                    
-                    const allEvents = parseStaticEvents();
-                    return categorizeEvents(allEvents);
+                    console.warn('initializeEvents() called but Google Calendar is the only data source');
+                    console.warn('Use initializeEventsAsync() instead');
+                    return { upcoming: [], past: [] };
                 }
                 
                 function renderStayTunedCard(hasPastEvents) {
@@ -6107,9 +6190,9 @@ app.get('/', (c) => {
                 // Update scroll spacer based on event count
                 updateScrollSpacer(upcoming.length);
                 
-                // Re-query event slides after dynamic rendering
-                const eventSlides = document.querySelectorAll('.event-slide');
-                const dots = document.querySelectorAll('.heading-wrapper .event-dot, #upcoming-event-dots .event-dot');
+                // Re-query event slides after dynamic rendering - assign to outer scope variables
+                eventSlides = document.querySelectorAll('.event-slide');
+                dots = document.querySelectorAll('.heading-wrapper .event-dot, #upcoming-event-dots .event-dot');
 
                 // ========================================
                 // PAST EVENTS MODAL CONTROLS
@@ -6225,16 +6308,18 @@ app.get('/', (c) => {
                     }, { passive: true });
                 }
                 
-                })(); // End of async event initialization IIFE
-
                 // ========================================
                 // MAIN EVENT CAROUSEL (only if upcoming events exist)
                 // ========================================
                 
-                if (!outreachSection || !scrollSpacer || !eventsContainer || !eventSlides.length) {
+                // Check carousel initialization
+                const carouselSlides = document.querySelectorAll('.event-slide');
+                if (!outreachSection || !scrollSpacer || !eventsContainer || !carouselSlides.length) {
                     console.log('Outreach section not fully initialized - likely Stay Tuned only mode');
                     // Still set up the rest of the page even without events
                 }
+                
+                })(); // End of async event initialization IIFE
                 
                 // Handle hash in URL on page load (e.g., ms.church/#contact)
                 // Prevent browser's default anchor scroll and apply our custom offset

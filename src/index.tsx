@@ -5829,6 +5829,10 @@ app.get('/', (c) => {
                         apiUrl.searchParams.set('timeZone', CALENDAR_CONFIG.timeZone);
                         apiUrl.searchParams.set('eventTypes', 'default'); // Only user-created events, not holidays
                         
+                        // CRITICAL: Include attachments in the response
+                        // Without this, the attachments array won't be populated
+                        apiUrl.searchParams.set('supportsAttachments', 'true');
+                        
                         // Include past year for gallery + future events
                         const oneYearAgo = new Date();
                         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
@@ -5868,19 +5872,41 @@ app.get('/', (c) => {
                                 let imageUrl = '';
                                 let driveFileLink = '';
                                 
+                                // Log attachment data for debugging
+                                console.log('Event attachments:', gcalEvent.summary, gcalEvent.attachments);
+                                
                                 if (gcalEvent.attachments && gcalEvent.attachments.length > 0) {
+                                    // Log first attachment details
+                                    console.log('First attachment:', gcalEvent.attachments[0]);
+                                    
                                     const imageAttachment = gcalEvent.attachments.find(att => 
                                         att.mimeType && att.mimeType.startsWith('image/')
                                     );
                                     
                                     if (imageAttachment && imageAttachment.fileId) {
-                                        imageUrl = \`https://drive.google.com/uc?export=view&id=\${imageAttachment.fileId}\`;
+                                        // Use lh3.googleusercontent.com for more reliable image loading
+                                        imageUrl = \`https://lh3.googleusercontent.com/d/\${imageAttachment.fileId}\`;
                                         driveFileLink = imageAttachment.fileUrl || \`https://drive.google.com/file/d/\${imageAttachment.fileId}/view\`;
+                                        console.log('Image URL (from mimeType match):', imageUrl);
                                     } else if (gcalEvent.attachments[0]?.fileId) {
                                         const firstAtt = gcalEvent.attachments[0];
-                                        imageUrl = \`https://drive.google.com/uc?export=view&id=\${firstAtt.fileId}\`;
+                                        // Use lh3.googleusercontent.com for more reliable image loading
+                                        imageUrl = \`https://lh3.googleusercontent.com/d/\${firstAtt.fileId}\`;
                                         driveFileLink = firstAtt.fileUrl || \`https://drive.google.com/file/d/\${firstAtt.fileId}/view\`;
+                                        console.log('Image URL (from first attachment):', imageUrl);
+                                    } else if (gcalEvent.attachments[0]?.fileUrl) {
+                                        // If no fileId, try to extract from fileUrl
+                                        const fileUrl = gcalEvent.attachments[0].fileUrl;
+                                        const fileIdMatch = fileUrl.match(/\\/d\\/([a-zA-Z0-9_-]+)/);
+                                        if (fileIdMatch) {
+                                            const extractedId = fileIdMatch[1];
+                                            imageUrl = \`https://lh3.googleusercontent.com/d/\${extractedId}\`;
+                                            driveFileLink = fileUrl;
+                                            console.log('Image URL (extracted from fileUrl):', imageUrl);
+                                        }
                                     }
+                                } else {
+                                    console.log('No attachments found for event:', gcalEvent.summary);
                                 }
                                 
                                 // Extract CTA from description

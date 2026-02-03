@@ -5884,23 +5884,23 @@ app.get('/', (c) => {
                                     );
                                     
                                     if (imageAttachment && imageAttachment.fileId) {
-                                        // Use lh3.googleusercontent.com for more reliable image loading
-                                        imageUrl = \`https://lh3.googleusercontent.com/d/\${imageAttachment.fileId}\`;
+                                        // Use lh3.googleusercontent.com with size parameter for reliable public image loading
+                                        imageUrl = \`https://lh3.googleusercontent.com/d/\${imageAttachment.fileId}=w1000\`;
                                         driveFileLink = imageAttachment.fileUrl || \`https://drive.google.com/file/d/\${imageAttachment.fileId}/view\`;
                                         console.log('Image URL (from mimeType match):', imageUrl);
                                     } else if (gcalEvent.attachments[0]?.fileId) {
                                         const firstAtt = gcalEvent.attachments[0];
-                                        // Use lh3.googleusercontent.com for more reliable image loading
-                                        imageUrl = \`https://lh3.googleusercontent.com/d/\${firstAtt.fileId}\`;
+                                        // Use lh3.googleusercontent.com with size parameter
+                                        imageUrl = \`https://lh3.googleusercontent.com/d/\${firstAtt.fileId}=w1000\`;
                                         driveFileLink = firstAtt.fileUrl || \`https://drive.google.com/file/d/\${firstAtt.fileId}/view\`;
                                         console.log('Image URL (from first attachment):', imageUrl);
                                     } else if (gcalEvent.attachments[0]?.fileUrl) {
                                         // If no fileId, try to extract from fileUrl
                                         const fileUrl = gcalEvent.attachments[0].fileUrl;
-                                        const fileIdMatch = fileUrl.match(/\\/d\\/([a-zA-Z0-9_-]+)/);
+                                        const fileIdMatch = fileUrl.match(/\\/d\\/([a-zA-Z0-9_-]+)|[?&]id=([a-zA-Z0-9_-]+)/);
                                         if (fileIdMatch) {
-                                            const extractedId = fileIdMatch[1];
-                                            imageUrl = \`https://lh3.googleusercontent.com/d/\${extractedId}\`;
+                                            const extractedId = fileIdMatch[1] || fileIdMatch[2];
+                                            imageUrl = \`https://lh3.googleusercontent.com/d/\${extractedId}=w1000\`;
                                             driveFileLink = fileUrl;
                                             console.log('Image URL (extracted from fileUrl):', imageUrl);
                                         }

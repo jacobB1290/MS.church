@@ -1161,6 +1161,144 @@ app.get('/', (c) => {
             .outreach .section-heading {
                 margin-bottom: 24px;
             }
+
+            .outreach-carousel {
+                position: relative;
+                width: 100%;
+            }
+
+            .outreach-carousel-track {
+                display: flex;
+                gap: 20px;
+                overflow-x: auto;
+                padding: 8px 16px 24px;
+                scroll-snap-type: x mandatory;
+                scroll-padding: 16px;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior-x: contain;
+            }
+
+            .outreach-carousel-track::-webkit-scrollbar {
+                display: none;
+            }
+
+            .outreach-card {
+                flex: 0 0 82%;
+                max-width: 420px;
+                aspect-ratio: 3 / 4;
+                background: rgba(255, 255, 255, 0.85);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                border-radius: 40px;
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 0 12px 32px rgba(0, 0, 0, 0.04);
+                backdrop-filter: blur(20px);
+                display: flex;
+                flex-direction: column;
+                padding: 18px;
+                gap: 16px;
+                scroll-snap-align: start;
+                position: relative;
+            }
+
+            .outreach-card-media {
+                position: relative;
+                flex: 1;
+                border-radius: 28px;
+                overflow: hidden;
+                background: rgba(255, 255, 255, 0.6);
+            }
+
+            .outreach-card .flyer-image,
+            .outreach-card .flyer-placeholder {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 28px;
+                margin: 0;
+            }
+
+            .outreach-card-media .event-date {
+                position: absolute;
+                top: 16px;
+                left: 16px;
+                z-index: 2;
+            }
+
+            .outreach-card-content {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .outreach-card-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 20px;
+                line-height: 1.3;
+                color: #1a1a2e;
+            }
+
+            .outreach-event-card .btn {
+                width: 100%;
+            }
+
+            .outreach-card.stay-tuned-card,
+            .outreach-card.past-events-card {
+                justify-content: center;
+                text-align: center;
+                align-items: center;
+                padding: 28px 22px !important;
+            }
+
+            .outreach-card.past-events-card {
+                cursor: pointer;
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid rgba(255, 255, 255, 0.65);
+                font: inherit;
+            }
+
+            .outreach-card.past-events-card .past-card-btn {
+                margin-top: 8px;
+            }
+
+            @media (min-width: 961px) {
+                .outreach-carousel-track {
+                    gap: 26px;
+                    padding: 12px 32px 32px;
+                    scroll-padding: 32px;
+                }
+
+                .outreach-card {
+                    flex: 0 0 clamp(260px, 30vw, 360px) !important;
+                    max-width: none !important;
+                }
+
+                .outreach-card.stay-tuned-card,
+                .outreach-card.past-events-card {
+                    width: auto !important;
+                    max-width: none !important;
+                    min-width: 0 !important;
+                }
+
+                .outreach-carousel::before,
+                .outreach-carousel::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    width: 80px;
+                    pointer-events: none;
+                    z-index: 5;
+                }
+
+                .outreach-carousel::before {
+                    left: 0;
+                    background: linear-gradient(90deg, var(--bg-default), rgba(248, 249, 253, 0));
+                }
+
+                .outreach-carousel::after {
+                    right: 0;
+                    background: linear-gradient(270deg, var(--bg-default), rgba(248, 249, 253, 0));
+                }
+            }
             
             /* Stay Tuned container - reduce space below */
             .stay-tuned-container {
@@ -5565,9 +5703,6 @@ app.get('/', (c) => {
                 <section class="outreach" id="outreach" style="animation-delay: 0.3s">
                     <span class="section-eyebrow">Outreach</span>
                     <h2 class="section-heading">Serving our community with love and purpose.</h2>
-                    <div class="event-indicators" id="upcoming-event-dots" style="display: none;">
-                        <!-- Dots will be dynamically generated based on upcoming event count -->
-                    </div>
                     
                     <!--
                     ================================================
@@ -5597,20 +5732,11 @@ app.get('/', (c) => {
                         "events": []
                     }
                     </script>
-                    
-                    <!-- Stay Tuned Card - rendered outside scroll container when no upcoming events -->
-                    <div class="stay-tuned-container" id="stay-tuned-container" style="display: none;">
-                        <!-- Will be populated by JavaScript when no upcoming events -->
-                    </div>
-                    
-                    <div class="outreach-scroll-container" id="outreach-scroll-container">
-                        <div class="sticky-wrapper">
-                            <div class="events-container" id="events-container">
-                                <!-- Events will be dynamically rendered here by JavaScript -->
-                                <!-- If upcoming events exist: Shows event cards with carousel -->
-                            </div>
+
+                    <div class="outreach-carousel" id="outreach-carousel" aria-label="Outreach events carousel">
+                        <div class="outreach-carousel-track" id="events-container">
+                            <!-- Cards will be dynamically rendered here by JavaScript -->
                         </div>
-                        <div class="scroll-spacer"></div>
                     </div>
                 </section>
                 
@@ -5763,20 +5889,13 @@ app.get('/', (c) => {
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const body = document.body;
-                const outreachSection = document.querySelector('.outreach');
-                const scrollSpacer = document.querySelector('.scroll-spacer');
-                const eventsContainer = document.querySelector('.events-container');
+                const eventsContainer = document.querySelector('.outreach-carousel-track');
                 const navShell = document.querySelector('.nav-shell');
                 const sections = document.querySelectorAll('section[id]');
                 const navLinks = document.querySelectorAll('nav a[href^="#"]');
                 const pastEventsModal = document.getElementById('past-events-modal');
                 const pastEventsSlides = document.getElementById('past-events-slides');
                 const pastEventsDots = document.getElementById('past-events-dots');
-                const upcomingEventDots = document.getElementById('upcoming-event-dots');
-                
-                // Event slides and dots - will be populated after async event loading
-                let eventSlides = [];
-                let dots = [];
 
                 // ========================================
                 // DYNAMIC EVENT MANAGER
@@ -6027,63 +6146,36 @@ app.get('/', (c) => {
                 }
                 
                 function renderStayTunedCard(hasPastEvents) {
-                    // Check if desktop (>= 961px)
-                    const isDesktop = window.innerWidth >= 961;
-                    
-                    if (isDesktop && hasPastEvents) {
-                        // Desktop: Two card layout - Upcoming + Past Events
-                        // Using inline styles to GUARANTEE side-by-side layout
-                        return \`
-                            <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 40px; justify-content: center; align-items: flex-start; width: 100%; max-width: 750px; margin: 0 auto;">
-                                <div class="stay-tuned-card" style="flex: 0 0 320px; width: 320px; max-width: 320px; aspect-ratio: 3/4; border-radius: 36px;">
-                                    <span class="event-date stay-tuned-badge">COMING SOON</span>
-                                    <div class="stay-tuned-content">
-                                        <div class="stay-tuned-icon">✨</div>
-                                        <h3 class="stay-tuned-title">Stay Tuned</h3>
-                                        <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
-                                        <div class="stay-tuned-decoration">
-                                            <span>🤝</span>
-                                            <span>❤️</span>
-                                            <span>🙏</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 320px; width: 320px; max-width: 320px; aspect-ratio: 3/4; border-radius: 36px;">
-                                    <span class="past-card-badge">MEMORIES</span>
-                                    <div class="past-card-icon">📸</div>
-                                    <h3 class="past-card-title">Past Events</h3>
-                                    <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
-                                    <span class="past-card-btn">View Gallery</span>
+                    return \`
+                        <div class="outreach-card stay-tuned-card">
+                            <span class="event-date stay-tuned-badge">COMING SOON</span>
+                            <div class="stay-tuned-content">
+                                <div class="stay-tuned-icon">✨</div>
+                                <h3 class="stay-tuned-title">Stay Tuned</h3>
+                                <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
+                                <div class="stay-tuned-decoration">
+                                    <span>🤝</span>
+                                    <span>❤️</span>
+                                    <span>🙏</span>
                                 </div>
                             </div>
-                        \`;
-                    } else {
-                        // Mobile: Single card with button inside
-                        return \`
-                            <div class="stay-tuned-card">
-                                <span class="event-date stay-tuned-badge">COMING SOON</span>
-                                <div class="stay-tuned-content">
-                                    <div class="stay-tuned-icon">✨</div>
-                                    <h3 class="stay-tuned-title">Stay Tuned</h3>
-                                    <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
-                                    <div class="stay-tuned-decoration">
-                                        <span>🤝</span>
-                                        <span>❤️</span>
-                                        <span>🙏</span>
-                                    </div>
-                                    \${hasPastEvents ? '<button class="btn-view-past-events" id="btn-view-past-events">View Past Events</button>' : ''}
-                                </div>
-                            </div>
-                        \`;
-                    }
+                        </div>
+                    \`;
+                }
+
+                function renderPastEventsCard() {
+                    return \`
+                        <button class="outreach-card past-events-card" id="btn-view-past-events" type="button" aria-label="View past outreach events">
+                            <span class="past-card-badge">MEMORIES</span>
+                            <div class="past-card-icon">📸</div>
+                            <h3 class="past-card-title">Past Events</h3>
+                            <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
+                            <span class="past-card-btn">View Gallery</span>
+                        </button>
+                    \`;
                 }
                 
                 function renderUpcomingEventCard(event, index, totalUpcoming) {
-                    // Generate dots for this card
-                    const dotsHTML = Array.from({ length: totalUpcoming }, (_, i) => 
-                        \`<span class="event-dot \${i === index ? 'active' : ''}"></span>\`
-                    ).join('');
-                    
                     // Debug: Log the event being rendered
                     console.log('Rendering event card:', event.title, 'Image URL:', event.image);
                     
@@ -6093,20 +6185,16 @@ app.get('/', (c) => {
                         : \`<div class="flyer-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,#d4a574,#c89860);display:flex;align-items:center;justify-content:center;"><span style="font-size:48px;">📅</span></div>\`;
                     
                     return \`
-                        <div class="event-slide \${index === 0 ? 'active' : ''}" data-event="\${index + 1}">
-                            <div class="event-card">
-                                <div class="event-flyer-wrapper">
-                                    \${imageHtml}
-                                    <span class="event-date">\${event.displayDate}</span>
-                                    <div class="event-indicators">
-                                        \${dotsHTML}
-                                    </div>
-                                </div>
-                                <div class="event-cta">
-                                    <a href="\${event.cta.link}" class="btn btn-primary">\${event.cta.text}</a>
-                                </div>
+                        <article class="outreach-card outreach-event-card" data-event="\${index + 1}">
+                            <div class="outreach-card-media">
+                                \${imageHtml}
+                                <span class="event-date">\${event.displayDate}</span>
                             </div>
-                        </div>
+                            <div class="outreach-card-content">
+                                <h3 class="outreach-card-title">\${event.title}</h3>
+                                <a href="\${event.cta.link}" class="btn btn-primary">\${event.cta.text}</a>
+                            </div>
+                        </article>
                     \`;
                 }
                 
@@ -6122,94 +6210,26 @@ app.get('/', (c) => {
                     \`;
                 }
                 
-                function updateScrollSpacer(upcomingCount) {
-                    // Adjust scroll spacer height based on number of upcoming events
-                    // 0 events (Stay Tuned only): no scroll mechanism needed
-                    // 1 event: 100vh
-                    // 2 events: 200vh
-                    // 3+ events: 312vh (original)
-                    
-                    const stickyWrapper = document.querySelector('.sticky-wrapper');
-                    
-                    if (upcomingCount === 0) {
-                        // No upcoming events - disable sticky scroll mechanism entirely
-                        scrollSpacer.style.height = '0';
-                        scrollSpacer.style.display = 'none';
-                        if (stickyWrapper) {
-                            stickyWrapper.style.position = 'relative';
-                            stickyWrapper.style.height = 'auto';
-                            stickyWrapper.style.minHeight = 'auto';
-                        }
-                        // Add class for CSS override
-                        outreachSection.classList.add('stay-tuned-only');
-                    } else {
-                        // Remove class if it was previously added
-                        outreachSection.classList.remove('stay-tuned-only');
-                        // Upcoming events exist - use sticky scroll mechanism
-                        scrollSpacer.style.display = 'block';
-                        if (stickyWrapper) {
-                            stickyWrapper.style.position = 'sticky';
-                            stickyWrapper.style.height = '80vh';
-                        }
-                        
-                        let spacerHeight;
-                        if (upcomingCount === 1) {
-                            spacerHeight = '100vh';
-                        } else if (upcomingCount === 2) {
-                            spacerHeight = '200vh';
-                        } else {
-                            spacerHeight = '312vh';
-                        }
-                        scrollSpacer.style.height = spacerHeight;
-                    }
-                }
-                
                 // Initialize and render events
                 // Using an async IIFE to support Google Calendar API fetching
                 (async () => {
                 const { upcoming, past } = await initializeEventsAsync();
                 console.log('Event Manager:', { upcoming: upcoming.length, past: past.length });
                 
-                // Get the stay-tuned container and scroll container
-                const stayTunedContainer = document.getElementById('stay-tuned-container');
-                const outreachScrollContainer = document.getElementById('outreach-scroll-container');
-                
-                // Render events in main container
-                if (upcoming.length === 0) {
-                    // No upcoming events - show Stay Tuned card in separate container
-                    if (stayTunedContainer) {
-                        stayTunedContainer.innerHTML = renderStayTunedCard(past.length > 0);
-                        stayTunedContainer.style.display = 'block';
-                    }
-                    // Hide the scroll container entirely
-                    if (outreachScrollContainer) {
-                        outreachScrollContainer.style.display = 'none';
-                    }
-                    body.classList.add('stay-tuned-active');
+                if (eventsContainer) {
+                    const cards = [];
                     
-                    // Hide upcoming event dots
-                    if (upcomingEventDots) upcomingEventDots.style.display = 'none';
-                } else {
-                    // Hide stay-tuned container, show scroll container
-                    if (stayTunedContainer) {
-                        stayTunedContainer.style.display = 'none';
-                    }
-                    if (outreachScrollContainer) {
-                        outreachScrollContainer.style.display = 'block';
+                    if (upcoming.length === 0) {
+                        cards.push(renderStayTunedCard(past.length > 0));
+                    } else {
+                        cards.push(...upcoming.map((event, i) => renderUpcomingEventCard(event, i, upcoming.length)));
                     }
                     
-                    // Render upcoming events
-                    eventsContainer.innerHTML = upcoming.map((event, i) => 
-                        renderUpcomingEventCard(event, i, upcoming.length)
-                    ).join('');
-                    
-                    // Show and populate upcoming event dots
-                    if (upcomingEventDots) {
-                        upcomingEventDots.style.display = 'flex';
-                        upcomingEventDots.innerHTML = upcoming.map((_, i) => 
-                            \`<span class="event-dot \${i === 0 ? 'active' : ''}"></span>\`
-                        ).join('');
+                    if (past.length > 0) {
+                        cards.push(renderPastEventsCard());
                     }
+                    
+                    eventsContainer.innerHTML = cards.join('');
                 }
                 
                 // Render past events in modal
@@ -6223,13 +6243,6 @@ app.get('/', (c) => {
                     ).join('');
                 }
                 
-                // Update scroll spacer based on event count
-                updateScrollSpacer(upcoming.length);
-                
-                // Re-query event slides after dynamic rendering - assign to outer scope variables
-                eventSlides = document.querySelectorAll('.event-slide');
-                dots = document.querySelectorAll('.heading-wrapper .event-dot, #upcoming-event-dots .event-dot');
-
                 // ========================================
                 // PAST EVENTS MODAL CONTROLS
                 // ========================================
@@ -6255,7 +6268,6 @@ app.get('/', (c) => {
                 
                 // Open past events modal
                 const viewPastEventsBtn = document.getElementById('btn-view-past-events');
-                const viewPastEventsBtnDesktop = document.getElementById('btn-view-past-events-desktop');
                 
                 const openPastEventsModal = () => {
                     if (pastEventsModal && past.length > 0) {
@@ -6267,11 +6279,6 @@ app.get('/', (c) => {
                 
                 if (viewPastEventsBtn && pastEventsModal && past.length > 0) {
                     viewPastEventsBtn.addEventListener('click', openPastEventsModal);
-                }
-                
-                // Desktop past events card click handler
-                if (viewPastEventsBtnDesktop && pastEventsModal && past.length > 0) {
-                    viewPastEventsBtnDesktop.addEventListener('click', openPastEventsModal);
                 }
                 
                 // Close past events modal
@@ -6342,17 +6349,6 @@ app.get('/', (c) => {
                             }
                         }
                     }, { passive: true });
-                }
-                
-                // ========================================
-                // MAIN EVENT CAROUSEL (only if upcoming events exist)
-                // ========================================
-                
-                // Check carousel initialization
-                const carouselSlides = document.querySelectorAll('.event-slide');
-                if (!outreachSection || !scrollSpacer || !eventsContainer || !carouselSlides.length) {
-                    console.log('Outreach section not fully initialized - likely Stay Tuned only mode');
-                    // Still set up the rest of the page even without events
                 }
                 
                 })(); // End of async event initialization IIFE
@@ -6435,21 +6431,7 @@ app.get('/', (c) => {
                     }
                     lastNavScrollY = currentScrollY;
                 }
-                
-                let currentEventIndex = 0;
-                const totalEvents = eventSlides.length;
-                
-                // Track if we're in the outreach section
-                let inOutreachSection = false;
-                
-                // Rate limiting mechanism for event changes
-                let isChangeRateLimited = false;
-                let lastEventChangeTime = 0;
-                const changeCooldownMs = 800;
-                
-                // Manual swipe override - prevents scroll from fighting swipe gestures
-                let manualSwipeOverride = false;
-                
+
                 // Update active nav link
                 function updateActiveNavLink() {
                     let currentSection = '';
@@ -6464,7 +6446,7 @@ app.get('/', (c) => {
                     
                     navLinks.forEach(link => {
                         link.classList.remove('active');
-                        if (link.getAttribute('href') === \`#\${currentSection}\`) {
+                        if (link.getAttribute('href') === '#' + currentSection) {
                             link.classList.add('active');
                         }
                     });
@@ -6481,271 +6463,10 @@ app.get('/', (c) => {
                 }
                 
                 function handleScroll() {
-                    const outreachRect = outreachSection.getBoundingClientRect();
-                    const spacerRect = scrollSpacer.getBoundingClientRect();
-                    const vh = window.innerHeight;
-
                     handleMobileNav();
                     updateActiveNavLink();
-
-                    const inSection = (outreachRect.top <= vh * 0.3) && (spacerRect.bottom > vh * 0.7);
-
-                    if (inSection) {
-                        if (!inOutreachSection) {
-                            inOutreachSection = true;
-                            requestAnimationFrame(() => requestAnimationFrame(() => updateActiveEvent(currentEventIndex, false)));
-                        }
-
-                        const spacerTop = spacerRect.top - vh * 0.35;
-                        const spacerHeightRaw = spacerRect.height - vh * 0.5;
-                        const spacerHeight = Math.max(spacerHeightRaw, 1);
-                        const progress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
-
-                        if (outreachHeader) {
-                            if (progress > 0.9) {
-                                const t = Math.min(1, (progress - 0.9) / 0.1);
-                                outreachHeader.style.opacity = String(1 - t);
-                                outreachHeader.style.transform = \`translateY(\${-20 * t}px)\`;
-                            } else {
-                                outreachHeader.style.opacity = '1';
-                                outreachHeader.style.transform = 'translateY(0)';
-                            }
-                        }
-
-                        // Calculate which event should be shown based on scroll progress
-                        // But respect manual swipe overrides - don't fight the user!
-                        // Dynamic calculation based on actual event count
-                        let newIndex;
-                        if (totalEvents === 1) {
-                            newIndex = 0; // Only one card (Stay Tuned)
-                        } else if (totalEvents === 2) {
-                            newIndex = progress < 0.5 ? 0 : 1;
-                        } else if (totalEvents === 3) {
-                            newIndex = progress < 0.33 ? 0 : (progress < 0.67 ? 1 : 2);
-                        } else {
-                            // 4+ events: distribute evenly
-                            const segmentSize = 1 / totalEvents;
-                            newIndex = Math.min(Math.floor(progress / segmentSize), totalEvents - 1);
-                        }
-
-                        const now = Date.now();
-                        
-                        // Only update from scroll if:
-                        // 1. Index actually changed
-                        // 2. Not rate limited
-                        // 3. NOT during manual swipe override (let swipe complete first)
-                        if (!manualSwipeOverride &&
-                            newIndex !== currentEventIndex &&
-                           (!isChangeRateLimited || (now - lastEventChangeTime) > changeCooldownMs)) {
-                            currentEventIndex = newIndex;
-                            updateActiveEvent(currentEventIndex, false);
-                            isChangeRateLimited = true;
-                            lastEventChangeTime = now;
-                            setTimeout(() => { isChangeRateLimited = false; }, changeCooldownMs);
-                        }
-
-                    } else {
-                        if (inOutreachSection) {
-                            inOutreachSection = false;
-                            requestAnimationFrame(() => {
-                                body.classList.remove('event-1-active', 'event-2-active', 'event-3-active', 'event-4-active');
-                            });
-                        }
-                        if (spacerRect.bottom <= vh * 0.7 && currentEventIndex !== totalEvents - 1) {
-                            currentEventIndex = totalEvents - 1;
-                            updateActiveEvent(currentEventIndex, true);
-                        } else if (outreachRect.top > vh * 0.3 && currentEventIndex !== 0) {
-                            currentEventIndex = 0;
-                            updateActiveEvent(0, true);
-                        }
-                    }
-                }
-                
-                function setAriaVisibility(index) {
-                    eventSlides.forEach((slide, i) => {
-                        slide.setAttribute('aria-hidden', i === index ? 'false' : 'true');
-                        slide.inert = i !== index;
-                    });
                 }
 
-                function updateDots(index) {
-                    console.log('Updating dots for index:', index, 'Total dots:', dots.length);
-                    if (!dots.length) {
-                        console.warn('No dots found!');
-                        return;
-                    }
-                    dots.forEach((dot, i) => {
-                        if (i === index) {
-                            dot.classList.add('active');
-                            console.log('Dot', i, 'set to active (gold)');
-                        } else {
-                            dot.classList.remove('active');
-                        }
-                    });
-                }
-
-                function updateBodyBg(index, skip) {
-                    if (skip) return;
-                    body.classList.remove('event-1-active', 'event-2-active', 'event-3-active', 'event-4-active', 'stay-tuned-active');
-                    
-                    // If we're showing the Stay Tuned card (index 0 with no upcoming events)
-                    const isStayTuned = eventSlides[index]?.classList.contains('stay-tuned-card');
-                    if (isStayTuned) {
-                        body.classList.add('stay-tuned-active');
-                    } else {
-                        body.classList.add('event-' + (index + 1) + '-active');
-                    }
-                }
-
-                function updateActiveEvent(index, skipBackground, fromSwipe = false) {
-                    // Only phones (≤480px) get stacked card behavior
-                    // Tablets (481-960px) show all 3 cards in grid
-                    const isMobile = window.innerWidth <= 960;
-                    
-                    // Update active class
-                    eventSlides.forEach(s => s.classList.remove('active'));
-                    const active = eventSlides[index];
-                    if (active) active.classList.add('active');
-                    
-                    // Mobile: Update stack positions for other cards
-                    if (isMobile) {
-                        // Remove all stack position classes first
-                        eventSlides.forEach(s => {
-                            s.classList.remove('stack-position-1', 'stack-position-2', 'stack-position-3');
-                        });
-                        
-                        // Assign stack positions in visual order (next card closer than previous)
-                        // When viewing card 2: card 3 should be position-1 (closer), card 1 should be position-2 (further)
-                        const totalCards = eventSlides.length;
-                        let stackPos = 1;
-                        
-                        // Start from next card after active, wrap around (max 3 stack positions)
-                        for (let i = 1; i < totalCards && stackPos <= 3; i++) {
-                            const cardIndex = (index + i) % totalCards;
-                            eventSlides[cardIndex].classList.add('stack-position-' + stackPos);
-                            stackPos++;
-                        }
-                    }
-                    
-                    setAriaVisibility(index);
-                    updateDots(index);
-                    updateBodyBg(index, skipBackground);
-                    
-                    // Update dots overlaid on each event image to match active state
-                    eventSlides.forEach((slide, slideIndex) => {
-                        const overlaidDots = slide.querySelectorAll('.event-flyer-wrapper .event-dot');
-                        overlaidDots.forEach((dot, dotIndex) => {
-                            if (dotIndex === index) {
-                                dot.classList.add('active');
-                            } else {
-                                dot.classList.remove('active');
-                            }
-                        });
-                    });
-                }
-
-                updateActiveEvent(0, true);
-                
-                // SWIPE TO SCROLL - Works exactly like nav buttons
-                let touchStartX = 0;
-                let touchStartY = 0;
-
-                // Dynamic scroll positions for each card based on event count
-                function getCardPositions() {
-                    const count = eventSlides.length;
-                    if (count === 1) return [0.5]; // Single card
-                    if (count === 2) return [0.25, 0.75];
-                    if (count === 3) return [0.17, 0.5, 0.83];
-                    // 4+ cards: distribute evenly
-                    return Array.from({ length: count }, (_, i) => (i + 0.5) / count);
-                }
-                const cardPositions = getCardPositions();
-
-                const swipeTarget = eventsContainer;
-                if (swipeTarget) {
-                    swipeTarget.addEventListener('touchstart', e => {
-                        touchStartX = e.touches[0].clientX;
-                        touchStartY = e.touches[0].clientY;
-                    }, { passive: true });
-
-                    swipeTarget.addEventListener('touchend', e => {
-                        if (!e.changedTouches || !e.changedTouches[0]) return;
-                        
-                        const touchEndX = e.changedTouches[0].clientX;
-                        const touchEndY = e.changedTouches[0].clientY;
-                        
-                        const dx = touchEndX - touchStartX;
-                        const dy = touchEndY - touchStartY;
-                        
-                        // Only horizontal swipes
-                        if (Math.abs(dx) < Math.abs(dy)) return;
-                        if (Math.abs(dx) < 50) return;
-                        
-                        // Determine target card
-                        let targetCard = currentEventIndex;
-                        let scrollToWatch = false;
-                        
-                        if (dx < 0) {
-                            // Swipe LEFT = next
-                            if (currentEventIndex === totalEvents - 1) {
-                                // At last card, swipe left goes to Watch section
-                                scrollToWatch = true;
-                            } else {
-                                targetCard = currentEventIndex + 1;
-                            }
-                        } else {
-                            // Swipe RIGHT = previous
-                            targetCard = Math.max(currentEventIndex - 1, 0);
-                        }
-                        
-                        // Handle scroll to Watch section
-                        if (scrollToWatch) {
-                            const watchSection = document.querySelector('#watch');
-                            if (watchSection) {
-                                const watchTop = watchSection.getBoundingClientRect().top + window.pageYOffset;
-                                const navOffset = 30; // Mobile nav offset
-                                window.scrollTo({
-                                    top: watchTop - navOffset,
-                                    behavior: 'smooth'
-                                });
-                            }
-                            return;
-                        }
-                        
-                        // No change? Do nothing
-                        if (targetCard === currentEventIndex) return;
-                        
-                        // Calculate scroll position (like nav buttons do)
-                        const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
-                        const spacerHeight = scrollSpacer.offsetHeight;
-                        const targetScroll = outreachTop + (spacerHeight * cardPositions[targetCard]);
-                        
-                        // Scroll there - scroll handler will update the card
-                        window.scrollTo({
-                            top: targetScroll,
-                            behavior: 'smooth'
-                        });
-                    }, { passive: true });
-                }
-                
-                // Dot click navigation - tap any dot to jump to that event
-                dots.forEach((dot, index) => {
-                    dot.addEventListener('click', () => {
-                        if (currentEventIndex === index) return; // Already on this event
-                        
-                        currentEventIndex = index;
-                        updateActiveEvent(currentEventIndex, false);
-                        
-                        // Set manual override to prevent scroll from interfering
-                        manualSwipeOverride = true;
-                        setTimeout(() => { manualSwipeOverride = false; }, 600);
-                    });
-                    
-                    // Add touch feedback
-                    dot.style.cursor = 'pointer';
-                    dot.style.transition = 'transform 0.2s ease, background 0.3s ease';
-                });
-                
                 let ticking = false;
                 window.addEventListener('scroll', () => {
                     if (!ticking) {
@@ -6854,65 +6575,6 @@ app.get('/', (c) => {
                     });
                 });
                 
-                // Special handler for "See Flyer" button - scroll to show event 2
-                const seeFlyerBtn = document.querySelector('.btn-see-flyer');
-                if (seeFlyerBtn) {
-                    seeFlyerBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        
-                        // Calculate scroll position to show event 2 (middle event)
-                        // Need to scroll into the middle of the scroll-spacer to trigger event 2
-                        const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
-                        const spacerHeight = scrollSpacer.offsetHeight;
-                        
-                        // Scroll to middle of spacer (50% progress = event 2)
-                        // Add some extra offset to ensure we're solidly in event 2 territory
-                        const targetScroll = outreachTop + (spacerHeight * 0.5);
-                        
-                        window.scrollTo({
-                            top: targetScroll,
-                            behavior: 'smooth'
-                        });
-                    });
-                }
-                
-                // Explicit handler for Event 2 REQUEST ITEMS button
-                // Ensures button works on desktop AND mobile
-                // Use setTimeout to ensure DOM is ready
-                setTimeout(() => {
-                    const requestItemsButtons = document.querySelectorAll('.event-slide[data-event="2"] .event-cta a[href="#contact"]');
-                    console.log('Found REQUEST ITEMS buttons:', requestItemsButtons.length);
-                    
-                    if (requestItemsButtons.length === 0) {
-                        console.warn('No REQUEST ITEMS buttons found! Trying alternate selector...');
-                        // Try alternate selector
-                        const allButtons = document.querySelectorAll('a[href="#contact"]');
-                        console.log('All contact links found:', allButtons.length);
-                    }
-                    
-                    requestItemsButtons.forEach((button, index) => {
-                        console.log('Attaching click handler to button', index);
-                        button.addEventListener('click', function(e) {
-                            console.log('REQUEST ITEMS button clicked!');
-                            e.preventDefault();
-                            e.stopPropagation();
-                            
-                            const contactSection = document.querySelector('#contact');
-                            if (contactSection) {
-                                const navOffset = window.innerWidth <= 1199 ? 30 : 45;
-                                const targetPosition = contactSection.getBoundingClientRect().top + window.pageYOffset - navOffset;
-                                console.log('Scrolling to contact section at:', targetPosition);
-                                window.scrollTo({
-                                    top: targetPosition,
-                                    behavior: 'smooth'
-                                });
-                            } else {
-                                console.error('Contact section not found!');
-                            }
-                        }, true); // Use capture phase
-                    });
-                }, 500); // Wait 500ms for DOM to be fully ready
-                
                 // Clothes Drive Form - Add/Remove Children
                 const addChildBtn = document.querySelector('.btn-add-child');
                 const childrenContainer = document.getElementById('children-container');
@@ -6979,7 +6641,7 @@ app.get('/', (c) => {
                     });
                 }
                 
-                // Handle "More Info" button click to scroll to Event 2 and activate it
+                // Handle "More Info" button click to scroll to Outreach section
                 const moreInfoBtn = document.querySelector('.btn-more-info');
                 if (moreInfoBtn) {
                     moreInfoBtn.addEventListener('click', (e) => {
@@ -6996,13 +6658,6 @@ app.get('/', (c) => {
                                 top: targetPosition,
                                 behavior: 'smooth'
                             });
-                            
-                            // Wait for scroll to complete, then activate event 2
-                            setTimeout(() => {
-                                // Trigger event 2 to become active
-                                currentEventIndex = 1; // Event 2 (index 1)
-                                updateActiveEvent(currentEventIndex, false);
-                            }, 800);
                         }
                     });
                 }

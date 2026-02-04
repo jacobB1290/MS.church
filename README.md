@@ -1,6 +1,6 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.24.0
+## 🔢 CURRENT VERSION: v1.30.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
 
 ### v1.24.0 - Hero Find Us Button with Frosted Glass Effect

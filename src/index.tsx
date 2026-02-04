@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { serveStatic } from 'hono/cloudflare-workers'
 
-// Version: 1.29.17 - Image loading fix with lh3.googleusercontent.com
+// Version: 1.30.0 - Outreach carousel cleanup and layout tuning
 
 const app = new Hono()
 
@@ -1262,12 +1262,12 @@ app.get('/', (c) => {
             @media (min-width: 961px) {
                 .outreach-carousel-track {
                     gap: 26px;
-                    padding: 12px 32px 32px;
-                    scroll-padding: 32px;
+                    padding: 12px 80px 32px 40px;
+                    scroll-padding: 40px;
                 }
 
                 .outreach-card {
-                    flex: 0 0 clamp(260px, 30vw, 360px) !important;
+                    flex: 0 0 clamp(260px, 26vw, 330px) !important;
                     max-width: none !important;
                 }
 
@@ -1297,160 +1297,6 @@ app.get('/', (c) => {
                 .outreach-carousel::after {
                     right: 0;
                     background: linear-gradient(270deg, var(--bg-default), rgba(248, 249, 253, 0));
-                }
-            }
-            
-            /* Stay Tuned container - reduce space below */
-            .stay-tuned-container {
-                margin-bottom: 0;
-            }
-            
-            /* ========================================
-               DESKTOP STAY TUNED - Two Card Layout
-               Only applies to screens >= 961px
-               ======================================== */
-            @media (min-width: 961px) {
-                .stay-tuned-container {
-                    display: flex !important;
-                    flex-direction: row !important;
-                    flex-wrap: nowrap !important;
-                    gap: 24px;
-                    justify-content: center;
-                    align-items: stretch;
-                    max-width: 700px;
-                    margin: 0 auto;
-                    width: 100%;
-                }
-                
-                .stay-tuned-card,
-                .past-events-card {
-                    aspect-ratio: 3/4 !important;
-                    width: 280px !important;
-                    max-width: 280px !important;
-                    min-width: 280px !important;
-                    height: auto !important;
-                    min-height: unset !important;
-                    max-height: unset !important;
-                    flex: 0 0 280px !important;
-                    padding: 32px 24px !important;
-                }
-                
-                .stay-tuned-card .stay-tuned-icon {
-                    font-size: 32px;
-                    margin-top: 0;
-                }
-                
-                .stay-tuned-card .stay-tuned-title {
-                    font-size: 22px !important;
-                }
-                
-                .stay-tuned-card .stay-tuned-text {
-                    font-size: 13px !important;
-                    line-height: 1.5;
-                }
-                
-                .stay-tuned-card .stay-tuned-decoration {
-                    font-size: 18px;
-                    gap: 10px;
-                }
-                
-                .stay-tuned-card .stay-tuned-badge {
-                    font-size: 9px !important;
-                    padding: 5px 10px !important;
-                    top: 12px;
-                    left: 12px;
-                }
-                
-                .stay-tuned-card .btn-view-past-events {
-                    font-size: 12px !important;
-                    padding: 8px 16px !important;
-                }
-                
-                /* Past Events Card - Desktop */
-                .past-events-card {
-                    background: rgba(255, 255, 255, 0.85);
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
-                                0 12px 32px rgba(0, 0, 0, 0.04);
-                    border: 1px solid rgba(255, 255, 255, 0.6);
-                    backdrop-filter: blur(20px);
-                    border-radius: 40px;
-                    position: relative;
-                    overflow: visible;
-                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-                    cursor: pointer;
-                }
-                
-                .past-events-card:hover {
-                    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
-                                0 16px 40px rgba(0, 0, 0, 0.05);
-                    transform: translateY(-4px);
-                }
-                
-                .stay-tuned-card {
-                    border-radius: 40px;
-                }
-                
-                .past-events-card .past-card-badge {
-                    background: linear-gradient(135deg, #8b9dc3 0%, #7189b0 100%);
-                    box-shadow: 0 4px 16px rgba(113, 137, 176, 0.35);
-                    position: absolute;
-                    top: 12px;
-                    left: 12px;
-                    color: white;
-                    font-size: 9px;
-                    font-weight: 700;
-                    padding: 5px 10px;
-                    border-radius: 20px;
-                    letter-spacing: 0.5px;
-                }
-                
-                .past-events-card .past-card-icon {
-                    font-size: 32px;
-                    margin-bottom: 6px;
-                }
-                
-                .past-events-card .past-card-title {
-                    font-family: 'Playfair Display', serif;
-                    font-size: 22px;
-                    font-weight: 700;
-                    margin: 0 0 6px 0;
-                    color: #1a1a2e;
-                }
-                
-                .past-events-card .past-card-text {
-                    font-size: 13px;
-                    color: rgba(26, 26, 46, 0.7);
-                    line-height: 1.5;
-                    margin-bottom: 12px;
-                }
-                
-                .past-events-card .past-card-btn {
-                    display: inline-block;
-                    padding: 8px 16px;
-                    background: transparent;
-                    border: 2px solid #d4a574;
-                    color: #d4a574;
-                    border-radius: 30px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                }
-                
-                .past-events-card .past-card-btn:hover {
-                    background: #d4a574;
-                    color: white;
-                }
-                
-                /* Reduce outreach section scroll on desktop when Stay Tuned only */
-                .outreach.stay-tuned-only {
-                    min-height: auto !important;
-                    padding-bottom: 60px !important;
                 }
             }
             
@@ -1717,92 +1563,6 @@ app.get('/', (c) => {
                STAY TUNED CARD - Future Events Placeholder
                Uses site colors (gold/warm tones matching the church brand)
                ======================================== */
-            /* Stay Tuned Container - sits outside scroll container, same width as section-card */
-            .stay-tuned-container {
-                width: 100%;
-            }
-            
-            .stay-tuned-card {
-                background: rgba(255, 255, 255, 0.85); /* Match section-card */
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                padding: 56px 64px; /* Match section-card */
-                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
-                            0 12px 32px rgba(0, 0, 0, 0.04); /* Match section-card */
-                border: 1px solid rgba(255, 255, 255, 0.6); /* Match section-card */
-                backdrop-filter: blur(20px); /* Match section-card */
-                min-height: auto;
-                border-radius: 48px; /* Match section-card */
-                position: relative;
-                overflow: visible;
-                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Match section-card */
-                aspect-ratio: 3/4; /* Portrait card - mobile */
-                width: 100%; /* Mobile: full width */
-            }
-            
-            /* DESKTOP OVERRIDE - Two cards side by side with 3:4 portrait ratio */
-            @media (min-width: 961px) {
-                .stay-tuned-container {
-                    display: flex !important;
-                    flex-direction: row !important;
-                    flex-wrap: nowrap !important;
-                    gap: 32px !important;
-                    justify-content: center !important;
-                    align-items: flex-start !important;
-                    max-width: 620px !important;
-                    margin: 0 auto !important;
-                    width: 100% !important;
-                }
-                
-                .stay-tuned-container > .stay-tuned-card,
-                .stay-tuned-container > .past-events-card {
-                    aspect-ratio: 3/4 !important;
-                    width: 260px !important;
-                    max-width: 260px !important;
-                    min-width: 260px !important;
-                    flex: 0 0 260px !important;
-                    height: auto !important;
-                    min-height: unset !important;
-                    max-height: unset !important;
-                    padding: 28px 20px !important;
-                    border-radius: 32px !important;
-                }
-            }
-            
-            .stay-tuned-card:hover {
-                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
-                            0 16px 40px rgba(0, 0, 0, 0.05);
-                transform: translateY(-4px);
-            }
-            
-            /* ========================================
-               STAY TUNED ONLY MODE
-               When no upcoming events - clean static layout
-               Card is now rendered in stay-tuned-container (outside scroll container)
-               ======================================== */
-            .stay-tuned-only {
-                /* Remove excessive gap between sections */
-                margin-bottom: 0 !important;
-                min-height: auto !important; /* Remove 100vh min-height */
-            }
-            
-            .stay-tuned-only .section-heading {
-                margin-bottom: 24px; /* Spacing before card */
-            }
-            
-            .stay-tuned-only .section-eyebrow {
-                display: inline-flex !important; /* Ensure pill fits text only */
-                width: fit-content !important;
-                max-width: fit-content !important;
-            }
-            
-            .stay-tuned-only .stay-tuned-container {
-                margin-bottom: 0;
-            }
-            
             .stay-tuned-badge {
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%) !important;
                 box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35) !important;
@@ -6145,7 +5905,7 @@ app.get('/', (c) => {
                     return { upcoming: [], past: [] };
                 }
                 
-                function renderStayTunedCard(hasPastEvents) {
+                function renderStayTunedCard() {
                     return \`
                         <div class="outreach-card stay-tuned-card">
                             <span class="event-date stay-tuned-badge">COMING SOON</span>
@@ -6218,9 +5978,13 @@ app.get('/', (c) => {
                 
                 if (eventsContainer) {
                     const cards = [];
+                    const isDesktop = window.innerWidth >= 961;
                     
                     if (upcoming.length === 0) {
-                        cards.push(renderStayTunedCard(past.length > 0));
+                        cards.push(renderStayTunedCard());
+                        if (isDesktop) {
+                            cards.push(renderStayTunedCard());
+                        }
                     } else {
                         cards.push(...upcoming.map((event, i) => renderUpcomingEventCard(event, i, upcoming.length)));
                     }

@@ -1152,11 +1152,15 @@ app.get('/', (c) => {
                 width: fit-content !important;
                 max-width: fit-content !important;
                 margin-bottom: 12px;
+                position: relative;
+                z-index: 5;
             }
             
             .outreach .section-heading {
                 margin-bottom: 28px;
                 text-align: left;
+                position: relative;
+                z-index: 5;
             }
 
             /* Stay Tuned container */
@@ -1233,32 +1237,30 @@ app.get('/', (c) => {
             .carousel-viewport {
                 position: relative;
                 overflow: visible;
-                clip-path: inset(-60px -24px -60px -24px);
+                clip-path: inset(-80px -40px -80px -40px);
             }
 
-            /* Soft fog on left/right edges — sits INSIDE clip-path, OUTSIDE cards */
+            /* Soft fog on left/right edges — ONLY covers card area, never header */
             .carousel-wrapper::before,
             .carousel-wrapper::after {
                 content: '';
                 position: absolute;
-                top: -60px;
-                bottom: -60px;
-                width: 48px;
+                top: 0;
+                bottom: 0;
+                width: 60px;
                 z-index: 3;
                 pointer-events: none;
             }
             .carousel-wrapper::before {
-                left: -24px;
+                left: -40px;
                 background: linear-gradient(to right, 
                     var(--bg-color, #f8f9fd) 0%, 
-                    var(--bg-color, #f8f9fd) 30%,
                     rgba(248, 249, 253, 0) 100%);
             }
             .carousel-wrapper::after {
-                right: -24px;
+                right: -40px;
                 background: linear-gradient(to left, 
                     var(--bg-color, #f8f9fd) 0%, 
-                    var(--bg-color, #f8f9fd) 30%,
                     rgba(248, 249, 253, 0) 100%);
             }
 
@@ -1279,10 +1281,25 @@ app.get('/', (c) => {
             @media (max-width: 960px) {
                 .carousel-card {
                     /* width set dynamically by JS */
-                    padding: 0 12px;
+                    padding: 0 16px;
                 }
                 .carousel-viewport {
-                    clip-path: inset(-50px -16px -50px -16px);
+                    clip-path: inset(-60px 0 -60px 0);
+                }
+                .carousel-wrapper {
+                    overflow-x: clip;
+                }
+                .carousel-wrapper::before,
+                .carousel-wrapper::after {
+                    width: 24px;
+                    left: 0;
+                }
+                .carousel-wrapper::before {
+                    left: 0;
+                }
+                .carousel-wrapper::after {
+                    right: 0;
+                    left: auto;
                 }
             }
 
@@ -1309,14 +1326,14 @@ app.get('/', (c) => {
                 top: 50%;
                 transform: translateY(-50%);
                 z-index: 10;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.7);
+                width: 34px;
+                height: 34px;
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.55);
                 backdrop-filter: blur(12px);
                 -webkit-backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.5);
-                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -1327,17 +1344,17 @@ app.get('/', (c) => {
             }
 
             .carousel-arrow.prev {
-                left: 6px;
+                left: 24px;
             }
 
             .carousel-arrow.next {
-                right: 6px;
+                right: 24px;
             }
 
             .carousel-arrow:hover {
-                background: rgba(255, 255, 255, 0.9);
+                background: rgba(255, 255, 255, 0.85);
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-                transform: translateY(-50%) scale(1.1);
+                transform: translateY(-50%) scale(1.08);
             }
 
             .carousel-arrow.hidden {
@@ -1347,15 +1364,16 @@ app.get('/', (c) => {
 
             @media (min-width: 961px) {
                 .carousel-arrow {
-                    width: 42px;
-                    height: 42px;
+                    width: 40px;
+                    height: 40px;
                     font-size: 20px;
+                    border-radius: 12px;
                 }
                 .carousel-arrow.prev {
-                    left: 14px;
+                    left: 24px;
                 }
                 .carousel-arrow.next {
-                    right: 14px;
+                    right: 24px;
                 }
             }
 

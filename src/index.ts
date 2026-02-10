@@ -1220,37 +1220,91 @@ app.get('/', (c) => {
             }
 
             /* ========================================
-               CAROUSEL - Show/Hide Grid (zero overflow)
-               Cards are rendered in a simple flex row.
-               Navigation swaps which cards are visible.
-               Nothing is clipped — shadows render freely.
+               CAROUSEL - Sliding Animation (ZERO overflow)
+               All cards live in the DOM. Visible cards use
+               position: relative and flow in a flex row.
+               Off-screen cards use position: absolute,
+               opacity: 0, and pointer-events: none.
+               CSS transitions animate the enter/exit.
+               No container has overflow: hidden.
+               Shadows and glow extend freely.
                ======================================== */
             .carousel-wrapper {
                 position: relative;
                 width: 100%;
             }
 
-            .carousel-grid {
+            /* The stage holds the visible flex row AND absolute off-screen cards */
+            .carousel-stage {
+                position: relative;
                 display: flex;
-                gap: 20px;
                 justify-content: center;
                 align-items: stretch;
+                gap: 20px;
                 width: 100%;
-                transition: opacity 0.3s ease;
+                /* no overflow! */
             }
 
+            /* === Card states === */
             .carousel-card {
+                box-sizing: border-box;
+                transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+                            opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform, opacity;
+            }
+
+            /* Visible cards flow in the flex row */
+            .carousel-card[data-state="visible"] {
+                position: relative;
+                opacity: 1;
+                transform: translateX(0);
+                pointer-events: auto;
                 flex: 1 1 0;
                 min-width: 0;
                 max-width: 400px;
             }
 
+            /* Cards that exited to the left */
+            .carousel-card[data-state="exit-left"] {
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                transform: translateX(-80px);
+                pointer-events: none;
+                width: 0;
+                height: 0;
+            }
+
+            /* Cards that exited to the right */
+            .carousel-card[data-state="exit-right"] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                opacity: 0;
+                transform: translateX(80px);
+                pointer-events: none;
+                width: 0;
+                height: 0;
+            }
+
+            /* Cards waiting to enter (no transition yet) */
+            .carousel-card[data-state="hidden"] {
+                position: absolute;
+                top: 0;
+                opacity: 0;
+                pointer-events: none;
+                width: 0;
+                height: 0;
+                transition: none;
+            }
+
             /* Mobile: single card centered */
             @media (max-width: 960px) {
-                .carousel-grid {
+                .carousel-stage {
                     gap: 0;
                 }
-                .carousel-card {
+                .carousel-card[data-state="visible"] {
                     flex: 0 0 80%;
                     max-width: 340px;
                 }
@@ -1258,11 +1312,11 @@ app.get('/', (c) => {
 
             /* Desktop: up to 3 cards, evenly sized */
             @media (min-width: 961px) {
-                .carousel-grid {
+                .carousel-stage {
                     gap: 24px;
                     padding: 0 24px;
                 }
-                .carousel-card {
+                .carousel-card[data-state="visible"] {
                     max-width: none;
                 }
             }
@@ -5026,10 +5080,10 @@ app.get('/', (c) => {
                     <div class="stay-tuned-container" id="stay-tuned-container" style="display: none;">
                     </div>
                     
-                    <!-- Carousel for upcoming events -->
+                    <!-- Carousel for upcoming events — zero overflow, sliding animations -->
                     <div class="carousel-wrapper" id="carousel-wrapper" style="display: none;">
-                        <div class="carousel-grid" id="carousel-grid">
-                            <!-- Visible cards rendered here by JS -->
+                        <div class="carousel-stage" id="carousel-stage">
+                            <!-- ALL cards rendered here by JS; visibility controlled via data-state attribute -->
                         </div>
                         <div class="carousel-nav" id="carousel-nav">
                             <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous event">&#8249;</button>
@@ -5198,7 +5252,7 @@ app.get('/', (c) => {
                 
                 // Carousel elements
                 const carouselWrapper = document.getElementById('carousel-wrapper');
-                const carouselGrid = document.getElementById('carousel-grid');
+                const carouselStage = document.getElementById('carousel-stage');
                 const carouselPrev = document.getElementById('carousel-prev');
                 const carouselNext = document.getElementById('carousel-next');
                 const carouselDotsContainer = document.getElementById('carousel-dots');
@@ -5796,14 +5850,64 @@ app.get('/', (c) => {
                 
                 // ========================================
                 // CAROUSEL CONTROLLER
-                // Show/hide grid — zero overflow containers
-                // Only visible cards are in the DOM at any time
+                // Sliding animation — zero overflow containers
+                // ALL cards are in the DOM at all times.
+                // Visible cards: position: relative, opacity: 1
+                // Off-screen cards: position: absolute, opacity: 0
+                // CSS transitions handle the slide+fade animation.
                 // ========================================
                 function initCarousel(allCards, pastEvents) {
-                    if (!carouselGrid || !carouselPrev || !carouselNext || allCards.length === 0) return;
+                    if (!carouselStage || !carouselPrev || !carouselNext || allCards.length === 0) return;
                     
                     let currentIndex = 0;
                     const totalCards = allCards.length;
+                    
+                    // Render ALL cards into the DOM once
+                    carouselStage.innerHTML = allCards.join('');
+                    const cardElements = Array.from(carouselStage.querySelectorAll('.carousel-card'));
+                    
+                    // Wire up "See Past Events" card click
+                    const seePastCard = document.getElementById('carousel-see-past');
+                    if (seePastCard && pastEventsModal && pastEvents && pastEvents.length > 0) {
+                        seePastCard.addEventListener('click', () => {
+                            pastEventsModal.classList.add('active');
+                            body.classList.add('modal-open');
+                            document.querySelectorAll('.past-event-slide').forEach((s, i) => {
+                                s.classList.remove('active', 'prev');
+                                if (i === 0) s.classList.add('active');
+                            });
+                            document.querySelectorAll('.past-events-dot').forEach((d, i) => {
+                                d.classList.toggle('active', i === 0);
+                            });
+                        });
+                    }
+                    
+                    // Run glow detection once on all cards
+                    document.querySelectorAll('[data-glow-detect]').forEach(wrapper => {
+                        const img = wrapper.querySelector('.flyer-image');
+                        if (!img) { wrapper.classList.add('glow-warm'); return; }
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = 8; canvas.height = 8;
+                        const detect = () => {
+                            try {
+                                ctx.drawImage(img, 0, 0, 8, 8);
+                                const d = ctx.getImageData(0, 0, 8, 8).data;
+                                let r=0,g=0,b=0,c=0;
+                                for (let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];c++;}
+                                r=Math.round(r/c);g=Math.round(g/c);b=Math.round(b/c);
+                                if(r>160&&g<100&&b<100)wrapper.classList.add('glow-red');
+                                else if(b>140&&r<120)wrapper.classList.add('glow-blue');
+                                else if(g>140&&r<120)wrapper.classList.add('glow-green');
+                                else if(r>120&&b>120&&g<100)wrapper.classList.add('glow-purple');
+                                else if(r<80&&g<80&&b<80)wrapper.classList.add('glow-dark');
+                                else wrapper.classList.add('glow-warm');
+                            } catch(e) { wrapper.classList.add('glow-warm'); }
+                        };
+                        if (img.complete && img.naturalWidth > 0) detect();
+                        else img.addEventListener('load', detect);
+                        img.addEventListener('error', () => wrapper.classList.add('glow-warm'));
+                    });
                     
                     function getCardsPerView() {
                         return window.innerWidth >= 961 ? 3 : 1;
@@ -5813,53 +5917,33 @@ app.get('/', (c) => {
                         return Math.max(0, totalCards - getCardsPerView());
                     }
                     
-                    function renderVisibleCards() {
+                    // Track which direction we're sliding for exit animations
+                    let slideDirection = 'right'; // 'left' or 'right'
+                    
+                    function updateCardStates() {
                         const perView = getCardsPerView();
-                        const visible = allCards.slice(currentIndex, currentIndex + perView);
-                        carouselGrid.innerHTML = visible.join('');
+                        const visibleStart = currentIndex;
+                        const visibleEnd = currentIndex + perView;
                         
-                        // Wire up "See Past Events" card click if it's visible
-                        const seePastCard = document.getElementById('carousel-see-past');
-                        if (seePastCard && pastEventsModal && pastEvents && pastEvents.length > 0) {
-                            seePastCard.addEventListener('click', () => {
-                                pastEventsModal.classList.add('active');
-                                body.classList.add('modal-open');
-                                document.querySelectorAll('.past-event-slide').forEach((s, i) => {
-                                    s.classList.remove('active', 'prev');
-                                    if (i === 0) s.classList.add('active');
-                                });
-                                document.querySelectorAll('.past-events-dot').forEach((d, i) => {
-                                    d.classList.toggle('active', i === 0);
-                                });
-                            });
-                        }
-                        
-                        // Re-run glow detection on newly rendered images
-                        document.querySelectorAll('[data-glow-detect]').forEach(wrapper => {
-                            const img = wrapper.querySelector('.flyer-image');
-                            if (!img) { wrapper.classList.add('glow-warm'); return; }
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            canvas.width = 8; canvas.height = 8;
-                            const detect = () => {
-                                try {
-                                    ctx.drawImage(img, 0, 0, 8, 8);
-                                    const d = ctx.getImageData(0, 0, 8, 8).data;
-                                    let r=0,g=0,b=0,c=0;
-                                    for (let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];c++;}
-                                    r=Math.round(r/c);g=Math.round(g/c);b=Math.round(b/c);
-                                    if(r>160&&g<100&&b<100)wrapper.classList.add('glow-red');
-                                    else if(b>140&&r<120)wrapper.classList.add('glow-blue');
-                                    else if(g>140&&r<120)wrapper.classList.add('glow-green');
-                                    else if(r>120&&b>120&&g<100)wrapper.classList.add('glow-purple');
-                                    else if(r<80&&g<80&&b<80)wrapper.classList.add('glow-dark');
-                                    else wrapper.classList.add('glow-warm');
-                                } catch(e) { wrapper.classList.add('glow-warm'); }
-                            };
-                            if (img.complete && img.naturalWidth > 0) detect();
-                            else img.addEventListener('load', detect);
-                            img.addEventListener('error', () => wrapper.classList.add('glow-warm'));
+                        cardElements.forEach((card, i) => {
+                            if (i >= visibleStart && i < visibleEnd) {
+                                card.setAttribute('data-state', 'visible');
+                            } else if (i < visibleStart) {
+                                card.setAttribute('data-state', 'exit-left');
+                            } else {
+                                card.setAttribute('data-state', 'exit-right');
+                            }
                         });
+                    }
+                    
+                    // Set initial states WITHOUT transitions (instant positioning)
+                    function setInitialStates() {
+                        cardElements.forEach(card => {
+                            card.setAttribute('data-state', 'hidden');
+                        });
+                        // Force layout so 'hidden' state (no transition) is applied
+                        void carouselStage.offsetHeight;
+                        updateCardStates();
                     }
                     
                     function updateArrows() {
@@ -5882,7 +5966,9 @@ app.get('/', (c) => {
                         
                         carouselDotsContainer.querySelectorAll('.carousel-dot').forEach(dot => {
                             dot.addEventListener('click', () => {
-                                currentIndex = parseInt(dot.dataset.index);
+                                const target = parseInt(dot.dataset.index);
+                                slideDirection = target > currentIndex ? 'right' : 'left';
+                                currentIndex = target;
                                 render();
                                 resetAutoTimer();
                             });
@@ -5890,7 +5976,7 @@ app.get('/', (c) => {
                     }
                     
                     function render() {
-                        renderVisibleCards();
+                        updateCardStates();
                         updateArrows();
                         updateDots();
                         // Hide nav row entirely if all cards fit
@@ -5902,27 +5988,42 @@ app.get('/', (c) => {
                     }
                     
                     carouselPrev.addEventListener('click', () => {
-                        if (currentIndex > 0) { currentIndex--; render(); resetAutoTimer(); }
+                        if (currentIndex > 0) {
+                            slideDirection = 'left';
+                            currentIndex--;
+                            render();
+                            resetAutoTimer();
+                        }
                     });
                     
                     carouselNext.addEventListener('click', () => {
-                        if (currentIndex < getMaxIndex()) { currentIndex++; render(); resetAutoTimer(); }
+                        if (currentIndex < getMaxIndex()) {
+                            slideDirection = 'right';
+                            currentIndex++;
+                            render();
+                            resetAutoTimer();
+                        }
                     });
                     
-                    // Touch/swipe support on the grid
+                    // Touch/swipe support on the stage
                     let touchStartX = 0, touchStartY = 0;
-                    carouselGrid.addEventListener('touchstart', e => {
+                    carouselStage.addEventListener('touchstart', e => {
                         touchStartX = e.touches[0].clientX;
                         touchStartY = e.touches[0].clientY;
                     }, { passive: true });
                     
-                    carouselGrid.addEventListener('touchend', e => {
+                    carouselStage.addEventListener('touchend', e => {
                         if (!e.changedTouches[0]) return;
                         const dx = e.changedTouches[0].clientX - touchStartX;
                         const dy = e.changedTouches[0].clientY - touchStartY;
                         if (Math.abs(dx) < Math.abs(dy) || Math.abs(dx) < 50) return;
-                        if (dx < 0 && currentIndex < getMaxIndex()) currentIndex++;
-                        else if (dx > 0 && currentIndex > 0) currentIndex--;
+                        if (dx < 0 && currentIndex < getMaxIndex()) {
+                            slideDirection = 'right';
+                            currentIndex++;
+                        } else if (dx > 0 && currentIndex > 0) {
+                            slideDirection = 'left';
+                            currentIndex--;
+                        }
                         render();
                         resetAutoTimer();
                     }, { passive: true });
@@ -5930,8 +6031,13 @@ app.get('/', (c) => {
                     // Auto-advance every 5 seconds
                     function startAutoTimer() {
                         return setInterval(() => {
-                            if (currentIndex < getMaxIndex()) currentIndex++;
-                            else currentIndex = 0;
+                            if (currentIndex < getMaxIndex()) {
+                                slideDirection = 'right';
+                                currentIndex++;
+                            } else {
+                                slideDirection = 'left';
+                                currentIndex = 0;
+                            }
                             render();
                         }, 5000);
                     }
@@ -5949,8 +6055,15 @@ app.get('/', (c) => {
                         render();
                     });
                     
-                    // Initial render
-                    render();
+                    // Initial render — instant, no transition
+                    setInitialStates();
+                    updateArrows();
+                    updateDots();
+                    if (carouselNav && getMaxIndex() === 0) {
+                        carouselNav.style.display = 'none';
+                    } else if (carouselNav) {
+                        carouselNav.style.display = 'flex';
+                    }
                 }
                 
                 // Update active nav link

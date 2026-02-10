@@ -1143,18 +1143,18 @@ app.get('/', (c) => {
             .outreach {
                 display: flex;
                 flex-direction: column;
-                padding-bottom: 40px;
+                padding-bottom: 48px;
             }
 
             .outreach .section-eyebrow {
                 display: inline-flex !important;
                 width: fit-content !important;
                 max-width: fit-content !important;
-                margin-bottom: 10px;
+                margin-bottom: 12px;
             }
             
             .outreach .section-heading {
-                margin-bottom: 24px;
+                margin-bottom: 28px;
             }
 
             /* Stay Tuned container */
@@ -1178,7 +1178,7 @@ app.get('/', (c) => {
                 
                 .stay-tuned-card,
                 .past-events-card {
-                    aspect-ratio: 4/5 !important;
+                    aspect-ratio: 3/4 !important;
                     width: 280px !important;
                     max-width: 280px !important;
                     min-width: 280px !important;
@@ -1232,36 +1232,34 @@ app.get('/', (c) => {
                 width: 100%;
             }
 
-            /* Viewport clips left/right with room for peeking cards */
+            /* Viewport clips sides — generous room for shadows */
             .carousel-viewport {
                 position: relative;
-                clip-path: inset(-60px -20px -60px -20px);
-                /* 20px extra on sides lets next/prev cards peek in */
+                overflow: visible;
+                clip-path: inset(-60px -4px -60px -4px);
             }
 
-            /* Fog gradients on edges — soft fade instead of hard clip */
+            /* Soft fog on edges */
             .carousel-wrapper::before,
             .carousel-wrapper::after {
                 content: '';
                 position: absolute;
                 top: -60px;
                 bottom: -60px;
-                width: 60px;
+                width: 32px;
                 z-index: 3;
                 pointer-events: none;
             }
             .carousel-wrapper::before {
-                left: -20px;
+                left: -4px;
                 background: linear-gradient(to right, 
                     var(--bg-color, #f8f9fd) 0%, 
-                    var(--bg-color, #f8f9fd) 20%,
                     rgba(248, 249, 253, 0) 100%);
             }
             .carousel-wrapper::after {
-                right: -20px;
+                right: -4px;
                 background: linear-gradient(to left, 
                     var(--bg-color, #f8f9fd) 0%, 
-                    var(--bg-color, #f8f9fd) 20%,
                     rgba(248, 249, 253, 0) 100%);
             }
 
@@ -1276,22 +1274,32 @@ app.get('/', (c) => {
             .carousel-card {
                 flex-shrink: 0;
                 box-sizing: border-box;
-                padding: 0 10px;
             }
 
-            /* Mobile: one card at a time, constrained size */
+            /* Mobile: one card at a time, centered with breathing room */
             @media (max-width: 960px) {
                 .carousel-card {
                     width: 100%;
-                    padding: 0 24px;
+                    padding: 0 28px;
+                }
+                .carousel-viewport {
+                    clip-path: inset(-60px 0 -60px 0);
+                }
+                .event-flyer-wrapper {
+                    max-height: 440px;
+                    margin: 0 auto;
+                }
+                .carousel-past-card {
+                    max-height: 440px;
+                    margin: 0 auto;
                 }
             }
 
-            /* Desktop: 3 cards at a time */
+            /* Desktop: 3 cards in a row with balanced gutters */
             @media (min-width: 961px) {
                 .carousel-card {
                     width: 33.333%;
-                    padding: 0 12px;
+                    padding: 0 8px;
                 }
             }
 
@@ -1301,7 +1309,7 @@ app.get('/', (c) => {
                 align-items: center;
                 justify-content: center;
                 gap: 16px;
-                margin-top: 20px;
+                margin-top: 28px;
             }
 
             .carousel-arrow {
@@ -1384,17 +1392,16 @@ app.get('/', (c) => {
             .event-flyer-wrapper {
                 position: relative;
                 width: 100%;
-                aspect-ratio: 4/5;
+                aspect-ratio: 3/4;
                 border-radius: 20px;
                 overflow: hidden; /* crops image to rounded corners only — box-shadow is outside */
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
                 transition: box-shadow 0.4s ease, transform 0.4s ease;
             }
             
-            /* Mobile: cap card height so it doesn't eat the screen */
+            /* Mobile: proper 3:4 card sizing */
             @media (max-width: 960px) {
                 .event-flyer-wrapper {
-                    max-height: 420px;
                     border-radius: 18px;
                 }
             }
@@ -1542,7 +1549,7 @@ app.get('/', (c) => {
                 justify-content: center;
                 text-align: center;
                 width: 100%;
-                aspect-ratio: 4/5;
+                aspect-ratio: 3/4;
                 background: rgba(255, 255, 255, 0.85);
                 border: 1px solid rgba(255,255,255,0.6);
                 backdrop-filter: blur(20px);
@@ -1559,7 +1566,6 @@ app.get('/', (c) => {
             }
             @media (max-width: 960px) {
                 .carousel-past-card {
-                    max-height: 420px;
                     border-radius: 18px;
                 }
             }
@@ -1592,7 +1598,11 @@ app.get('/', (c) => {
             /* Desktop: bigger cards & stronger glow */
             @media (min-width: 961px) {
                 .event-flyer-wrapper {
-                    border-radius: 28px;
+                    border-radius: 24px;
+                    max-height: 380px;
+                }
+                .carousel-past-card {
+                    max-height: 380px;
                 }
                 .event-date {
                     top: 16px;
@@ -1601,7 +1611,7 @@ app.get('/', (c) => {
                     font-size: 11px;
                 }
                 .carousel-past-card {
-                    border-radius: 28px;
+                    border-radius: 24px;
                     padding: 32px 24px;
                 }
                 .carousel-past-card .past-card-icon { font-size: 48px; }
@@ -1662,11 +1672,11 @@ app.get('/', (c) => {
                 border: 1px solid rgba(255, 255, 255, 0.6); /* Match section-card */
                 backdrop-filter: blur(20px); /* Match section-card */
                 min-height: auto;
-                border-radius: 48px; /* Match section-card */
+                border-radius: 24px; /* Match card styling */
                 position: relative;
                 overflow: visible;
                 transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Match section-card */
-                aspect-ratio: 4/5; /* Portrait card - mobile */
+                aspect-ratio: 3/4; /* Portrait card - mobile */
                 width: 100%; /* Mobile: full width */
             }
             
@@ -1686,7 +1696,7 @@ app.get('/', (c) => {
                 
                 .stay-tuned-container > .stay-tuned-card,
                 .stay-tuned-container > .past-events-card {
-                    aspect-ratio: 4/5 !important;
+                    aspect-ratio: 3/4 !important;
                     width: 260px !important;
                     max-width: 260px !important;
                     min-width: 260px !important;
@@ -3185,6 +3195,7 @@ app.get('/', (c) => {
                 .outreach {
                     width: 100%;
                     max-width: 100vw;
+                    padding-bottom: 40px;
                     /* No overflow:hidden - shadows must not be clipped */
                 }
                 
@@ -4681,12 +4692,13 @@ app.get('/', (c) => {
                 
                 /* Desktop Outreach Section - 3-in-row grid */
                 .outreach {
-                    max-width: 1400px;
+                    max-width: 960px;
                     margin: 0 auto;
-                    width: min(1280px, 94%);
+                    width: min(960px, 90%);
                     min-height: auto;
                     display: block;
                     padding-top: 0;
+                    padding-bottom: 60px;
                 }
                 
                 /* Desktop outreach - same layout as schedule */
@@ -4698,7 +4710,7 @@ app.get('/', (c) => {
                 }
                 
                 .outreach .section-heading {
-                    margin-bottom: 32px;
+                    margin-bottom: 36px;
                     text-align: left;
                 }
                 
@@ -5544,7 +5556,7 @@ app.get('/', (c) => {
                         // Desktop: Two card layout - Upcoming + Past Events (same size)
                         return \`
                             <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 40px; justify-content: center; align-items: flex-start; width: 100%; max-width: 900px; margin: 0 auto;">
-                                <div class="stay-tuned-card" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 4/5; border-radius: 24px;">
+                                <div class="stay-tuned-card" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;">
                                     <span class="event-date stay-tuned-badge">COMING SOON</span>
                                     <div class="stay-tuned-content">
                                         <div class="stay-tuned-icon">✨</div>
@@ -5557,7 +5569,7 @@ app.get('/', (c) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 4/5; border-radius: 24px;">
+                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;">
                                     <span class="past-card-badge">MEMORIES</span>
                                     <div class="past-card-icon">📸</div>
                                     <h3 class="past-card-title">Past Events</h3>

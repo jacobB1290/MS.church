@@ -222,7 +222,7 @@ app.get('/api/calendar/events', async (c) => {
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.29.0 - Zero-overflow carousel: show/hide grid replaces translateX sliding -->
+    <!-- v1.31.0 - Smooth gliding carousel with clip-path, frosted glass CTA, gold dots -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -1220,114 +1220,61 @@ app.get('/', (c) => {
             }
 
             /* ========================================
-               CAROUSEL - Sliding Animation (ZERO overflow)
-               All cards live in the DOM. Visible cards use
-               position: relative and flow in a flex row.
-               Off-screen cards use position: absolute,
-               opacity: 0, and pointer-events: none.
-               CSS transitions animate the enter/exit.
-               No container has overflow: hidden.
-               Shadows and glow extend freely.
+               CAROUSEL - Smooth Gliding Track Animation
+               Uses translateX on a flex track for true simultaneous
+               slide: outgoing cards glide out while incoming glide in.
+               clip-path clips left/right but allows vertical shadows.
+               NO overflow: hidden anywhere in the carousel.
                ======================================== */
             .carousel-wrapper {
                 position: relative;
                 width: 100%;
             }
 
-            /* The stage holds the visible flex row AND absolute off-screen cards */
-            .carousel-stage {
+            /* Viewport clips LEFT/RIGHT only — vertical shadows extend freely */
+            .carousel-viewport {
                 position: relative;
+                clip-path: inset(-60px 0px -60px 0px);
+                /* NOT overflow: hidden — shadows breathe vertically */
+            }
+
+            /* The track is a flex row of ALL cards; translateX slides it */
+            .carousel-track {
                 display: flex;
-                justify-content: center;
-                align-items: stretch;
-                gap: 20px;
-                width: 100%;
-                /* no overflow! */
+                transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                will-change: transform;
             }
 
-            /* === Card states === */
+            /* Each card slot */
             .carousel-card {
+                flex-shrink: 0;
                 box-sizing: border-box;
-                transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1),
-                            opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-                will-change: transform, opacity;
+                padding: 0 10px;
             }
 
-            /* Visible cards flow in the flex row */
-            .carousel-card[data-state="visible"] {
-                position: relative;
-                opacity: 1;
-                transform: translateX(0);
-                pointer-events: auto;
-                flex: 1 1 0;
-                min-width: 0;
-                max-width: 400px;
-            }
-
-            /* Cards that exited to the left */
-            .carousel-card[data-state="exit-left"] {
-                position: absolute;
-                top: 0;
-                left: 0;
-                opacity: 0;
-                transform: translateX(-80px);
-                pointer-events: none;
-                width: 0;
-                height: 0;
-            }
-
-            /* Cards that exited to the right */
-            .carousel-card[data-state="exit-right"] {
-                position: absolute;
-                top: 0;
-                right: 0;
-                opacity: 0;
-                transform: translateX(80px);
-                pointer-events: none;
-                width: 0;
-                height: 0;
-            }
-
-            /* Cards waiting to enter (no transition yet) */
-            .carousel-card[data-state="hidden"] {
-                position: absolute;
-                top: 0;
-                opacity: 0;
-                pointer-events: none;
-                width: 0;
-                height: 0;
-                transition: none;
-            }
-
-            /* Mobile: single card centered */
+            /* Mobile: one card at a time, full width */
             @media (max-width: 960px) {
-                .carousel-stage {
-                    gap: 0;
-                }
-                .carousel-card[data-state="visible"] {
-                    flex: 0 0 80%;
-                    max-width: 340px;
+                .carousel-card {
+                    width: 100%;
+                    padding: 0 16px;
                 }
             }
 
-            /* Desktop: up to 3 cards, evenly sized */
+            /* Desktop: 3 cards at a time */
             @media (min-width: 961px) {
-                .carousel-stage {
-                    gap: 24px;
-                    padding: 0 24px;
-                }
-                .carousel-card[data-state="visible"] {
-                    max-width: none;
+                .carousel-card {
+                    width: 33.333%;
+                    padding: 0 12px;
                 }
             }
 
-            /* Navigation row: arrows + dots together */
+            /* Navigation row: arrows + dots */
             .carousel-nav {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 gap: 16px;
-                margin-top: 24px;
+                margin-top: 28px;
             }
 
             .carousel-arrow {
@@ -1337,8 +1284,8 @@ app.get('/', (c) => {
                 height: 40px;
                 border-radius: 50%;
                 background: rgba(255, 255, 255, 0.95);
-                border: 1px solid rgba(0, 0, 0, 0.08);
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(0, 0, 0, 0.06);
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -1350,24 +1297,24 @@ app.get('/', (c) => {
 
             .carousel-arrow:hover {
                 background: #fff;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
-                transform: scale(1.08);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14);
+                transform: scale(1.1);
             }
 
             .carousel-arrow.hidden {
-                opacity: 0.3;
+                opacity: 0.25;
                 pointer-events: none;
             }
 
             @media (min-width: 961px) {
                 .carousel-arrow {
-                    width: 44px;
-                    height: 44px;
-                    font-size: 20px;
+                    width: 46px;
+                    height: 46px;
+                    font-size: 22px;
                 }
             }
 
-            /* Dots */
+            /* Dots — gold theme */
             .carousel-dots {
                 display: flex;
                 gap: 10px;
@@ -1375,24 +1322,28 @@ app.get('/', (c) => {
             }
 
             .carousel-dot {
-                width: 10px;
-                height: 10px;
+                width: 8px;
+                height: 8px;
                 border-radius: 50%;
-                background: rgba(0, 0, 0, 0.15);
+                background: #d4a574;
+                opacity: 0.3;
                 border: none;
                 cursor: pointer;
-                transition: all 0.3s ease;
+                transition: all 0.35s ease;
                 padding: 0;
             }
 
             .carousel-dot.active {
-                background: #d4a574;
-                transform: scale(1.2);
-                box-shadow: 0 0 8px rgba(212, 165, 116, 0.5);
+                opacity: 1;
+                width: 10px;
+                height: 10px;
+                box-shadow: 0 0 10px rgba(212, 165, 116, 0.6);
             }
 
             /* ========================================
-               EVENT CARDS - Clean Card Design with Glow
+               EVENT CARDS - Full-bleed Image with Glow
+               Mobile: image IS the card, CTA overlaid with frosted glass
+               Desktop: image card with separate CTA below
                ======================================== */
             .event-card {
                 position: relative;
@@ -1407,11 +1358,14 @@ app.get('/', (c) => {
                 position: relative;
                 width: 100%;
                 aspect-ratio: 3/4;
-                border-radius: 20px;
-                overflow: hidden; /* Only element with overflow:hidden — crops image to rounded corners */
-                margin-bottom: 12px;
+                border-radius: 24px;
+                overflow: hidden; /* crops image to rounded corners only — box-shadow is outside */
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-                transition: box-shadow 0.4s ease;
+                transition: box-shadow 0.4s ease, transform 0.4s ease;
+            }
+            
+            .event-flyer-wrapper:hover {
+                transform: translateY(-3px);
             }
             
             /* Dominant color glow effect */
@@ -1474,11 +1428,19 @@ app.get('/', (c) => {
                 white-space: nowrap;
             }
 
-            /* CTA Button */
+            /* === CTA Button === */
+            /* Mobile: Frosted glass overlay on bottom of image */
             .event-cta {
-                width: 100%;
-                padding: 0;
-                margin-bottom: 8px;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 5;
+                padding: 14px 16px;
+                background: rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border-top: 1px solid rgba(255, 255, 255, 0.3);
             }
             
             .event-cta.hidden {
@@ -1487,23 +1449,54 @@ app.get('/', (c) => {
 
             .event-cta .btn {
                 width: 100%;
-                padding: 14px 28px;
+                padding: 12px 24px;
                 font-size: 13px;
                 font-weight: 700;
-                border-radius: 16px;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: white;
-                box-shadow: 0 6px 20px rgba(200, 152, 96, 0.35);
+                border-radius: 14px;
+                background: rgba(255, 255, 255, 0.85);
+                color: #1a1a2e;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
                 cursor: pointer;
                 display: block;
                 text-align: center;
                 text-decoration: none;
+                letter-spacing: 0.5px;
             }
 
             .event-cta .btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 10px 28px rgba(200, 152, 96, 0.45);
+                background: #fff;
+                box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+                transform: translateY(-1px);
+            }
+
+            /* Desktop: CTA below the card, not overlaid */
+            @media (min-width: 961px) {
+                .event-cta {
+                    position: relative;
+                    bottom: auto;
+                    left: auto;
+                    right: auto;
+                    padding: 0;
+                    background: none;
+                    backdrop-filter: none;
+                    -webkit-backdrop-filter: none;
+                    border-top: none;
+                    margin-top: 14px;
+                }
+                .event-cta .btn {
+                    padding: 14px 32px;
+                    font-size: 14px;
+                    border-radius: 18px;
+                    background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                    color: white;
+                    box-shadow: 0 6px 20px rgba(200, 152, 96, 0.35);
+                }
+                .event-cta .btn:hover {
+                    background: linear-gradient(135deg, #c89860 0%, #b88a52 100%);
+                    box-shadow: 0 10px 28px rgba(200, 152, 96, 0.45);
+                    transform: translateY(-2px);
+                }
             }
             
             /* See Past Events card in carousel */
@@ -1518,7 +1511,7 @@ app.get('/', (c) => {
                 background: rgba(255, 255, 255, 0.85);
                 border: 1px solid rgba(255,255,255,0.6);
                 backdrop-filter: blur(20px);
-                border-radius: 20px;
+                border-radius: 24px;
                 position: relative;
                 cursor: pointer;
                 transition: all 0.4s ease;
@@ -1555,22 +1548,16 @@ app.get('/', (c) => {
             }
             .carousel-past-card .past-card-btn:hover { background: #d4a574; color: white; }
 
-            /* Desktop: bigger cards & glow */
+            /* Desktop: bigger cards & stronger glow */
             @media (min-width: 961px) {
                 .event-flyer-wrapper {
                     border-radius: 28px;
-                    margin-bottom: 16px;
                 }
                 .event-date {
                     top: 16px;
                     left: 16px;
                     padding: 8px 18px;
                     font-size: 11px;
-                }
-                .event-cta .btn {
-                    padding: 16px 32px;
-                    font-size: 14px;
-                    border-radius: 20px;
                 }
                 .carousel-past-card {
                     border-radius: 28px;
@@ -5080,10 +5067,12 @@ app.get('/', (c) => {
                     <div class="stay-tuned-container" id="stay-tuned-container" style="display: none;">
                     </div>
                     
-                    <!-- Carousel for upcoming events — zero overflow, sliding animations -->
+                    <!-- Carousel for upcoming events — smooth gliding, no overflow:hidden -->
                     <div class="carousel-wrapper" id="carousel-wrapper" style="display: none;">
-                        <div class="carousel-stage" id="carousel-stage">
-                            <!-- ALL cards rendered here by JS; visibility controlled via data-state attribute -->
+                        <div class="carousel-viewport">
+                            <div class="carousel-track" id="carousel-track">
+                                <!-- ALL cards rendered here by JS; track slides via translateX -->
+                            </div>
                         </div>
                         <div class="carousel-nav" id="carousel-nav">
                             <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous event">&#8249;</button>
@@ -5252,7 +5241,7 @@ app.get('/', (c) => {
                 
                 // Carousel elements
                 const carouselWrapper = document.getElementById('carousel-wrapper');
-                const carouselStage = document.getElementById('carousel-stage');
+                const carouselTrack = document.getElementById('carousel-track');
                 const carouselPrev = document.getElementById('carousel-prev');
                 const carouselNext = document.getElementById('carousel-next');
                 const carouselDotsContainer = document.getElementById('carousel-dots');
@@ -5566,6 +5555,7 @@ app.get('/', (c) => {
                     
                     // Only show CTA if the link is a real URL (not just #contact default)
                     const hasRealLink = event.cta && event.cta.link && event.cta.link !== '#contact' && event.cta.link.startsWith('http');
+                    // CTA sits INSIDE the flyer-wrapper for frosted glass overlay on mobile
                     const ctaHtml = hasRealLink 
                         ? \`<div class="event-cta"><a href="\${event.cta.link}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">\${event.cta.text}</a></div>\`
                         : '';
@@ -5576,8 +5566,8 @@ app.get('/', (c) => {
                                 <div class="event-flyer-wrapper" data-glow-detect>
                                     \${imageHtml}
                                     <span class="event-date">\${event.displayDate}</span>
+                                    \${ctaHtml}
                                 </div>
-                                \${ctaHtml}
                             </div>
                         </div>
                     \`;
@@ -5850,21 +5840,19 @@ app.get('/', (c) => {
                 
                 // ========================================
                 // CAROUSEL CONTROLLER
-                // Sliding animation — zero overflow containers
-                // ALL cards are in the DOM at all times.
-                // Visible cards: position: relative, opacity: 1
-                // Off-screen cards: position: absolute, opacity: 0
-                // CSS transitions handle the slide+fade animation.
+                // Smooth gliding track — translateX slides all cards
+                // Both outgoing and incoming cards visible during animation
+                // clip-path hides left/right overflow (not overflow:hidden)
+                // Vertical shadows extend freely through clip-path
                 // ========================================
                 function initCarousel(allCards, pastEvents) {
-                    if (!carouselStage || !carouselPrev || !carouselNext || allCards.length === 0) return;
+                    if (!carouselTrack || !carouselPrev || !carouselNext || allCards.length === 0) return;
                     
                     let currentIndex = 0;
                     const totalCards = allCards.length;
                     
-                    // Render ALL cards into the DOM once
-                    carouselStage.innerHTML = allCards.join('');
-                    const cardElements = Array.from(carouselStage.querySelectorAll('.carousel-card'));
+                    // Render ALL cards into the track
+                    carouselTrack.innerHTML = allCards.join('');
                     
                     // Wire up "See Past Events" card click
                     const seePastCard = document.getElementById('carousel-see-past');
@@ -5917,33 +5905,22 @@ app.get('/', (c) => {
                         return Math.max(0, totalCards - getCardsPerView());
                     }
                     
-                    // Track which direction we're sliding for exit animations
-                    let slideDirection = 'right'; // 'left' or 'right'
-                    
-                    function updateCardStates() {
-                        const perView = getCardsPerView();
-                        const visibleStart = currentIndex;
-                        const visibleEnd = currentIndex + perView;
+                    function updateTrack() {
+                        // Each card is (100% / perView) wide, so offset = currentIndex * (100 / totalCards)%
+                        // Track width = totalCards * (100 / perView)%
+                        // But simpler: each card is (100/perView)% of viewport
+                        // Track total = totalCards * (100/perView)% of viewport
+                        // Offset = currentIndex * (100/perView)% of viewport... 
+                        // We need percentage of the TRACK width.
+                        // Card width in track = 1/totalCards of track = (100/totalCards)%
+                        // offset = currentIndex * (100 / totalCards)%
+                        const offset = (currentIndex / totalCards) * 100;
+                        carouselTrack.style.transform = 'translateX(-' + offset + '%)';
                         
-                        cardElements.forEach((card, i) => {
-                            if (i >= visibleStart && i < visibleEnd) {
-                                card.setAttribute('data-state', 'visible');
-                            } else if (i < visibleStart) {
-                                card.setAttribute('data-state', 'exit-left');
-                            } else {
-                                card.setAttribute('data-state', 'exit-right');
-                            }
-                        });
-                    }
-                    
-                    // Set initial states WITHOUT transitions (instant positioning)
-                    function setInitialStates() {
-                        cardElements.forEach(card => {
-                            card.setAttribute('data-state', 'hidden');
-                        });
-                        // Force layout so 'hidden' state (no transition) is applied
-                        void carouselStage.offsetHeight;
-                        updateCardStates();
+                        // Set track width: each card = (100/perView)% of viewport
+                        // So total track = totalCards * (100/perView)% of viewport
+                        const perView = getCardsPerView();
+                        carouselTrack.style.width = (totalCards * 100 / perView) + '%';
                     }
                     
                     function updateArrows() {
@@ -5966,9 +5943,7 @@ app.get('/', (c) => {
                         
                         carouselDotsContainer.querySelectorAll('.carousel-dot').forEach(dot => {
                             dot.addEventListener('click', () => {
-                                const target = parseInt(dot.dataset.index);
-                                slideDirection = target > currentIndex ? 'right' : 'left';
-                                currentIndex = target;
+                                currentIndex = parseInt(dot.dataset.index);
                                 render();
                                 resetAutoTimer();
                             });
@@ -5976,7 +5951,7 @@ app.get('/', (c) => {
                     }
                     
                     function render() {
-                        updateCardStates();
+                        updateTrack();
                         updateArrows();
                         updateDots();
                         // Hide nav row entirely if all cards fit
@@ -5989,7 +5964,6 @@ app.get('/', (c) => {
                     
                     carouselPrev.addEventListener('click', () => {
                         if (currentIndex > 0) {
-                            slideDirection = 'left';
                             currentIndex--;
                             render();
                             resetAutoTimer();
@@ -5998,32 +5972,26 @@ app.get('/', (c) => {
                     
                     carouselNext.addEventListener('click', () => {
                         if (currentIndex < getMaxIndex()) {
-                            slideDirection = 'right';
                             currentIndex++;
                             render();
                             resetAutoTimer();
                         }
                     });
                     
-                    // Touch/swipe support on the stage
+                    // Touch/swipe support
                     let touchStartX = 0, touchStartY = 0;
-                    carouselStage.addEventListener('touchstart', e => {
+                    carouselTrack.addEventListener('touchstart', e => {
                         touchStartX = e.touches[0].clientX;
                         touchStartY = e.touches[0].clientY;
                     }, { passive: true });
                     
-                    carouselStage.addEventListener('touchend', e => {
+                    carouselTrack.addEventListener('touchend', e => {
                         if (!e.changedTouches[0]) return;
                         const dx = e.changedTouches[0].clientX - touchStartX;
                         const dy = e.changedTouches[0].clientY - touchStartY;
                         if (Math.abs(dx) < Math.abs(dy) || Math.abs(dx) < 50) return;
-                        if (dx < 0 && currentIndex < getMaxIndex()) {
-                            slideDirection = 'right';
-                            currentIndex++;
-                        } else if (dx > 0 && currentIndex > 0) {
-                            slideDirection = 'left';
-                            currentIndex--;
-                        }
+                        if (dx < 0 && currentIndex < getMaxIndex()) currentIndex++;
+                        else if (dx > 0 && currentIndex > 0) currentIndex--;
                         render();
                         resetAutoTimer();
                     }, { passive: true });
@@ -6031,13 +5999,8 @@ app.get('/', (c) => {
                     // Auto-advance every 5 seconds
                     function startAutoTimer() {
                         return setInterval(() => {
-                            if (currentIndex < getMaxIndex()) {
-                                slideDirection = 'right';
-                                currentIndex++;
-                            } else {
-                                slideDirection = 'left';
-                                currentIndex = 0;
-                            }
+                            if (currentIndex < getMaxIndex()) currentIndex++;
+                            else currentIndex = 0;
                             render();
                         }, 5000);
                     }
@@ -6055,15 +6018,8 @@ app.get('/', (c) => {
                         render();
                     });
                     
-                    // Initial render — instant, no transition
-                    setInitialStates();
-                    updateArrows();
-                    updateDots();
-                    if (carouselNav && getMaxIndex() === 0) {
-                        carouselNav.style.display = 'none';
-                    } else if (carouselNav) {
-                        carouselNav.style.display = 'flex';
-                    }
+                    // Initial render
+                    render();
                 }
                 
                 // Update active nav link

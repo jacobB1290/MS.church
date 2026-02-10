@@ -222,7 +222,7 @@ app.get('/api/calendar/events', async (c) => {
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.27.4 - Dynamic copyright year in footer -->
+    <!-- v1.28.0 - Outreach carousel UX overhaul: glow, past events card, conditional CTA, mobile arrows outside -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -1171,7 +1171,7 @@ app.get('/', (c) => {
                     gap: 24px;
                     justify-content: center;
                     align-items: stretch;
-                    max-width: 700px;
+                    max-width: 900px;
                     margin: 0 auto;
                     width: 100%;
                 }
@@ -1179,22 +1179,22 @@ app.get('/', (c) => {
                 .stay-tuned-card,
                 .past-events-card {
                     aspect-ratio: 3/4 !important;
-                    width: 280px !important;
-                    max-width: 280px !important;
-                    min-width: 280px !important;
+                    width: 320px !important;
+                    max-width: 320px !important;
+                    min-width: 320px !important;
                     height: auto !important;
                     min-height: unset !important;
                     max-height: unset !important;
-                    flex: 0 0 280px !important;
-                    padding: 32px 24px !important;
+                    flex: 0 0 320px !important;
+                    padding: 40px 32px !important;
                 }
                 
-                .stay-tuned-card .stay-tuned-icon { font-size: 32px; margin-top: 0; }
-                .stay-tuned-card .stay-tuned-title { font-size: 22px !important; }
-                .stay-tuned-card .stay-tuned-text { font-size: 13px !important; line-height: 1.5; }
-                .stay-tuned-card .stay-tuned-decoration { font-size: 18px; gap: 10px; }
-                .stay-tuned-card .stay-tuned-badge { font-size: 9px !important; padding: 5px 10px !important; top: 12px; left: 12px; }
-                .stay-tuned-card .btn-view-past-events { font-size: 12px !important; padding: 8px 16px !important; }
+                .stay-tuned-card .stay-tuned-icon { font-size: 36px; margin-top: 0; }
+                .stay-tuned-card .stay-tuned-title { font-size: 26px !important; }
+                .stay-tuned-card .stay-tuned-text { font-size: 14px !important; line-height: 1.6; }
+                .stay-tuned-card .stay-tuned-decoration { font-size: 20px; gap: 12px; }
+                .stay-tuned-card .stay-tuned-badge { font-size: 10px !important; padding: 6px 12px !important; top: 14px; left: 14px; }
+                .stay-tuned-card .btn-view-past-events { font-size: 13px !important; padding: 10px 20px !important; }
                 
                 .past-events-card {
                     background: rgba(255, 255, 255, 0.85);
@@ -1209,11 +1209,11 @@ app.get('/', (c) => {
                 }
                 .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
                 .stay-tuned-card { border-radius: 40px; }
-                .past-events-card .past-card-badge { background: linear-gradient(135deg, #8b9dc3 0%, #7189b0 100%); box-shadow: 0 4px 16px rgba(113,137,176,0.35); position: absolute; top: 12px; left: 12px; color: white; font-size: 9px; font-weight: 700; padding: 5px 10px; border-radius: 20px; letter-spacing: 0.5px; }
-                .past-events-card .past-card-icon { font-size: 32px; margin-bottom: 6px; }
-                .past-events-card .past-card-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin: 0 0 6px 0; color: #1a1a2e; }
-                .past-events-card .past-card-text { font-size: 13px; color: rgba(26,26,46,0.7); line-height: 1.5; margin-bottom: 12px; }
-                .past-events-card .past-card-btn { display: inline-block; padding: 8px 16px; background: transparent; border: 2px solid #d4a574; color: #d4a574; border-radius: 30px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+                .past-events-card .past-card-badge { background: linear-gradient(135deg, #8b9dc3 0%, #7189b0 100%); box-shadow: 0 4px 16px rgba(113,137,176,0.35); position: absolute; top: 14px; left: 14px; color: white; font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 20px; letter-spacing: 0.5px; }
+                .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
+                .past-events-card .past-card-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; margin: 0 0 8px 0; color: #1a1a2e; }
+                .past-events-card .past-card-text { font-size: 14px; color: rgba(26,26,46,0.7); line-height: 1.6; margin-bottom: 14px; }
+                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #d4a574; color: #d4a574; border-radius: 30px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
                 .past-events-card .past-card-btn:hover { background: #d4a574; color: white; }
                 
                 .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 60px !important; }
@@ -1226,6 +1226,21 @@ app.get('/', (c) => {
                 position: relative;
                 width: 100%;
                 overflow: hidden;
+                padding: 12px 0;
+            }
+
+            /* Carousel layout container with arrows outside on mobile */
+            .carousel-layout {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .carousel-viewport {
+                flex: 1;
+                overflow: hidden;
+                min-width: 0;
             }
 
             .carousel-track {
@@ -1236,51 +1251,79 @@ app.get('/', (c) => {
 
             .carousel-card {
                 flex: 0 0 100%;
-                padding: 0 12px;
+                padding: 0 8px;
                 box-sizing: border-box;
             }
 
             /* Desktop: show 3 cards at a time, bigger cards */
             @media (min-width: 961px) {
+                .carousel-layout {
+                    gap: 0;
+                }
                 .carousel-card {
                     flex: 0 0 33.333%;
                     padding: 0 16px;
                 }
+                .carousel-wrapper {
+                    padding: 16px 0;
+                }
+            }
+            
+            /* Center cards when few items (2 or less on desktop) */
+            .carousel-track.centered {
+                justify-content: center;
             }
 
-            /* Carousel navigation arrows */
+            /* Carousel navigation arrows - MOBILE: beside cards */
             .carousel-arrow {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
+                flex-shrink: 0;
                 z-index: 20;
-                width: 48px;
-                height: 48px;
+                width: 36px;
+                height: 36px;
                 border-radius: 50%;
-                background: rgba(255, 255, 255, 0.9);
+                background: rgba(255, 255, 255, 0.95);
                 border: 1px solid rgba(0, 0, 0, 0.08);
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                font-size: 20px;
+                font-size: 18px;
                 color: #1a1a2e;
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
             }
 
             .carousel-arrow:hover {
                 background: rgba(255, 255, 255, 1);
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-                transform: translateY(-50%) scale(1.08);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                transform: scale(1.08);
             }
 
-            .carousel-arrow.prev { left: 8px; }
-            .carousel-arrow.next { right: 8px; }
-
             .carousel-arrow.hidden { opacity: 0; pointer-events: none; }
+            
+            /* Desktop: arrows overlaid on cards */
+            @media (min-width: 961px) {
+                .carousel-layout {
+                    position: relative;
+                }
+                .carousel-arrow {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 48px;
+                    height: 48px;
+                    font-size: 22px;
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+                }
+                .carousel-arrow:hover {
+                    transform: translateY(-50%) scale(1.08);
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+                }
+                .carousel-arrow.prev { left: 4px; }
+                .carousel-arrow.next { right: 4px; }
+            }
 
             /* Carousel dots */
             .carousel-dots {
@@ -1308,7 +1351,7 @@ app.get('/', (c) => {
             }
 
             /* ========================================
-               EVENT CARDS - Clean Card Design
+               EVENT CARDS - Clean Card Design with Glow
                ======================================== */
             .event-card {
                 position: relative;
@@ -1323,10 +1366,31 @@ app.get('/', (c) => {
                 position: relative;
                 width: 100%;
                 aspect-ratio: 3/4;
-                border-radius: 24px;
+                border-radius: 20px;
                 overflow: hidden;
-                margin-bottom: 16px;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                margin-bottom: 12px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+                transition: box-shadow 0.4s ease;
+            }
+            
+            /* Dominant color glow effect */
+            .event-flyer-wrapper.glow-warm {
+                box-shadow: 0 8px 40px rgba(212, 165, 116, 0.35), 0 4px 16px rgba(200, 152, 96, 0.2);
+            }
+            .event-flyer-wrapper.glow-red {
+                box-shadow: 0 8px 40px rgba(200, 60, 60, 0.3), 0 4px 16px rgba(180, 40, 40, 0.18);
+            }
+            .event-flyer-wrapper.glow-blue {
+                box-shadow: 0 8px 40px rgba(60, 120, 200, 0.3), 0 4px 16px rgba(40, 100, 180, 0.18);
+            }
+            .event-flyer-wrapper.glow-green {
+                box-shadow: 0 8px 40px rgba(60, 180, 100, 0.3), 0 4px 16px rgba(40, 150, 80, 0.18);
+            }
+            .event-flyer-wrapper.glow-purple {
+                box-shadow: 0 8px 40px rgba(140, 80, 200, 0.3), 0 4px 16px rgba(120, 60, 180, 0.18);
+            }
+            .event-flyer-wrapper.glow-dark {
+                box-shadow: 0 8px 40px rgba(40, 40, 60, 0.35), 0 4px 16px rgba(20, 20, 40, 0.2);
             }
 
             .flyer-image {
@@ -1354,15 +1418,15 @@ app.get('/', (c) => {
             /* Date pill overlaid on image */
             .event-date {
                 position: absolute;
-                top: 14px;
-                left: 14px;
+                top: 12px;
+                left: 12px;
                 z-index: 5;
-                padding: 8px 18px;
+                padding: 6px 14px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 border-radius: 100px;
-                font-size: 11px;
+                font-size: 10px;
                 font-weight: 700;
-                letter-spacing: 2px;
+                letter-spacing: 1.5px;
                 color: #ffffff;
                 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
                 text-transform: uppercase;
@@ -1375,13 +1439,17 @@ app.get('/', (c) => {
                 padding: 0;
                 margin-bottom: 8px;
             }
+            
+            .event-cta.hidden {
+                display: none;
+            }
 
             .event-cta .btn {
                 width: 100%;
-                padding: 16px 32px;
-                font-size: 14px;
+                padding: 14px 28px;
+                font-size: 13px;
                 font-weight: 700;
-                border-radius: 20px;
+                border-radius: 16px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: white;
                 box-shadow: 0 6px 20px rgba(200, 152, 96, 0.35);
@@ -1396,22 +1464,101 @@ app.get('/', (c) => {
                 transform: translateY(-2px);
                 box-shadow: 0 10px 28px rgba(200, 152, 96, 0.45);
             }
+            
+            /* See Past Events card in carousel */
+            .carousel-past-card {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                width: 100%;
+                aspect-ratio: 3/4;
+                background: rgba(255, 255, 255, 0.85);
+                border: 1px solid rgba(255,255,255,0.6);
+                backdrop-filter: blur(20px);
+                border-radius: 20px;
+                position: relative;
+                overflow: hidden;
+                cursor: pointer;
+                transition: all 0.4s ease;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+                padding: 24px 16px;
+            }
+            .carousel-past-card:hover {
+                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+                transform: translateY(-4px);
+            }
+            .carousel-past-card .past-card-badge {
+                position: absolute; top: 12px; left: 12px;
+                background: linear-gradient(135deg, #8b9dc3, #7189b0);
+                color: white; font-size: 9px; font-weight: 700;
+                padding: 5px 10px; border-radius: 20px;
+                letter-spacing: 0.5px;
+                box-shadow: 0 4px 12px rgba(113,137,176,0.3);
+            }
+            .carousel-past-card .past-card-icon { font-size: 40px; margin-bottom: 10px; }
+            .carousel-past-card .past-card-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 20px; font-weight: 700; margin: 0 0 8px 0; color: #1a1a2e;
+            }
+            .carousel-past-card .past-card-text {
+                font-size: 12px; color: rgba(26,26,46,0.6);
+                line-height: 1.5; margin-bottom: 14px; max-width: 200px;
+            }
+            .carousel-past-card .past-card-btn {
+                display: inline-block; padding: 10px 20px;
+                background: transparent; border: 2px solid #d4a574;
+                color: #d4a574; border-radius: 30px;
+                font-size: 12px; font-weight: 600;
+                cursor: pointer; transition: all 0.3s ease;
+            }
+            .carousel-past-card .past-card-btn:hover { background: #d4a574; color: white; }
 
-            /* Desktop: bigger cards */
+            /* Desktop: bigger cards & glow */
             @media (min-width: 961px) {
                 .event-flyer-wrapper {
-                    border-radius: 32px;
+                    border-radius: 28px;
+                    margin-bottom: 16px;
                 }
                 .event-date {
-                    top: 18px;
-                    left: 18px;
-                    padding: 10px 22px;
-                    font-size: 12px;
+                    top: 16px;
+                    left: 16px;
+                    padding: 8px 18px;
+                    font-size: 11px;
                 }
                 .event-cta .btn {
-                    padding: 18px 36px;
-                    font-size: 15px;
-                    border-radius: 24px;
+                    padding: 16px 32px;
+                    font-size: 14px;
+                    border-radius: 20px;
+                }
+                .carousel-past-card {
+                    border-radius: 28px;
+                    padding: 32px 24px;
+                }
+                .carousel-past-card .past-card-icon { font-size: 48px; }
+                .carousel-past-card .past-card-title { font-size: 24px; }
+                .carousel-past-card .past-card-text { font-size: 14px; max-width: 240px; }
+                .carousel-past-card .past-card-btn { padding: 12px 24px; font-size: 13px; }
+                
+                /* Stronger glow on desktop */
+                .event-flyer-wrapper.glow-warm {
+                    box-shadow: 0 12px 48px rgba(212, 165, 116, 0.4), 0 6px 20px rgba(200, 152, 96, 0.25);
+                }
+                .event-flyer-wrapper.glow-red {
+                    box-shadow: 0 12px 48px rgba(200, 60, 60, 0.35), 0 6px 20px rgba(180, 40, 40, 0.2);
+                }
+                .event-flyer-wrapper.glow-blue {
+                    box-shadow: 0 12px 48px rgba(60, 120, 200, 0.35), 0 6px 20px rgba(40, 100, 180, 0.2);
+                }
+                .event-flyer-wrapper.glow-green {
+                    box-shadow: 0 12px 48px rgba(60, 180, 100, 0.35), 0 6px 20px rgba(40, 150, 80, 0.2);
+                }
+                .event-flyer-wrapper.glow-purple {
+                    box-shadow: 0 12px 48px rgba(140, 80, 200, 0.35), 0 6px 20px rgba(120, 60, 180, 0.2);
+                }
+                .event-flyer-wrapper.glow-dark {
+                    box-shadow: 0 12px 48px rgba(40, 40, 60, 0.4), 0 6px 20px rgba(20, 20, 40, 0.25);
                 }
             }
 
@@ -4895,11 +5042,15 @@ app.get('/', (c) => {
                     
                     <!-- Carousel for upcoming events -->
                     <div class="carousel-wrapper" id="carousel-wrapper" style="display: none;">
-                        <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous event">&#8249;</button>
-                        <div class="carousel-track" id="carousel-track">
-                            <!-- Event cards rendered here by JS -->
+                        <div class="carousel-layout">
+                            <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous event">&#8249;</button>
+                            <div class="carousel-viewport">
+                                <div class="carousel-track" id="carousel-track">
+                                    <!-- Event cards rendered here by JS -->
+                                </div>
+                            </div>
+                            <button class="carousel-arrow next" id="carousel-next" aria-label="Next event">&#8250;</button>
                         </div>
-                        <button class="carousel-arrow next" id="carousel-next" aria-label="Next event">&#8250;</button>
                         <div class="carousel-dots" id="carousel-dots"></div>
                     </div>
                 </section>
@@ -5321,11 +5472,10 @@ app.get('/', (c) => {
                     const isDesktop = window.innerWidth >= 961;
                     
                     if (isDesktop && hasPastEvents) {
-                        // Desktop: Two card layout - Upcoming + Past Events
-                        // Using inline styles to GUARANTEE side-by-side layout
+                        // Desktop: Two card layout - Upcoming + Past Events (same size)
                         return \`
-                            <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 40px; justify-content: center; align-items: flex-start; width: 100%; max-width: 750px; margin: 0 auto;">
-                                <div class="stay-tuned-card" style="flex: 0 0 320px; width: 320px; max-width: 320px; aspect-ratio: 3/4; border-radius: 36px;">
+                            <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 40px; justify-content: center; align-items: flex-start; width: 100%; max-width: 900px; margin: 0 auto;">
+                                <div class="stay-tuned-card" style="flex: 0 0 340px; width: 340px; max-width: 340px; aspect-ratio: 3/4; border-radius: 28px;">
                                     <span class="event-date stay-tuned-badge">COMING SOON</span>
                                     <div class="stay-tuned-content">
                                         <div class="stay-tuned-icon">✨</div>
@@ -5338,7 +5488,7 @@ app.get('/', (c) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 320px; width: 320px; max-width: 320px; aspect-ratio: 3/4; border-radius: 36px;">
+                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 340px; width: 340px; max-width: 340px; aspect-ratio: 3/4; border-radius: 28px;">
                                     <span class="past-card-badge">MEMORIES</span>
                                     <div class="past-card-icon">📸</div>
                                     <h3 class="past-card-title">Past Events</h3>
@@ -5372,19 +5522,23 @@ app.get('/', (c) => {
                     console.log('Rendering event card:', event.title, 'Image URL:', event.image);
                     
                     const imageHtml = event.image 
-                        ? \`<img src="\${event.image}" alt="\${event.title}" class="flyer-image" onerror="console.error('Image failed to load:', this.src); this.style.display='none';">\`
+                        ? \`<img src="\${event.image}" alt="\${event.title}" class="flyer-image" crossorigin="anonymous" onerror="console.error('Image failed to load:', this.src); this.style.display='none';">\`
                         : \`<div class="flyer-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,#d4a574,#c89860);display:flex;align-items:center;justify-content:center;"><span style="font-size:48px;">📅</span></div>\`;
+                    
+                    // Only show CTA if the link is a real URL (not just #contact default)
+                    const hasRealLink = event.cta && event.cta.link && event.cta.link !== '#contact' && event.cta.link.startsWith('http');
+                    const ctaHtml = hasRealLink 
+                        ? \`<div class="event-cta"><a href="\${event.cta.link}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">\${event.cta.text}</a></div>\`
+                        : '';
                     
                     return \`
                         <div class="carousel-card">
                             <div class="event-card">
-                                <div class="event-flyer-wrapper">
+                                <div class="event-flyer-wrapper" data-glow-detect>
                                     \${imageHtml}
                                     <span class="event-date">\${event.displayDate}</span>
                                 </div>
-                                <div class="event-cta">
-                                    <a href="\${event.cta.link}" class="btn btn-primary">\${event.cta.text}</a>
-                                </div>
+                                \${ctaHtml}
                             </div>
                         </div>
                     \`;
@@ -5427,13 +5581,104 @@ app.get('/', (c) => {
                     
                     // Render cards into carousel track
                     if (carouselTrack) {
-                        carouselTrack.innerHTML = upcoming.map((event, i) => 
+                        let cardsHtml = upcoming.map((event, i) => 
                             renderUpcomingEventCard(event, i, upcoming.length)
                         ).join('');
+                        
+                        // Add "See Past Events" card at the end if there are past events
+                        if (past.length > 0) {
+                            cardsHtml += \`
+                                <div class="carousel-card">
+                                    <div class="carousel-past-card" id="carousel-see-past">
+                                        <span class="past-card-badge">MEMORIES</span>
+                                        <div class="past-card-icon">📸</div>
+                                        <h3 class="past-card-title">Past Events</h3>
+                                        <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
+                                        <span class="past-card-btn">View Gallery</span>
+                                    </div>
+                                </div>
+                            \`;
+                        }
+                        
+                        carouselTrack.innerHTML = cardsHtml;
+                        
+                        // Calculate total cards including past events card
+                        const totalCarouselCards = upcoming.length + (past.length > 0 ? 1 : 0);
+                        
+                        // Center track if 2 or fewer cards on desktop
+                        if (totalCarouselCards <= 2 && window.innerWidth >= 961) {
+                            carouselTrack.classList.add('centered');
+                            // Make cards not stretch to 33% but stay natural
+                            carouselTrack.querySelectorAll('.carousel-card').forEach(card => {
+                                card.style.flex = '0 0 33.333%';
+                            });
+                        }
+                        
+                        // Wire up the "See Past Events" card click
+                        const seePastCard = document.getElementById('carousel-see-past');
+                        if (seePastCard && pastEventsModal && past.length > 0) {
+                            seePastCard.addEventListener('click', () => {
+                                pastEventsModal.classList.add('active');
+                                body.classList.add('modal-open');
+                                // Reset to first slide
+                                const firstSlide = document.querySelector('.past-event-slide');
+                                if (firstSlide) {
+                                    document.querySelectorAll('.past-event-slide').forEach((s, i) => {
+                                        s.classList.remove('active', 'prev');
+                                        if (i === 0) s.classList.add('active');
+                                    });
+                                    document.querySelectorAll('.past-events-dot').forEach((d, i) => {
+                                        d.classList.toggle('active', i === 0);
+                                    });
+                                }
+                            });
+                        }
+                        
+                        // Detect dominant color for glow effect on each card image
+                        setTimeout(() => {
+                            document.querySelectorAll('[data-glow-detect]').forEach(wrapper => {
+                                const img = wrapper.querySelector('.flyer-image');
+                                if (!img) { wrapper.classList.add('glow-warm'); return; }
+                                
+                                const canvas = document.createElement('canvas');
+                                const ctx = canvas.getContext('2d');
+                                canvas.width = 8;
+                                canvas.height = 8;
+                                
+                                const detectGlow = () => {
+                                    try {
+                                        ctx.drawImage(img, 0, 0, 8, 8);
+                                        const data = ctx.getImageData(0, 0, 8, 8).data;
+                                        let r = 0, g = 0, b = 0, count = 0;
+                                        for (let i = 0; i < data.length; i += 4) {
+                                            r += data[i]; g += data[i+1]; b += data[i+2]; count++;
+                                        }
+                                        r = Math.round(r / count);
+                                        g = Math.round(g / count);
+                                        b = Math.round(b / count);
+                                        
+                                        // Classify dominant color
+                                        if (r > 160 && g < 100 && b < 100) wrapper.classList.add('glow-red');
+                                        else if (b > 140 && r < 120) wrapper.classList.add('glow-blue');
+                                        else if (g > 140 && r < 120) wrapper.classList.add('glow-green');
+                                        else if (r > 120 && b > 120 && g < 100) wrapper.classList.add('glow-purple');
+                                        else if (r < 80 && g < 80 && b < 80) wrapper.classList.add('glow-dark');
+                                        else wrapper.classList.add('glow-warm');
+                                    } catch(e) {
+                                        wrapper.classList.add('glow-warm');
+                                    }
+                                };
+                                
+                                if (img.complete) detectGlow();
+                                else img.addEventListener('load', detectGlow);
+                                img.addEventListener('error', () => wrapper.classList.add('glow-warm'));
+                            });
+                        }, 500);
                     }
                     
-                    // Initialize carousel
-                    initCarousel(upcoming.length);
+                    // Initialize carousel with total cards (events + optional past card)
+                    const totalCarouselCards = upcoming.length + (past.length > 0 ? 1 : 0);
+                    initCarousel(totalCarouselCards);
                 }
                 
                 // Render past events in modal
@@ -5650,6 +5895,7 @@ app.get('/', (c) => {
                     if (!carouselTrack || !carouselPrev || !carouselNext || totalCards === 0) return;
                     
                     let currentIndex = 0;
+                    const carouselViewport = document.querySelector('.carousel-viewport');
                     
                     function getCardsPerView() {
                         return window.innerWidth >= 961 ? 3 : 1;
@@ -5660,7 +5906,17 @@ app.get('/', (c) => {
                         return Math.max(0, totalCards - perView);
                     }
                     
-                    function updateCarousel() {
+                    function updateCentering() {
+                        // Center when there are fewer cards than can fit on desktop
+                        const perView = getCardsPerView();
+                        if (totalCards <= perView && totalCards < 3) {
+                            carouselTrack.classList.add('centered');
+                        } else {
+                            carouselTrack.classList.remove('centered');
+                        }
+                    }
+                    
+                    function updateCarouselView() {
                         const perView = getCardsPerView();
                         const cardWidthPercent = 100 / perView;
                         const offset = currentIndex * cardWidthPercent;
@@ -5669,6 +5925,9 @@ app.get('/', (c) => {
                         // Update arrows visibility
                         carouselPrev.classList.toggle('hidden', currentIndex <= 0);
                         carouselNext.classList.toggle('hidden', currentIndex >= getMaxIndex());
+                        
+                        // Update centering
+                        updateCentering();
                         
                         // Update dots
                         updateCarouselDots();
@@ -5692,7 +5951,8 @@ app.get('/', (c) => {
                         carouselDotsContainer.querySelectorAll('.carousel-dot').forEach(dot => {
                             dot.addEventListener('click', () => {
                                 currentIndex = parseInt(dot.dataset.index);
-                                updateCarousel();
+                                updateCarouselView();
+                                resetAutoTimer();
                             });
                         });
                     }
@@ -5700,26 +5960,29 @@ app.get('/', (c) => {
                     carouselPrev.addEventListener('click', () => {
                         if (currentIndex > 0) {
                             currentIndex--;
-                            updateCarousel();
+                            updateCarouselView();
+                            resetAutoTimer();
                         }
                     });
                     
                     carouselNext.addEventListener('click', () => {
                         if (currentIndex < getMaxIndex()) {
                             currentIndex++;
-                            updateCarousel();
+                            updateCarouselView();
+                            resetAutoTimer();
                         }
                     });
                     
                     // Touch/swipe support
                     let touchStartX = 0;
                     let touchStartY = 0;
-                    carouselTrack.addEventListener('touchstart', e => {
+                    const swipeTarget = carouselViewport || carouselTrack;
+                    swipeTarget.addEventListener('touchstart', e => {
                         touchStartX = e.touches[0].clientX;
                         touchStartY = e.touches[0].clientY;
                     }, { passive: true });
                     
-                    carouselTrack.addEventListener('touchend', e => {
+                    swipeTarget.addEventListener('touchend', e => {
                         if (!e.changedTouches[0]) return;
                         const dx = e.changedTouches[0].clientX - touchStartX;
                         const dy = e.changedTouches[0].clientY - touchStartY;
@@ -5730,40 +5993,43 @@ app.get('/', (c) => {
                         } else if (dx > 0 && currentIndex > 0) {
                             currentIndex--;
                         }
-                        updateCarousel();
+                        updateCarouselView();
+                        resetAutoTimer();
                     }, { passive: true });
                     
                     // Auto-advance every 5 seconds
-                    let autoTimer = setInterval(() => {
-                        if (currentIndex < getMaxIndex()) {
-                            currentIndex++;
-                        } else {
-                            currentIndex = 0;
-                        }
-                        updateCarousel();
-                    }, 5000);
-                    
-                    // Pause auto-advance on interaction
-                    carouselWrapper.addEventListener('mouseenter', () => clearInterval(autoTimer));
-                    carouselWrapper.addEventListener('mouseleave', () => {
-                        autoTimer = setInterval(() => {
+                    function startAutoTimer() {
+                        return setInterval(() => {
                             if (currentIndex < getMaxIndex()) {
                                 currentIndex++;
                             } else {
                                 currentIndex = 0;
                             }
-                            updateCarousel();
+                            updateCarouselView();
                         }, 5000);
+                    }
+                    
+                    let autoTimer = startAutoTimer();
+                    
+                    function resetAutoTimer() {
+                        clearInterval(autoTimer);
+                        autoTimer = startAutoTimer();
+                    }
+                    
+                    // Pause auto-advance on hover
+                    carouselWrapper.addEventListener('mouseenter', () => clearInterval(autoTimer));
+                    carouselWrapper.addEventListener('mouseleave', () => {
+                        autoTimer = startAutoTimer();
                     });
                     
                     // Recalculate on resize
                     window.addEventListener('resize', () => {
                         if (currentIndex > getMaxIndex()) currentIndex = getMaxIndex();
-                        updateCarousel();
+                        updateCarouselView();
                     });
                     
                     // Initial render
-                    updateCarousel();
+                    updateCarouselView();
                 }
                 
                 // Update active nav link

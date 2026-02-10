@@ -505,7 +505,6 @@ app.get('/', (c) => {
                 --bg-event3: #f5d8d8; /* Pleasant muted red */
                 --bg-event4: #e6e8f5; /* Soft blue-gray */
                 --bg-event5: #f0e6f5; /* Soft lavender */
-                --outreach-spacer: 100vh; /* Default for single card - JS adjusts dynamically */
             }
 
             * {
@@ -556,12 +555,7 @@ app.get('/', (c) => {
                 padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
-            /* Event backgrounds - solid colors for seamless overscroll */
-            body.event-1-active { background: var(--bg-event1); }
-            body.event-2-active { background: var(--bg-event2); }
-            body.event-3-active { background: var(--bg-event3); }
-            body.event-4-active { background: var(--bg-event4); }
-            body.event-5-active { background: var(--bg-event5); }
+            /* Body background - static, no dynamic changes */
             body.stay-tuned-active { background: var(--bg-stay-tuned); }
             
             /* Modal open - prevent body scroll */
@@ -1141,16 +1135,17 @@ app.get('/', (c) => {
                 font-size: 16px;
             }
 
-            /* Enhanced Outreach Section with Scroll Container */
+            /* ========================================
+               OUTREACH SECTION - Simple Horizontal Carousel
+               ======================================== */
             #outreach { overscroll-behavior: contain; }
 
             .outreach {
-                min-height: 100vh;
                 display: flex;
                 flex-direction: column;
+                padding-bottom: 40px;
             }
 
-            /* Outreach section header - same layout as Schedule */
             .outreach .section-eyebrow {
                 display: inline-flex !important;
                 width: fit-content !important;
@@ -1161,16 +1156,13 @@ app.get('/', (c) => {
             .outreach .section-heading {
                 margin-bottom: 24px;
             }
-            
-            /* Stay Tuned container - reduce space below */
+
+            /* Stay Tuned container */
             .stay-tuned-container {
                 margin-bottom: 0;
             }
             
-            /* ========================================
-               DESKTOP STAY TUNED - Two Card Layout
-               Only applies to screens >= 961px
-               ======================================== */
+            /* Desktop Stay Tuned - Two Card Layout */
             @media (min-width: 961px) {
                 .stay-tuned-container {
                     display: flex !important;
@@ -1197,297 +1189,154 @@ app.get('/', (c) => {
                     padding: 32px 24px !important;
                 }
                 
-                .stay-tuned-card .stay-tuned-icon {
-                    font-size: 32px;
-                    margin-top: 0;
-                }
+                .stay-tuned-card .stay-tuned-icon { font-size: 32px; margin-top: 0; }
+                .stay-tuned-card .stay-tuned-title { font-size: 22px !important; }
+                .stay-tuned-card .stay-tuned-text { font-size: 13px !important; line-height: 1.5; }
+                .stay-tuned-card .stay-tuned-decoration { font-size: 18px; gap: 10px; }
+                .stay-tuned-card .stay-tuned-badge { font-size: 9px !important; padding: 5px 10px !important; top: 12px; left: 12px; }
+                .stay-tuned-card .btn-view-past-events { font-size: 12px !important; padding: 8px 16px !important; }
                 
-                .stay-tuned-card .stay-tuned-title {
-                    font-size: 22px !important;
-                }
-                
-                .stay-tuned-card .stay-tuned-text {
-                    font-size: 13px !important;
-                    line-height: 1.5;
-                }
-                
-                .stay-tuned-card .stay-tuned-decoration {
-                    font-size: 18px;
-                    gap: 10px;
-                }
-                
-                .stay-tuned-card .stay-tuned-badge {
-                    font-size: 9px !important;
-                    padding: 5px 10px !important;
-                    top: 12px;
-                    left: 12px;
-                }
-                
-                .stay-tuned-card .btn-view-past-events {
-                    font-size: 12px !important;
-                    padding: 8px 16px !important;
-                }
-                
-                /* Past Events Card - Desktop */
                 .past-events-card {
                     background: rgba(255, 255, 255, 0.85);
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
-                                0 12px 32px rgba(0, 0, 0, 0.04);
-                    border: 1px solid rgba(255, 255, 255, 0.6);
+                    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+                    box-shadow: 0 32px 80px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.04);
+                    border: 1px solid rgba(255,255,255,0.6);
                     backdrop-filter: blur(20px);
                     border-radius: 40px;
-                    position: relative;
-                    overflow: visible;
+                    position: relative; overflow: visible;
                     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                     cursor: pointer;
                 }
+                .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
+                .stay-tuned-card { border-radius: 40px; }
+                .past-events-card .past-card-badge { background: linear-gradient(135deg, #8b9dc3 0%, #7189b0 100%); box-shadow: 0 4px 16px rgba(113,137,176,0.35); position: absolute; top: 12px; left: 12px; color: white; font-size: 9px; font-weight: 700; padding: 5px 10px; border-radius: 20px; letter-spacing: 0.5px; }
+                .past-events-card .past-card-icon { font-size: 32px; margin-bottom: 6px; }
+                .past-events-card .past-card-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin: 0 0 6px 0; color: #1a1a2e; }
+                .past-events-card .past-card-text { font-size: 13px; color: rgba(26,26,46,0.7); line-height: 1.5; margin-bottom: 12px; }
+                .past-events-card .past-card-btn { display: inline-block; padding: 8px 16px; background: transparent; border: 2px solid #d4a574; color: #d4a574; border-radius: 30px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+                .past-events-card .past-card-btn:hover { background: #d4a574; color: white; }
                 
-                .past-events-card:hover {
-                    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
-                                0 16px 40px rgba(0, 0, 0, 0.05);
-                    transform: translateY(-4px);
-                }
-                
-                .stay-tuned-card {
-                    border-radius: 40px;
-                }
-                
-                .past-events-card .past-card-badge {
-                    background: linear-gradient(135deg, #8b9dc3 0%, #7189b0 100%);
-                    box-shadow: 0 4px 16px rgba(113, 137, 176, 0.35);
-                    position: absolute;
-                    top: 12px;
-                    left: 12px;
-                    color: white;
-                    font-size: 9px;
-                    font-weight: 700;
-                    padding: 5px 10px;
-                    border-radius: 20px;
-                    letter-spacing: 0.5px;
-                }
-                
-                .past-events-card .past-card-icon {
-                    font-size: 32px;
-                    margin-bottom: 6px;
-                }
-                
-                .past-events-card .past-card-title {
-                    font-family: 'Playfair Display', serif;
-                    font-size: 22px;
-                    font-weight: 700;
-                    margin: 0 0 6px 0;
-                    color: #1a1a2e;
-                }
-                
-                .past-events-card .past-card-text {
-                    font-size: 13px;
-                    color: rgba(26, 26, 46, 0.7);
-                    line-height: 1.5;
-                    margin-bottom: 12px;
-                }
-                
-                .past-events-card .past-card-btn {
-                    display: inline-block;
-                    padding: 8px 16px;
-                    background: transparent;
-                    border: 2px solid #d4a574;
-                    color: #d4a574;
-                    border-radius: 30px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                }
-                
-                .past-events-card .past-card-btn:hover {
-                    background: #d4a574;
-                    color: white;
-                }
-                
-                /* Reduce outreach section scroll on desktop when Stay Tuned only */
-                .outreach.stay-tuned-only {
-                    min-height: auto !important;
-                    padding-bottom: 60px !important;
-                }
-            }
-            
-            .event-indicators {
-                margin-bottom: 20px;
-            }
-
-            /* Removed sticky title - now using sticky header instead */
-
-            .outreach-scroll-container {
-                position: relative;
-                margin-top: 0;
-            }
-
-            .sticky-wrapper {
-                position: sticky;
-                top: 0vh;
-                height: 80vh;
-                display: flex;
-                align-items: flex-start;
-                justify-content: center;
-                padding-top: 5px;
-            }
-
-            .outreach-scroll-container { position: relative; }
-            .events-container { position: relative; width: 100%; height: 100%; }
-
-            /* Desktop: Hide non-active slides completely */
-            @media (min-width: 961px) {
-                .event-slide {
-                    position: absolute;
-                    inset: 0;
-                    width: 100%;
-                    opacity: 0;
-                    visibility: hidden;
-                    transform: translateY(30px) scale(0.95);
-                    transition: opacity 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
-                                transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
-                    pointer-events: none;
-                    z-index: 0;
-                    will-change: transform, opacity;
-                }
-
-                .event-slide.active {
-                    opacity: 1;
-                    visibility: visible;
-                    transform: translateY(0) scale(1);
-                    pointer-events: auto;
-                    z-index: 1;
-                }
-            }
-
-            .scroll-spacer { height: var(--outreach-spacer); pointer-events: none; }
-            
-            /* Scroll snap disabled - using manual zone calculation for precise control */
-            
-            /* Event Indicator Dots */
-            .event-indicators {
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-end;
-                align-items: center;
-                gap: 12px;
-                position: relative;
-                z-index: 70;
-                padding: 0;
-            }
-            
-            .heading-wrapper .event-indicators {
-                display: none;
-            }
-            
-            .event-dot {
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.7);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                cursor: pointer;
-                border: 2px solid transparent;
-            }
-            
-            .event-dot.active {
-                width: 12px;
-                height: 12px;
-                background: #d4a574;
-                box-shadow: 0 0 16px rgba(212, 165, 116, 0.8),
-                            0 4px 12px rgba(212, 165, 116, 0.4);
-                border: 2px solid #d4a574;
-                transform: scale(1.1);
-            }
-            
-            .event-dot:hover:not(.active) {
-                background: rgba(255, 255, 255, 0.9);
-                transform: scale(1.1);
-            }
-            
-            /* Scroll hint removed - using dot indicators only */
-
-            @media (prefers-reduced-motion: reduce) {
-                .event-slide { transition: none; transform: none; }
+                .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 60px !important; }
             }
 
             /* ========================================
-               EVENT CARDS - COMPLETE REBUILD
-               Full-screen image layout with floating elements
+               CAROUSEL WRAPPER
                ======================================== */
-            
-            /* Main Event Card Container */
-            .event-card {
-                position: relative;
-                width: 100vw;
-                height: 85vh;
-                margin-left: calc(-50vw + 50%);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: flex-start;
-                padding-top: 10px;
-                box-sizing: border-box;
-            }
-            
-            /* Meta row with date and dots - HIDDEN, now overlaid on image */
-            .event-meta-row {
-                display: none;
-            }
-            
-            /* Date pill styling */
-            .event-date {
-                padding: 8px 20px;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                border-radius: 100px;
-                font-size: 11px;
-                font-weight: 700;
-                letter-spacing: 2px;
-                color: #ffffff;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-                text-transform: uppercase;
-                white-space: nowrap;
-            }
-            
-            /* Event indicators (dots) */
-            .event-indicators {
-                display: flex;
-                gap: 10px;
-            }
-            
-            /* Image Wrapper - Fixed 3:4 portrait aspect ratio for seamless display */
-            .event-flyer-wrapper {
+            .carousel-wrapper {
                 position: relative;
                 width: 100%;
-                max-width: 469px;  /* Reduced from 517px to account for removed padding */
-                aspect-ratio: 3/4;
+                overflow: hidden;
+            }
+
+            .carousel-track {
+                display: flex;
+                transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                will-change: transform;
+            }
+
+            .carousel-card {
+                flex: 0 0 100%;
+                padding: 0 12px;
+                box-sizing: border-box;
+            }
+
+            /* Desktop: show 3 cards at a time, bigger cards */
+            @media (min-width: 961px) {
+                .carousel-card {
+                    flex: 0 0 33.333%;
+                    padding: 0 16px;
+                }
+            }
+
+            /* Carousel navigation arrows */
+            .carousel-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 20;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                z-index: 10;
-                margin: 0 auto 24px;  /* Center with auto margins, removed horizontal padding */
-                padding: 0;  /* Removed horizontal padding to prevent flyer cutoff */
-                box-sizing: border-box;
-                border-radius: 32px; /* Match other site elements (hero, schedule items) */
-                overflow: hidden; /* Clip any overflow while preserving rounded corners */
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 20px;
+                color: #1a1a2e;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
             }
-            
-            /* Image styling - Enforces 3:4 aspect ratio, rounded corners match site elements */
+
+            .carousel-arrow:hover {
+                background: rgba(255, 255, 255, 1);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+                transform: translateY(-50%) scale(1.08);
+            }
+
+            .carousel-arrow.prev { left: 8px; }
+            .carousel-arrow.next { right: 8px; }
+
+            .carousel-arrow.hidden { opacity: 0; pointer-events: none; }
+
+            /* Carousel dots */
+            .carousel-dots {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            .carousel-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: rgba(0, 0, 0, 0.15);
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                padding: 0;
+            }
+
+            .carousel-dot.active {
+                background: #d4a574;
+                transform: scale(1.2);
+                box-shadow: 0 0 8px rgba(212, 165, 116, 0.5);
+            }
+
+            /* ========================================
+               EVENT CARDS - Clean Card Design
+               ======================================== */
+            .event-card {
+                position: relative;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                box-sizing: border-box;
+            }
+
+            .event-flyer-wrapper {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 3/4;
+                border-radius: 24px;
+                overflow: hidden;
+                margin-bottom: 16px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            }
+
             .flyer-image {
-                width: 101%;
-                height: 101%;
+                width: 100%;
+                height: 100%;
                 object-fit: cover;
                 object-position: center;
-                border-radius: 32px;
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-                margin: -0.5%; /* Center the slightly oversized image */
+                display: block;
             }
-            
+
             .placeholder-flyer {
                 width: 100%;
                 height: 100%;
@@ -1500,71 +1349,72 @@ app.get('/', (c) => {
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                border-radius: 32px;
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             }
-            
-            /* Date and Dots Overlaid on Image */
-            .event-flyer-wrapper .event-date {
+
+            /* Date pill overlaid on image */
+            .event-date {
                 position: absolute;
-                top: 16px;
-                left: 32px;
-                z-index: 20;
-                margin: 0;
-            }
-            
-            .event-flyer-wrapper .event-indicators {
-                position: absolute;
-                top: 20px;
-                right: 40px;
-                z-index: 20;
-                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.3));
-            }
-            
-            /* CTA Button - Below image */
-            .event-cta {
-                position: relative;
-                width: 100%;
-                max-width: 800px;
-                padding: 0 24px;
-                margin-bottom: 24px;
-                z-index: 100;
-                pointer-events: auto; /* Ensure button is always clickable */
-            }
-            
-            .event-cta .btn {
-                pointer-events: auto; /* Force button to be clickable */
-                cursor: pointer;
-            }
-            
-            /* Hide buttons for events 1 and 3, show only for event 2 */
-            .event-slide[data-event="1"] .event-cta,
-            .event-slide[data-event="3"] .event-cta {
-                display: none;
-            }
-            
-            /* Event 2 button: add more space above */
-            .event-slide[data-event="2"] .event-cta {
-                margin-top: 16px;
-            }
-            
-            .event-cta .btn {
-                width: 100%;
-                padding: 20px 40px;
-                font-size: 15px;
+                top: 14px;
+                left: 14px;
+                z-index: 5;
+                padding: 8px 18px;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                border-radius: 100px;
+                font-size: 11px;
                 font-weight: 700;
-                border-radius: 24px;
+                letter-spacing: 2px;
+                color: #ffffff;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+
+            /* CTA Button */
+            .event-cta {
+                width: 100%;
+                padding: 0;
+                margin-bottom: 8px;
+            }
+
+            .event-cta .btn {
+                width: 100%;
+                padding: 16px 32px;
+                font-size: 14px;
+                font-weight: 700;
+                border-radius: 20px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: white;
-                box-shadow: 0 8px 24px rgba(200, 152, 96, 0.4);
+                box-shadow: 0 6px 20px rgba(200, 152, 96, 0.35);
                 transition: all 0.3s ease;
+                cursor: pointer;
+                display: block;
+                text-align: center;
+                text-decoration: none;
             }
-            
+
             .event-cta .btn:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 12px 32px rgba(200, 152, 96, 0.5);
+                box-shadow: 0 10px 28px rgba(200, 152, 96, 0.45);
             }
-            
+
+            /* Desktop: bigger cards */
+            @media (min-width: 961px) {
+                .event-flyer-wrapper {
+                    border-radius: 32px;
+                }
+                .event-date {
+                    top: 18px;
+                    left: 18px;
+                    padding: 10px 22px;
+                    font-size: 12px;
+                }
+                .event-cta .btn {
+                    padding: 18px 36px;
+                    font-size: 15px;
+                    border-radius: 24px;
+                }
+            }
+
             /* Hide legacy elements */
             .event-header-mobile,
             .event-header-content,
@@ -1574,7 +1424,7 @@ app.get('/', (c) => {
             .event-description {
                 display: none !important;
             }
-            
+
             /* ========================================
                STAY TUNED CARD - Future Events Placeholder
                Uses site colors (gold/warm tones matching the church brand)
@@ -2072,39 +1922,6 @@ app.get('/', (c) => {
                 transform: scale(1.2);
             }
 
-            .carousel-arrow {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 48px;
-                height: 48px;
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                font-size: 22px;
-                color: #1a1a2e;
-                transition: all 0.3s ease;
-                z-index: 120;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            }
-
-            .carousel-arrow:hover {
-                background: rgba(255, 255, 255, 1);
-                transform: translateY(-50%) scale(1.1);
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            }
-
-            .carousel-arrow.prev {
-                left: 24px;
-            }
-
-            .carousel-arrow.next {
-                right: 24px;
-            }
-            
             /* Lightbox for Flyer Full-Screen View */
             .lightbox {
                 position: fixed;
@@ -3149,135 +2966,13 @@ app.get('/', (c) => {
                     display: block;
                 }
                 
-                /* Outreach Section - Mobile scroll behavior */
-                .outreach {
-                    min-height: 100vh;
-                    display: flex;
-                    flex-direction: column;
-                }
-                
-                .outreach-scroll-container {
-                    position: relative;
-                    margin-top: 0;
-                }
-                
-                .sticky-wrapper {
-                    position: sticky;
-                    top: 0vh;
-                    height: 80vh;
-                    display: flex;
-                    align-items: flex-start;
-                    justify-content: center;
-                    padding-top: 3vh;
-                    width: 100%;
-                    max-width: 100%;
-                    margin: 0 auto;
-                }
-                
-                .events-container {
-                    position: relative;
-                    width: 100%;
-                    max-width: 500px;  /* Constrain width for better centering */
-                    height: 100%;
-                    margin: 0 auto;
-                }
-                
-                /* MOBILE STACKED CARDS - Clean and refined */
-                .event-slide {
-                    position: absolute !important;
-                    top: 0;
-                    left: 50%;
-                    width: 85%;
-                    max-width: 400px;
-                    opacity: 1 !important;
-                    visibility: visible !important;
-                    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                                filter 0.3s ease;
-                }
-                
-                /* Active card always on top */
-                .event-slide.active {
-                    z-index: 30 !important;
-                    transform: translateX(-50%) translateY(0) scale(1) !important;
-                }
-                
-                /* First card behind active */
-                .event-slide.stack-position-1 {
-                    z-index: 20;
-                    transform: translateX(-50%) translateY(20px) scale(0.96);
-                }
-                
-                /* Second card behind active */
-                .event-slide.stack-position-2 {
-                    z-index: 10;
-                    transform: translateX(-50%) translateY(40px) scale(0.92);
-                }
-                
-                /* Third card behind active (for 4-card layout) */
-                .event-slide.stack-position-3 {
-                    z-index: 5;
-                    transform: translateX(-50%) translateY(60px) scale(0.88);
-                }
-                
-                /* Only active card interactive */
-                .event-slide.active {
-                    pointer-events: auto !important;
-                }
-                
-                .event-slide:not(.active) {
-                    pointer-events: none !important;
-                    overflow: hidden;
-                }
-                
-                /* Hide UI on stacked cards */
-                .event-slide:not(.active) .event-date,
-                .event-slide:not(.active) .event-indicators,
-                .event-slide:not(.active) .event-cta,
-                .event-slide:not(.active) .past-event-label {
-                    opacity: 0;
-                    visibility: hidden;
-                }
-                
-                /* Depth shadows */
-                .event-slide:not(.active) .event-flyer-wrapper {
-                    filter: brightness(0.92);
-                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-                }
-                
-                .event-slide.active .event-flyer-wrapper {
-                    filter: brightness(1);
-                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-                }
-                
-                .scroll-spacer {
-                    height: var(--outreach-spacer);
-                    pointer-events: none;
-                }
-                
-                /* Event cards - Mobile/Tablet centered layout */
-                .event-card {
-                    position: relative;
-                    width: 100%;
-                    max-width: 100vw;
-                    height: 75vh;
-                    margin: 0 auto;  /* Center horizontally */
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: flex-start;
-                    padding-top: 10px;
-                    box-sizing: border-box;
-                }
-                
-                /* Ensure outreach section is properly contained */
+                /* Outreach Section - Mobile */
                 .outreach {
                     width: 100%;
                     max-width: 100vw;
                     overflow-x: hidden;
-                    margin: 0;
                 }
                 
-                /* Outreach header elements align left like schedule */
                 .outreach .section-eyebrow {
                     display: inline-flex !important;
                     width: fit-content !important;
@@ -3287,12 +2982,6 @@ app.get('/', (c) => {
                 
                 .outreach .section-heading {
                     text-align: left;
-                }
-                
-                .events-container {
-                    display: flex;
-                    justify-content: center;
-                    width: 100%;
                 }
             }
             
@@ -3324,17 +3013,7 @@ app.get('/', (c) => {
                     aspect-ratio: 3/4;
                 }
 
-                .outreach-title-sticky {
-                    top: 110px;
-                }
 
-                .sticky-wrapper {
-                    top: 15vh;
-                }
-                
-                .scroll-spacer {
-                    height: 683vh;
-                }
             }
 
             @media (max-width: 899px) {
@@ -3501,90 +3180,8 @@ app.get('/', (c) => {
                     font-size: 15px;
                 }
 
-                .outreach-title-sticky {
-                    top: 75px;
-                    padding: 10px 0;
-                    margin-bottom: 30px;
-                }
-
-                .outreach-title-sticky h2 {
-                    font-size: clamp(24px, 4.5vw, 36px);
-                }
-                
-                .outreach {
-                    width: 100%;
-                    max-width: 100vw;
-                    margin: 0 auto;
-                    overflow-x: hidden;
-                }
-                
-                /* Mobile outreach section - left aligned like schedule */
-                .outreach .section-heading {
-                    margin-bottom: 24px;
-                }
-                
-                .outreach .section-eyebrow {
-                    display: inline-flex !important;
-                    width: fit-content !important;
-                    max-width: fit-content !important;
-                    margin-bottom: 12px;
-                }
-
                 /* Mobile/Tablet Event Cards - Centered layout */
-                .events-container,
-                .sticky-wrapper {
-                    width: 100%;
-                    max-width: 100vw;
-                    padding: 0;
-                    box-sizing: border-box;
-                    display: flex;
-                    justify-content: center;
-                }
-                
-                .event-card {
-                    height: 90vh;
-                    margin: 0 auto;
-                    width: 100%;
-                    max-width: 500px;
-                    padding-top: 16px;
-                }
-                
-                .event-meta-row {
-                    max-width: 405px;
-                    padding: 0 20px;
-                    margin-bottom: 16px;
-                }
-                
-                .event-date {
-                    padding: 7px 18px;
-                    font-size: 10px;
-                }
-                
-                .event-flyer-wrapper {
-                    max-width: 426px;  /* Reduced from 466px to account for removed padding */
-                    padding: 0;  /* Removed horizontal padding to prevent flyer cutoff */
-                    margin: 0 auto 20px;  /* Center with auto margins */
-                }
-                
-                .flyer-image {
-                    border-radius: 32px;
-                }
-                
-                .placeholder-flyer {
-                    border-radius: 32px;
-                }
-                
-                .event-cta {
-                    padding: 0 20px;
-                    margin-bottom: 20px;
-                    max-width: 405px;
-                }
-                
-                .event-cta .btn {
-                    padding: 18px 32px;
-                    font-size: 14px;
-                    border-radius: 20px;
-                }
+
 
                 .watch-card {
                     padding: 32px 24px;
@@ -3738,75 +3335,7 @@ app.get('/', (c) => {
                                 0 4px 12px rgba(212, 165, 116, 0.2);
                 }
                 
-                /* Mobile 480px Event Cards - Clean Stacked Design */
-                
-                .sticky-wrapper {
-                    height: 90vh;
-                    padding-top: 2vh;
-                }
-                
-                .events-container {
-                    position: relative;
-                    width: 100%;
-                    height: 100%;
-                }
-                
-                /* All cards visible and stacked */
-                .event-slide {
-                    position: absolute !important;
-                    top: 0;
-                    left: 50%;
-                    width: 85%;
-                    max-width: 360px;
-                    opacity: 1 !important;
-                    visibility: visible !important;
-                    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                                filter 0.3s ease;
-                }
-                
-                /* Active card always on top */
-                .event-slide.active {
-                    z-index: 30 !important;
-                    transform: translateX(-50%) translateY(0) scale(1) !important;
-                }
-                
-                /* First card behind active */
-                .event-slide.stack-position-1 {
-                    z-index: 20;
-                    transform: translateX(-50%) translateY(20px) scale(0.96);
-                }
-                
-                /* Second card behind active */
-                .event-slide.stack-position-2 {
-                    z-index: 10;
-                    transform: translateX(-50%) translateY(40px) scale(0.92);
-                }
-                
-                /* Third card behind active (for 4-card layout) */
-                .event-slide.stack-position-3 {
-                    z-index: 5;
-                    transform: translateX(-50%) translateY(60px) scale(0.88);
-                }
-                
-                /* Active card gets pointer events */
-                .event-slide.active {
-                    pointer-events: auto !important;
-                }
-                
-                /* Non-active cards: disable interactions and hide UI elements */
-                .event-slide:not(.active) {
-                    pointer-events: none !important;
-                    overflow: hidden;
-                }
-                
-                /* Hide date badge, dots, buttons, and past event labels on stacked cards */
-                .event-slide:not(.active) .event-date,
-                .event-slide:not(.active) .event-indicators,
-                .event-slide:not(.active) .event-cta,
-                .event-slide:not(.active) .past-event-label {
-                    opacity: 0;
-                    visibility: hidden;
-                }
+
                 
                 /* Mobile Stay Tuned Card styling */
                 .stay-tuned-card {
@@ -3846,95 +3375,10 @@ app.get('/', (c) => {
                     font-size: 9px;
                 }
                 
-                /* ========================================
-                   MOBILE STAY-TUNED-ONLY OVERRIDES
-                   Card is now in stay-tuned-container (outside scroll container)
-                   ======================================== */
+                /* Mobile stay-tuned overrides */
                 .stay-tuned-only {
-                    margin-bottom: -100px !important; /* Pull Watch section much closer */
-                    min-height: auto !important; /* Remove 100vh min-height */
-                    overflow: visible !important; /* CRITICAL: Allow shadows to render without clipping */
-                }
-                
-                .stay-tuned-only .section-eyebrow {
-                    display: inline-flex !important; /* Ensure pill fits text only */
-                    width: fit-content !important;
-                    max-width: fit-content !important;
-                }
-                
-                .stay-tuned-only .section-heading {
-                    margin-bottom: 16px;
-                }
-                
-                .stay-tuned-only .stay-tuned-container {
-                    margin-bottom: 0;
-                    /* Add padding to give shadow room to render */
-                    padding: 40px 20px 60px 20px; /* top, right, bottom, left */
-                    margin-left: -20px; /* Compensate for padding to keep card centered */
-                    margin-right: -20px;
-                    width: calc(100% + 40px); /* Account for negative margins */
-                    box-sizing: border-box;
-                    display: flex;
-                    justify-content: center;
-                }
-                
-                /* Mobile Stay Tuned card sizing - constrain width for cleaner look */
-                .stay-tuned-only .stay-tuned-card {
-                    width: 85%;
-                    max-width: 380px;
-                    margin: 0 auto;
-                }
-                
-                /* Mobile Past Event styling */
-                .past-event-label {
-                    top: 12px;
-                    right: 24px;
-                    padding: 5px 12px;
-                    font-size: 8px;
-                }
-                
-                /* Add subtle shadow to show depth */
-                .event-slide:not(.active) .event-flyer-wrapper {
-                    filter: brightness(0.92);
-                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-                }
-                
-                .event-slide.active .event-flyer-wrapper {
-                    filter: brightness(1);
-                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-                }
-                
-                /* Adjust event card */
-                .event-card {
-                    height: auto;
-                    width: 100%;
-                    padding: 0;
-                    margin: 0;
-                }
-                
-                .event-meta-row {
-                    max-width: clamp(340px, 80vw, 360px);
-                    padding: 0 clamp(14px, 3.5vw, 16px);
-                    margin-bottom: clamp(12px, 2.8vw, 14px);
-                }
-                
-                .event-date {
-                    padding: clamp(5px, 1.4vw, 6px) clamp(14px, 3.8vw, 16px);
-                    font-size: clamp(8px, 2.2vw, 9px);
-                }
-                
-                .event-flyer-wrapper {
-                    max-width: clamp(322px, 78vw, 382px);  /* Reduced to account for removed padding */
-                    padding: 0;  /* Removed horizontal padding to prevent flyer cutoff */
-                    margin: 0 auto clamp(14px, 3.2vw, 16px);  /* Center with auto margins */
-                    /* Reduce image height slightly on small screens to make room for button */
-                    max-height: 68vh;
-                }
-                
-                .flyer-image {
-                    border-radius: 32px;
-                    max-height: 68vh;
-                    object-fit: contain;
+                    min-height: auto !important;
+                    padding-bottom: 20px !important;
                 }
                 
                 .placeholder-flyer {
@@ -4204,30 +3648,11 @@ app.get('/', (c) => {
                     margin-bottom: 10px;
                 }
                 
-                .outreach-scroll-container {
-                    margin-top: 0;
-                }
-                
-                .outreach {
-                    padding-top: 0;
-                }
-
-                .sticky-wrapper {
-                    height: auto;
-                    min-height: 55vh;
-                    top: 18vh;
-                    gap: 0;
-                    padding-bottom: 100px;
-                    justify-content: flex-start;
-                }
-
-                .scroll-spacer {
-                    height: 234vh;
-                }
-                
+                .outreach-scroll-container,
+                .sticky-wrapper,
+                .scroll-spacer,
                 .events-container {
-                    margin-top: 0;
-                    flex: 0 0 auto;
+                    /* Legacy classes no longer used */
                 }
                 
                 .event-indicators {
@@ -5062,129 +4487,7 @@ app.get('/', (c) => {
                     text-align: left;
                 }
                 
-                .event-indicators {
-                    display: none; /* Hide dots on desktop */
-                }
-                
-                .outreach-scroll-container {
-                    position: relative;
-                    margin-top: 0;
-                }
-                
-                /* Desktop: No sticky, no scroll spacer */
-                .sticky-wrapper {
-                    position: relative;
-                    top: 0;
-                    height: auto;
-                    min-height: auto;
-                    padding: 0;
-                    padding-bottom: 0;
-                    gap: 0;
-                    display: block;
-                }
-                
-                .scroll-spacer {
-                    display: none;
-                    height: 0;
-                }
-                
-                /* Desktop: Show all 3 events in grid */
-                .events-container {
-                    display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 32px;
-                    padding: 0 20px;
-                    width: 100%;
-                    margin-top: 0;
-                    position: relative;
-                }
-                
-                /* Desktop: All events visible, no absolute positioning */
-                .event-slide {
-                    position: relative;
-                    opacity: 1;
-                    visibility: visible;
-                    transform: none;
-                    pointer-events: auto;
-                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                    z-index: 1;
-                }
-                
-                /* Desktop: Event cards in columns */
-                .event-card {
-                    height: auto;
-                    width: 100%;
-                    margin: 0;
-                    margin-left: 0;
-                    padding: clamp(16px, 2vw, 24px);
-                    padding-top: clamp(16px, 2vw, 24px);
-                    background: rgba(255, 255, 255, 0.9);
-                    border-radius: 24px;
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: flex-start;
-                }
-                
-                .event-card:hover {
-                    transform: translateY(-8px) scale(1.02);
-                    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
-                }
-                
-                /* Desktop: Event flyer sizing */
-                .event-flyer-wrapper {
-                    max-width: 100%;
-                    aspect-ratio: 3/4;
-                    margin-bottom: clamp(16px, 2vw, 20px);
-                    padding: 0;
-                    max-height: none;
-                    position: relative;
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 10;
-                }
-                
-                .flyer-image,
-                .placeholder-flyer {
-                    border-radius: 32px;
-                    max-height: none;
-                    height: 100%;
-                    width: 100%;
-                    object-fit: cover;
-                }
-                
-                .event-flyer-wrapper .event-date {
-                    top: 12px;
-                    left: 12px;
-                    font-size: clamp(9px, 1vw, 10px);
-                    padding: clamp(5px, 0.8vw, 6px) clamp(12px, 1.5vw, 14px);
-                }
-                
-                .event-flyer-wrapper .event-indicators {
-                    display: none;  /* Hide 3 dots on desktop event cards */
-                }
-                
-                .event-cta {
-                    padding: 0;
-                    margin: 0;
-                    margin-bottom: 0;
-                    max-width: none;
-                    position: relative;
-                    width: 100%;
-                    z-index: 100;
-                }
-                
-                .event-cta .btn {
-                    width: 100%;
-                    padding: clamp(12px, 1.5vw, 14px) clamp(20px, 2.5vw, 24px);
-                    font-size: clamp(11px, 1.2vw, 12px);
-                    border-radius: 16px;
-                }
+                /* Desktop outreach handled by base carousel CSS */
                 
                 /* Desktop Watch Section - Properly scaled (reverted to original centered layout) */
                 .watch {
@@ -5565,9 +4868,6 @@ app.get('/', (c) => {
                 <section class="outreach" id="outreach" style="animation-delay: 0.3s">
                     <span class="section-eyebrow">Outreach</span>
                     <h2 class="section-heading">Serving our community with love and purpose.</h2>
-                    <div class="event-indicators" id="upcoming-event-dots" style="display: none;">
-                        <!-- Dots will be dynamically generated based on upcoming event count -->
-                    </div>
                     
                     <!--
                     ================================================
@@ -5580,37 +4880,27 @@ app.get('/', (c) => {
                     1. Create an event in Google Calendar
                     2. Attach a flyer image from Google Drive (must be shared publicly)
                     3. Optionally add CTA in description: [CTA: BUTTON TEXT | #contact]
-                       Examples: [CTA: RSVP NOW | #contact] or [CTA: LEARN MORE | /form]
                     
                     The website will:
-                    - Pull the event title (summary)
-                    - Pull the event date and format it (e.g., "DEC 21")
+                    - Pull the event title and date
                     - Pull the attached Google Drive image
                     - Auto-sort into Upcoming vs Past events
                     - Show "Stay Tuned" when no upcoming events exist
-                    
-                    Events from subscribed holiday calendars are automatically filtered out.
                     ================================================
                     -->
-                    <script type="application/json" id="events-data">
-                    {
-                        "events": []
-                    }
-                    </script>
                     
-                    <!-- Stay Tuned Card - rendered outside scroll container when no upcoming events -->
+                    <!-- Stay Tuned Card - shown when no upcoming events -->
                     <div class="stay-tuned-container" id="stay-tuned-container" style="display: none;">
-                        <!-- Will be populated by JavaScript when no upcoming events -->
                     </div>
                     
-                    <div class="outreach-scroll-container" id="outreach-scroll-container">
-                        <div class="sticky-wrapper">
-                            <div class="events-container" id="events-container">
-                                <!-- Events will be dynamically rendered here by JavaScript -->
-                                <!-- If upcoming events exist: Shows event cards with carousel -->
-                            </div>
+                    <!-- Carousel for upcoming events -->
+                    <div class="carousel-wrapper" id="carousel-wrapper" style="display: none;">
+                        <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous event">&#8249;</button>
+                        <div class="carousel-track" id="carousel-track">
+                            <!-- Event cards rendered here by JS -->
                         </div>
-                        <div class="scroll-spacer"></div>
+                        <button class="carousel-arrow next" id="carousel-next" aria-label="Next event">&#8250;</button>
+                        <div class="carousel-dots" id="carousel-dots"></div>
                     </div>
                 </section>
                 
@@ -5764,19 +5054,19 @@ app.get('/', (c) => {
             document.addEventListener('DOMContentLoaded', () => {
                 const body = document.body;
                 const outreachSection = document.querySelector('.outreach');
-                const scrollSpacer = document.querySelector('.scroll-spacer');
-                const eventsContainer = document.querySelector('.events-container');
                 const navShell = document.querySelector('.nav-shell');
                 const sections = document.querySelectorAll('section[id]');
                 const navLinks = document.querySelectorAll('nav a[href^="#"]');
                 const pastEventsModal = document.getElementById('past-events-modal');
                 const pastEventsSlides = document.getElementById('past-events-slides');
                 const pastEventsDots = document.getElementById('past-events-dots');
-                const upcomingEventDots = document.getElementById('upcoming-event-dots');
                 
-                // Event slides and dots - will be populated after async event loading
-                let eventSlides = [];
-                let dots = [];
+                // Carousel elements
+                const carouselWrapper = document.getElementById('carousel-wrapper');
+                const carouselTrack = document.getElementById('carousel-track');
+                const carouselPrev = document.getElementById('carousel-prev');
+                const carouselNext = document.getElementById('carousel-next');
+                const carouselDotsContainer = document.getElementById('carousel-dots');
 
                 // ========================================
                 // DYNAMIC EVENT MANAGER
@@ -6079,28 +5369,18 @@ app.get('/', (c) => {
                 }
                 
                 function renderUpcomingEventCard(event, index, totalUpcoming) {
-                    // Generate dots for this card
-                    const dotsHTML = Array.from({ length: totalUpcoming }, (_, i) => 
-                        \`<span class="event-dot \${i === index ? 'active' : ''}"></span>\`
-                    ).join('');
-                    
-                    // Debug: Log the event being rendered
                     console.log('Rendering event card:', event.title, 'Image URL:', event.image);
                     
-                    // If no image, show a placeholder
                     const imageHtml = event.image 
                         ? \`<img src="\${event.image}" alt="\${event.title}" class="flyer-image" onerror="console.error('Image failed to load:', this.src); this.style.display='none';">\`
                         : \`<div class="flyer-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,#d4a574,#c89860);display:flex;align-items:center;justify-content:center;"><span style="font-size:48px;">📅</span></div>\`;
                     
                     return \`
-                        <div class="event-slide \${index === 0 ? 'active' : ''}" data-event="\${index + 1}">
+                        <div class="carousel-card">
                             <div class="event-card">
                                 <div class="event-flyer-wrapper">
                                     \${imageHtml}
                                     <span class="event-date">\${event.displayDate}</span>
-                                    <div class="event-indicators">
-                                        \${dotsHTML}
-                                    </div>
                                 </div>
                                 <div class="event-cta">
                                     <a href="\${event.cta.link}" class="btn btn-primary">\${event.cta.text}</a>
@@ -6122,94 +5402,38 @@ app.get('/', (c) => {
                     \`;
                 }
                 
-                function updateScrollSpacer(upcomingCount) {
-                    // Adjust scroll spacer height based on number of upcoming events
-                    // 0 events (Stay Tuned only): no scroll mechanism needed
-                    // 1 event: 100vh
-                    // 2 events: 200vh
-                    // 3+ events: 312vh (original)
-                    
-                    const stickyWrapper = document.querySelector('.sticky-wrapper');
-                    
-                    if (upcomingCount === 0) {
-                        // No upcoming events - disable sticky scroll mechanism entirely
-                        scrollSpacer.style.height = '0';
-                        scrollSpacer.style.display = 'none';
-                        if (stickyWrapper) {
-                            stickyWrapper.style.position = 'relative';
-                            stickyWrapper.style.height = 'auto';
-                            stickyWrapper.style.minHeight = 'auto';
-                        }
-                        // Add class for CSS override
-                        outreachSection.classList.add('stay-tuned-only');
-                    } else {
-                        // Remove class if it was previously added
-                        outreachSection.classList.remove('stay-tuned-only');
-                        // Upcoming events exist - use sticky scroll mechanism
-                        scrollSpacer.style.display = 'block';
-                        if (stickyWrapper) {
-                            stickyWrapper.style.position = 'sticky';
-                            stickyWrapper.style.height = '80vh';
-                        }
-                        
-                        let spacerHeight;
-                        if (upcomingCount === 1) {
-                            spacerHeight = '100vh';
-                        } else if (upcomingCount === 2) {
-                            spacerHeight = '200vh';
-                        } else {
-                            spacerHeight = '312vh';
-                        }
-                        scrollSpacer.style.height = spacerHeight;
-                    }
-                }
+
                 
                 // Initialize and render events
-                // Using an async IIFE to support Google Calendar API fetching
                 (async () => {
                 const { upcoming, past } = await initializeEventsAsync();
                 console.log('Event Manager:', { upcoming: upcoming.length, past: past.length });
                 
-                // Get the stay-tuned container and scroll container
                 const stayTunedContainer = document.getElementById('stay-tuned-container');
-                const outreachScrollContainer = document.getElementById('outreach-scroll-container');
                 
-                // Render events in main container
                 if (upcoming.length === 0) {
-                    // No upcoming events - show Stay Tuned card in separate container
+                    // No upcoming events - show Stay Tuned card
                     if (stayTunedContainer) {
                         stayTunedContainer.innerHTML = renderStayTunedCard(past.length > 0);
                         stayTunedContainer.style.display = 'block';
                     }
-                    // Hide the scroll container entirely
-                    if (outreachScrollContainer) {
-                        outreachScrollContainer.style.display = 'none';
-                    }
+                    if (carouselWrapper) carouselWrapper.style.display = 'none';
                     body.classList.add('stay-tuned-active');
-                    
-                    // Hide upcoming event dots
-                    if (upcomingEventDots) upcomingEventDots.style.display = 'none';
+                    if (outreachSection) outreachSection.classList.add('stay-tuned-only');
                 } else {
-                    // Hide stay-tuned container, show scroll container
-                    if (stayTunedContainer) {
-                        stayTunedContainer.style.display = 'none';
-                    }
-                    if (outreachScrollContainer) {
-                        outreachScrollContainer.style.display = 'block';
-                    }
+                    // Show carousel with upcoming events
+                    if (stayTunedContainer) stayTunedContainer.style.display = 'none';
+                    if (carouselWrapper) carouselWrapper.style.display = 'block';
                     
-                    // Render upcoming events
-                    eventsContainer.innerHTML = upcoming.map((event, i) => 
-                        renderUpcomingEventCard(event, i, upcoming.length)
-                    ).join('');
-                    
-                    // Show and populate upcoming event dots
-                    if (upcomingEventDots) {
-                        upcomingEventDots.style.display = 'flex';
-                        upcomingEventDots.innerHTML = upcoming.map((_, i) => 
-                            \`<span class="event-dot \${i === 0 ? 'active' : ''}"></span>\`
+                    // Render cards into carousel track
+                    if (carouselTrack) {
+                        carouselTrack.innerHTML = upcoming.map((event, i) => 
+                            renderUpcomingEventCard(event, i, upcoming.length)
                         ).join('');
                     }
+                    
+                    // Initialize carousel
+                    initCarousel(upcoming.length);
                 }
                 
                 // Render past events in modal
@@ -6222,13 +5446,6 @@ app.get('/', (c) => {
                         \`<span class="past-events-dot \${i === 0 ? 'active' : ''}"></span>\`
                     ).join('');
                 }
-                
-                // Update scroll spacer based on event count
-                updateScrollSpacer(upcoming.length);
-                
-                // Re-query event slides after dynamic rendering - assign to outer scope variables
-                eventSlides = document.querySelectorAll('.event-slide');
-                dots = document.querySelectorAll('.heading-wrapper .event-dot, #upcoming-event-dots .event-dot');
 
                 // ========================================
                 // PAST EVENTS MODAL CONTROLS
@@ -6344,17 +5561,6 @@ app.get('/', (c) => {
                     }, { passive: true });
                 }
                 
-                // ========================================
-                // MAIN EVENT CAROUSEL (only if upcoming events exist)
-                // ========================================
-                
-                // Check carousel initialization
-                const carouselSlides = document.querySelectorAll('.event-slide');
-                if (!outreachSection || !scrollSpacer || !eventsContainer || !carouselSlides.length) {
-                    console.log('Outreach section not fully initialized - likely Stay Tuned only mode');
-                    // Still set up the rest of the page even without events
-                }
-                
                 })(); // End of async event initialization IIFE
                 
                 // Handle hash in URL on page load (e.g., ms.church/#contact)
@@ -6436,19 +5642,129 @@ app.get('/', (c) => {
                     lastNavScrollY = currentScrollY;
                 }
                 
-                let currentEventIndex = 0;
-                const totalEvents = eventSlides.length;
-                
-                // Track if we're in the outreach section
-                let inOutreachSection = false;
-                
-                // Rate limiting mechanism for event changes
-                let isChangeRateLimited = false;
-                let lastEventChangeTime = 0;
-                const changeCooldownMs = 800;
-                
-                // Manual swipe override - prevents scroll from fighting swipe gestures
-                let manualSwipeOverride = false;
+                // ========================================
+                // CAROUSEL CONTROLLER
+                // Simple arrow-based horizontal carousel
+                // ========================================
+                function initCarousel(totalCards) {
+                    if (!carouselTrack || !carouselPrev || !carouselNext || totalCards === 0) return;
+                    
+                    let currentIndex = 0;
+                    
+                    function getCardsPerView() {
+                        return window.innerWidth >= 961 ? 3 : 1;
+                    }
+                    
+                    function getMaxIndex() {
+                        const perView = getCardsPerView();
+                        return Math.max(0, totalCards - perView);
+                    }
+                    
+                    function updateCarousel() {
+                        const perView = getCardsPerView();
+                        const cardWidthPercent = 100 / perView;
+                        const offset = currentIndex * cardWidthPercent;
+                        carouselTrack.style.transform = 'translateX(-' + offset + '%)';
+                        
+                        // Update arrows visibility
+                        carouselPrev.classList.toggle('hidden', currentIndex <= 0);
+                        carouselNext.classList.toggle('hidden', currentIndex >= getMaxIndex());
+                        
+                        // Update dots
+                        updateCarouselDots();
+                    }
+                    
+                    function updateCarouselDots() {
+                        if (!carouselDotsContainer) return;
+                        const maxIdx = getMaxIndex();
+                        // Show a dot for each position
+                        const dotCount = maxIdx + 1;
+                        if (dotCount <= 1) {
+                            carouselDotsContainer.style.display = 'none';
+                            return;
+                        }
+                        carouselDotsContainer.style.display = 'flex';
+                        carouselDotsContainer.innerHTML = Array.from({ length: dotCount }, (_, i) =>
+                            '<button class="carousel-dot ' + (i === currentIndex ? 'active' : '') + '" data-index="' + i + '"></button>'
+                        ).join('');
+                        
+                        // Dot click handlers
+                        carouselDotsContainer.querySelectorAll('.carousel-dot').forEach(dot => {
+                            dot.addEventListener('click', () => {
+                                currentIndex = parseInt(dot.dataset.index);
+                                updateCarousel();
+                            });
+                        });
+                    }
+                    
+                    carouselPrev.addEventListener('click', () => {
+                        if (currentIndex > 0) {
+                            currentIndex--;
+                            updateCarousel();
+                        }
+                    });
+                    
+                    carouselNext.addEventListener('click', () => {
+                        if (currentIndex < getMaxIndex()) {
+                            currentIndex++;
+                            updateCarousel();
+                        }
+                    });
+                    
+                    // Touch/swipe support
+                    let touchStartX = 0;
+                    let touchStartY = 0;
+                    carouselTrack.addEventListener('touchstart', e => {
+                        touchStartX = e.touches[0].clientX;
+                        touchStartY = e.touches[0].clientY;
+                    }, { passive: true });
+                    
+                    carouselTrack.addEventListener('touchend', e => {
+                        if (!e.changedTouches[0]) return;
+                        const dx = e.changedTouches[0].clientX - touchStartX;
+                        const dy = e.changedTouches[0].clientY - touchStartY;
+                        if (Math.abs(dx) < Math.abs(dy) || Math.abs(dx) < 50) return;
+                        
+                        if (dx < 0 && currentIndex < getMaxIndex()) {
+                            currentIndex++;
+                        } else if (dx > 0 && currentIndex > 0) {
+                            currentIndex--;
+                        }
+                        updateCarousel();
+                    }, { passive: true });
+                    
+                    // Auto-advance every 5 seconds
+                    let autoTimer = setInterval(() => {
+                        if (currentIndex < getMaxIndex()) {
+                            currentIndex++;
+                        } else {
+                            currentIndex = 0;
+                        }
+                        updateCarousel();
+                    }, 5000);
+                    
+                    // Pause auto-advance on interaction
+                    carouselWrapper.addEventListener('mouseenter', () => clearInterval(autoTimer));
+                    carouselWrapper.addEventListener('mouseleave', () => {
+                        autoTimer = setInterval(() => {
+                            if (currentIndex < getMaxIndex()) {
+                                currentIndex++;
+                            } else {
+                                currentIndex = 0;
+                            }
+                            updateCarousel();
+                        }, 5000);
+                    });
+                    
+                    // Recalculate on resize
+                    window.addEventListener('resize', () => {
+                        if (currentIndex > getMaxIndex()) currentIndex = getMaxIndex();
+                        updateCarousel();
+                    });
+                    
+                    // Initial render
+                    updateCarousel();
+                }
                 
                 // Update active nav link
                 function updateActiveNavLink() {
@@ -6456,7 +5772,6 @@ app.get('/', (c) => {
                     
                     sections.forEach(section => {
                         const sectionTop = section.offsetTop;
-                        const sectionHeight = section.clientHeight;
                         if (window.pageYOffset >= sectionTop - 200) {
                             currentSection = section.getAttribute('id');
                         }
@@ -6464,305 +5779,34 @@ app.get('/', (c) => {
                     
                     navLinks.forEach(link => {
                         link.classList.remove('active');
-                        if (link.getAttribute('href') === \`#\${currentSection}\`) {
+                        if (link.getAttribute('href') === '#' + currentSection) {
                             link.classList.add('active');
                         }
                     });
                     
-                    // Update Contact button active state
                     const contactBtn = document.querySelector('.nav-form-btn');
                     if (contactBtn) {
-                        if (currentSection === 'contact') {
-                            contactBtn.classList.add('active');
-                        } else {
-                            contactBtn.classList.remove('active');
-                        }
+                        contactBtn.classList.toggle('active', currentSection === 'contact');
                     }
                 }
-                
-                function handleScroll() {
-                    const outreachRect = outreachSection.getBoundingClientRect();
-                    const spacerRect = scrollSpacer.getBoundingClientRect();
-                    const vh = window.innerHeight;
-
-                    handleMobileNav();
-                    updateActiveNavLink();
-
-                    const inSection = (outreachRect.top <= vh * 0.3) && (spacerRect.bottom > vh * 0.7);
-
-                    if (inSection) {
-                        if (!inOutreachSection) {
-                            inOutreachSection = true;
-                            requestAnimationFrame(() => requestAnimationFrame(() => updateActiveEvent(currentEventIndex, false)));
-                        }
-
-                        const spacerTop = spacerRect.top - vh * 0.35;
-                        const spacerHeightRaw = spacerRect.height - vh * 0.5;
-                        const spacerHeight = Math.max(spacerHeightRaw, 1);
-                        const progress = Math.max(0, Math.min(1, -spacerTop / spacerHeight));
-
-                        if (outreachHeader) {
-                            if (progress > 0.9) {
-                                const t = Math.min(1, (progress - 0.9) / 0.1);
-                                outreachHeader.style.opacity = String(1 - t);
-                                outreachHeader.style.transform = \`translateY(\${-20 * t}px)\`;
-                            } else {
-                                outreachHeader.style.opacity = '1';
-                                outreachHeader.style.transform = 'translateY(0)';
-                            }
-                        }
-
-                        // Calculate which event should be shown based on scroll progress
-                        // But respect manual swipe overrides - don't fight the user!
-                        // Dynamic calculation based on actual event count
-                        let newIndex;
-                        if (totalEvents === 1) {
-                            newIndex = 0; // Only one card (Stay Tuned)
-                        } else if (totalEvents === 2) {
-                            newIndex = progress < 0.5 ? 0 : 1;
-                        } else if (totalEvents === 3) {
-                            newIndex = progress < 0.33 ? 0 : (progress < 0.67 ? 1 : 2);
-                        } else {
-                            // 4+ events: distribute evenly
-                            const segmentSize = 1 / totalEvents;
-                            newIndex = Math.min(Math.floor(progress / segmentSize), totalEvents - 1);
-                        }
-
-                        const now = Date.now();
-                        
-                        // Only update from scroll if:
-                        // 1. Index actually changed
-                        // 2. Not rate limited
-                        // 3. NOT during manual swipe override (let swipe complete first)
-                        if (!manualSwipeOverride &&
-                            newIndex !== currentEventIndex &&
-                           (!isChangeRateLimited || (now - lastEventChangeTime) > changeCooldownMs)) {
-                            currentEventIndex = newIndex;
-                            updateActiveEvent(currentEventIndex, false);
-                            isChangeRateLimited = true;
-                            lastEventChangeTime = now;
-                            setTimeout(() => { isChangeRateLimited = false; }, changeCooldownMs);
-                        }
-
-                    } else {
-                        if (inOutreachSection) {
-                            inOutreachSection = false;
-                            requestAnimationFrame(() => {
-                                body.classList.remove('event-1-active', 'event-2-active', 'event-3-active', 'event-4-active');
-                            });
-                        }
-                        if (spacerRect.bottom <= vh * 0.7 && currentEventIndex !== totalEvents - 1) {
-                            currentEventIndex = totalEvents - 1;
-                            updateActiveEvent(currentEventIndex, true);
-                        } else if (outreachRect.top > vh * 0.3 && currentEventIndex !== 0) {
-                            currentEventIndex = 0;
-                            updateActiveEvent(0, true);
-                        }
-                    }
-                }
-                
-                function setAriaVisibility(index) {
-                    eventSlides.forEach((slide, i) => {
-                        slide.setAttribute('aria-hidden', i === index ? 'false' : 'true');
-                        slide.inert = i !== index;
-                    });
-                }
-
-                function updateDots(index) {
-                    console.log('Updating dots for index:', index, 'Total dots:', dots.length);
-                    if (!dots.length) {
-                        console.warn('No dots found!');
-                        return;
-                    }
-                    dots.forEach((dot, i) => {
-                        if (i === index) {
-                            dot.classList.add('active');
-                            console.log('Dot', i, 'set to active (gold)');
-                        } else {
-                            dot.classList.remove('active');
-                        }
-                    });
-                }
-
-                function updateBodyBg(index, skip) {
-                    if (skip) return;
-                    body.classList.remove('event-1-active', 'event-2-active', 'event-3-active', 'event-4-active', 'stay-tuned-active');
-                    
-                    // If we're showing the Stay Tuned card (index 0 with no upcoming events)
-                    const isStayTuned = eventSlides[index]?.classList.contains('stay-tuned-card');
-                    if (isStayTuned) {
-                        body.classList.add('stay-tuned-active');
-                    } else {
-                        body.classList.add('event-' + (index + 1) + '-active');
-                    }
-                }
-
-                function updateActiveEvent(index, skipBackground, fromSwipe = false) {
-                    // Only phones (≤480px) get stacked card behavior
-                    // Tablets (481-960px) show all 3 cards in grid
-                    const isMobile = window.innerWidth <= 960;
-                    
-                    // Update active class
-                    eventSlides.forEach(s => s.classList.remove('active'));
-                    const active = eventSlides[index];
-                    if (active) active.classList.add('active');
-                    
-                    // Mobile: Update stack positions for other cards
-                    if (isMobile) {
-                        // Remove all stack position classes first
-                        eventSlides.forEach(s => {
-                            s.classList.remove('stack-position-1', 'stack-position-2', 'stack-position-3');
-                        });
-                        
-                        // Assign stack positions in visual order (next card closer than previous)
-                        // When viewing card 2: card 3 should be position-1 (closer), card 1 should be position-2 (further)
-                        const totalCards = eventSlides.length;
-                        let stackPos = 1;
-                        
-                        // Start from next card after active, wrap around (max 3 stack positions)
-                        for (let i = 1; i < totalCards && stackPos <= 3; i++) {
-                            const cardIndex = (index + i) % totalCards;
-                            eventSlides[cardIndex].classList.add('stack-position-' + stackPos);
-                            stackPos++;
-                        }
-                    }
-                    
-                    setAriaVisibility(index);
-                    updateDots(index);
-                    updateBodyBg(index, skipBackground);
-                    
-                    // Update dots overlaid on each event image to match active state
-                    eventSlides.forEach((slide, slideIndex) => {
-                        const overlaidDots = slide.querySelectorAll('.event-flyer-wrapper .event-dot');
-                        overlaidDots.forEach((dot, dotIndex) => {
-                            if (dotIndex === index) {
-                                dot.classList.add('active');
-                            } else {
-                                dot.classList.remove('active');
-                            }
-                        });
-                    });
-                }
-
-                updateActiveEvent(0, true);
-                
-                // SWIPE TO SCROLL - Works exactly like nav buttons
-                let touchStartX = 0;
-                let touchStartY = 0;
-
-                // Dynamic scroll positions for each card based on event count
-                function getCardPositions() {
-                    const count = eventSlides.length;
-                    if (count === 1) return [0.5]; // Single card
-                    if (count === 2) return [0.25, 0.75];
-                    if (count === 3) return [0.17, 0.5, 0.83];
-                    // 4+ cards: distribute evenly
-                    return Array.from({ length: count }, (_, i) => (i + 0.5) / count);
-                }
-                const cardPositions = getCardPositions();
-
-                const swipeTarget = eventsContainer;
-                if (swipeTarget) {
-                    swipeTarget.addEventListener('touchstart', e => {
-                        touchStartX = e.touches[0].clientX;
-                        touchStartY = e.touches[0].clientY;
-                    }, { passive: true });
-
-                    swipeTarget.addEventListener('touchend', e => {
-                        if (!e.changedTouches || !e.changedTouches[0]) return;
-                        
-                        const touchEndX = e.changedTouches[0].clientX;
-                        const touchEndY = e.changedTouches[0].clientY;
-                        
-                        const dx = touchEndX - touchStartX;
-                        const dy = touchEndY - touchStartY;
-                        
-                        // Only horizontal swipes
-                        if (Math.abs(dx) < Math.abs(dy)) return;
-                        if (Math.abs(dx) < 50) return;
-                        
-                        // Determine target card
-                        let targetCard = currentEventIndex;
-                        let scrollToWatch = false;
-                        
-                        if (dx < 0) {
-                            // Swipe LEFT = next
-                            if (currentEventIndex === totalEvents - 1) {
-                                // At last card, swipe left goes to Watch section
-                                scrollToWatch = true;
-                            } else {
-                                targetCard = currentEventIndex + 1;
-                            }
-                        } else {
-                            // Swipe RIGHT = previous
-                            targetCard = Math.max(currentEventIndex - 1, 0);
-                        }
-                        
-                        // Handle scroll to Watch section
-                        if (scrollToWatch) {
-                            const watchSection = document.querySelector('#watch');
-                            if (watchSection) {
-                                const watchTop = watchSection.getBoundingClientRect().top + window.pageYOffset;
-                                const navOffset = 30; // Mobile nav offset
-                                window.scrollTo({
-                                    top: watchTop - navOffset,
-                                    behavior: 'smooth'
-                                });
-                            }
-                            return;
-                        }
-                        
-                        // No change? Do nothing
-                        if (targetCard === currentEventIndex) return;
-                        
-                        // Calculate scroll position (like nav buttons do)
-                        const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
-                        const spacerHeight = scrollSpacer.offsetHeight;
-                        const targetScroll = outreachTop + (spacerHeight * cardPositions[targetCard]);
-                        
-                        // Scroll there - scroll handler will update the card
-                        window.scrollTo({
-                            top: targetScroll,
-                            behavior: 'smooth'
-                        });
-                    }, { passive: true });
-                }
-                
-                // Dot click navigation - tap any dot to jump to that event
-                dots.forEach((dot, index) => {
-                    dot.addEventListener('click', () => {
-                        if (currentEventIndex === index) return; // Already on this event
-                        
-                        currentEventIndex = index;
-                        updateActiveEvent(currentEventIndex, false);
-                        
-                        // Set manual override to prevent scroll from interfering
-                        manualSwipeOverride = true;
-                        setTimeout(() => { manualSwipeOverride = false; }, 600);
-                    });
-                    
-                    // Add touch feedback
-                    dot.style.cursor = 'pointer';
-                    dot.style.transition = 'transform 0.2s ease, background 0.3s ease';
-                });
                 
                 let ticking = false;
                 window.addEventListener('scroll', () => {
                     if (!ticking) {
                         ticking = true;
                         window.requestAnimationFrame(() => {
-                            handleScroll();
+                            handleMobileNav();
+                            updateActiveNavLink();
                             ticking = false;
                         });
                     }
                 }, { passive: true });
                 
-                // Initial check
-                handleScroll();
+                handleMobileNav();
+                updateActiveNavLink();
                 
                 window.addEventListener('resize', () => {
                     handleMobileNav();
-                    handleScroll();
                 });
                 
                 // Smooth scrolling for navigation links with offset for sticky nav
@@ -6854,25 +5898,15 @@ app.get('/', (c) => {
                     });
                 });
                 
-                // Special handler for "See Flyer" button - scroll to show event 2
+                // Special handler for "See Flyer" button - scroll to outreach
                 const seeFlyerBtn = document.querySelector('.btn-see-flyer');
                 if (seeFlyerBtn) {
                     seeFlyerBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        
-                        // Calculate scroll position to show event 2 (middle event)
-                        // Need to scroll into the middle of the scroll-spacer to trigger event 2
-                        const outreachTop = outreachSection.getBoundingClientRect().top + window.pageYOffset;
-                        const spacerHeight = scrollSpacer.offsetHeight;
-                        
-                        // Scroll to middle of spacer (50% progress = event 2)
-                        // Add some extra offset to ensure we're solidly in event 2 territory
-                        const targetScroll = outreachTop + (spacerHeight * 0.5);
-                        
-                        window.scrollTo({
-                            top: targetScroll,
-                            behavior: 'smooth'
-                        });
+                        const outreachEl = document.getElementById('outreach');
+                        if (outreachEl) {
+                            outreachEl.scrollIntoView({ behavior: 'smooth' });
+                        }
                     });
                 }
                 
@@ -6880,7 +5914,7 @@ app.get('/', (c) => {
                 // Ensures button works on desktop AND mobile
                 // Use setTimeout to ensure DOM is ready
                 setTimeout(() => {
-                    const requestItemsButtons = document.querySelectorAll('.event-slide[data-event="2"] .event-cta a[href="#contact"]');
+                    const requestItemsButtons = document.querySelectorAll('.carousel-card .event-cta a[href="#contact"]');
                     console.log('Found REQUEST ITEMS buttons:', requestItemsButtons.length);
                     
                     if (requestItemsButtons.length === 0) {
@@ -6979,30 +6013,14 @@ app.get('/', (c) => {
                     });
                 }
                 
-                // Handle "More Info" button click to scroll to Event 2 and activate it
+                // Handle "More Info" button click to scroll to outreach
                 const moreInfoBtn = document.querySelector('.btn-more-info');
                 if (moreInfoBtn) {
                     moreInfoBtn.addEventListener('click', (e) => {
                         e.preventDefault();
-                        
-                        // Scroll to outreach section
-                        const outreachSection = document.getElementById('outreach');
-                        if (outreachSection) {
-                            // Calculate position to scroll to
-                            const navHeight = document.querySelector('.nav-shell')?.offsetHeight || 0;
-                            const targetPosition = outreachSection.offsetTop - navHeight - 20;
-                            
-                            window.scrollTo({
-                                top: targetPosition,
-                                behavior: 'smooth'
-                            });
-                            
-                            // Wait for scroll to complete, then activate event 2
-                            setTimeout(() => {
-                                // Trigger event 2 to become active
-                                currentEventIndex = 1; // Event 2 (index 1)
-                                updateActiveEvent(currentEventIndex, false);
-                            }, 800);
+                        const outreachEl = document.getElementById('outreach');
+                        if (outreachEl) {
+                            outreachEl.scrollIntoView({ behavior: 'smooth' });
                         }
                     });
                 }

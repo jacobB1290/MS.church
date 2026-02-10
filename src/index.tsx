@@ -222,7 +222,7 @@ app.get('/api/calendar/events', async (c) => {
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.28.0 - Outreach carousel UX overhaul: glow, past events card, conditional CTA, mobile arrows outside -->
+    <!-- v1.28.1 - Fix carousel card clipping: clip-path instead of overflow:hidden -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -1225,8 +1225,7 @@ app.get('/', (c) => {
             .carousel-wrapper {
                 position: relative;
                 width: 100%;
-                overflow: hidden;
-                padding: 12px 0;
+                /* NO overflow:hidden here - shadows must be visible */
             }
 
             /* Carousel layout container with arrows outside on mobile */
@@ -1239,8 +1238,10 @@ app.get('/', (c) => {
 
             .carousel-viewport {
                 flex: 1;
-                overflow: hidden;
                 min-width: 0;
+                /* Only clip horizontal overflow - let shadows extend vertically */
+                overflow: visible;
+                clip-path: inset(-60px -1px -60px -1px);
             }
 
             .carousel-track {
@@ -1263,9 +1264,6 @@ app.get('/', (c) => {
                 .carousel-card {
                     flex: 0 0 33.333%;
                     padding: 0 16px;
-                }
-                .carousel-wrapper {
-                    padding: 16px 0;
                 }
             }
             
@@ -3117,7 +3115,7 @@ app.get('/', (c) => {
                 .outreach {
                     width: 100%;
                     max-width: 100vw;
-                    overflow-x: hidden;
+                    /* No overflow:hidden - shadows must not be clipped */
                 }
                 
                 .outreach .section-eyebrow {

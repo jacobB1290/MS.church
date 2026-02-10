@@ -1178,10 +1178,10 @@ app.get('/', (c) => {
                 
                 .stay-tuned-card,
                 .past-events-card {
-                    aspect-ratio: 3/4 !important;
-                    width: 320px !important;
-                    max-width: 320px !important;
-                    min-width: 320px !important;
+                    aspect-ratio: 4/5 !important;
+                    width: 280px !important;
+                    max-width: 280px !important;
+                    min-width: 280px !important;
                     height: auto !important;
                     min-height: unset !important;
                     max-height: unset !important;
@@ -1223,7 +1223,8 @@ app.get('/', (c) => {
                CAROUSEL - Smooth Gliding Track Animation
                Uses translateX on a flex track for true simultaneous
                slide: outgoing cards glide out while incoming glide in.
-               clip-path clips left/right but allows vertical shadows.
+               clip-path clips left/right with generous peek room.
+               Fog gradients on edges soften the entrance.
                NO overflow: hidden anywhere in the carousel.
                ======================================== */
             .carousel-wrapper {
@@ -1231,11 +1232,37 @@ app.get('/', (c) => {
                 width: 100%;
             }
 
-            /* Viewport clips LEFT/RIGHT only — vertical shadows extend freely */
+            /* Viewport clips left/right with room for peeking cards */
             .carousel-viewport {
                 position: relative;
-                clip-path: inset(-60px 0px -60px 0px);
-                /* NOT overflow: hidden — shadows breathe vertically */
+                clip-path: inset(-60px -20px -60px -20px);
+                /* 20px extra on sides lets next/prev cards peek in */
+            }
+
+            /* Fog gradients on edges — soft fade instead of hard clip */
+            .carousel-wrapper::before,
+            .carousel-wrapper::after {
+                content: '';
+                position: absolute;
+                top: -60px;
+                bottom: -60px;
+                width: 60px;
+                z-index: 3;
+                pointer-events: none;
+            }
+            .carousel-wrapper::before {
+                left: -20px;
+                background: linear-gradient(to right, 
+                    var(--bg-color, #f8f9fd) 0%, 
+                    var(--bg-color, #f8f9fd) 20%,
+                    rgba(248, 249, 253, 0) 100%);
+            }
+            .carousel-wrapper::after {
+                right: -20px;
+                background: linear-gradient(to left, 
+                    var(--bg-color, #f8f9fd) 0%, 
+                    var(--bg-color, #f8f9fd) 20%,
+                    rgba(248, 249, 253, 0) 100%);
             }
 
             /* The track is a flex row of ALL cards; translateX slides it */
@@ -1252,11 +1279,11 @@ app.get('/', (c) => {
                 padding: 0 10px;
             }
 
-            /* Mobile: one card at a time, full width */
+            /* Mobile: one card at a time, constrained size */
             @media (max-width: 960px) {
                 .carousel-card {
                     width: 100%;
-                    padding: 0 16px;
+                    padding: 0 24px;
                 }
             }
 
@@ -1274,7 +1301,7 @@ app.get('/', (c) => {
                 align-items: center;
                 justify-content: center;
                 gap: 16px;
-                margin-top: 28px;
+                margin-top: 20px;
             }
 
             .carousel-arrow {
@@ -1357,11 +1384,19 @@ app.get('/', (c) => {
             .event-flyer-wrapper {
                 position: relative;
                 width: 100%;
-                aspect-ratio: 3/4;
-                border-radius: 24px;
+                aspect-ratio: 4/5;
+                border-radius: 20px;
                 overflow: hidden; /* crops image to rounded corners only — box-shadow is outside */
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
                 transition: box-shadow 0.4s ease, transform 0.4s ease;
+            }
+            
+            /* Mobile: cap card height so it doesn't eat the screen */
+            @media (max-width: 960px) {
+                .event-flyer-wrapper {
+                    max-height: 420px;
+                    border-radius: 18px;
+                }
             }
             
             .event-flyer-wrapper:hover {
@@ -1507,11 +1542,11 @@ app.get('/', (c) => {
                 justify-content: center;
                 text-align: center;
                 width: 100%;
-                aspect-ratio: 3/4;
+                aspect-ratio: 4/5;
                 background: rgba(255, 255, 255, 0.85);
                 border: 1px solid rgba(255,255,255,0.6);
                 backdrop-filter: blur(20px);
-                border-radius: 24px;
+                border-radius: 20px;
                 position: relative;
                 cursor: pointer;
                 transition: all 0.4s ease;
@@ -1521,6 +1556,12 @@ app.get('/', (c) => {
             .carousel-past-card:hover {
                 box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
                 transform: translateY(-4px);
+            }
+            @media (max-width: 960px) {
+                .carousel-past-card {
+                    max-height: 420px;
+                    border-radius: 18px;
+                }
             }
             .carousel-past-card .past-card-badge {
                 position: absolute; top: 12px; left: 12px;
@@ -1625,7 +1666,7 @@ app.get('/', (c) => {
                 position: relative;
                 overflow: visible;
                 transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Match section-card */
-                aspect-ratio: 3/4; /* Portrait card - mobile */
+                aspect-ratio: 4/5; /* Portrait card - mobile */
                 width: 100%; /* Mobile: full width */
             }
             
@@ -1645,7 +1686,7 @@ app.get('/', (c) => {
                 
                 .stay-tuned-container > .stay-tuned-card,
                 .stay-tuned-container > .past-events-card {
-                    aspect-ratio: 3/4 !important;
+                    aspect-ratio: 4/5 !important;
                     width: 260px !important;
                     max-width: 260px !important;
                     min-width: 260px !important;
@@ -5503,7 +5544,7 @@ app.get('/', (c) => {
                         // Desktop: Two card layout - Upcoming + Past Events (same size)
                         return \`
                             <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 40px; justify-content: center; align-items: flex-start; width: 100%; max-width: 900px; margin: 0 auto;">
-                                <div class="stay-tuned-card" style="flex: 0 0 340px; width: 340px; max-width: 340px; aspect-ratio: 3/4; border-radius: 28px;">
+                                <div class="stay-tuned-card" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 4/5; border-radius: 24px;">
                                     <span class="event-date stay-tuned-badge">COMING SOON</span>
                                     <div class="stay-tuned-content">
                                         <div class="stay-tuned-icon">✨</div>
@@ -5516,7 +5557,7 @@ app.get('/', (c) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 340px; width: 340px; max-width: 340px; aspect-ratio: 3/4; border-radius: 28px;">
+                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 4/5; border-radius: 24px;">
                                     <span class="past-card-badge">MEMORIES</span>
                                     <div class="past-card-icon">📸</div>
                                     <h3 class="past-card-title">Past Events</h3>

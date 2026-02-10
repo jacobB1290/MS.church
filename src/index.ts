@@ -1229,34 +1229,36 @@ app.get('/', (c) => {
                 width: 100%;
             }
 
-            /* Viewport clips sides — room for card shadows */
+            /* Viewport: clip-path gives generous room for shadows on ALL sides */
             .carousel-viewport {
                 position: relative;
                 overflow: visible;
-                clip-path: inset(-20px 0 -20px 0);
+                clip-path: inset(-60px -24px -60px -24px);
             }
 
-            /* Soft fog on edges — positioned OUTSIDE the cards */
+            /* Soft fog on left/right edges — sits INSIDE clip-path, OUTSIDE cards */
             .carousel-wrapper::before,
             .carousel-wrapper::after {
                 content: '';
                 position: absolute;
-                top: 0;
-                bottom: 0;
-                width: 40px;
+                top: -60px;
+                bottom: -60px;
+                width: 48px;
                 z-index: 3;
                 pointer-events: none;
             }
             .carousel-wrapper::before {
-                left: -40px;
+                left: -24px;
                 background: linear-gradient(to right, 
                     var(--bg-color, #f8f9fd) 0%, 
+                    var(--bg-color, #f8f9fd) 30%,
                     rgba(248, 249, 253, 0) 100%);
             }
             .carousel-wrapper::after {
-                right: -40px;
+                right: -24px;
                 background: linear-gradient(to left, 
                     var(--bg-color, #f8f9fd) 0%, 
+                    var(--bg-color, #f8f9fd) 30%,
                     rgba(248, 249, 253, 0) 100%);
             }
 
@@ -1280,7 +1282,7 @@ app.get('/', (c) => {
                     padding: 0 12px;
                 }
                 .carousel-viewport {
-                    clip-path: inset(-16px 0 -16px 0);
+                    clip-path: inset(-50px -16px -50px -16px);
                 }
             }
 

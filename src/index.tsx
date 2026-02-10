@@ -222,7 +222,7 @@ app.get('/api/calendar/events', async (c) => {
 app.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
-    <!-- v1.28.1 - Fix carousel card clipping: clip-path instead of overflow:hidden -->
+    <!-- v1.29.0 - Zero-overflow carousel: show/hide grid replaces translateX sliding -->
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -1220,68 +1220,71 @@ app.get('/', (c) => {
             }
 
             /* ========================================
-               CAROUSEL WRAPPER
+               CAROUSEL - Show/Hide Grid (zero overflow)
+               Cards are rendered in a simple flex row.
+               Navigation swaps which cards are visible.
+               Nothing is clipped — shadows render freely.
                ======================================== */
             .carousel-wrapper {
                 position: relative;
                 width: 100%;
-                /* NO overflow:hidden here - shadows must be visible */
             }
 
-            /* Carousel layout container with arrows outside on mobile */
-            .carousel-layout {
+            .carousel-grid {
                 display: flex;
-                align-items: center;
-                gap: 8px;
+                gap: 20px;
+                justify-content: center;
+                align-items: stretch;
                 width: 100%;
-            }
-
-            .carousel-viewport {
-                flex: 1;
-                min-width: 0;
-                /* Only clip horizontal overflow - let shadows extend vertically */
-                overflow: visible;
-                clip-path: inset(-60px -1px -60px -1px);
-            }
-
-            .carousel-track {
-                display: flex;
-                transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-                will-change: transform;
+                transition: opacity 0.3s ease;
             }
 
             .carousel-card {
-                flex: 0 0 100%;
-                padding: 0 8px;
-                box-sizing: border-box;
+                flex: 1 1 0;
+                min-width: 0;
+                max-width: 400px;
             }
 
-            /* Desktop: show 3 cards at a time, bigger cards */
-            @media (min-width: 961px) {
-                .carousel-layout {
+            /* Mobile: single card centered */
+            @media (max-width: 960px) {
+                .carousel-grid {
                     gap: 0;
                 }
                 .carousel-card {
-                    flex: 0 0 33.333%;
-                    padding: 0 16px;
+                    flex: 0 0 80%;
+                    max-width: 340px;
                 }
             }
-            
-            /* Center cards when few items (2 or less on desktop) */
-            .carousel-track.centered {
-                justify-content: center;
+
+            /* Desktop: up to 3 cards, evenly sized */
+            @media (min-width: 961px) {
+                .carousel-grid {
+                    gap: 24px;
+                    padding: 0 24px;
+                }
+                .carousel-card {
+                    max-width: none;
+                }
             }
 
-            /* Carousel navigation arrows - MOBILE: beside cards */
+            /* Navigation row: arrows + dots together */
+            .carousel-nav {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 16px;
+                margin-top: 24px;
+            }
+
             .carousel-arrow {
                 flex-shrink: 0;
-                z-index: 20;
-                width: 36px;
-                height: 36px;
+                z-index: 2;
+                width: 40px;
+                height: 40px;
                 border-radius: 50%;
                 background: rgba(255, 255, 255, 0.95);
                 border: 1px solid rgba(0, 0, 0, 0.08);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -1292,43 +1295,29 @@ app.get('/', (c) => {
             }
 
             .carousel-arrow:hover {
-                background: rgba(255, 255, 255, 1);
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                background: #fff;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
                 transform: scale(1.08);
             }
 
-            .carousel-arrow.hidden { opacity: 0; pointer-events: none; }
-            
-            /* Desktop: arrows overlaid on cards */
-            @media (min-width: 961px) {
-                .carousel-layout {
-                    position: relative;
-                }
-                .carousel-arrow {
-                    position: absolute;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    width: 48px;
-                    height: 48px;
-                    font-size: 22px;
-                    backdrop-filter: blur(10px);
-                    -webkit-backdrop-filter: blur(10px);
-                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-                }
-                .carousel-arrow:hover {
-                    transform: translateY(-50%) scale(1.08);
-                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-                }
-                .carousel-arrow.prev { left: 4px; }
-                .carousel-arrow.next { right: 4px; }
+            .carousel-arrow.hidden {
+                opacity: 0.3;
+                pointer-events: none;
             }
 
-            /* Carousel dots */
+            @media (min-width: 961px) {
+                .carousel-arrow {
+                    width: 44px;
+                    height: 44px;
+                    font-size: 20px;
+                }
+            }
+
+            /* Dots */
             .carousel-dots {
                 display: flex;
-                justify-content: center;
                 gap: 10px;
-                margin-top: 20px;
+                align-items: center;
             }
 
             .carousel-dot {
@@ -1365,7 +1354,7 @@ app.get('/', (c) => {
                 width: 100%;
                 aspect-ratio: 3/4;
                 border-radius: 20px;
-                overflow: hidden;
+                overflow: hidden; /* Only element with overflow:hidden — crops image to rounded corners */
                 margin-bottom: 12px;
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
                 transition: box-shadow 0.4s ease;
@@ -1477,7 +1466,6 @@ app.get('/', (c) => {
                 backdrop-filter: blur(20px);
                 border-radius: 20px;
                 position: relative;
-                overflow: hidden;
                 cursor: pointer;
                 transition: all 0.4s ease;
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
@@ -5040,16 +5028,14 @@ app.get('/', (c) => {
                     
                     <!-- Carousel for upcoming events -->
                     <div class="carousel-wrapper" id="carousel-wrapper" style="display: none;">
-                        <div class="carousel-layout">
+                        <div class="carousel-grid" id="carousel-grid">
+                            <!-- Visible cards rendered here by JS -->
+                        </div>
+                        <div class="carousel-nav" id="carousel-nav">
                             <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous event">&#8249;</button>
-                            <div class="carousel-viewport">
-                                <div class="carousel-track" id="carousel-track">
-                                    <!-- Event cards rendered here by JS -->
-                                </div>
-                            </div>
+                            <div class="carousel-dots" id="carousel-dots"></div>
                             <button class="carousel-arrow next" id="carousel-next" aria-label="Next event">&#8250;</button>
                         </div>
-                        <div class="carousel-dots" id="carousel-dots"></div>
                     </div>
                 </section>
                 
@@ -5212,10 +5198,11 @@ app.get('/', (c) => {
                 
                 // Carousel elements
                 const carouselWrapper = document.getElementById('carousel-wrapper');
-                const carouselTrack = document.getElementById('carousel-track');
+                const carouselGrid = document.getElementById('carousel-grid');
                 const carouselPrev = document.getElementById('carousel-prev');
                 const carouselNext = document.getElementById('carousel-next');
                 const carouselDotsContainer = document.getElementById('carousel-dots');
+                const carouselNav = document.getElementById('carousel-nav');
 
                 // ========================================
                 // DYNAMIC EVENT MANAGER
@@ -5577,106 +5564,28 @@ app.get('/', (c) => {
                     if (stayTunedContainer) stayTunedContainer.style.display = 'none';
                     if (carouselWrapper) carouselWrapper.style.display = 'block';
                     
-                    // Render cards into carousel track
-                    if (carouselTrack) {
-                        let cardsHtml = upcoming.map((event, i) => 
-                            renderUpcomingEventCard(event, i, upcoming.length)
-                        ).join('');
-                        
-                        // Add "See Past Events" card at the end if there are past events
-                        if (past.length > 0) {
-                            cardsHtml += \`
-                                <div class="carousel-card">
-                                    <div class="carousel-past-card" id="carousel-see-past">
-                                        <span class="past-card-badge">MEMORIES</span>
-                                        <div class="past-card-icon">📸</div>
-                                        <h3 class="past-card-title">Past Events</h3>
-                                        <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
-                                        <span class="past-card-btn">View Gallery</span>
-                                    </div>
+                    // Build ALL card HTML into an array (events + optional past-events card)
+                    const allCards = upcoming.map((event, i) => 
+                        renderUpcomingEventCard(event, i, upcoming.length)
+                    );
+                    
+                    // Add "See Past Events" card at the end if there are past events
+                    if (past.length > 0) {
+                        allCards.push(\`
+                            <div class="carousel-card">
+                                <div class="carousel-past-card" id="carousel-see-past">
+                                    <span class="past-card-badge">MEMORIES</span>
+                                    <div class="past-card-icon">📸</div>
+                                    <h3 class="past-card-title">Past Events</h3>
+                                    <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
+                                    <span class="past-card-btn">View Gallery</span>
                                 </div>
-                            \`;
-                        }
-                        
-                        carouselTrack.innerHTML = cardsHtml;
-                        
-                        // Calculate total cards including past events card
-                        const totalCarouselCards = upcoming.length + (past.length > 0 ? 1 : 0);
-                        
-                        // Center track if 2 or fewer cards on desktop
-                        if (totalCarouselCards <= 2 && window.innerWidth >= 961) {
-                            carouselTrack.classList.add('centered');
-                            // Make cards not stretch to 33% but stay natural
-                            carouselTrack.querySelectorAll('.carousel-card').forEach(card => {
-                                card.style.flex = '0 0 33.333%';
-                            });
-                        }
-                        
-                        // Wire up the "See Past Events" card click
-                        const seePastCard = document.getElementById('carousel-see-past');
-                        if (seePastCard && pastEventsModal && past.length > 0) {
-                            seePastCard.addEventListener('click', () => {
-                                pastEventsModal.classList.add('active');
-                                body.classList.add('modal-open');
-                                // Reset to first slide
-                                const firstSlide = document.querySelector('.past-event-slide');
-                                if (firstSlide) {
-                                    document.querySelectorAll('.past-event-slide').forEach((s, i) => {
-                                        s.classList.remove('active', 'prev');
-                                        if (i === 0) s.classList.add('active');
-                                    });
-                                    document.querySelectorAll('.past-events-dot').forEach((d, i) => {
-                                        d.classList.toggle('active', i === 0);
-                                    });
-                                }
-                            });
-                        }
-                        
-                        // Detect dominant color for glow effect on each card image
-                        setTimeout(() => {
-                            document.querySelectorAll('[data-glow-detect]').forEach(wrapper => {
-                                const img = wrapper.querySelector('.flyer-image');
-                                if (!img) { wrapper.classList.add('glow-warm'); return; }
-                                
-                                const canvas = document.createElement('canvas');
-                                const ctx = canvas.getContext('2d');
-                                canvas.width = 8;
-                                canvas.height = 8;
-                                
-                                const detectGlow = () => {
-                                    try {
-                                        ctx.drawImage(img, 0, 0, 8, 8);
-                                        const data = ctx.getImageData(0, 0, 8, 8).data;
-                                        let r = 0, g = 0, b = 0, count = 0;
-                                        for (let i = 0; i < data.length; i += 4) {
-                                            r += data[i]; g += data[i+1]; b += data[i+2]; count++;
-                                        }
-                                        r = Math.round(r / count);
-                                        g = Math.round(g / count);
-                                        b = Math.round(b / count);
-                                        
-                                        // Classify dominant color
-                                        if (r > 160 && g < 100 && b < 100) wrapper.classList.add('glow-red');
-                                        else if (b > 140 && r < 120) wrapper.classList.add('glow-blue');
-                                        else if (g > 140 && r < 120) wrapper.classList.add('glow-green');
-                                        else if (r > 120 && b > 120 && g < 100) wrapper.classList.add('glow-purple');
-                                        else if (r < 80 && g < 80 && b < 80) wrapper.classList.add('glow-dark');
-                                        else wrapper.classList.add('glow-warm');
-                                    } catch(e) {
-                                        wrapper.classList.add('glow-warm');
-                                    }
-                                };
-                                
-                                if (img.complete) detectGlow();
-                                else img.addEventListener('load', detectGlow);
-                                img.addEventListener('error', () => wrapper.classList.add('glow-warm'));
-                            });
-                        }, 500);
+                            </div>
+                        \`);
                     }
                     
-                    // Initialize carousel with total cards (events + optional past card)
-                    const totalCarouselCards = upcoming.length + (past.length > 0 ? 1 : 0);
-                    initCarousel(totalCarouselCards);
+                    // Initialize the show/hide carousel with all cards
+                    initCarousel(allCards, past);
                 }
                 
                 // Render past events in modal
@@ -5887,54 +5796,80 @@ app.get('/', (c) => {
                 
                 // ========================================
                 // CAROUSEL CONTROLLER
-                // Simple arrow-based horizontal carousel
+                // Show/hide grid — zero overflow containers
+                // Only visible cards are in the DOM at any time
                 // ========================================
-                function initCarousel(totalCards) {
-                    if (!carouselTrack || !carouselPrev || !carouselNext || totalCards === 0) return;
+                function initCarousel(allCards, pastEvents) {
+                    if (!carouselGrid || !carouselPrev || !carouselNext || allCards.length === 0) return;
                     
                     let currentIndex = 0;
-                    const carouselViewport = document.querySelector('.carousel-viewport');
+                    const totalCards = allCards.length;
                     
                     function getCardsPerView() {
                         return window.innerWidth >= 961 ? 3 : 1;
                     }
                     
                     function getMaxIndex() {
-                        const perView = getCardsPerView();
-                        return Math.max(0, totalCards - perView);
+                        return Math.max(0, totalCards - getCardsPerView());
                     }
                     
-                    function updateCentering() {
-                        // Center when there are fewer cards than can fit on desktop
+                    function renderVisibleCards() {
                         const perView = getCardsPerView();
-                        if (totalCards <= perView && totalCards < 3) {
-                            carouselTrack.classList.add('centered');
-                        } else {
-                            carouselTrack.classList.remove('centered');
-                        }
-                    }
-                    
-                    function updateCarouselView() {
-                        const perView = getCardsPerView();
-                        const cardWidthPercent = 100 / perView;
-                        const offset = currentIndex * cardWidthPercent;
-                        carouselTrack.style.transform = 'translateX(-' + offset + '%)';
+                        const visible = allCards.slice(currentIndex, currentIndex + perView);
+                        carouselGrid.innerHTML = visible.join('');
                         
-                        // Update arrows visibility
+                        // Wire up "See Past Events" card click if it's visible
+                        const seePastCard = document.getElementById('carousel-see-past');
+                        if (seePastCard && pastEventsModal && pastEvents && pastEvents.length > 0) {
+                            seePastCard.addEventListener('click', () => {
+                                pastEventsModal.classList.add('active');
+                                body.classList.add('modal-open');
+                                document.querySelectorAll('.past-event-slide').forEach((s, i) => {
+                                    s.classList.remove('active', 'prev');
+                                    if (i === 0) s.classList.add('active');
+                                });
+                                document.querySelectorAll('.past-events-dot').forEach((d, i) => {
+                                    d.classList.toggle('active', i === 0);
+                                });
+                            });
+                        }
+                        
+                        // Re-run glow detection on newly rendered images
+                        document.querySelectorAll('[data-glow-detect]').forEach(wrapper => {
+                            const img = wrapper.querySelector('.flyer-image');
+                            if (!img) { wrapper.classList.add('glow-warm'); return; }
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            canvas.width = 8; canvas.height = 8;
+                            const detect = () => {
+                                try {
+                                    ctx.drawImage(img, 0, 0, 8, 8);
+                                    const d = ctx.getImageData(0, 0, 8, 8).data;
+                                    let r=0,g=0,b=0,c=0;
+                                    for (let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];c++;}
+                                    r=Math.round(r/c);g=Math.round(g/c);b=Math.round(b/c);
+                                    if(r>160&&g<100&&b<100)wrapper.classList.add('glow-red');
+                                    else if(b>140&&r<120)wrapper.classList.add('glow-blue');
+                                    else if(g>140&&r<120)wrapper.classList.add('glow-green');
+                                    else if(r>120&&b>120&&g<100)wrapper.classList.add('glow-purple');
+                                    else if(r<80&&g<80&&b<80)wrapper.classList.add('glow-dark');
+                                    else wrapper.classList.add('glow-warm');
+                                } catch(e) { wrapper.classList.add('glow-warm'); }
+                            };
+                            if (img.complete && img.naturalWidth > 0) detect();
+                            else img.addEventListener('load', detect);
+                            img.addEventListener('error', () => wrapper.classList.add('glow-warm'));
+                        });
+                    }
+                    
+                    function updateArrows() {
                         carouselPrev.classList.toggle('hidden', currentIndex <= 0);
                         carouselNext.classList.toggle('hidden', currentIndex >= getMaxIndex());
-                        
-                        // Update centering
-                        updateCentering();
-                        
-                        // Update dots
-                        updateCarouselDots();
                     }
                     
-                    function updateCarouselDots() {
+                    function updateDots() {
                         if (!carouselDotsContainer) return;
                         const maxIdx = getMaxIndex();
-                        // Show a dot for each position
                         const dotCount = maxIdx + 1;
                         if (dotCount <= 1) {
                             carouselDotsContainer.style.display = 'none';
@@ -5945,89 +5880,77 @@ app.get('/', (c) => {
                             '<button class="carousel-dot ' + (i === currentIndex ? 'active' : '') + '" data-index="' + i + '"></button>'
                         ).join('');
                         
-                        // Dot click handlers
                         carouselDotsContainer.querySelectorAll('.carousel-dot').forEach(dot => {
                             dot.addEventListener('click', () => {
                                 currentIndex = parseInt(dot.dataset.index);
-                                updateCarouselView();
+                                render();
                                 resetAutoTimer();
                             });
                         });
                     }
                     
-                    carouselPrev.addEventListener('click', () => {
-                        if (currentIndex > 0) {
-                            currentIndex--;
-                            updateCarouselView();
-                            resetAutoTimer();
+                    function render() {
+                        renderVisibleCards();
+                        updateArrows();
+                        updateDots();
+                        // Hide nav row entirely if all cards fit
+                        if (carouselNav && getMaxIndex() === 0) {
+                            carouselNav.style.display = 'none';
+                        } else if (carouselNav) {
+                            carouselNav.style.display = 'flex';
                         }
+                    }
+                    
+                    carouselPrev.addEventListener('click', () => {
+                        if (currentIndex > 0) { currentIndex--; render(); resetAutoTimer(); }
                     });
                     
                     carouselNext.addEventListener('click', () => {
-                        if (currentIndex < getMaxIndex()) {
-                            currentIndex++;
-                            updateCarouselView();
-                            resetAutoTimer();
-                        }
+                        if (currentIndex < getMaxIndex()) { currentIndex++; render(); resetAutoTimer(); }
                     });
                     
-                    // Touch/swipe support
-                    let touchStartX = 0;
-                    let touchStartY = 0;
-                    const swipeTarget = carouselViewport || carouselTrack;
-                    swipeTarget.addEventListener('touchstart', e => {
+                    // Touch/swipe support on the grid
+                    let touchStartX = 0, touchStartY = 0;
+                    carouselGrid.addEventListener('touchstart', e => {
                         touchStartX = e.touches[0].clientX;
                         touchStartY = e.touches[0].clientY;
                     }, { passive: true });
                     
-                    swipeTarget.addEventListener('touchend', e => {
+                    carouselGrid.addEventListener('touchend', e => {
                         if (!e.changedTouches[0]) return;
                         const dx = e.changedTouches[0].clientX - touchStartX;
                         const dy = e.changedTouches[0].clientY - touchStartY;
                         if (Math.abs(dx) < Math.abs(dy) || Math.abs(dx) < 50) return;
-                        
-                        if (dx < 0 && currentIndex < getMaxIndex()) {
-                            currentIndex++;
-                        } else if (dx > 0 && currentIndex > 0) {
-                            currentIndex--;
-                        }
-                        updateCarouselView();
+                        if (dx < 0 && currentIndex < getMaxIndex()) currentIndex++;
+                        else if (dx > 0 && currentIndex > 0) currentIndex--;
+                        render();
                         resetAutoTimer();
                     }, { passive: true });
                     
                     // Auto-advance every 5 seconds
                     function startAutoTimer() {
                         return setInterval(() => {
-                            if (currentIndex < getMaxIndex()) {
-                                currentIndex++;
-                            } else {
-                                currentIndex = 0;
-                            }
-                            updateCarouselView();
+                            if (currentIndex < getMaxIndex()) currentIndex++;
+                            else currentIndex = 0;
+                            render();
                         }, 5000);
                     }
-                    
                     let autoTimer = startAutoTimer();
-                    
                     function resetAutoTimer() {
                         clearInterval(autoTimer);
                         autoTimer = startAutoTimer();
                     }
-                    
-                    // Pause auto-advance on hover
                     carouselWrapper.addEventListener('mouseenter', () => clearInterval(autoTimer));
-                    carouselWrapper.addEventListener('mouseleave', () => {
-                        autoTimer = startAutoTimer();
-                    });
+                    carouselWrapper.addEventListener('mouseleave', () => { autoTimer = startAutoTimer(); });
                     
                     // Recalculate on resize
                     window.addEventListener('resize', () => {
                         if (currentIndex > getMaxIndex()) currentIndex = getMaxIndex();
-                        updateCarouselView();
+                        render();
                     });
                     
                     // Initial render
-                    updateCarouselView();
+                    render();
                 }
                 
                 // Update active nav link

@@ -1279,7 +1279,7 @@ app.get('/', (c) => {
             /* Mobile: one card at a time, centered with breathing room */
             @media (max-width: 960px) {
                 .carousel-card {
-                    width: 100%;
+                    /* width set dynamically by JS based on total card count */
                     padding: 0 28px;
                 }
                 .carousel-viewport {
@@ -1298,7 +1298,7 @@ app.get('/', (c) => {
             /* Desktop: 3 cards in a row with balanced gutters */
             @media (min-width: 961px) {
                 .carousel-card {
-                    width: 33.333%;
+                    /* width set dynamically by JS based on total card count */
                     padding: 0 8px;
                 }
             }
@@ -5959,21 +5959,20 @@ app.get('/', (c) => {
                     }
                     
                     function updateTrack() {
-                        // Each card is (100% / perView) wide, so offset = currentIndex * (100 / totalCards)%
-                        // Track width = totalCards * (100 / perView)%
-                        // But simpler: each card is (100/perView)% of viewport
-                        // Track total = totalCards * (100/perView)% of viewport
-                        // Offset = currentIndex * (100/perView)% of viewport... 
-                        // We need percentage of the TRACK width.
-                        // Card width in track = 1/totalCards of track = (100/totalCards)%
-                        // offset = currentIndex * (100 / totalCards)%
+                        const perView = getCardsPerView();
+                        // Track = totalCards / perView * 100% of the wrapper
+                        // Each card = 1/totalCards of the track 
+                        // So perView cards exactly fill the wrapper width
+                        carouselTrack.style.width = (totalCards * 100 / perView) + '%';
+                        
+                        // Each card must be (100 / totalCards)% of the TRACK
+                        const cardPct = (100 / totalCards);
+                        carouselTrack.querySelectorAll('.carousel-card').forEach(card => {
+                            card.style.width = cardPct + '%';
+                        });
+                        
                         const offset = (currentIndex / totalCards) * 100;
                         carouselTrack.style.transform = 'translateX(-' + offset + '%)';
-                        
-                        // Set track width: each card = (100/perView)% of viewport
-                        // So total track = totalCards * (100/perView)% of viewport
-                        const perView = getCardsPerView();
-                        carouselTrack.style.width = (totalCards * 100 / perView) + '%';
                     }
                     
                     function updateArrows() {

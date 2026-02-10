@@ -1144,6 +1144,7 @@ app.get('/', (c) => {
                 display: flex;
                 flex-direction: column;
                 padding-bottom: 48px;
+                align-items: flex-start;
             }
 
             .outreach .section-eyebrow {
@@ -1155,6 +1156,7 @@ app.get('/', (c) => {
             
             .outreach .section-heading {
                 margin-bottom: 28px;
+                text-align: left;
             }
 
             /* Stay Tuned container */
@@ -1221,43 +1223,38 @@ app.get('/', (c) => {
 
             /* ========================================
                CAROUSEL - Smooth Gliding Track Animation
-               Uses translateX on a flex track for true simultaneous
-               slide: outgoing cards glide out while incoming glide in.
-               clip-path clips left/right with generous peek room.
-               Fog gradients on edges soften the entrance.
-               NO overflow: hidden anywhere in the carousel.
                ======================================== */
             .carousel-wrapper {
                 position: relative;
                 width: 100%;
             }
 
-            /* Viewport clips sides — generous room for shadows */
+            /* Viewport clips sides — room for card shadows */
             .carousel-viewport {
                 position: relative;
                 overflow: visible;
-                clip-path: inset(-60px -4px -60px -4px);
+                clip-path: inset(-20px 0 -20px 0);
             }
 
-            /* Soft fog on edges */
+            /* Soft fog on edges — positioned OUTSIDE the cards */
             .carousel-wrapper::before,
             .carousel-wrapper::after {
                 content: '';
                 position: absolute;
-                top: -60px;
-                bottom: -60px;
-                width: 32px;
+                top: 0;
+                bottom: 0;
+                width: 40px;
                 z-index: 3;
                 pointer-events: none;
             }
             .carousel-wrapper::before {
-                left: -4px;
+                left: -40px;
                 background: linear-gradient(to right, 
                     var(--bg-color, #f8f9fd) 0%, 
                     rgba(248, 249, 253, 0) 100%);
             }
             .carousel-wrapper::after {
-                right: -4px;
+                right: -40px;
                 background: linear-gradient(to left, 
                     var(--bg-color, #f8f9fd) 0%, 
                     rgba(248, 249, 253, 0) 100%);
@@ -1276,76 +1273,87 @@ app.get('/', (c) => {
                 box-sizing: border-box;
             }
 
-            /* Mobile: one card at a time, centered with breathing room */
+            /* Mobile: one card at a time */
             @media (max-width: 960px) {
                 .carousel-card {
-                    /* width set dynamically by JS based on total card count */
-                    padding: 0 28px;
+                    /* width set dynamically by JS */
+                    padding: 0 12px;
                 }
                 .carousel-viewport {
-                    clip-path: inset(-60px 0 -60px 0);
-                }
-                .event-flyer-wrapper {
-                    max-height: 440px;
-                    margin: 0 auto;
-                }
-                .carousel-past-card {
-                    max-height: 440px;
-                    margin: 0 auto;
+                    clip-path: inset(-16px 0 -16px 0);
                 }
             }
 
-            /* Desktop: 3 cards in a row with balanced gutters */
+            /* Desktop: 3 cards in a row */
             @media (min-width: 961px) {
                 .carousel-card {
-                    /* width set dynamically by JS based on total card count */
-                    padding: 0 8px;
+                    /* width set dynamically by JS */
+                    padding: 0 10px;
                 }
             }
 
-            /* Navigation row: arrows + dots */
+            /* Navigation: dots below, arrows float on card edges */
             .carousel-nav {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 16px;
-                margin-top: 28px;
+                gap: 12px;
+                margin-top: 24px;
             }
 
+            /* Arrows: frosted glass floating on card sides */
             .carousel-arrow {
-                flex-shrink: 0;
-                z-index: 2;
-                width: 40px;
-                height: 40px;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+                width: 36px;
+                height: 36px;
                 border-radius: 50%;
-                background: rgba(255, 255, 255, 0.95);
-                border: 1px solid rgba(0, 0, 0, 0.06);
-                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                font-size: 18px;
+                font-size: 16px;
                 color: #1a1a2e;
             }
 
+            .carousel-arrow.prev {
+                left: 6px;
+            }
+
+            .carousel-arrow.next {
+                right: 6px;
+            }
+
             .carousel-arrow:hover {
-                background: #fff;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14);
-                transform: scale(1.1);
+                background: rgba(255, 255, 255, 0.9);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                transform: translateY(-50%) scale(1.1);
             }
 
             .carousel-arrow.hidden {
-                opacity: 0.25;
+                opacity: 0;
                 pointer-events: none;
             }
 
             @media (min-width: 961px) {
                 .carousel-arrow {
-                    width: 46px;
-                    height: 46px;
-                    font-size: 22px;
+                    width: 42px;
+                    height: 42px;
+                    font-size: 20px;
+                }
+                .carousel-arrow.prev {
+                    left: 14px;
+                }
+                .carousel-arrow.next {
+                    right: 14px;
                 }
             }
 
@@ -1599,10 +1607,6 @@ app.get('/', (c) => {
             @media (min-width: 961px) {
                 .event-flyer-wrapper {
                     border-radius: 24px;
-                    max-height: 380px;
-                }
-                .carousel-past-card {
-                    max-height: 380px;
                 }
                 .event-date {
                     top: 16px;
@@ -3194,9 +3198,10 @@ app.get('/', (c) => {
                 /* Outreach Section - Mobile */
                 .outreach {
                     width: 100%;
-                    max-width: 100vw;
+                    max-width: 100%;
                     padding-bottom: 40px;
-                    /* No overflow:hidden - shadows must not be clipped */
+                    overflow-x: clip; /* prevent horizontal scroll but allow vertical shadows */
+                    overflow-y: visible;
                 }
                 
                 .outreach .section-eyebrow {
@@ -4690,18 +4695,18 @@ app.get('/', (c) => {
                     width: auto;
                 }
                 
-                /* Desktop Outreach Section - 3-in-row grid */
+                /* Desktop Outreach Section - match page content width */
                 .outreach {
-                    max-width: 960px;
+                    max-width: 1200px;
                     margin: 0 auto;
-                    width: min(960px, 90%);
+                    width: min(1200px, 94%);
                     min-height: auto;
                     display: block;
                     padding-top: 0;
                     padding-bottom: 60px;
                 }
                 
-                /* Desktop outreach - same layout as schedule */
+                /* Desktop outreach - left-aligned heading */
                 .outreach .section-eyebrow {
                     display: inline-flex !important;
                     width: fit-content !important;
@@ -5127,10 +5132,10 @@ app.get('/', (c) => {
                                 <!-- ALL cards rendered here by JS; track slides via translateX -->
                             </div>
                         </div>
+                        <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous event">&#8249;</button>
+                        <button class="carousel-arrow next" id="carousel-next" aria-label="Next event">&#8250;</button>
                         <div class="carousel-nav" id="carousel-nav">
-                            <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous event">&#8249;</button>
                             <div class="carousel-dots" id="carousel-dots"></div>
-                            <button class="carousel-arrow next" id="carousel-next" aria-label="Next event">&#8250;</button>
                         </div>
                     </div>
                 </section>
@@ -6006,11 +6011,16 @@ app.get('/', (c) => {
                         updateTrack();
                         updateArrows();
                         updateDots();
-                        // Hide nav row entirely if all cards fit
+                        // Hide dots row if all cards fit
                         if (carouselNav && getMaxIndex() === 0) {
                             carouselNav.style.display = 'none';
+                            // Also hide arrows when all cards fit
+                            carouselPrev.style.display = 'none';
+                            carouselNext.style.display = 'none';
                         } else if (carouselNav) {
                             carouselNav.style.display = 'flex';
+                            carouselPrev.style.display = 'flex';
+                            carouselNext.style.display = 'flex';
                         }
                     }
                     

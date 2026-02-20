@@ -54,13 +54,33 @@ MS.church/
 
 ---
 
-## Architecture: The Monolithic Template Pattern
+## Architecture: Module-per-Route Template Pattern
 
-**The entire website lives in `src/index.tsx`.** All HTML, CSS, and JavaScript are returned as inline template strings from Hono route handlers. There is no separate HTML file, React component tree, or external CSS bundle beyond the near-empty `public/static/style.css`.
+The website uses Hono to render complete pages server-side as `c.html(...)` responses. All HTML, CSS, and JavaScript are inline template strings — no separate HTML files or external CSS bundles beyond the near-empty `public/static/style.css`.
 
-This is intentional: Hono renders the complete page server-side as a single `c.html(...)` response. Every section's styles and scripts are embedded in `<style>` and `<script>` blocks within the template string.
+The code is organized into modules by responsibility:
 
-### Routes (defined in `src/index.tsx`)
+```
+src/
+├── index.tsx           # Cloudflare Pages entry (adds cloudflare serveStatic, imports app)
+├── index.ts            # Vercel entry (adds node serveStatic, imports app)
+├── app.ts              # Shared Hono app — registers all routes
+├── config.ts           # Google Calendar configuration
+├── routes/
+│   ├── calendar.ts     # GET /api/calendar/events (with 5-min server-side cache)
+│   ├── home.ts         # GET / (composes head + body + scripts templates)
+│   ├── privacy.ts      # GET /privacy
+│   └── misc.ts         # GET /robots.txt, /sitemap.xml, GET /form
+└── templates/
+    ├── home-head.ts    # <head> section (meta tags, schema, analytics, styles)
+    ├── home-styles.ts  # ~4500 lines of CSS (imported by home-head.ts)
+    ├── home-body.ts    # HTML body sections (nav, hero, schedule, events, watch, contact, footer)
+    └── home-scripts.ts # Client-side JavaScript
+```
+
+**Editing workflow:** For home page changes, edit the relevant template file. For a new page, create `src/routes/your-page.ts` and register it in `src/app.ts`. Run `npm run sync-check` before committing.
+
+### Routes (defined in `src/routes/`)
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -89,7 +109,7 @@ import { serveStatic } from 'hono/cloudflare-workers'
 import { serveStatic } from '@hono/node-server/serve-static'
 ```
 
-**Critical rule: whenever you modify `src/index.tsx`, you MUST apply the same changes to `src/index.ts`**, keeping the Vercel import intact. Failure to sync these files will cause one platform to run outdated code.
+**Critical rule: whenever you modify `src/index.tsx`, you MUST apply the same changes to `src/index.ts`**, keeping the Vercel import intact. Failure to sync these files will cause one platform to run outdated code. Run `npm run sync-check` to verify.
 
 ---
 
@@ -275,20 +295,24 @@ Vercel Analytics and Speed Insights are loaded conditionally in the client via d
 
 ## Key Conventions for AI Assistants
 
-1. **Always edit `src/index.tsx` first**, then apply identical changes to `src/index.ts` (change only the `serveStatic` import if it differs).
+1. **For home page changes**, edit the relevant file in `src/templates/` or `src/routes/home.ts`. For new pages, create `src/routes/your-page.ts` and register it in `src/app.ts`.
 
-2. **Bump the version number** in the comment at line ~5 of both files and in the HTML comment inside `c.html()`.
+2. **`src/index.tsx` and `src/index.ts` must stay in sync** (only their `serveStatic` import differs). Run `npm run sync-check` before committing any changes to these files.
 
-3. **Do not add external dependencies lightly.** The current architecture is intentionally lightweight: no React, no component library, no state management. Consider whether an inline implementation is sufficient before adding a package.
+3. **Bump the version number** in the comment at line 1 of both `src/index.tsx` and `src/index.ts`, and in the HTML comment inside `src/routes/home.ts`.
 
-4. **All HTML, CSS, and JavaScript is inline.** Do not create separate HTML or JS files. Styles and scripts go inside the template string in their respective `<style>` and `<script>` tags.
+4. **Do not add external dependencies lightly.** The current architecture is intentionally lightweight: no React, no component library, no state management. Consider whether an inline implementation is sufficient before adding a package.
 
-5. **`public/static/style.css` is effectively empty** (contains only a placeholder `h1` rule). Do not rely on it for substantial styling — all styles live in the inlined `<style>` block.
+5. **All HTML, CSS, and JavaScript is inline** (in template strings). For the home page, CSS lives in `src/templates/home-styles.ts` and client JS in `src/templates/home-scripts.ts`.
 
-6. **SEO metadata is extensive.** The `<head>` section includes Schema.org JSON-LD, Open Graph, Twitter Card, geo tags, and canonical URL. Preserve and update these when changing page content.
+6. **`public/static/style.css` is effectively empty** (contains only a placeholder `h1` rule). Do not rely on it for substantial styling — all styles live in the inlined `<style>` block.
 
-7. **No test suite exists.** There are no automated tests. Validate changes visually by running `npm run dev`.
+7. **SEO metadata is extensive.** The `<head>` section (`src/templates/home-head.ts`) includes Schema.org JSON-LD, Open Graph, Twitter Card, geo tags, and canonical URL. Preserve and update these when changing page content.
 
-8. **The README.md is a changelog**, not typical documentation. Add a new version entry there for any significant changes.
+8. **No test suite exists.** There are no automated tests. Validate changes visually by running `npm run dev`.
 
-9. **Church details** — address is 3080 Wildwood St (also written as "3080 N Wildwood St"), Boise, ID 83713. Email: `morningstarchurchboise@gmail.com`. Sunday service at 9:00 AM (10:00 AM per Schema.org — verify with church before changing).
+9. **The README.md is a changelog**, not typical documentation. Add a new version entry there for any significant changes.
+
+10. **Church details** — address is 3080 Wildwood St (also written as "3080 N Wildwood St"), Boise, ID 83713. Email: `morningstarchurchboise@gmail.com`. Sunday service at 9:00 AM (10:00 AM per Schema.org — verify with church before changing).
+
+11. **Calendar events** are fetched server-side in `src/routes/calendar.ts` with a 5-minute in-memory cache. The client calls `/api/calendar/events` — it does NOT call Google Calendar directly anymore. Update image URL handling in `calendar.ts` if the lh3.googleusercontent.com format changes.

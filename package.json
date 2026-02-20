@@ -7,7 +7,8 @@
     "preview": "wrangler pages dev",
     "deploy": "npm run build && wrangler pages deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
-    "vercel-build": "vite build"
+    "vercel-build": "vite build",
+    "sync-check": "bash scripts/sync-check.sh"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",

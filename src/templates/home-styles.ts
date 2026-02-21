@@ -1187,6 +1187,10 @@ export const homeStyles = (): string => `
             /* Stay Tuned Container - sits outside scroll container, same width as section-card */
             .stay-tuned-container {
                 width: 100%;
+                /* Padding gives the card's box-shadow room on the sides.
+                   Without this, overflow-x: clip on .outreach (mobile) clips
+                   the horizontal shadow flush at the section edge. */
+                padding: 0 24px;
             }
             
             .stay-tuned-card {
@@ -1222,6 +1226,7 @@ export const homeStyles = (): string => `
                     max-width: 620px !important;
                     margin: 0 auto !important;
                     width: 100% !important;
+                    padding: 0 !important; /* Desktop has plenty of room via max-width centering */
                 }
                 
                 .stay-tuned-container > .stay-tuned-card,

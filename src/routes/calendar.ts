@@ -35,7 +35,12 @@ export function registerCalendarRoute(app: Hono) {
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
       apiUrl.searchParams.set('timeMin', oneYearAgo.toISOString())
 
-      const response = await fetch(apiUrl.toString())
+      // The API key has HTTP-referrer restrictions set to ms.church.
+      // Server-side requests don't carry a browser Referer header, so we
+      // must set it explicitly or Google returns 403 "API key not valid".
+      const response = await fetch(apiUrl.toString(), {
+        headers: { Referer: 'https://ms.church/' },
+      })
 
       if (!response.ok) {
         const errorData = await response.json() as { error?: { message?: string } }

@@ -2736,6 +2736,11 @@ export const homeStyles = (): string => `
                    where it's then faded out by the gradient pseudo-elements below. */
                 .outreach.stay-tuned-only {
                     overflow: visible;
+                    /* The 100px main flex-gap was sized for the full carousel.
+                       In stay-tuned mode the section is a single static card,
+                       so pull the next section up with a negative margin to
+                       reduce the effective gap from 100px → ~40px. */
+                    margin-bottom: -60px !important;
                 }
 
                 /* Gradient side fades — same technique as carousel edge fogs.

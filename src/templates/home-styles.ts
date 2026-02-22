@@ -1187,10 +1187,7 @@ export const homeStyles = (): string => `
             /* Stay Tuned Container - sits outside scroll container, same width as section-card */
             .stay-tuned-container {
                 width: 100%;
-                /* Padding gives the card's box-shadow room on the sides.
-                   Without this, overflow-x: clip on .outreach (mobile) clips
-                   the horizontal shadow flush at the section edge. */
-                padding: 0 24px;
+                position: relative; /* Required for gradient edge-fade pseudo-elements */
             }
             
             .stay-tuned-card {
@@ -1226,7 +1223,6 @@ export const homeStyles = (): string => `
                     max-width: 620px !important;
                     margin: 0 auto !important;
                     width: 100% !important;
-                    padding: 0 !important; /* Desktop has plenty of room via max-width centering */
                 }
                 
                 .stay-tuned-container > .stay-tuned-card,
@@ -2731,8 +2727,41 @@ export const homeStyles = (): string => `
                     width: 100%;
                     max-width: 100%;
                     padding-bottom: 40px;
-                    overflow-x: clip; /* prevent horizontal scroll but allow vertical shadows */
+                    overflow-x: clip; /* prevent horizontal scroll from carousel cards */
                     overflow-y: visible;
+                }
+
+                /* Stay-tuned mode has no carousel, so horizontal overflow is safe to open.
+                   This lets the card's box-shadow render past the section boundary
+                   where it's then faded out by the gradient pseudo-elements below. */
+                .outreach.stay-tuned-only {
+                    overflow: visible;
+                }
+
+                /* Gradient side fades — same technique as carousel edge fogs.
+                   Smoothly dissolves the card's side shadow into the page background
+                   instead of a hard clip line at the viewport margin. */
+                .stay-tuned-container::before,
+                .stay-tuned-container::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    width: 20px;
+                    z-index: 2;
+                    pointer-events: none;
+                }
+                .stay-tuned-container::before {
+                    left: -12px;
+                    background: linear-gradient(to right,
+                        #f8f9fd 0%,
+                        rgba(248, 249, 253, 0) 100%);
+                }
+                .stay-tuned-container::after {
+                    right: -12px;
+                    background: linear-gradient(to left,
+                        #f8f9fd 0%,
+                        rgba(248, 249, 253, 0) 100%);
                 }
                 
                 .outreach .section-eyebrow {

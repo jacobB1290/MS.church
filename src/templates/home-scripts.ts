@@ -382,12 +382,60 @@ export const homeScripts = (): string => `
                     return { borderRadius: '100px', padding: '8px 20px', gap: '12px' };
                 }
 
+                // Apply compact visual state instantly (no animation) — used before Motion loads
+                function applyCompactInstant() {
+                    const p = compactShellProps();
+                    navShell.style.borderRadius = p.borderRadius;
+                    navShell.style.padding      = p.padding;
+                    navShell.style.gap          = p.gap;
+                    navBrand.style.overflow     = 'hidden';
+                    navBrand.style.height       = '0px';
+                    navBrand.style.opacity      = '0';
+                    navBrand.style.marginTop    = '0px';
+                    navBrand.style.marginBottom = '0px';
+                    navCtaEl.style.overflow     = 'hidden';
+                    navCtaEl.style.height       = '0px';
+                    navCtaEl.style.opacity      = '0';
+                    navCtaEl.style.marginTop    = '0px';
+                    navCtaEl.style.marginBottom = '0px';
+                    if (window.innerWidth <= 480 && navFormBtn) {
+                        navFormBtn.style.display = 'inline-flex';
+                        navFormBtn.style.opacity = '1';
+                        navFormBtn.style.scale   = '1';
+                    }
+                }
+
+                // Clear all compact inline styles — lets CSS class rules resume control
+                function clearCompactInlineStyles() {
+                    navShell.style.borderRadius = '';
+                    navShell.style.padding      = '';
+                    navShell.style.gap          = '';
+                    navBrand.style.overflow     = '';
+                    navBrand.style.height       = '';
+                    navBrand.style.opacity      = '';
+                    navBrand.style.marginTop    = '';
+                    navBrand.style.marginBottom = '';
+                    navCtaEl.style.overflow     = '';
+                    navCtaEl.style.height       = '';
+                    navCtaEl.style.opacity      = '';
+                    navCtaEl.style.marginTop    = '';
+                    navCtaEl.style.marginBottom = '';
+                    if (navFormBtn) {
+                        navFormBtn.style.display = 'none';
+                        navFormBtn.style.opacity = '0';
+                        navFormBtn.style.scale   = '';  // restore CSS 0.85 default
+                    }
+                }
+
                 function compactNav() {
                     if (navIsCompact) return;
                     navIsCompact = true;
                     navShell.classList.add('scrolled-mobile');
 
-                    if (!_anim || !_spring) return; // CSS class is enough as fallback
+                    if (!_anim || !_spring) {
+                        applyCompactInstant(); // instant fallback — no animation
+                        return;
+                    }
 
                     const isTiny  = window.innerWidth <= 480;
 
@@ -429,8 +477,8 @@ export const homeScripts = (): string => `
                     navIsCompact = false;
 
                     if (!_anim || !_spring) {
-                        // CSS fallback: just toggle class
                         navShell.classList.remove('scrolled-mobile');
+                        clearCompactInlineStyles();
                         return;
                     }
 
@@ -453,26 +501,30 @@ export const homeScripts = (): string => `
                         .then(() => {
                             // Once settled, clear inline so CSS clamp() takes over exactly
                             navShell.style.borderRadius = '';
-                            navShell.style.padding = '';
-                            navShell.style.gap = '';
+                            navShell.style.padding      = '';
+                            navShell.style.gap          = '';
                         });
 
                     // 2. Brand slides down into view
                     _anim(navBrand,
-                        { opacity: 1, height: brandNatH + 'px', marginTop: '', marginBottom: '' },
+                        { opacity: 1, height: brandNatH + 'px' },
                         { duration: 0.46, easing: SPRING, delay: 0.1 }
                     ).then(() => {
-                        navBrand.style.height   = 'auto'; // restore auto for resizing
-                        navBrand.style.overflow = '';
+                        navBrand.style.height       = ''; // restore CSS auto
+                        navBrand.style.overflow     = '';
+                        navBrand.style.marginTop    = '';
+                        navBrand.style.marginBottom = '';
                     });
 
                     // 3. CTA slides down (slight stagger after brand starts)
                     _anim(navCtaEl,
-                        { opacity: 1, height: ctaNatH + 'px', marginTop: '', marginBottom: '' },
+                        { opacity: 1, height: ctaNatH + 'px' },
                         { duration: 0.46, easing: SPRING, delay: 0.16 }
                     ).then(() => {
-                        navCtaEl.style.height   = 'auto';
-                        navCtaEl.style.overflow = '';
+                        navCtaEl.style.height       = '';
+                        navCtaEl.style.overflow     = '';
+                        navCtaEl.style.marginTop    = '';
+                        navCtaEl.style.marginBottom = '';
                     });
                 }
 

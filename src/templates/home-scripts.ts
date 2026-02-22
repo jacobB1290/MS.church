@@ -16,6 +16,9 @@ export const homeScripts = (): string => `
                 const body = document.body;
                 const outreachSection = document.querySelector('.outreach');
                 const navShell = document.querySelector('.nav-shell');
+                const navBrand  = navShell.querySelector('.brand');
+                const navCtaEl  = navShell.querySelector('.nav-cta');
+                const navFormBtn = navShell.querySelector('.nav-form-btn');
                 const sections = document.querySelectorAll('section[id]');
                 const navLinks = document.querySelectorAll('nav a[href^="#"]');
                 const pastEventsModal = document.getElementById('past-events-modal');
@@ -324,7 +327,166 @@ export const homeScripts = (): string => `
                     }, { once: true });
                 }
 
-                // Mobile nav compression on scroll
+                // ========================================
+                // MOTION-POWERED NAV — buttery spring transitions
+                // State machine: expanded ↔ compact
+                // Motion (cdn.jsdelivr.net/npm/motion@11) handles:
+                //   borderRadius, padding, gap on the shell
+                //   height + opacity on brand / nav-cta
+                //   opacity + scale on the compact contact button
+                // CSS handles: top, margin-bottom (position changes, no conflict)
+                // ========================================
+
+                // Capture natural dimensions before any animation fires
+                let brandNatH = navBrand.offsetHeight;
+                let ctaNatH   = navCtaEl.offsetHeight;
+                let navIsCompact = false;
+
+                // Spring easing configs
+                const SPRING_OPEN  = { stiffness: 300, damping: 30, restDelta: 0.001 };
+                const SPRING_CLOSE = { stiffness: 400, damping: 40, restDelta: 0.001 };
+                const EASE_IN = [0.4, 0, 1, 1];   // sharp exit easing (no spring)
+
+                // Motion module — loaded immediately so it's ready before first scroll
+                let _anim = null, _spring = null;
+                import('https://cdn.jsdelivr.net/npm/motion@11/+esm')
+                    .then(({ animate, spring }) => {
+                        _anim = animate; _spring = spring;
+                        // Re-measure after fonts/layout settle (layout may shift on load)
+                        if (!navIsCompact) {
+                            brandNatH = navBrand.offsetHeight;
+                            ctaNatH   = navCtaEl.offsetHeight;
+                        }
+                    })
+                    .catch(() => { /* Motion CDN failed — CSS class fallback active */ });
+
+                // Compute expanded shell target values to match CSS clamp() equivalents
+                function expandedShellProps() {
+                    const w = window.innerWidth;
+                    if (w <= 480) {
+                        const br = Math.min(40, Math.max(32, w * 0.08));
+                        const pv = Math.min(16, Math.max(12, w * 0.035));
+                        const ph = Math.min(20, Math.max(15, w * 0.045));
+                        return { borderRadius: br + 'px', padding: pv + 'px ' + ph + 'px', gap: '16px' };
+                    }
+                    return { borderRadius: '40px', padding: '16px 20px', gap: '16px' };
+                }
+
+                function compactShellProps() {
+                    const w = window.innerWidth;
+                    if (w <= 480) {
+                        const pv = Math.min(8, Math.max(6, w * 0.018));
+                        const ph = Math.min(20, Math.max(15, w * 0.045));
+                        return { borderRadius: '100px', padding: pv + 'px ' + ph + 'px', gap: '10px' };
+                    }
+                    return { borderRadius: '100px', padding: '8px 20px', gap: '12px' };
+                }
+
+                function compactNav() {
+                    if (navIsCompact) return;
+                    navIsCompact = true;
+                    navShell.classList.add('scrolled-mobile');
+
+                    if (!_anim || !_spring) return; // CSS class is enough as fallback
+
+                    const isTiny  = window.innerWidth <= 480;
+
+                    // Prepare overflow:hidden so height:0 hides content without display:none
+                    navBrand.style.overflow  = 'hidden';
+                    navCtaEl.style.overflow  = 'hidden';
+
+                    // 1. Brand: fade out + slide up + height collapse
+                    _anim(navBrand,
+                        { opacity: 0, height: '0px', marginTop: '0px', marginBottom: '0px' },
+                        { duration: 0.26, easing: EASE_IN }
+                    );
+
+                    // 2. CTA: fade out + height collapse (tiny stagger after brand)
+                    _anim(navCtaEl,
+                        { opacity: 0, height: '0px', marginTop: '0px', marginBottom: '0px' },
+                        { duration: 0.22, easing: EASE_IN, delay: 0.04 }
+                    );
+
+                    // 3. Shell reshapes into pill — starts as content begins to leave
+                    _anim(navShell, compactShellProps(), {
+                        duration: 0.5,
+                        easing: _spring(SPRING_CLOSE),
+                        delay: 0.06,
+                    });
+
+                    // 4. Compact contact button slides in (tiny screens only)
+                    if (isTiny && navFormBtn) {
+                        navFormBtn.style.display = 'inline-flex';
+                        _anim(navFormBtn,
+                            { opacity: 1, scale: 1 },
+                            { duration: 0.38, easing: _spring(SPRING_OPEN), delay: 0.24 }
+                        );
+                    }
+                }
+
+                function expandNav() {
+                    if (!navIsCompact) return;
+                    navIsCompact = false;
+
+                    if (!_anim || !_spring) {
+                        // CSS fallback: just toggle class
+                        navShell.classList.remove('scrolled-mobile');
+                        return;
+                    }
+
+                    const isTiny = window.innerWidth <= 480;
+                    const SPRING = _spring(SPRING_OPEN);
+
+                    // 0. Hide compact button first (tiny screens)
+                    if (isTiny && navFormBtn && navFormBtn.style.display !== 'none') {
+                        _anim(navFormBtn,
+                            { opacity: 0, scale: 0.88 },
+                            { duration: 0.16, easing: EASE_IN }
+                        ).then(() => { navFormBtn.style.display = 'none'; });
+                    }
+
+                    // Remove class now — lets CSS-owned top/margin revert smoothly
+                    navShell.classList.remove('scrolled-mobile');
+
+                    // 1. Shell blooms open first (sets the stage for content to enter)
+                    _anim(navShell, expandedShellProps(), { duration: 0.5, easing: SPRING })
+                        .then(() => {
+                            // Once settled, clear inline so CSS clamp() takes over exactly
+                            navShell.style.borderRadius = '';
+                            navShell.style.padding = '';
+                            navShell.style.gap = '';
+                        });
+
+                    // 2. Brand slides down into view
+                    _anim(navBrand,
+                        { opacity: 1, height: brandNatH + 'px', marginTop: '', marginBottom: '' },
+                        { duration: 0.46, easing: SPRING, delay: 0.1 }
+                    ).then(() => {
+                        navBrand.style.height   = 'auto'; // restore auto for resizing
+                        navBrand.style.overflow = '';
+                    });
+
+                    // 3. CTA slides down (slight stagger after brand starts)
+                    _anim(navCtaEl,
+                        { opacity: 1, height: ctaNatH + 'px', marginTop: '', marginBottom: '' },
+                        { duration: 0.46, easing: SPRING, delay: 0.16 }
+                    ).then(() => {
+                        navCtaEl.style.height   = 'auto';
+                        navCtaEl.style.overflow = '';
+                    });
+                }
+
+                // Re-measure natural heights on resize (only when fully expanded)
+                window.addEventListener('resize', () => {
+                    if (!navIsCompact) {
+                        brandNatH = navBrand.offsetHeight;
+                        ctaNatH   = navCtaEl.offsetHeight;
+                    }
+                });
+
+                // ========================================
+                // SCROLL-DRIVEN NAV STATE
+                // ========================================
                 let lastNavScrollY = 0;
                 function getScrollThreshold() {
                     const width = window.innerWidth;
@@ -351,18 +513,18 @@ export const homeScripts = (): string => `
                             scrollUpAtTopCount++;
                             if (scrollUpAtTopCount >= 2) {
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                                navShell.classList.remove('scrolled-mobile');
+                                expandNav();
                                 scrollUpAtTopCount = 0;
                             }
                         } else if (currentScrollY > scrollThreshold) {
-                            navShell.classList.add('scrolled-mobile');
+                            compactNav();
                             scrollUpAtTopCount = 0;
                         } else {
-                            navShell.classList.remove('scrolled-mobile');
+                            expandNav();
                             scrollUpAtTopCount = 0;
                         }
                     } else {
-                        navShell.classList.remove('scrolled-mobile');
+                        if (navIsCompact) expandNav();
                         scrollUpAtTopCount = 0;
                     }
                     lastNavScrollY = currentScrollY;
@@ -532,8 +694,7 @@ export const homeScripts = (): string => `
                         link.classList.remove('active');
                         if (link.getAttribute('href') === '#' + currentSection) link.classList.add('active');
                     });
-                    const contactBtn = document.querySelector('.nav-form-btn');
-                    if (contactBtn) contactBtn.classList.toggle('active', currentSection === 'contact');
+                    if (navFormBtn) navFormBtn.classList.toggle('active', currentSection === 'contact');
                 }
 
                 let ticking = false;
@@ -560,7 +721,7 @@ export const homeScripts = (): string => `
 
                         if (targetId === '#home' || targetId === '#') {
                             if (window.innerWidth <= 1199) {
-                                navShell.classList.remove('scrolled-mobile');
+                                expandNav();
                                 isNavigatingHome = true;
                             }
                             window.scrollTo({ top: 0, behavior: 'smooth' });

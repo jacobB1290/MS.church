@@ -95,7 +95,7 @@ export const homeStyles = (): string => `
                 align-items: center;
                 justify-content: space-between;
                 gap: 40px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08),
                             0 8px 20px rgba(0, 0, 0, 0.04);
                 backdrop-filter: blur(20px);
                 position: fixed;
@@ -104,28 +104,54 @@ export const homeStyles = (): string => `
                 transform: translateX(-50%);
                 z-index: 1000;
                 border: 1px solid rgba(255, 255, 255, 0.4);
-                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                /* Only CSS-owned transitions: background/shadow (hover) and top (position).
+                   Motion owns: borderRadius, padding, gap (state transitions). */
+                transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                            box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                            top 0.35s cubic-bezier(0.4, 0, 0.2, 1);
                 width: min(1280px, 94%);
             }
-            
+
+            /* scrolled-mobile: CSS owns only position/margin.
+               Motion owns: borderRadius, padding, gap, brand height, cta height. */
             .nav-shell.scrolled-mobile {
-                padding: 10px 20px;
                 top: 16px;
             }
-            
-            .nav-shell.scrolled-mobile .brand {
-                display: none;
-            }
-            
-            .nav-shell.scrolled-mobile .nav-cta {
-                display: none;
-            }
-            
-            /* Mobile-only form button for scrolled state */
+
+            /* Motion handles brand and cta visibility — no display:none here.
+               overflow:hidden is set by JS before animation starts. */
+
+            /* Mobile-only compact contact button — hidden until Motion shows it */
             .nav-form-btn {
                 display: none;
+                padding: 6px 14px;
+                border-radius: 100px;
+                background: rgba(255, 255, 255, 0.9);
+                color: #1a1a2e;
+                font-size: 10px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1.2px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap;
+                opacity: 0;
+                scale: 0.85;
+                will-change: opacity, transform;
             }
-            
+
+            /* Active (contact section) state for compact button */
+            .nav-form-btn.active {
+                font-weight: 900;
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                color: #ffffff;
+                box-shadow: 0 8px 24px rgba(212, 165, 116, 0.4),
+                            0 4px 12px rgba(212, 165, 116, 0.2);
+            }
+
             .nav-shell.scrolled-mobile nav ul {
                 margin: 0;
             }
@@ -140,6 +166,9 @@ export const homeStyles = (): string => `
                 display: flex;
                 flex-direction: column;
                 line-height: 1;
+                /* overflow:hidden applied by JS only during mobile animation
+                   so desktop hover translateY(-2px) is never clipped */
+                will-change: opacity, height;
                 transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
@@ -225,11 +254,15 @@ export const homeStyles = (): string => `
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.5);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                /* Motion owns opacity/height; CSS owns hover states */
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                            box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                            background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 text-align: center;
+                will-change: opacity, height;
             }
 
             .nav-cta:hover {
@@ -2824,10 +2857,9 @@ export const homeStyles = (): string => `
                     top: 12px;
                 }
                 
+                /* scrolled-mobile: CSS owns position/margin only.
+                   Motion owns borderRadius, padding, gap. */
                 .nav-shell.scrolled-mobile {
-                    border-radius: 100px;
-                    padding: 8px 20px;
-                    gap: 0;
                     margin-bottom: 30px;
                     top: 8px;
                 }
@@ -2859,11 +2891,10 @@ export const homeStyles = (): string => `
                     order: 2;  /* CTA button last */
                 }
                 
-                /* Contact button - shift right when compressed */
+                /* Contact button layout in compact row — Motion handles padding */
                 .nav-shell.scrolled-mobile .nav-cta {
                     width: auto;
                     margin-left: auto;
-                    padding: 8px 20px;
                 }
 
                 .brand-title {
@@ -3073,62 +3104,15 @@ export const homeStyles = (): string => `
                 }
 
                 .nav-shell {
-                    padding: clamp(12px, 3.5vw, 16px) clamp(15px, 4.5vw, 20px);
-                    border-radius: clamp(32px, 8vw, 40px);
+                    /* padding/borderRadius set via clamp equivalents by Motion.
+                       Only override non-Motion properties here. */
                     top: clamp(8px, 2.5vw, 12px);
                     width: 94%;
-                    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
-                
+
+                /* scrolled-mobile: only position (Motion owns the rest) */
                 .nav-shell.scrolled-mobile {
-                    border-radius: 100px;
-                    padding: clamp(6px, 1.8vw, 8px) clamp(15px, 4.5vw, 20px);
                     top: clamp(6px, 1.8vw, 8px);
-                }
-                
-                .nav-shell.scrolled-mobile .nav-cta {
-                    display: none;
-                }
-                
-                .nav-form-btn {
-                    display: none;
-                    padding: 6px 14px;
-                    border-radius: 100px;
-                    background: rgba(255, 255, 255, 0.9);
-                    color: #1a1a2e;
-                    font-size: 10px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    letter-spacing: 1.2px;
-                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-                    backdrop-filter: blur(10px);
-                    border: 1px solid rgba(255, 255, 255, 0.5);
-                    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-                    align-items: center;
-                    justify-content: center;
-                    white-space: nowrap;
-                    opacity: 0;
-                    transform: scale(0.85);
-                    position: absolute;
-                    right: 18px;
-                }
-                
-                .nav-shell.scrolled-mobile .nav-form-btn {
-                    display: inline-flex;
-                    opacity: 1;
-                    transform: scale(1);
-                    position: relative;
-                    margin-left: 8px;
-                    right: auto;
-                }
-                
-                /* Active state for Contact button */
-                .nav-form-btn.active {
-                    font-weight: 900;
-                    background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                    color: #ffffff;
-                    box-shadow: 0 8px 24px rgba(212, 165, 116, 0.4),
-                                0 4px 12px rgba(212, 165, 116, 0.2);
                 }
                 
 

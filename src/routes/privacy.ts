@@ -369,7 +369,7 @@ export function registerPrivacyRoute(app: Hono) {
                   </ul>
                   
                   <h3>Email as a Convenience</h3>
-                  <p>We may accept privacy requests submitted by email to <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> as a convenience. However, please be aware that this email inbox may not be monitored regularly, and submitting a request by email does not guarantee a response. If you do not receive a response to an email request within a reasonable time, please submit your request by mail to the address above.</p>
+                  <p>We may accept privacy requests submitted by email to <a href="mailto:support@ms.church">support@ms.church</a> as a convenience. However, please be aware that this email inbox may not be monitored regularly, and submitting a request by email does not guarantee a response. If you do not receive a response to an email request within a reasonable time, please submit your request by mail to the address above.</p>
                   
                   <h3>Opt-Out Requests</h3>
                   <p><strong>Exception for Opt-Out:</strong> Opt-out requests do not require a mailed letter. You can opt out of communications at any time by:</p>
@@ -410,7 +410,7 @@ export function registerPrivacyRoute(app: Hono) {
                           Boise, Idaho 83713
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
-                      <p>You may also reach us by email at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response. For formal requests requiring a response, please contact us by mail.</p>
+                      <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response. For formal requests requiring a response, please contact us by mail.</p>
                       <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                   </div>
               </section>
@@ -450,7 +450,7 @@ export function registerPrivacyRoute(app: Hono) {
                       3080 Wildwood St<br>
                       Boise, Idaho 83713
                   </p>
-                  <p>You may also submit a notice by email to <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> with the subject line "Copyright Complaint" as a convenience, though mail is preferred. Please include a description of the copyrighted work, the location (URL) of the allegedly infringing material on our Site, and your contact information. We will review and respond to valid copyright complaints in accordance with applicable law.</p>
+                  <p>You may also submit a notice by email to <a href="mailto:support@ms.church">support@ms.church</a> with the subject line "Copyright Complaint" as a convenience, though mail is preferred. Please include a description of the copyrighted work, the location (URL) of the allegedly infringing material on our Site, and your contact information. We will review and respond to valid copyright complaints in accordance with applicable law.</p>
                   
                   <h2>User Conduct</h2>
                   <p>By using this website, you agree to conduct yourself in a manner consistent with the values and mission of Morning Star Christian Church. When using our contact form or otherwise interacting with the Site, you agree not to:</p>
@@ -533,7 +533,7 @@ export function registerPrivacyRoute(app: Hono) {
                           Boise, Idaho 83713
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
-                      <p>You may also reach us by email at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
+                      <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
                       <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                   </div>
               </section>
@@ -620,7 +620,7 @@ export function registerPrivacyRoute(app: Hono) {
                           Boise, Idaho 83713
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
-                      <p>You may also reach us by email at <a href="mailto:morningstarchurchboise@gmail.com">morningstarchurchboise@gmail.com</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
+                      <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
                       <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability. We will make reasonable efforts to assist with accessibility needs as resources permit.</em></p>
                   </div>
               </section>

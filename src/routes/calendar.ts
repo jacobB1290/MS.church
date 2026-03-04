@@ -38,12 +38,19 @@ export function registerCalendarRoute(app: Hono) {
       const response = await fetch(apiUrl.toString())
 
       if (!response.ok) {
-        const errorData = await response.json() as { error?: { message?: string } }
-        console.error('Google Calendar API error:', errorData)
+        let errorMessage = 'Unknown error'
+        try {
+          const errorData = await response.json() as { error?: { message?: string } }
+          errorMessage = errorData.error?.message ?? 'Unknown error'
+        } catch {
+          // Response was not JSON (e.g., HTML error page)
+          errorMessage = `HTTP ${response.status} error`
+        }
+        console.error('Google Calendar API error:', errorMessage)
         return c.json(
           {
             success: false,
-            error: `Google Calendar API error: ${errorData.error?.message ?? 'Unknown error'}`,
+            error: `Google Calendar API error: ${errorMessage}`,
             events: [],
           },
           response.status as 400 | 401 | 403 | 404 | 500

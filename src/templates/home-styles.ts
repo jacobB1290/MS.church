@@ -89,7 +89,7 @@ export const homeStyles = (): string => `
             .nav-shell {
                 padding: 20px 40px;
                 background: rgb(255, 255, 255);
-                background: rgba(255, 255, 255, 0.75);
+                background: rgba(255, 255, 255, 0.45);
                 border-radius: 100px;
                 display: flex;
                 align-items: center;
@@ -131,8 +131,8 @@ export const homeStyles = (): string => `
             }
 
             .nav-shell:hover {
-                background: rgba(255, 255, 255, 0.85);
-                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1), 
+                background: rgba(255, 255, 255, 0.6);
+                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1),
                             0 10px 24px rgba(0, 0, 0, 0.05);
             }
 
@@ -2682,43 +2682,97 @@ export const homeStyles = (): string => `
                This matches the original working version from GitHub
                ======================================== */
             @media (max-width: 899px) {
-                /* Phone nav-spacer */
+                /* Phone nav-spacer - zero since hero is fullscreen behind nav */
                 .nav-spacer {
-                    height: 190px;
+                    height: 0;
                 }
-                
-                /* Mobile Hero Section - Grid vertical layout */
+
+                /* Mobile Hero Section - Fullscreen background */
                 .hero {
-                    display: grid;
-                    gap: 40px;
-                    padding: 60px 0;
-                }
-                
-                .hero-body {
-                    display: grid;
-                    gap: 60px;
-                    align-items: start;
-                }
-                
-                .hero-content {
-                    display: grid;
-                    gap: 32px;
-                }
-                
-                .hero-image {
                     position: relative;
-                    width: 100%;
-                    height: 100%;
-                    min-height: 450px;
-                    border-radius: 32px;
+                    height: 100vh;
+                    height: 100svh;
+                    min-height: 600px;
                     overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end;
+                    padding: 0;
+                    gap: 0;
+                    background-image: url('/static/church-building.jpg');
+                    background-size: cover;
+                    background-position: center;
+                    border-radius: 0;
+                    margin: 0;
                 }
-                
-                .hero-image img {
+
+                /* Gradient overlay for text readability */
+                .hero::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(
+                        to bottom,
+                        rgba(0, 0, 0, 0.25) 0%,
+                        rgba(0, 0, 0, 0.0) 25%,
+                        rgba(0, 0, 0, 0.35) 58%,
+                        rgba(0, 0, 0, 0.72) 100%
+                    );
+                    z-index: 1;
+                    pointer-events: none;
+                }
+
+                /* Hero title positioned above content */
+                .hero-title {
+                    position: relative;
+                    z-index: 2;
+                    color: white !important;
+                    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
+                    padding: 0 24px;
+                    margin-bottom: 0;
+                }
+
+                .hero-body {
+                    position: relative;
+                    z-index: 2;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    padding: 0 24px 90px;
+                    margin: 0;
                     width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    display: block;
+                    box-sizing: border-box;
+                }
+
+                .hero-content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                /* Text colors over dark image */
+                .hero p {
+                    color: rgba(255, 255, 255, 0.88) !important;
+                }
+
+                .hero-address {
+                    color: rgba(255, 255, 255, 0.7) !important;
+                }
+
+                /* Hero image becomes absolute fullscreen — img hidden, Find Us stays */
+                .hero-image {
+                    position: absolute !important;
+                    inset: 0 !important;
+                    min-height: unset !important;
+                    border-radius: 0 !important;
+                    z-index: 3;
+                    overflow: visible !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                }
+
+                .hero-image img {
+                    display: none; /* background is on .hero via CSS */
                 }
                 
                 /* Outreach Section - Mobile */
@@ -2885,16 +2939,18 @@ export const homeStyles = (): string => `
                 }
 
                 .hero {
-                    padding: 40px 0;
+                    padding: 0;
                 }
 
                 .hero h1 {
                     font-size: clamp(32px, 7vw, 44px);
+                    color: white;
                 }
 
                 .hero p {
                     font-size: 16px;
                     line-height: 1.7;
+                    color: rgba(255, 255, 255, 0.88);
                 }
 
                 .btn {
@@ -3030,7 +3086,7 @@ export const homeStyles = (): string => `
                 }
 
                 .nav-spacer {
-                    height: clamp(130px, 40vw, 190px);
+                    height: 0;
                 }
 
                 .nav-shell {
@@ -3213,49 +3269,52 @@ export const homeStyles = (): string => `
                 }
 
                 .hero {
-                    padding: 20px 0 60px;
-                    min-height: auto;
-                    gap: 20px;
-                    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
-                    border-radius: 32px;
+                    height: 100vh;
+                    height: 100svh;
+                    min-height: 600px;
+                    padding: 0;
+                    gap: 0;
+                    background-image: url('/static/church-building.jpg');
+                    background-size: cover;
+                    background-position: center;
+                    border-radius: 0;
                     margin: 0;
-                    padding-left: 0;
-                    padding-right: 0;
                 }
-                
+
                 .hero-body {
                     display: flex;
                     flex-direction: column;
-                    gap: 24px;
+                    gap: 8px;
                     width: 100%;
                     margin: 0;
-                    padding: 0;
+                    padding: 0 24px 90px;
+                    box-sizing: border-box;
                 }
-                
+
                 .hero-content {
-                    order: 2;
+                    order: unset;
                     display: flex;
                     flex-direction: column;
-                    gap: 20px;
+                    gap: 8px;
                 }
-                
+
                 .hero-content p {
                     margin: 0;
                     line-height: 1.7;
-                    text-align: center;
+                    text-align: left;
                 }
-                
+
                 .hero-image {
-                    order: 1;
-                    min-height: 320px;
-                    border-radius: 24px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    order: unset;
+                    min-height: unset !important;
+                    border-radius: 0 !important;
+                    display: block;
+                    align-items: unset;
+                    justify-content: unset;
                 }
-                
+
                 .hero-image img {
-                    object-position: center;
+                    display: none;
                 }
                 
                 /* Find Us Button - Smaller padding on mobile */
@@ -3305,14 +3364,16 @@ export const homeStyles = (): string => `
                     font-size: clamp(58px, 12vw, 77px);
                     line-height: 1.0;
                     letter-spacing: -1.5px;
-                    margin: 0 0 20px 0;
-                    text-align: center;
+                    margin: 0 0 12px 0;
+                    text-align: left;
+                    color: white;
                 }
 
                 .hero p {
                     font-size: 20px;
                     line-height: 1.7;
                     max-width: 100%;
+                    color: rgba(255, 255, 255, 0.88);
                 }
 
                 .cta-group {

@@ -97,6 +97,7 @@ export const homeStyles = (): string => `
                 gap: 40px;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08),
                             0 8px 20px rgba(0, 0, 0, 0.04);
+                -webkit-backdrop-filter: blur(20px);
                 backdrop-filter: blur(20px);
                 position: fixed;
                 top: 16px;
@@ -2696,54 +2697,55 @@ export const homeStyles = (): string => `
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
-                    justify-content: flex-start;
-                    padding-top: clamp(120px, 28vh, 200px);
-                    padding-left: 0;
-                    padding-right: 0;
-                    padding-bottom: 0;
+                    justify-content: flex-end;
+                    padding: 0;
                     gap: 0;
                     background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
                     background-position: center top;
                     border-radius: 0;
-                    /* Break out of .page width constraint for true edge-to-edge */
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
                 }
 
-                /* White fade at bottom of hero */
+                /* Dark overlay + minimal white transition at very bottom */
                 .hero::after {
                     content: '';
                     position: absolute;
                     inset: 0;
                     background: linear-gradient(
                         to bottom,
-                        rgba(255, 255, 255, 0.0) 0%,
-                        rgba(255, 255, 255, 0.0) 60%,
-                        rgba(248, 249, 253, 0.75) 82%,
+                        rgba(0, 0, 0, 0.35) 0%,
+                        rgba(0, 0, 0, 0.28) 55%,
+                        rgba(0, 0, 0, 0.12) 80%,
+                        rgba(248, 249, 253, 0.55) 93%,
                         rgb(248, 249, 253) 100%
                     );
                     z-index: 1;
                     pointer-events: none;
                 }
 
-                /* Hero title over image */
+                /* h1 — absolutely centered in upper portion of image */
                 .hero-title {
-                    position: relative;
+                    position: absolute;
+                    top: 38vh;
+                    left: 0;
+                    right: 0;
+                    text-align: center;
                     z-index: 2;
                     color: white !important;
-                    text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55);
-                    padding: 0 28px;
-                    margin-bottom: 0;
+                    text-shadow: 0 2px 32px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 0, 0, 0.3);
+                    padding: 0 24px;
                 }
 
+                /* Bottom content area — paragraph text at the bottom of hero */
                 .hero-body {
                     position: relative;
                     z-index: 2;
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
-                    padding: 0 28px 0;
+                    gap: 0;
+                    padding: 0 28px 32px;
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
@@ -2752,19 +2754,19 @@ export const homeStyles = (): string => `
                 .hero-content {
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
+                    gap: 4px;
                 }
 
-                /* Text colors over image */
+                /* Text colors over darkened image */
                 .hero p {
-                    color: rgba(255, 255, 255, 0.9) !important;
+                    color: rgba(255, 255, 255, 0.88) !important;
                 }
 
                 .hero-address {
-                    color: rgba(255, 255, 255, 0.75) !important;
+                    display: none; /* hide address — Find Us handles this */
                 }
 
-                /* Hero image becomes absolute fullscreen — img hidden, Find Us stays */
+                /* Hero image — invisible fullscreen container for Find Us button only */
                 .hero-image {
                     position: absolute !important;
                     inset: 0 !important;
@@ -2774,10 +2776,32 @@ export const homeStyles = (): string => `
                     overflow: visible !important;
                     width: 100% !important;
                     height: 100% !important;
+                    pointer-events: none;
                 }
 
                 .hero-image img {
-                    display: none; /* background is on .hero via CSS */
+                    display: none;
+                }
+
+                /* Find Us — gold, above the paragraph text */
+                .find-us-wrapper {
+                    bottom: 90px;
+                    left: 28px;
+                    right: 28px;
+                    pointer-events: auto;
+                }
+
+                .find-us-btn {
+                    background: rgba(212, 165, 116, 0.92);
+                    -webkit-backdrop-filter: blur(12px);
+                    backdrop-filter: blur(12px);
+                    color: #1a1a2e;
+                    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+                    border: 1px solid rgba(255, 255, 255, 0.25);
+                }
+
+                .find-us-btn:hover {
+                    background: rgba(212, 165, 116, 1.0);
                 }
                 
                 /* Outreach Section - Mobile */
@@ -2841,7 +2865,11 @@ export const homeStyles = (): string => `
                     gap: 16px;
                     margin: 20px auto 50px;
                     padding: 16px 20px;
-                    top: 12px;
+                    top: calc(env(safe-area-inset-top, 0px) + 8px);
+                    /* Transparent so hero image shows through to top of screen */
+                    background: rgba(255, 255, 255, 0.28);
+                    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+                    backdrop-filter: blur(24px) saturate(1.4);
                 }
                 
                 .nav-shell.scrolled-mobile {
@@ -2950,6 +2978,7 @@ export const homeStyles = (): string => `
                 .hero h1 {
                     font-size: clamp(32px, 7vw, 44px);
                     color: white;
+                    text-align: center;
                 }
 
                 .hero p {
@@ -3277,11 +3306,8 @@ export const homeStyles = (): string => `
                     height: 100vh;
                     height: 100svh;
                     min-height: 600px;
-                    justify-content: flex-start;
-                    padding-top: clamp(100px, 25vh, 180px);
-                    padding-left: 0;
-                    padding-right: 0;
-                    padding-bottom: 0;
+                    justify-content: flex-end;
+                    padding: 0;
                     gap: 0;
                     background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
@@ -3294,10 +3320,10 @@ export const homeStyles = (): string => `
                 .hero-body {
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
+                    gap: 0;
                     width: 100%;
                     margin: 0;
-                    padding: 0 28px 0;
+                    padding: 0 28px 32px;
                     box-sizing: border-box;
                 }
 
@@ -3305,13 +3331,13 @@ export const homeStyles = (): string => `
                     order: unset;
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
+                    gap: 4px;
                 }
 
                 .hero-content p {
                     margin: 0;
-                    line-height: 1.7;
-                    text-align: left;
+                    line-height: 1.6;
+                    text-align: center;
                 }
 
                 .hero-image {
@@ -3371,13 +3397,22 @@ export const homeStyles = (): string => `
                 }
 
                 .hero h1 {
-                    font-size: clamp(58px, 12vw, 77px);
+                    font-size: clamp(52px, 11vw, 72px);
                     line-height: 1.0;
                     letter-spacing: -1.5px;
-                    margin: 0 0 12px 0;
-                    text-align: left;
+                    margin: 0;
+                    text-align: center;
                     color: white;
-                    text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55);
+                    text-shadow: 0 2px 32px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 0, 0, 0.3);
+                }
+
+                /* Reposition h1 in upper area when inside the 480px fullscreen hero */
+                .hero .hero-title {
+                    position: absolute;
+                    top: 36vh;
+                    left: 0;
+                    right: 0;
+                    padding: 0 24px;
                 }
 
                 .hero p {

@@ -29,7 +29,7 @@ export const homeBody = (): string => `
                     <h1 class="hero-title">Mending the Broken.</h1>
                     <div class="hero-body">
                         <div class="hero-content">
-                            <p>Join us every Sunday at 9:00 AM as we worship, learn, and serve together. Expect meaningful teaching, passionate worship, and a community devoted to making Boise brighter.</p>
+                            <p>Join us every Sunday at 9:00 AM.</p>
                             <address class="hero-address">3080 Wildwood St · Boise, Idaho</address>
                         </div>
                         <div class="hero-image">

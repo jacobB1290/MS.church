@@ -1,4 +1,4 @@
-// Version: 1.31.1 - Mobile hero edge-to-edge IMG_7331.jpeg; white fade; nav restored
+// Version: 1.31.2 - Mobile hero refined: dark overlay, centered h1, gold Find Us, transparent nav
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

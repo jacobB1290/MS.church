@@ -89,13 +89,13 @@ export const homeStyles = (): string => `
             .nav-shell {
                 padding: 20px 40px;
                 background: rgb(255, 255, 255);
-                background: rgba(255, 255, 255, 0.45);
+                background: rgba(255, 255, 255, 0.75);
                 border-radius: 100px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 40px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08),
                             0 8px 20px rgba(0, 0, 0, 0.04);
                 backdrop-filter: blur(20px);
                 position: fixed;
@@ -131,7 +131,7 @@ export const homeStyles = (): string => `
             }
 
             .nav-shell:hover {
-                background: rgba(255, 255, 255, 0.6);
+                background: rgba(255, 255, 255, 0.85);
                 box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1),
                             0 10px 24px rgba(0, 0, 0, 0.05);
             }
@@ -2687,7 +2687,7 @@ export const homeStyles = (): string => `
                     height: 0;
                 }
 
-                /* Mobile Hero Section - Fullscreen background */
+                /* Mobile Hero Section - Fullscreen edge-to-edge background */
                 .hero {
                     position: relative;
                     height: 100vh;
@@ -2696,39 +2696,44 @@ export const homeStyles = (): string => `
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
-                    justify-content: flex-end;
-                    padding: 0;
+                    justify-content: flex-start;
+                    padding-top: clamp(120px, 28vh, 200px);
+                    padding-left: 0;
+                    padding-right: 0;
+                    padding-bottom: 0;
                     gap: 0;
-                    background-image: url('/static/church-building.jpg');
+                    background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
-                    background-position: center;
+                    background-position: center top;
                     border-radius: 0;
-                    margin: 0;
+                    /* Break out of .page width constraint for true edge-to-edge */
+                    width: 100vw;
+                    margin-left: calc(-50vw + 50%);
                 }
 
-                /* Gradient overlay for text readability */
+                /* White fade at bottom of hero */
                 .hero::after {
                     content: '';
                     position: absolute;
                     inset: 0;
                     background: linear-gradient(
                         to bottom,
-                        rgba(0, 0, 0, 0.25) 0%,
-                        rgba(0, 0, 0, 0.0) 25%,
-                        rgba(0, 0, 0, 0.35) 58%,
-                        rgba(0, 0, 0, 0.72) 100%
+                        rgba(255, 255, 255, 0.0) 0%,
+                        rgba(255, 255, 255, 0.0) 60%,
+                        rgba(248, 249, 253, 0.75) 82%,
+                        rgb(248, 249, 253) 100%
                     );
                     z-index: 1;
                     pointer-events: none;
                 }
 
-                /* Hero title positioned above content */
+                /* Hero title over image */
                 .hero-title {
                     position: relative;
                     z-index: 2;
                     color: white !important;
-                    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
-                    padding: 0 24px;
+                    text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55);
+                    padding: 0 28px;
                     margin-bottom: 0;
                 }
 
@@ -2738,7 +2743,7 @@ export const homeStyles = (): string => `
                     display: flex;
                     flex-direction: column;
                     gap: 8px;
-                    padding: 0 24px 90px;
+                    padding: 0 28px 0;
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
@@ -2750,13 +2755,13 @@ export const homeStyles = (): string => `
                     gap: 8px;
                 }
 
-                /* Text colors over dark image */
+                /* Text colors over image */
                 .hero p {
-                    color: rgba(255, 255, 255, 0.88) !important;
+                    color: rgba(255, 255, 255, 0.9) !important;
                 }
 
                 .hero-address {
-                    color: rgba(255, 255, 255, 0.7) !important;
+                    color: rgba(255, 255, 255, 0.75) !important;
                 }
 
                 /* Hero image becomes absolute fullscreen — img hidden, Find Us stays */
@@ -3272,13 +3277,18 @@ export const homeStyles = (): string => `
                     height: 100vh;
                     height: 100svh;
                     min-height: 600px;
-                    padding: 0;
+                    justify-content: flex-start;
+                    padding-top: clamp(100px, 25vh, 180px);
+                    padding-left: 0;
+                    padding-right: 0;
+                    padding-bottom: 0;
                     gap: 0;
-                    background-image: url('/static/church-building.jpg');
+                    background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
-                    background-position: center;
+                    background-position: center top;
                     border-radius: 0;
-                    margin: 0;
+                    width: 100vw;
+                    margin-left: calc(-50vw + 50%);
                 }
 
                 .hero-body {
@@ -3287,7 +3297,7 @@ export const homeStyles = (): string => `
                     gap: 8px;
                     width: 100%;
                     margin: 0;
-                    padding: 0 24px 90px;
+                    padding: 0 28px 0;
                     box-sizing: border-box;
                 }
 
@@ -3367,6 +3377,7 @@ export const homeStyles = (): string => `
                     margin: 0 0 12px 0;
                     text-align: left;
                     color: white;
+                    text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55);
                 }
 
                 .hero p {

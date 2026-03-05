@@ -1,4 +1,4 @@
-// Version: 1.31.0 - Mobile hero fullscreen background image; glassier nav
+// Version: 1.31.1 - Mobile hero edge-to-edge IMG_7331.jpeg; white fade; nav restored
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

@@ -4,6 +4,8 @@ export const homeHead = (): string => `
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+        <!-- iOS: make status bar transparent so hero image shows through -->
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
         <!-- Primary Meta Tags -->
         <title>Morning Star Christian Church | Boise, Idaho - Sunday Services & Community</title>

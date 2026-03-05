@@ -1,4 +1,4 @@
-// Version: 1.31.2 - Mobile hero refined: dark overlay, centered h1, gold Find Us, transparent nav
+// Version: 1.31.3 - Fix iOS safe-area gap: body bg image + status bar meta
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

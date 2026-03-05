@@ -2682,6 +2682,24 @@ export const homeStyles = (): string => `
                Stacked card layout with scroll behavior
                This matches the original working version from GitHub
                ======================================== */
+
+            /* iOS safe-area fix: body background fills the strip behind the status
+               bar / Dynamic Island when viewport-fit=cover is active. Matching the
+               same hero image prevents the white/gray gap at the top of the screen. */
+            @media (max-width: 899px) {
+                html {
+                    background: #111;
+                }
+                body {
+                    margin: 0;
+                    padding: 0;
+                    background-image: url('/static/IMG_7331.jpeg');
+                    background-size: cover;
+                    background-position: top center;
+                    background-repeat: no-repeat;
+                }
+            }
+
             @media (max-width: 899px) {
                 /* Phone nav-spacer - zero since hero is fullscreen behind nav */
                 .nav-spacer {

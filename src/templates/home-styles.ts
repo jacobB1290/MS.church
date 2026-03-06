@@ -2736,7 +2736,7 @@ export const homeStyles = (): string => `
                     border-radius: 0;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
-                    margin-bottom: -60px;
+                    margin-bottom: 0;
                     box-sizing: border-box;
                 }
 
@@ -2789,13 +2789,48 @@ export const homeStyles = (): string => `
                         rgba(20, 18, 10, 0.4) 14%,
                         rgba(0, 0, 0, 0.18) 30%,
                         rgba(0, 0, 0, 0.05) 55%,
-                        transparent 70%,
-                        rgba(248, 249, 253, 0.4) 85%,
-                        rgba(248, 249, 253, 0.85) 94%,
-                        rgba(248, 249, 253, 1.0) 100%
+                        transparent 75%
                     );
                     z-index: 2;
                     pointer-events: none;
+                }
+
+                /* Bridge — sits OUTSIDE the hero, overlaps its bottom edge
+                   and the white page below.  backdrop-filter blurs content
+                   from BOTH sides of the seam so there is no hard line. */
+                .hero-bridge {
+                    position: relative;
+                    height: 200px;
+                    margin-top: -200px;   /* pull up into the hero */
+                    z-index: 5;           /* above hero ::after (z-index 2) */
+                    pointer-events: none;
+                }
+                .hero-bridge-blur {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                }
+                .hero-bridge-blur.bridge-blur-1 {
+                    height: 100%;
+                    -webkit-backdrop-filter: blur(4px);
+                    backdrop-filter: blur(4px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
+                }
+                .hero-bridge-blur.bridge-blur-2 {
+                    height: 70%;
+                    -webkit-backdrop-filter: blur(12px);
+                    backdrop-filter: blur(12px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 70%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 70%);
+                }
+                .hero-bridge-blur.bridge-blur-3 {
+                    height: 40%;
+                    -webkit-backdrop-filter: blur(28px);
+                    backdrop-filter: blur(28px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 80%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 80%);
                 }
 
                 /* h1 — centered in upper portion, clear of church building */

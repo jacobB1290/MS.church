@@ -60,6 +60,13 @@ export const homeBody = (): string => `
                     </div>
                 </section>
 
+                <!-- Bridge: overlaps hero bottom + white area, blurs across the seam -->
+                <div class="hero-bridge">
+                    <div class="hero-bridge-blur bridge-blur-1"></div>
+                    <div class="hero-bridge-blur bridge-blur-2"></div>
+                    <div class="hero-bridge-blur bridge-blur-3"></div>
+                </div>
+
                 <section class="schedule" id="schedule" style="animation-delay: 0.2s">
                     <span class="section-eyebrow">Weekly Schedule</span>
                     <h2 class="section-heading">Three simple touchpoints to connect every week.</h2>

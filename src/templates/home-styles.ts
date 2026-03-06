@@ -2888,11 +2888,12 @@ export const homeStyles = (): string => `
                     letter-spacing: 2px;
                     text-transform: uppercase;
                     text-shadow:
-                        0 2px 8px rgba(0, 0, 0, 1),
-                        0 4px 20px rgba(0, 0, 0, 0.9),
-                        0 6px 40px rgba(0, 0, 0, 0.8),
-                        0 8px 80px rgba(0, 0, 0, 0.7),
-                        0 0 120px rgba(0, 0, 0, 0.5) !important;
+                        0 2px 12px rgba(0, 0, 0, 1),
+                        0 4px 30px rgba(0, 0, 0, 1),
+                        0 6px 60px rgba(0, 0, 0, 0.95),
+                        0 10px 100px rgba(0, 0, 0, 0.9),
+                        0 0 160px rgba(0, 0, 0, 0.8),
+                        0 0 220px rgba(0, 0, 0, 0.6) !important;
                     margin: 0;
                     max-width: none !important;
                     line-height: 1.4 !important;

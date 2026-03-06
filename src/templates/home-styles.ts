@@ -334,6 +334,7 @@ export const homeStyles = (): string => `
                 letter-spacing: -2px;
                 color: #1a1a2e;
                 font-weight: 700;
+                margin-top: 0.5vh;
                 text-shadow: 0 8px 24px rgba(26, 26, 46, 0.15),
                              0 4px 8px rgba(26, 26, 46, 0.1);
             }
@@ -2869,7 +2870,7 @@ export const homeStyles = (): string => `
                 /* h1 — centered in upper portion, clear of church building */
                 .hero .hero-title {
                     position: absolute;
-                    top: 23vh;
+                    top: 23.5vh;
                     left: 0;
                     right: 0;
                     text-align: center;

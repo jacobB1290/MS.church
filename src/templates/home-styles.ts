@@ -2783,6 +2783,10 @@ export const homeStyles = (): string => `
                     content: '';
                     position: absolute;
                     inset: 0;
+                    /* Dark olive at top → clear middle → page-bg white at bottom.
+                       Fading the image to #f8f9fd BEFORE the bridge blur means the
+                       blur mixes two similar light colors instead of dark-vs-light,
+                       eliminating the muddy brown band. */
                     background: linear-gradient(
                         to bottom,
                         rgba(61, 58, 42, 0.94) 0%,
@@ -2790,7 +2794,11 @@ export const homeStyles = (): string => `
                         rgba(20, 18, 10, 0.4) 14%,
                         rgba(0, 0, 0, 0.18) 30%,
                         rgba(0, 0, 0, 0.05) 55%,
-                        transparent 75%
+                        transparent 70%,
+                        rgba(248, 249, 253, 0.35) 82%,
+                        rgba(248, 249, 253, 0.7) 90%,
+                        rgba(248, 249, 253, 0.95) 97%,
+                        #f8f9fd 100%
                     );
                     z-index: 2;
                     pointer-events: none;
@@ -2819,37 +2827,26 @@ export const homeStyles = (): string => `
                     inset: 0;
                 }
                 .hero-bridge-blur.bridge-blur-1 {
-                    -webkit-backdrop-filter: blur(4px);
-                    backdrop-filter: blur(4px);
+                    -webkit-backdrop-filter: blur(3px);
+                    backdrop-filter: blur(3px);
                     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
                     mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
                 }
                 .hero-bridge-blur.bridge-blur-2 {
-                    -webkit-backdrop-filter: blur(16px);
-                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(10px);
+                    backdrop-filter: blur(10px);
                     -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
                     mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
                 }
                 .hero-bridge-blur.bridge-blur-3 {
-                    -webkit-backdrop-filter: blur(40px);
-                    backdrop-filter: blur(40px);
+                    -webkit-backdrop-filter: blur(24px);
+                    backdrop-filter: blur(24px);
                     -webkit-mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
                     mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
                 }
-                /* Subtle color blend so the blurred seam doesn't look muddy */
+                /* No heavy white overlay needed — hero already fades to page-bg */
                 .hero-bridge::after {
-                    content: '';
-                    position: absolute;
-                    inset: 0;
-                    background: linear-gradient(
-                        to bottom,
-                        transparent 0%,
-                        rgba(248, 249, 253, 0.1) 40%,
-                        rgba(248, 249, 253, 0.3) 50%,
-                        rgba(248, 249, 253, 0.5) 65%,
-                        rgba(248, 249, 253, 0.7) 100%
-                    );
-                    z-index: 1;
+                    display: none;
                 }
 
                 /* h1 — centered in upper portion, clear of church building */

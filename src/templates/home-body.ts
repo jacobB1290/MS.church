@@ -26,6 +26,10 @@ export const homeBody = (): string => `
             <div class="nav-spacer"></div>
             <main>
                 <section class="hero" id="home" style="animation-delay: 0.1s">
+                    <div class="hero-blur-layer blur-1"></div>
+                    <div class="hero-blur-layer blur-2"></div>
+                    <div class="hero-blur-layer blur-3"></div>
+                    <div class="hero-blur-layer blur-4"></div>
                     <h1 class="hero-title">Mending the Broken.</h1>
                     <div class="hero-body">
                         <div class="hero-content">

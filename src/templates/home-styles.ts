@@ -2722,9 +2722,9 @@ export const homeStyles = (): string => `
                     transform: none !important;
                     animation: none !important;
                     position: relative;
-                    height: 100vh;
-                    height: 100svh;
-                    min-height: 600px;
+                    height: 130vh;
+                    height: 130svh;
+                    min-height: 800px;
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
@@ -2740,24 +2740,44 @@ export const homeStyles = (): string => `
                     box-sizing: border-box;
                 }
 
-                /* Blur strip at bottom edge — feathers the image into white */
-                .hero::before {
-                    content: '';
+                /* Blur layers at bottom — stacked to build up progressive blur */
+                .hero-blur-layer {
                     position: absolute;
-                    bottom: 0;
                     left: 0;
                     right: 0;
-                    height: 180px;
-                    z-index: 1;
+                    bottom: 0;
                     pointer-events: none;
-                    -webkit-backdrop-filter: blur(24px);
-                    backdrop-filter: blur(24px);
+                    z-index: 1;
+                }
+                .hero-blur-layer.blur-1 {
+                    height: 280px;
+                    -webkit-backdrop-filter: blur(2px);
+                    backdrop-filter: blur(2px);
                     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
                     mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
                 }
+                .hero-blur-layer.blur-2 {
+                    height: 200px;
+                    -webkit-backdrop-filter: blur(6px);
+                    backdrop-filter: blur(6px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                }
+                .hero-blur-layer.blur-3 {
+                    height: 120px;
+                    -webkit-backdrop-filter: blur(16px);
+                    backdrop-filter: blur(16px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                }
+                .hero-blur-layer.blur-4 {
+                    height: 60px;
+                    -webkit-backdrop-filter: blur(32px);
+                    backdrop-filter: blur(32px);
+                }
 
-                /* Overlay: warm olive taper at top (matches theme-color #3d3a2a) → dark
-                   mid-section → white fade at bottom blends with blur strip */
+                /* Overlay: warm olive taper at top (matches theme-color #3d3a2a) → clear
+                   mid-section → white tint at very bottom to blend blurred area into page */
                 .hero::after {
                     content: '';
                     position: absolute;
@@ -2765,13 +2785,13 @@ export const homeStyles = (): string => `
                     background: linear-gradient(
                         to bottom,
                         rgba(61, 58, 42, 0.94) 0%,
-                        rgba(46, 42, 26, 0.7) 8%,
-                        rgba(20, 18, 10, 0.4) 18%,
-                        rgba(0, 0, 0, 0.18) 40%,
-                        rgba(0, 0, 0, 0.08) 65%,
-                        rgba(248, 249, 253, 0.3) 78%,
-                        rgba(248, 249, 253, 0.7) 88%,
-                        rgba(248, 249, 253, 0.92) 94%,
+                        rgba(46, 42, 26, 0.7) 6%,
+                        rgba(20, 18, 10, 0.4) 14%,
+                        rgba(0, 0, 0, 0.18) 30%,
+                        rgba(0, 0, 0, 0.05) 55%,
+                        transparent 70%,
+                        rgba(248, 249, 253, 0.4) 85%,
+                        rgba(248, 249, 253, 0.85) 94%,
                         rgba(248, 249, 253, 1.0) 100%
                     );
                     z-index: 2;

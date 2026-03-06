@@ -2683,25 +2683,20 @@ export const homeStyles = (): string => `
                This matches the original working version from GitHub
                ======================================== */
 
-            /* iOS safe-area fix: body background fills the strip behind the status
-               bar / Dynamic Island when viewport-fit=cover is active. Matching the
-               same hero image prevents the white/gray gap at the top of the screen. */
+            /* iOS safe-area: olive background on html fills the strip behind the
+               status bar / Dynamic Island. No background-image on body — the hero
+               section handles that entirely. */
             @media (max-width: 899px) {
                 html {
-                    /* warm dark olive — fills iOS status bar / Dynamic Island area */
                     background: #3d3a2a !important;
                     background-color: #3d3a2a !important;
                 }
                 body {
                     margin: 0;
                     padding: 0;
-                    /* Olive base ensures status bar area matches hero overlay top */
-                    background-color: #3d3a2a;
-                    background-image: url('/static/IMG_7331.jpeg');
-                    background-size: cover;
-                    background-position: top center;
-                    background-repeat: no-repeat;
-                    /* Kill the base light-to-light transition that flashes white */
+                    /* Olive color only — no image here (hero handles it) */
+                    background-color: #3d3a2a !important;
+                    background-image: none !important;
                     transition: none;
                 }
             }
@@ -2712,8 +2707,14 @@ export const homeStyles = (): string => `
                     height: 0;
                 }
 
-                /* Mobile Hero Section - Fullscreen edge-to-edge background */
+                /* Mobile Hero Section - Fullscreen edge-to-edge background.
+                   CRITICAL: override fadeInUp so hero is instantly visible —
+                   otherwise the 0.1s animation-delay causes a flash where the
+                   olive body bg shows through the nav's translucent backdrop. */
                 .hero {
+                    opacity: 1 !important;
+                    transform: none !important;
+                    animation: none !important;
                     position: relative;
                     height: 100vh;
                     height: 100svh;
@@ -2919,9 +2920,9 @@ export const homeStyles = (): string => `
                     margin: 20px auto 50px;
                     padding: 16px 20px;
                     top: calc(env(safe-area-inset-top, 0px) + 8px);
-                    /* High enough opacity that olive body bg doesn't bleed through,
-                       but still translucent enough for a frosted glass feel */
-                    background: rgba(255, 255, 255, 0.78);
+                    /* Hero is always visible behind nav (no fadeInUp), so
+                       backdrop-filter blurs the hero image — nice frosted glass */
+                    background: rgba(255, 255, 255, 0.72);
                     -webkit-backdrop-filter: blur(28px) saturate(1.6);
                     backdrop-filter: blur(28px) saturate(1.6);
                     border: 1px solid rgba(255, 255, 255, 0.4);

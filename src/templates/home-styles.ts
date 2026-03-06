@@ -2859,7 +2859,7 @@ export const homeStyles = (): string => `
                     z-index: 3;
                     color: white !important;
                     font-size: clamp(64px, 16vw, 88px);
-                    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.85), 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 100px rgba(0, 0, 0, 0.4);
+                    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
                     padding: 0 20px;
                     line-height: 1.0;
                     letter-spacing: -1.5px;

@@ -580,6 +580,13 @@ export const homeStyles = (): string => `
                     background: rgb(255, 255, 255) !important;
                     border: 1px solid rgba(0, 0, 0, 0.08) !important;
                 }
+                /* On mobile, Find Us button stays gold even without backdrop-filter */
+                @media (max-width: 899px) {
+                    .find-us-btn {
+                        background: #d4a574 !important;
+                        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+                    }
+                }
             }
 
             /* Schedule Section */
@@ -2925,6 +2932,7 @@ export const homeStyles = (): string => `
                 }
 
                 .find-us-btn {
+                    background: #d4a574;
                     background: rgba(212, 165, 116, 0.92);
                     -webkit-backdrop-filter: blur(12px);
                     backdrop-filter: blur(12px);
@@ -3292,6 +3300,7 @@ export const homeStyles = (): string => `
                     text-transform: uppercase;
                     letter-spacing: 1.2px;
                     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                    -webkit-backdrop-filter: blur(10px);
                     backdrop-filter: blur(10px);
                     border: 1px solid rgba(255, 255, 255, 0.5);
                     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -3316,8 +3325,11 @@ export const homeStyles = (): string => `
                 /* Active state for Contact button */
                 .nav-form-btn.active {
                     font-weight: 900;
+                    background: #d4a574;
+                    background: -webkit-linear-gradient(315deg, #c89860 0%, #d4a574 100%);
                     background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                     color: #ffffff;
+                    border-color: rgba(212, 165, 116, 0.4);
                     box-shadow: 0 8px 24px rgba(212, 165, 116, 0.4),
                                 0 4px 12px rgba(212, 165, 116, 0.2);
                 }

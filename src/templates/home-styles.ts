@@ -89,7 +89,7 @@ export const homeStyles = (): string => `
             .nav-shell {
                 padding: 20px 40px;
                 background: rgb(255, 255, 255);
-                background: rgba(255, 255, 255, 0.88);
+                background: rgba(255, 255, 255, 0.72);
                 border-radius: 100px;
                 display: flex;
                 align-items: center;
@@ -132,7 +132,7 @@ export const homeStyles = (): string => `
             }
 
             .nav-shell:hover {
-                background: rgba(255, 255, 255, 0.85);
+                background: rgba(255, 255, 255, 0.78);
                 box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1),
                             0 10px 24px rgba(0, 0, 0, 0.05);
             }
@@ -3003,10 +3003,10 @@ export const homeStyles = (): string => `
                     top: calc(env(safe-area-inset-top, 0px) + 8px);
                     /* Low opacity white + heavy blur = warm frosted glass that
                        picks up the olive/earth tones from the hero behind it */
-                    background: rgba(255, 255, 255, 0.82);
+                    background: rgba(255, 255, 255, 0.72);
                     -webkit-backdrop-filter: blur(40px) saturate(1.8);
                     backdrop-filter: blur(40px) saturate(1.8);
-                    border: 1px solid rgba(255, 255, 255, 0.5);
+                    border: 1px solid rgba(255, 255, 255, 0.4);
                     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
                                 0 2px 8px rgba(0, 0, 0, 0.06);
                 }
@@ -3017,8 +3017,7 @@ export const homeStyles = (): string => `
                     gap: 0;
                     margin-bottom: 30px;
                     top: 8px;
-                    /* Slightly more opaque when scrolled over lighter sections */
-                    background: rgba(255, 255, 255, 0.55);
+                    background: rgba(255, 255, 255, 0.72);
                 }
 
                 nav ul {

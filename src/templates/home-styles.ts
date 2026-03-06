@@ -156,20 +156,22 @@ export const homeStyles = (): string => `
 
             .brand-title {
                 font-family: 'Playfair Display', serif;
-                font-size: 22px;
+                font-size: 26px;
                 font-weight: 700;
                 letter-spacing: 3px;
                 text-transform: uppercase;
                 color: #1a1a2e;
+                white-space: nowrap;
             }
 
             .brand-subtitle {
-                font-size: 11px;
+                font-size: 13px;
                 letter-spacing: 4px;
                 text-transform: uppercase;
                 color: rgba(26, 26, 46, 0.5);
                 font-weight: 600;
                 margin-top: 2px;
+                white-space: nowrap;
             }
 
             nav ul {
@@ -178,7 +180,7 @@ export const homeStyles = (): string => `
                 gap: 36px;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                font-size: 12px;
+                font-size: 14px;
                 font-weight: 700;
             }
 
@@ -188,6 +190,7 @@ export const homeStyles = (): string => `
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 position: relative;
                 padding-bottom: 4px;
+                white-space: nowrap;
             }
 
             nav a.active {
@@ -226,10 +229,11 @@ export const homeStyles = (): string => `
                 border-radius: 100px;
                 background: rgba(255, 255, 255, 0.9);
                 color: #1a1a2e;
-                font-size: 12px;
+                font-size: 14px;
                 font-weight: 700;
                 text-transform: uppercase;
                 letter-spacing: 2px;
+                white-space: nowrap;
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.5);
@@ -3064,9 +3068,10 @@ export const homeStyles = (): string => `
                 .nav-cta {
                     width: 100%;
                     padding: 10px 24px;
-                    font-size: 10px;
+                    font-size: 12px;
                     text-align: center;
                     order: 2;  /* CTA button last */
+                    white-space: nowrap;
                 }
                 
                 /* Contact button - shift right when compressed */
@@ -3077,17 +3082,19 @@ export const homeStyles = (): string => `
                 }
 
                 .brand-title {
-                    font-size: 16px;
+                    font-size: 19px;
                     letter-spacing: 2px;
+                    white-space: nowrap;
                 }
 
                 .brand-subtitle {
-                    font-size: 9px;
+                    font-size: 11px;
                     letter-spacing: 3px;
+                    white-space: nowrap;
                 }
-                
+
                 nav a {
-                    font-size: clamp(8px, 2.5vw, 10px);
+                    font-size: clamp(11px, 2.8vw, 13px);
                     letter-spacing: clamp(1px, 0.4vw, 2px);
                     white-space: nowrap;
                 }
@@ -3403,15 +3410,17 @@ export const homeStyles = (): string => `
                 }
 
                 .brand-title {
-                    font-size: clamp(14px, 4vw, 16px);
+                    font-size: clamp(16px, 4.5vw, 19px);
                     letter-spacing: clamp(1.5px, 0.5vw, 2px);
                     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    white-space: nowrap;
                 }
 
                 .brand-subtitle {
-                    font-size: clamp(7px, 2.2vw, 9px);
+                    font-size: clamp(9px, 2.5vw, 11px);
                     letter-spacing: clamp(2.5px, 0.7vw, 3px);
                     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    white-space: nowrap;
                 }
 
                 nav ul {
@@ -3439,20 +3448,22 @@ export const homeStyles = (): string => `
                 }
 
                 nav a {
-                    font-size: clamp(8px, 2.2vw, 10px);
+                    font-size: clamp(10px, 2.5vw, 12px);
                     letter-spacing: clamp(0.8px, 0.3vw, 1.5px);
                     white-space: nowrap;
                 }
-                
+
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: clamp(8px, 2.2vw, 10px);
+                    font-size: clamp(10px, 2.5vw, 12px);
                     letter-spacing: clamp(0.8px, 0.3vw, 1.5px);
+                    white-space: nowrap;
                 }
 
                 .nav-cta {
                     padding: clamp(6px, 2vw, 8px) clamp(12px, 3.5vw, 16px);
-                    font-size: clamp(8px, 2.2vw, 9px);
+                    font-size: clamp(10px, 2.5vw, 11px);
                     letter-spacing: clamp(1px, 0.3vw, 1.5px);
+                    white-space: nowrap;
                 }
 
                 main {
@@ -3854,29 +3865,34 @@ export const homeStyles = (): string => `
                 }
                 
                 .brand-title {
-                    font-size: 12px;
+                    font-size: 14px;
                     letter-spacing: 1px;
+                    white-space: nowrap;
                 }
-                
+
                 .brand-subtitle {
-                    font-size: 7px;
-                    letter-spacing: 1.8px;
-                }
-                
-                nav a {
                     font-size: 9px;
+                    letter-spacing: 1.8px;
+                    white-space: nowrap;
+                }
+
+                nav a {
+                    font-size: 11px;
                     letter-spacing: 1px;
+                    white-space: nowrap;
                 }
-                
+
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: 8px;
+                    font-size: 10px;
                     letter-spacing: 0.8px;
+                    white-space: nowrap;
                 }
-                
+
                 .nav-cta {
                     padding: 6px 12px;
-                    font-size: 8px;
+                    font-size: 10px;
                     letter-spacing: 0.8px;
+                    white-space: nowrap;
                 }
                 
                 /* Main Content Spacing - Dramatically reduce gaps to move sections up */

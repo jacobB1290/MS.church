@@ -2800,9 +2800,9 @@ export const homeStyles = (): string => `
                    from BOTH sides of the seam so there is no hard line. */
                 .hero-bridge {
                     position: relative;
-                    height: 250px;
-                    margin-top: -250px;   /* pull up fully into the hero */
-                    z-index: 5;
+                    height: 300px;
+                    margin-top: -300px;
+                    z-index: 3;           /* below hero-body (z:4) so button stays sharp */
                     pointer-events: none;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
@@ -2816,24 +2816,26 @@ export const homeStyles = (): string => `
                 /* Layer 1: gentle blur across the full bridge height */
                 .hero-bridge-blur.bridge-blur-1 {
                     height: 100%;
-                    -webkit-backdrop-filter: blur(3px);
-                    backdrop-filter: blur(3px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+                    -webkit-backdrop-filter: blur(4px);
+                    backdrop-filter: blur(4px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
                 }
-                /* Layer 2: medium blur, bottom 60% */
+                /* Layer 2: medium blur */
                 .hero-bridge-blur.bridge-blur-2 {
-                    height: 60%;
-                    -webkit-backdrop-filter: blur(10px);
-                    backdrop-filter: blur(10px);
+                    height: 65%;
+                    -webkit-backdrop-filter: blur(14px);
+                    backdrop-filter: blur(14px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
+                }
+                /* Layer 3: heavy blur at the very bottom */
+                .hero-bridge-blur.bridge-blur-3 {
+                    height: 40%;
+                    -webkit-backdrop-filter: blur(32px);
+                    backdrop-filter: blur(32px);
                     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
                     mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
-                }
-                /* Layer 3: heavy blur, bottom 35% */
-                .hero-bridge-blur.bridge-blur-3 {
-                    height: 35%;
-                    -webkit-backdrop-filter: blur(24px);
-                    backdrop-filter: blur(24px);
                 }
                 /* White taper on top of the blur — fades blurred image to page bg */
                 .hero-bridge::after {
@@ -2843,10 +2845,11 @@ export const homeStyles = (): string => `
                     background: linear-gradient(
                         to bottom,
                         transparent 0%,
-                        rgba(248, 249, 253, 0.15) 30%,
-                        rgba(248, 249, 253, 0.5) 55%,
-                        rgba(248, 249, 253, 0.85) 75%,
-                        rgba(248, 249, 253, 1.0) 90%
+                        rgba(248, 249, 253, 0.2) 25%,
+                        rgba(248, 249, 253, 0.55) 45%,
+                        rgba(248, 249, 253, 0.8) 60%,
+                        rgba(248, 249, 253, 0.95) 75%,
+                        rgba(248, 249, 253, 1.0) 85%
                     );
                     z-index: 1;
                 }

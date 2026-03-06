@@ -45,7 +45,7 @@ export const homeScripts = (): string => `
                             } else {
                                 htmlEl.classList.add('scrolled-past-hero');
                             }
-                        }, { threshold: 0.05 });
+                        }, { threshold: 0.90 });
                         statusBarObserver.observe(heroEl);
                     }
                 }

@@ -2733,8 +2733,24 @@ export const homeStyles = (): string => `
                     box-sizing: border-box;
                 }
 
+                /* Blur strip at bottom edge — feathers the image into white */
+                .hero::before {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 120px;
+                    z-index: 1;
+                    pointer-events: none;
+                    -webkit-backdrop-filter: blur(20px);
+                    backdrop-filter: blur(20px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                }
+
                 /* Overlay: warm olive taper at top (matches theme-color #3d3a2a) → dark
-                   mid-section → subtle white transition at very bottom */
+                   mid-section → white fade at bottom blends with blur strip */
                 .hero::after {
                     content: '';
                     position: absolute;
@@ -2746,11 +2762,11 @@ export const homeStyles = (): string => `
                         rgba(20, 18, 10, 0.4) 18%,
                         rgba(0, 0, 0, 0.18) 40%,
                         rgba(0, 0, 0, 0.10) 70%,
-                        rgba(0, 0, 0, 0.05) 85%,
-                        rgba(248, 249, 253, 0.5) 94%,
-                        rgba(248, 249, 253, 0.95) 100%
+                        rgba(0, 0, 0, 0.03) 85%,
+                        rgba(248, 249, 253, 0.6) 93%,
+                        rgba(248, 249, 253, 1.0) 100%
                     );
-                    z-index: 1;
+                    z-index: 2;
                     pointer-events: none;
                 }
 
@@ -2761,7 +2777,7 @@ export const homeStyles = (): string => `
                     left: 0;
                     right: 0;
                     text-align: center;
-                    z-index: 2;
+                    z-index: 3;
                     color: white !important;
                     font-size: clamp(64px, 16vw, 88px);
                     text-shadow: 0 2px 32px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 0, 0, 0.25);

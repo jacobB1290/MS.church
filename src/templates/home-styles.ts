@@ -2688,7 +2688,9 @@ export const homeStyles = (): string => `
                same hero image prevents the white/gray gap at the top of the screen. */
             @media (max-width: 899px) {
                 html {
-                    background: #111;
+                    /* warm dark olive — approximates the top of IMG_7331.jpeg
+                       with the dark overlay applied, so the safe-area strip is seamless */
+                    background: #2e2a1a;
                 }
                 body {
                     margin: 0;
@@ -2726,47 +2728,53 @@ export const homeStyles = (): string => `
                     margin-left: calc(-50vw + 50%);
                 }
 
-                /* Dark overlay + minimal white transition at very bottom */
+                /* Overlay: warm olive taper at top (matches safe-area bg) → dark
+                   mid-section → subtle white transition at very bottom */
                 .hero::after {
                     content: '';
                     position: absolute;
                     inset: 0;
                     background: linear-gradient(
                         to bottom,
-                        rgba(0, 0, 0, 0.35) 0%,
-                        rgba(0, 0, 0, 0.28) 55%,
-                        rgba(0, 0, 0, 0.12) 80%,
-                        rgba(248, 249, 253, 0.55) 93%,
+                        rgba(46, 42, 26, 0.92) 0%,     /* matches html bg — seamless with status bar */
+                        rgba(20, 18, 10, 0.55) 12%,    /* taper fades into image */
+                        rgba(0, 0, 0, 0.22) 35%,       /* gentle dark over church image */
+                        rgba(0, 0, 0, 0.18) 68%,
+                        rgba(248, 249, 253, 0.45) 90%,
                         rgb(248, 249, 253) 100%
                     );
                     z-index: 1;
                     pointer-events: none;
                 }
 
-                /* h1 — absolutely centered in upper portion of image */
+                /* h1 — centered, positioned below nav in upper portion of image */
                 .hero-title {
                     position: absolute;
-                    top: 38vh;
+                    top: 28vh;
                     left: 0;
                     right: 0;
                     text-align: center;
                     z-index: 2;
                     color: white !important;
-                    text-shadow: 0 2px 32px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 0, 0, 0.3);
-                    padding: 0 24px;
+                    font-size: clamp(64px, 16vw, 86px);
+                    text-shadow: 0 2px 32px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 0, 0, 0.25);
+                    padding: 0 20px;
+                    line-height: 1.0;
+                    letter-spacing: -1.5px;
                 }
 
-                /* Bottom content area — paragraph text at the bottom of hero */
+                /* Bottom content area — paragraph text sits below FIND US button */
                 .hero-body {
                     position: relative;
                     z-index: 2;
                     display: flex;
                     flex-direction: column;
                     gap: 0;
-                    padding: 0 28px 32px;
+                    padding: 0 28px calc(env(safe-area-inset-bottom, 0px) + 52px);
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
+                    text-align: center;
                 }
 
                 .hero-content {
@@ -2801,9 +2809,9 @@ export const homeStyles = (): string => `
                     display: none;
                 }
 
-                /* Find Us — gold, above the paragraph text */
+                /* Find Us — gold, sits directly above paragraph text */
                 .find-us-wrapper {
-                    bottom: 90px;
+                    bottom: calc(env(safe-area-inset-bottom, 0px) + 108px);
                     left: 28px;
                     right: 28px;
                     pointer-events: auto;
@@ -2994,9 +3002,11 @@ export const homeStyles = (): string => `
                 }
 
                 .hero h1 {
-                    font-size: clamp(32px, 7vw, 44px);
+                    font-size: clamp(64px, 16vw, 86px);
                     color: white;
                     text-align: center;
+                    line-height: 1.0;
+                    letter-spacing: -1.5px;
                 }
 
                 .hero p {
@@ -3415,22 +3425,23 @@ export const homeStyles = (): string => `
                 }
 
                 .hero h1 {
-                    font-size: clamp(52px, 11vw, 72px);
+                    font-size: clamp(64px, 16vw, 86px);
                     line-height: 1.0;
                     letter-spacing: -1.5px;
                     margin: 0;
                     text-align: center;
                     color: white;
-                    text-shadow: 0 2px 32px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 0, 0, 0.3);
+                    text-shadow: 0 2px 32px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 0, 0, 0.25);
                 }
 
-                /* Reposition h1 in upper area when inside the 480px fullscreen hero */
+                /* Reposition h1 in upper area (480px breakpoint override) */
                 .hero .hero-title {
                     position: absolute;
-                    top: 36vh;
+                    top: 28vh;
                     left: 0;
                     right: 0;
-                    padding: 0 24px;
+                    padding: 0 20px;
+                    font-size: clamp(64px, 16vw, 86px);
                 }
 
                 .hero p {

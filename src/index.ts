@@ -1,4 +1,4 @@
-// Version: 1.31.3 - Fix iOS safe-area gap: body bg image + status bar meta
+// Version: 1.31.4 - Status bar olive taper, larger/higher h1, layout fix
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

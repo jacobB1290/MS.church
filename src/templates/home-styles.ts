@@ -2872,37 +2872,23 @@ export const homeStyles = (): string => `
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    gap: 10px;
-                    padding: 0 24px env(safe-area-inset-bottom, 0px);
+                    gap: 12px;
+                    padding: 0 24px;
+                    padding-bottom: 18vh;
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
                     text-align: center;
                 }
 
-                .hero-content {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 2px;
-                    order: 2;
-                }
-
-                /* Text colors — light on dark image background */
-                .hero p {
-                    color: rgba(255, 255, 255, 0.85) !important;
-                    font-size: 14px !important;
-                    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
-                }
-
-                .hero-address {
-                    display: block !important;
-                    color: rgba(255, 255, 255, 0.55);
-                    font-style: normal;
-                    font-size: 11px;
+                .hero-service-time {
+                    color: rgba(255, 255, 255, 0.9) !important;
+                    font-size: 15px !important;
+                    font-weight: 500;
                     letter-spacing: 1.5px;
                     text-transform: uppercase;
-                    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+                    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+                    margin: 0;
                 }
 
                 /* Hero image — invisible fullscreen container for Find Us button only */

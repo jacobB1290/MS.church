@@ -32,10 +32,7 @@ export const homeBody = (): string => `
                     <div class="hero-blur-layer blur-4"></div>
                     <h1 class="hero-title">Mending the Broken.</h1>
                     <div class="hero-body">
-                        <div class="hero-content">
-                            <p>Join us every Sunday at 9:00 AM.</p>
-                            <address class="hero-address">3080 Wildwood St · Boise, Idaho</address>
-                        </div>
+                        <p class="hero-service-time">Join us Sundays at 9 AM</p>
                         <div class="hero-image">
                             <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building" loading="eager">
                             <!-- Find Us Button - Long frosted glass pill at bottom of image -->

@@ -2723,9 +2723,9 @@ export const homeStyles = (): string => `
                     transform: none !important;
                     animation: none !important;
                     position: relative;
-                    height: 85vh;
-                    height: 85svh;
-                    min-height: 560px;
+                    height: 100vh;
+                    height: 100svh;
+                    min-height: 640px;
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
@@ -2803,8 +2803,8 @@ export const homeStyles = (): string => `
                 .hero-bridge {
                     position: relative;
                     height: 180px;
-                    margin-top: -180px;
-                    margin-bottom: 0;
+                    margin-top: calc(-180px - 100px); /* bridge height + eat top flex gap */
+                    margin-bottom: -100px; /* eat bottom flex gap */
                     z-index: 2;
                     pointer-events: none;
                     width: 100vw;
@@ -2878,7 +2878,7 @@ export const homeStyles = (): string => `
                     align-items: center;
                     gap: 12px;
                     padding: 0 24px;
-                    padding-bottom: 8vh;
+                    padding-bottom: 12vh;
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
@@ -3115,6 +3115,12 @@ export const homeStyles = (): string => `
 
                 section {
                     padding: 0;
+                }
+
+                /* Schedule must sit above the bridge blur (z:2) */
+                .schedule {
+                    position: relative;
+                    z-index: 3;
                 }
 
                 .hero {

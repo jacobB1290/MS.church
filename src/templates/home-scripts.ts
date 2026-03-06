@@ -31,6 +31,25 @@ export const homeScripts = (): string => `
                 const carouselNav = document.getElementById('carousel-nav');
 
                 // ========================================
+                // iOS STATUS BAR COLOR (mobile only)
+                // Switches html+body from olive (hero) to white (schedule+)
+                // so Safari's status bar tint matches the current section.
+                // ========================================
+                if (window.innerWidth <= 899) {
+                    const heroEl = document.querySelector('.hero');
+                    if (heroEl) {
+                        const htmlEl = document.documentElement;
+                        const statusBarObserver = new IntersectionObserver((entries) => {
+                            const isHeroVisible = entries[0].isIntersecting;
+                            const bg = isHeroVisible ? '#3d3a2a' : '#f8f9fd';
+                            htmlEl.style.background = bg;
+                            body.style.background = bg;
+                        }, { threshold: 0.05 });
+                        statusBarObserver.observe(heroEl);
+                    }
+                }
+
+                // ========================================
                 // DYNAMIC EVENT MANAGER
                 // Fetches from /api/calendar/events (server-side proxy with 5-min cache)
                 // Auto-archives past events, handles 0-3+ upcoming events

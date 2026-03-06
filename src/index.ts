@@ -1,4 +1,4 @@
-// Version: 1.31.6 - Increase nav typography sizes and prevent text wrapping
+// Version: 1.31.7 - Move hero title 0.5vh down
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

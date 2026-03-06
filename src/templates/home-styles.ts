@@ -2802,40 +2802,41 @@ export const homeStyles = (): string => `
                    z-index 2: above image (1) but below button (4) and schedule. */
                 .hero-bridge {
                     position: relative;
-                    height: 80px;
-                    margin-top: calc(-80px - 100px); /* bridge height + eat top flex gap */
-                    margin-bottom: -100px; /* eat bottom flex gap */
+                    height: 160px;
+                    /* Center on seam: pull up half into hero, leave half over background.
+                       Also eat the 100px flex gaps on both sides. */
+                    margin-top: calc(-80px - 100px);
+                    margin-bottom: calc(-80px - 100px);
                     z-index: 2;
                     pointer-events: none;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
                 }
+                /* All blur layers are full-height, centered on the seam.
+                   Mask: transparent at both edges → opaque at center = strongest blur at seam. */
                 .hero-bridge-blur {
                     position: absolute;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
+                    inset: 0;
                 }
                 .hero-bridge-blur.bridge-blur-1 {
-                    height: 100%;
-                    -webkit-backdrop-filter: blur(6px);
-                    backdrop-filter: blur(6px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
+                    -webkit-backdrop-filter: blur(4px);
+                    backdrop-filter: blur(4px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
                 }
                 .hero-bridge-blur.bridge-blur-2 {
-                    height: 60%;
-                    -webkit-backdrop-filter: blur(20px);
-                    backdrop-filter: blur(20px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+                    -webkit-backdrop-filter: blur(16px);
+                    backdrop-filter: blur(16px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
+                    mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
                 }
                 .hero-bridge-blur.bridge-blur-3 {
-                    height: 35%;
                     -webkit-backdrop-filter: blur(40px);
                     backdrop-filter: blur(40px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
+                    mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
                 }
-                /* Subtle color taper at the seam */
+                /* Subtle color blend so the blurred seam doesn't look muddy */
                 .hero-bridge::after {
                     content: '';
                     position: absolute;
@@ -2843,9 +2844,10 @@ export const homeStyles = (): string => `
                     background: linear-gradient(
                         to bottom,
                         transparent 0%,
-                        rgba(248, 249, 253, 0.15) 40%,
-                        rgba(248, 249, 253, 0.5) 70%,
-                        rgba(248, 249, 253, 0.85) 100%
+                        rgba(248, 249, 253, 0.1) 40%,
+                        rgba(248, 249, 253, 0.3) 50%,
+                        rgba(248, 249, 253, 0.5) 65%,
+                        rgba(248, 249, 253, 0.7) 100%
                     );
                     z-index: 1;
                 }

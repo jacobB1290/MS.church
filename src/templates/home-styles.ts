@@ -2683,22 +2683,17 @@ export const homeStyles = (): string => `
                This matches the original working version from GitHub
                ======================================== */
 
-            /* iOS status bar color trick:
-               html = olive (#3d3a2a) — fills the ENTIRE screen including status bar.
-               body = light (#f8f9fd) BUT with background-clip: content-box and
-               padding-top for the safe area. The body bg only renders BELOW the
-               status bar, leaving the html olive visible in the status bar strip.
-               The hero pulls back up with negative margin to cover the viewport. */
+            /* iOS status bar: Safari reads body's background-color for the
+               status bar tint. html+body = olive so status bar is olive.
+               .page wrapper gets the light bg to cover visible content. */
             @media (max-width: 899px) {
                 html {
                     background: #3d3a2a !important;
                 }
                 body {
                     margin: 0;
-                    padding-top: env(safe-area-inset-top, 47px);
-                    background: var(--bg-color) !important;
-                    -webkit-background-clip: content-box !important;
-                    background-clip: content-box !important;
+                    padding: 0;
+                    background: #3d3a2a !important;
                     background-image: none !important;
                     transition: none;
                 }
@@ -2714,7 +2709,7 @@ export const homeStyles = (): string => `
                    No fadeInUp animation — hero must be instantly visible so
                    the nav's backdrop-filter blurs the hero, not a blank bg.
                    Negative margin-top pulls hero back up over the body's
-                   safe-area padding so the image fills the full viewport. */
+                   the nav's backdrop-filter blurs the hero, not a blank bg. */
                 .hero {
                     opacity: 1 !important;
                     transform: none !important;
@@ -2723,7 +2718,6 @@ export const homeStyles = (): string => `
                     height: 100vh;
                     height: 100svh;
                     min-height: 600px;
-                    margin-top: calc(-1 * env(safe-area-inset-top, 47px));
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
@@ -3017,7 +3011,9 @@ export const homeStyles = (): string => `
 
             @media (max-width: 899px) {
                 .page {
-                    width: 92%;
+                    width: 100%;
+                    background: var(--bg-color); /* light bg covers olive body */
+                    box-sizing: border-box;
                 }
 
                 main {

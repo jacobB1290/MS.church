@@ -2683,19 +2683,16 @@ export const homeStyles = (): string => `
                This matches the original working version from GitHub
                ======================================== */
 
-            /* iOS safe-area: olive background on html fills the strip behind the
-               status bar / Dynamic Island. No background-image on body — the hero
-               section handles that entirely. */
+            /* iOS safe-area: only the status bar strip needs olive.
+               Body stays light (#f8f9fd) so the rest of the page is unaffected.
+               A ::before on the hero bleeds upward to fill the status bar gap. */
             @media (max-width: 899px) {
                 html {
-                    background: #3d3a2a !important;
-                    background-color: #3d3a2a !important;
+                    background: var(--bg-color) !important;
                 }
                 body {
                     margin: 0;
                     padding: 0;
-                    /* Olive color only — no image here (hero handles it) */
-                    background-color: #3d3a2a !important;
                     background-image: none !important;
                     transition: none;
                 }
@@ -2709,21 +2706,26 @@ export const homeStyles = (): string => `
 
                 /* Mobile Hero Section - Fullscreen edge-to-edge background.
                    CRITICAL: override fadeInUp so hero is instantly visible —
-                   otherwise the 0.1s animation-delay causes a flash where the
-                   olive body bg shows through the nav's translucent backdrop. */
+                   otherwise the animation-delay causes a flash where the light
+                   body bg shows through the nav's translucent backdrop.
+
+                   The negative margin + extra height extends the hero upward
+                   into the iOS status bar area so its background-image and
+                   gradient fill the gap — no olive body bg needed. */
                 .hero {
                     opacity: 1 !important;
                     transform: none !important;
                     animation: none !important;
                     position: relative;
-                    height: 100vh;
-                    height: 100svh;
-                    min-height: 600px;
+                    height: calc(100vh + 100px);
+                    height: calc(100svh + 100px);
+                    min-height: 700px;
+                    margin-top: -100px;
+                    padding-top: 100px;
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-end;
-                    padding: 0;
                     gap: 0;
                     background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
@@ -2731,6 +2733,7 @@ export const homeStyles = (): string => `
                     border-radius: 0;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
+                    box-sizing: border-box;
                 }
 
                 /* Overlay: warm olive taper at top (matches theme-color #3d3a2a) → dark
@@ -2754,10 +2757,11 @@ export const homeStyles = (): string => `
                     pointer-events: none;
                 }
 
-                /* h1 — centered in upper portion, clear of church building */
+                /* h1 — centered in upper portion, clear of church building.
+                   +100px compensates for the hero's negative margin extension. */
                 .hero .hero-title {
                     position: absolute;
-                    top: 22vh;
+                    top: calc(22vh + 100px);
                     left: 0;
                     right: 0;
                     text-align: center;

@@ -2859,7 +2859,7 @@ export const homeStyles = (): string => `
                     z-index: 3;
                     color: white !important;
                     font-size: clamp(64px, 16vw, 88px);
-                    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 2px 60px rgba(0, 0, 0, 0.5), 0 0 120px rgba(0, 0, 0, 0.3);
+                    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.85), 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 100px rgba(0, 0, 0, 0.4);
                     padding: 0 20px;
                     line-height: 1.0;
                     letter-spacing: -1.5px;
@@ -2874,7 +2874,7 @@ export const homeStyles = (): string => `
                     align-items: center;
                     gap: 12px;
                     padding: 0 24px;
-                    padding-bottom: 28vh;
+                    padding-bottom: 23vh;
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
@@ -3003,10 +3003,10 @@ export const homeStyles = (): string => `
                     top: calc(env(safe-area-inset-top, 0px) + 8px);
                     /* Low opacity white + heavy blur = warm frosted glass that
                        picks up the olive/earth tones from the hero behind it */
-                    background: rgba(255, 255, 255, 0.35);
+                    background: rgba(255, 255, 255, 0.82);
                     -webkit-backdrop-filter: blur(40px) saturate(1.8);
                     backdrop-filter: blur(40px) saturate(1.8);
-                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
                     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
                                 0 2px 8px rgba(0, 0, 0, 0.06);
                 }

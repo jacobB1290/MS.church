@@ -2801,7 +2801,7 @@ export const homeStyles = (): string => `
                     flex-direction: column;
                     align-items: center;
                     gap: 10px;
-                    padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
+                    padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 48px);
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;

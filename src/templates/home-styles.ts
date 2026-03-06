@@ -44,6 +44,12 @@ export const homeStyles = (): string => `
                     background: rgb(255, 255, 255) !important;
                     border: 1px solid rgba(0, 0, 0, 0.08) !important;
                 }
+                /* Active (gold) state must override the white fallback above */
+                .nav-form-btn.active {
+                    background: #d4a574 !important;
+                    color: #ffffff !important;
+                    border-color: rgba(212, 165, 116, 0.4) !important;
+                }
             }
 
             body {

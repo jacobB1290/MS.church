@@ -1,4 +1,4 @@
-// Version: 1.31.8 - Reduce navbar backdrop blur
+// Version: 1.31.9 - Further reduce navbar backdrop blur to 2px
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

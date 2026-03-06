@@ -2802,7 +2802,8 @@ export const homeStyles = (): string => `
                     position: relative;
                     height: 300px;
                     margin-top: -300px;
-                    z-index: 3;           /* below hero-body (z:4) so button stays sharp */
+                    margin-bottom: -120px; /* pull schedule section up into the white zone */
+                    z-index: 3;
                     pointer-events: none;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
@@ -2813,31 +2814,26 @@ export const homeStyles = (): string => `
                     right: 0;
                     bottom: 0;
                 }
-                /* Layer 1: gentle blur across the full bridge height */
                 .hero-bridge-blur.bridge-blur-1 {
                     height: 100%;
-                    -webkit-backdrop-filter: blur(4px);
-                    backdrop-filter: blur(4px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
+                    -webkit-backdrop-filter: blur(8px);
+                    backdrop-filter: blur(8px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 30%);
                 }
-                /* Layer 2: medium blur */
                 .hero-bridge-blur.bridge-blur-2 {
-                    height: 65%;
-                    -webkit-backdrop-filter: blur(14px);
-                    backdrop-filter: blur(14px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
+                    height: 70%;
+                    -webkit-backdrop-filter: blur(24px);
+                    backdrop-filter: blur(24px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 30%);
                 }
-                /* Layer 3: heavy blur at the very bottom */
                 .hero-bridge-blur.bridge-blur-3 {
-                    height: 40%;
-                    -webkit-backdrop-filter: blur(32px);
-                    backdrop-filter: blur(32px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+                    height: 45%;
+                    -webkit-backdrop-filter: blur(48px);
+                    backdrop-filter: blur(48px);
                 }
-                /* White taper on top of the blur — fades blurred image to page bg */
+                /* White taper on top of the blur */
                 .hero-bridge::after {
                     content: '';
                     position: absolute;
@@ -2845,11 +2841,10 @@ export const homeStyles = (): string => `
                     background: linear-gradient(
                         to bottom,
                         transparent 0%,
-                        rgba(248, 249, 253, 0.2) 25%,
-                        rgba(248, 249, 253, 0.55) 45%,
-                        rgba(248, 249, 253, 0.8) 60%,
-                        rgba(248, 249, 253, 0.95) 75%,
-                        rgba(248, 249, 253, 1.0) 85%
+                        rgba(248, 249, 253, 0.3) 20%,
+                        rgba(248, 249, 253, 0.65) 40%,
+                        rgba(248, 249, 253, 0.9) 55%,
+                        rgba(248, 249, 253, 1.0) 70%
                     );
                     z-index: 1;
                 }

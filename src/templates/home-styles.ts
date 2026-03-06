@@ -2683,28 +2683,24 @@ export const homeStyles = (): string => `
                This matches the original working version from GitHub
                ======================================== */
 
-            /* iOS status bar trick: a fixed olive strip covers ONLY the
-               safe-area-inset-top (the ~47px behind the clock/battery).
-               Body and html stay light so nothing else is affected. */
+            /* iOS status bar color trick:
+               html = olive (#3d3a2a) — fills the ENTIRE screen including status bar.
+               body = light (#f8f9fd) BUT with background-clip: content-box and
+               padding-top for the safe area. The body bg only renders BELOW the
+               status bar, leaving the html olive visible in the status bar strip.
+               The hero pulls back up with negative margin to cover the viewport. */
             @media (max-width: 899px) {
+                html {
+                    background: #3d3a2a !important;
+                }
                 body {
                     margin: 0;
-                    padding: 0;
+                    padding-top: env(safe-area-inset-top, 47px);
+                    background: var(--bg-color) !important;
+                    -webkit-background-clip: content-box !important;
+                    background-clip: content-box !important;
                     background-image: none !important;
                     transition: none;
-                }
-
-                /* Fixed olive strip — sits in the status bar gap, above everything */
-                body::before {
-                    content: '';
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: env(safe-area-inset-top, 0px);
-                    background: #3d3a2a;
-                    z-index: 9999;
-                    pointer-events: none;
                 }
             }
 
@@ -2716,7 +2712,9 @@ export const homeStyles = (): string => `
 
                 /* Mobile Hero - fullscreen with image background.
                    No fadeInUp animation — hero must be instantly visible so
-                   the nav's backdrop-filter blurs the hero, not a blank bg. */
+                   the nav's backdrop-filter blurs the hero, not a blank bg.
+                   Negative margin-top pulls hero back up over the body's
+                   safe-area padding so the image fills the full viewport. */
                 .hero {
                     opacity: 1 !important;
                     transform: none !important;
@@ -2725,6 +2723,7 @@ export const homeStyles = (): string => `
                     height: 100vh;
                     height: 100svh;
                     min-height: 600px;
+                    margin-top: calc(-1 * env(safe-area-inset-top, 47px));
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;

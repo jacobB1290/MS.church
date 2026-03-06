@@ -103,8 +103,8 @@ export const homeStyles = (): string => `
                 gap: 40px;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08),
                             0 8px 20px rgba(0, 0, 0, 0.04);
-                -webkit-backdrop-filter: blur(20px);
-                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(8px);
+                backdrop-filter: blur(8px);
                 position: fixed;
                 top: 16px;
                 left: 50%;

@@ -178,7 +178,7 @@ export const homeStyles = (): string => `
 
             nav a {
                 color: #1a1a2e;
-                opacity: 0.6;
+                opacity: 1;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 position: relative;
                 padding-bottom: 4px;
@@ -218,15 +218,15 @@ export const homeStyles = (): string => `
             .nav-cta {
                 padding: 12px 20px;
                 border-radius: 100px;
-                background: #1a1a2e;
-                color: #ffffff;
+                background: rgba(255, 255, 255, 0.9);
+                color: #1a1a2e;
                 font-size: 12px;
                 font-weight: 700;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
                 backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.5);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 display: inline-flex;
                 align-items: center;
@@ -236,8 +236,8 @@ export const homeStyles = (): string => `
 
             .nav-cta:hover {
                 transform: translateY(-3px);
-                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
-                background: #2a2a4e;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+                background: rgba(255, 255, 255, 1);
             }
 
             main {
@@ -3284,15 +3284,15 @@ export const homeStyles = (): string => `
                     display: none;
                     padding: 6px 14px;
                     border-radius: 100px;
-                    background: #1a1a2e;
-                    color: #ffffff;
+                    background: rgba(255, 255, 255, 0.9);
+                    color: #1a1a2e;
                     font-size: 10px;
                     font-weight: 700;
                     text-transform: uppercase;
                     letter-spacing: 1.2px;
-                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
                     backdrop-filter: blur(10px);
-                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
                     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                     align-items: center;
                     justify-content: center;

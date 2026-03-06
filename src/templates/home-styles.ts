@@ -89,7 +89,7 @@ export const homeStyles = (): string => `
             .nav-shell {
                 padding: 20px 40px;
                 background: rgb(255, 255, 255);
-                background: rgba(255, 255, 255, 0.75);
+                background: rgba(255, 255, 255, 0.88);
                 border-radius: 100px;
                 display: flex;
                 align-items: center;
@@ -2859,7 +2859,7 @@ export const homeStyles = (): string => `
                     z-index: 3;
                     color: white !important;
                     font-size: clamp(64px, 16vw, 88px);
-                    text-shadow: 0 2px 32px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 0, 0, 0.25);
+                    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), 0 2px 60px rgba(0, 0, 0, 0.5), 0 0 120px rgba(0, 0, 0, 0.3);
                     padding: 0 20px;
                     line-height: 1.0;
                     letter-spacing: -1.5px;
@@ -2874,7 +2874,7 @@ export const homeStyles = (): string => `
                     align-items: center;
                     gap: 12px;
                     padding: 0 24px;
-                    padding-bottom: 18vh;
+                    padding-bottom: 28vh;
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
@@ -2883,9 +2883,9 @@ export const homeStyles = (): string => `
 
                 .hero-service-time {
                     color: rgba(255, 255, 255, 0.9) !important;
-                    font-size: 15px !important;
+                    font-size: 19px !important;
                     font-weight: 500;
-                    letter-spacing: 1.5px;
+                    letter-spacing: 2px;
                     text-transform: uppercase;
                     text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
                     margin: 0;
@@ -2925,7 +2925,7 @@ export const homeStyles = (): string => `
                     border: 1px solid rgba(255, 255, 255, 0.25);
                     letter-spacing: 2.5px;
                     font-weight: 600;
-                    padding: 12px 40px;
+                    padding: 8px 40px;
                     font-size: 12px;
                 }
 

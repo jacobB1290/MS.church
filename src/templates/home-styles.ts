@@ -2723,9 +2723,9 @@ export const homeStyles = (): string => `
                     transform: none !important;
                     animation: none !important;
                     position: relative;
-                    height: 100vh;
-                    height: 100svh;
-                    min-height: 640px;
+                    height: 115vh;
+                    height: 115svh;
+                    min-height: 700px;
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;

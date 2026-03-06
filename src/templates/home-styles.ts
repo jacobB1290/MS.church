@@ -177,6 +177,7 @@ export const homeStyles = (): string => `
             }
 
             nav a {
+                color: #1a1a2e;
                 opacity: 0.6;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 position: relative;
@@ -2802,7 +2803,7 @@ export const homeStyles = (): string => `
                     position: relative;
                     height: 300px;
                     margin-top: -300px;
-                    margin-bottom: -120px; /* pull schedule section up into the white zone */
+                    margin-bottom: -200px; /* pull schedule section up into the white zone */
                     z-index: 3;
                     pointer-events: none;
                     width: 100vw;
@@ -2882,13 +2883,20 @@ export const homeStyles = (): string => `
                 }
 
                 .hero-service-time {
-                    color: rgba(255, 255, 255, 0.9) !important;
+                    color: #ffffff !important;
                     font-size: 19px !important;
-                    font-weight: 500;
+                    font-weight: 600;
                     letter-spacing: 2px;
                     text-transform: uppercase;
-                    text-shadow: 0 4px 40px rgba(0, 0, 0, 0.95), 0 8px 80px rgba(0, 0, 0, 0.8), 0 0 160px rgba(0, 0, 0, 0.6), 0 0 200px rgba(0, 0, 0, 0.4);
+                    text-shadow:
+                        0 2px 8px rgba(0, 0, 0, 1),
+                        0 4px 20px rgba(0, 0, 0, 0.9),
+                        0 6px 40px rgba(0, 0, 0, 0.8),
+                        0 8px 80px rgba(0, 0, 0, 0.7),
+                        0 0 120px rgba(0, 0, 0, 0.5) !important;
                     margin: 0;
+                    max-width: none !important;
+                    line-height: 1.4 !important;
                 }
 
                 /* Hero image — invisible fullscreen container for Find Us button only */

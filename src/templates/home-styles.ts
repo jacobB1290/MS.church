@@ -2803,7 +2803,7 @@ export const homeStyles = (): string => `
                     position: relative;
                     height: 300px;
                     margin-top: -300px;
-                    margin-bottom: -200px; /* pull schedule section up into the white zone */
+                    margin-bottom: 0;
                     z-index: 3;
                     pointer-events: none;
                     width: 100vw;

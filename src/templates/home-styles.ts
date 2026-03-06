@@ -2723,9 +2723,9 @@ export const homeStyles = (): string => `
                     transform: none !important;
                     animation: none !important;
                     position: relative;
-                    height: 115vh;
-                    height: 115svh;
-                    min-height: 700px;
+                    height: 85vh;
+                    height: 85svh;
+                    min-height: 560px;
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
@@ -2798,13 +2798,14 @@ export const homeStyles = (): string => `
 
                 /* Bridge — sits OUTSIDE the hero, overlaps its bottom edge
                    and the white page below.  backdrop-filter blurs content
-                   from BOTH sides of the seam so there is no hard line. */
+                   from BOTH sides of the seam so there is no hard line.
+                   z-index 2: above image (1) but below button (4) and schedule. */
                 .hero-bridge {
                     position: relative;
-                    height: 300px;
-                    margin-top: -300px;
+                    height: 180px;
+                    margin-top: -180px;
                     margin-bottom: 0;
-                    z-index: 3;
+                    z-index: 2;
                     pointer-events: none;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
@@ -2817,24 +2818,26 @@ export const homeStyles = (): string => `
                 }
                 .hero-bridge-blur.bridge-blur-1 {
                     height: 100%;
-                    -webkit-backdrop-filter: blur(8px);
-                    backdrop-filter: blur(8px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 30%);
+                    -webkit-backdrop-filter: blur(4px);
+                    backdrop-filter: blur(4px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
                 }
                 .hero-bridge-blur.bridge-blur-2 {
-                    height: 70%;
-                    -webkit-backdrop-filter: blur(24px);
-                    backdrop-filter: blur(24px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 30%);
+                    height: 65%;
+                    -webkit-backdrop-filter: blur(16px);
+                    backdrop-filter: blur(16px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
                 }
                 .hero-bridge-blur.bridge-blur-3 {
-                    height: 45%;
-                    -webkit-backdrop-filter: blur(48px);
-                    backdrop-filter: blur(48px);
+                    height: 35%;
+                    -webkit-backdrop-filter: blur(40px);
+                    backdrop-filter: blur(40px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
                 }
-                /* White taper on top of the blur */
+                /* Subtle color taper — NOT opaque white, just blends the blur into page bg */
                 .hero-bridge::after {
                     content: '';
                     position: absolute;
@@ -2842,10 +2845,10 @@ export const homeStyles = (): string => `
                     background: linear-gradient(
                         to bottom,
                         transparent 0%,
-                        rgba(248, 249, 253, 0.3) 20%,
-                        rgba(248, 249, 253, 0.65) 40%,
-                        rgba(248, 249, 253, 0.9) 55%,
-                        rgba(248, 249, 253, 1.0) 70%
+                        transparent 30%,
+                        rgba(248, 249, 253, 0.2) 50%,
+                        rgba(248, 249, 253, 0.5) 70%,
+                        rgba(248, 249, 253, 0.8) 90%
                     );
                     z-index: 1;
                 }
@@ -2875,7 +2878,7 @@ export const homeStyles = (): string => `
                     align-items: center;
                     gap: 12px;
                     padding: 0 24px;
-                    padding-bottom: 21vh;
+                    padding-bottom: 8vh;
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;

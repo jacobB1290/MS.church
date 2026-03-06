@@ -2800,10 +2800,12 @@ export const homeStyles = (): string => `
                    from BOTH sides of the seam so there is no hard line. */
                 .hero-bridge {
                     position: relative;
-                    height: 200px;
-                    margin-top: -200px;   /* pull up into the hero */
-                    z-index: 5;           /* above hero ::after (z-index 2) */
+                    height: 250px;
+                    margin-top: -250px;   /* pull up fully into the hero */
+                    z-index: 5;
                     pointer-events: none;
+                    width: 100vw;
+                    margin-left: calc(-50vw + 50%);
                 }
                 .hero-bridge-blur {
                     position: absolute;
@@ -2811,26 +2813,42 @@ export const homeStyles = (): string => `
                     right: 0;
                     bottom: 0;
                 }
+                /* Layer 1: gentle blur across the full bridge height */
                 .hero-bridge-blur.bridge-blur-1 {
                     height: 100%;
-                    -webkit-backdrop-filter: blur(4px);
-                    backdrop-filter: blur(4px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
+                    -webkit-backdrop-filter: blur(3px);
+                    backdrop-filter: blur(3px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
                 }
+                /* Layer 2: medium blur, bottom 60% */
                 .hero-bridge-blur.bridge-blur-2 {
-                    height: 70%;
-                    -webkit-backdrop-filter: blur(12px);
-                    backdrop-filter: blur(12px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 70%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 70%);
+                    height: 60%;
+                    -webkit-backdrop-filter: blur(10px);
+                    backdrop-filter: blur(10px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
                 }
+                /* Layer 3: heavy blur, bottom 35% */
                 .hero-bridge-blur.bridge-blur-3 {
-                    height: 40%;
-                    -webkit-backdrop-filter: blur(28px);
-                    backdrop-filter: blur(28px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 80%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 80%);
+                    height: 35%;
+                    -webkit-backdrop-filter: blur(24px);
+                    backdrop-filter: blur(24px);
+                }
+                /* White taper on top of the blur — fades blurred image to page bg */
+                .hero-bridge::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(
+                        to bottom,
+                        transparent 0%,
+                        rgba(248, 249, 253, 0.15) 30%,
+                        rgba(248, 249, 253, 0.5) 55%,
+                        rgba(248, 249, 253, 0.85) 75%,
+                        rgba(248, 249, 253, 1.0) 90%
+                    );
+                    z-index: 1;
                 }
 
                 /* h1 — centered in upper portion, clear of church building */

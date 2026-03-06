@@ -2802,8 +2802,8 @@ export const homeStyles = (): string => `
                    z-index 2: above image (1) but below button (4) and schedule. */
                 .hero-bridge {
                     position: relative;
-                    height: 180px;
-                    margin-top: calc(-180px - 100px); /* bridge height + eat top flex gap */
+                    height: 80px;
+                    margin-top: calc(-80px - 100px); /* bridge height + eat top flex gap */
                     margin-bottom: -100px; /* eat bottom flex gap */
                     z-index: 2;
                     pointer-events: none;
@@ -2818,26 +2818,24 @@ export const homeStyles = (): string => `
                 }
                 .hero-bridge-blur.bridge-blur-1 {
                     height: 100%;
-                    -webkit-backdrop-filter: blur(4px);
-                    backdrop-filter: blur(4px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+                    -webkit-backdrop-filter: blur(6px);
+                    backdrop-filter: blur(6px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
                 }
                 .hero-bridge-blur.bridge-blur-2 {
-                    height: 65%;
-                    -webkit-backdrop-filter: blur(16px);
-                    backdrop-filter: blur(16px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
+                    height: 60%;
+                    -webkit-backdrop-filter: blur(20px);
+                    backdrop-filter: blur(20px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
                 }
                 .hero-bridge-blur.bridge-blur-3 {
                     height: 35%;
                     -webkit-backdrop-filter: blur(40px);
                     backdrop-filter: blur(40px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 50%);
                 }
-                /* Subtle color taper — NOT opaque white, just blends the blur into page bg */
+                /* Subtle color taper at the seam */
                 .hero-bridge::after {
                     content: '';
                     position: absolute;
@@ -2845,10 +2843,9 @@ export const homeStyles = (): string => `
                     background: linear-gradient(
                         to bottom,
                         transparent 0%,
-                        transparent 30%,
-                        rgba(248, 249, 253, 0.2) 50%,
+                        rgba(248, 249, 253, 0.15) 40%,
                         rgba(248, 249, 253, 0.5) 70%,
-                        rgba(248, 249, 253, 0.8) 90%
+                        rgba(248, 249, 253, 0.85) 100%
                     );
                     z-index: 1;
                 }
@@ -2878,7 +2875,7 @@ export const homeStyles = (): string => `
                     align-items: center;
                     gap: 12px;
                     padding: 0 24px;
-                    padding-bottom: 12vh;
+                    padding-bottom: 21vh;
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
@@ -3121,6 +3118,7 @@ export const homeStyles = (): string => `
                 .schedule {
                     position: relative;
                     z-index: 3;
+                    margin-top: 40px;
                 }
 
                 .hero {

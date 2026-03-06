@@ -2732,7 +2732,7 @@ export const homeStyles = (): string => `
                     gap: 0;
                     background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
-                    background-position: center 35%;
+                    background-position: center 20%;
                     border-radius: 0;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
@@ -2747,11 +2747,11 @@ export const homeStyles = (): string => `
                     bottom: 0;
                     left: 0;
                     right: 0;
-                    height: 120px;
+                    height: 180px;
                     z-index: 1;
                     pointer-events: none;
-                    -webkit-backdrop-filter: blur(20px);
-                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(24px);
+                    backdrop-filter: blur(24px);
                     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
                     mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
                 }
@@ -2768,9 +2768,10 @@ export const homeStyles = (): string => `
                         rgba(46, 42, 26, 0.7) 8%,
                         rgba(20, 18, 10, 0.4) 18%,
                         rgba(0, 0, 0, 0.18) 40%,
-                        rgba(0, 0, 0, 0.10) 70%,
-                        rgba(0, 0, 0, 0.03) 85%,
-                        rgba(248, 249, 253, 0.6) 93%,
+                        rgba(0, 0, 0, 0.08) 65%,
+                        rgba(248, 249, 253, 0.3) 78%,
+                        rgba(248, 249, 253, 0.7) 88%,
+                        rgba(248, 249, 253, 0.92) 94%,
                         rgba(248, 249, 253, 1.0) 100%
                     );
                     z-index: 2;

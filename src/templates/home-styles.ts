@@ -89,14 +89,15 @@ export const homeStyles = (): string => `
             .nav-shell {
                 padding: 20px 40px;
                 background: rgb(255, 255, 255);
-                background: rgba(255, 255, 255, 0.75);
+                background: rgba(255, 255, 255, 0.72);
                 border-radius: 100px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 40px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08),
                             0 8px 20px rgba(0, 0, 0, 0.04);
+                -webkit-backdrop-filter: blur(20px);
                 backdrop-filter: blur(20px);
                 position: fixed;
                 top: 16px;
@@ -131,8 +132,8 @@ export const homeStyles = (): string => `
             }
 
             .nav-shell:hover {
-                background: rgba(255, 255, 255, 0.85);
-                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1), 
+                background: rgba(255, 255, 255, 0.78);
+                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1),
                             0 10px 24px rgba(0, 0, 0, 0.05);
             }
 
@@ -176,7 +177,8 @@ export const homeStyles = (): string => `
             }
 
             nav a {
-                opacity: 0.6;
+                color: #1a1a2e;
+                opacity: 1;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 position: relative;
                 padding-bottom: 4px;
@@ -2681,44 +2683,267 @@ export const homeStyles = (): string => `
                Stacked card layout with scroll behavior
                This matches the original working version from GitHub
                ======================================== */
+
+            /* iOS status bar: Safari reads body's background-color for the
+               status bar tint. Defaults to olive; JS adds .scrolled-past-hero
+               to switch to white when user scrolls past the hero section.
+               .page wrapper always has light bg to cover visible content. */
             @media (max-width: 899px) {
-                /* Phone nav-spacer */
+                html {
+                    background: #3d3a2a !important;
+                }
+                html.scrolled-past-hero {
+                    background: #f8f9fd !important;
+                }
+                body {
+                    margin: 0;
+                    padding: 0;
+                    background: #3d3a2a !important;
+                    background-image: none !important;
+                    transition: none;
+                }
+                html.scrolled-past-hero body {
+                    background: #f8f9fd !important;
+                }
+            }
+
+            @media (max-width: 899px) {
+                /* Phone nav-spacer - zero since hero is fullscreen behind nav */
                 .nav-spacer {
-                    height: 190px;
+                    height: 0;
                 }
-                
-                /* Mobile Hero Section - Grid vertical layout */
+
+                /* Mobile Hero - fullscreen with image background.
+                   No fadeInUp animation — hero must be instantly visible so
+                   the nav's backdrop-filter blurs the hero, not a blank bg.
+                   Negative margin-top pulls hero back up over the body's
+                   the nav's backdrop-filter blurs the hero, not a blank bg. */
                 .hero {
-                    display: grid;
-                    gap: 40px;
-                    padding: 60px 0;
-                }
-                
-                .hero-body {
-                    display: grid;
-                    gap: 60px;
-                    align-items: start;
-                }
-                
-                .hero-content {
-                    display: grid;
-                    gap: 32px;
-                }
-                
-                .hero-image {
+                    opacity: 1 !important;
+                    transform: none !important;
+                    animation: none !important;
                     position: relative;
-                    width: 100%;
-                    height: 100%;
-                    min-height: 450px;
-                    border-radius: 32px;
+                    height: 115vh;
+                    height: 115svh;
+                    min-height: 700px;
                     overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end;
+                    gap: 0;
+                    background-image: url('/static/IMG_7331.jpeg');
+                    background-size: cover;
+                    background-position: center 20%;
+                    border-radius: 0;
+                    width: 100vw;
+                    margin-left: calc(-50vw + 50%);
+                    margin-bottom: 0;
+                    box-sizing: border-box;
                 }
-                
-                .hero-image img {
+
+                /* Blur layers at bottom — stacked to build up progressive blur */
+                .hero-blur-layer {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    pointer-events: none;
+                    z-index: 1;
+                }
+                .hero-blur-layer.blur-1 {
+                    height: 280px;
+                    -webkit-backdrop-filter: blur(2px);
+                    backdrop-filter: blur(2px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                }
+                .hero-blur-layer.blur-2 {
+                    height: 200px;
+                    -webkit-backdrop-filter: blur(6px);
+                    backdrop-filter: blur(6px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                }
+                .hero-blur-layer.blur-3 {
+                    height: 120px;
+                    -webkit-backdrop-filter: blur(16px);
+                    backdrop-filter: blur(16px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                }
+                .hero-blur-layer.blur-4 {
+                    height: 60px;
+                    -webkit-backdrop-filter: blur(32px);
+                    backdrop-filter: blur(32px);
+                }
+
+                /* Overlay: warm olive taper at top (matches theme-color #3d3a2a) → clear
+                   mid-section → white tint at very bottom to blend blurred area into page */
+                .hero::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    /* Dark olive at top → clear middle → page-bg white at bottom.
+                       Fading the image to #f8f9fd BEFORE the bridge blur means the
+                       blur mixes two similar light colors instead of dark-vs-light,
+                       eliminating the muddy brown band. */
+                    background: linear-gradient(
+                        to bottom,
+                        rgba(61, 58, 42, 0.94) 0%,
+                        rgba(46, 42, 26, 0.7) 6%,
+                        rgba(20, 18, 10, 0.4) 14%,
+                        rgba(0, 0, 0, 0.18) 30%,
+                        rgba(0, 0, 0, 0.05) 55%,
+                        transparent 70%,
+                        rgba(248, 249, 253, 0.35) 82%,
+                        rgba(248, 249, 253, 0.7) 90%,
+                        rgba(248, 249, 253, 0.95) 97%,
+                        #f8f9fd 100%
+                    );
+                    z-index: 2;
+                    pointer-events: none;
+                }
+
+                /* Bridge — sits OUTSIDE the hero, overlaps its bottom edge
+                   and the white page below.  backdrop-filter blurs content
+                   from BOTH sides of the seam so there is no hard line.
+                   z-index 2: above image (1) but below button (4) and schedule. */
+                .hero-bridge {
+                    position: relative;
+                    height: 160px;
+                    /* Center on seam: pull up half into hero, leave half over background.
+                       Also eat the 100px flex gaps on both sides. */
+                    margin-top: calc(-80px - 100px);
+                    margin-bottom: calc(-80px - 100px);
+                    z-index: 2;
+                    pointer-events: none;
+                    width: 100vw;
+                    margin-left: calc(-50vw + 50%);
+                }
+                /* All blur layers are full-height, centered on the seam.
+                   Mask: transparent at both edges → opaque at center = strongest blur at seam. */
+                .hero-bridge-blur {
+                    position: absolute;
+                    inset: 0;
+                }
+                .hero-bridge-blur.bridge-blur-1 {
+                    -webkit-backdrop-filter: blur(3px);
+                    backdrop-filter: blur(3px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+                }
+                .hero-bridge-blur.bridge-blur-2 {
+                    -webkit-backdrop-filter: blur(10px);
+                    backdrop-filter: blur(10px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
+                    mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
+                }
+                .hero-bridge-blur.bridge-blur-3 {
+                    -webkit-backdrop-filter: blur(24px);
+                    backdrop-filter: blur(24px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
+                    mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
+                }
+                /* No heavy white overlay needed — hero already fades to page-bg */
+                .hero-bridge::after {
+                    display: none;
+                }
+
+                /* h1 — centered in upper portion, clear of church building */
+                .hero .hero-title {
+                    position: absolute;
+                    top: 22vh;
+                    left: 0;
+                    right: 0;
+                    text-align: center;
+                    z-index: 3;
+                    color: white !important;
+                    font-size: clamp(64px, 16vw, 88px);
+                    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
+                    padding: 0 20px;
+                    line-height: 1.0;
+                    letter-spacing: -1.5px;
+                }
+
+                /* Bottom content area — stacked: Find Us button + info text */
+                .hero-body {
+                    position: relative;
+                    z-index: 4;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 0 24px;
+                    padding-bottom: 21vh;
+                    margin: 0;
                     width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    display: block;
+                    box-sizing: border-box;
+                    text-align: center;
+                }
+
+                .hero-service-time {
+                    color: #ffffff !important;
+                    font-size: 19px !important;
+                    font-weight: 600;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
+                    text-shadow:
+                        0 2px 8px rgba(0, 0, 0, 1),
+                        0 4px 20px rgba(0, 0, 0, 0.9),
+                        0 6px 40px rgba(0, 0, 0, 0.8),
+                        0 8px 80px rgba(0, 0, 0, 0.7),
+                        0 0 120px rgba(0, 0, 0, 0.5) !important;
+                    margin: 0;
+                    max-width: none !important;
+                    line-height: 1.4 !important;
+                }
+
+                /* Hero image — invisible fullscreen container for Find Us button only */
+                .hero-image {
+                    position: static !important;
+                    min-height: 0 !important;
+                    height: 0 !important;
+                    border-radius: 0 !important;
+                    overflow: visible !important;
+                    width: 100% !important;
+                    order: 1;
+                }
+
+                .hero-image img {
+                    display: none;
+                }
+
+                /* Find Us — gold pill, in normal document flow (not absolute) */
+                .find-us-wrapper {
+                    position: relative;
+                    bottom: auto;
+                    left: auto;
+                    right: auto;
+                    width: 100%;
+                    pointer-events: auto;
+                }
+
+                .find-us-btn {
+                    background: rgba(212, 165, 116, 0.92);
+                    -webkit-backdrop-filter: blur(12px);
+                    backdrop-filter: blur(12px);
+                    color: #ffffff;
+                    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+                    border: 1px solid rgba(255, 255, 255, 0.25);
+                    letter-spacing: 2.5px;
+                    font-weight: 600;
+                    padding: 8px 40px;
+                    font-size: 12px;
+                }
+
+                .find-us-btn:hover {
+                    background: rgba(212, 165, 116, 1.0);
+                }
+
+                /* Dropdown opens above button */
+                .find-us-wrapper .address-dropdown {
+                    bottom: calc(100% + 12px);
+                    top: auto;
                 }
                 
                 /* Outreach Section - Mobile */
@@ -2777,12 +3002,20 @@ export const homeStyles = (): string => `
                 /* NAV - Centered layout matching mobile design */
                 .nav-shell {
                     flex-wrap: wrap;
-                    justify-content: center;  /* Center all nav content */
+                    justify-content: center;
                     border-radius: 40px;
                     gap: 16px;
                     margin: 20px auto 50px;
                     padding: 16px 20px;
-                    top: 12px;
+                    top: calc(env(safe-area-inset-top, 0px) + 8px);
+                    /* Low opacity white + heavy blur = warm frosted glass that
+                       picks up the olive/earth tones from the hero behind it */
+                    background: rgba(255, 255, 255, 0.72);
+                    -webkit-backdrop-filter: blur(40px) saturate(1.8);
+                    backdrop-filter: blur(40px) saturate(1.8);
+                    border: 1px solid rgba(255, 255, 255, 0.4);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+                                0 2px 8px rgba(0, 0, 0, 0.06);
                 }
                 
                 .nav-shell.scrolled-mobile {
@@ -2791,6 +3024,7 @@ export const homeStyles = (): string => `
                     gap: 0;
                     margin-bottom: 30px;
                     top: 8px;
+                    background: rgba(255, 255, 255, 0.72);
                 }
 
                 nav ul {
@@ -2843,14 +3077,7 @@ export const homeStyles = (): string => `
                     white-space: nowrap;
                 }
 
-                .hero h1 {
-                    font-size: clamp(36px, 8vw, 52px);
-                    letter-spacing: -1px;
-                }
-
-                .hero p {
-                    font-size: 18px;
-                }
+                /* .hero h1 and .hero p — see main mobile hero block below */
 
                 .section-heading {
                     font-size: clamp(32px, 6vw, 48px);
@@ -2872,7 +3099,9 @@ export const homeStyles = (): string => `
 
             @media (max-width: 899px) {
                 .page {
-                    width: 92%;
+                    width: 100%;
+                    background: var(--bg-color); /* light bg covers olive body */
+                    box-sizing: border-box;
                 }
 
                 main {
@@ -2884,18 +3113,18 @@ export const homeStyles = (): string => `
                     padding: 0;
                 }
 
+                /* Schedule must sit above the bridge blur (z:2) */
+                .schedule {
+                    position: relative;
+                    z-index: 3;
+                    margin-top: 40px;
+                }
+
                 .hero {
-                    padding: 40px 0;
+                    padding: 0;
                 }
 
-                .hero h1 {
-                    font-size: clamp(32px, 7vw, 44px);
-                }
-
-                .hero p {
-                    font-size: 16px;
-                    line-height: 1.7;
-                }
+                /* .hero h1 inherits from .hero-title in main mobile hero block above */
 
                 .btn {
                     padding: 16px 32px;
@@ -3030,7 +3259,7 @@ export const homeStyles = (): string => `
                 }
 
                 .nav-spacer {
-                    height: clamp(130px, 40vw, 190px);
+                    height: 0;
                 }
 
                 .nav-shell {
@@ -3212,108 +3441,8 @@ export const homeStyles = (): string => `
                     margin-bottom: 20px; /* Reduced from 80px - contact section sits closer to footer */
                 }
 
-                .hero {
-                    padding: 20px 0 60px;
-                    min-height: auto;
-                    gap: 20px;
-                    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
-                    border-radius: 32px;
-                    margin: 0;
-                    padding-left: 0;
-                    padding-right: 0;
-                }
-                
-                .hero-body {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 24px;
-                    width: 100%;
-                    margin: 0;
-                    padding: 0;
-                }
-                
-                .hero-content {
-                    order: 2;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 20px;
-                }
-                
-                .hero-content p {
-                    margin: 0;
-                    line-height: 1.7;
-                    text-align: center;
-                }
-                
-                .hero-image {
-                    order: 1;
-                    min-height: 320px;
-                    border-radius: 24px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                
-                .hero-image img {
-                    object-position: center;
-                }
-                
-                /* Find Us Button - Smaller padding on mobile */
-                .find-us-wrapper {
-                    bottom: 12px;
-                    left: 12px;
-                    right: 12px;
-                }
-                
-                .find-us-btn {
-                    padding: 7px 28px;
-                    font-size: 11px;
-                    font-weight: 500;
-                }
-                
-                .service-info-buttons {
-                    width: 100%;
-                    margin: 0;
-                    padding: 0;
-                }
-                
-                .hero-body .cta-group {
-                    margin: 4px 0 0 0 !important;
-                    padding: 0 !important;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 12px;
-                    align-items: stretch;
-                    justify-content: center;
-                    width: 100%;
-                }
-                
-                .hero-body .cta-group .btn {
-                    width: 100% !important;
-                    margin: 0 !important;
-                    padding: 16px 32px !important;
-                    box-sizing: border-box;
-                }
-
-                .hero .eyebrow {
-                    padding: 12px 24px;
-                    font-size: 13px;
-                    letter-spacing: 2.5px;
-                }
-
-                .hero h1 {
-                    font-size: clamp(58px, 12vw, 77px);
-                    line-height: 1.0;
-                    letter-spacing: -1.5px;
-                    margin: 0 0 20px 0;
-                    text-align: center;
-                }
-
-                .hero p {
-                    font-size: 20px;
-                    line-height: 1.7;
-                    max-width: 100%;
-                }
+                /* 480px hero rules removed — 899px breakpoint handles all mobile hero layout.
+                   Only keep non-hero overrides and minor refinements here. */
 
                 .cta-group {
                     flex-direction: column;

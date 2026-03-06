@@ -4,6 +4,8 @@ export const homeHead = (): string => `
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+        <!-- iOS: make status bar blend with hero image olive tones -->
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
         <!-- Primary Meta Tags -->
         <title>Morning Star Christian Church | Boise, Idaho - Sunday Services & Community</title>
@@ -41,11 +43,10 @@ export const homeHead = (): string => `
         <meta name="twitter:image" content="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025">
         <meta name="twitter:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
 
-        <!-- Safari iOS theme-color for status bar and tab bar background -->
-        <meta name="theme-color" content="#f8f9fd">
-        <meta name="theme-color" content="#f8f9fd" media="(prefers-color-scheme: light)">
+        <!-- Safari iOS theme-color — olive green blends with hero image top -->
+        <meta name="theme-color" content="#3d3a2a">
+        <meta name="theme-color" content="#3d3a2a" media="(prefers-color-scheme: light)">
         <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
-        <meta name="apple-mobile-web-app-status-bar-style" content="default">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-title" content="Morning Star Church">
         <meta name="application-name" content="Morning Star Church">

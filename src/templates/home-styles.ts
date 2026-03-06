@@ -2874,7 +2874,7 @@ export const homeStyles = (): string => `
                     align-items: center;
                     gap: 12px;
                     padding: 0 24px;
-                    padding-bottom: 23vh;
+                    padding-bottom: 21vh;
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
@@ -2887,7 +2887,7 @@ export const homeStyles = (): string => `
                     font-weight: 500;
                     letter-spacing: 2px;
                     text-transform: uppercase;
-                    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+                    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
                     margin: 0;
                 }
 

@@ -2688,16 +2688,21 @@ export const homeStyles = (): string => `
                same hero image prevents the white/gray gap at the top of the screen. */
             @media (max-width: 899px) {
                 html {
-                    /* warm dark olive — matches theme-color for seamless iOS status bar */
-                    background: #3d3a2a;
+                    /* warm dark olive — fills iOS status bar / Dynamic Island area */
+                    background: #3d3a2a !important;
+                    background-color: #3d3a2a !important;
                 }
                 body {
                     margin: 0;
                     padding: 0;
+                    /* Olive base ensures status bar area matches hero overlay top */
+                    background-color: #3d3a2a;
                     background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
                     background-position: top center;
                     background-repeat: no-repeat;
+                    /* Kill the base light-to-light transition that flashes white */
+                    transition: none;
                 }
             }
 
@@ -2747,30 +2752,31 @@ export const homeStyles = (): string => `
                     pointer-events: none;
                 }
 
-                /* h1 — centered, positioned below nav in upper portion of image */
-                .hero-title {
+                /* h1 — centered in upper portion, clear of church building */
+                .hero .hero-title {
                     position: absolute;
-                    top: 20vh;
+                    top: 24vh;
                     left: 0;
                     right: 0;
                     text-align: center;
                     z-index: 2;
                     color: white !important;
-                    font-size: clamp(58px, 14vw, 78px);
+                    font-size: clamp(54px, 13vw, 72px);
                     text-shadow: 0 2px 32px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 0, 0, 0.25);
                     padding: 0 20px;
                     line-height: 1.0;
                     letter-spacing: -1.5px;
                 }
 
-                /* Bottom content area — paragraph text sits below FIND US button */
+                /* Bottom content area — stacked: Find Us button + info text */
                 .hero-body {
                     position: relative;
-                    z-index: 2;
+                    z-index: 4;
                     display: flex;
                     flex-direction: column;
-                    gap: 0;
-                    padding: 0 28px calc(env(safe-area-inset-bottom, 0px) + 72px);
+                    align-items: center;
+                    gap: 12px;
+                    padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 28px);
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
@@ -2780,40 +2786,48 @@ export const homeStyles = (): string => `
                 .hero-content {
                     display: flex;
                     flex-direction: column;
-                    gap: 4px;
+                    align-items: center;
+                    gap: 2px;
+                    order: 2;
                 }
 
                 /* Text colors over darkened image */
                 .hero p {
                     color: rgba(255, 255, 255, 0.88) !important;
+                    font-size: 15px !important;
                 }
 
                 .hero-address {
-                    display: none; /* hide address — Find Us handles this */
+                    display: block !important;
+                    color: rgba(255, 255, 255, 0.6);
+                    font-style: normal;
+                    font-size: 12px;
+                    letter-spacing: 1.5px;
+                    text-transform: uppercase;
                 }
 
                 /* Hero image — invisible fullscreen container for Find Us button only */
                 .hero-image {
-                    position: absolute !important;
-                    inset: 0 !important;
-                    min-height: unset !important;
+                    position: static !important;
+                    min-height: 0 !important;
+                    height: 0 !important;
                     border-radius: 0 !important;
-                    z-index: 3;
                     overflow: visible !important;
                     width: 100% !important;
-                    height: 100% !important;
-                    pointer-events: none;
+                    order: 1;
                 }
 
                 .hero-image img {
                     display: none;
                 }
 
-                /* Find Us — gold, sits directly above paragraph text */
+                /* Find Us — gold pill, in normal document flow (not absolute) */
                 .find-us-wrapper {
-                    bottom: calc(env(safe-area-inset-bottom, 0px) + 138px);
-                    left: 28px;
-                    right: 28px;
+                    position: relative;
+                    bottom: auto;
+                    left: auto;
+                    right: auto;
+                    width: 100%;
                     pointer-events: auto;
                 }
 
@@ -2826,12 +2840,18 @@ export const homeStyles = (): string => `
                     border: 1px solid rgba(255, 255, 255, 0.25);
                     letter-spacing: 2.5px;
                     font-weight: 700;
-                    padding: 14px 40px;
+                    padding: 16px 40px;
                     font-size: 13px;
                 }
 
                 .find-us-btn:hover {
                     background: rgba(212, 165, 116, 1.0);
+                }
+
+                /* Dropdown opens above button */
+                .find-us-wrapper .address-dropdown {
+                    bottom: calc(100% + 12px);
+                    top: auto;
                 }
                 
                 /* Outreach Section - Mobile */
@@ -2890,17 +2910,19 @@ export const homeStyles = (): string => `
                 /* NAV - Centered layout matching mobile design */
                 .nav-shell {
                     flex-wrap: wrap;
-                    justify-content: center;  /* Center all nav content */
+                    justify-content: center;
                     border-radius: 40px;
                     gap: 16px;
                     margin: 20px auto 50px;
                     padding: 16px 20px;
                     top: calc(env(safe-area-inset-top, 0px) + 8px);
-                    /* Mostly white with slight translucency for depth */
-                    background: rgba(255, 255, 255, 0.82);
-                    -webkit-backdrop-filter: blur(24px) saturate(1.4);
-                    backdrop-filter: blur(24px) saturate(1.4);
-                    border: 1px solid rgba(255, 255, 255, 0.6);
+                    /* Frosted glass — translucent white with strong blur */
+                    background: rgba(255, 255, 255, 0.55);
+                    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+                    backdrop-filter: blur(28px) saturate(1.6);
+                    border: 1px solid rgba(255, 255, 255, 0.35);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+                                0 2px 8px rgba(0, 0, 0, 0.06);
                 }
                 
                 .nav-shell.scrolled-mobile {
@@ -2961,14 +2983,7 @@ export const homeStyles = (): string => `
                     white-space: nowrap;
                 }
 
-                .hero h1 {
-                    font-size: clamp(36px, 8vw, 52px);
-                    letter-spacing: -1px;
-                }
-
-                .hero p {
-                    font-size: 18px;
-                }
+                /* .hero h1 and .hero p — see main mobile hero block below */
 
                 .section-heading {
                     font-size: clamp(32px, 6vw, 48px);
@@ -3006,19 +3021,7 @@ export const homeStyles = (): string => `
                     padding: 0;
                 }
 
-                .hero h1 {
-                    font-size: clamp(64px, 16vw, 86px);
-                    color: white;
-                    text-align: center;
-                    line-height: 1.0;
-                    letter-spacing: -1.5px;
-                }
-
-                .hero p {
-                    font-size: 16px;
-                    line-height: 1.7;
-                    color: rgba(255, 255, 255, 0.88);
-                }
+                /* .hero h1 inherits from .hero-title in main mobile hero block above */
 
                 .btn {
                     padding: 16px 32px;
@@ -3335,126 +3338,8 @@ export const homeStyles = (): string => `
                     margin-bottom: 20px; /* Reduced from 80px - contact section sits closer to footer */
                 }
 
-                .hero {
-                    height: 100vh;
-                    height: 100svh;
-                    min-height: 600px;
-                    justify-content: flex-end;
-                    padding: 0;
-                    gap: 0;
-                    background-image: url('/static/IMG_7331.jpeg');
-                    background-size: cover;
-                    background-position: center top;
-                    border-radius: 0;
-                    width: 100vw;
-                    margin-left: calc(-50vw + 50%);
-                }
-
-                .hero-body {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0;
-                    width: 100%;
-                    margin: 0;
-                    padding: 0 28px 32px;
-                    box-sizing: border-box;
-                }
-
-                .hero-content {
-                    order: unset;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 4px;
-                }
-
-                .hero-content p {
-                    margin: 0;
-                    line-height: 1.6;
-                    text-align: center;
-                }
-
-                .hero-image {
-                    order: unset;
-                    min-height: unset !important;
-                    border-radius: 0 !important;
-                    display: block;
-                    align-items: unset;
-                    justify-content: unset;
-                }
-
-                .hero-image img {
-                    display: none;
-                }
-                
-                /* Find Us Button - Smaller padding on mobile */
-                .find-us-wrapper {
-                    bottom: 12px;
-                    left: 12px;
-                    right: 12px;
-                }
-                
-                .find-us-btn {
-                    padding: 7px 28px;
-                    font-size: 11px;
-                    font-weight: 500;
-                }
-                
-                .service-info-buttons {
-                    width: 100%;
-                    margin: 0;
-                    padding: 0;
-                }
-                
-                .hero-body .cta-group {
-                    margin: 4px 0 0 0 !important;
-                    padding: 0 !important;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 12px;
-                    align-items: stretch;
-                    justify-content: center;
-                    width: 100%;
-                }
-                
-                .hero-body .cta-group .btn {
-                    width: 100% !important;
-                    margin: 0 !important;
-                    padding: 16px 32px !important;
-                    box-sizing: border-box;
-                }
-
-                .hero .eyebrow {
-                    padding: 12px 24px;
-                    font-size: 13px;
-                    letter-spacing: 2.5px;
-                }
-
-                .hero h1 {
-                    font-size: clamp(64px, 16vw, 86px);
-                    line-height: 1.0;
-                    letter-spacing: -1.5px;
-                    margin: 0;
-                    text-align: center;
-                    color: white;
-                    text-shadow: 0 2px 32px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 0, 0, 0.25);
-                }
-
-                /* Reposition h1 in upper area (480px breakpoint override) */
-                .hero .hero-title {
-                    position: absolute;
-                    top: 20vh;
-                    left: 0;
-                    right: 0;
-                    padding: 0 20px;
-                    font-size: clamp(58px, 14vw, 78px);
-                }
-
-                .hero p {
-                    font-size: 20px;
-                    line-height: 1.7;
-                    max-width: 100%;
-                    color: rgba(255, 255, 255, 0.88);
-                }
+                /* 480px hero rules removed — 899px breakpoint handles all mobile hero layout.
+                   Only keep non-hero overrides and minor refinements here. */
 
                 .cta-group {
                     flex-direction: column;

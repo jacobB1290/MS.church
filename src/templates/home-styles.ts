@@ -2732,7 +2732,7 @@ export const homeStyles = (): string => `
                     gap: 0;
                     background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
-                    background-position: center center;
+                    background-position: center 35%;
                     border-radius: 0;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);

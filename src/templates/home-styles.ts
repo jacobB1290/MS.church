@@ -2865,7 +2865,7 @@ export const homeStyles = (): string => `
                 /* h1 — centered in upper portion, clear of church building */
                 .hero .hero-title {
                     position: absolute;
-                    top: 22vh;
+                    top: 23vh;
                     left: 0;
                     right: 0;
                     text-align: center;

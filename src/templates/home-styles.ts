@@ -2887,7 +2887,7 @@ export const homeStyles = (): string => `
                     font-weight: 500;
                     letter-spacing: 2px;
                     text-transform: uppercase;
-                    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
+                    text-shadow: 0 4px 40px rgba(0, 0, 0, 0.95), 0 8px 80px rgba(0, 0, 0, 0.8), 0 0 160px rgba(0, 0, 0, 0.6), 0 0 200px rgba(0, 0, 0, 0.4);
                     margin: 0;
                 }
 

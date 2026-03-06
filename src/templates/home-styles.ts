@@ -2740,13 +2740,14 @@ export const homeStyles = (): string => `
                     inset: 0;
                     background: linear-gradient(
                         to bottom,
-                        rgba(61, 58, 42, 0.94) 0%,     /* matches theme-color — seamless with status bar */
-                        rgba(46, 42, 26, 0.7) 8%,      /* taper fades into image */
-                        rgba(20, 18, 10, 0.4) 18%,     /* lighter to reveal more image */
-                        rgba(0, 0, 0, 0.18) 40%,       /* gentle dark over church image */
-                        rgba(0, 0, 0, 0.15) 65%,
-                        rgba(248, 249, 253, 0.45) 90%,
-                        rgb(248, 249, 253) 100%
+                        rgba(61, 58, 42, 0.94) 0%,
+                        rgba(46, 42, 26, 0.7) 8%,
+                        rgba(20, 18, 10, 0.4) 18%,
+                        rgba(0, 0, 0, 0.18) 40%,
+                        rgba(0, 0, 0, 0.12) 70%,
+                        rgba(0, 0, 0, 0.08) 85%,
+                        rgba(248, 249, 253, 0.3) 96%,
+                        rgba(248, 249, 253, 0.7) 100%
                     );
                     z-index: 1;
                     pointer-events: none;
@@ -2755,13 +2756,13 @@ export const homeStyles = (): string => `
                 /* h1 — centered in upper portion, clear of church building */
                 .hero .hero-title {
                     position: absolute;
-                    top: 24vh;
+                    top: 22vh;
                     left: 0;
                     right: 0;
                     text-align: center;
                     z-index: 2;
                     color: white !important;
-                    font-size: clamp(54px, 13vw, 72px);
+                    font-size: clamp(64px, 16vw, 88px);
                     text-shadow: 0 2px 32px rgba(0, 0, 0, 0.5), 0 0 80px rgba(0, 0, 0, 0.25);
                     padding: 0 20px;
                     line-height: 1.0;
@@ -2775,8 +2776,8 @@ export const homeStyles = (): string => `
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    gap: 12px;
-                    padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 28px);
+                    gap: 10px;
+                    padding: 0 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
                     margin: 0;
                     width: 100%;
                     box-sizing: border-box;
@@ -2791,19 +2792,21 @@ export const homeStyles = (): string => `
                     order: 2;
                 }
 
-                /* Text colors over darkened image */
+                /* Text colors — light on dark image background */
                 .hero p {
-                    color: rgba(255, 255, 255, 0.88) !important;
-                    font-size: 15px !important;
+                    color: rgba(255, 255, 255, 0.85) !important;
+                    font-size: 14px !important;
+                    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
                 }
 
                 .hero-address {
                     display: block !important;
-                    color: rgba(255, 255, 255, 0.6);
+                    color: rgba(255, 255, 255, 0.55);
                     font-style: normal;
-                    font-size: 12px;
+                    font-size: 11px;
                     letter-spacing: 1.5px;
                     text-transform: uppercase;
+                    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
                 }
 
                 /* Hero image — invisible fullscreen container for Find Us button only */
@@ -2839,9 +2842,9 @@ export const homeStyles = (): string => `
                     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
                     border: 1px solid rgba(255, 255, 255, 0.25);
                     letter-spacing: 2.5px;
-                    font-weight: 700;
-                    padding: 16px 40px;
-                    font-size: 13px;
+                    font-weight: 600;
+                    padding: 12px 40px;
+                    font-size: 12px;
                 }
 
                 .find-us-btn:hover {
@@ -2916,13 +2919,14 @@ export const homeStyles = (): string => `
                     margin: 20px auto 50px;
                     padding: 16px 20px;
                     top: calc(env(safe-area-inset-top, 0px) + 8px);
-                    /* Frosted glass — translucent white with strong blur */
-                    background: rgba(255, 255, 255, 0.55);
+                    /* High enough opacity that olive body bg doesn't bleed through,
+                       but still translucent enough for a frosted glass feel */
+                    background: rgba(255, 255, 255, 0.78);
                     -webkit-backdrop-filter: blur(28px) saturate(1.6);
                     backdrop-filter: blur(28px) saturate(1.6);
-                    border: 1px solid rgba(255, 255, 255, 0.35);
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
-                                0 2px 8px rgba(0, 0, 0, 0.06);
+                    border: 1px solid rgba(255, 255, 255, 0.4);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10),
+                                0 2px 8px rgba(0, 0, 0, 0.04);
                 }
                 
                 .nav-shell.scrolled-mobile {

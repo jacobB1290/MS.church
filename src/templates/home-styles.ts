@@ -2683,18 +2683,28 @@ export const homeStyles = (): string => `
                This matches the original working version from GitHub
                ======================================== */
 
-            /* iOS safe-area: only the status bar strip needs olive.
-               Body stays light (#f8f9fd) so the rest of the page is unaffected.
-               A ::before on the hero bleeds upward to fill the status bar gap. */
+            /* iOS status bar trick: a fixed olive strip covers ONLY the
+               safe-area-inset-top (the ~47px behind the clock/battery).
+               Body and html stay light so nothing else is affected. */
             @media (max-width: 899px) {
-                html {
-                    background: var(--bg-color) !important;
-                }
                 body {
                     margin: 0;
                     padding: 0;
                     background-image: none !important;
                     transition: none;
+                }
+
+                /* Fixed olive strip — sits in the status bar gap, above everything */
+                body::before {
+                    content: '';
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: env(safe-area-inset-top, 0px);
+                    background: #3d3a2a;
+                    z-index: 9999;
+                    pointer-events: none;
                 }
             }
 
@@ -2704,24 +2714,17 @@ export const homeStyles = (): string => `
                     height: 0;
                 }
 
-                /* Mobile Hero Section - Fullscreen edge-to-edge background.
-                   CRITICAL: override fadeInUp so hero is instantly visible —
-                   otherwise the animation-delay causes a flash where the light
-                   body bg shows through the nav's translucent backdrop.
-
-                   The negative margin + extra height extends the hero upward
-                   into the iOS status bar area so its background-image and
-                   gradient fill the gap — no olive body bg needed. */
+                /* Mobile Hero - fullscreen with image background.
+                   No fadeInUp animation — hero must be instantly visible so
+                   the nav's backdrop-filter blurs the hero, not a blank bg. */
                 .hero {
                     opacity: 1 !important;
                     transform: none !important;
                     animation: none !important;
                     position: relative;
-                    height: calc(100vh + 100px);
-                    height: calc(100svh + 100px);
-                    min-height: 700px;
-                    margin-top: -100px;
-                    padding-top: 100px;
+                    height: 100vh;
+                    height: 100svh;
+                    min-height: 600px;
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
@@ -2757,11 +2760,10 @@ export const homeStyles = (): string => `
                     pointer-events: none;
                 }
 
-                /* h1 — centered in upper portion, clear of church building.
-                   +100px compensates for the hero's negative margin extension. */
+                /* h1 — centered in upper portion, clear of church building */
                 .hero .hero-title {
                     position: absolute;
-                    top: calc(22vh + 100px);
+                    top: 22vh;
                     left: 0;
                     right: 0;
                     text-align: center;
@@ -2924,14 +2926,14 @@ export const homeStyles = (): string => `
                     margin: 20px auto 50px;
                     padding: 16px 20px;
                     top: calc(env(safe-area-inset-top, 0px) + 8px);
-                    /* Hero is always visible behind nav (no fadeInUp), so
-                       backdrop-filter blurs the hero image — nice frosted glass */
-                    background: rgba(255, 255, 255, 0.72);
-                    -webkit-backdrop-filter: blur(28px) saturate(1.6);
-                    backdrop-filter: blur(28px) saturate(1.6);
-                    border: 1px solid rgba(255, 255, 255, 0.4);
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10),
-                                0 2px 8px rgba(0, 0, 0, 0.04);
+                    /* Low opacity white + heavy blur = warm frosted glass that
+                       picks up the olive/earth tones from the hero behind it */
+                    background: rgba(255, 255, 255, 0.35);
+                    -webkit-backdrop-filter: blur(40px) saturate(1.8);
+                    backdrop-filter: blur(40px) saturate(1.8);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+                                0 2px 8px rgba(0, 0, 0, 0.06);
                 }
                 
                 .nav-shell.scrolled-mobile {
@@ -2940,6 +2942,8 @@ export const homeStyles = (): string => `
                     gap: 0;
                     margin-bottom: 30px;
                     top: 8px;
+                    /* Slightly more opaque when scrolled over lighter sections */
+                    background: rgba(255, 255, 255, 0.55);
                 }
 
                 nav ul {

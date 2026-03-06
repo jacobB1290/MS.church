@@ -2725,10 +2725,11 @@ export const homeStyles = (): string => `
                     gap: 0;
                     background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
-                    background-position: center top;
+                    background-position: center center;
                     border-radius: 0;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
+                    margin-bottom: -60px;
                     box-sizing: border-box;
                 }
 
@@ -2744,10 +2745,10 @@ export const homeStyles = (): string => `
                         rgba(46, 42, 26, 0.7) 8%,
                         rgba(20, 18, 10, 0.4) 18%,
                         rgba(0, 0, 0, 0.18) 40%,
-                        rgba(0, 0, 0, 0.12) 70%,
-                        rgba(0, 0, 0, 0.08) 85%,
-                        rgba(248, 249, 253, 0.3) 96%,
-                        rgba(248, 249, 253, 0.7) 100%
+                        rgba(0, 0, 0, 0.10) 70%,
+                        rgba(0, 0, 0, 0.05) 85%,
+                        rgba(248, 249, 253, 0.5) 94%,
+                        rgba(248, 249, 253, 0.95) 100%
                     );
                     z-index: 1;
                     pointer-events: none;

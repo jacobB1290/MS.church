@@ -40,10 +40,11 @@ export const homeScripts = (): string => `
                     if (heroEl) {
                         const htmlEl = document.documentElement;
                         const statusBarObserver = new IntersectionObserver((entries) => {
-                            const isHeroVisible = entries[0].isIntersecting;
-                            const bg = isHeroVisible ? '#3d3a2a' : '#f8f9fd';
-                            htmlEl.style.background = bg;
-                            body.style.background = bg;
+                            if (entries[0].isIntersecting) {
+                                htmlEl.classList.remove('scrolled-past-hero');
+                            } else {
+                                htmlEl.classList.add('scrolled-past-hero');
+                            }
                         }, { threshold: 0.05 });
                         statusBarObserver.observe(heroEl);
                     }

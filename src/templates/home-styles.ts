@@ -2684,11 +2684,15 @@ export const homeStyles = (): string => `
                ======================================== */
 
             /* iOS status bar: Safari reads body's background-color for the
-               status bar tint. html+body = olive so status bar is olive.
-               .page wrapper gets the light bg to cover visible content. */
+               status bar tint. Defaults to olive; JS adds .scrolled-past-hero
+               to switch to white when user scrolls past the hero section.
+               .page wrapper always has light bg to cover visible content. */
             @media (max-width: 899px) {
                 html {
                     background: #3d3a2a !important;
+                }
+                html.scrolled-past-hero {
+                    background: #f8f9fd !important;
                 }
                 body {
                     margin: 0;
@@ -2696,6 +2700,9 @@ export const homeStyles = (): string => `
                     background: #3d3a2a !important;
                     background-image: none !important;
                     transition: none;
+                }
+                html.scrolled-past-hero body {
+                    background: #f8f9fd !important;
                 }
             }
 

@@ -95,7 +95,7 @@ export const homeStyles = (): string => `
             .nav-shell {
                 padding: 20px 40px;
                 background: rgb(255, 255, 255);
-                background: rgba(255, 255, 255, 0.72);
+                background: rgba(255, 255, 255, 0.42);
                 border-radius: 100px;
                 display: flex;
                 align-items: center;
@@ -103,8 +103,8 @@ export const homeStyles = (): string => `
                 gap: 40px;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08),
                             0 8px 20px rgba(0, 0, 0, 0.04);
-                -webkit-backdrop-filter: blur(2px);
-                backdrop-filter: blur(2px);
+                -webkit-backdrop-filter: blur(12px);
+                backdrop-filter: blur(12px);
                 position: fixed;
                 top: 16px;
                 left: 50%;
@@ -138,7 +138,7 @@ export const homeStyles = (): string => `
             }
 
             .nav-shell:hover {
-                background: rgba(255, 255, 255, 0.78);
+                background: rgba(255, 255, 255, 0.50);
                 box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1),
                             0 10px 24px rgba(0, 0, 0, 0.05);
             }

@@ -1,4 +1,4 @@
-// Version: 1.31.7 - Move hero title 0.5vh down
+// Version: 1.31.8 - Fix mobile scrolled nav button scaling/wrapping
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

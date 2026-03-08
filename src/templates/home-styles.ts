@@ -3040,8 +3040,9 @@ export const homeStyles = (): string => `
                 
                 .nav-shell.scrolled-mobile {
                     border-radius: 100px;
-                    padding: 8px 20px;
+                    padding: clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px);
                     gap: 0;
+                    flex-wrap: nowrap; /* Prevent CONTACT button from dropping to second row */
                     margin-bottom: 30px;
                     top: 8px;
                     background: rgba(255, 255, 255, 0.72);
@@ -3054,9 +3055,17 @@ export const homeStyles = (): string => `
                     gap: clamp(8px, 3vw, 18px); /* Responsive gap */
                     order: 1;  /* Nav links first */
                 }
-                
+
+                /* In scrolled state, let nav fill available space and distribute evenly */
+                .nav-shell.scrolled-mobile nav {
+                    flex: 1;
+                    min-width: 0;
+                }
+
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: clamp(8px, 3vw, 16px);
+                    gap: 0;
+                    justify-content: space-evenly;
+                    width: 100%;
                 }
 
                 .brand {
@@ -3305,14 +3314,14 @@ export const homeStyles = (): string => `
                 
                 .nav-form-btn {
                     display: none;
-                    padding: 6px 14px;
+                    padding: clamp(5px, 1.5vw, 6px) clamp(9px, 3vw, 14px);
                     border-radius: 100px;
                     background: rgba(255, 255, 255, 0.9);
                     color: #1a1a2e;
-                    font-size: 10px;
+                    font-size: clamp(9px, 2.5vw, 10px);
                     font-weight: 700;
                     text-transform: uppercase;
-                    letter-spacing: 1.2px;
+                    letter-spacing: clamp(0.5px, 0.3vw, 1.2px);
                     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
                     -webkit-backdrop-filter: blur(10px);
                     backdrop-filter: blur(10px);
@@ -3321,18 +3330,19 @@ export const homeStyles = (): string => `
                     align-items: center;
                     justify-content: center;
                     white-space: nowrap;
+                    flex-shrink: 0;
                     opacity: 0;
                     transform: scale(0.85);
                     position: absolute;
                     right: 18px;
                 }
-                
+
                 .nav-shell.scrolled-mobile .nav-form-btn {
                     display: inline-flex;
                     opacity: 1;
                     transform: scale(1);
                     position: relative;
-                    margin-left: 8px;
+                    margin-left: clamp(4px, 1.5vw, 8px);
                     right: auto;
                 }
                 
@@ -3443,9 +3453,9 @@ export const homeStyles = (): string => `
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: clamp(6px, 2.5vw, 12px);
+                    gap: 0;
                     flex-wrap: nowrap;
-                    justify-content: center;
+                    justify-content: space-evenly;
                 }
 
                 nav a {
@@ -3455,8 +3465,8 @@ export const homeStyles = (): string => `
                 }
 
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: clamp(10px, 2.5vw, 12px);
-                    letter-spacing: clamp(0.8px, 0.3vw, 1.5px);
+                    font-size: clamp(9px, 2.8vw, 12px);
+                    letter-spacing: clamp(0px, 0.2vw, 1px);
                     white-space: nowrap;
                 }
 

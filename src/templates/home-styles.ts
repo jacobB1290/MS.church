@@ -758,34 +758,35 @@ export const homeStyles = (): string => `
                 width: 100%;
             }
 
-            /* Viewport: clip-path gives generous room for shadows on ALL sides */
+            /* Viewport: overflow hidden with padding gives room for shadows without hard clip */
             .carousel-viewport {
                 position: relative;
-                overflow: visible;
-                clip-path: inset(-80px -40px -80px -40px);
+                overflow: hidden;
+                padding: 60px 24px;
+                margin: -60px -24px;
             }
 
-            /* Soft fog on left/right edges — ONLY covers card area, never header */
+            /* Soft fog on left/right edges — smoothly fades shadow overflow */
             .carousel-wrapper::before,
             .carousel-wrapper::after {
                 content: '';
                 position: absolute;
                 top: 0;
                 bottom: 0;
-                width: 60px;
+                width: 48px;
                 z-index: 3;
                 pointer-events: none;
             }
             .carousel-wrapper::before {
-                left: -40px;
-                background: linear-gradient(to right, 
-                    var(--bg-color, #f8f9fd) 0%, 
+                left: 0;
+                background: linear-gradient(to right,
+                    var(--bg-color, #f8f9fd) 0%,
                     rgba(248, 249, 253, 0) 100%);
             }
             .carousel-wrapper::after {
-                right: -40px;
-                background: linear-gradient(to left, 
-                    var(--bg-color, #f8f9fd) 0%, 
+                right: 0;
+                background: linear-gradient(to left,
+                    var(--bg-color, #f8f9fd) 0%,
                     rgba(248, 249, 253, 0) 100%);
             }
 
@@ -810,24 +811,22 @@ export const homeStyles = (): string => `
                     padding: 0 16px;
                 }
                 .carousel-viewport {
-                    /* Allow shadows to extend vertically, but clip horizontally
-                       to prevent adjacent card glow from bleeding through */
-                    clip-path: inset(-60px 0px -60px 0px);
+                    padding: 50px 16px;
+                    margin: -50px -16px;
                 }
                 .carousel-wrapper {
-                    /* Let clip-path handle containment; no extra clipping */
                     overflow: visible;
                 }
-                /* Soft fog fades — slightly wider to cover the shadow bleed area */
+                /* Soft fog fades on mobile */
                 .carousel-wrapper::before,
                 .carousel-wrapper::after {
-                    width: 40px;
+                    width: 32px;
                 }
                 .carousel-wrapper::before {
-                    left: -24px;
+                    left: 0;
                 }
                 .carousel-wrapper::after {
-                    right: -24px;
+                    right: 0;
                     left: auto;
                 }
             }

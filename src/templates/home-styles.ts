@@ -24,6 +24,7 @@ export const homeStyles = (): string => `
                 background-color: var(--bg-color);
                 min-height: 100%;
                 min-height: -webkit-fill-available;
+                overflow-x: hidden;
             }
             
             /* Fallback for older iOS devices (iPhone 6S, iPhone X, etc.) that don't support backdrop-filter */

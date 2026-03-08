@@ -810,21 +810,24 @@ export const homeStyles = (): string => `
                     padding: 0 16px;
                 }
                 .carousel-viewport {
-                    clip-path: inset(-60px 0 -60px 0);
+                    /* Allow shadows to extend on ALL sides — generous horizontal room
+                       so card glow/shadow isn't hard-clipped at the edges */
+                    clip-path: inset(-60px -24px -60px -24px);
                 }
                 .carousel-wrapper {
-                    overflow-x: clip;
+                    /* Let clip-path handle containment; no extra clipping */
+                    overflow: visible;
                 }
+                /* Soft fog fades — slightly wider to cover the shadow bleed area */
                 .carousel-wrapper::before,
                 .carousel-wrapper::after {
-                    width: 24px;
-                    left: 0;
+                    width: 40px;
                 }
                 .carousel-wrapper::before {
-                    left: 0;
+                    left: -24px;
                 }
                 .carousel-wrapper::after {
-                    right: 0;
+                    right: -24px;
                     left: auto;
                 }
             }
@@ -2971,8 +2974,12 @@ export const homeStyles = (): string => `
                     width: 100%;
                     max-width: 100%;
                     padding-bottom: 40px;
-                    overflow-x: clip; /* prevent horizontal scroll but allow vertical shadows */
-                    overflow-y: visible;
+                    /* Side padding gives card shadows room to breathe naturally
+                       instead of being hard-clipped at the viewport edge */
+                    padding-left: 12px;
+                    padding-right: 12px;
+                    box-sizing: border-box;
+                    overflow: visible;
                 }
                 
                 .outreach .section-eyebrow {

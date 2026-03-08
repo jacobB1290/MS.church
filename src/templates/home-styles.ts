@@ -3128,8 +3128,8 @@ export const homeStyles = (): string => `
                 }
 
                 main {
-                    gap: 100px;
-                    margin-bottom: 100px;
+                    gap: 64px;
+                    margin-bottom: 64px;
                 }
 
                 section {
@@ -3140,7 +3140,6 @@ export const homeStyles = (): string => `
                 .schedule {
                     position: relative;
                     z-index: 3;
-                    margin-top: 40px;
                 }
 
                 .hero {
@@ -3656,10 +3655,6 @@ export const homeStyles = (): string => `
                     border-radius: 32px;
                 }
 
-                .watch {
-                    margin-top: 120px;
-                }
-
                 .watch-card {
                     padding: 28px 20px;
                     border-radius: 24px;
@@ -3896,10 +3891,10 @@ export const homeStyles = (): string => `
                     white-space: nowrap;
                 }
                 
-                /* Main Content Spacing - Dramatically reduce gaps to move sections up */
+                /* Main Content Spacing */
                 main {
-                    gap: 20px;
-                    margin-bottom: 20px;
+                    gap: 48px;
+                    margin-bottom: 48px;
                 }
                 
                 /* Hero Section - Add padding to push text down */
@@ -4073,7 +4068,6 @@ export const homeStyles = (): string => `
                 /* Watch Section */
                 .watch {
                     gap: 12px;
-                    margin-top: 100px;
                 }
                 
                 .watch-header {

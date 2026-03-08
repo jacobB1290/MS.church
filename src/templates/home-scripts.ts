@@ -495,11 +495,21 @@ export const homeScripts = (): string => `
                         if (currentIndex < getMaxIndex()) { currentIndex++; render(); resetAutoTimer(); }
                     });
 
-                    let touchStartX = 0, touchStartY = 0;
+                    let touchStartX = 0, touchStartY = 0, isSwiping = false;
                     carouselTrack.addEventListener('touchstart', e => {
                         touchStartX = e.touches[0].clientX;
                         touchStartY = e.touches[0].clientY;
+                        isSwiping = false;
                     }, { passive: true });
+                    carouselTrack.addEventListener('touchmove', e => {
+                        if (!e.touches[0]) return;
+                        const dx = Math.abs(e.touches[0].clientX - touchStartX);
+                        const dy = Math.abs(e.touches[0].clientY - touchStartY);
+                        if (dx > dy && dx > 10) {
+                            isSwiping = true;
+                            e.preventDefault();
+                        }
+                    }, { passive: false });
                     carouselTrack.addEventListener('touchend', e => {
                         if (!e.changedTouches[0]) return;
                         const dx = e.changedTouches[0].clientX - touchStartX;

@@ -794,6 +794,7 @@ export const homeStyles = (): string => `
                 display: flex;
                 transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
                 will-change: transform;
+                touch-action: pan-y pinch-zoom;
             }
 
             /* Each card slot */
@@ -809,9 +810,9 @@ export const homeStyles = (): string => `
                     padding: 0 16px;
                 }
                 .carousel-viewport {
-                    /* Allow shadows to extend on ALL sides — generous horizontal room
-                       so card glow/shadow isn't hard-clipped at the edges */
-                    clip-path: inset(-60px -24px -60px -24px);
+                    /* Allow shadows to extend vertically, but clip horizontally
+                       to prevent adjacent card glow from bleeding through */
+                    clip-path: inset(-60px 0px -60px 0px);
                 }
                 .carousel-wrapper {
                     /* Let clip-path handle containment; no extra clipping */
@@ -949,18 +950,11 @@ export const homeStyles = (): string => `
                 position: relative;
                 width: 100%;
                 aspect-ratio: 3/4;
-                border-radius: 20px;
+                border-radius: 32px;
                 overflow: hidden;
                 background: transparent;
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
                 transition: box-shadow 0.4s ease, transform 0.4s ease;
-            }
-
-            /* Mobile: match memories card radius */
-            @media (max-width: 960px) {
-                .event-flyer-wrapper {
-                    border-radius: 18px;
-                }
             }
             
             .event-flyer-wrapper:hover {
@@ -1110,7 +1104,7 @@ export const homeStyles = (): string => `
                 background: rgba(255, 255, 255, 0.85);
                 border: 1px solid rgba(255,255,255,0.6);
                 backdrop-filter: blur(20px);
-                border-radius: 20px;
+                border-radius: 32px;
                 position: relative;
                 cursor: pointer;
                 transition: all 0.4s ease;
@@ -1123,7 +1117,7 @@ export const homeStyles = (): string => `
             }
             @media (max-width: 960px) {
                 .carousel-past-card {
-                    border-radius: 18px;
+                    border-radius: 32px;
                 }
             }
             .carousel-past-card .past-card-badge {
@@ -1155,7 +1149,7 @@ export const homeStyles = (): string => `
             /* Desktop: bigger cards & stronger glow */
             @media (min-width: 961px) {
                 .event-flyer-wrapper {
-                    border-radius: 24px;
+                    border-radius: 40px;
                 }
                 .event-date {
                     top: 16px;
@@ -1164,7 +1158,7 @@ export const homeStyles = (): string => `
                     font-size: 11px;
                 }
                 .carousel-past-card {
-                    border-radius: 24px;
+                    border-radius: 40px;
                     padding: 32px 24px;
                 }
                 .carousel-past-card .past-card-icon { font-size: 48px; }
@@ -3580,7 +3574,7 @@ export const homeStyles = (): string => `
                 }
 
                 .event-card {
-                    border-radius: 18px;
+                    border-radius: 32px;
                 }
 
                 .event-date {
@@ -4511,7 +4505,7 @@ export const homeStyles = (): string => `
                 
                 .event-card {
                     padding: clamp(12px, 1.5vw, 18px);
-                    border-radius: 20px;
+                    border-radius: 40px;
                 }
                 
                 .event-cta .btn {

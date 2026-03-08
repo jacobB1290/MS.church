@@ -669,7 +669,6 @@ export const homeStyles = (): string => `
             .outreach {
                 display: flex;
                 flex-direction: column;
-                padding-bottom: 48px;
                 align-items: flex-start;
             }
 
@@ -747,7 +746,7 @@ export const homeStyles = (): string => `
                 .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #d4a574; color: #d4a574; border-radius: 30px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
                 .past-events-card .past-card-btn:hover { background: #d4a574; color: white; }
                 
-                .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 60px !important; }
+                .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
             }
 
             /* ========================================
@@ -2964,7 +2963,7 @@ export const homeStyles = (): string => `
                 .outreach {
                     width: 100%;
                     max-width: 100%;
-                    padding-bottom: 40px;
+                    padding-bottom: 0;
                     /* Side padding gives card shadows room to breathe naturally
                        instead of being hard-clipped at the viewport edge */
                     padding-left: 12px;
@@ -3386,7 +3385,7 @@ export const homeStyles = (): string => `
                 /* Mobile stay-tuned overrides */
                 .stay-tuned-only {
                     min-height: auto !important;
-                    padding-bottom: 20px !important;
+                    padding-bottom: 0 !important;
                 }
                 
                 .placeholder-flyer {

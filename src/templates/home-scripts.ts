@@ -59,66 +59,12 @@ export const homeScripts = (): string => `
                 // Browser-side cache (5 minutes) to avoid repeat fetches within a session
                 let calendarCache = { data: null, timestamp: 0 };
 
-                // Direct Google Calendar fetch (fallback when server proxy fails).
-                // The API key is HTTP-Referrer-restricted to ms.church, so this
-                // only works from the browser on the live domain.
-                async function fetchCalendarDirect() {
-                    const calendarId = 'morningstarchurchboise@gmail.com';
-                    const apiKey = 'AIzaSyBa2FQQolaJ0iM3vYSCCJd55vXkzmPA6Jg';
-                    const oneYearAgo = new Date();
-                    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-                    const url = new URL(\`https://www.googleapis.com/calendar/v3/calendars/\${encodeURIComponent(calendarId)}/events\`);
-                    url.searchParams.set('key', apiKey);
-                    url.searchParams.set('singleEvents', 'true');
-                    url.searchParams.set('orderBy', 'startTime');
-                    url.searchParams.set('maxResults', '50');
-                    url.searchParams.set('timeZone', 'America/Boise');
-                    url.searchParams.set('eventTypes', 'default');
-                    url.searchParams.set('supportsAttachments', 'true');
-                    url.searchParams.set('timeMin', oneYearAgo.toISOString());
-
-                    const resp = await fetch(url.toString());
-                    if (!resp.ok) throw new Error(\`Google API HTTP \${resp.status}\`);
-                    const data = await resp.json();
-                    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-                    return (data.items || [])
-                        .filter(e => e.status !== 'cancelled' && (!e.eventType || e.eventType === 'default'))
-                        .map(e => {
-                            const startDate = (e.start && (e.start.date || e.start.dateTime)) || '';
-                            const d = new Date(startDate);
-                            let imageUrl = '';
-                            if (e.attachments && e.attachments.length > 0) {
-                                const img = e.attachments.find(a => a.mimeType && a.mimeType.startsWith('image/')) || e.attachments[0];
-                                if (img.fileId) imageUrl = \`https://lh3.googleusercontent.com/d/\${img.fileId}=w1000\`;
-                                else if (img.fileUrl) {
-                                    const m = img.fileUrl.match(/\\/d\\/([a-zA-Z0-9_-]+)|[?&]id=([a-zA-Z0-9_-]+)/);
-                                    if (m) imageUrl = \`https://lh3.googleusercontent.com/d/\${m[1] || m[2]}=w1000\`;
-                                }
-                            }
-                            let ctaText = 'LEARN MORE', ctaLink = '#contact';
-                            if (e.description) {
-                                const cm = e.description.match(/\\[CTA:\\s*([^|]+)\\s*\\|\\s*([^\\]]+)\\]/);
-                                if (cm) { ctaText = cm[1].trim(); ctaLink = cm[2].trim(); }
-                            }
-                            return {
-                                id: e.id,
-                                title: e.summary || 'Untitled Event',
-                                description: (e.description || '').replace(/\\[CTA:[^\\]]+\\]/, '').trim(),
-                                date: d.toISOString().split('T')[0],
-                                displayDate: \`\${months[d.getMonth()]} \${d.getDate()}\`,
-                                image: imageUrl,
-                                cta: { text: ctaText, link: ctaLink }
-                            };
-                        });
-                }
-
                 async function fetchGoogleCalendarEvents() {
                     const now = Date.now();
                     if (calendarCache.data && (now - calendarCache.timestamp) < 5 * 60 * 1000) {
                         return calendarCache.data;
                     }
 
-                    // Try server proxy first (benefits from server-side caching)
                     try {
                         const response = await fetch('/api/calendar/events');
                         if (!response.ok) throw new Error(\`HTTP \${response.status}\`);
@@ -126,17 +72,8 @@ export const homeScripts = (): string => `
                         if (!data.success) throw new Error(data.error || 'Calendar API error');
                         calendarCache = { data: data.events, timestamp: now };
                         return data.events;
-                    } catch (proxyError) {
-                        console.warn('Server proxy failed, trying direct fetch:', proxyError);
-                    }
-
-                    // Fallback: call Google Calendar API directly from the browser
-                    try {
-                        const events = await fetchCalendarDirect();
-                        calendarCache = { data: events, timestamp: now };
-                        return events;
-                    } catch (directError) {
-                        console.error('Direct calendar fetch also failed:', directError);
+                    } catch (error) {
+                        console.error('Failed to fetch events:', error);
                         const heading = document.querySelector('.outreach .section-heading');
                         if (heading && !heading.nextElementSibling?.classList.contains('calendar-error-notice')) {
                             const notice = document.createElement('p');

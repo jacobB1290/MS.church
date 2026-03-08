@@ -35,27 +35,24 @@ export function registerCalendarRoute(app: Hono) {
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
       apiUrl.searchParams.set('timeMin', oneYearAgo.toISOString())
 
-      // The Google Cloud API key is HTTP-Referrer-restricted to ms.church.
-      // Forward the original browser Referer so Google accepts the request.
-      const clientReferer = c.req.header('referer') || c.req.header('origin') || 'https://ms.church/'
+      // The API key has HTTP-referrer restrictions set to ms.church.
+      // Server-side requests don't carry a browser Referer header, so we
+      // must set it explicitly or Google returns 403 "API key not valid".
       const response = await fetch(apiUrl.toString(), {
-        headers: {
-          'Referer': clientReferer,
-        },
+        headers: { Referer: 'https://ms.church/' },
       })
 
       if (!response.ok) {
-        let errorMessage = 'Unknown error'
+        // Read body once as text, then try to parse as JSON
+        const body = await response.text().catch(() => '')
+        let errorMessage = `HTTP ${response.status}`
         try {
-          const errorData = await response.json() as { error?: { message?: string } }
+          const errorData = JSON.parse(body) as { error?: { message?: string } }
           errorMessage = errorData.error?.message ?? errorMessage
-          console.error('Google Calendar API error:', errorData)
         } catch {
-          // Google sometimes returns HTML error pages (e.g. 403), not JSON
-          const text = await response.text().catch(() => '')
-          console.error('Google Calendar API error (non-JSON):', response.status, text.slice(0, 200))
-          errorMessage = `HTTP ${response.status}`
+          // Google sometimes returns HTML error pages (e.g. 403)
         }
+        console.error('Google Calendar API error:', response.status, errorMessage)
         return c.json(
           {
             success: false,

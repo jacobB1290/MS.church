@@ -949,7 +949,7 @@ export const homeStyles = (): string => `
                 position: relative;
                 width: 100%;
                 aspect-ratio: 3/4;
-                border-radius: 20px;
+                border-radius: 24px;
                 overflow: hidden;
                 background: transparent;
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
@@ -959,7 +959,7 @@ export const homeStyles = (): string => `
             /* Mobile: proper 3:4 card sizing */
             @media (max-width: 960px) {
                 .event-flyer-wrapper {
-                    border-radius: 18px;
+                    border-radius: 24px;
                 }
             }
             

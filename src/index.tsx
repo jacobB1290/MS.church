@@ -1,4 +1,4 @@
-// Version: 1.32.1 - Redesign Stay Tuned card with premium editorial aesthetic
+// Version: 1.32.2 - Polish carousel UI: rounded arrows, gold dots, card radius fix
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

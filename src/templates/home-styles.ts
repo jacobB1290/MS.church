@@ -740,7 +740,7 @@ export const homeStyles = (): string => `
                 }
                 .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
                 .stay-tuned-card { border-radius: 40px; }
-                .past-events-card .past-card-badge { background: linear-gradient(135deg, #8b9dc3 0%, #7189b0 100%); box-shadow: 0 4px 16px rgba(113,137,176,0.35); position: absolute; top: 14px; left: 14px; color: white; font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 20px; letter-spacing: 0.5px; }
+                .past-events-card .past-card-badge { background: linear-gradient(135deg, #d4a574 0%, #c89860 100%); box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35); position: absolute; top: 14px; left: 14px; color: white; font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 100px; letter-spacing: 1.5px; }
                 .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
                 .past-events-card .past-card-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; margin: 0 0 8px 0; color: #1a1a2e; }
                 .past-events-card .past-card-text { font-size: 14px; color: rgba(26,26,46,0.7); line-height: 1.6; margin-bottom: 14px; }
@@ -854,13 +854,13 @@ export const homeStyles = (): string => `
                 top: 50%;
                 transform: translateY(-50%);
                 z-index: 10;
-                width: 34px;
-                height: 34px;
-                border-radius: 10px;
-                background: rgba(255, 255, 255, 0.55);
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.6);
                 backdrop-filter: blur(12px);
                 -webkit-backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.35);
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
                 display: flex;
                 align-items: center;
@@ -892,10 +892,10 @@ export const homeStyles = (): string => `
 
             @media (min-width: 961px) {
                 .carousel-arrow {
-                    width: 40px;
-                    height: 40px;
+                    width: 42px;
+                    height: 42px;
                     font-size: 20px;
-                    border-radius: 12px;
+                    border-radius: 50%;
                 }
                 .carousel-arrow.prev {
                     left: 24px;
@@ -912,23 +912,23 @@ export const homeStyles = (): string => `
                 align-items: center;
             }
 
-            .carousel-dot {
-                width: 8px;
-                height: 8px;
+            .carousel-dots .carousel-dot {
+                width: 9px;
+                height: 9px;
                 border-radius: 50%;
-                background: #d4a574;
-                opacity: 0.3;
-                border: none;
+                background: rgba(212, 165, 116, 0.25);
+                border: 1.5px solid rgba(212, 165, 116, 0.4);
                 cursor: pointer;
                 transition: all 0.35s ease;
                 padding: 0;
             }
 
-            .carousel-dot.active {
-                opacity: 1;
+            .carousel-dots .carousel-dot.active {
+                background: #d4a574;
+                border-color: #d4a574;
                 width: 10px;
                 height: 10px;
-                box-shadow: 0 0 10px rgba(212, 165, 116, 0.6);
+                box-shadow: 0 0 10px rgba(212, 165, 116, 0.5);
             }
 
             /* ========================================
@@ -950,7 +950,8 @@ export const homeStyles = (): string => `
                 width: 100%;
                 aspect-ratio: 3/4;
                 border-radius: 20px;
-                overflow: hidden; /* crops image to rounded corners only — box-shadow is outside */
+                overflow: hidden;
+                background: transparent;
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
                 transition: box-shadow 0.4s ease, transform 0.4s ease;
             }
@@ -1127,11 +1128,11 @@ export const homeStyles = (): string => `
             }
             .carousel-past-card .past-card-badge {
                 position: absolute; top: 12px; left: 12px;
-                background: linear-gradient(135deg, #8b9dc3, #7189b0);
+                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 color: white; font-size: 9px; font-weight: 700;
-                padding: 5px 10px; border-radius: 20px;
-                letter-spacing: 0.5px;
-                box-shadow: 0 4px 12px rgba(113,137,176,0.3);
+                padding: 5px 10px; border-radius: 100px;
+                letter-spacing: 1.5px;
+                box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35);
             }
             .carousel-past-card .past-card-icon { font-size: 40px; margin-bottom: 10px; }
             .carousel-past-card .past-card-title {
@@ -1681,7 +1682,7 @@ export const homeStyles = (): string => `
                 z-index: 120;
             }
 
-            .carousel-dot {
+            .carousel-controls .carousel-dot {
                 width: 10px;
                 height: 10px;
                 border-radius: 50%;
@@ -1691,7 +1692,7 @@ export const homeStyles = (): string => `
                 transition: all 0.3s ease;
             }
 
-            .carousel-dot.active {
+            .carousel-controls .carousel-dot.active {
                 background: rgba(255, 255, 255, 0.95);
                 border-color: rgba(255, 255, 255, 1);
                 transform: scale(1.2);

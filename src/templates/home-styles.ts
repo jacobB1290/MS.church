@@ -756,41 +756,38 @@ export const homeStyles = (): string => `
                 position: relative;
                 width: 100%;
                 overflow: hidden;
-                /* Generous padding so overflow:hidden clips well beyond the cards,
-                   giving shadows and transforms plenty of room to breathe */
-                padding: 100px 60px;
-                margin: -100px -60px;
             }
 
-            /* Viewport: no clip-path needed — wrapper padding handles overflow room */
+            /* Viewport: clip-path gives generous room for shadows on ALL sides */
             .carousel-viewport {
                 position: relative;
                 overflow: visible;
+                clip-path: inset(-80px -40px -80px -40px);
             }
 
-            /* Soft fog — fades adjacent card edges gently */
+            /* Soft fog INSIDE viewport — fades adjacent card shadow bleed at edges */
             .carousel-viewport::before,
             .carousel-viewport::after {
                 content: '';
                 position: absolute;
-                top: -100px;
-                bottom: -100px;
-                width: 90px;
+                top: -80px;
+                bottom: -80px;
+                width: 80px;
                 z-index: 10;
                 pointer-events: none;
             }
             .carousel-viewport::before {
-                left: -60px;
+                left: -40px;
                 background: linear-gradient(to right,
-                    var(--bg-color, #f8f9fd) 30%,
-                    rgba(248, 249, 253, 0.3) 65%,
+                    var(--bg-color, #f8f9fd) 25%,
+                    rgba(248, 249, 253, 0.4) 60%,
                     rgba(248, 249, 253, 0) 100%);
             }
             .carousel-viewport::after {
-                right: -60px;
+                right: -40px;
                 background: linear-gradient(to left,
-                    var(--bg-color, #f8f9fd) 30%,
-                    rgba(248, 249, 253, 0.3) 65%,
+                    var(--bg-color, #f8f9fd) 25%,
+                    rgba(248, 249, 253, 0.4) 60%,
                     rgba(248, 249, 253, 0) 100%);
             }
 
@@ -814,22 +811,24 @@ export const homeStyles = (): string => `
                     /* width set dynamically by JS */
                     padding: 0 16px;
                 }
-                .carousel-wrapper {
-                    padding: 80px 40px;
-                    margin: -80px -40px;
+                .carousel-viewport {
+                    clip-path: inset(-60px -24px -60px -24px);
                 }
-                /* Fog — gentle fade at edges */
+                .carousel-wrapper {
+                    overflow: hidden;
+                }
+                /* Fog inside viewport — extends inward for a gentle fade */
                 .carousel-viewport::before,
                 .carousel-viewport::after {
-                    top: -80px;
-                    bottom: -80px;
-                    width: 70px;
+                    top: -60px;
+                    bottom: -60px;
+                    width: 56px;
                 }
                 .carousel-viewport::before {
-                    left: -40px;
+                    left: -24px;
                 }
                 .carousel-viewport::after {
-                    right: -40px;
+                    right: -24px;
                     left: auto;
                 }
             }

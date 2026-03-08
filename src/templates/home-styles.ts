@@ -755,6 +755,7 @@ export const homeStyles = (): string => `
             .carousel-wrapper {
                 position: relative;
                 width: 100%;
+                overflow: hidden;
             }
 
             /* Viewport: clip-path gives generous room for shadows on ALL sides */
@@ -814,7 +815,7 @@ export const homeStyles = (): string => `
                     clip-path: inset(-60px -24px -60px -24px);
                 }
                 .carousel-wrapper {
-                    overflow: visible;
+                    overflow: hidden;
                 }
                 /* Fog inside viewport — extends inward for a gentle fade */
                 .carousel-viewport::before,
@@ -2971,7 +2972,7 @@ export const homeStyles = (): string => `
                     padding-left: 12px;
                     padding-right: 12px;
                     box-sizing: border-box;
-                    overflow: visible;
+                    overflow: clip;
                 }
                 
                 .outreach .section-eyebrow {

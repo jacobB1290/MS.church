@@ -949,17 +949,17 @@ export const homeStyles = (): string => `
                 position: relative;
                 width: 100%;
                 aspect-ratio: 3/4;
-                border-radius: 24px;
+                border-radius: 20px;
                 overflow: hidden;
                 background: transparent;
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
                 transition: box-shadow 0.4s ease, transform 0.4s ease;
             }
-            
-            /* Mobile: proper 3:4 card sizing */
+
+            /* Mobile: match memories card radius */
             @media (max-width: 960px) {
                 .event-flyer-wrapper {
-                    border-radius: 24px;
+                    border-radius: 18px;
                 }
             }
             
@@ -969,22 +969,22 @@ export const homeStyles = (): string => `
             
             /* Dominant color glow effect */
             .event-flyer-wrapper.glow-warm {
-                box-shadow: 0 8px 40px rgba(212, 165, 116, 0.35), 0 4px 16px rgba(200, 152, 96, 0.2);
+                box-shadow: 0 12px 48px rgba(212, 165, 116, 0.5), 0 6px 20px rgba(200, 152, 96, 0.3);
             }
             .event-flyer-wrapper.glow-red {
-                box-shadow: 0 8px 40px rgba(200, 60, 60, 0.3), 0 4px 16px rgba(180, 40, 40, 0.18);
+                box-shadow: 0 12px 48px rgba(200, 60, 60, 0.45), 0 6px 20px rgba(180, 40, 40, 0.28);
             }
             .event-flyer-wrapper.glow-blue {
-                box-shadow: 0 8px 40px rgba(60, 120, 200, 0.3), 0 4px 16px rgba(40, 100, 180, 0.18);
+                box-shadow: 0 12px 48px rgba(60, 120, 200, 0.45), 0 6px 20px rgba(40, 100, 180, 0.28);
             }
             .event-flyer-wrapper.glow-green {
-                box-shadow: 0 8px 40px rgba(60, 180, 100, 0.3), 0 4px 16px rgba(40, 150, 80, 0.18);
+                box-shadow: 0 12px 48px rgba(60, 180, 100, 0.45), 0 6px 20px rgba(40, 150, 80, 0.28);
             }
             .event-flyer-wrapper.glow-purple {
-                box-shadow: 0 8px 40px rgba(140, 80, 200, 0.3), 0 4px 16px rgba(120, 60, 180, 0.18);
+                box-shadow: 0 12px 48px rgba(140, 80, 200, 0.45), 0 6px 20px rgba(120, 60, 180, 0.28);
             }
             .event-flyer-wrapper.glow-dark {
-                box-shadow: 0 8px 40px rgba(40, 40, 60, 0.35), 0 4px 16px rgba(20, 20, 40, 0.2);
+                box-shadow: 0 12px 48px rgba(40, 40, 60, 0.5), 0 6px 20px rgba(20, 20, 40, 0.3);
             }
 
             .flyer-image {
@@ -1174,22 +1174,22 @@ export const homeStyles = (): string => `
                 
                 /* Stronger glow on desktop */
                 .event-flyer-wrapper.glow-warm {
-                    box-shadow: 0 12px 48px rgba(212, 165, 116, 0.4), 0 6px 20px rgba(200, 152, 96, 0.25);
+                    box-shadow: 0 16px 56px rgba(212, 165, 116, 0.55), 0 8px 24px rgba(200, 152, 96, 0.35);
                 }
                 .event-flyer-wrapper.glow-red {
-                    box-shadow: 0 12px 48px rgba(200, 60, 60, 0.35), 0 6px 20px rgba(180, 40, 40, 0.2);
+                    box-shadow: 0 16px 56px rgba(200, 60, 60, 0.5), 0 8px 24px rgba(180, 40, 40, 0.3);
                 }
                 .event-flyer-wrapper.glow-blue {
-                    box-shadow: 0 12px 48px rgba(60, 120, 200, 0.35), 0 6px 20px rgba(40, 100, 180, 0.2);
+                    box-shadow: 0 16px 56px rgba(60, 120, 200, 0.5), 0 8px 24px rgba(40, 100, 180, 0.3);
                 }
                 .event-flyer-wrapper.glow-green {
-                    box-shadow: 0 12px 48px rgba(60, 180, 100, 0.35), 0 6px 20px rgba(40, 150, 80, 0.2);
+                    box-shadow: 0 16px 56px rgba(60, 180, 100, 0.5), 0 8px 24px rgba(40, 150, 80, 0.3);
                 }
                 .event-flyer-wrapper.glow-purple {
-                    box-shadow: 0 12px 48px rgba(140, 80, 200, 0.35), 0 6px 20px rgba(120, 60, 180, 0.2);
+                    box-shadow: 0 16px 56px rgba(140, 80, 200, 0.5), 0 8px 24px rgba(120, 60, 180, 0.3);
                 }
                 .event-flyer-wrapper.glow-dark {
-                    box-shadow: 0 12px 48px rgba(40, 40, 60, 0.4), 0 6px 20px rgba(20, 20, 40, 0.25);
+                    box-shadow: 0 16px 56px rgba(40, 40, 60, 0.55), 0 8px 24px rgba(20, 20, 40, 0.35);
                 }
             }
 
@@ -3580,7 +3580,7 @@ export const homeStyles = (): string => `
                 }
 
                 .event-card {
-                    border-radius: 24px;
+                    border-radius: 18px;
                 }
 
                 .event-date {
@@ -3646,10 +3646,6 @@ export const homeStyles = (): string => `
                 
                 .placeholder-flyer {
                     aspect-ratio: 3/4;
-                }
-
-                .flyer-image {
-                    border-radius: 32px;
                 }
 
                 .placeholder-flyer {
@@ -4046,10 +4042,6 @@ export const homeStyles = (): string => `
                     max-width: 373px;
                     padding: 0 12px;
                     margin-bottom: 14px;
-                }
-                
-                .flyer-image {
-                    border-radius: 32px;
                 }
                 
                 .placeholder-flyer {

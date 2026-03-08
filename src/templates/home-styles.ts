@@ -3040,7 +3040,7 @@ export const homeStyles = (): string => `
                 
                 .nav-shell.scrolled-mobile {
                     border-radius: 100px;
-                    padding: clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px);
+                    padding: clamp(6px, 2vw, 8px) 0 clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px);
                     gap: 0;
                     flex-wrap: nowrap; /* Prevent CONTACT button from dropping to second row */
                     margin-bottom: 30px;
@@ -3344,6 +3344,15 @@ export const homeStyles = (): string => `
                     position: relative;
                     margin-left: clamp(4px, 1.5vw, 8px);
                     right: auto;
+                    align-self: stretch;
+                    border-radius: 0 100px 100px 0;
+                    padding-top: 0;
+                    padding-bottom: 0;
+                    padding-right: clamp(12px, 4vw, 20px); /* match shell's removed right padding */
+                    box-shadow: none;
+                    border-left: none;
+                    border-top: none;
+                    border-bottom: none;
                 }
                 
                 /* Active state for Contact button */

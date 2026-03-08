@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.31.8 - Fix mobile scrolled nav button scaling/wrapping -->
+<!-- v1.31.9 - Flush CONTACT button radius to nav pill edge -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

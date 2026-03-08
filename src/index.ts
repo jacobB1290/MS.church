@@ -1,4 +1,4 @@
-// Version: 1.31.8 - Fix mobile scrolled nav button scaling/wrapping
+// Version: 1.31.9 - Flush CONTACT button radius to nav pill edge
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

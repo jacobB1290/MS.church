@@ -35,15 +35,28 @@ export function registerCalendarRoute(app: Hono) {
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
       apiUrl.searchParams.set('timeMin', oneYearAgo.toISOString())
 
-      const response = await fetch(apiUrl.toString())
+      // The API key has HTTP-referrer restrictions set to ms.church.
+      // Server-side requests don't carry a browser Referer header, so we
+      // must set it explicitly or Google returns 403 "API key not valid".
+      const response = await fetch(apiUrl.toString(), {
+        headers: { Referer: 'https://ms.church/' },
+      })
 
       if (!response.ok) {
-        const errorData = await response.json() as { error?: { message?: string } }
-        console.error('Google Calendar API error:', errorData)
+        // Read body once as text, then try to parse as JSON
+        const body = await response.text().catch(() => '')
+        let errorMessage = `HTTP ${response.status}`
+        try {
+          const errorData = JSON.parse(body) as { error?: { message?: string } }
+          errorMessage = errorData.error?.message ?? errorMessage
+        } catch {
+          // Google sometimes returns HTML error pages (e.g. 403)
+        }
+        console.error('Google Calendar API error:', response.status, errorMessage)
         return c.json(
           {
             success: false,
-            error: `Google Calendar API error: ${errorData.error?.message ?? 'Unknown error'}`,
+            error: `Google Calendar API error: ${errorMessage}`,
             events: [],
           },
           response.status as 400 | 401 | 403 | 404 | 500

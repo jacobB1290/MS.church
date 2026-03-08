@@ -1,4 +1,4 @@
-// Version: 1.32.0 - Fix calendar API + outreach card shadow clipping
+// Version: 1.32.1 - Redesign Stay Tuned card with premium editorial aesthetic
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

@@ -721,11 +721,10 @@ export const homeStyles = (): string => `
                     padding: 40px 32px !important;
                 }
                 
-                .stay-tuned-card .stay-tuned-icon { font-size: 36px; margin-top: 0; }
+                .stay-tuned-card .stay-tuned-ornament { width: 40px; height: 40px; }
                 .stay-tuned-card .stay-tuned-title { font-size: 26px !important; }
                 .stay-tuned-card .stay-tuned-text { font-size: 14px !important; line-height: 1.6; }
-                .stay-tuned-card .stay-tuned-decoration { font-size: 20px; gap: 12px; }
-                .stay-tuned-card .stay-tuned-badge { font-size: 10px !important; padding: 6px 12px !important; top: 14px; left: 14px; }
+                .stay-tuned-card .stay-tuned-rule { width: 32px; }
                 .stay-tuned-card .btn-view-past-events { font-size: 13px !important; padding: 10px 20px !important; }
                 
                 .past-events-card {
@@ -1213,26 +1212,38 @@ export const homeStyles = (): string => `
             }
             
             .stay-tuned-card {
-                background: rgba(255, 255, 255, 0.85); /* Match section-card */
+                background: linear-gradient(165deg, rgba(255,255,255,0.92) 0%, rgba(248,245,240,0.88) 100%);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                padding: 56px 64px; /* Match section-card */
-                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
-                            0 12px 32px rgba(0, 0, 0, 0.04); /* Match section-card */
-                border: 1px solid rgba(255, 255, 255, 0.6); /* Match section-card */
-                backdrop-filter: blur(20px); /* Match section-card */
+                padding: 56px 40px;
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
+                            0 12px 32px rgba(0, 0, 0, 0.04);
+                border: 1px solid rgba(212, 165, 116, 0.15);
+                backdrop-filter: blur(20px);
                 min-height: auto;
-                border-radius: 24px; /* Match card styling */
+                border-radius: 24px;
                 position: relative;
-                overflow: visible;
-                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Match section-card */
-                aspect-ratio: 3/4; /* Portrait card - mobile */
-                width: 100%; /* Mobile: full width */
+                overflow: hidden;
+                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                aspect-ratio: 3/4;
+                width: 100%;
             }
-            
+
+            /* Subtle gold shimmer across the top edge */
+            .stay-tuned-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, transparent 0%, #d4a574 30%, #c89860 50%, #d4a574 70%, transparent 100%);
+                opacity: 0.6;
+            }
+
             /* DESKTOP OVERRIDE - Two cards side by side with 3:4 portrait ratio */
             @media (min-width: 961px) {
                 .stay-tuned-container {
@@ -1246,7 +1257,7 @@ export const homeStyles = (): string => `
                     margin: 0 auto !important;
                     width: 100% !important;
                 }
-                
+
                 .stay-tuned-container > .stay-tuned-card,
                 .stay-tuned-container > .past-events-card {
                     aspect-ratio: 3/4 !important;
@@ -1261,107 +1272,93 @@ export const homeStyles = (): string => `
                     border-radius: 32px !important;
                 }
             }
-            
+
             .stay-tuned-card:hover {
-                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
-                            0 16px 40px rgba(0, 0, 0, 0.05);
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1),
+                            0 16px 40px rgba(0, 0, 0, 0.05),
+                            0 0 0 1px rgba(212, 165, 116, 0.12);
                 transform: translateY(-4px);
             }
-            
+
             /* ========================================
                STAY TUNED ONLY MODE
                When no upcoming events - clean static layout
-               Card is now rendered in stay-tuned-container (outside scroll container)
                ======================================== */
             .stay-tuned-only {
-                /* Remove excessive gap between sections */
                 margin-bottom: 0 !important;
-                min-height: auto !important; /* Remove 100vh min-height */
+                min-height: auto !important;
             }
-            
+
             .stay-tuned-only .section-heading {
-                margin-bottom: 24px; /* Spacing before card */
+                margin-bottom: 24px;
             }
-            
+
             .stay-tuned-only .section-eyebrow {
-                display: inline-flex !important; /* Ensure pill fits text only */
+                display: inline-flex !important;
                 width: fit-content !important;
                 max-width: fit-content !important;
             }
-            
+
             .stay-tuned-only .stay-tuned-container {
                 margin-bottom: 0;
             }
-            
-            .stay-tuned-badge {
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%) !important;
-                box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35) !important;
-                position: absolute;
-                top: 16px;
-                left: 16px;
-            }
-            
+
             .stay-tuned-content {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: 12px;
+                gap: 14px;
                 width: 100%;
                 padding: 10px 0;
                 overflow: visible;
             }
-            
-            .stay-tuned-icon {
-                font-size: 48px;
-                animation: sparkle 2.5s ease-in-out infinite;
-                line-height: 1;
-                margin-top: 10px;
+
+            /* SVG ornament star */
+            .stay-tuned-ornament {
+                width: 52px;
+                height: 52px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: ornamentGlow 4s ease-in-out infinite;
             }
-            
-            @keyframes sparkle {
-                0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
-                50% { transform: scale(1.08) rotate(3deg); opacity: 0.9; }
+
+            .stay-tuned-star {
+                width: 100%;
+                height: 100%;
+                filter: drop-shadow(0 2px 8px rgba(212, 165, 116, 0.3));
             }
-            
+
+            @keyframes ornamentGlow {
+                0%, 100% { opacity: 0.85; transform: scale(1); }
+                50% { opacity: 1; transform: scale(1.06); }
+            }
+
             .stay-tuned-title {
                 font-family: 'Playfair Display', serif;
                 font-size: clamp(26px, 5vw, 36px);
                 font-weight: 700;
                 margin: 0;
                 color: #1a1a2e;
+                letter-spacing: -0.02em;
             }
-            
+
+            /* Thin gold divider rule */
+            .stay-tuned-rule {
+                width: 48px;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, #d4a574, transparent);
+                margin: 2px 0;
+            }
+
             .stay-tuned-text {
                 font-size: clamp(13px, 3.5vw, 15px);
-                color: rgba(26, 26, 46, 0.65);
-                line-height: 1.6;
+                color: rgba(26, 26, 46, 0.55);
+                line-height: 1.7;
                 margin: 0;
                 max-width: 240px;
-            }
-            
-            .stay-tuned-decoration {
-                display: flex;
-                gap: 16px;
-                font-size: 22px;
-                margin-top: 8px;
-            }
-            
-            .stay-tuned-decoration span {
-                animation: float 3s ease-in-out infinite;
-            }
-            
-            .stay-tuned-decoration span:nth-child(2) {
-                animation-delay: 0.4s;
-            }
-            
-            .stay-tuned-decoration span:nth-child(3) {
-                animation-delay: 0.8s;
-            }
-            
-            @keyframes float {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-5px); }
+                font-style: italic;
             }
             
             /* View Past Events Button - subtle, not too prominent */
@@ -3361,31 +3358,29 @@ export const homeStyles = (): string => `
                     padding: 40px 24px;
                     border-radius: 32px;
                 }
-                
+
                 .stay-tuned-content {
                     gap: 10px;
                     padding: 5px 0;
                 }
-                
-                .stay-tuned-icon {
-                    font-size: 40px;
-                    margin-top: 5px;
+
+                .stay-tuned-ornament {
+                    width: 44px;
+                    height: 44px;
                 }
-                
+
                 .stay-tuned-title {
                     font-size: clamp(24px, 6vw, 32px);
                 }
-                
+
                 .stay-tuned-text {
                     font-size: clamp(13px, 3.2vw, 15px);
                     max-width: 220px;
-                    line-height: 1.5;
+                    line-height: 1.6;
                 }
-                
-                .stay-tuned-decoration {
-                    font-size: 20px;
-                    gap: 12px;
-                    margin-top: 6px;
+
+                .stay-tuned-rule {
+                    width: 36px;
                 }
                 
                 .btn-view-past-events {

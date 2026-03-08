@@ -114,21 +114,26 @@ export const homeScripts = (): string => `
                 function renderStayTunedCard(hasPastEvents) {
                     const isDesktop = window.innerWidth >= 961;
 
+                    const stayTunedInner = \`
+                        <div class="stay-tuned-content">
+                            <div class="stay-tuned-ornament">
+                                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="stay-tuned-star">
+                                    <path d="M40 8 L44 32 L68 28 L48 40 L68 52 L44 48 L40 72 L36 48 L12 52 L32 40 L12 28 L36 32 Z" fill="url(#goldGrad)" opacity="0.9"/>
+                                    <defs><linearGradient id="goldGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#d4a574"/><stop offset="100%" stop-color="#c89860"/></linearGradient></defs>
+                                </svg>
+                            </div>
+                            <h3 class="stay-tuned-title">Stay Tuned</h3>
+                            <div class="stay-tuned-rule"></div>
+                            <p class="stay-tuned-text">New events are on the horizon.<br>Check back soon for what's next.</p>
+                            \${hasPastEvents && !isDesktop ? '<button class="btn-view-past-events" id="btn-view-past-events">View Past Events</button>' : ''}
+                        </div>
+                    \`;
+
                     if (isDesktop && hasPastEvents) {
                         return \`
                             <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 40px; justify-content: center; align-items: flex-start; width: 100%; max-width: 900px; margin: 0 auto;">
                                 <div class="stay-tuned-card" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;">
-                                    <span class="event-date stay-tuned-badge">COMING SOON</span>
-                                    <div class="stay-tuned-content">
-                                        <div class="stay-tuned-icon">✨</div>
-                                        <h3 class="stay-tuned-title">Stay Tuned</h3>
-                                        <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
-                                        <div class="stay-tuned-decoration">
-                                            <span>🤝</span>
-                                            <span>❤️</span>
-                                            <span>🙏</span>
-                                        </div>
-                                    </div>
+                                    \${stayTunedInner}
                                 </div>
                                 <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;">
                                     <span class="past-card-badge">MEMORIES</span>
@@ -142,18 +147,7 @@ export const homeScripts = (): string => `
                     } else {
                         return \`
                             <div class="stay-tuned-card">
-                                <span class="event-date stay-tuned-badge">COMING SOON</span>
-                                <div class="stay-tuned-content">
-                                    <div class="stay-tuned-icon">✨</div>
-                                    <h3 class="stay-tuned-title">Stay Tuned</h3>
-                                    <p class="stay-tuned-text">Exciting events are being planned!<br>Check back soon for upcoming outreach opportunities.</p>
-                                    <div class="stay-tuned-decoration">
-                                        <span>🤝</span>
-                                        <span>❤️</span>
-                                        <span>🙏</span>
-                                    </div>
-                                    \${hasPastEvents ? '<button class="btn-view-past-events" id="btn-view-past-events">View Past Events</button>' : ''}
-                                </div>
+                                \${stayTunedInner}
                             </div>
                         \`;
                     }

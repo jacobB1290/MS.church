@@ -677,7 +677,7 @@ export const homeStyles = (): string => `
                 display: inline-flex !important;
                 width: fit-content !important;
                 max-width: fit-content !important;
-                margin-bottom: 12px;
+                margin-bottom: 24px;
                 position: relative;
                 z-index: 5;
             }
@@ -2085,7 +2085,7 @@ export const homeStyles = (): string => `
                 text-align: left; /* Left aligned on desktop like other sections */
                 max-width: 800px;
                 margin: 0;
-                padding: 0 5%;
+                padding: 0;
             }
             
             /* Gift Gallery - Images always in a row, scale to fit */
@@ -3128,8 +3128,8 @@ export const homeStyles = (): string => `
                 }
 
                 main {
-                    gap: 100px;
-                    margin-bottom: 100px;
+                    gap: 64px;
+                    margin-bottom: 64px;
                 }
 
                 section {
@@ -3140,7 +3140,6 @@ export const homeStyles = (): string => `
                 .schedule {
                     position: relative;
                     z-index: 3;
-                    margin-top: 40px;
                 }
 
                 .hero {
@@ -3490,7 +3489,7 @@ export const homeStyles = (): string => `
                 }
 
                 .section-eyebrow {
-                    font-size: 12px;
+                    font-size: 9px;
                     padding: 10px 20px;
                     letter-spacing: 2.5px;
                     margin-bottom: 16px;
@@ -3656,10 +3655,6 @@ export const homeStyles = (): string => `
                     border-radius: 32px;
                 }
 
-                .watch {
-                    margin-top: 120px;
-                }
-
                 .watch-card {
                     padding: 28px 20px;
                     border-radius: 24px;
@@ -3717,7 +3712,7 @@ export const homeStyles = (): string => `
                 
                 .contact-header {
                     text-align: left !important;
-                    padding: 0 5%;
+                    padding: 0;
                     margin-left: 0;
                     margin-right: auto;
                 }
@@ -3896,10 +3891,10 @@ export const homeStyles = (): string => `
                     white-space: nowrap;
                 }
                 
-                /* Main Content Spacing - Dramatically reduce gaps to move sections up */
+                /* Main Content Spacing */
                 main {
-                    gap: 20px;
-                    margin-bottom: 20px;
+                    gap: 48px;
+                    margin-bottom: 48px;
                 }
                 
                 /* Hero Section - Add padding to push text down */
@@ -3951,12 +3946,12 @@ export const homeStyles = (): string => `
                     letter-spacing: 1px;
                 }
                 
-                /* Section Headers - Minimal spacing */
+                /* Section Headers */
                 .section-eyebrow {
                     font-size: 8px;
-                    padding: 6px 12px;
+                    padding: 9px 16px;
                     letter-spacing: 1.5px;
-                    margin-bottom: 2px;
+                    margin-bottom: 12px;
                 }
                 
                 .section-heading {
@@ -4073,7 +4068,6 @@ export const homeStyles = (): string => `
                 /* Watch Section */
                 .watch {
                     gap: 12px;
-                    margin-top: 100px;
                 }
                 
                 .watch-header {

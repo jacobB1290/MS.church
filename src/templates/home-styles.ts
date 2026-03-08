@@ -758,35 +758,34 @@ export const homeStyles = (): string => `
                 width: 100%;
             }
 
-            /* Viewport: overflow hidden with padding gives room for shadows without hard clip */
+            /* Viewport: clip-path gives generous room for shadows on ALL sides */
             .carousel-viewport {
                 position: relative;
-                overflow: hidden;
-                padding: 60px 24px;
-                margin: -60px -24px;
+                overflow: visible;
+                clip-path: inset(-80px -40px -80px -40px);
             }
 
-            /* Soft fog on left/right edges — smoothly fades shadow overflow */
-            .carousel-wrapper::before,
-            .carousel-wrapper::after {
+            /* Soft fog INSIDE viewport — fades adjacent card shadow bleed at edges */
+            .carousel-viewport::before,
+            .carousel-viewport::after {
                 content: '';
                 position: absolute;
-                top: 0;
-                bottom: 0;
-                width: 48px;
-                z-index: 3;
+                top: -80px;
+                bottom: -80px;
+                width: 80px;
+                z-index: 10;
                 pointer-events: none;
             }
-            .carousel-wrapper::before {
-                left: 0;
+            .carousel-viewport::before {
+                left: -40px;
                 background: linear-gradient(to right,
-                    var(--bg-color, #f8f9fd) 0%,
+                    var(--bg-color, #f8f9fd) 30%,
                     rgba(248, 249, 253, 0) 100%);
             }
-            .carousel-wrapper::after {
-                right: 0;
+            .carousel-viewport::after {
+                right: -40px;
                 background: linear-gradient(to left,
-                    var(--bg-color, #f8f9fd) 0%,
+                    var(--bg-color, #f8f9fd) 30%,
                     rgba(248, 249, 253, 0) 100%);
             }
 
@@ -811,22 +810,23 @@ export const homeStyles = (): string => `
                     padding: 0 16px;
                 }
                 .carousel-viewport {
-                    padding: 50px 16px;
-                    margin: -50px -16px;
+                    clip-path: inset(-60px -24px -60px -24px);
                 }
                 .carousel-wrapper {
                     overflow: visible;
                 }
-                /* Soft fog fades on mobile */
-                .carousel-wrapper::before,
-                .carousel-wrapper::after {
-                    width: 32px;
+                /* Fog inside viewport — covers the full clip-path height */
+                .carousel-viewport::before,
+                .carousel-viewport::after {
+                    top: -60px;
+                    bottom: -60px;
+                    width: 60px;
                 }
-                .carousel-wrapper::before {
-                    left: 0;
+                .carousel-viewport::before {
+                    left: -24px;
                 }
-                .carousel-wrapper::after {
-                    right: 0;
+                .carousel-viewport::after {
+                    right: -24px;
                     left: auto;
                 }
             }

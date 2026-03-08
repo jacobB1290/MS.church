@@ -771,20 +771,22 @@ export const homeStyles = (): string => `
                 position: absolute;
                 top: -80px;
                 bottom: -80px;
-                width: 40px;
+                width: 80px;
                 z-index: 10;
                 pointer-events: none;
             }
             .carousel-viewport::before {
                 left: -40px;
                 background: linear-gradient(to right,
-                    var(--bg-color, #f8f9fd) 40%,
+                    var(--bg-color, #f8f9fd) 25%,
+                    rgba(248, 249, 253, 0.4) 60%,
                     rgba(248, 249, 253, 0) 100%);
             }
             .carousel-viewport::after {
                 right: -40px;
                 background: linear-gradient(to left,
-                    var(--bg-color, #f8f9fd) 40%,
+                    var(--bg-color, #f8f9fd) 25%,
+                    rgba(248, 249, 253, 0.4) 60%,
                     rgba(248, 249, 253, 0) 100%);
             }
 
@@ -814,12 +816,12 @@ export const homeStyles = (): string => `
                 .carousel-wrapper {
                     overflow: visible;
                 }
-                /* Fog inside viewport — only covers the clip-path overflow zone */
+                /* Fog inside viewport — extends inward for a gentle fade */
                 .carousel-viewport::before,
                 .carousel-viewport::after {
                     top: -60px;
                     bottom: -60px;
-                    width: 24px;
+                    width: 56px;
                 }
                 .carousel-viewport::before {
                     left: -24px;

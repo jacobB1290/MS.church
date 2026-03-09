@@ -2476,8 +2476,8 @@ export const homeStyles = (): string => `
             /* JotForm Container Styles */
             .jotform-container {
                 width: 100%;
-                min-height: 800px;
-                /* Card styling lives here so shadow extends naturally outside the iframe */
+                /* No min-height — container matches the iframe's auto-resized height exactly,
+                   eliminating the empty white space that appeared below the form */
                 background: #fff;
                 border-radius: 24px;
                 border: 1px solid rgba(255, 255, 255, 0.6);
@@ -3862,7 +3862,6 @@ export const homeStyles = (): string => `
 
                 /* Jotform container - mobile sizing */
                 .jotform-container {
-                    min-height: 900px;
                     border-radius: 24px;
                 }
 

@@ -1,4 +1,4 @@
-// Version: 1.32.14 - Gold token updated to #9d7853
+// Version: 1.32.15 - Fix nav WCAG 2.5.8 target size (44×44px minimum)
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

@@ -1,4 +1,4 @@
-// Version: 1.32.13 - Gold token updated to #8C6B4A
+// Version: 1.32.14 - Gold token updated to #9d7853
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

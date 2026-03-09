@@ -1,4 +1,5 @@
 import { type Hono } from 'hono'
+import { GOLD } from '../design-tokens.js'
 
 export function registerPrivacyRoute(app: Hono) {
   app.get('/privacy', (c) => {
@@ -33,6 +34,7 @@ export function registerPrivacyRoute(app: Hono) {
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
           <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
           <style>
+              :root { --gold: ${GOLD}; }
               * {
                   margin: 0;
                   padding: 0;
@@ -57,7 +59,7 @@ export function registerPrivacyRoute(app: Hono) {
                   display: inline-flex;
                   align-items: center;
                   gap: 8px;
-                  color: #d4a574;
+                  color: var(--gold);
                   text-decoration: none;
                   font-size: 14px;
                   font-weight: 500;
@@ -84,7 +86,7 @@ export function registerPrivacyRoute(app: Hono) {
               
               .page-header .last-updated {
                   font-size: 14px;
-                  color: rgba(26, 26, 46, 0.5);
+                  color: #6b6b80;
               }
               
               .nav-tabs {
@@ -113,9 +115,9 @@ export function registerPrivacyRoute(app: Hono) {
               }
               
               .nav-tab.active {
-                  background: #d4a574;
+                  background: var(--gold);
                   color: #ffffff;
-                  border-color: #d4a574;
+                  border-color: var(--gold);
               }
               
               .legal-section {
@@ -135,7 +137,7 @@ export function registerPrivacyRoute(app: Hono) {
                   margin-bottom: 24px;
                   font-weight: 700;
                   padding-bottom: 16px;
-                  border-bottom: 2px solid #d4a574;
+                  border-bottom: 2px solid var(--gold);
               }
               
               .legal-section h2 {
@@ -175,7 +177,7 @@ export function registerPrivacyRoute(app: Hono) {
               }
               
               .legal-section a {
-                  color: #d4a574;
+                  color: var(--gold);
                   text-decoration: none;
               }
               
@@ -189,7 +191,7 @@ export function registerPrivacyRoute(app: Hono) {
               }
               
               .contact-box {
-                  background: rgba(212, 165, 116, 0.1);
+                  background: color-mix(in srgb, var(--gold) 10%, transparent);
                   border-radius: 16px;
                   padding: 24px;
                   margin-top: 32px;
@@ -411,7 +413,7 @@ export function registerPrivacyRoute(app: Hono) {
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
                       <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response. For formal requests requiring a response, please contact us by mail.</p>
-                      <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
+                      <p style="font-size: 13px; color: #6b6b80; margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                   </div>
               </section>
               
@@ -534,7 +536,7 @@ export function registerPrivacyRoute(app: Hono) {
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
                       <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
-                      <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
+                      <p style="font-size: 13px; color: #6b6b80; margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                   </div>
               </section>
               
@@ -621,7 +623,7 @@ export function registerPrivacyRoute(app: Hono) {
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
                       <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
-                      <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability. We will make reasonable efforts to assist with accessibility needs as resources permit.</em></p>
+                      <p style="font-size: 13px; color: #6b6b80; margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability. We will make reasonable efforts to assist with accessibility needs as resources permit.</em></p>
                   </div>
               </section>
           </div>

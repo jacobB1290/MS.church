@@ -1,4 +1,5 @@
 import { type Hono } from 'hono'
+import { GOLD } from '../design-tokens.js'
 
 export function registerMiscRoutes(app: Hono) {
   app.get('/robots.txt', (c) => {
@@ -210,6 +211,7 @@ export function registerMiscRoutes(app: Hono) {
           </script>
           
           <style>
+              :root { --gold: ${GOLD}; }
               * {
                   margin: 0;
                   padding: 0;
@@ -284,7 +286,7 @@ export function registerMiscRoutes(app: Hono) {
               }
               
               nav a:last-child {
-                  background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                  background: linear-gradient(135deg, var(--gold) 0%, var(--gold) 100%);
                   color: white;
                   padding: 12px 28px;
                   border-radius: 100px;
@@ -343,9 +345,9 @@ export function registerMiscRoutes(app: Hono) {
               
               input:focus, textarea:focus, select:focus {
                   outline: none;
-                  border-color: #d4a574;
+                  border-color: var(--gold);
                   background: white;
-                  box-shadow: 0 8px 24px rgba(212, 165, 116, 0.15);
+                  box-shadow: 0 8px 24px color-mix(in srgb, var(--gold) 15%, transparent);
               }
               
               textarea {
@@ -354,7 +356,7 @@ export function registerMiscRoutes(app: Hono) {
               }
               
               .submit-btn {
-                  background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                  background: linear-gradient(135deg, var(--gold) 0%, var(--gold) 100%);
                   color: white;
                   padding: 18px 40px;
                   border-radius: 100px;
@@ -366,12 +368,12 @@ export function registerMiscRoutes(app: Hono) {
                   cursor: pointer;
                   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                   width: 100%;
-                  box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35);
+                  box-shadow: 0 16px 40px color-mix(in srgb, var(--gold) 35%, transparent);
               }
               
               .submit-btn:hover {
                   transform: translateY(-4px);
-                  box-shadow: 0 20px 50px rgba(200, 152, 96, 0.45);
+                  box-shadow: 0 20px 50px color-mix(in srgb, var(--gold) 45%, transparent);
               }
           </style>
       </head>

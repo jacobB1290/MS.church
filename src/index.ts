@@ -1,4 +1,4 @@
-// Version: 1.32.5 - Watch card border-radius matches section/contact cards (48px)
+// Version: 1.32.14 - Gold token updated to #9d7853
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

@@ -119,7 +119,7 @@ export const homeScripts = (): string => `
                             <div class="stay-tuned-ornament">
                                 <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="stay-tuned-star">
                                     <path d="M40 8 L44 32 L68 28 L48 40 L68 52 L44 48 L40 72 L36 48 L12 52 L32 40 L12 28 L36 32 Z" fill="url(#goldGrad)" opacity="0.9"/>
-                                    <defs><linearGradient id="goldGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#d4a574"/><stop offset="100%" stop-color="#c89860"/></linearGradient></defs>
+                                    <defs><linearGradient id="goldGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="var(--gold)"/><stop offset="100%" stop-color="var(--gold-dark)"/></linearGradient></defs>
                                 </svg>
                             </div>
                             <h3 class="stay-tuned-title">Stay Tuned</h3>
@@ -137,7 +137,7 @@ export const homeScripts = (): string => `
                                 </div>
                                 <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;">
                                     <span class="past-card-badge">MEMORIES</span>
-                                    <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="#d4a574" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
+                                    <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
                                     <h3 class="past-card-title">Past Events</h3>
                                     <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
                                     <span class="past-card-btn">View Gallery</span>
@@ -156,7 +156,7 @@ export const homeScripts = (): string => `
                 function renderUpcomingEventCard(event, index, totalUpcoming) {
                     const imageHtml = event.image
                         ? \`<img src="\${event.image}" alt="\${event.title}" class="flyer-image" loading="lazy" crossorigin="anonymous" onerror="this.style.display='none';">\`
-                        : \`<div class="flyer-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,#d4a574,#c89860);display:flex;align-items:center;justify-content:center;"><span style="font-size:48px;">📅</span></div>\`;
+                        : \`<div class="flyer-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;"><span style="font-size:48px;">📅</span></div>\`;
 
                     const hasRealLink = event.cta && event.cta.link && event.cta.link !== '#contact' && event.cta.link.startsWith('http');
                     const ctaHtml = hasRealLink
@@ -215,7 +215,7 @@ export const homeScripts = (): string => `
                             <div class="carousel-card">
                                 <div class="carousel-past-card" id="carousel-see-past">
                                     <span class="past-card-badge">MEMORIES</span>
-                                    <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="#d4a574" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
+                                    <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
                                     <h3 class="past-card-title">Past Events</h3>
                                     <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
                                     <span class="past-card-btn">View Gallery</span>

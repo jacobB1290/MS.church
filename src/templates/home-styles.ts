@@ -1,6 +1,15 @@
+import { GOLD } from '../design-tokens.js'
+
 export const homeStyles = (): string => `
             :root {
                 color-scheme: light;
+
+                /* ── Gold accent — single source of truth ── */
+                /* Change GOLD in src/design-tokens.ts; all usages below derive from --gold */
+                --gold: ${GOLD};
+                --gold-dark:   color-mix(in srgb, var(--gold) 70%, black);
+                --gold-deeper: color-mix(in srgb, var(--gold) 55%, black);
+
                 /* Solid background color for seamless Safari iOS overscroll */
                 --bg-color: #f8f9fd;
                 --bg-default: #f8f9fd;
@@ -79,9 +88,9 @@ export const homeStyles = (): string => `
                 }
                 /* Active (gold) state must override the white fallback above */
                 .nav-form-btn.active {
-                    background: #d4a574 !important;
+                    background: var(--gold) !important;
                     color: #ffffff !important;
-                    border-color: rgba(212, 165, 116, 0.4) !important;
+                    border-color: color-mix(in srgb, var(--gold) 40%, transparent) !important;
                 }
             }
 
@@ -202,7 +211,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: rgba(26, 26, 46, 0.5);
+                color: #6b6b80;
                 font-weight: var(--weight-semibold);
                 margin-top: 2px;
                 white-space: nowrap;
@@ -229,7 +238,7 @@ export const homeStyles = (): string => `
 
             nav a.active {
                 opacity: 1;
-                color: #d4a574;
+                color: var(--gold);
             }
 
             nav a::after {
@@ -246,7 +255,7 @@ export const homeStyles = (): string => `
 
             nav a.active::after {
                 transform: translateX(-50%) scaleX(1);
-                background: #d4a574;
+                background: var(--gold);
             }
 
             nav a:hover {
@@ -348,7 +357,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wider);
-                color: rgba(26, 26, 46, 0.6);
+                color: #595970;
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.5);
@@ -402,14 +411,14 @@ export const homeStyles = (): string => `
             }
 
             .btn-primary {
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: #fff;
-                box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35);
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                color: #ffffff;
+                box-shadow: 0 16px 40px color-mix(in srgb, var(--gold) 35%, transparent);
             }
 
             .btn-primary:hover {
                 transform: translateY(-4px);
-                box-shadow: 0 20px 50px rgba(200, 152, 96, 0.45);
+                box-shadow: 0 20px 50px color-mix(in srgb, var(--gold) 45%, transparent);
             }
 
             .btn-secondary {
@@ -439,14 +448,14 @@ export const homeStyles = (): string => `
             }
             
             .btn-watch-gold {
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%) !important;
-                color: #fff !important;
-                box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35) !important;
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%) !important;
+                color: #ffffff !important;
+                box-shadow: 0 16px 40px color-mix(in srgb, var(--gold) 35%, transparent) !important;
                 border: none !important;
             }
             
             .btn-watch-gold:hover {
-                box-shadow: 0 20px 50px rgba(200, 152, 96, 0.45) !important;
+                box-shadow: 0 20px 50px color-mix(in srgb, var(--gold) 45%, transparent) !important;
             }
 
             /* Section Headers */
@@ -459,7 +468,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wider);
-                color: rgba(26, 26, 46, 0.5);
+                color: #6b6b80;
                 margin-bottom: 32px;
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
                 backdrop-filter: blur(10px);
@@ -490,7 +499,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: rgba(26, 26, 46, 0.5);
+                color: #6b6b80;
                 margin-bottom: 48px;
                 font-weight: var(--weight-semibold);
             }
@@ -505,7 +514,7 @@ export const homeStyles = (): string => `
                 cursor: pointer;
                 color: inherit;
                 text-decoration: underline;
-                text-decoration-color: rgba(212, 165, 116, 0.5);
+                text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent);
                 text-underline-offset: 4px;
                 transition: text-decoration-color 0.3s ease;
                 background: none;
@@ -517,7 +526,7 @@ export const homeStyles = (): string => `
             }
             
             .address-trigger:hover {
-                text-decoration-color: rgba(212, 165, 116, 0.8);
+                text-decoration-color: color-mix(in srgb, var(--gold) 80%, transparent);
             }
             
             .address-dropdown {
@@ -561,7 +570,7 @@ export const homeStyles = (): string => `
             }
             
             .address-dropdown-item:hover {
-                background: rgba(212, 165, 116, 0.1);
+                background: color-mix(in srgb, var(--gold) 10%, transparent);
             }
             
             .address-dropdown-icon {
@@ -628,7 +637,7 @@ export const homeStyles = (): string => `
                 /* On mobile, Find Us button stays gold even without backdrop-filter */
                 @media (max-width: 899px) {
                     .find-us-btn {
-                        background: #d4a574 !important;
+                        background: var(--gold) !important;
                         border: 1px solid rgba(255, 255, 255, 0.25) !important;
                     }
                 }
@@ -679,7 +688,7 @@ export const homeStyles = (): string => `
                 letter-spacing: var(--tracking-wide);
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
-                color: rgba(26, 26, 46, 0.45);
+                color: #6b6b80;
             }
 
             .schedule-item h3 {
@@ -774,12 +783,12 @@ export const homeStyles = (): string => `
                 }
                 .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
                 .stay-tuned-card { border-radius: 32px; }
-                .past-events-card .past-card-badge { background: linear-gradient(135deg, #d4a574 0%, #c89860 100%); box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35); position: absolute; top: 14px; left: 14px; color: white; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
+                .past-events-card .past-card-badge { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 35%, transparent); position: absolute; top: 14px; left: 14px; color: #ffffff; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
                 .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
                 .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e; }
                 .past-events-card .past-card-text { font-size: var(--text-small); color: rgba(26,26,46,0.7); line-height: var(--leading-normal); margin-bottom: 14px; }
-                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #d4a574; color: #d4a574; border-radius: 24px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
-                .past-events-card .past-card-btn:hover { background: #d4a574; color: white; }
+                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid var(--gold); color: var(--gold); border-radius: 24px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
+                .past-events-card .past-card-btn:hover { background: var(--gold); color: #ffffff; }
                 
                 .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
             }
@@ -952,19 +961,19 @@ export const homeStyles = (): string => `
                 width: 9px;
                 height: 9px;
                 border-radius: 50%;
-                background: rgba(212, 165, 116, 0.25);
-                border: 1.5px solid rgba(212, 165, 116, 0.4);
+                background: color-mix(in srgb, var(--gold) 25%, transparent);
+                border: 1.5px solid color-mix(in srgb, var(--gold) 40%, transparent);
                 cursor: pointer;
                 transition: all 0.35s ease;
                 padding: 0;
             }
 
             .carousel-dots .carousel-dot.active {
-                background: #d4a574;
-                border-color: #d4a574;
+                background: var(--gold);
+                border-color: var(--gold);
                 width: 10px;
                 height: 10px;
-                box-shadow: 0 0 10px rgba(212, 165, 116, 0.5);
+                box-shadow: 0 0 10px color-mix(in srgb, var(--gold) 50%, transparent);
             }
 
             /* ========================================
@@ -998,7 +1007,7 @@ export const homeStyles = (): string => `
             
             /* Dominant color glow effect */
             .event-flyer-wrapper.glow-warm {
-                box-shadow: 0 12px 48px rgba(212, 165, 116, 0.5), 0 6px 20px rgba(200, 152, 96, 0.3);
+                box-shadow: 0 12px 48px color-mix(in srgb, var(--gold) 50%, transparent), 0 6px 20px color-mix(in srgb, var(--gold) 30%, transparent);
             }
             .event-flyer-wrapper.glow-red {
                 box-shadow: 0 12px 48px rgba(200, 60, 60, 0.45), 0 6px 20px rgba(180, 40, 40, 0.28);
@@ -1032,7 +1041,7 @@ export const homeStyles = (): string => `
                 align-items: center;
                 justify-content: center;
                 font-size: 16px;
-                color: rgba(26, 26, 46, 0.4);
+                color: #6b6b80;
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
@@ -1045,13 +1054,13 @@ export const homeStyles = (): string => `
                 left: 12px;
                 z-index: 5;
                 padding: 6px 14px;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 border-radius: 100px;
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
                 color: #ffffff;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 30%, transparent);
                 text-transform: uppercase;
                 white-space: nowrap;
             }
@@ -1116,13 +1125,13 @@ export const homeStyles = (): string => `
                     padding: 14px 32px;
                     font-size: var(--text-small);
                     border-radius: 16px;
-                    background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                    color: white;
-                    box-shadow: 0 6px 20px rgba(200, 152, 96, 0.35);
+                    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                    color: #ffffff;
+                    box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
                 }
                 .event-cta .btn:hover {
-                    background: linear-gradient(135deg, #c89860 0%, #b88a52 100%);
-                    box-shadow: 0 10px 28px rgba(200, 152, 96, 0.45);
+                    background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
+                    box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
                     transform: translateY(-2px);
                 }
             }
@@ -1157,11 +1166,11 @@ export const homeStyles = (): string => `
             }
             .carousel-past-card .past-card-badge {
                 position: absolute; top: 12px; left: 12px;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: white; font-size: var(--text-eyebrow); font-weight: var(--weight-bold);
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                color: #ffffff; font-size: var(--text-eyebrow); font-weight: var(--weight-bold);
                 padding: 5px 10px; border-radius: 100px;
                 letter-spacing: var(--tracking-wide);
-                box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35);
+                box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 35%, transparent);
             }
             .carousel-past-card .past-card-icon { font-size: 40px; margin-bottom: 10px; }
             .carousel-past-card .past-card-title {
@@ -1169,17 +1178,17 @@ export const homeStyles = (): string => `
                 font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e;
             }
             .carousel-past-card .past-card-text {
-                font-size: var(--text-label); color: rgba(26,26,46,0.6);
+                font-size: var(--text-label); color: #595970;
                 line-height: var(--leading-normal); margin-bottom: 14px; max-width: 200px;
             }
             .carousel-past-card .past-card-btn {
                 display: inline-block; padding: 10px 20px;
-                background: transparent; border: 2px solid #d4a574;
-                color: #d4a574; border-radius: 24px;
+                background: transparent; border: 2px solid var(--gold);
+                color: var(--gold); border-radius: 24px;
                 font-size: var(--text-label); font-weight: var(--weight-semibold);
                 cursor: pointer; transition: all 0.3s ease;
             }
-            .carousel-past-card .past-card-btn:hover { background: #d4a574; color: white; }
+            .carousel-past-card .past-card-btn:hover { background: var(--gold); color: #ffffff; }
 
             /* Desktop: bigger cards & stronger glow */
             @media (min-width: 961px) {
@@ -1203,7 +1212,7 @@ export const homeStyles = (): string => `
                 
                 /* Stronger glow on desktop */
                 .event-flyer-wrapper.glow-warm {
-                    box-shadow: 0 16px 56px rgba(212, 165, 116, 0.55), 0 8px 24px rgba(200, 152, 96, 0.35);
+                    box-shadow: 0 16px 56px color-mix(in srgb, var(--gold) 55%, transparent), 0 8px 24px color-mix(in srgb, var(--gold) 35%, transparent);
                 }
                 .event-flyer-wrapper.glow-red {
                     box-shadow: 0 16px 56px rgba(200, 60, 60, 0.5), 0 8px 24px rgba(180, 40, 40, 0.3);
@@ -1251,7 +1260,7 @@ export const homeStyles = (): string => `
                 padding: 56px 40px;
                 box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
                             0 12px 32px rgba(0, 0, 0, 0.04);
-                border: 1px solid rgba(212, 165, 116, 0.15);
+                border: 1px solid color-mix(in srgb, var(--gold) 15%, transparent);
                 backdrop-filter: blur(20px);
                 min-height: auto;
                 border-radius: 24px;
@@ -1270,7 +1279,7 @@ export const homeStyles = (): string => `
                 left: 0;
                 right: 0;
                 height: 3px;
-                background: linear-gradient(90deg, transparent 0%, #d4a574 30%, #c89860 50%, #d4a574 70%, transparent 100%);
+                background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold-dark) 50%, var(--gold) 70%, transparent 100%);
                 opacity: 0.6;
             }
 
@@ -1306,7 +1315,7 @@ export const homeStyles = (): string => `
             .stay-tuned-card:hover {
                 box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1),
                             0 16px 40px rgba(0, 0, 0, 0.05),
-                            0 0 0 1px rgba(212, 165, 116, 0.12);
+                            0 0 0 1px color-mix(in srgb, var(--gold) 12%, transparent);
                 transform: translateY(-4px);
             }
 
@@ -1357,7 +1366,7 @@ export const homeStyles = (): string => `
             .stay-tuned-star {
                 width: 100%;
                 height: 100%;
-                filter: drop-shadow(0 2px 8px rgba(212, 165, 116, 0.3));
+                filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--gold) 30%, transparent));
             }
 
             @keyframes ornamentGlow {
@@ -1379,19 +1388,19 @@ export const homeStyles = (): string => `
             .stay-tuned-rule {
                 width: 48px;
                 height: 1px;
-                background: linear-gradient(90deg, transparent, #d4a574, transparent);
+                background: linear-gradient(90deg, transparent, var(--gold), transparent);
                 margin: 2px 0;
             }
 
             .stay-tuned-text {
                 font-size: var(--text-small);
-                color: rgba(26, 26, 46, 0.55);
+                color: #636378;
                 line-height: var(--leading-normal);
                 margin: 0;
                 max-width: 240px;
                 font-style: italic;
             }
-            
+
             /* View Past Events Button - subtle, not too prominent */
             .btn-view-past-events {
                 margin-top: 16px;
@@ -1403,16 +1412,16 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-semibold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
-                color: rgba(26, 26, 46, 0.55);
+                color: #636378;
                 cursor: pointer;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 flex-shrink: 0;
             }
-            
+
             .btn-view-past-events:hover {
                 background: rgba(26, 26, 46, 0.05);
                 border-color: rgba(26, 26, 46, 0.3);
-                color: rgba(26, 26, 46, 0.75);
+                color: #595970;
                 transform: translateY(-1px);
             }
             
@@ -1623,9 +1632,9 @@ export const homeStyles = (): string => `
             }
             
             .past-events-dot.active {
-                background: #d4a574;
+                background: var(--gold);
                 transform: scale(1.3);
-                box-shadow: 0 0 10px rgba(212, 165, 116, 0.5);
+                box-shadow: 0 0 10px color-mix(in srgb, var(--gold) 50%, transparent);
             }
             
             .past-events-dot:hover:not(.active) {
@@ -2048,7 +2057,7 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-semibold);
                 text-transform: uppercase;
                 letter-spacing: var(--tracking-normal);
-                color: rgba(255, 255, 255, 0.6);
+                color: rgba(255, 255, 255, 0.9);
             }
             
             /* Playlist Button */
@@ -2335,16 +2344,16 @@ export const homeStyles = (): string => `
             
             .form-group input::placeholder,
             .form-group textarea::placeholder {
-                color: rgba(26, 26, 46, 0.4);
+                color: #767690;
             }
             
             .form-group input:focus,
             .form-group select:focus,
             .form-group textarea:focus {
                 outline: none;
-                border-color: #d4a574;
+                border-color: var(--gold);
                 background: white;
-                box-shadow: 0 8px 24px rgba(212, 165, 116, 0.15);
+                box-shadow: 0 8px 24px color-mix(in srgb, var(--gold) 15%, transparent);
                 transform: translateY(-2px);
             }
             
@@ -2421,13 +2430,13 @@ export const homeStyles = (): string => `
                 background: white;
                 border-radius: 16px;
                 margin-bottom: 20px;
-                border: 2px solid rgba(212, 165, 116, 0.2);
+                border: 2px solid color-mix(in srgb, var(--gold) 20%, transparent);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
             
             .child-form:hover {
-                border-color: rgba(212, 165, 116, 0.4);
-                box-shadow: 0 8px 24px rgba(212, 165, 116, 0.1);
+                border-color: color-mix(in srgb, var(--gold) 40%, transparent);
+                box-shadow: 0 8px 24px color-mix(in srgb, var(--gold) 10%, transparent);
             }
             
             .child-header {
@@ -2436,13 +2445,13 @@ export const homeStyles = (): string => `
                 align-items: center;
                 margin-bottom: 20px;
                 padding-bottom: 16px;
-                border-bottom: 2px solid rgba(212, 165, 116, 0.2);
+                border-bottom: 2px solid color-mix(in srgb, var(--gold) 20%, transparent);
             }
             
             .child-number {
                 font-family: 'Playfair Display', serif;
                 font-size: 20px;
-                color: #d4a574;
+                color: var(--gold);
                 font-weight: 700;
                 margin: 0;
             }
@@ -2594,7 +2603,7 @@ export const homeStyles = (): string => `
             .detail-label {
                 font-size: 16px;
                 font-weight: 600;
-                color: rgba(26, 26, 46, 0.6);
+                color: #595970;
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -2967,13 +2976,12 @@ export const homeStyles = (): string => `
                 }
 
                 .find-us-btn {
-                    background: #d4a574;
-                    background: rgba(212, 165, 116, 0.92);
+                    background: var(--gold);
                     -webkit-backdrop-filter: blur(12px);
                     backdrop-filter: blur(12px);
                     color: #ffffff;
-                    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
-                    border: 1px solid rgba(255, 255, 255, 0.25);
+                    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), 0 0 24px color-mix(in srgb, var(--gold) 35%, transparent);
+                    border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
                     letter-spacing: 2.5px;
                     font-weight: 600;
                     padding: 8px 40px;
@@ -2981,7 +2989,7 @@ export const homeStyles = (): string => `
                 }
 
                 .find-us-btn:hover {
-                    background: rgba(212, 165, 116, 1.0);
+                    background: var(--gold);
                 }
 
                 /* Dropdown opens above button */
@@ -3370,13 +3378,13 @@ export const homeStyles = (): string => `
                 /* Active state for Contact button */
                 .nav-form-btn.active {
                     font-weight: 900;
-                    background: #d4a574;
-                    background: -webkit-linear-gradient(315deg, #c89860 0%, #d4a574 100%);
-                    background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                    background: var(--gold);
+                    background: -webkit-linear-gradient(315deg, var(--gold-dark) 0%, var(--gold) 100%);
+                    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                     color: #ffffff;
-                    border-color: rgba(212, 165, 116, 0.4);
-                    box-shadow: 0 8px 24px rgba(212, 165, 116, 0.4),
-                                0 4px 12px rgba(212, 165, 116, 0.2);
+                    border-color: color-mix(in srgb, var(--gold) 40%, transparent);
+                    box-shadow: 0 8px 24px color-mix(in srgb, var(--gold) 40%, transparent),
+                                0 4px 12px color-mix(in srgb, var(--gold) 20%, transparent);
                 }
                 
 
@@ -4360,7 +4368,7 @@ export const homeStyles = (): string => `
                 .hero-address {
                     font-style: normal;
                     font-size: 16px;
-                    color: rgba(26, 26, 46, 0.6);
+                    color: #595970;
                     font-weight: 500;
                     margin-top: 8px;
                 }
@@ -4592,7 +4600,7 @@ export const homeStyles = (): string => `
                 /* Safari iOS safe area - add extra padding for home indicator */
                 padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
                 margin-top: 40px;
-                border-top: 1px solid #d4a574;
+                border-top: 1px solid var(--gold);
             }
             
             .footer-content {
@@ -4626,7 +4634,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: rgba(26, 26, 46, 0.5);
+                color: #6b6b80;
                 font-weight: var(--weight-semibold);
                 margin-top: 4px;
             }
@@ -4650,7 +4658,7 @@ export const homeStyles = (): string => `
             }
             
             .footer-social a:hover {
-                background: #d4a574;
+                background: var(--gold);
                 color: #ffffff;
                 transform: translateY(-3px);
             }
@@ -4672,13 +4680,13 @@ export const homeStyles = (): string => `
             
             .footer-link {
                 font-size: var(--text-small);
-                color: rgba(26, 26, 46, 0.6);
+                color: #595970;
                 text-decoration: none;
                 transition: color 0.3s ease;
             }
 
             .footer-link:hover {
-                color: #d4a574;
+                color: var(--gold);
             }
 
             .footer-link-separator {
@@ -4688,7 +4696,7 @@ export const homeStyles = (): string => `
 
             .footer-copyright {
                 font-size: var(--text-small);
-                color: rgba(26, 26, 46, 0.5);
+                color: #6b6b80;
                 text-align: center;
             }
             

@@ -1,4 +1,4 @@
-// Version: 1.32.9 - Single source of truth gold token: GOLD in design-tokens.ts → --gold CSS var
+// Version: 1.32.10 - Gold token updated to #856D3F
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

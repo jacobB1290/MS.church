@@ -1,4 +1,4 @@
-// Version: 1.32.9 - Single source of truth gold token: GOLD in design-tokens.ts → --gold CSS var
+// Version: 1.32.10 - Gold token updated to #856D3F
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

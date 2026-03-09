@@ -4,4 +4,4 @@
  */
 
 /** Primary gold accent used for buttons, active states, links, and decorative accents. */
-export const GOLD = '#85754D';
+export const GOLD = '#856D3F';

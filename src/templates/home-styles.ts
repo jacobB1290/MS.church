@@ -11,6 +11,38 @@ export const homeStyles = (): string => `
                 --bg-event3: #f5d8d8; /* Pleasant muted red */
                 --bg-event4: #e6e8f5; /* Soft blue-gray */
                 --bg-event5: #f0e6f5; /* Soft lavender */
+
+                /* ── Typography System ── */
+                --font-display: 'Playfair Display', Georgia, serif;
+                --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+                /* Type scale — fluid from mobile to desktop */
+                --text-hero:    clamp(52px, 8vw, 88px);   /* Hero headline — unique, largest */
+                --text-title:   clamp(36px, 5vw, 52px);   /* Section h2 titles — all sections */
+                --text-heading: clamp(20px, 2.5vw, 26px); /* Card / item h3 sub-headings */
+                --text-lead:    clamp(17px, 1.5vw, 20px); /* Lead paragraphs */
+                --text-body:    16px;                      /* Base body text */
+                --text-small:   14px;                      /* Nav links, secondary text */
+                --text-label:   12px;                      /* Buttons, UI labels */
+                --text-eyebrow: 10px;                      /* Eyebrows, badges, overlines */
+
+                /* Font weights */
+                --weight-regular:  400;
+                --weight-medium:   500;
+                --weight-semibold: 600;
+                --weight-bold:     700;
+
+                /* Line heights */
+                --leading-tight:  1.1;   /* Display headings */
+                --leading-snug:   1.3;   /* Sub-headings */
+                --leading-normal: 1.6;   /* Body text */
+                --leading-loose:  1.8;   /* Lead / prose */
+
+                /* Letter spacing */
+                --tracking-tight:  -0.02em; /* Serif display headings */
+                --tracking-normal:  0em;    /* Body text */
+                --tracking-wide:    0.12em; /* Buttons, nav labels */
+                --tracking-wider:   0.25em; /* Eyebrows, brand subtitles */
             }
 
             * {
@@ -54,14 +86,15 @@ export const homeStyles = (): string => `
             }
 
             body {
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-family: var(--font-body);
+                font-size: var(--text-body);
                 /* Solid background color for seamless Safari iOS overscroll */
                 background-color: var(--bg-color);
                 background: var(--bg-default);
                 color: #1a1a2e;
                 min-height: 100vh;
                 min-height: -webkit-fill-available;
-                line-height: 1.6;
+                line-height: var(--leading-normal);
                 overflow-x: hidden;
                 transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1);
                 /* Safari iOS safe area insets for landscape mode and home indicator */
@@ -156,21 +189,21 @@ export const homeStyles = (): string => `
             }
 
             .brand-title {
-                font-family: 'Playfair Display', serif;
-                font-size: 26px;
-                font-weight: 700;
-                letter-spacing: 3px;
+                font-family: var(--font-display);
+                font-size: 24px;
+                font-weight: var(--weight-bold);
+                letter-spacing: 0.1em;
                 text-transform: uppercase;
                 color: #1a1a2e;
                 white-space: nowrap;
             }
 
             .brand-subtitle {
-                font-size: 13px;
-                letter-spacing: 4px;
+                font-size: var(--text-eyebrow);
+                letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
                 color: rgba(26, 26, 46, 0.5);
-                font-weight: 600;
+                font-weight: var(--weight-semibold);
                 margin-top: 2px;
                 white-space: nowrap;
             }
@@ -180,9 +213,9 @@ export const homeStyles = (): string => `
                 display: flex;
                 gap: 36px;
                 text-transform: uppercase;
-                letter-spacing: 2px;
-                font-size: 14px;
-                font-weight: 700;
+                letter-spacing: var(--tracking-wide);
+                font-size: var(--text-small);
+                font-weight: var(--weight-bold);
             }
 
             nav a {
@@ -230,10 +263,10 @@ export const homeStyles = (): string => `
                 border-radius: 100px;
                 background: rgba(255, 255, 255, 0.9);
                 color: #1a1a2e;
-                font-size: 14px;
-                font-weight: 700;
+                font-size: var(--text-small);
+                font-weight: var(--weight-bold);
                 text-transform: uppercase;
-                letter-spacing: 2px;
+                letter-spacing: var(--tracking-wide);
                 white-space: nowrap;
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
                 backdrop-filter: blur(10px);
@@ -312,9 +345,9 @@ export const homeStyles = (): string => `
                 background: rgba(255, 255, 255, 0.7);
                 border-radius: 100px;
                 text-transform: uppercase;
-                font-size: 11px;
-                font-weight: 700;
-                letter-spacing: 3px;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wider);
                 color: rgba(26, 26, 46, 0.6);
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
                 backdrop-filter: blur(10px);
@@ -329,12 +362,12 @@ export const homeStyles = (): string => `
             }
 
             .hero h1 {
-                font-family: 'Playfair Display', serif;
-                font-size: clamp(52px, 9vw, 96px);
-                line-height: 1.05;
-                letter-spacing: -2px;
+                font-family: var(--font-display);
+                font-size: var(--text-hero);
+                line-height: var(--leading-tight);
+                letter-spacing: var(--tracking-tight);
                 color: #1a1a2e;
-                font-weight: 700;
+                font-weight: var(--weight-bold);
                 margin-top: 0.5vh;
                 text-shadow: 0 8px 24px rgba(26, 26, 46, 0.15),
                              0 4px 8px rgba(26, 26, 46, 0.1);
@@ -342,9 +375,9 @@ export const homeStyles = (): string => `
 
             .hero p {
                 max-width: 640px;
-                font-size: 20px;
+                font-size: var(--text-lead);
                 color: rgba(26, 26, 46, 0.7);
-                line-height: 1.8;
+                line-height: var(--leading-loose);
             }
 
             .cta-group {
@@ -360,9 +393,9 @@ export const homeStyles = (): string => `
                 padding: 18px 40px;
                 border-radius: 100px;
                 text-transform: uppercase;
-                font-size: 12px;
-                font-weight: 700;
-                letter-spacing: 2px;
+                font-size: var(--text-label);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
                 border: none;
                 cursor: pointer;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -423,9 +456,9 @@ export const homeStyles = (): string => `
                 border-radius: 100px;
                 background: rgba(255, 255, 255, 0.8);
                 text-transform: uppercase;
-                font-size: 10px;
-                font-weight: 700;
-                letter-spacing: 3px;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wider);
                 color: rgba(26, 26, 46, 0.5);
                 margin-bottom: 32px;
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
@@ -434,32 +467,32 @@ export const homeStyles = (): string => `
             }
 
             .section-heading {
-                font-family: 'Playfair Display', serif;
-                font-size: clamp(40px, 7vw, 64px);
+                font-family: var(--font-display);
+                font-size: var(--text-title);
                 color: #1a1a2e;
                 margin-bottom: 24px;
                 max-width: 800px;
-                font-weight: 700;
-                line-height: 1.1;
-                letter-spacing: -1px;
+                font-weight: var(--weight-bold);
+                line-height: var(--leading-tight);
+                letter-spacing: var(--tracking-tight);
             }
 
             .section-lead {
                 max-width: 720px;
                 color: rgba(26, 26, 46, 0.7);
-                font-size: 20px;
+                font-size: var(--text-lead);
                 margin-bottom: 16px;
-                line-height: 1.8;
+                line-height: var(--leading-loose);
             }
 
             address {
                 font-style: normal;
-                font-size: 13px;
-                letter-spacing: 3px;
+                font-size: var(--text-eyebrow);
+                letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
                 color: rgba(26, 26, 46, 0.5);
                 margin-bottom: 48px;
-                font-weight: 600;
+                font-weight: var(--weight-semibold);
             }
             
             /* Address Dropdown Menu */
@@ -521,9 +554,9 @@ export const homeStyles = (): string => `
                 transition: background 0.2s ease;
                 text-decoration: none;
                 color: #1a1a2e;
-                font-size: 14px;
-                font-weight: 500;
-                letter-spacing: 0.5px;
+                font-size: var(--text-small);
+                font-weight: var(--weight-medium);
+                letter-spacing: var(--tracking-normal);
                 text-transform: none;
             }
             
@@ -557,17 +590,17 @@ export const homeStyles = (): string => `
                 -webkit-backdrop-filter: blur(20px);
                 border: 1px solid rgba(255, 255, 255, 0.4);
                 border-radius: 100px;
-                font-size: 12px;
-                font-weight: 500;
-                letter-spacing: 2px;
+                font-size: var(--text-label);
+                font-weight: var(--weight-medium);
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 color: #1a1a2e;
                 cursor: pointer;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
                             0 4px 12px rgba(0, 0, 0, 0.05);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            
+
             .find-us-btn:hover {
                 background: rgba(255, 255, 255, 0.85);
                 box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 
@@ -643,23 +676,24 @@ export const homeStyles = (): string => `
 
             .schedule-item span {
                 text-transform: uppercase;
-                letter-spacing: 2.5px;
-                font-size: 11px;
-                font-weight: 700;
+                letter-spacing: var(--tracking-wide);
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
                 color: rgba(26, 26, 46, 0.45);
             }
 
             .schedule-item h3 {
-                font-size: 26px;
-                font-weight: 700;
+                font-size: var(--text-heading);
+                font-weight: var(--weight-bold);
                 color: #1a1a2e;
-                font-family: 'Playfair Display', serif;
+                font-family: var(--font-display);
+                line-height: var(--leading-snug);
             }
 
             .schedule-item p {
                 color: rgba(26, 26, 46, 0.65);
-                line-height: 1.8;
-                font-size: 16px;
+                line-height: var(--leading-loose);
+                font-size: var(--text-body);
             }
 
             /* ========================================
@@ -722,10 +756,10 @@ export const homeStyles = (): string => `
                 }
                 
                 .stay-tuned-card .stay-tuned-ornament { width: 40px; height: 40px; }
-                .stay-tuned-card .stay-tuned-title { font-size: 26px !important; }
-                .stay-tuned-card .stay-tuned-text { font-size: 14px !important; line-height: 1.6; }
+                .stay-tuned-card .stay-tuned-title { font-size: var(--text-heading) !important; }
+                .stay-tuned-card .stay-tuned-text { font-size: var(--text-small) !important; line-height: var(--leading-normal); }
                 .stay-tuned-card .stay-tuned-rule { width: 32px; }
-                .stay-tuned-card .btn-view-past-events { font-size: 13px !important; padding: 10px 20px !important; }
+                .stay-tuned-card .btn-view-past-events { font-size: var(--text-eyebrow) !important; padding: 10px 20px !important; }
                 
                 .past-events-card {
                     background: rgba(255, 255, 255, 0.85);
@@ -740,11 +774,11 @@ export const homeStyles = (): string => `
                 }
                 .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
                 .stay-tuned-card { border-radius: 40px; }
-                .past-events-card .past-card-badge { background: linear-gradient(135deg, #d4a574 0%, #c89860 100%); box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35); position: absolute; top: 14px; left: 14px; color: white; font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 100px; letter-spacing: 1.5px; }
+                .past-events-card .past-card-badge { background: linear-gradient(135deg, #d4a574 0%, #c89860 100%); box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35); position: absolute; top: 14px; left: 14px; color: white; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
                 .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
-                .past-events-card .past-card-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; margin: 0 0 8px 0; color: #1a1a2e; }
-                .past-events-card .past-card-text { font-size: 14px; color: rgba(26,26,46,0.7); line-height: 1.6; margin-bottom: 14px; }
-                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #d4a574; color: #d4a574; border-radius: 30px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+                .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e; }
+                .past-events-card .past-card-text { font-size: var(--text-small); color: rgba(26,26,46,0.7); line-height: var(--leading-normal); margin-bottom: 14px; }
+                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #d4a574; color: #d4a574; border-radius: 30px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
                 .past-events-card .past-card-btn:hover { background: #d4a574; color: white; }
                 
                 .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
@@ -1013,9 +1047,9 @@ export const homeStyles = (): string => `
                 padding: 6px 14px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                 border-radius: 100px;
-                font-size: 10px;
-                font-weight: 700;
-                letter-spacing: 1.5px;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
                 color: #ffffff;
                 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
                 text-transform: uppercase;
@@ -1044,8 +1078,8 @@ export const homeStyles = (): string => `
             .event-cta .btn {
                 width: 100%;
                 padding: 12px 24px;
-                font-size: 13px;
-                font-weight: 700;
+                font-size: var(--text-label);
+                font-weight: var(--weight-bold);
                 border-radius: 14px;
                 background: rgba(255, 255, 255, 0.85);
                 color: #1a1a2e;
@@ -1055,7 +1089,7 @@ export const homeStyles = (): string => `
                 display: block;
                 text-align: center;
                 text-decoration: none;
-                letter-spacing: 0.5px;
+                letter-spacing: var(--tracking-wide);
             }
 
             .event-cta .btn:hover {
@@ -1080,7 +1114,7 @@ export const homeStyles = (): string => `
                 }
                 .event-cta .btn {
                     padding: 14px 32px;
-                    font-size: 14px;
+                    font-size: var(--text-small);
                     border-radius: 18px;
                     background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                     color: white;
@@ -1124,25 +1158,25 @@ export const homeStyles = (): string => `
             .carousel-past-card .past-card-badge {
                 position: absolute; top: 12px; left: 12px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: white; font-size: 9px; font-weight: 700;
+                color: white; font-size: var(--text-eyebrow); font-weight: var(--weight-bold);
                 padding: 5px 10px; border-radius: 100px;
-                letter-spacing: 1.5px;
+                letter-spacing: var(--tracking-wide);
                 box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35);
             }
             .carousel-past-card .past-card-icon { font-size: 40px; margin-bottom: 10px; }
             .carousel-past-card .past-card-title {
-                font-family: 'Playfair Display', serif;
-                font-size: 20px; font-weight: 700; margin: 0 0 8px 0; color: #1a1a2e;
+                font-family: var(--font-display);
+                font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e;
             }
             .carousel-past-card .past-card-text {
-                font-size: 12px; color: rgba(26,26,46,0.6);
-                line-height: 1.5; margin-bottom: 14px; max-width: 200px;
+                font-size: var(--text-label); color: rgba(26,26,46,0.6);
+                line-height: var(--leading-normal); margin-bottom: 14px; max-width: 200px;
             }
             .carousel-past-card .past-card-btn {
                 display: inline-block; padding: 10px 20px;
                 background: transparent; border: 2px solid #d4a574;
                 color: #d4a574; border-radius: 30px;
-                font-size: 12px; font-weight: 600;
+                font-size: var(--text-label); font-weight: var(--weight-semibold);
                 cursor: pointer; transition: all 0.3s ease;
             }
             .carousel-past-card .past-card-btn:hover { background: #d4a574; color: white; }
@@ -1156,16 +1190,16 @@ export const homeStyles = (): string => `
                     top: 16px;
                     left: 16px;
                     padding: 8px 18px;
-                    font-size: 11px;
+                    font-size: var(--text-eyebrow);
                 }
                 .carousel-past-card {
                     border-radius: 40px;
                     padding: 32px 24px;
                 }
                 .carousel-past-card .past-card-icon { font-size: 48px; }
-                .carousel-past-card .past-card-title { font-size: 24px; }
-                .carousel-past-card .past-card-text { font-size: 14px; max-width: 240px; }
-                .carousel-past-card .past-card-btn { padding: 12px 24px; font-size: 13px; }
+                .carousel-past-card .past-card-title { font-size: var(--text-heading); }
+                .carousel-past-card .past-card-text { font-size: var(--text-small); max-width: 240px; }
+                .carousel-past-card .past-card-btn { padding: 12px 24px; font-size: var(--text-label); }
                 
                 /* Stronger glow on desktop */
                 .event-flyer-wrapper.glow-warm {
@@ -1332,12 +1366,13 @@ export const homeStyles = (): string => `
             }
 
             .stay-tuned-title {
-                font-family: 'Playfair Display', serif;
-                font-size: clamp(26px, 5vw, 36px);
-                font-weight: 700;
+                font-family: var(--font-display);
+                font-size: var(--text-heading);
+                font-weight: var(--weight-bold);
                 margin: 0;
                 color: #1a1a2e;
-                letter-spacing: -0.02em;
+                letter-spacing: var(--tracking-tight);
+                line-height: var(--leading-snug);
             }
 
             /* Thin gold divider rule */
@@ -1349,9 +1384,9 @@ export const homeStyles = (): string => `
             }
 
             .stay-tuned-text {
-                font-size: clamp(13px, 3.5vw, 15px);
+                font-size: var(--text-small);
                 color: rgba(26, 26, 46, 0.55);
-                line-height: 1.7;
+                line-height: var(--leading-normal);
                 margin: 0;
                 max-width: 240px;
                 font-style: italic;
@@ -1364,9 +1399,9 @@ export const homeStyles = (): string => `
                 background: transparent;
                 border: 1.5px solid rgba(26, 26, 46, 0.2);
                 border-radius: 100px;
-                font-size: 10px;
-                font-weight: 600;
-                letter-spacing: 1.2px;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-semibold);
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 color: rgba(26, 26, 46, 0.55);
                 cursor: pointer;
@@ -1523,21 +1558,21 @@ export const homeStyles = (): string => `
                 background: rgba(255, 255, 255, 0.15);
                 backdrop-filter: blur(8px);
                 border-radius: 100px;
-                font-size: 10px;
-                font-weight: 700;
-                letter-spacing: 1.5px;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
                 color: rgba(255, 255, 255, 0.9);
                 text-transform: uppercase;
                 margin-bottom: 8px;
             }
-            
+
             .past-event-slide-title {
-                font-family: 'Playfair Display', serif;
-                font-size: 16px;
-                font-weight: 600;
+                font-family: var(--font-display);
+                font-size: var(--text-small);
+                font-weight: var(--weight-semibold);
                 color: #ffffff;
                 margin: 0;
-                line-height: 1.4;
+                line-height: var(--leading-snug);
             }
             
             /* Carousel Navigation Arrows */
@@ -1776,9 +1811,9 @@ export const homeStyles = (): string => `
                 background: rgba(255, 255, 255, 0.9);
                 padding: 12px 28px;
                 border-radius: 100px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: 1px;
+                font-size: var(--text-label);
+                font-weight: var(--weight-semibold);
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 color: #1a1a2e;
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
@@ -1854,9 +1889,9 @@ export const homeStyles = (): string => `
                 border-radius: 100px;
                 padding: 8px 20px;
                 color: #ffb5a6;
-                font-size: 11px;
-                font-weight: 700;
-                letter-spacing: 2px;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
             }
 
@@ -1876,16 +1911,16 @@ export const homeStyles = (): string => `
 
             .preview-screen p {
                 color: rgba(255, 255, 255, 0.85);
-                line-height: 1.9;
-                font-size: 18px;
+                line-height: var(--leading-loose);
+                font-size: var(--text-lead);
             }
 
             .preview-screen small {
                 display: block;
                 color: rgba(255, 255, 255, 0.6);
-                font-size: 14px;
+                font-size: var(--text-small);
                 margin-top: 8px;
-                letter-spacing: 1px;
+                letter-spacing: var(--tracking-normal);
             }
 
             .btn-outline {
@@ -1935,10 +1970,10 @@ export const homeStyles = (): string => `
             }
 
             .past-streams-label {
-                font-size: 14px;
-                font-weight: 600;
+                font-size: var(--text-small);
+                font-weight: var(--weight-semibold);
                 text-transform: uppercase;
-                letter-spacing: 2px;
+                letter-spacing: var(--tracking-wide);
                 color: rgba(255, 255, 255, 0.7);
                 margin-bottom: 16px;
             }
@@ -1953,8 +1988,8 @@ export const homeStyles = (): string => `
             
             .live-verse {
                 color: rgba(255, 255, 255, 0.85);
-                line-height: 1.9;
-                font-size: 18px;
+                line-height: var(--leading-loose);
+                font-size: var(--text-lead);
                 text-align: center;
                 margin: 0;
             }
@@ -2009,10 +2044,10 @@ export const homeStyles = (): string => `
             }
             
             .countdown-label-small {
-                font-size: 9px;
-                font-weight: 600;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-semibold);
                 text-transform: uppercase;
-                letter-spacing: 1px;
+                letter-spacing: var(--tracking-normal);
                 color: rgba(255, 255, 255, 0.6);
             }
             
@@ -2214,9 +2249,9 @@ export const homeStyles = (): string => `
                 width: auto;
                 margin: 8px auto 16px;
                 padding: 8px 24px;
-                font-size: 11px;
-                font-weight: 600;
-                letter-spacing: 1.5px;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-semibold);
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 border-radius: 100px;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2278,9 +2313,9 @@ export const homeStyles = (): string => `
             }
             
             .form-group label {
-                font-size: 13px;
-                font-weight: 700;
-                letter-spacing: 1px;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 color: rgba(26, 26, 46, 0.7);
             }
@@ -2671,17 +2706,17 @@ export const homeStyles = (): string => `
             }
             
             .contact-text h4 {
-                font-size: 16px;
-                font-weight: 700;
+                font-size: var(--text-body);
+                font-weight: var(--weight-bold);
                 color: #1a1a2e;
                 margin-bottom: 6px;
-                letter-spacing: 0.5px;
+                letter-spacing: var(--tracking-normal);
             }
-            
+
             .contact-text p {
-                font-size: 15px;
+                font-size: var(--text-small);
                 color: rgba(26, 26, 46, 0.7);
-                line-height: 1.6;
+                line-height: var(--leading-normal);
             }
 
             /* ========================================
@@ -3482,14 +3517,14 @@ export const homeStyles = (): string => `
                 .btn {
                     width: 100% !important;
                     padding: 16px 32px;
-                    font-size: 14px;
-                    letter-spacing: 2px;
+                    font-size: var(--text-small);
+                    letter-spacing: var(--tracking-wide);
                 }
 
                 .section-eyebrow {
-                    font-size: 9px;
+                    font-size: var(--text-eyebrow);
                     padding: 10px 20px;
-                    letter-spacing: 2.5px;
+                    letter-spacing: var(--tracking-wider);
                     margin-bottom: 16px;
                 }
 
@@ -4567,20 +4602,20 @@ export const homeStyles = (): string => `
             }
             
             .footer-brand-title {
-                font-family: 'Playfair Display', serif;
+                font-family: var(--font-display);
                 font-size: 24px;
-                font-weight: 700;
-                letter-spacing: 3px;
+                font-weight: var(--weight-bold);
+                letter-spacing: 0.1em;
                 text-transform: uppercase;
                 color: #1a1a2e;
             }
-            
+
             .footer-brand-subtitle {
-                font-size: 11px;
-                letter-spacing: 4px;
+                font-size: var(--text-eyebrow);
+                letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
                 color: rgba(26, 26, 46, 0.5);
-                font-weight: 600;
+                font-weight: var(--weight-semibold);
                 margin-top: 4px;
             }
             
@@ -4624,23 +4659,23 @@ export const homeStyles = (): string => `
             }
             
             .footer-link {
-                font-size: 13px;
+                font-size: var(--text-small);
                 color: rgba(26, 26, 46, 0.6);
                 text-decoration: none;
                 transition: color 0.3s ease;
             }
-            
+
             .footer-link:hover {
                 color: #d4a574;
             }
-            
+
             .footer-link-separator {
                 color: rgba(26, 26, 46, 0.3);
-                font-size: 13px;
+                font-size: var(--text-small);
             }
-            
+
             .footer-copyright {
-                font-size: 13px;
+                font-size: var(--text-small);
                 color: rgba(26, 26, 46, 0.5);
                 text-align: center;
             }

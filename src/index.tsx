@@ -1,4 +1,4 @@
-// Version: 1.32.5 - Watch card border-radius matches section/contact cards (48px)
+// Version: 1.32.6 - WCAG 2.1 AA contrast ratio fixes throughout
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

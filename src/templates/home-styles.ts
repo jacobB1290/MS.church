@@ -80,7 +80,7 @@ export const homeStyles = (): string => `
                 /* Active (gold) state must override the white fallback above */
                 .nav-form-btn.active {
                     background: #d4a574 !important;
-                    color: #ffffff !important;
+                    color: #1a1a2e !important;
                     border-color: rgba(212, 165, 116, 0.4) !important;
                 }
             }
@@ -202,7 +202,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: rgba(26, 26, 46, 0.5);
+                color: #6b6b80;
                 font-weight: var(--weight-semibold);
                 margin-top: 2px;
                 white-space: nowrap;
@@ -229,7 +229,7 @@ export const homeStyles = (): string => `
 
             nav a.active {
                 opacity: 1;
-                color: #d4a574;
+                color: #8a5e28;
             }
 
             nav a::after {
@@ -246,7 +246,7 @@ export const homeStyles = (): string => `
 
             nav a.active::after {
                 transform: translateX(-50%) scaleX(1);
-                background: #d4a574;
+                background: #8a5e28;
             }
 
             nav a:hover {
@@ -348,7 +348,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wider);
-                color: rgba(26, 26, 46, 0.6);
+                color: #595970;
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.5);
@@ -403,7 +403,7 @@ export const homeStyles = (): string => `
 
             .btn-primary {
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: #fff;
+                color: #1a1a2e;
                 box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35);
             }
 
@@ -440,7 +440,7 @@ export const homeStyles = (): string => `
             
             .btn-watch-gold {
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%) !important;
-                color: #fff !important;
+                color: #1a1a2e !important;
                 box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35) !important;
                 border: none !important;
             }
@@ -459,7 +459,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wider);
-                color: rgba(26, 26, 46, 0.5);
+                color: #6b6b80;
                 margin-bottom: 32px;
                 box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
                 backdrop-filter: blur(10px);
@@ -490,7 +490,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: rgba(26, 26, 46, 0.5);
+                color: #6b6b80;
                 margin-bottom: 48px;
                 font-weight: var(--weight-semibold);
             }
@@ -679,7 +679,7 @@ export const homeStyles = (): string => `
                 letter-spacing: var(--tracking-wide);
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
-                color: rgba(26, 26, 46, 0.45);
+                color: #6b6b80;
             }
 
             .schedule-item h3 {
@@ -774,12 +774,12 @@ export const homeStyles = (): string => `
                 }
                 .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
                 .stay-tuned-card { border-radius: 32px; }
-                .past-events-card .past-card-badge { background: linear-gradient(135deg, #d4a574 0%, #c89860 100%); box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35); position: absolute; top: 14px; left: 14px; color: white; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
+                .past-events-card .past-card-badge { background: linear-gradient(135deg, #d4a574 0%, #c89860 100%); box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35); position: absolute; top: 14px; left: 14px; color: #1a1a2e; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
                 .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
                 .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e; }
                 .past-events-card .past-card-text { font-size: var(--text-small); color: rgba(26,26,46,0.7); line-height: var(--leading-normal); margin-bottom: 14px; }
-                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #d4a574; color: #d4a574; border-radius: 24px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
-                .past-events-card .past-card-btn:hover { background: #d4a574; color: white; }
+                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #8a5e28; color: #8a5e28; border-radius: 24px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
+                .past-events-card .past-card-btn:hover { background: #8a5e28; color: #ffffff; }
                 
                 .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
             }
@@ -1032,7 +1032,7 @@ export const homeStyles = (): string => `
                 align-items: center;
                 justify-content: center;
                 font-size: 16px;
-                color: rgba(26, 26, 46, 0.4);
+                color: #6b6b80;
                 font-weight: 600;
                 text-transform: uppercase;
                 letter-spacing: 2px;
@@ -1050,7 +1050,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
-                color: #ffffff;
+                color: #1a1a2e;
                 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
                 text-transform: uppercase;
                 white-space: nowrap;
@@ -1117,7 +1117,7 @@ export const homeStyles = (): string => `
                     font-size: var(--text-small);
                     border-radius: 16px;
                     background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                    color: white;
+                    color: #1a1a2e;
                     box-shadow: 0 6px 20px rgba(200, 152, 96, 0.35);
                 }
                 .event-cta .btn:hover {
@@ -1158,7 +1158,7 @@ export const homeStyles = (): string => `
             .carousel-past-card .past-card-badge {
                 position: absolute; top: 12px; left: 12px;
                 background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: white; font-size: var(--text-eyebrow); font-weight: var(--weight-bold);
+                color: #1a1a2e; font-size: var(--text-eyebrow); font-weight: var(--weight-bold);
                 padding: 5px 10px; border-radius: 100px;
                 letter-spacing: var(--tracking-wide);
                 box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35);
@@ -1169,17 +1169,17 @@ export const homeStyles = (): string => `
                 font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e;
             }
             .carousel-past-card .past-card-text {
-                font-size: var(--text-label); color: rgba(26,26,46,0.6);
+                font-size: var(--text-label); color: #595970;
                 line-height: var(--leading-normal); margin-bottom: 14px; max-width: 200px;
             }
             .carousel-past-card .past-card-btn {
                 display: inline-block; padding: 10px 20px;
-                background: transparent; border: 2px solid #d4a574;
-                color: #d4a574; border-radius: 24px;
+                background: transparent; border: 2px solid #8a5e28;
+                color: #8a5e28; border-radius: 24px;
                 font-size: var(--text-label); font-weight: var(--weight-semibold);
                 cursor: pointer; transition: all 0.3s ease;
             }
-            .carousel-past-card .past-card-btn:hover { background: #d4a574; color: white; }
+            .carousel-past-card .past-card-btn:hover { background: #8a5e28; color: #ffffff; }
 
             /* Desktop: bigger cards & stronger glow */
             @media (min-width: 961px) {
@@ -1385,13 +1385,13 @@ export const homeStyles = (): string => `
 
             .stay-tuned-text {
                 font-size: var(--text-small);
-                color: rgba(26, 26, 46, 0.55);
+                color: #636378;
                 line-height: var(--leading-normal);
                 margin: 0;
                 max-width: 240px;
                 font-style: italic;
             }
-            
+
             /* View Past Events Button - subtle, not too prominent */
             .btn-view-past-events {
                 margin-top: 16px;
@@ -1403,16 +1403,16 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-semibold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
-                color: rgba(26, 26, 46, 0.55);
+                color: #636378;
                 cursor: pointer;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 flex-shrink: 0;
             }
-            
+
             .btn-view-past-events:hover {
                 background: rgba(26, 26, 46, 0.05);
                 border-color: rgba(26, 26, 46, 0.3);
-                color: rgba(26, 26, 46, 0.75);
+                color: #595970;
                 transform: translateY(-1px);
             }
             
@@ -2048,7 +2048,7 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-semibold);
                 text-transform: uppercase;
                 letter-spacing: var(--tracking-normal);
-                color: rgba(255, 255, 255, 0.6);
+                color: rgba(255, 255, 255, 0.9);
             }
             
             /* Playlist Button */
@@ -2335,7 +2335,7 @@ export const homeStyles = (): string => `
             
             .form-group input::placeholder,
             .form-group textarea::placeholder {
-                color: rgba(26, 26, 46, 0.4);
+                color: #767690;
             }
             
             .form-group input:focus,
@@ -2442,7 +2442,7 @@ export const homeStyles = (): string => `
             .child-number {
                 font-family: 'Playfair Display', serif;
                 font-size: 20px;
-                color: #d4a574;
+                color: #8a5e28;
                 font-weight: 700;
                 margin: 0;
             }
@@ -2594,7 +2594,7 @@ export const homeStyles = (): string => `
             .detail-label {
                 font-size: 16px;
                 font-weight: 600;
-                color: rgba(26, 26, 46, 0.6);
+                color: #595970;
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -2971,7 +2971,7 @@ export const homeStyles = (): string => `
                     background: rgba(212, 165, 116, 0.92);
                     -webkit-backdrop-filter: blur(12px);
                     backdrop-filter: blur(12px);
-                    color: #ffffff;
+                    color: #1a1a2e;
                     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
                     border: 1px solid rgba(255, 255, 255, 0.25);
                     letter-spacing: 2.5px;
@@ -3373,7 +3373,7 @@ export const homeStyles = (): string => `
                     background: #d4a574;
                     background: -webkit-linear-gradient(315deg, #c89860 0%, #d4a574 100%);
                     background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                    color: #ffffff;
+                    color: #1a1a2e;
                     border-color: rgba(212, 165, 116, 0.4);
                     box-shadow: 0 8px 24px rgba(212, 165, 116, 0.4),
                                 0 4px 12px rgba(212, 165, 116, 0.2);
@@ -4360,7 +4360,7 @@ export const homeStyles = (): string => `
                 .hero-address {
                     font-style: normal;
                     font-size: 16px;
-                    color: rgba(26, 26, 46, 0.6);
+                    color: #595970;
                     font-weight: 500;
                     margin-top: 8px;
                 }
@@ -4626,7 +4626,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: rgba(26, 26, 46, 0.5);
+                color: #6b6b80;
                 font-weight: var(--weight-semibold);
                 margin-top: 4px;
             }
@@ -4651,7 +4651,7 @@ export const homeStyles = (): string => `
             
             .footer-social a:hover {
                 background: #d4a574;
-                color: #ffffff;
+                color: #1a1a2e;
                 transform: translateY(-3px);
             }
             
@@ -4672,7 +4672,7 @@ export const homeStyles = (): string => `
             
             .footer-link {
                 font-size: var(--text-small);
-                color: rgba(26, 26, 46, 0.6);
+                color: #595970;
                 text-decoration: none;
                 transition: color 0.3s ease;
             }
@@ -4688,7 +4688,7 @@ export const homeStyles = (): string => `
 
             .footer-copyright {
                 font-size: var(--text-small);
-                color: rgba(26, 26, 46, 0.5);
+                color: #6b6b80;
                 text-align: center;
             }
             

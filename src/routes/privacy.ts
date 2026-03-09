@@ -84,7 +84,7 @@ export function registerPrivacyRoute(app: Hono) {
               
               .page-header .last-updated {
                   font-size: 14px;
-                  color: rgba(26, 26, 46, 0.5);
+                  color: #6b6b80;
               }
               
               .nav-tabs {
@@ -411,7 +411,7 @@ export function registerPrivacyRoute(app: Hono) {
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
                       <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response. For formal requests requiring a response, please contact us by mail.</p>
-                      <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
+                      <p style="font-size: 13px; color: #6b6b80; margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                   </div>
               </section>
               
@@ -534,7 +534,7 @@ export function registerPrivacyRoute(app: Hono) {
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
                       <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
-                      <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
+                      <p style="font-size: 13px; color: #6b6b80; margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                   </div>
               </section>
               
@@ -621,7 +621,7 @@ export function registerPrivacyRoute(app: Hono) {
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
                       <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
-                      <p style="font-size: 13px; color: rgba(26, 26, 46, 0.5); margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability. We will make reasonable efforts to assist with accessibility needs as resources permit.</em></p>
+                      <p style="font-size: 13px; color: #6b6b80; margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability. We will make reasonable efforts to assist with accessibility needs as resources permit.</em></p>
                   </div>
               </section>
           </div>

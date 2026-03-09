@@ -2477,8 +2477,14 @@ export const homeStyles = (): string => `
             .jotform-container {
                 width: 100%;
                 min-height: 800px;
-                background: transparent;
+                /* Card styling lives here (not inside the iframe) so the shadow
+                   can extend naturally beyond the container's edges */
+                background: rgba(255, 255, 255, 0.85);
                 border-radius: 24px;
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
+                            0 12px 32px rgba(0, 0, 0, 0.04);
+                backdrop-filter: blur(20px);
                 overflow: visible;
                 position: relative;
             }
@@ -3859,6 +3865,7 @@ export const homeStyles = (): string => `
                 /* Jotform container - mobile sizing and branding cover */
                 .jotform-container {
                     min-height: 900px;
+                    border-radius: 24px;
                 }
 
                 .jotform-container::after {

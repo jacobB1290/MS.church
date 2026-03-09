@@ -2477,43 +2477,41 @@ export const homeStyles = (): string => `
             .jotform-container {
                 width: 100%;
                 min-height: 800px;
-                /* Card styling lives here (not inside the iframe) so the shadow
-                   can extend naturally beyond the container's edges */
-                background: rgba(255, 255, 255, 0.85);
+                /* Card styling lives here so shadow extends naturally outside the iframe */
+                background: #fff;
                 border-radius: 24px;
                 border: 1px solid rgba(255, 255, 255, 0.6);
                 box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
                             0 12px 32px rgba(0, 0, 0, 0.04);
-                backdrop-filter: blur(20px);
                 overflow: visible;
                 position: relative;
             }
-            
-            /*
-             * Jotform branding cover — gradient fade so the form card shadow
-             * has no hard edge. Transparent at top (shadow bleeds through),
-             * solid at bottom (hides JotForm watermark).
-             */
+
             .jotform-container::before {
-                display: none; /* Gradient ::after handles the fade; inverted-corner trick no longer needed */
+                display: none;
             }
 
+            /* Solid cover for JotForm branding at the very bottom of the iframe.
+               Solid (not gradient) so button shadow doesn't bleed through. */
             .jotform-container::after {
                 content: '';
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 100px; /* Tall enough for gradient to fade shadow + cover branding */
-                background: linear-gradient(to bottom, transparent 0%, #f8f9fd 55%);
+                height: 56px;
+                background: #fff;
                 pointer-events: none;
                 z-index: 9;
+                border-radius: 0 0 24px 24px;
             }
-            
+
             .jotform-container iframe {
                 width: 100%;
                 border: none;
                 min-height: 800px;
+                border-radius: 24px; /* Clips iframe pixels to match container corners */
+                display: block;
             }
             
             /* Prevent zoom on form inputs - Mobile Safari Fix */
@@ -3862,18 +3860,20 @@ export const homeStyles = (): string => `
                     font-size: 17px;
                 }
 
-                /* Jotform container - mobile sizing and branding cover */
+                /* Jotform container - mobile sizing */
                 .jotform-container {
                     min-height: 900px;
                     border-radius: 24px;
                 }
 
                 .jotform-container::after {
-                    height: 110px; /* Slightly taller gradient on mobile */
+                    height: 56px;
+                    border-radius: 0 0 24px 24px;
                 }
 
                 .jotform-container iframe {
                     min-height: 900px;
+                    border-radius: 24px;
                 }
             }
 

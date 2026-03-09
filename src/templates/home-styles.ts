@@ -2490,18 +2490,18 @@ export const homeStyles = (): string => `
             .jotform-container::before {
                 content: '';
                 position: absolute;
-                bottom: 70px; /* Higher up - right at bottom of form card */
+                bottom: 50px; /* Sits above the branding cover */
                 left: 50%;
                 transform: translateX(-50%);
                 width: calc(100% - 40px); /* Match form card width */
                 height: 24px;
                 background: transparent;
                 border-radius: 0 0 24px 24px; /* Round bottom corners */
-                box-shadow: 0 80px 0 0 #f8f9fd; /* Taller shadow to cover more */
+                box-shadow: 0 60px 0 0 #f8f9fd; /* Shadow covers down to container bottom */
                 pointer-events: none;
                 z-index: 10;
             }
-            
+
             /* Solid cover for the Jotform branding area - extends full width */
             .jotform-container::after {
                 content: '';
@@ -2509,7 +2509,7 @@ export const homeStyles = (): string => `
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 70px; /* Taller to meet the ::before */
+                height: 50px; /* Covers JotForm branding (~40px) without clipping form card */
                 background: #f8f9fd;
                 pointer-events: none;
                 z-index: 9;
@@ -3866,8 +3866,29 @@ export const homeStyles = (): string => `
                 .contact-text p {
                     font-size: 17px;
                 }
+
+                /* Jotform container - mobile sizing and branding cover */
+                .jotform-container {
+                    min-height: 900px;
+                }
+
+                .jotform-container::before {
+                    bottom: 65px;
+                    width: calc(100% - 28px);
+                    height: 20px;
+                    border-radius: 0 0 16px 16px;
+                    box-shadow: 0 75px 0 0 #f8f9fd;
+                }
+
+                .jotform-container::after {
+                    height: 65px; /* Slightly taller on mobile — branding has more vertical space */
+                }
+
+                .jotform-container iframe {
+                    min-height: 900px;
+                }
             }
-            
+
             /* 375px breakpoint REMOVED - Using fluid clamp() scaling in 480px breakpoint instead */
             /* This ensures smooth scaling from 320px to 960px with iPhone 17 Pro Max values as maximum */
             @media (max-width: 0px) {

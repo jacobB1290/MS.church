@@ -1,4 +1,4 @@
-// Version: 1.32.10 - Gold token updated to #856D3F
+// Version: 1.32.11 - Gold token updated to #8C6B4A
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

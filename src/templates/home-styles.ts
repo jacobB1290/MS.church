@@ -1849,7 +1849,7 @@ export const homeStyles = (): string => `
 
             .watch-card {
                 background: linear-gradient(135deg, #8B0000 0%, #5A0000 100%);
-                border-radius: 32px;
+                border-radius: 48px;
                 padding: 48px;
                 color: #ffffff;
                 box-shadow: 0 32px 80px rgba(139, 0, 0, 0.3);

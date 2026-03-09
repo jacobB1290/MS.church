@@ -1,4 +1,4 @@
-// Version: 1.32.6 - WCAG 2.1 AA contrast ratio fixes throughout
+// Version: 1.32.7 - WCAG: shift gold to amber (#9c6c1a) so white text passes 4.5:1
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

@@ -79,9 +79,9 @@ export const homeStyles = (): string => `
                 }
                 /* Active (gold) state must override the white fallback above */
                 .nav-form-btn.active {
-                    background: #d4a574 !important;
-                    color: #1a1a2e !important;
-                    border-color: rgba(212, 165, 116, 0.4) !important;
+                    background: #9c6c1a !important;
+                    color: #ffffff !important;
+                    border-color: rgba(156, 108, 26, 0.4) !important;
                 }
             }
 
@@ -229,7 +229,7 @@ export const homeStyles = (): string => `
 
             nav a.active {
                 opacity: 1;
-                color: #8a5e28;
+                color: #9c6c1a;
             }
 
             nav a::after {
@@ -246,7 +246,7 @@ export const homeStyles = (): string => `
 
             nav a.active::after {
                 transform: translateX(-50%) scaleX(1);
-                background: #8a5e28;
+                background: #9c6c1a;
             }
 
             nav a:hover {
@@ -402,9 +402,9 @@ export const homeStyles = (): string => `
             }
 
             .btn-primary {
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: #1a1a2e;
-                box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35);
+                background: linear-gradient(135deg, #9c6c1a 0%, #7e5614 100%);
+                color: #ffffff;
+                box-shadow: 0 16px 40px rgba(156, 108, 26, 0.35);
             }
 
             .btn-primary:hover {
@@ -439,9 +439,9 @@ export const homeStyles = (): string => `
             }
             
             .btn-watch-gold {
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%) !important;
-                color: #1a1a2e !important;
-                box-shadow: 0 16px 40px rgba(200, 152, 96, 0.35) !important;
+                background: linear-gradient(135deg, #9c6c1a 0%, #7e5614 100%) !important;
+                color: #ffffff !important;
+                box-shadow: 0 16px 40px rgba(156, 108, 26, 0.35) !important;
                 border: none !important;
             }
             
@@ -774,12 +774,12 @@ export const homeStyles = (): string => `
                 }
                 .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
                 .stay-tuned-card { border-radius: 32px; }
-                .past-events-card .past-card-badge { background: linear-gradient(135deg, #d4a574 0%, #c89860 100%); box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35); position: absolute; top: 14px; left: 14px; color: #1a1a2e; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
+                .past-events-card .past-card-badge { background: linear-gradient(135deg, #9c6c1a 0%, #7e5614 100%); box-shadow: 0 4px 16px rgba(156, 108, 26, 0.35); position: absolute; top: 14px; left: 14px; color: #ffffff; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
                 .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
                 .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e; }
                 .past-events-card .past-card-text { font-size: var(--text-small); color: rgba(26,26,46,0.7); line-height: var(--leading-normal); margin-bottom: 14px; }
-                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #8a5e28; color: #8a5e28; border-radius: 24px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
-                .past-events-card .past-card-btn:hover { background: #8a5e28; color: #ffffff; }
+                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #9c6c1a; color: #9c6c1a; border-radius: 24px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
+                .past-events-card .past-card-btn:hover { background: #9c6c1a; color: #ffffff; }
                 
                 .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
             }
@@ -1045,13 +1045,13 @@ export const homeStyles = (): string => `
                 left: 12px;
                 z-index: 5;
                 padding: 6px 14px;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
+                background: linear-gradient(135deg, #9c6c1a 0%, #7e5614 100%);
                 border-radius: 100px;
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
-                color: #1a1a2e;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+                color: #ffffff;
+                box-shadow: 0 4px 16px rgba(156, 108, 26, 0.3);
                 text-transform: uppercase;
                 white-space: nowrap;
             }
@@ -1116,13 +1116,13 @@ export const homeStyles = (): string => `
                     padding: 14px 32px;
                     font-size: var(--text-small);
                     border-radius: 16px;
-                    background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                    color: #1a1a2e;
-                    box-shadow: 0 6px 20px rgba(200, 152, 96, 0.35);
+                    background: linear-gradient(135deg, #9c6c1a 0%, #7e5614 100%);
+                    color: #ffffff;
+                    box-shadow: 0 6px 20px rgba(156, 108, 26, 0.35);
                 }
                 .event-cta .btn:hover {
-                    background: linear-gradient(135deg, #c89860 0%, #b88a52 100%);
-                    box-shadow: 0 10px 28px rgba(200, 152, 96, 0.45);
+                    background: linear-gradient(135deg, #7e5614 0%, #66450f 100%);
+                    box-shadow: 0 10px 28px rgba(156, 108, 26, 0.45);
                     transform: translateY(-2px);
                 }
             }
@@ -1157,11 +1157,11 @@ export const homeStyles = (): string => `
             }
             .carousel-past-card .past-card-badge {
                 position: absolute; top: 12px; left: 12px;
-                background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                color: #1a1a2e; font-size: var(--text-eyebrow); font-weight: var(--weight-bold);
+                background: linear-gradient(135deg, #9c6c1a 0%, #7e5614 100%);
+                color: #ffffff; font-size: var(--text-eyebrow); font-weight: var(--weight-bold);
                 padding: 5px 10px; border-radius: 100px;
                 letter-spacing: var(--tracking-wide);
-                box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35);
+                box-shadow: 0 4px 16px rgba(156, 108, 26, 0.35);
             }
             .carousel-past-card .past-card-icon { font-size: 40px; margin-bottom: 10px; }
             .carousel-past-card .past-card-title {
@@ -1174,12 +1174,12 @@ export const homeStyles = (): string => `
             }
             .carousel-past-card .past-card-btn {
                 display: inline-block; padding: 10px 20px;
-                background: transparent; border: 2px solid #8a5e28;
-                color: #8a5e28; border-radius: 24px;
+                background: transparent; border: 2px solid #9c6c1a;
+                color: #9c6c1a; border-radius: 24px;
                 font-size: var(--text-label); font-weight: var(--weight-semibold);
                 cursor: pointer; transition: all 0.3s ease;
             }
-            .carousel-past-card .past-card-btn:hover { background: #8a5e28; color: #ffffff; }
+            .carousel-past-card .past-card-btn:hover { background: #9c6c1a; color: #ffffff; }
 
             /* Desktop: bigger cards & stronger glow */
             @media (min-width: 961px) {
@@ -2442,7 +2442,7 @@ export const homeStyles = (): string => `
             .child-number {
                 font-family: 'Playfair Display', serif;
                 font-size: 20px;
-                color: #8a5e28;
+                color: #9c6c1a;
                 font-weight: 700;
                 margin: 0;
             }
@@ -2967,11 +2967,11 @@ export const homeStyles = (): string => `
                 }
 
                 .find-us-btn {
-                    background: #d4a574;
-                    background: rgba(212, 165, 116, 0.92);
+                    background: #9c6c1a;
+                    background: rgba(156, 108, 26, 0.95);
                     -webkit-backdrop-filter: blur(12px);
                     backdrop-filter: blur(12px);
-                    color: #1a1a2e;
+                    color: #ffffff;
                     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
                     border: 1px solid rgba(255, 255, 255, 0.25);
                     letter-spacing: 2.5px;
@@ -3370,13 +3370,13 @@ export const homeStyles = (): string => `
                 /* Active state for Contact button */
                 .nav-form-btn.active {
                     font-weight: 900;
-                    background: #d4a574;
-                    background: -webkit-linear-gradient(315deg, #c89860 0%, #d4a574 100%);
-                    background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
-                    color: #1a1a2e;
-                    border-color: rgba(212, 165, 116, 0.4);
-                    box-shadow: 0 8px 24px rgba(212, 165, 116, 0.4),
-                                0 4px 12px rgba(212, 165, 116, 0.2);
+                    background: #9c6c1a;
+                    background: -webkit-linear-gradient(315deg, #7e5614 0%, #9c6c1a 100%);
+                    background: linear-gradient(135deg, #9c6c1a 0%, #7e5614 100%);
+                    color: #ffffff;
+                    border-color: rgba(156, 108, 26, 0.4);
+                    box-shadow: 0 8px 24px rgba(156, 108, 26, 0.4),
+                                0 4px 12px rgba(156, 108, 26, 0.2);
                 }
                 
 
@@ -4650,8 +4650,8 @@ export const homeStyles = (): string => `
             }
             
             .footer-social a:hover {
-                background: #d4a574;
-                color: #1a1a2e;
+                background: #9c6c1a;
+                color: #ffffff;
                 transform: translateY(-3px);
             }
             

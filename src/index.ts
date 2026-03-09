@@ -1,4 +1,4 @@
-// Version: 1.32.7 - WCAG: shift gold to amber (#9c6c1a) so white text passes 4.5:1
+// Version: 1.32.8 - Refine WCAG gold to #906c18 (H=42° golden hue, warm glow shadows restored)
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

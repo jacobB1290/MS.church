@@ -1,4 +1,4 @@
-// Version: 1.32.8 - Refine WCAG gold to #906c18 (H=42° golden hue, warm glow shadows restored)
+// Version: 1.32.9 - Single source of truth gold token: GOLD in design-tokens.ts → --gold CSS var
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

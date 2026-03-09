@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.32.8 - Refine WCAG gold to #906c18 (H=42° golden hue, warm glow shadows restored) -->
+<!-- v1.32.9 - Single source of truth gold token: GOLD in design-tokens.ts -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

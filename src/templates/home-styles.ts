@@ -2483,34 +2483,23 @@ export const homeStyles = (): string => `
                 position: relative;
             }
             
-            /* 
-             * Jotform logo cover - sits below the form, hugs the rounded corners
-             * Uses box-shadow trick to create inverted rounded corners
+            /*
+             * Jotform branding cover — gradient fade so the form card shadow
+             * has no hard edge. Transparent at top (shadow bleeds through),
+             * solid at bottom (hides JotForm watermark).
              */
             .jotform-container::before {
-                content: '';
-                position: absolute;
-                bottom: 50px; /* Sits above the branding cover */
-                left: 50%;
-                transform: translateX(-50%);
-                width: calc(100% - 40px); /* Match form card width */
-                height: 24px;
-                background: transparent;
-                border-radius: 0 0 24px 24px; /* Round bottom corners */
-                box-shadow: 0 60px 0 0 #f8f9fd; /* Shadow covers down to container bottom */
-                pointer-events: none;
-                z-index: 10;
+                display: none; /* Gradient ::after handles the fade; inverted-corner trick no longer needed */
             }
 
-            /* Solid cover for the Jotform branding area - extends full width */
             .jotform-container::after {
                 content: '';
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 50px; /* Covers JotForm branding (~40px) without clipping form card */
-                background: #f8f9fd;
+                height: 100px; /* Tall enough for gradient to fade shadow + cover branding */
+                background: linear-gradient(to bottom, transparent 0%, #f8f9fd 55%);
                 pointer-events: none;
                 z-index: 9;
             }
@@ -3872,16 +3861,8 @@ export const homeStyles = (): string => `
                     min-height: 900px;
                 }
 
-                .jotform-container::before {
-                    bottom: 65px;
-                    width: calc(100% - 28px);
-                    height: 20px;
-                    border-radius: 0 0 16px 16px;
-                    box-shadow: 0 75px 0 0 #f8f9fd;
-                }
-
                 .jotform-container::after {
-                    height: 65px; /* Slightly taller on mobile — branding has more vertical space */
+                    height: 110px; /* Slightly taller gradient on mobile */
                 }
 
                 .jotform-container iframe {

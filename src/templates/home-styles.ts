@@ -232,8 +232,13 @@ export const homeStyles = (): string => `
                 opacity: 1;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 position: relative;
-                padding-bottom: 4px;
+                padding: 15px 12px;
                 white-space: nowrap;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 44px;
+                border-radius: 6px;
             }
 
             nav a.active {
@@ -268,7 +273,7 @@ export const homeStyles = (): string => `
             }
 
             .nav-cta {
-                padding: 12px 20px;
+                padding: 15px 24px;
                 border-radius: 100px;
                 background: rgba(255, 255, 255, 0.9);
                 color: #1a1a2e;
@@ -285,6 +290,7 @@ export const homeStyles = (): string => `
                 align-items: center;
                 justify-content: center;
                 text-align: center;
+                min-height: 44px;
             }
 
             .nav-cta:hover {
@@ -3087,12 +3093,12 @@ export const homeStyles = (): string => `
                     width: 100%;
                     justify-content: center;  /* Center nav links */
                     flex-wrap: nowrap; /* Prevent wrapping */
-                    gap: clamp(8px, 3vw, 18px); /* Responsive gap */
+                    gap: clamp(12px, 3vw, 18px); /* Responsive gap - WCAG 2.5.8 spacing */
                     order: 1;  /* Nav links first */
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: clamp(8px, 3vw, 16px);
+                    gap: clamp(12px, 3vw, 16px);
                 }
 
                 .brand {
@@ -3104,18 +3110,20 @@ export const homeStyles = (): string => `
 
                 .nav-cta {
                     width: 100%;
-                    padding: 10px 24px;
+                    padding: 12px 24px;
                     font-size: 12px;
                     text-align: center;
                     order: 2;  /* CTA button last */
                     white-space: nowrap;
+                    min-height: 44px;
                 }
-                
+
                 /* Contact button - shift right when compressed */
                 .nav-shell.scrolled-mobile .nav-cta {
                     width: auto;
                     margin-left: auto;
-                    padding: 8px 20px;
+                    padding: 10px 20px;
+                    min-height: 44px;
                 }
 
                 .brand-title {
@@ -3344,7 +3352,7 @@ export const homeStyles = (): string => `
                 
                 .nav-form-btn {
                     display: none;
-                    padding: 6px 14px;
+                    padding: 10px 14px;
                     border-radius: 100px;
                     background: rgba(255, 255, 255, 0.9);
                     color: #1a1a2e;
@@ -3364,6 +3372,7 @@ export const homeStyles = (): string => `
                     transform: scale(0.85);
                     position: absolute;
                     right: 18px;
+                    min-height: 44px;
                 }
                 
                 .nav-shell.scrolled-mobile .nav-form-btn {
@@ -3462,7 +3471,7 @@ export const homeStyles = (): string => `
                 }
 
                 nav ul {
-                    gap: clamp(6px, 2.5vw, 14px);
+                    gap: clamp(12px, 2.5vw, 14px);
                     flex-wrap: nowrap;
                     justify-content: center;
                 }
@@ -3480,7 +3489,7 @@ export const homeStyles = (): string => `
                 }
                 
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: clamp(6px, 2.5vw, 12px);
+                    gap: clamp(12px, 2.5vw, 12px);
                     flex-wrap: nowrap;
                     justify-content: center;
                 }
@@ -3498,10 +3507,11 @@ export const homeStyles = (): string => `
                 }
 
                 .nav-cta {
-                    padding: clamp(6px, 2vw, 8px) clamp(12px, 3.5vw, 16px);
+                    padding: clamp(10px, 2vw, 15px) clamp(12px, 3.5vw, 16px);
                     font-size: clamp(10px, 2.5vw, 11px);
                     letter-spacing: clamp(1px, 0.3vw, 1.5px);
                     white-space: nowrap;
+                    min-height: 44px;
                 }
 
                 main {

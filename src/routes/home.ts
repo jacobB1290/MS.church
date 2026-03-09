@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.32.14 - Gold token updated to #9d7853 -->
+<!-- v1.32.15 - Fix nav WCAG 2.5.8 target size (44×44px minimum) -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

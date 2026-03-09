@@ -1,4 +1,4 @@
-// Version: 1.32.3 - Standardize typography: CSS type-scale variables, unified hierarchy
+// Version: 1.32.4 - Standardize corner radii with proper outer/inner ratio system
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

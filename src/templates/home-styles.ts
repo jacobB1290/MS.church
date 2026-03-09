@@ -526,8 +526,8 @@ export const homeStyles = (): string => `
                 left: 50%;
                 transform: translateX(-50%);
                 background: white;
-                border-radius: 12px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 
+                border-radius: 16px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15),
                             0 2px 8px rgba(0, 0, 0, 0.1);
                 padding: 8px;
                 min-width: 200px;
@@ -767,18 +767,18 @@ export const homeStyles = (): string => `
                     box-shadow: 0 32px 80px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.04);
                     border: 1px solid rgba(255,255,255,0.6);
                     backdrop-filter: blur(20px);
-                    border-radius: 40px;
+                    border-radius: 32px;
                     position: relative; overflow: visible;
                     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
                     cursor: pointer;
                 }
                 .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
-                .stay-tuned-card { border-radius: 40px; }
+                .stay-tuned-card { border-radius: 32px; }
                 .past-events-card .past-card-badge { background: linear-gradient(135deg, #d4a574 0%, #c89860 100%); box-shadow: 0 4px 16px rgba(212, 165, 116, 0.35); position: absolute; top: 14px; left: 14px; color: white; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
                 .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
                 .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e; }
                 .past-events-card .past-card-text { font-size: var(--text-small); color: rgba(26,26,46,0.7); line-height: var(--leading-normal); margin-bottom: 14px; }
-                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #d4a574; color: #d4a574; border-radius: 30px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
+                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid #d4a574; color: #d4a574; border-radius: 24px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
                 .past-events-card .past-card-btn:hover { background: #d4a574; color: white; }
                 
                 .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
@@ -1080,7 +1080,7 @@ export const homeStyles = (): string => `
                 padding: 12px 24px;
                 font-size: var(--text-label);
                 font-weight: var(--weight-bold);
-                border-radius: 14px;
+                border-radius: 16px;
                 background: rgba(255, 255, 255, 0.85);
                 color: #1a1a2e;
                 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -1115,7 +1115,7 @@ export const homeStyles = (): string => `
                 .event-cta .btn {
                     padding: 14px 32px;
                     font-size: var(--text-small);
-                    border-radius: 18px;
+                    border-radius: 16px;
                     background: linear-gradient(135deg, #d4a574 0%, #c89860 100%);
                     color: white;
                     box-shadow: 0 6px 20px rgba(200, 152, 96, 0.35);
@@ -1175,7 +1175,7 @@ export const homeStyles = (): string => `
             .carousel-past-card .past-card-btn {
                 display: inline-block; padding: 10px 20px;
                 background: transparent; border: 2px solid #d4a574;
-                color: #d4a574; border-radius: 30px;
+                color: #d4a574; border-radius: 24px;
                 font-size: var(--text-label); font-weight: var(--weight-semibold);
                 cursor: pointer; transition: all 0.3s ease;
             }
@@ -1184,7 +1184,7 @@ export const homeStyles = (): string => `
             /* Desktop: bigger cards & stronger glow */
             @media (min-width: 961px) {
                 .event-flyer-wrapper {
-                    border-radius: 40px;
+                    border-radius: 32px;
                 }
                 .event-date {
                     top: 16px;
@@ -1193,7 +1193,7 @@ export const homeStyles = (): string => `
                     font-size: var(--text-eyebrow);
                 }
                 .carousel-past-card {
-                    border-radius: 40px;
+                    border-radius: 32px;
                     padding: 32px 24px;
                 }
                 .carousel-past-card .past-card-icon { font-size: 48px; }
@@ -1510,7 +1510,7 @@ export const homeStyles = (): string => `
                 max-width: 380px;
                 aspect-ratio: 3/4;
                 overflow: hidden;
-                border-radius: 20px;
+                border-radius: 24px;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             }
             
@@ -1539,7 +1539,7 @@ export const homeStyles = (): string => `
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                border-radius: 20px;
+                border-radius: 0;
             }
             
             .past-event-slide-info {
@@ -1549,9 +1549,9 @@ export const homeStyles = (): string => `
                 right: 0;
                 padding: 20px;
                 background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
-                border-radius: 0 0 20px 20px;
+                border-radius: 0 0 24px 24px;
             }
-            
+
             .past-event-slide-date {
                 display: inline-block;
                 padding: 5px 12px;
@@ -1849,7 +1849,7 @@ export const homeStyles = (): string => `
 
             .watch-card {
                 background: linear-gradient(135deg, #8B0000 0%, #5A0000 100%);
-                border-radius: 32px;
+                border-radius: 48px;
                 padding: 48px;
                 color: #ffffff;
                 box-shadow: 0 32px 80px rgba(139, 0, 0, 0.3);
@@ -2400,7 +2400,7 @@ export const homeStyles = (): string => `
             .form-section {
                 padding: 32px;
                 background: rgba(248, 248, 252, 0.5);
-                border-radius: 20px;
+                border-radius: 24px;
                 margin-bottom: 24px;
             }
             
@@ -2476,49 +2476,42 @@ export const homeStyles = (): string => `
             /* JotForm Container Styles */
             .jotform-container {
                 width: 100%;
-                min-height: 800px;
-                background: transparent;
-                border-radius: 20px;
+                /* No min-height — container matches the iframe's auto-resized height exactly,
+                   eliminating the empty white space that appeared below the form */
+                background: #fff;
+                border-radius: 24px;
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
+                            0 12px 32px rgba(0, 0, 0, 0.04);
                 overflow: visible;
                 position: relative;
             }
-            
-            /* 
-             * Jotform logo cover - sits below the form, hugs the rounded corners
-             * Uses box-shadow trick to create inverted rounded corners
-             */
+
             .jotform-container::before {
-                content: '';
-                position: absolute;
-                bottom: 70px; /* Higher up - right at bottom of form card */
-                left: 50%;
-                transform: translateX(-50%);
-                width: calc(100% - 40px); /* Match form card width */
-                height: 24px;
-                background: transparent;
-                border-radius: 0 0 24px 24px; /* Round bottom corners */
-                box-shadow: 0 80px 0 0 #f8f9fd; /* Taller shadow to cover more */
-                pointer-events: none;
-                z-index: 10;
+                display: none;
             }
-            
-            /* Solid cover for the Jotform branding area - extends full width */
+
+            /* Solid cover for JotForm branding at the very bottom of the iframe.
+               Solid (not gradient) so button shadow doesn't bleed through. */
             .jotform-container::after {
                 content: '';
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 70px; /* Taller to meet the ::before */
-                background: #f8f9fd;
+                height: 56px;
+                background: #fff;
                 pointer-events: none;
                 z-index: 9;
+                border-radius: 0 0 24px 24px;
             }
-            
+
             .jotform-container iframe {
                 width: 100%;
                 border: none;
                 min-height: 800px;
+                border-radius: 24px; /* Clips iframe pixels to match container corners */
+                display: block;
             }
             
             /* Prevent zoom on form inputs - Mobile Safari Fix */
@@ -2581,10 +2574,10 @@ export const homeStyles = (): string => `
                 max-width: 500px;
                 background: rgba(255, 255, 255, 0.6);
                 padding: 24px;
-                border-radius: 20px;
+                border-radius: 24px;
                 border: 1px solid rgba(255, 255, 255, 0.8);
             }
-            
+
             .detail-item {
                 display: flex;
                 align-items: center;
@@ -2688,7 +2681,7 @@ export const homeStyles = (): string => `
                 align-items: flex-start;
                 padding: 24px;
                 background: rgba(255, 255, 255, 0.6);
-                border-radius: 20px;
+                border-radius: 24px;
                 border: 1px solid rgba(255, 255, 255, 0.8);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
@@ -3193,6 +3186,10 @@ export const homeStyles = (): string => `
                     border-radius: 32px;
                 }
 
+                .schedule-item {
+                    border-radius: 24px;
+                }
+
                 .section-eyebrow {
                     font-size: 9px;
                     padding: 10px 20px;
@@ -3228,7 +3225,7 @@ export const homeStyles = (): string => `
 
                 .watch-card {
                     padding: 32px 24px;
-                    border-radius: 28px;
+                    border-radius: 32px;
                 }
 
                 .preview-screen {
@@ -3253,7 +3250,7 @@ export const homeStyles = (): string => `
                 /* Contact Section Tablet */
                 .contact-card {
                     padding: 48px 36px;
-                    border-radius: 36px;
+                    border-radius: 32px;
                     grid-template-columns: 1fr;
                     gap: 48px;
                 }
@@ -3439,7 +3436,7 @@ export const homeStyles = (): string => `
                 .event-cta .btn {
                     padding: clamp(15px, 3.8vw, 16px) clamp(28px, 7vw, 32px);
                     font-size: clamp(12px, 3.2vw, 13px);
-                    border-radius: clamp(17px, 4.2vw, 18px);
+                    border-radius: 16px;
                 }
 
                 .brand-title {
@@ -3557,7 +3554,7 @@ export const homeStyles = (): string => `
 
                 .schedule-item {
                     padding: 16px 14px;
-                    border-radius: 18px;
+                    border-radius: 16px;
                     gap: 8px;
                 }
 
@@ -3693,7 +3690,7 @@ export const homeStyles = (): string => `
                     padding: 28px 20px;
                     min-height: 240px;
                     gap: 20px;
-                    border-radius: 20px;
+                    border-radius: 16px;
                 }
 
                 .live-status {
@@ -3775,7 +3772,7 @@ export const homeStyles = (): string => `
                 
                 .contact-card {
                     padding: 32px 24px;
-                    border-radius: 28px;
+                    border-radius: 24px;
                     grid-template-columns: 1fr;
                     gap: 40px;
                 }
@@ -3794,7 +3791,7 @@ export const homeStyles = (): string => `
                 .form-group textarea {
                     padding: 14px 18px;
                     font-size: 15px;
-                    border-radius: 14px;
+                    border-radius: 12px;
                 }
                 
                 .form-group textarea {
@@ -3862,8 +3859,23 @@ export const homeStyles = (): string => `
                 .contact-text p {
                     font-size: 17px;
                 }
+
+                /* Jotform container - mobile sizing */
+                .jotform-container {
+                    border-radius: 24px;
+                }
+
+                .jotform-container::after {
+                    height: 56px;
+                    border-radius: 0 0 24px 24px;
+                }
+
+                .jotform-container iframe {
+                    min-height: 900px;
+                    border-radius: 24px;
+                }
             }
-            
+
             /* 375px breakpoint REMOVED - Using fluid clamp() scaling in 480px breakpoint instead */
             /* This ensures smooth scaling from 320px to 960px with iPhone 17 Pro Max values as maximum */
             @media (max-width: 0px) {
@@ -3879,7 +3891,7 @@ export const homeStyles = (): string => `
                 
                 .nav-shell {
                     padding: 8px 10px;
-                    border-radius: 20px;
+                    border-radius: 16px;
                     top: 5px;
                     width: 94%;
                 }
@@ -4101,13 +4113,13 @@ export const homeStyles = (): string => `
                 
                 .watch-card {
                     padding: 20px 14px;
-                    border-radius: 18px;
+                    border-radius: 16px;
                 }
-                
+
                 .preview-screen {
                     padding: 20px 14px;
                     min-height: 190px;
-                    border-radius: 16px;
+                    border-radius: 12px;
                 }
                 
                 .live-status {
@@ -4174,7 +4186,7 @@ export const homeStyles = (): string => `
                 
                 .contact-card {
                     padding: 16px 14px;
-                    border-radius: 18px;
+                    border-radius: 16px;
                     gap: 16px;
                 }
                 
@@ -4186,7 +4198,7 @@ export const homeStyles = (): string => `
                     bottom: 85px; /* Higher up on mobile */
                     width: calc(100% - 28px); /* Match mobile form card width */
                     height: 20px;
-                    border-radius: 0 0 20px 20px;
+                    border-radius: 0 0 16px 16px;
                     box-shadow: 0 95px 0 0 #f8f9fd; /* Taller shadow */
                 }
                 
@@ -4381,7 +4393,7 @@ export const homeStyles = (): string => `
                     min-height: clamp(500px, 50vh, 650px);
                     max-height: clamp(600px, 60vh, 700px);
                     height: clamp(550px, 55vh, 650px);
-                    border-radius: clamp(20px, 2vw, 28px);
+                    border-radius: clamp(20px, 2vw, 24px);
                     overflow: hidden;
                     box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
                 }
@@ -4541,7 +4553,7 @@ export const homeStyles = (): string => `
                 
                 .event-card {
                     padding: clamp(12px, 1.5vw, 18px);
-                    border-radius: 40px;
+                    border-radius: 32px;
                 }
                 
                 .event-cta .btn {

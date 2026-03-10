@@ -4632,7 +4632,9 @@ export const homeStyles = (): string => `
                     display: grid !important;
                     grid-template-columns: repeat(2, 1fr) !important;
                     gap: 20px !important;
+                    width: 100% !important;
                     max-width: unset !important;
+                    margin: 0 !important;
                     position: static !important;
                     left: auto !important;
                     transform: none !important;

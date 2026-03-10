@@ -373,10 +373,10 @@ export const homeScripts = (): string => `
                         stayTunedContainer.style.display = 'block';
                         // On desktop: size container to 2/3 of outreach and center it
                         if (window.innerWidth >= 961) {
-                            const outreach = stayTunedContainer.closest('.outreach') as HTMLElement;
+                            var outreach = stayTunedContainer.closest('.outreach');
                             if (outreach) {
-                                const w = outreach.offsetWidth;
-                                const cw = Math.round(w * 2 / 3);
+                                var w = outreach.offsetWidth;
+                                var cw = Math.round(w * 2 / 3);
                                 stayTunedContainer.style.width = cw + 'px';
                                 stayTunedContainer.style.marginLeft = Math.round((w - cw) / 2) + 'px';
                                 stayTunedContainer.style.marginRight = Math.round((w - cw) / 2) + 'px';

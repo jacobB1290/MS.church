@@ -371,6 +371,17 @@ export const homeScripts = (): string => `
                     if (stayTunedContainer) {
                         stayTunedContainer.innerHTML = renderStayTunedCard(past.length > 0, past);
                         stayTunedContainer.style.display = 'block';
+                        // On desktop: size container to 2/3 of outreach and center it
+                        if (window.innerWidth >= 961) {
+                            const outreach = stayTunedContainer.closest('.outreach') as HTMLElement;
+                            if (outreach) {
+                                const w = outreach.offsetWidth;
+                                const cw = Math.round(w * 2 / 3);
+                                stayTunedContainer.style.width = cw + 'px';
+                                stayTunedContainer.style.marginLeft = Math.round((w - cw) / 2) + 'px';
+                                stayTunedContainer.style.marginRight = Math.round((w - cw) / 2) + 'px';
+                            }
+                        }
                         // Initialize the color swirl animation on the stay tuned card
                         const cardEl = document.getElementById('stay-tuned-card-el');
                         if (cardEl) initColorSwirl(past, cardEl);

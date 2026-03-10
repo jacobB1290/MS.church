@@ -4625,20 +4625,17 @@ export const homeStyles = (): string => `
                 }
 
             /* Stay Tuned - Two Card Layout
-               Container = 2/3 of outreach width (2 of 3 carousel slots).
-               2-col grid: each card = (2/3W - gap) / 2 ≈ 1/3W = one carousel card width.
-               Centering via position:relative + left:50% + translateX(-50%) — bulletproof
-               regardless of parent display type (works in block, flex-column, etc.). */
+               Width and centering are set by JS (centerStayTunedContainer) using exact
+               pixel measurements. CSS provides the 2-col grid structure; JS handles
+               the 2/3 width and margin-left centering reliably at any viewport size. */
                 .stay-tuned-container {
                     display: grid !important;
                     grid-template-columns: repeat(2, 1fr) !important;
                     gap: 20px !important;
-                    width: calc(200% / 3) !important;
                     max-width: unset !important;
-                    margin: 0 !important;
-                    position: relative !important;
-                    left: 50% !important;
-                    transform: translateX(-50%) !important;
+                    position: static !important;
+                    left: auto !important;
+                    transform: none !important;
                 }
 
                 .stay-tuned-card,

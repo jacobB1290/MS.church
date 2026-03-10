@@ -1303,35 +1303,35 @@ export const homeStyles = (): string => `
                 height: 55%;
                 top: 5%;
                 left: 0%;
-                animation: swirlOrbit1 12s ease-in-out infinite;
+                animation: swirlOrbit1 8s ease-in-out infinite;
             }
             .swirl-blob:nth-child(2) {
                 width: 50%;
                 height: 50%;
                 top: 35%;
                 right: 0%;
-                animation: swirlOrbit2 15s ease-in-out infinite;
+                animation: swirlOrbit2 10s ease-in-out infinite;
             }
             .swirl-blob:nth-child(3) {
                 width: 48%;
                 height: 48%;
                 bottom: 0%;
                 left: 15%;
-                animation: swirlOrbit3 13s ease-in-out infinite;
+                animation: swirlOrbit3 9s ease-in-out infinite;
             }
             .swirl-blob:nth-child(4) {
                 width: 42%;
                 height: 42%;
                 top: 15%;
                 right: 15%;
-                animation: swirlOrbit4 16s ease-in-out infinite;
+                animation: swirlOrbit4 11s ease-in-out infinite;
             }
             .swirl-blob:nth-child(5) {
                 width: 38%;
                 height: 38%;
                 bottom: 15%;
                 right: 5%;
-                animation: swirlOrbit5 11s ease-in-out infinite;
+                animation: swirlOrbit5 7s ease-in-out infinite;
             }
 
             @keyframes swirlOrbit1 {

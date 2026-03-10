@@ -4266,126 +4266,244 @@ export const homeStyles = (): string => `
                     max-width: 1400px;
                 }
                 
-                /* Desktop Navigation Spacer - CRITICAL: Override base 320px */
+                /* Desktop Navigation Spacer - nav overlaps full-screen hero */
                 .nav-spacer {
-                    height: 100px;  /* Natural spacing for desktop - nav moved up */
+                    height: 0;
                 }
-                
+
                 main {
                     gap: 120px;
                     margin-bottom: 120px;
                 }
-                
-                /* Desktop Hero Section - TWO COLUMN GRID WITH CENTERED TEXT */
+
+                /* ─── Desktop Hero Section - FULL VIEWPORT ───────────────────────
+                   Same pattern as mobile: background-image on .hero, content overlaid.
+                   .hero-image is collapsed (height:0); <img> is hidden (saves render).
+                   Find Us button flows inline in .hero-body, centered below title.
+                   ─────────────────────────────────────────────────────────────── */
                 .hero {
-                    display: flex;
-                    flex-direction: column;
-                    gap: clamp(8px, 1vw, 12px);
-                    padding: clamp(10px, 1.5vw, 15px) 0 clamp(50px, 6vw, 70px);
-                    max-width: 100%;
-                    margin: 0;
-                    min-height: auto;
-                    overflow: visible;
-                }
-                
-                .hero h1 {
-                    max-width: clamp(1100px, 90vw, 1300px);
-                    margin: 0 auto;
-                    width: 100%;
-                    padding: 0 clamp(16px, 3vw, 32px);
-                    overflow: visible;
-                }
-                
-                .hero-body {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    grid-template-rows: 1fr;
-                    grid-template-areas: 
-                        "content image";
-                    max-width: clamp(1100px, 90vw, 1300px);
-                    margin: 0 auto;
-                    column-gap: clamp(40px, 5vw, 70px);
-                    row-gap: 0;
-                    align-items: center;
-                    width: 100%;
-                }
-                
-                .hero-content {
-                    grid-area: content;
-                    max-width: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    gap: clamp(16px, 2vw, 24px);
-                    text-align: center;  /* Center all text */
-                    align-items: center;  /* Center child elements */
-                }
-                
-                .hero-image {
-                    grid-area: image;
-                    align-self: stretch;
-                }
-                
-                /* Hero address styling */
-                .hero-address {
-                    font-style: normal;
-                    font-size: 16px;
-                    color: #595970;
-                    font-weight: 500;
-                    margin-top: 8px;
-                }
-                
-                .hero-content p {
-                    text-align: center;  /* Center paragraph text */
-                    margin: 0;
-                    max-width: 90%;  /* Slightly constrain width for readability */
-                }
-                
-                .hero h1 {
-                    font-size: clamp(64px, 7vw, 110px);
-                    line-height: 1.15;
-                    letter-spacing: -0.02em;
-                    text-align: center;  /* Center heading */
-                    margin: 0 0 clamp(12px, 1.5vw, 18px) 0;
-                    overflow: visible;
-                    padding-bottom: 4px;
-                }
-                
-                .hero p {
-                    font-size: clamp(20px, 1.8vw, 24px);
-                    line-height: 1.6;
-                    max-width: 100%;
-                }
-                
-                .hero-image {
-                    position: relative;
-                    width: 100%;
-                    min-height: clamp(500px, 50vh, 650px);
-                    max-height: clamp(600px, 60vh, 700px);
-                    height: clamp(550px, 55vh, 650px);
-                    border-radius: clamp(20px, 2vw, 24px);
+                    opacity: 1 !important;
+                    transform: none !important;
+                    animation: none !important;
+                    /* Break out of .page max-width container */
+                    width: 100vw;
+                    margin-left: calc(-50vw + 50%);
+                    /* Full viewport */
+                    height: 100vh;
+                    min-height: 640px;
                     overflow: hidden;
-                    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.15);
+                    /* Center content vertically */
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 0;
+                    padding: 0;
+                    /* Hero background image (landscape) */
+                    background-image: url('/static/church-hero-desktop.jpg');
+                    background-size: cover;
+                    background-position: center;
+                    position: relative;
                 }
-                
-                .hero-image img {
+
+                /* Gradient overlay: dark top (nav legibility) → mostly clear → white fade at bottom */
+                .hero::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(
+                        to bottom,
+                        rgba(0, 0, 0, 0.58) 0%,
+                        rgba(0, 0, 0, 0.28) 10%,
+                        rgba(0, 0, 0, 0.10) 28%,
+                        rgba(0, 0, 0, 0.10) 55%,
+                        rgba(0, 0, 0, 0.28) 70%,
+                        rgba(248, 249, 253, 0.55) 83%,
+                        rgba(248, 249, 253, 0.88) 91%,
+                        #f8f9fd 100%
+                    );
+                    z-index: 2;
+                    pointer-events: none;
+                }
+
+                /* Blur layers at bottom — progressive blur into page background */
+                .hero-blur-layer {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    pointer-events: none;
+                    z-index: 3;
+                }
+                .hero-blur-layer.blur-1 {
+                    height: 320px;
+                    -webkit-backdrop-filter: blur(2px);
+                    backdrop-filter: blur(2px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                }
+                .hero-blur-layer.blur-2 {
+                    height: 220px;
+                    -webkit-backdrop-filter: blur(6px);
+                    backdrop-filter: blur(6px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                }
+                .hero-blur-layer.blur-3 {
+                    height: 130px;
+                    -webkit-backdrop-filter: blur(16px);
+                    backdrop-filter: blur(16px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+                }
+                .hero-blur-layer.blur-4 {
+                    height: 70px;
+                    -webkit-backdrop-filter: blur(32px);
+                    backdrop-filter: blur(32px);
+                }
+
+                /* Hero title — white, large, centered above overlay */
+                .hero h1 {
+                    position: relative;
+                    z-index: 4;
+                    color: #ffffff;
+                    font-size: clamp(56px, 7vw, 110px);
+                    line-height: 1.1;
+                    letter-spacing: -0.02em;
+                    text-align: center;
+                    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45), 0 0 80px rgba(0, 0, 0, 0.25);
+                    max-width: clamp(700px, 85vw, 1200px);
+                    padding: 0 clamp(24px, 4vw, 80px);
+                    margin: 0 0 clamp(12px, 1.5vw, 20px) 0;
                     width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    display: block;
+                    overflow: visible;
                 }
-                
+
+                /* Hero body — flex column, no grid, centered */
+                .hero-body {
+                    position: relative;
+                    z-index: 4;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: clamp(20px, 2.5vw, 32px);
+                    max-width: 600px;
+                    width: 100%;
+                    padding: 0 clamp(24px, 4vw, 80px);
+                    margin: 0;
+                    /* Unset two-column grid */
+                    grid-template-columns: unset;
+                    grid-template-areas: unset;
+                }
+
+                /* Hero service-time and any hero <p> — white text */
+                .hero p {
+                    color: rgba(255, 255, 255, 0.92);
+                    font-size: clamp(18px, 1.8vw, 22px);
+                    line-height: 1.6;
+                    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
+                    text-align: center;
+                    max-width: 100%;
+                    margin: 0;
+                }
+
+                /* Collapse hero-image — image shown via .hero background-image */
+                .hero-image {
+                    position: static;
+                    height: 0 !important;
+                    min-height: 0 !important;
+                    max-height: 0 !important;
+                    overflow: visible;
+                    width: 100%;
+                    border-radius: 0;
+                    box-shadow: none;
+                    align-self: unset;
+                }
+
+                .hero-image img {
+                    display: none;
+                }
+
+                /* Find Us button — in flow below service time, centered */
+                .find-us-wrapper {
+                    position: relative !important;
+                    bottom: auto;
+                    left: auto;
+                    right: auto;
+                    transform: none;
+                    width: auto;
+                    pointer-events: auto;
+                }
+
                 .hero-body .cta-group {
                     flex-direction: row;
-                    justify-content: center;  /* Center buttons */
+                    justify-content: center;
                     align-items: center;
                     width: 100%;
                     margin-top: 0;
                 }
-                
+
                 .hero-body .cta-group .btn {
                     width: auto;
                 }
                 
+                /* Find Us btn — white frosted glass looks great over dark hero */
+                .find-us-btn {
+                    background: rgba(255, 255, 255, 0.22);
+                    -webkit-backdrop-filter: blur(16px);
+                    backdrop-filter: blur(16px);
+                    color: #ffffff;
+                    border: 1px solid rgba(255, 255, 255, 0.38);
+                    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), 0 1px 6px rgba(0, 0, 0, 0.1);
+                    letter-spacing: 2px;
+                    font-weight: 600;
+                    padding: 10px 40px;
+                    font-size: 13px;
+                }
+                .find-us-btn:hover {
+                    background: rgba(255, 255, 255, 0.32);
+                    border-color: rgba(255, 255, 255, 0.55);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+                }
+
+                /* Hero bridge — blurs the seam between hero bottom and schedule section.
+                   Negative margins eat the 120px main flex gap on both sides. */
+                .hero-bridge {
+                    position: relative;
+                    height: 160px;
+                    margin-top: calc(-80px - 120px);
+                    margin-bottom: calc(-80px - 120px);
+                    z-index: 5;
+                    pointer-events: none;
+                    width: 100vw;
+                    margin-left: calc(-50vw + 50%);
+                }
+                .hero-bridge-blur {
+                    position: absolute;
+                    inset: 0;
+                }
+                .hero-bridge-blur.bridge-blur-1 {
+                    -webkit-backdrop-filter: blur(3px);
+                    backdrop-filter: blur(3px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+                }
+                .hero-bridge-blur.bridge-blur-2 {
+                    -webkit-backdrop-filter: blur(10px);
+                    backdrop-filter: blur(10px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
+                    mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
+                }
+                .hero-bridge-blur.bridge-blur-3 {
+                    -webkit-backdrop-filter: blur(24px);
+                    backdrop-filter: blur(24px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
+                    mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
+                }
+                .hero-bridge::after {
+                    display: none;
+                }
+
                 /* Desktop Outreach Section - match page content width */
                 .outreach {
                     max-width: 1200px;
@@ -4660,23 +4778,13 @@ export const homeStyles = (): string => `
                Prevents awkward proportions when resizing
                ======================================== */
             @media (min-width: 961px) and (max-width: 1199px) {
-                /* Scale down hero for intermediate widths */
+                /* Scale down hero title for intermediate widths */
                 .hero h1 {
                     font-size: clamp(48px, 5.5vw, 72px);
                 }
-                
+
                 .hero p {
                     font-size: clamp(16px, 1.6vw, 20px);
-                }
-                
-                .hero-body {
-                    column-gap: clamp(24px, 3vw, 40px);
-                }
-                
-                .hero-image {
-                    min-height: clamp(350px, 40vh, 450px);
-                    max-height: clamp(400px, 50vh, 500px);
-                    height: clamp(380px, 45vh, 480px);
                 }
                 
                 /* Scale down event grid for intermediate widths */

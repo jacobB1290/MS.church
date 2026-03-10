@@ -629,8 +629,15 @@ export const homeScripts = (): string => `
                         carouselTrack.querySelectorAll('.carousel-card').forEach(card => {
                             card.style.width = cardPct + '%';
                         });
-                        const offset = (currentIndex / totalCards) * 100;
-                        carouselTrack.style.transform = 'translateX(-' + offset + '%)';
+                        if (totalCards < perView) {
+                            // Fewer cards than slots — center the track within the viewport
+                            // Shift = half the empty slots as a % of track width
+                            const centerPct = (perView - totalCards) / (2 * totalCards) * 100;
+                            carouselTrack.style.transform = 'translateX(' + centerPct + '%)';
+                        } else {
+                            const offset = (currentIndex / totalCards) * 100;
+                            carouselTrack.style.transform = 'translateX(-' + offset + '%)';
+                        }
                     }
                     function updateArrows() {
                         carouselPrev.classList.toggle('hidden', currentIndex <= 0);

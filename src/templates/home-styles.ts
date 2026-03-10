@@ -3325,6 +3325,7 @@ export const homeStyles = (): string => `
                     font-size: 9px;
                     padding: 10px 20px;
                     letter-spacing: 2.5px;
+                    margin-bottom: 20px;
                 }
 
                 .section-heading {
@@ -3354,9 +3355,17 @@ export const homeStyles = (): string => `
                 /* Mobile/Tablet Event Cards - Centered layout */
 
 
+                .watch {
+                    gap: 20px;
+                }
+
                 .watch-card {
                     padding: 32px 24px;
                     border-radius: 32px;
+                }
+
+                .contact {
+                    gap: 28px;
                 }
 
                 .preview-screen {
@@ -3663,6 +3672,10 @@ export const homeStyles = (): string => `
                     font-size: clamp(34px, 7vw, 43px);
                     margin-bottom: 16px;
                     line-height: 1.2;
+                }
+
+                .watch {
+                    gap: 16px;
                 }
 
                 .section-lead {

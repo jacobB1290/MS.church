@@ -1251,7 +1251,7 @@ export const homeStyles = (): string => `
             }
             
             .stay-tuned-card {
-                background: linear-gradient(165deg, rgba(255,255,255,0.92) 0%, rgba(248,245,240,0.88) 100%);
+                background: rgba(255, 255, 255, 0.85);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -1260,7 +1260,7 @@ export const homeStyles = (): string => `
                 padding: 56px 40px;
                 box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
                             0 12px 32px rgba(0, 0, 0, 0.04);
-                border: 1px solid color-mix(in srgb, var(--gold) 15%, transparent);
+                border: 1px solid rgba(255, 255, 255, 0.6);
                 backdrop-filter: blur(20px);
                 min-height: auto;
                 border-radius: 24px;
@@ -1271,16 +1271,8 @@ export const homeStyles = (): string => `
                 width: 100%;
             }
 
-            /* Subtle gold shimmer across the top edge */
             .stay-tuned-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 3px;
-                background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold-dark) 50%, var(--gold) 70%, transparent 100%);
-                opacity: 0.6;
+                display: none;
             }
 
             /* DESKTOP OVERRIDE - Two cards side by side with 3:4 portrait ratio */
@@ -3423,6 +3415,9 @@ export const homeStyles = (): string => `
                     margin-top: 12px;
                     padding: 8px 16px;
                     font-size: 9px;
+                    background: var(--gold);
+                    border-color: var(--gold);
+                    color: #ffffff;
                 }
                 
                 /* Mobile stay-tuned overrides */

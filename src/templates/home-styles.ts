@@ -4465,12 +4465,54 @@ export const homeStyles = (): string => `
                     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
                 }
 
-                /* Hero bridge — disabled on desktop.
-                   The gradient + blur layers at the bottom of .hero handle the
-                   image-to-page transition. The bridge would bleed into the schedule
-                   section eyebrow, so we hide it entirely. */
+                /* Hero bridge — centered on the exact hero/page seam.
+                   margin-top pulls it up so its midpoint aligns with hero bottom.
+                   margin-bottom eats the remaining gap so schedule follows immediately.
+                   Bridge: 80px above seam → 80px below seam (160px tall).
+                   Schedule padding-top: 100px ensures eyebrow text clears the blur zone.
+                   Schedule z-index > bridge so section content renders on top. */
                 .hero-bridge {
+                    display: block;
+                    position: relative;
+                    height: 160px;
+                    margin-top: calc(-80px - 120px);
+                    margin-bottom: calc(-80px - 120px);
+                    z-index: 5;
+                    pointer-events: none;
+                    width: 100vw;
+                    margin-left: calc(-50vw + 50%);
+                }
+                .hero-bridge-blur {
+                    position: absolute;
+                    inset: 0;
+                }
+                .hero-bridge-blur.bridge-blur-1 {
+                    -webkit-backdrop-filter: blur(3px);
+                    backdrop-filter: blur(3px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+                }
+                .hero-bridge-blur.bridge-blur-2 {
+                    -webkit-backdrop-filter: blur(10px);
+                    backdrop-filter: blur(10px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
+                    mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
+                }
+                .hero-bridge-blur.bridge-blur-3 {
+                    -webkit-backdrop-filter: blur(24px);
+                    backdrop-filter: blur(24px);
+                    -webkit-mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
+                    mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
+                }
+                .hero-bridge::after {
                     display: none;
+                }
+
+                /* Schedule section — sits above bridge, padded so eyebrow clears blur zone */
+                .schedule {
+                    position: relative;
+                    z-index: 6;
+                    padding-top: 100px;
                 }
 
                 /* Desktop Outreach Section - match page content width */

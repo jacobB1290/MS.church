@@ -4624,29 +4624,33 @@ export const homeStyles = (): string => `
                     max-width: 720px;
                 }
 
-            /* Stay Tuned - Two Card Layout */
+            /* Stay Tuned - Two Card Layout
+               Formula: 3 card_widths + 2 gaps = outreach_width (page width)
+               → card_width = calc((100% - 2 × 20px) / 3) = calc((100% - 40px) / 3)
+               Gap of 20px matches carousel's inter-card spacing (10px padding each side).
+               Two cards occupy the first 2 of 3 slots; 3rd slot is naturally empty. */
                 .stay-tuned-container {
                     display: flex !important;
                     flex-direction: row !important;
                     flex-wrap: nowrap !important;
-                    gap: 24px;
-                    justify-content: center;
-                    align-items: stretch;
-                    max-width: 900px;
-                    margin: 0 auto;
+                    gap: 20px;
+                    justify-content: flex-start;
+                    align-items: flex-start;
                     width: 100%;
+                    max-width: unset;
+                    margin: 0;
                 }
 
                 .stay-tuned-card,
                 .past-events-card {
+                    flex: 0 0 calc((100% - 40px) / 3) !important;
+                    width: calc((100% - 40px) / 3) !important;
+                    max-width: unset !important;
+                    min-width: unset !important;
                     aspect-ratio: 3/4 !important;
-                    width: 280px !important;
-                    max-width: 280px !important;
-                    min-width: 280px !important;
                     height: auto !important;
                     min-height: unset !important;
                     max-height: unset !important;
-                    flex: 0 0 320px !important;
                     padding: 40px 32px !important;
                 }
 
@@ -4762,32 +4766,6 @@ export const homeStyles = (): string => `
                     box-shadow: 0 16px 56px rgba(40, 40, 60, 0.55), 0 8px 24px rgba(20, 20, 40, 0.35);
                 }
 
-            /* Stay Tuned - Two cards side by side with 3:4 portrait ratio (final override) */
-                .stay-tuned-container {
-                    display: flex !important;
-                    flex-direction: row !important;
-                    flex-wrap: nowrap !important;
-                    gap: 32px !important;
-                    justify-content: center !important;
-                    align-items: flex-start !important;
-                    max-width: 620px !important;
-                    margin: 0 auto !important;
-                    width: 100% !important;
-                }
-
-                .stay-tuned-container > .stay-tuned-card,
-                .stay-tuned-container > .past-events-card {
-                    aspect-ratio: 3/4 !important;
-                    width: 260px !important;
-                    max-width: 260px !important;
-                    min-width: 260px !important;
-                    flex: 0 0 260px !important;
-                    height: auto !important;
-                    min-height: unset !important;
-                    max-height: unset !important;
-                    padding: 28px 20px !important;
-                    border-radius: 32px !important;
-                }
             }
 
             /* ========================================

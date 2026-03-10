@@ -4,6 +4,16 @@ import { GOOGLE_CALENDAR_CONFIG } from '../config.js'
 // In-memory cache for calendar API responses (shared across requests in the same worker instance)
 let _cache: { data: unknown; ts: number } | null = null
 
+// On Vercel, route event images through Vercel Image Optimization for
+// automatic WebP/AVIF conversion and CDN edge caching (configured in vercel.json).
+// Falls back to direct Google CDN URLs on Cloudflare and local dev.
+const isVercel = typeof process !== 'undefined' && !!process.env?.VERCEL
+
+function toImageUrl(fileId: string): string {
+  const raw = `https://lh3.googleusercontent.com/d/${fileId}=w800`
+  return isVercel ? `/_vercel/image?url=${encodeURIComponent(raw)}&w=800&q=80` : raw
+}
+
 export function registerCalendarRoute(app: Hono) {
   app.get('/api/calendar/events', async (c) => {
     try {
@@ -103,11 +113,11 @@ export function registerCalendarRoute(app: Hono) {
             )
             const attachment = imageAttachment ?? gcalEvent.attachments[0]
             if (attachment.fileId) {
-              imageUrl = `https://lh3.googleusercontent.com/d/${attachment.fileId}=w1000`
+              imageUrl = toImageUrl(attachment.fileId)
             } else if (attachment.fileUrl) {
               const match = attachment.fileUrl.match(/\/d\/([a-zA-Z0-9_-]+)|[?&]id=([a-zA-Z0-9_-]+)/)
               if (match) {
-                imageUrl = `https://lh3.googleusercontent.com/d/${match[1] ?? match[2]}=w1000`
+                imageUrl = toImageUrl(match[1] ?? match[2])
               }
             }
           }
@@ -145,6 +155,8 @@ export function registerCalendarRoute(app: Hono) {
 
       _cache = { data: result, ts: now }
       c.header('X-Cache', 'MISS')
+      // Let Vercel CDN cache the response at the edge for 5 minutes
+      c.header('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
       return c.json(result)
     } catch (error) {
       console.error('Calendar API error:', error)

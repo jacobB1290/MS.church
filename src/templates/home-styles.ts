@@ -1251,7 +1251,7 @@ export const homeStyles = (): string => `
             }
             
             .stay-tuned-card {
-                background: rgba(255, 255, 255, 0.85);
+                background: rgba(255, 255, 255, 0.6);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -1273,6 +1273,123 @@ export const homeStyles = (): string => `
 
             .stay-tuned-card::before {
                 display: none;
+            }
+
+            /* ========================================
+               COLOR SWIRL - Animated background from past event colors
+               Soft, blurred blobs that orbit and morph to convey "in the works"
+               ======================================== */
+            .stay-tuned-swirl {
+                position: absolute;
+                inset: -40%;
+                z-index: 0;
+                pointer-events: none;
+                filter: blur(60px) saturate(1.3);
+                opacity: 0;
+                animation: swirlFadeIn 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+
+            @keyframes swirlFadeIn {
+                to { opacity: 1; }
+            }
+
+            .swirl-blob {
+                position: absolute;
+                border-radius: 50%;
+                mix-blend-mode: normal;
+                will-change: transform;
+            }
+
+            .swirl-blob:nth-child(1) {
+                width: 55%;
+                height: 55%;
+                top: 10%;
+                left: 5%;
+                animation: swirlOrbit1 18s ease-in-out infinite;
+            }
+            .swirl-blob:nth-child(2) {
+                width: 50%;
+                height: 50%;
+                top: 40%;
+                right: 5%;
+                animation: swirlOrbit2 22s ease-in-out infinite;
+            }
+            .swirl-blob:nth-child(3) {
+                width: 45%;
+                height: 45%;
+                bottom: 5%;
+                left: 20%;
+                animation: swirlOrbit3 20s ease-in-out infinite;
+            }
+            .swirl-blob:nth-child(4) {
+                width: 40%;
+                height: 40%;
+                top: 20%;
+                right: 20%;
+                animation: swirlOrbit4 24s ease-in-out infinite;
+            }
+            .swirl-blob:nth-child(5) {
+                width: 35%;
+                height: 35%;
+                bottom: 20%;
+                right: 10%;
+                animation: swirlOrbit5 16s ease-in-out infinite;
+            }
+
+            @keyframes swirlOrbit1 {
+                0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+                25%  { transform: translate(20%, 15%) scale(1.15) rotate(45deg); }
+                50%  { transform: translate(-10%, 25%) scale(0.9) rotate(120deg); }
+                75%  { transform: translate(15%, -10%) scale(1.1) rotate(225deg); }
+                100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+            }
+            @keyframes swirlOrbit2 {
+                0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+                25%  { transform: translate(-25%, 10%) scale(1.2) rotate(-60deg); }
+                50%  { transform: translate(15%, -20%) scale(0.85) rotate(-150deg); }
+                75%  { transform: translate(-15%, 20%) scale(1.1) rotate(-270deg); }
+                100% { transform: translate(0, 0) scale(1) rotate(-360deg); }
+            }
+            @keyframes swirlOrbit3 {
+                0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+                33%  { transform: translate(20%, -15%) scale(1.2) rotate(80deg); }
+                66%  { transform: translate(-15%, 10%) scale(0.9) rotate(200deg); }
+                100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+            }
+            @keyframes swirlOrbit4 {
+                0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+                20%  { transform: translate(-20%, -15%) scale(1.1) rotate(-40deg); }
+                50%  { transform: translate(10%, 20%) scale(0.95) rotate(-120deg); }
+                80%  { transform: translate(15%, -10%) scale(1.15) rotate(-280deg); }
+                100% { transform: translate(0, 0) scale(1) rotate(-360deg); }
+            }
+            @keyframes swirlOrbit5 {
+                0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+                30%  { transform: translate(15%, 20%) scale(1.15) rotate(70deg); }
+                60%  { transform: translate(-20%, -10%) scale(0.9) rotate(180deg); }
+                100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+            }
+
+            /* Frosted glass overlay to keep text readable above swirl */
+            .stay-tuned-frost {
+                position: absolute;
+                inset: 0;
+                z-index: 1;
+                background: rgba(255, 255, 255, 0.55);
+                backdrop-filter: blur(2px);
+                border-radius: inherit;
+            }
+
+            /* Ensure content sits above swirl + frost */
+            .stay-tuned-content {
+                position: relative;
+                z-index: 2;
+            }
+
+            /* Reduce motion for accessibility */
+            @media (prefers-reduced-motion: reduce) {
+                .swirl-blob { animation: none !important; }
+                .stay-tuned-swirl { animation: none !important; opacity: 0.7; }
             }
 
             /* DESKTOP OVERRIDE - Two cards side by side with 3:4 portrait ratio */
@@ -1343,6 +1460,8 @@ export const homeStyles = (): string => `
                 width: 100%;
                 padding: 10px 0;
                 overflow: visible;
+                position: relative;
+                z-index: 2;
             }
 
             /* SVG ornament star */
@@ -1374,6 +1493,7 @@ export const homeStyles = (): string => `
                 color: #1a1a2e;
                 letter-spacing: var(--tracking-tight);
                 line-height: var(--leading-snug);
+                text-shadow: 0 1px 4px rgba(255, 255, 255, 0.8);
             }
 
             /* Thin gold divider rule */
@@ -1386,35 +1506,39 @@ export const homeStyles = (): string => `
 
             .stay-tuned-text {
                 font-size: var(--text-small);
-                color: #636378;
+                color: #4a4a5e;
                 line-height: var(--leading-normal);
                 margin: 0;
+                text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7);
                 max-width: 240px;
                 font-style: italic;
             }
 
-            /* View Past Events Button - subtle, not too prominent */
+            /* View Past Events Button - stands out against swirl */
             .btn-view-past-events {
                 margin-top: 16px;
                 padding: 10px 20px;
-                background: transparent;
+                background: rgba(255, 255, 255, 0.7);
                 border: 1.5px solid rgba(26, 26, 46, 0.2);
                 border-radius: 100px;
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-semibold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
-                color: #636378;
+                color: #4a4a5e;
                 cursor: pointer;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 flex-shrink: 0;
+                backdrop-filter: blur(8px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             }
 
             .btn-view-past-events:hover {
-                background: rgba(26, 26, 46, 0.05);
+                background: rgba(255, 255, 255, 0.85);
                 border-color: rgba(26, 26, 46, 0.3);
-                color: #595970;
+                color: #3a3a50;
                 transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             }
             
             /* Hide button if no past events */

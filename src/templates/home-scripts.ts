@@ -111,7 +111,134 @@ export const homeScripts = (): string => `
                     return categorizeEvents(events || []);
                 }
 
-                function renderStayTunedCard(hasPastEvents) {
+                // Extract dominant colors from an image via offscreen canvas sampling
+                function extractColorsFromImage(img) {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const size = 64;
+                        canvas.width = size;
+                        canvas.height = size;
+                        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                        ctx.drawImage(img, 0, 0, size, size);
+                        const data = ctx.getImageData(0, 0, size, size).data;
+                        // Sample pixels at grid points and cluster into dominant colors
+                        const buckets = {};
+                        for (let y = 4; y < size; y += 8) {
+                            for (let x = 4; x < size; x += 8) {
+                                const i = (y * size + x) * 4;
+                                const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+                                if (a < 128) continue;
+                                // Quantize to reduce to key colors
+                                const qr = Math.round(r / 48) * 48;
+                                const qg = Math.round(g / 48) * 48;
+                                const qb = Math.round(b / 48) * 48;
+                                const key = qr + ',' + qg + ',' + qb;
+                                if (!buckets[key]) buckets[key] = { r: 0, g: 0, b: 0, count: 0 };
+                                buckets[key].r += r;
+                                buckets[key].g += g;
+                                buckets[key].b += b;
+                                buckets[key].count++;
+                            }
+                        }
+                        // Sort by frequency, take top colors, skip near-white and near-black
+                        return Object.values(buckets)
+                            .filter(b => {
+                                const avg = (b.r / b.count + b.g / b.count + b.b / b.count) / 3;
+                                return avg > 40 && avg < 220;
+                            })
+                            .sort((a, b) => b.count - a.count)
+                            .slice(0, 5)
+                            .map(b => {
+                                const r = Math.round(b.r / b.count);
+                                const g = Math.round(b.g / b.count);
+                                const bl = Math.round(b.b / b.count);
+                                // Lighten and desaturate slightly for a soft pastel feel
+                                const lr = Math.min(255, Math.round(r * 0.6 + 255 * 0.4));
+                                const lg = Math.min(255, Math.round(g * 0.6 + 255 * 0.4));
+                                const lb = Math.min(255, Math.round(bl * 0.6 + 255 * 0.4));
+                                return 'rgba(' + lr + ',' + lg + ',' + lb + ',0.7)';
+                            });
+                    } catch (e) {
+                        return [];
+                    }
+                }
+
+                // Load past event images and extract a palette, then inject swirl blobs
+                function initColorSwirl(pastEvents, cardEl) {
+                    if (!cardEl) return;
+
+                    // Default soft palette (gold/warm tones matching church brand)
+                    const defaultColors = [
+                        'rgba(212, 165, 116, 0.7)',
+                        'rgba(200, 152, 96, 0.65)',
+                        'rgba(168, 190, 220, 0.6)',
+                        'rgba(220, 180, 160, 0.65)',
+                        'rgba(180, 170, 210, 0.6)'
+                    ];
+
+                    // Create swirl container and frost overlay
+                    const swirlEl = document.createElement('div');
+                    swirlEl.className = 'stay-tuned-swirl';
+                    const frostEl = document.createElement('div');
+                    frostEl.className = 'stay-tuned-frost';
+
+                    function renderBlobs(colors) {
+                        // Ensure we have exactly 5 colors
+                        while (colors.length < 5) {
+                            colors.push(defaultColors[colors.length % defaultColors.length]);
+                        }
+                        swirlEl.innerHTML = colors.slice(0, 5).map(c =>
+                            '<div class="swirl-blob" style="background:radial-gradient(circle,'+c+' 0%,transparent 70%);"></div>'
+                        ).join('');
+                        // Insert swirl and frost before the content
+                        cardEl.insertBefore(frostEl, cardEl.firstChild);
+                        cardEl.insertBefore(swirlEl, cardEl.firstChild);
+                    }
+
+                    // Try to extract from past event images
+                    const imagesWithSrc = pastEvents.filter(e => e.image);
+                    if (imagesWithSrc.length === 0) {
+                        renderBlobs([...defaultColors]);
+                        return;
+                    }
+
+                    // Load up to 3 images and extract colors
+                    const toLoad = imagesWithSrc.slice(0, 3);
+                    let loaded = 0;
+                    let allColors = [];
+
+                    toLoad.forEach(event => {
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        img.onload = function() {
+                            allColors = allColors.concat(extractColorsFromImage(img));
+                            loaded++;
+                            if (loaded === toLoad.length) {
+                                // Deduplicate similar colors and pick best 5
+                                const unique = allColors.length > 0 ? allColors.slice(0, 5) : [...defaultColors];
+                                renderBlobs(unique);
+                            }
+                        };
+                        img.onerror = function() {
+                            loaded++;
+                            if (loaded === toLoad.length) {
+                                const unique = allColors.length > 0 ? allColors.slice(0, 5) : [...defaultColors];
+                                renderBlobs(unique);
+                            }
+                        };
+                        img.src = event.image;
+                    });
+
+                    // Fallback if images take too long
+                    setTimeout(() => {
+                        if (loaded < toLoad.length) {
+                            const colors = allColors.length > 0 ? allColors.slice(0, 5) : [...defaultColors];
+                            renderBlobs(colors);
+                        }
+                    }, 4000);
+                }
+
+                function renderStayTunedCard(hasPastEvents, pastEvents) {
                     const isDesktop = window.innerWidth >= 961;
 
                     const stayTunedInner = \`
@@ -132,7 +259,7 @@ export const homeScripts = (): string => `
                     if (isDesktop && hasPastEvents) {
                         return \`
                             <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 40px; justify-content: center; align-items: flex-start; width: 100%; max-width: 900px; margin: 0 auto;">
-                                <div class="stay-tuned-card" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;">
+                                <div class="stay-tuned-card" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;" id="stay-tuned-card-el">
                                     \${stayTunedInner}
                                 </div>
                                 <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;">
@@ -146,7 +273,7 @@ export const homeScripts = (): string => `
                         \`;
                     } else {
                         return \`
-                            <div class="stay-tuned-card">
+                            <div class="stay-tuned-card" id="stay-tuned-card-el">
                                 \${stayTunedInner}
                             </div>
                         \`;
@@ -196,8 +323,11 @@ export const homeScripts = (): string => `
 
                 if (upcoming.length === 0) {
                     if (stayTunedContainer) {
-                        stayTunedContainer.innerHTML = renderStayTunedCard(past.length > 0);
+                        stayTunedContainer.innerHTML = renderStayTunedCard(past.length > 0, past);
                         stayTunedContainer.style.display = 'block';
+                        // Initialize the color swirl animation on the stay tuned card
+                        const cardEl = document.getElementById('stay-tuned-card-el');
+                        if (cardEl) initColorSwirl(past, cardEl);
                     }
                     if (carouselWrapper) carouselWrapper.style.display = 'none';
                     body.classList.add('stay-tuned-active');

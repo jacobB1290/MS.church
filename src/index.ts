@@ -1,4 +1,4 @@
-// Version: 1.32.15 - Stay Tuned card: white bg, no gold top line; mobile button gold
+// Version: 1.32.16 - Stay Tuned card: animated color swirl from past event imagery
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

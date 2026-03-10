@@ -737,62 +737,6 @@ export const homeStyles = (): string => `
                 margin-bottom: 0;
             }
             
-            /* Desktop Stay Tuned - Two Card Layout */
-            @media (min-width: 961px) {
-                .stay-tuned-container {
-                    display: flex !important;
-                    flex-direction: row !important;
-                    flex-wrap: nowrap !important;
-                    gap: 24px;
-                    justify-content: center;
-                    align-items: stretch;
-                    max-width: 900px;
-                    margin: 0 auto;
-                    width: 100%;
-                }
-                
-                .stay-tuned-card,
-                .past-events-card {
-                    aspect-ratio: 3/4 !important;
-                    width: 280px !important;
-                    max-width: 280px !important;
-                    min-width: 280px !important;
-                    height: auto !important;
-                    min-height: unset !important;
-                    max-height: unset !important;
-                    flex: 0 0 320px !important;
-                    padding: 40px 32px !important;
-                }
-                
-                .stay-tuned-card .stay-tuned-ornament { width: 40px; height: 40px; }
-                .stay-tuned-card .stay-tuned-title { font-size: var(--text-heading) !important; }
-                .stay-tuned-card .stay-tuned-text { font-size: var(--text-small) !important; line-height: var(--leading-normal); }
-                .stay-tuned-card .stay-tuned-rule { width: 32px; }
-                .stay-tuned-card .btn-view-past-events { font-size: var(--text-eyebrow) !important; padding: 10px 20px !important; }
-                
-                .past-events-card {
-                    background: rgba(255, 255, 255, 0.85);
-                    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-                    box-shadow: 0 32px 80px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.04);
-                    border: 1px solid rgba(255,255,255,0.6);
-                    backdrop-filter: blur(20px);
-                    border-radius: 32px;
-                    position: relative; overflow: visible;
-                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-                    cursor: pointer;
-                }
-                .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
-                .stay-tuned-card { border-radius: 32px; }
-                .past-events-card .past-card-badge { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 35%, transparent); position: absolute; top: 14px; left: 14px; color: #ffffff; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
-                .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
-                .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e; }
-                .past-events-card .past-card-text { font-size: var(--text-small); color: rgba(26,26,46,0.7); line-height: var(--leading-normal); margin-bottom: 14px; }
-                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid var(--gold); color: var(--gold); border-radius: 24px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
-                .past-events-card .past-card-btn:hover { background: var(--gold); color: #ffffff; }
-                
-                .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
-            }
-
             /* ========================================
                CAROUSEL - Smooth Gliding Track Animation
                ======================================== */
@@ -876,14 +820,6 @@ export const homeStyles = (): string => `
                 }
             }
 
-            /* Desktop: 3 cards in a row */
-            @media (min-width: 961px) {
-                .carousel-card {
-                    /* width set dynamically by JS */
-                    padding: 0 10px;
-                }
-            }
-
             /* Navigation: dots below, arrows float on card edges */
             .carousel-nav {
                 display: flex;
@@ -933,21 +869,6 @@ export const homeStyles = (): string => `
             .carousel-arrow.hidden {
                 opacity: 0;
                 pointer-events: none;
-            }
-
-            @media (min-width: 961px) {
-                .carousel-arrow {
-                    width: 42px;
-                    height: 42px;
-                    font-size: 20px;
-                    border-radius: 50%;
-                }
-                .carousel-arrow.prev {
-                    left: 24px;
-                }
-                .carousel-arrow.next {
-                    right: 24px;
-                }
             }
 
             /* Dots — gold theme */
@@ -1107,35 +1028,6 @@ export const homeStyles = (): string => `
                 transform: translateY(-1px);
             }
 
-            /* Desktop: CTA below the card, not overlaid */
-            @media (min-width: 961px) {
-                .event-cta {
-                    position: relative;
-                    bottom: auto;
-                    left: auto;
-                    right: auto;
-                    padding: 0;
-                    background: none;
-                    backdrop-filter: none;
-                    -webkit-backdrop-filter: none;
-                    border-top: none;
-                    margin-top: 14px;
-                }
-                .event-cta .btn {
-                    padding: 14px 32px;
-                    font-size: var(--text-small);
-                    border-radius: 16px;
-                    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-                    color: #ffffff;
-                    box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
-                }
-                .event-cta .btn:hover {
-                    background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
-                    box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
-                    transform: translateY(-2px);
-                }
-            }
-            
             /* See Past Events card in carousel */
             .carousel-past-card {
                 display: flex;
@@ -1189,47 +1081,6 @@ export const homeStyles = (): string => `
                 cursor: pointer; transition: all 0.3s ease;
             }
             .carousel-past-card .past-card-btn:hover { background: var(--gold); color: #ffffff; }
-
-            /* Desktop: bigger cards & stronger glow */
-            @media (min-width: 961px) {
-                .event-flyer-wrapper {
-                    border-radius: 32px;
-                }
-                .event-date {
-                    top: 16px;
-                    left: 16px;
-                    padding: 8px 18px;
-                    font-size: var(--text-eyebrow);
-                }
-                .carousel-past-card {
-                    border-radius: 32px;
-                    padding: 32px 24px;
-                }
-                .carousel-past-card .past-card-icon { font-size: 48px; }
-                .carousel-past-card .past-card-title { font-size: var(--text-heading); }
-                .carousel-past-card .past-card-text { font-size: var(--text-small); max-width: 240px; }
-                .carousel-past-card .past-card-btn { padding: 12px 24px; font-size: var(--text-label); }
-                
-                /* Stronger glow on desktop */
-                .event-flyer-wrapper.glow-warm {
-                    box-shadow: 0 16px 56px color-mix(in srgb, var(--gold) 55%, transparent), 0 8px 24px color-mix(in srgb, var(--gold) 35%, transparent);
-                }
-                .event-flyer-wrapper.glow-red {
-                    box-shadow: 0 16px 56px rgba(200, 60, 60, 0.5), 0 8px 24px rgba(180, 40, 40, 0.3);
-                }
-                .event-flyer-wrapper.glow-blue {
-                    box-shadow: 0 16px 56px rgba(60, 120, 200, 0.5), 0 8px 24px rgba(40, 100, 180, 0.3);
-                }
-                .event-flyer-wrapper.glow-green {
-                    box-shadow: 0 16px 56px rgba(60, 180, 100, 0.5), 0 8px 24px rgba(40, 150, 80, 0.3);
-                }
-                .event-flyer-wrapper.glow-purple {
-                    box-shadow: 0 16px 56px rgba(140, 80, 200, 0.5), 0 8px 24px rgba(120, 60, 180, 0.3);
-                }
-                .event-flyer-wrapper.glow-dark {
-                    box-shadow: 0 16px 56px rgba(40, 40, 60, 0.55), 0 8px 24px rgba(20, 20, 40, 0.35);
-                }
-            }
 
             /* Hide legacy elements */
             .event-header-mobile,
@@ -1393,35 +1244,6 @@ export const homeStyles = (): string => `
             @media (prefers-reduced-motion: reduce) {
                 .swirl-blob { animation: none !important; }
                 .stay-tuned-swirl { animation: none !important; opacity: 0.7; }
-            }
-
-            /* DESKTOP OVERRIDE - Two cards side by side with 3:4 portrait ratio */
-            @media (min-width: 961px) {
-                .stay-tuned-container {
-                    display: flex !important;
-                    flex-direction: row !important;
-                    flex-wrap: nowrap !important;
-                    gap: 32px !important;
-                    justify-content: center !important;
-                    align-items: flex-start !important;
-                    max-width: 620px !important;
-                    margin: 0 auto !important;
-                    width: 100% !important;
-                }
-
-                .stay-tuned-container > .stay-tuned-card,
-                .stay-tuned-container > .past-events-card {
-                    aspect-ratio: 3/4 !important;
-                    width: 260px !important;
-                    max-width: 260px !important;
-                    min-width: 260px !important;
-                    flex: 0 0 260px !important;
-                    height: auto !important;
-                    min-height: unset !important;
-                    max-height: unset !important;
-                    padding: 28px 20px !important;
-                    border-radius: 32px !important;
-                }
             }
 
             .stay-tuned-card:hover {
@@ -4665,8 +4487,173 @@ export const homeStyles = (): string => `
                     font-size: 20px;
                     max-width: 720px;
                 }
+
+            /* Stay Tuned - Two Card Layout */
+                .stay-tuned-container {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    flex-wrap: nowrap !important;
+                    gap: 24px;
+                    justify-content: center;
+                    align-items: stretch;
+                    max-width: 900px;
+                    margin: 0 auto;
+                    width: 100%;
+                }
+
+                .stay-tuned-card,
+                .past-events-card {
+                    aspect-ratio: 3/4 !important;
+                    width: 280px !important;
+                    max-width: 280px !important;
+                    min-width: 280px !important;
+                    height: auto !important;
+                    min-height: unset !important;
+                    max-height: unset !important;
+                    flex: 0 0 320px !important;
+                    padding: 40px 32px !important;
+                }
+
+                .stay-tuned-card .stay-tuned-ornament { width: 40px; height: 40px; }
+                .stay-tuned-card .stay-tuned-title { font-size: var(--text-heading) !important; }
+                .stay-tuned-card .stay-tuned-text { font-size: var(--text-small) !important; line-height: var(--leading-normal); }
+                .stay-tuned-card .stay-tuned-rule { width: 32px; }
+                .stay-tuned-card .btn-view-past-events { font-size: var(--text-eyebrow) !important; padding: 10px 20px !important; }
+
+                .past-events-card {
+                    background: rgba(255, 255, 255, 0.85);
+                    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+                    box-shadow: 0 32px 80px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.04);
+                    border: 1px solid rgba(255,255,255,0.6);
+                    backdrop-filter: blur(20px);
+                    border-radius: 32px;
+                    position: relative; overflow: visible;
+                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    cursor: pointer;
+                }
+                .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
+                .stay-tuned-card { border-radius: 32px; }
+                .past-events-card .past-card-badge { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 35%, transparent); position: absolute; top: 14px; left: 14px; color: #ffffff; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
+                .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
+                .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e; }
+                .past-events-card .past-card-text { font-size: var(--text-small); color: rgba(26,26,46,0.7); line-height: var(--leading-normal); margin-bottom: 14px; }
+                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid var(--gold); color: var(--gold); border-radius: 24px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
+                .past-events-card .past-card-btn:hover { background: var(--gold); color: #ffffff; }
+
+                .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
+
+            /* Carousel */
+                .carousel-card {
+                    /* width set dynamically by JS */
+                    padding: 0 10px;
+                }
+
+                .carousel-arrow {
+                    width: 42px;
+                    height: 42px;
+                    font-size: 20px;
+                    border-radius: 50%;
+                }
+                .carousel-arrow.prev {
+                    left: 24px;
+                }
+                .carousel-arrow.next {
+                    right: 24px;
+                }
+
+            /* Event CTA below the card, not overlaid */
+                .event-cta {
+                    position: relative;
+                    bottom: auto;
+                    left: auto;
+                    right: auto;
+                    padding: 0;
+                    background: none;
+                    backdrop-filter: none;
+                    -webkit-backdrop-filter: none;
+                    border-top: none;
+                    margin-top: 14px;
+                }
+                .event-cta .btn {
+                    padding: 14px 32px;
+                    font-size: var(--text-small);
+                    border-radius: 16px;
+                    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                    color: #ffffff;
+                    box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
+                }
+                .event-cta .btn:hover {
+                    background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
+                    box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
+                    transform: translateY(-2px);
+                }
+
+            /* Event cards - bigger cards & stronger glow */
+                .event-flyer-wrapper {
+                    border-radius: 32px;
+                }
+                .event-date {
+                    top: 16px;
+                    left: 16px;
+                    padding: 8px 18px;
+                    font-size: var(--text-eyebrow);
+                }
+                .carousel-past-card {
+                    border-radius: 32px;
+                    padding: 32px 24px;
+                }
+                .carousel-past-card .past-card-icon { font-size: 48px; }
+                .carousel-past-card .past-card-title { font-size: var(--text-heading); }
+                .carousel-past-card .past-card-text { font-size: var(--text-small); max-width: 240px; }
+                .carousel-past-card .past-card-btn { padding: 12px 24px; font-size: var(--text-label); }
+
+                .event-flyer-wrapper.glow-warm {
+                    box-shadow: 0 16px 56px color-mix(in srgb, var(--gold) 55%, transparent), 0 8px 24px color-mix(in srgb, var(--gold) 35%, transparent);
+                }
+                .event-flyer-wrapper.glow-red {
+                    box-shadow: 0 16px 56px rgba(200, 60, 60, 0.5), 0 8px 24px rgba(180, 40, 40, 0.3);
+                }
+                .event-flyer-wrapper.glow-blue {
+                    box-shadow: 0 16px 56px rgba(60, 120, 200, 0.5), 0 8px 24px rgba(40, 100, 180, 0.3);
+                }
+                .event-flyer-wrapper.glow-green {
+                    box-shadow: 0 16px 56px rgba(60, 180, 100, 0.5), 0 8px 24px rgba(40, 150, 80, 0.3);
+                }
+                .event-flyer-wrapper.glow-purple {
+                    box-shadow: 0 16px 56px rgba(140, 80, 200, 0.5), 0 8px 24px rgba(120, 60, 180, 0.3);
+                }
+                .event-flyer-wrapper.glow-dark {
+                    box-shadow: 0 16px 56px rgba(40, 40, 60, 0.55), 0 8px 24px rgba(20, 20, 40, 0.35);
+                }
+
+            /* Stay Tuned - Two cards side by side with 3:4 portrait ratio (final override) */
+                .stay-tuned-container {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    flex-wrap: nowrap !important;
+                    gap: 32px !important;
+                    justify-content: center !important;
+                    align-items: flex-start !important;
+                    max-width: 620px !important;
+                    margin: 0 auto !important;
+                    width: 100% !important;
+                }
+
+                .stay-tuned-container > .stay-tuned-card,
+                .stay-tuned-container > .past-events-card {
+                    aspect-ratio: 3/4 !important;
+                    width: 260px !important;
+                    max-width: 260px !important;
+                    min-width: 260px !important;
+                    flex: 0 0 260px !important;
+                    height: auto !important;
+                    min-height: unset !important;
+                    max-height: unset !important;
+                    padding: 28px 20px !important;
+                    border-radius: 32px !important;
+                }
             }
-            
+
             /* ========================================
                INTERMEDIATE BREAKPOINT (961px - 1199px)
                Ensures desktop layout scales properly for narrow desktop windows

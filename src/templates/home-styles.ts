@@ -592,28 +592,28 @@ export const homeStyles = (): string => `
                 align-items: center;
                 justify-content: center;
                 width: 100%;
-                padding: 8px 40px;
+                padding: 12px 30px;
                 background: rgb(255, 255, 255);
                 background: rgba(255, 255, 255, 0.75);
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.4);
+                border: 1.5px solid rgba(255, 255, 255, 0.4);
                 border-radius: 100px;
                 font-size: var(--text-label);
-                font-weight: var(--weight-medium);
+                font-weight: var(--weight-semibold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 color: #1a1a2e;
                 cursor: pointer;
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
                             0 4px 12px rgba(0, 0, 0, 0.05);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .find-us-btn:hover {
-                background: rgba(255, 255, 255, 0.85);
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 
-                            0 6px 16px rgba(0, 0, 0, 0.06);
+                background: rgba(255, 255, 255, 0.88);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.13),
+                            0 6px 16px rgba(0, 0, 0, 0.07);
             }
             
             /* Find Us Dropdown - positioned above button */
@@ -632,13 +632,13 @@ export const homeStyles = (): string => `
             @supports not (backdrop-filter: blur(1px)) {
                 .find-us-btn {
                     background: rgb(255, 255, 255) !important;
-                    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+                    border: 1.5px solid rgba(0, 0, 0, 0.08) !important;
                 }
                 /* On mobile, Find Us button stays gold even without backdrop-filter */
                 @media (max-width: 899px) {
                     .find-us-btn {
                         background: var(--gold) !important;
-                        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+                        border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
                     }
                 }
             }
@@ -768,7 +768,7 @@ export const homeStyles = (): string => `
                 .stay-tuned-card .stay-tuned-title { font-size: var(--text-heading) !important; }
                 .stay-tuned-card .stay-tuned-text { font-size: var(--text-small) !important; line-height: var(--leading-normal); }
                 .stay-tuned-card .stay-tuned-rule { width: 32px; }
-                .stay-tuned-card .btn-view-past-events { font-size: var(--text-eyebrow) !important; padding: 10px 20px !important; }
+                .stay-tuned-card .btn-view-past-events { font-size: var(--text-label) !important; padding: 12px 30px !important; }
                 
                 .past-events-card {
                     background: rgba(255, 255, 255, 0.85);
@@ -1396,17 +1396,17 @@ export const homeStyles = (): string => `
             /* View Past Events Button - subtle, not too prominent */
             .btn-view-past-events {
                 margin-top: 16px;
-                padding: 10px 20px;
+                padding: 12px 30px;
                 background: transparent;
                 border: 1.5px solid rgba(26, 26, 46, 0.2);
                 border-radius: 100px;
-                font-size: var(--text-eyebrow);
+                font-size: var(--text-label);
                 font-weight: var(--weight-semibold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 color: #636378;
                 cursor: pointer;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
                 flex-shrink: 0;
             }
 
@@ -1414,7 +1414,7 @@ export const homeStyles = (): string => `
                 background: rgba(26, 26, 46, 0.05);
                 border-color: rgba(26, 26, 46, 0.3);
                 color: #595970;
-                transform: translateY(-1px);
+                transform: translateY(-2px);
             }
             
             /* Hide button if no past events */
@@ -1926,18 +1926,18 @@ export const homeStyles = (): string => `
 
             .btn-outline {
                 background: rgba(255, 255, 255, 0.95);
-                border: 2px solid #ffffff;
+                border: 1.5px solid #ffffff;
                 color: #FF0000;
-                padding: 16px 38px;
+                padding: 12px 30px;
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                font-weight: 700;
+                transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                font-weight: var(--weight-semibold);
             }
 
             .btn-outline:hover {
                 background: #ffffff;
-                transform: translateY(-4px);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+                transform: translateY(-2px);
+                box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
             }
 
             .past-streams {
@@ -2973,11 +2973,11 @@ export const homeStyles = (): string => `
                     backdrop-filter: blur(12px);
                     color: #ffffff;
                     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), 0 0 24px color-mix(in srgb, var(--gold) 35%, transparent);
-                    border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
-                    letter-spacing: 2.5px;
-                    font-weight: 600;
-                    padding: 8px 40px;
-                    font-size: 12px;
+                    border: 1.5px solid color-mix(in srgb, var(--gold) 45%, transparent);
+                    letter-spacing: var(--tracking-wide);
+                    font-weight: var(--weight-semibold);
+                    padding: 12px 30px;
+                    font-size: var(--text-label);
                 }
 
                 .find-us-btn:hover {
@@ -3413,8 +3413,8 @@ export const homeStyles = (): string => `
                 
                 .btn-view-past-events {
                     margin-top: 12px;
-                    padding: 8px 16px;
-                    font-size: 9px;
+                    padding: 10px 22px;
+                    font-size: var(--text-label);
                     background: var(--gold);
                     border-color: var(--gold);
                     color: #ffffff;
@@ -3718,9 +3718,9 @@ export const homeStyles = (): string => `
                 }
 
                 .btn-outline {
-                    padding: 15px 34px;
-                    font-size: 13px;
-                    letter-spacing: 2px;
+                    padding: 12px 30px;
+                    font-size: var(--text-label);
+                    letter-spacing: var(--tracking-wide);
                 }
 
                 .past-streams-label {
@@ -3978,10 +3978,10 @@ export const homeStyles = (): string => `
                 }
                 
                 .find-us-btn {
-                    padding: 6px 20px;
+                    padding: 10px 20px;
                     font-size: 10px;
-                    font-weight: 500;
-                    letter-spacing: 1.5px;
+                    font-weight: var(--weight-semibold);
+                    letter-spacing: var(--tracking-wide);
                 }
                 
                 .btn {
@@ -4147,8 +4147,8 @@ export const homeStyles = (): string => `
                 
                 .btn-outline {
                     padding: 10px 20px;
-                    font-size: 9px;
-                    letter-spacing: 1px;
+                    font-size: 10px;
+                    letter-spacing: var(--tracking-wide);
                 }
                 
                 .past-streams-label {

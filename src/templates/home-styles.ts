@@ -4624,33 +4624,32 @@ export const homeStyles = (): string => `
                     max-width: 720px;
                 }
 
-            /* Stay Tuned - Two Card Layout
-               Width and centering are set by JS (centerStayTunedContainer) using exact
-               pixel measurements. CSS provides the 2-col grid structure; JS handles
-               the 2/3 width and margin-left centering reliably at any viewport size. */
+            /* Stay Tuned - Two Card Layout (desktop)
+               Cards are direct children of .stay-tuned-container (no wrapper div).
+               JS sets display:grid inline (to override the initial display:none).
+               Container is max-width:66.667% (=2/3) centered with margin:0 auto.
+               Each 1fr column ≈ 1/3 of outreach width — same as one carousel card slot. */
                 .stay-tuned-container {
-                    display: grid !important;
-                    grid-template-columns: repeat(2, 1fr) !important;
+                    grid-template-columns: 1fr 1fr !important;
                     gap: 20px !important;
-                    width: 100% !important;
-                    max-width: unset !important;
-                    margin: 0 !important;
-                    position: static !important;
-                    left: auto !important;
-                    transform: none !important;
+                    width: auto !important;
+                    max-width: 66.667% !important;
+                    margin: 0 auto !important;
+                    box-sizing: border-box !important;
                 }
 
                 .stay-tuned-card,
                 .past-events-card {
-                    width: 100% !important;
-                    max-width: unset !important;
-                    min-width: unset !important;
+                    width: auto !important;
+                    max-width: none !important;
+                    min-width: 0 !important;
                     flex: none !important;
                     aspect-ratio: 3/4 !important;
                     height: auto !important;
                     min-height: unset !important;
                     max-height: unset !important;
                     padding: 40px 32px !important;
+                    box-sizing: border-box !important;
                 }
 
                 .stay-tuned-card .stay-tuned-ornament { width: 40px; height: 40px; }

@@ -1,4 +1,4 @@
-// Version: 1.32.21 - Fix and standardize section spacing on mobile (watch eyebrow, heading, card gaps)
+// Version: 1.33.0 - Desktop redesign: full-viewport hero with background image, centered overlay content
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

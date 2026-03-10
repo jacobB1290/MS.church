@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.32.21 - Fix and standardize section spacing on mobile (watch eyebrow, heading, card gaps) -->
+<!-- v1.33.0 - Desktop redesign: full-viewport hero with background image, centered overlay content -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

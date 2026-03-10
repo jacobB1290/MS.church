@@ -303,18 +303,17 @@ export const homeScripts = (): string => `
                     \`;
 
                     if (isDesktop && hasPastEvents) {
+                        // No wrapper div, no inline styles — CSS grid on .stay-tuned-container handles layout
                         return \`
-                            <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 40px; justify-content: center; align-items: flex-start; width: 100%; max-width: 900px; margin: 0 auto;">
-                                <div class="stay-tuned-card" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;" id="stay-tuned-card-el">
-                                    \${stayTunedInner}
-                                </div>
-                                <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;">
-                                    <span class="past-card-badge">MEMORIES</span>
-                                    <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
-                                    <h3 class="past-card-title">Past Events</h3>
-                                    <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
-                                    <span class="past-card-btn">View Gallery</span>
-                                </div>
+                            <div class="stay-tuned-card" id="stay-tuned-card-el">
+                                \${stayTunedInner}
+                            </div>
+                            <div class="past-events-card" id="btn-view-past-events-desktop">
+                                <span class="past-card-badge">MEMORIES</span>
+                                <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
+                                <h3 class="past-card-title">Past Events</h3>
+                                <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
+                                <span class="past-card-btn">View Gallery</span>
                             </div>
                         \`;
                     } else {
@@ -370,7 +369,8 @@ export const homeScripts = (): string => `
                 if (upcoming.length === 0) {
                     if (stayTunedContainer) {
                         stayTunedContainer.innerHTML = renderStayTunedCard(past.length > 0, past);
-                        stayTunedContainer.style.display = 'block';
+                        // Show as grid on desktop (CSS handles sizing/centering), block on mobile
+                        stayTunedContainer.style.display = window.innerWidth >= 961 ? 'grid' : 'block';
                         // Initialize the color swirl animation on the stay tuned card
                         const cardEl = document.getElementById('stay-tuned-card-el');
                         if (cardEl) initColorSwirl(past, cardEl);
@@ -629,8 +629,15 @@ export const homeScripts = (): string => `
                         carouselTrack.querySelectorAll('.carousel-card').forEach(card => {
                             card.style.width = cardPct + '%';
                         });
-                        const offset = (currentIndex / totalCards) * 100;
-                        carouselTrack.style.transform = 'translateX(-' + offset + '%)';
+                        if (totalCards < perView) {
+                            // Fewer cards than slots — center the track within the viewport
+                            // Shift = half the empty slots as a % of track width
+                            const centerPct = (perView - totalCards) / (2 * totalCards) * 100;
+                            carouselTrack.style.transform = 'translateX(' + centerPct + '%)';
+                        } else {
+                            const offset = (currentIndex / totalCards) * 100;
+                            carouselTrack.style.transform = 'translateX(-' + offset + '%)';
+                        }
                     }
                     function updateArrows() {
                         carouselPrev.classList.toggle('hidden', currentIndex <= 0);

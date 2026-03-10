@@ -123,15 +123,15 @@ export const homeScripts = (): string => `
                         const data = ctx.getImageData(0, 0, size, size).data;
                         // Sample pixels at grid points and cluster into dominant colors
                         const buckets = {};
-                        for (let y = 4; y < size; y += 8) {
-                            for (let x = 4; x < size; x += 8) {
+                        for (let y = 2; y < size; y += 4) {
+                            for (let x = 2; x < size; x += 4) {
                                 const i = (y * size + x) * 4;
                                 const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
                                 if (a < 128) continue;
                                 // Quantize to reduce to key colors
-                                const qr = Math.round(r / 48) * 48;
-                                const qg = Math.round(g / 48) * 48;
-                                const qb = Math.round(b / 48) * 48;
+                                const qr = Math.round(r / 40) * 40;
+                                const qg = Math.round(g / 40) * 40;
+                                const qb = Math.round(b / 40) * 40;
                                 const key = qr + ',' + qg + ',' + qb;
                                 if (!buckets[key]) buckets[key] = { r: 0, g: 0, b: 0, count: 0 };
                                 buckets[key].r += r;
@@ -144,23 +144,28 @@ export const homeScripts = (): string => `
                         return Object.values(buckets)
                             .filter(b => {
                                 const avg = (b.r / b.count + b.g / b.count + b.b / b.count) / 3;
-                                return avg > 40 && avg < 220;
+                                return avg > 50 && avg < 210;
                             })
                             .sort((a, b) => b.count - a.count)
-                            .slice(0, 5)
-                            .map(b => {
-                                const r = Math.round(b.r / b.count);
-                                const g = Math.round(b.g / b.count);
-                                const bl = Math.round(b.b / b.count);
-                                // Lighten and desaturate slightly for a soft pastel feel
-                                const lr = Math.min(255, Math.round(r * 0.6 + 255 * 0.4));
-                                const lg = Math.min(255, Math.round(g * 0.6 + 255 * 0.4));
-                                const lb = Math.min(255, Math.round(bl * 0.6 + 255 * 0.4));
-                                return 'rgba(' + lr + ',' + lg + ',' + lb + ',0.7)';
-                            });
+                            .slice(0, 6)
+                            .map(b => ({
+                                r: Math.round(b.r / b.count),
+                                g: Math.round(b.g / b.count),
+                                b: Math.round(b.b / b.count),
+                                count: b.count
+                            }));
                     } catch (e) {
                         return [];
                     }
+                }
+
+                // Convert raw RGB to a soft but still vivid color string for the swirl
+                function toSwirlColor(r, g, b) {
+                    // Lighten only 25% toward white (keeps color identity strong)
+                    const lr = Math.min(255, Math.round(r * 0.75 + 255 * 0.25));
+                    const lg = Math.min(255, Math.round(g * 0.75 + 255 * 0.25));
+                    const lb = Math.min(255, Math.round(b * 0.75 + 255 * 0.25));
+                    return 'rgba(' + lr + ',' + lg + ',' + lb + ',0.85)';
                 }
 
                 // Load past event images and extract a palette, then inject swirl blobs
@@ -169,11 +174,11 @@ export const homeScripts = (): string => `
 
                     // Default soft palette (gold/warm tones matching church brand)
                     const defaultColors = [
-                        'rgba(212, 165, 116, 0.7)',
-                        'rgba(200, 152, 96, 0.65)',
-                        'rgba(168, 190, 220, 0.6)',
-                        'rgba(220, 180, 160, 0.65)',
-                        'rgba(180, 170, 210, 0.6)'
+                        'rgba(212, 165, 116, 0.85)',
+                        'rgba(200, 140, 90, 0.8)',
+                        'rgba(150, 180, 215, 0.75)',
+                        'rgba(210, 160, 140, 0.8)',
+                        'rgba(170, 155, 200, 0.75)'
                     ];
 
                     // Create swirl container and frost overlay
@@ -182,60 +187,87 @@ export const homeScripts = (): string => `
                     const frostEl = document.createElement('div');
                     frostEl.className = 'stay-tuned-frost';
 
+                    function makeBlobGradient(c) {
+                        return 'radial-gradient(circle, ' + c + ' 0%, transparent 70%)';
+                    }
+
+                    // Render blobs immediately with given colors
                     function renderBlobs(colors) {
-                        // Ensure we have exactly 5 colors
                         while (colors.length < 5) {
                             colors.push(defaultColors[colors.length % defaultColors.length]);
                         }
                         swirlEl.innerHTML = colors.slice(0, 5).map(c =>
-                            '<div class="swirl-blob" style="background:radial-gradient(circle,'+c+' 0%,transparent 70%);"></div>'
+                            '<div class="swirl-blob" style="background:' + makeBlobGradient(c) + ';"></div>'
                         ).join('');
-                        // Insert swirl and frost before the content
                         cardEl.insertBefore(frostEl, cardEl.firstChild);
                         cardEl.insertBefore(swirlEl, cardEl.firstChild);
                     }
 
-                    // Try to extract from past event images
-                    const imagesWithSrc = pastEvents.filter(e => e.image);
-                    if (imagesWithSrc.length === 0) {
-                        renderBlobs([...defaultColors]);
-                        return;
+                    // Update existing blobs with new colors (CSS transition handles smoothness)
+                    function updateBlobs(colors) {
+                        while (colors.length < 5) {
+                            colors.push(defaultColors[colors.length % defaultColors.length]);
+                        }
+                        const blobs = swirlEl.querySelectorAll('.swirl-blob');
+                        colors.slice(0, 5).forEach((c, i) => {
+                            if (blobs[i]) blobs[i].style.background = makeBlobGradient(c);
+                        });
                     }
 
-                    // Load up to 3 images and extract colors
+                    // Step 1: Render immediately with defaults
+                    renderBlobs([...defaultColors]);
+
+                    // Step 2: Try to extract real colors from past event images
+                    const imagesWithSrc = pastEvents.filter(e => e.image);
+                    if (imagesWithSrc.length === 0) return;
+
+                    // Load up to 3 images, use small size for fast loading
                     const toLoad = imagesWithSrc.slice(0, 3);
                     let loaded = 0;
-                    let allColors = [];
+                    let allRawColors = [];
+                    let updated = false;
+
+                    function tryUpdate() {
+                        if (updated) return;
+                        if (allRawColors.length >= 3) {
+                            updated = true;
+                            const swirlColors = allRawColors
+                                .slice(0, 5)
+                                .map(c => toSwirlColor(c.r, c.g, c.b));
+                            updateBlobs(swirlColors);
+                        }
+                    }
 
                     toLoad.forEach(event => {
                         const img = new Image();
                         img.crossOrigin = 'anonymous';
+                        // Use smaller image for faster loading + less data to process
+                        const smallSrc = event.image.replace(/=w\d+/, '=w100');
                         img.onload = function() {
-                            allColors = allColors.concat(extractColorsFromImage(img));
+                            const colors = extractColorsFromImage(img);
+                            allRawColors = allRawColors.concat(colors);
                             loaded++;
-                            if (loaded === toLoad.length) {
-                                // Deduplicate similar colors and pick best 5
-                                const unique = allColors.length > 0 ? allColors.slice(0, 5) : [...defaultColors];
-                                renderBlobs(unique);
+                            if (loaded === toLoad.length || allRawColors.length >= 5) {
+                                tryUpdate();
                             }
                         };
                         img.onerror = function() {
                             loaded++;
-                            if (loaded === toLoad.length) {
-                                const unique = allColors.length > 0 ? allColors.slice(0, 5) : [...defaultColors];
-                                renderBlobs(unique);
-                            }
+                            if (loaded === toLoad.length) tryUpdate();
                         };
-                        img.src = event.image;
+                        img.src = smallSrc;
                     });
 
-                    // Fallback if images take too long
+                    // Final fallback — if after 5s we got some colors but not enough, use what we have
                     setTimeout(() => {
-                        if (loaded < toLoad.length) {
-                            const colors = allColors.length > 0 ? allColors.slice(0, 5) : [...defaultColors];
-                            renderBlobs(colors);
+                        if (!updated && allRawColors.length > 0) {
+                            updated = true;
+                            const swirlColors = allRawColors
+                                .slice(0, 5)
+                                .map(c => toSwirlColor(c.r, c.g, c.b));
+                            updateBlobs(swirlColors);
                         }
-                    }, 4000);
+                    }, 5000);
                 }
 
                 function renderStayTunedCard(hasPastEvents, pastEvents) {

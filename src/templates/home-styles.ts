@@ -1251,7 +1251,7 @@ export const homeStyles = (): string => `
             }
             
             .stay-tuned-card {
-                background: rgba(255, 255, 255, 0.6);
+                background: rgba(255, 255, 255, 0.15);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -1260,8 +1260,7 @@ export const homeStyles = (): string => `
                 padding: 56px 40px;
                 box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
                             0 12px 32px rgba(0, 0, 0, 0.04);
-                border: 1px solid rgba(255, 255, 255, 0.6);
-                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
                 min-height: auto;
                 border-radius: 24px;
                 position: relative;
@@ -1281,12 +1280,12 @@ export const homeStyles = (): string => `
                ======================================== */
             .stay-tuned-swirl {
                 position: absolute;
-                inset: -40%;
+                inset: -30%;
                 z-index: 0;
                 pointer-events: none;
-                filter: blur(60px) saturate(1.3);
+                filter: blur(40px) saturate(1.6);
                 opacity: 0;
-                animation: swirlFadeIn 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                animation: swirlFadeIn 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             }
 
             @keyframes swirlFadeIn {
@@ -1296,43 +1295,42 @@ export const homeStyles = (): string => `
             .swirl-blob {
                 position: absolute;
                 border-radius: 50%;
-                mix-blend-mode: normal;
                 will-change: transform;
             }
 
             .swirl-blob:nth-child(1) {
-                width: 55%;
-                height: 55%;
-                top: 10%;
-                left: 5%;
+                width: 65%;
+                height: 65%;
+                top: 5%;
+                left: 0%;
                 animation: swirlOrbit1 18s ease-in-out infinite;
             }
             .swirl-blob:nth-child(2) {
-                width: 50%;
-                height: 50%;
-                top: 40%;
-                right: 5%;
+                width: 60%;
+                height: 60%;
+                top: 35%;
+                right: 0%;
                 animation: swirlOrbit2 22s ease-in-out infinite;
             }
             .swirl-blob:nth-child(3) {
-                width: 45%;
-                height: 45%;
-                bottom: 5%;
-                left: 20%;
+                width: 55%;
+                height: 55%;
+                bottom: 0%;
+                left: 15%;
                 animation: swirlOrbit3 20s ease-in-out infinite;
             }
             .swirl-blob:nth-child(4) {
-                width: 40%;
-                height: 40%;
-                top: 20%;
-                right: 20%;
+                width: 50%;
+                height: 50%;
+                top: 15%;
+                right: 15%;
                 animation: swirlOrbit4 24s ease-in-out infinite;
             }
             .swirl-blob:nth-child(5) {
-                width: 35%;
-                height: 35%;
-                bottom: 20%;
-                right: 10%;
+                width: 45%;
+                height: 45%;
+                bottom: 15%;
+                right: 5%;
                 animation: swirlOrbit5 16s ease-in-out infinite;
             }
 
@@ -1370,13 +1368,13 @@ export const homeStyles = (): string => `
                 100% { transform: translate(0, 0) scale(1) rotate(360deg); }
             }
 
-            /* Frosted glass overlay to keep text readable above swirl */
+            /* Frosted glass overlay — just enough to keep text readable, not wash out colors */
             .stay-tuned-frost {
                 position: absolute;
                 inset: 0;
                 z-index: 1;
-                background: rgba(255, 255, 255, 0.55);
-                backdrop-filter: blur(2px);
+                background: rgba(255, 255, 255, 0.3);
+                backdrop-filter: blur(1px);
                 border-radius: inherit;
             }
 
@@ -1384,6 +1382,11 @@ export const homeStyles = (): string => `
             .stay-tuned-content {
                 position: relative;
                 z-index: 2;
+            }
+
+            /* Smooth transition when real colors replace defaults */
+            .swirl-blob {
+                transition: background 1.5s ease-in-out;
             }
 
             /* Reduce motion for accessibility */
@@ -1474,6 +1477,10 @@ export const homeStyles = (): string => `
                 animation: ornamentGlow 4s ease-in-out infinite;
             }
 
+            .stay-tuned-ornament svg {
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+            }
+
             .stay-tuned-star {
                 width: 100%;
                 height: 100%;
@@ -1493,7 +1500,7 @@ export const homeStyles = (): string => `
                 color: #1a1a2e;
                 letter-spacing: var(--tracking-tight);
                 line-height: var(--leading-snug);
-                text-shadow: 0 1px 4px rgba(255, 255, 255, 0.8);
+                text-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 1px 4px rgba(255, 255, 255, 0.8);
             }
 
             /* Thin gold divider rule */
@@ -1506,10 +1513,10 @@ export const homeStyles = (): string => `
 
             .stay-tuned-text {
                 font-size: var(--text-small);
-                color: #4a4a5e;
+                color: #3a3a50;
                 line-height: var(--leading-normal);
                 margin: 0;
-                text-shadow: 0 1px 3px rgba(255, 255, 255, 0.7);
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(255, 255, 255, 0.8);
                 max-width: 240px;
                 font-style: italic;
             }

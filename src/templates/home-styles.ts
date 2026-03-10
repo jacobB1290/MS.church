@@ -4361,17 +4361,18 @@ export const homeStyles = (): string => `
                     backdrop-filter: blur(32px);
                 }
 
-                /* Hero title — white, large, centered above overlay */
+                /* Hero title — white, large, centered above overlay, single line */
                 .hero h1 {
                     position: relative;
                     z-index: 4;
                     color: #ffffff;
-                    font-size: clamp(80px, 10vw, 150px);
+                    font-size: clamp(48px, 7.5vw, 120px);
                     line-height: 1.1;
                     letter-spacing: -0.02em;
                     text-align: center;
+                    white-space: nowrap;
                     text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45), 0 0 80px rgba(0, 0, 0, 0.25);
-                    max-width: clamp(700px, 85vw, 1200px);
+                    max-width: none;
                     padding: 0 clamp(24px, 4vw, 80px);
                     margin: 0 0 clamp(12px, 1.5vw, 20px) 0;
                     width: 100%;
@@ -4430,7 +4431,9 @@ export const homeStyles = (): string => `
                     left: auto;
                     right: auto;
                     transform: none;
-                    width: auto;
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
                     pointer-events: auto;
                 }
 
@@ -4456,8 +4459,9 @@ export const homeStyles = (): string => `
                     box-shadow: 0 6px 32px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
                     letter-spacing: 2px;
                     font-weight: 600;
-                    padding: 16px 56px;
+                    padding: 18px 100px;
                     font-size: 15px;
+                    width: auto;
                 }
                 .find-us-btn:hover {
                     background: var(--gold);

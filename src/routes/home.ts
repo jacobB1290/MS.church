@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.32.17 - Stay Tuned card: bolder color swirl, live color extraction from past events -->
+<!-- v1.32.18 - Stay Tuned swirl: slightly smaller blobs, faster animation, softer overall -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

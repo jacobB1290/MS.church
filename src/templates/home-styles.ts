@@ -1283,13 +1283,13 @@ export const homeStyles = (): string => `
                 inset: -30%;
                 z-index: 0;
                 pointer-events: none;
-                filter: blur(40px) saturate(1.6);
+                filter: blur(48px) saturate(1.4);
                 opacity: 0;
                 animation: swirlFadeIn 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             }
 
             @keyframes swirlFadeIn {
-                to { opacity: 1; }
+                to { opacity: 0.85; }
             }
 
             .swirl-blob {
@@ -1299,39 +1299,39 @@ export const homeStyles = (): string => `
             }
 
             .swirl-blob:nth-child(1) {
-                width: 65%;
-                height: 65%;
-                top: 5%;
-                left: 0%;
-                animation: swirlOrbit1 18s ease-in-out infinite;
-            }
-            .swirl-blob:nth-child(2) {
-                width: 60%;
-                height: 60%;
-                top: 35%;
-                right: 0%;
-                animation: swirlOrbit2 22s ease-in-out infinite;
-            }
-            .swirl-blob:nth-child(3) {
                 width: 55%;
                 height: 55%;
-                bottom: 0%;
-                left: 15%;
-                animation: swirlOrbit3 20s ease-in-out infinite;
+                top: 5%;
+                left: 0%;
+                animation: swirlOrbit1 12s ease-in-out infinite;
             }
-            .swirl-blob:nth-child(4) {
+            .swirl-blob:nth-child(2) {
                 width: 50%;
                 height: 50%;
+                top: 35%;
+                right: 0%;
+                animation: swirlOrbit2 15s ease-in-out infinite;
+            }
+            .swirl-blob:nth-child(3) {
+                width: 48%;
+                height: 48%;
+                bottom: 0%;
+                left: 15%;
+                animation: swirlOrbit3 13s ease-in-out infinite;
+            }
+            .swirl-blob:nth-child(4) {
+                width: 42%;
+                height: 42%;
                 top: 15%;
                 right: 15%;
-                animation: swirlOrbit4 24s ease-in-out infinite;
+                animation: swirlOrbit4 16s ease-in-out infinite;
             }
             .swirl-blob:nth-child(5) {
-                width: 45%;
-                height: 45%;
+                width: 38%;
+                height: 38%;
                 bottom: 15%;
                 right: 5%;
-                animation: swirlOrbit5 16s ease-in-out infinite;
+                animation: swirlOrbit5 11s ease-in-out infinite;
             }
 
             @keyframes swirlOrbit1 {

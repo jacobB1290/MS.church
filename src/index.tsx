@@ -1,4 +1,4 @@
-// Version: 1.32.15 - Stay Tuned card: white bg, no gold top line; mobile button gold
+// Version: 1.32.18 - Stay Tuned swirl: slightly smaller blobs, faster animation, softer overall
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

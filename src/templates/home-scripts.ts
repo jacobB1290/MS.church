@@ -111,7 +111,180 @@ export const homeScripts = (): string => `
                     return categorizeEvents(events || []);
                 }
 
-                function renderStayTunedCard(hasPastEvents) {
+                // Extract dominant colors from an image via offscreen canvas sampling
+                function extractColorsFromImage(img) {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const size = 64;
+                        canvas.width = size;
+                        canvas.height = size;
+                        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                        ctx.drawImage(img, 0, 0, size, size);
+                        const data = ctx.getImageData(0, 0, size, size).data;
+                        // Sample pixels at grid points and cluster into dominant colors
+                        const buckets = {};
+                        for (let y = 2; y < size; y += 4) {
+                            for (let x = 2; x < size; x += 4) {
+                                const i = (y * size + x) * 4;
+                                const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+                                if (a < 128) continue;
+                                // Quantize to reduce to key colors
+                                const qr = Math.round(r / 40) * 40;
+                                const qg = Math.round(g / 40) * 40;
+                                const qb = Math.round(b / 40) * 40;
+                                const key = qr + ',' + qg + ',' + qb;
+                                if (!buckets[key]) buckets[key] = { r: 0, g: 0, b: 0, count: 0 };
+                                buckets[key].r += r;
+                                buckets[key].g += g;
+                                buckets[key].b += b;
+                                buckets[key].count++;
+                            }
+                        }
+                        // Sort by frequency, take top colors, skip near-white and near-black
+                        return Object.values(buckets)
+                            .filter(b => {
+                                const avg = (b.r / b.count + b.g / b.count + b.b / b.count) / 3;
+                                return avg > 50 && avg < 210;
+                            })
+                            .sort((a, b) => b.count - a.count)
+                            .slice(0, 6)
+                            .map(b => ({
+                                r: Math.round(b.r / b.count),
+                                g: Math.round(b.g / b.count),
+                                b: Math.round(b.b / b.count),
+                                count: b.count
+                            }));
+                    } catch (e) {
+                        return [];
+                    }
+                }
+
+                // Convert raw RGB to a soft, pastel-like color string for the swirl
+                function toSwirlColor(r, g, b) {
+                    // Lighten 45% toward white for a softer, more pastel feel
+                    const lr = Math.min(255, Math.round(r * 0.55 + 255 * 0.45));
+                    const lg = Math.min(255, Math.round(g * 0.55 + 255 * 0.45));
+                    const lb = Math.min(255, Math.round(b * 0.55 + 255 * 0.45));
+                    return 'rgba(' + lr + ',' + lg + ',' + lb + ',0.7)';
+                }
+
+                // Load past event images and extract a palette, then inject swirl blobs
+                function initColorSwirl(pastEvents, cardEl) {
+                    if (!cardEl) return;
+
+                    // Default soft palette (gold/warm tones matching church brand)
+                    const defaultColors = [
+                        'rgba(212, 165, 116, 0.85)',
+                        'rgba(200, 140, 90, 0.8)',
+                        'rgba(150, 180, 215, 0.75)',
+                        'rgba(210, 160, 140, 0.8)',
+                        'rgba(170, 155, 200, 0.75)'
+                    ];
+
+                    // Create swirl container and frost overlay
+                    const swirlEl = document.createElement('div');
+                    swirlEl.className = 'stay-tuned-swirl';
+                    const frostEl = document.createElement('div');
+                    frostEl.className = 'stay-tuned-frost';
+
+                    function makeBlobGradient(c) {
+                        return 'radial-gradient(circle, ' + c + ' 0%, transparent 70%)';
+                    }
+
+                    // Render blobs immediately with given colors
+                    function renderBlobs(colors) {
+                        while (colors.length < 5) {
+                            colors.push(defaultColors[colors.length % defaultColors.length]);
+                        }
+                        swirlEl.innerHTML = colors.slice(0, 5).map(c =>
+                            '<div class="swirl-blob" style="background:' + makeBlobGradient(c) + ';"></div>'
+                        ).join('');
+                        cardEl.insertBefore(frostEl, cardEl.firstChild);
+                        cardEl.insertBefore(swirlEl, cardEl.firstChild);
+                    }
+
+                    // Update existing blobs with new colors (CSS transition handles smoothness)
+                    function updateBlobs(colors) {
+                        while (colors.length < 5) {
+                            colors.push(defaultColors[colors.length % defaultColors.length]);
+                        }
+                        const blobs = swirlEl.querySelectorAll('.swirl-blob');
+                        colors.slice(0, 5).forEach((c, i) => {
+                            if (blobs[i]) blobs[i].style.background = makeBlobGradient(c);
+                        });
+                    }
+
+                    // Step 1: Render immediately with defaults
+                    renderBlobs([...defaultColors]);
+
+                    // Step 2: Try to extract real colors from past event images
+                    const imagesWithSrc = pastEvents.filter(e => e.image);
+                    if (imagesWithSrc.length === 0) return;
+
+                    // Load up to 3 images, use small size for fast loading
+                    const toLoad = imagesWithSrc.slice(0, 3);
+                    let loaded = 0;
+                    // Store colors PER image so we can distribute evenly
+                    const perImageColors = [];
+                    let updated = false;
+
+                    // Round-robin pick from each image's palette to ensure color diversity
+                    function buildDiversePalette() {
+                        const result = [];
+                        const maxRounds = 3;
+                        for (let round = 0; round < maxRounds && result.length < 5; round++) {
+                            for (let i = 0; i < perImageColors.length && result.length < 5; i++) {
+                                if (perImageColors[i][round]) {
+                                    result.push(perImageColors[i][round]);
+                                }
+                            }
+                        }
+                        return result;
+                    }
+
+                    function tryUpdate() {
+                        if (updated) return;
+                        const totalColors = perImageColors.reduce((s, arr) => s + arr.length, 0);
+                        if (totalColors >= 3) {
+                            updated = true;
+                            const diverse = buildDiversePalette();
+                            const swirlColors = diverse.map(c => toSwirlColor(c.r, c.g, c.b));
+                            updateBlobs(swirlColors);
+                        }
+                    }
+
+                    toLoad.forEach(event => {
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        // Use smaller image for faster loading + less data to process
+                        const smallSrc = event.image.replace(/=w\d+/, '=w100');
+                        img.onload = function() {
+                            const colors = extractColorsFromImage(img);
+                            perImageColors.push(colors);
+                            loaded++;
+                            if (loaded === toLoad.length || perImageColors.length >= toLoad.length) {
+                                tryUpdate();
+                            }
+                        };
+                        img.onerror = function() {
+                            loaded++;
+                            if (loaded === toLoad.length) tryUpdate();
+                        };
+                        img.src = smallSrc;
+                    });
+
+                    // Final fallback — if after 5s we got some colors but not enough, use what we have
+                    setTimeout(() => {
+                        if (!updated && perImageColors.length > 0) {
+                            updated = true;
+                            const diverse = buildDiversePalette();
+                            const swirlColors = diverse.map(c => toSwirlColor(c.r, c.g, c.b));
+                            updateBlobs(swirlColors);
+                        }
+                    }, 5000);
+                }
+
+                function renderStayTunedCard(hasPastEvents, pastEvents) {
                     const isDesktop = window.innerWidth >= 961;
 
                     const stayTunedInner = \`
@@ -132,7 +305,7 @@ export const homeScripts = (): string => `
                     if (isDesktop && hasPastEvents) {
                         return \`
                             <div class="desktop-cards-wrapper" style="display: flex !important; flex-direction: row !important; gap: 40px; justify-content: center; align-items: flex-start; width: 100%; max-width: 900px; margin: 0 auto;">
-                                <div class="stay-tuned-card" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;">
+                                <div class="stay-tuned-card" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;" id="stay-tuned-card-el">
                                     \${stayTunedInner}
                                 </div>
                                 <div class="past-events-card" id="btn-view-past-events-desktop" style="flex: 0 0 280px; width: 280px; max-width: 280px; aspect-ratio: 3/4; border-radius: 24px;">
@@ -146,7 +319,7 @@ export const homeScripts = (): string => `
                         \`;
                     } else {
                         return \`
-                            <div class="stay-tuned-card">
+                            <div class="stay-tuned-card" id="stay-tuned-card-el">
                                 \${stayTunedInner}
                             </div>
                         \`;
@@ -196,8 +369,11 @@ export const homeScripts = (): string => `
 
                 if (upcoming.length === 0) {
                     if (stayTunedContainer) {
-                        stayTunedContainer.innerHTML = renderStayTunedCard(past.length > 0);
+                        stayTunedContainer.innerHTML = renderStayTunedCard(past.length > 0, past);
                         stayTunedContainer.style.display = 'block';
+                        // Initialize the color swirl animation on the stay tuned card
+                        const cardEl = document.getElementById('stay-tuned-card-el');
+                        if (cardEl) initColorSwirl(past, cardEl);
                     }
                     if (carouselWrapper) carouselWrapper.style.display = 'none';
                     body.classList.add('stay-tuned-active');

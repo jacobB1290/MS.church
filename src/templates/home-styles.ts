@@ -4625,17 +4625,17 @@ export const homeStyles = (): string => `
                 }
 
             /* Stay Tuned - Two Card Layout
-               Formula: 3 card_widths + 2 gaps = outreach_width (page width)
-               CSS Grid with repeat(3, 1fr) + gap: 20px → each cell = (outreach - 40px) / 3
-               Matches carousel exactly: 3 slots, 2 filled, 3rd slot empty.
-               Using grid (not flex) so 1fr resolves reliably against any container width. */
+               Container = 2/3 of outreach width (occupies same space as 2 of 3 carousel slots).
+               2-col grid: each card = (2/3W - gap) / 2 ≈ 1/3W — same as one carousel card.
+               Centered with margin:auto so it sits in the middle like the carousel does.
+               Carousel state (.carousel-wrapper) is unaffected — separate DOM element. */
                 .stay-tuned-container {
                     display: grid !important;
-                    grid-template-columns: repeat(3, 1fr) !important;
+                    grid-template-columns: repeat(2, 1fr) !important;
                     gap: 20px !important;
-                    width: 100% !important;
+                    width: calc(200% / 3) !important;
                     max-width: unset !important;
-                    margin: 0 !important;
+                    margin: 0 auto !important;
                 }
 
                 .stay-tuned-card,

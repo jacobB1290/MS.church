@@ -4366,7 +4366,7 @@ export const homeStyles = (): string => `
                     position: relative;
                     z-index: 4;
                     color: #ffffff;
-                    font-size: clamp(56px, 7vw, 110px);
+                    font-size: clamp(80px, 10vw, 150px);
                     line-height: 1.1;
                     letter-spacing: -0.02em;
                     text-align: center;
@@ -4398,7 +4398,7 @@ export const homeStyles = (): string => `
                 /* Hero service-time and any hero <p> — white text */
                 .hero p {
                     color: rgba(255, 255, 255, 0.92);
-                    font-size: clamp(18px, 1.8vw, 22px);
+                    font-size: clamp(24px, 2.4vw, 32px);
                     line-height: 1.6;
                     text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
                     text-align: center;
@@ -4446,23 +4446,23 @@ export const homeStyles = (): string => `
                     width: auto;
                 }
                 
-                /* Find Us btn — white frosted glass looks great over dark hero */
+                /* Find Us btn — gold, matches mobile */
                 .find-us-btn {
-                    background: rgba(255, 255, 255, 0.22);
+                    background: var(--gold);
                     -webkit-backdrop-filter: blur(16px);
                     backdrop-filter: blur(16px);
                     color: #ffffff;
-                    border: 1px solid rgba(255, 255, 255, 0.38);
-                    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), 0 1px 6px rgba(0, 0, 0, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.25);
+                    box-shadow: 0 6px 32px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
                     letter-spacing: 2px;
                     font-weight: 600;
-                    padding: 10px 40px;
-                    font-size: 13px;
+                    padding: 16px 56px;
+                    font-size: 15px;
                 }
                 .find-us-btn:hover {
-                    background: rgba(255, 255, 255, 0.32);
-                    border-color: rgba(255, 255, 255, 0.55);
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+                    background: var(--gold);
+                    filter: brightness(1.08);
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
                 }
 
                 /* Hero bridge — centered on the exact hero/page seam.

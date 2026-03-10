@@ -159,13 +159,13 @@ export const homeScripts = (): string => `
                     }
                 }
 
-                // Convert raw RGB to a soft but still vivid color string for the swirl
+                // Convert raw RGB to a soft, pastel-like color string for the swirl
                 function toSwirlColor(r, g, b) {
-                    // Lighten only 25% toward white (keeps color identity strong)
-                    const lr = Math.min(255, Math.round(r * 0.75 + 255 * 0.25));
-                    const lg = Math.min(255, Math.round(g * 0.75 + 255 * 0.25));
-                    const lb = Math.min(255, Math.round(b * 0.75 + 255 * 0.25));
-                    return 'rgba(' + lr + ',' + lg + ',' + lb + ',0.85)';
+                    // Lighten 45% toward white for a softer, more pastel feel
+                    const lr = Math.min(255, Math.round(r * 0.55 + 255 * 0.45));
+                    const lg = Math.min(255, Math.round(g * 0.55 + 255 * 0.45));
+                    const lb = Math.min(255, Math.round(b * 0.55 + 255 * 0.45));
+                    return 'rgba(' + lr + ',' + lg + ',' + lb + ',0.7)';
                 }
 
                 // Load past event images and extract a palette, then inject swirl blobs
@@ -224,16 +224,31 @@ export const homeScripts = (): string => `
                     // Load up to 3 images, use small size for fast loading
                     const toLoad = imagesWithSrc.slice(0, 3);
                     let loaded = 0;
-                    let allRawColors = [];
+                    // Store colors PER image so we can distribute evenly
+                    const perImageColors = [];
                     let updated = false;
+
+                    // Round-robin pick from each image's palette to ensure color diversity
+                    function buildDiversePalette() {
+                        const result = [];
+                        const maxRounds = 3;
+                        for (let round = 0; round < maxRounds && result.length < 5; round++) {
+                            for (let i = 0; i < perImageColors.length && result.length < 5; i++) {
+                                if (perImageColors[i][round]) {
+                                    result.push(perImageColors[i][round]);
+                                }
+                            }
+                        }
+                        return result;
+                    }
 
                     function tryUpdate() {
                         if (updated) return;
-                        if (allRawColors.length >= 3) {
+                        const totalColors = perImageColors.reduce((s, arr) => s + arr.length, 0);
+                        if (totalColors >= 3) {
                             updated = true;
-                            const swirlColors = allRawColors
-                                .slice(0, 5)
-                                .map(c => toSwirlColor(c.r, c.g, c.b));
+                            const diverse = buildDiversePalette();
+                            const swirlColors = diverse.map(c => toSwirlColor(c.r, c.g, c.b));
                             updateBlobs(swirlColors);
                         }
                     }
@@ -245,9 +260,9 @@ export const homeScripts = (): string => `
                         const smallSrc = event.image.replace(/=w\d+/, '=w100');
                         img.onload = function() {
                             const colors = extractColorsFromImage(img);
-                            allRawColors = allRawColors.concat(colors);
+                            perImageColors.push(colors);
                             loaded++;
-                            if (loaded === toLoad.length || allRawColors.length >= 5) {
+                            if (loaded === toLoad.length || perImageColors.length >= toLoad.length) {
                                 tryUpdate();
                             }
                         };
@@ -260,11 +275,10 @@ export const homeScripts = (): string => `
 
                     // Final fallback — if after 5s we got some colors but not enough, use what we have
                     setTimeout(() => {
-                        if (!updated && allRawColors.length > 0) {
+                        if (!updated && perImageColors.length > 0) {
                             updated = true;
-                            const swirlColors = allRawColors
-                                .slice(0, 5)
-                                .map(c => toSwirlColor(c.r, c.g, c.b));
+                            const diverse = buildDiversePalette();
+                            const swirlColors = diverse.map(c => toSwirlColor(c.r, c.g, c.b));
                             updateBlobs(swirlColors);
                         }
                     }, 5000);

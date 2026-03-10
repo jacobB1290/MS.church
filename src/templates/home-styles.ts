@@ -1373,8 +1373,8 @@ export const homeStyles = (): string => `
                 position: absolute;
                 inset: 0;
                 z-index: 1;
-                background: rgba(255, 255, 255, 0.3);
-                backdrop-filter: blur(1px);
+                background: rgba(255, 255, 255, 0.38);
+                backdrop-filter: blur(3px);
                 border-radius: inherit;
             }
 

@@ -1,4 +1,4 @@
-// Version: 1.32.20 - Past events modal: prefetch images before open, eager first slides, Vercel image optimization + CDN caching
+// Version: 1.32.21 - Fix and standardize section spacing on mobile (watch eyebrow, heading, card gaps)
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

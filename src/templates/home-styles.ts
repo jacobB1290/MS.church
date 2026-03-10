@@ -4299,14 +4299,14 @@ export const homeStyles = (): string => `
                     align-items: center;
                     gap: 0;
                     padding: 0;
-                    /* Hero background image (landscape) */
+                    /* Hero background image — left-positioned to keep church facade visible */
                     background-image: url('/static/16by9%20church.png');
                     background-size: cover;
-                    background-position: center;
+                    background-position: left center;
                     position: relative;
                 }
 
-                /* Gradient overlay: dark top (nav legibility) → mostly clear → white fade at bottom */
+                /* Gradient overlay: dark top (nav) → clear middle → subtle fade at very bottom only */
                 .hero::after {
                     content: '';
                     position: absolute;
@@ -4316,17 +4316,16 @@ export const homeStyles = (): string => `
                         rgba(0, 0, 0, 0.58) 0%,
                         rgba(0, 0, 0, 0.28) 10%,
                         rgba(0, 0, 0, 0.10) 28%,
-                        rgba(0, 0, 0, 0.10) 55%,
-                        rgba(0, 0, 0, 0.28) 70%,
-                        rgba(248, 249, 253, 0.55) 83%,
-                        rgba(248, 249, 253, 0.88) 91%,
+                        rgba(0, 0, 0, 0.10) 82%,
+                        rgba(248, 249, 253, 0.18) 91%,
+                        rgba(248, 249, 253, 0.55) 96%,
                         #f8f9fd 100%
                     );
                     z-index: 2;
                     pointer-events: none;
                 }
 
-                /* Blur layers at bottom — progressive blur into page background */
+                /* Blur layers — tight, contained at very bottom edge of hero only */
                 .hero-blur-layer {
                     position: absolute;
                     left: 0;
@@ -4336,28 +4335,28 @@ export const homeStyles = (): string => `
                     z-index: 3;
                 }
                 .hero-blur-layer.blur-1 {
-                    height: 320px;
+                    height: 90px;
                     -webkit-backdrop-filter: blur(2px);
                     backdrop-filter: blur(2px);
                     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
                     mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
                 }
                 .hero-blur-layer.blur-2 {
-                    height: 220px;
+                    height: 60px;
                     -webkit-backdrop-filter: blur(6px);
                     backdrop-filter: blur(6px);
                     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
                     mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
                 }
                 .hero-blur-layer.blur-3 {
-                    height: 130px;
+                    height: 36px;
                     -webkit-backdrop-filter: blur(16px);
                     backdrop-filter: blur(16px);
                     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
                     mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
                 }
                 .hero-blur-layer.blur-4 {
-                    height: 70px;
+                    height: 18px;
                     -webkit-backdrop-filter: blur(32px);
                     backdrop-filter: blur(32px);
                 }
@@ -4466,41 +4465,11 @@ export const homeStyles = (): string => `
                     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
                 }
 
-                /* Hero bridge — blurs the seam between hero bottom and schedule section.
-                   Negative margins eat the 120px main flex gap on both sides. */
+                /* Hero bridge — disabled on desktop.
+                   The gradient + blur layers at the bottom of .hero handle the
+                   image-to-page transition. The bridge would bleed into the schedule
+                   section eyebrow, so we hide it entirely. */
                 .hero-bridge {
-                    position: relative;
-                    height: 160px;
-                    margin-top: calc(-80px - 120px);
-                    margin-bottom: calc(-80px - 120px);
-                    z-index: 5;
-                    pointer-events: none;
-                    width: 100vw;
-                    margin-left: calc(-50vw + 50%);
-                }
-                .hero-bridge-blur {
-                    position: absolute;
-                    inset: 0;
-                }
-                .hero-bridge-blur.bridge-blur-1 {
-                    -webkit-backdrop-filter: blur(3px);
-                    backdrop-filter: blur(3px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
-                    mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
-                }
-                .hero-bridge-blur.bridge-blur-2 {
-                    -webkit-backdrop-filter: blur(10px);
-                    backdrop-filter: blur(10px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
-                    mask-image: linear-gradient(to bottom, transparent 10%, black 40%, black 60%, transparent 90%);
-                }
-                .hero-bridge-blur.bridge-blur-3 {
-                    -webkit-backdrop-filter: blur(24px);
-                    backdrop-filter: blur(24px);
-                    -webkit-mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
-                    mask-image: linear-gradient(to bottom, transparent 20%, black 45%, black 55%, transparent 80%);
-                }
-                .hero-bridge::after {
                     display: none;
                 }
 

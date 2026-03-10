@@ -34,7 +34,7 @@ export const homeBody = (): string => `
                     <div class="hero-body">
                         <p class="hero-service-time">Join us Sundays at 9 AM</p>
                         <div class="hero-image">
-                            <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building" loading="eager">
+                            <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building" loading="eager" fetchpriority="high" decoding="async">
                             <!-- Find Us Button - Long frosted glass pill at bottom of image -->
                             <div class="find-us-wrapper address-dropdown-wrapper">
                                 <button class="find-us-btn address-trigger" data-address="3080 Wildwood St, Boise, Idaho">Find Us</button>

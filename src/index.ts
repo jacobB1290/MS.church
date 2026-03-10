@@ -1,4 +1,4 @@
-// Version: 1.32.18 - Stay Tuned swirl: slightly smaller blobs, faster animation, softer overall
+// Version: 1.32.19 - Image loading performance: preload LCP hero, preconnect to image CDNs, fetchpriority+decoding attrs
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

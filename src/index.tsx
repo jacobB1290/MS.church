@@ -1,4 +1,4 @@
-// Version: 1.32.18 - Stay Tuned swirl: slightly smaller blobs, faster animation, softer overall
+// Version: 1.32.20 - Past events modal: prefetch images before open, eager first slides, Vercel image optimization + CDN caching
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

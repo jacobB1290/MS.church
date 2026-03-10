@@ -328,7 +328,7 @@ export const homeScripts = (): string => `
 
                 function renderUpcomingEventCard(event, index, totalUpcoming) {
                     const imageHtml = event.image
-                        ? \`<img src="\${event.image}" alt="\${event.title}" class="flyer-image" loading="lazy" crossorigin="anonymous" onerror="this.style.display='none';">\`
+                        ? \`<img src="\${event.image}" alt="\${event.title}" class="flyer-image" loading="lazy" decoding="async" crossorigin="anonymous" onerror="this.style.display='none';">\`
                         : \`<div class="flyer-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;"><span style="font-size:48px;">📅</span></div>\`;
 
                     const hasRealLink = event.cta && event.cta.link && event.cta.link !== '#contact' && event.cta.link.startsWith('http');
@@ -352,7 +352,7 @@ export const homeScripts = (): string => `
                 function renderPastEventSlide(event, index, isActive) {
                     return \`
                         <div class="past-event-slide \${isActive ? 'active' : ''}" data-past-index="\${index}">
-                            <img src="\${event.image}" alt="\${event.title}" loading="lazy">
+                            <img src="\${event.image}" alt="\${event.title}" loading="\${index < 2 ? 'eager' : 'lazy'}" decoding="async">
                             <div class="past-event-slide-info">
                                 <span class="past-event-slide-date">\${event.displayDate}</span>
                                 <h4 class="past-event-slide-title">\${event.title}</h4>
@@ -408,6 +408,13 @@ export const homeScripts = (): string => `
                     pastEventsSlides.innerHTML = past.map((event, i) =>
                         renderPastEventSlide(event, i, i === 0)
                     ).join('');
+
+                    // Pre-warm browser cache for past event images so modal opens
+                    // without any visible loading delay. Images 0-1 use loading="eager"
+                    // above; this prefetches the next few before the user clicks.
+                    past.slice(0, 4).forEach(function(ev) {
+                        if (ev.image) { var img = new Image(); img.src = ev.image; }
+                    });
 
                     pastEventsDots.innerHTML = past.map((_, i) =>
                         \`<span class="past-events-dot \${i === 0 ? 'active' : ''}"></span>\`

@@ -60,8 +60,15 @@ export const homeHead = (): string => `
         <!-- Preconnect for Performance -->
         <link rel="preconnect" href="https://www.youtube-nocookie.com">
         <link rel="preconnect" href="https://www.jotform.com">
+        <link rel="preconnect" href="https://page.gensparksite.com">
+        <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
         <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
         <link rel="dns-prefetch" href="https://www.jotform.com">
+        <link rel="dns-prefetch" href="https://page.gensparksite.com">
+        <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
+
+        <!-- Preload LCP hero image -->
+        <link rel="preload" as="image" href="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" fetchpriority="high">
 
         <!-- Schema.org Structured Data for Rich Results -->
         <script type="application/ld+json">

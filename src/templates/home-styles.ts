@@ -4521,9 +4521,9 @@ export const homeStyles = (): string => `
 
                 /* Desktop Outreach Section - match page content width */
                 .outreach {
-                    max-width: 1200px;
+                    width: min(1200px, 92%);
+                    max-width: unset;
                     margin: 0 auto;
-                    width: min(1200px, 94%);
                     min-height: auto;
                     display: block;
                     padding-top: 0;
@@ -4547,13 +4547,14 @@ export const homeStyles = (): string => `
                 
                 /* Desktop Watch Section - Properly scaled (reverted to original centered layout) */
                 .watch {
-                    max-width: 1200px;
+                    width: min(1200px, 92%);
+                    max-width: unset;
                     margin: 0 auto;
                 }
-                
+
                 .watch-card {
                     padding: 48px 56px;
-                    max-width: 1200px;
+                    max-width: 100%;
                     margin: 0 auto;
                 }
                 
@@ -4594,20 +4595,22 @@ export const homeStyles = (): string => `
                 
                 /* Desktop Contact Section */
                 .contact {
-                    max-width: 1200px;
+                    width: min(1200px, 92%);
+                    max-width: unset;
                     margin: 0 auto;
                 }
-                
+
                 .contact-card {
                     padding: 72px 80px;
-                    max-width: 1200px;
+                    max-width: 100%;
                 }
                 
                 /* Desktop Schedule Section */
                 .schedule-grid {
                     grid-template-columns: repeat(3, 1fr);
                     gap: 32px;
-                    max-width: 1200px;
+                    width: min(1200px, 92%);
+                    max-width: unset;
                     margin: 0 auto;
                 }
                 

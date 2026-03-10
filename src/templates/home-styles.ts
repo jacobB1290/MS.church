@@ -4300,7 +4300,7 @@ export const homeStyles = (): string => `
                     gap: 0;
                     padding: 0;
                     /* Hero background image (landscape) */
-                    background-image: url('/static/church-hero-desktop.jpg');
+                    background-image: url('/static/16by9%20church.png');
                     background-size: cover;
                     background-position: center;
                     position: relative;

@@ -4521,9 +4521,9 @@ export const homeStyles = (): string => `
 
                 /* Desktop Outreach Section - match page content width */
                 .outreach {
-                    width: min(1200px, 92%);
+                    width: 100%;
                     max-width: unset;
-                    margin: 0 auto;
+                    margin: 0;
                     min-height: auto;
                     display: block;
                     padding-top: 0;
@@ -4545,17 +4545,17 @@ export const homeStyles = (): string => `
                 
                 /* Desktop outreach handled by base carousel CSS */
                 
-                /* Desktop Watch Section - Properly scaled (reverted to original centered layout) */
+                /* Desktop Watch Section - fills page width like schedule section-card */
                 .watch {
-                    width: min(1200px, 92%);
+                    width: 100%;
                     max-width: unset;
-                    margin: 0 auto;
+                    margin: 0;
                 }
 
                 .watch-card {
                     padding: 48px 56px;
                     max-width: 100%;
-                    margin: 0 auto;
+                    margin: 0;
                 }
                 
                 .watch-main {
@@ -4593,11 +4593,11 @@ export const homeStyles = (): string => `
                     margin: 8px auto;
                 }
                 
-                /* Desktop Contact Section */
+                /* Desktop Contact Section - fills page width like schedule section-card */
                 .contact {
-                    width: min(1200px, 92%);
+                    width: 100%;
                     max-width: unset;
-                    margin: 0 auto;
+                    margin: 0;
                 }
 
                 .contact-card {
@@ -4609,9 +4609,9 @@ export const homeStyles = (): string => `
                 .schedule-grid {
                     grid-template-columns: repeat(3, 1fr);
                     gap: 32px;
-                    width: min(1200px, 92%);
+                    width: 100%;
                     max-width: unset;
-                    margin: 0 auto;
+                    margin: 0;
                 }
                 
                 /* Desktop Section typography */

@@ -1,4 +1,4 @@
-// Version: 1.34.3 - Outreach header: plain gold text instead of pills, no button arrow
+// Version: 1.34.4 - Color glow HSL fix, auto-scroll stability, arrows inside card, past-card shadow
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

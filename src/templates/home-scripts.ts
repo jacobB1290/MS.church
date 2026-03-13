@@ -647,20 +647,38 @@ export const homeScripts = (): string => `
                         if (!img) { wrapper.classList.add('glow-warm'); return; }
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        canvas.width = 8; canvas.height = 8;
+                        canvas.width = 16; canvas.height = 16;
                         const detect = () => {
                             try {
-                                ctx.drawImage(img, 0, 0, 8, 8);
-                                const d = ctx.getImageData(0, 0, 8, 8).data;
-                                let r=0,g=0,b=0,c=0;
-                                for (let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];c++;}
-                                r=Math.round(r/c);g=Math.round(g/c);b=Math.round(b/c);
-                                if(r>160&&g<100&&b<100)wrapper.classList.add('glow-red');
-                                else if(b>140&&r<120)wrapper.classList.add('glow-blue');
-                                else if(g>140&&r<120)wrapper.classList.add('glow-green');
-                                else if(r>120&&b>120&&g<100)wrapper.classList.add('glow-purple');
-                                else if(r<80&&g<80&&b<80)wrapper.classList.add('glow-dark');
-                                else wrapper.classList.add('glow-warm');
+                                ctx.drawImage(img, 0, 0, 16, 16);
+                                const d = ctx.getImageData(0, 0, 16, 16).data;
+                                // Bucket saturated pixels by hue (12 × 30° buckets), weighted by saturation.
+                                // This correctly identifies dominant hue even when whites/grays dilute a simple average.
+                                const hb = new Float32Array(12);
+                                let n = 0;
+                                for (let i = 0; i < d.length; i += 4) {
+                                    const r = d[i]/255, g = d[i+1]/255, b = d[i+2]/255;
+                                    const mx = Math.max(r,g,b), mn = Math.min(r,g,b), delta = mx - mn;
+                                    const l = (mx + mn) / 2;
+                                    const s = delta === 0 ? 0 : delta / (1 - Math.abs(2*l - 1));
+                                    if (s < 0.25 || l < 0.1 || l > 0.9) continue; // skip neutrals
+                                    n++;
+                                    let h;
+                                    if (mx === r) h = ((g - b) / delta % 6) * 60;
+                                    else if (mx === g) h = ((b - r) / delta + 2) * 60;
+                                    else h = ((r - g) / delta + 4) * 60;
+                                    if (h < 0) h += 360;
+                                    hb[Math.floor(h / 30)] += s; // weight bucket by saturation
+                                }
+                                if (n < 8) { wrapper.classList.add('glow-warm'); return; }
+                                const best = hb.indexOf(Math.max.apply(null, hb));
+                                // Buckets: 0=red,1=orange,2=yellow,3=chartreuse,4=green,5=spring,
+                                //          6=cyan,7=azure,8=blue,9=violet,10=magenta,11=rose
+                                if (best === 7 || best === 8) wrapper.classList.add('glow-blue');
+                                else if (best >= 3 && best <= 5) wrapper.classList.add('glow-green');
+                                else if (best === 0 || best === 11) wrapper.classList.add('glow-red');
+                                else if (best === 9 || best === 10) wrapper.classList.add('glow-purple');
+                                else wrapper.classList.add('glow-warm'); // orange / yellow → warm gold
                             } catch(e) { wrapper.classList.add('glow-warm'); }
                         };
                         if (img.complete && img.naturalWidth > 0) detect();
@@ -711,7 +729,8 @@ export const homeScripts = (): string => `
                             dot.addEventListener('click', () => {
                                 currentIndex = parseInt(dot.dataset.index);
                                 render();
-                                resetAutoTimer();
+                                pauseAuto();
+                                scheduleResume(3000);
                             });
                         });
                     }
@@ -730,57 +749,91 @@ export const homeScripts = (): string => `
                         }
                     }
 
+                    // ── Auto-scroll helpers ─────────────────────────────────────────
+                    // No auto-scroll when there is only one view (getMaxIndex() === 0).
+                    // While the user is touching or hovering, the ticker is fully paused.
+                    // After any interaction a 3 s (mouse: 1 s) cooldown fires before resume.
+                    let autoTimer = null;
+                    let autoResumeTimeout = null;
+                    let userInteracting = false;
+
+                    function startAutoTick() {
+                        if (getMaxIndex() === 0) return null;
+                        return setInterval(() => {
+                            if (userInteracting) return;
+                            currentIndex = currentIndex < getMaxIndex() ? currentIndex + 1 : 0;
+                            render();
+                        }, 5000);
+                    }
+                    function pauseAuto() {
+                        clearInterval(autoTimer);
+                        clearTimeout(autoResumeTimeout);
+                        autoTimer = null;
+                    }
+                    function scheduleResume(delay) {
+                        clearTimeout(autoResumeTimeout);
+                        autoResumeTimeout = setTimeout(() => {
+                            if (!userInteracting && getMaxIndex() > 0) autoTimer = startAutoTick();
+                        }, delay);
+                    }
+
+                    // Arrow buttons
                     carouselPrev.addEventListener('click', () => {
-                        if (currentIndex > 0) { currentIndex--; render(); resetAutoTimer(); }
+                        if (currentIndex > 0) { currentIndex--; render(); }
+                        pauseAuto();
+                        scheduleResume(3000);
                     });
                     carouselNext.addEventListener('click', () => {
-                        if (currentIndex < getMaxIndex()) { currentIndex++; render(); resetAutoTimer(); }
+                        if (currentIndex < getMaxIndex()) { currentIndex++; render(); }
+                        pauseAuto();
+                        scheduleResume(3000);
                     });
 
+                    // Touch — pause while finger is down, 3 s cooldown after lift
                     let touchStartX = 0, touchStartY = 0, isSwiping = false;
                     carouselTrack.addEventListener('touchstart', e => {
                         touchStartX = e.touches[0].clientX;
                         touchStartY = e.touches[0].clientY;
                         isSwiping = false;
+                        userInteracting = true;
+                        pauseAuto();
                     }, { passive: true });
                     carouselTrack.addEventListener('touchmove', e => {
                         if (!e.touches[0]) return;
                         const dx = Math.abs(e.touches[0].clientX - touchStartX);
                         const dy = Math.abs(e.touches[0].clientY - touchStartY);
-                        if (dx > dy && dx > 10) {
-                            isSwiping = true;
-                            e.preventDefault();
-                        }
+                        if (dx > dy && dx > 10) { isSwiping = true; e.preventDefault(); }
                     }, { passive: false });
                     carouselTrack.addEventListener('touchend', e => {
-                        if (!e.changedTouches[0]) return;
+                        userInteracting = false;
+                        if (!e.changedTouches[0]) { scheduleResume(3000); return; }
                         const dx = e.changedTouches[0].clientX - touchStartX;
                         const dy = e.changedTouches[0].clientY - touchStartY;
-                        if (Math.abs(dx) < Math.abs(dy) || Math.abs(dx) < 50) return;
-                        if (dx < 0 && currentIndex < getMaxIndex()) currentIndex++;
-                        else if (dx > 0 && currentIndex > 0) currentIndex--;
-                        render();
-                        resetAutoTimer();
+                        if (Math.abs(dx) >= Math.abs(dy) && Math.abs(dx) >= 50) {
+                            if (dx < 0 && currentIndex < getMaxIndex()) currentIndex++;
+                            else if (dx > 0 && currentIndex > 0) currentIndex--;
+                            render();
+                        }
+                        scheduleResume(3000);
                     }, { passive: true });
 
-                    function startAutoTimer() {
-                        return setInterval(() => {
-                            if (currentIndex < getMaxIndex()) currentIndex++;
-                            else currentIndex = 0;
-                            render();
-                        }, 5000);
-                    }
-                    let autoTimer = startAutoTimer();
-                    function resetAutoTimer() {
-                        clearInterval(autoTimer);
-                        autoTimer = startAutoTimer();
-                    }
-                    carouselWrapper.addEventListener('mouseenter', () => clearInterval(autoTimer));
-                    carouselWrapper.addEventListener('mouseleave', () => { autoTimer = startAutoTimer(); });
+                    // Mouse hover — pause immediately, resume 1 s after leave
+                    carouselWrapper.addEventListener('mouseenter', () => {
+                        userInteracting = true;
+                        pauseAuto();
+                    });
+                    carouselWrapper.addEventListener('mouseleave', () => {
+                        userInteracting = false;
+                        scheduleResume(1000);
+                    });
+
                     window.addEventListener('resize', () => {
                         if (currentIndex > getMaxIndex()) currentIndex = getMaxIndex();
                         render();
                     });
+
+                    // Start auto only when there are multiple views
+                    autoTimer = startAutoTick();
                     render();
                 }
 

@@ -760,7 +760,7 @@ export const homeStyles = (): string => `
                 top: -80px;
                 bottom: -80px;
                 width: 80px;
-                z-index: 10;
+                z-index: 5;   /* below carousel-arrow at z-index 20 */
                 pointer-events: none;
             }
             .carousel-viewport::before {
@@ -829,20 +829,20 @@ export const homeStyles = (): string => `
                 margin-top: 24px;
             }
 
-            /* Arrows: frosted glass floating on card sides */
+            /* Arrows: sit inside the card with z-index above the viewport fog overlays */
             .carousel-arrow {
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                z-index: 10;
+                z-index: 20;   /* above fog ::before/::after at z-index 10 */
                 width: 36px;
                 height: 36px;
                 border-radius: 50%;
-                background: rgba(255, 255, 255, 0.6);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.35);
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+                background: rgba(255, 255, 255, 0.82);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -852,17 +852,20 @@ export const homeStyles = (): string => `
                 color: #1a1a2e;
             }
 
+            /* Positioned so full circle sits inside the card's padded content area.
+               Card has 16px padding on each side; arrows at 22px keep the button
+               8px clear of the inner edge and fully inside the white outer-card. */
             .carousel-arrow.prev {
-                left: 24px;
+                left: 22px;
             }
 
             .carousel-arrow.next {
-                right: 24px;
+                right: 22px;
             }
 
             .carousel-arrow:hover {
-                background: rgba(255, 255, 255, 0.85);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                background: rgba(255, 255, 255, 0.96);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
                 transform: translateY(-50%) scale(1.08);
             }
 
@@ -1137,8 +1140,9 @@ export const homeStyles = (): string => `
                 transform: translateY(-1px);
             }
 
-            /* See Past Events card in carousel — content fills the outer-card;
-               outer-card provides the white background and border */
+            /* See Past Events card in carousel — content fills the outer-card.
+               Subtle shadow + inner border gives the content area its own depth so it
+               reads as a distinct surface inside the white outer-card. */
             .carousel-past-card {
                 display: flex;
                 flex-direction: column;
@@ -1149,6 +1153,9 @@ export const homeStyles = (): string => `
                 flex: 1;
                 aspect-ratio: 3/4;
                 border-radius: 18px;
+                box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07),
+                            inset 0 0 0 1px rgba(0, 0, 0, 0.055);
+                background: rgba(248, 249, 253, 0.6);
                 position: relative;
                 cursor: pointer;
                 padding: 24px 16px;

@@ -1,4 +1,4 @@
-// Version: 1.34.1 - Outreach pills: time pill gold, same height, Address button below card, MEMORIES pill outside
+// Version: 1.34.2 - Outreach: layered card-behind-card design with event-outer-card header
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

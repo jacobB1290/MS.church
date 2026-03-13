@@ -1,4 +1,4 @@
-// Version: 1.34.2 - Outreach: layered card-behind-card design with event-outer-card header
+// Version: 1.34.3 - Outreach header: plain gold text instead of pills, no button arrow
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

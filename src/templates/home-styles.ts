@@ -1008,45 +1008,26 @@ export const homeStyles = (): string => `
                 min-height: 28px;
             }
 
-            /* Date pill — gold gradient, left side of pill row */
+            /* Date text — plain gold, left side of header */
             .event-date {
-                display: inline-flex;
-                align-items: center;
-                padding: 6px 14px;
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-                border-radius: 100px;
-                font-size: var(--text-eyebrow);
+                font-size: 16px;
                 font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide);
-                color: #ffffff;
-                box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 30%, transparent);
+                letter-spacing: 1.5px;
+                color: var(--gold);
                 text-transform: uppercase;
                 white-space: nowrap;
                 line-height: 1;
             }
 
-            /* Time pill — gold gradient, right side of pill row (hidden when all-day).
-               Shares all visual properties with .event-date for identical height/radius. */
+            /* Time text — plain gold, right side of header (hidden when all-day) */
             .event-time-pill {
-                display: inline-flex;
-                align-items: center;
-                gap: 5px;
-                padding: 6px 14px;
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-                border-radius: 100px;
-                font-size: var(--text-eyebrow);
+                font-size: 16px;
                 font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide);
-                color: #ffffff;
-                box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 30%, transparent);
+                letter-spacing: 1px;
+                color: var(--gold);
                 text-transform: uppercase;
                 white-space: nowrap;
                 line-height: 1;
-            }
-
-            .event-time-icon {
-                flex-shrink: 0;
-                opacity: 0.9;
             }
 
             /* Description-link button — footer of the outer card, gold pill matching Find Us style.
@@ -1078,29 +1059,23 @@ export const homeStyles = (): string => `
                 transform: translateY(-2px);
             }
 
-            .event-link-btn-arrow {
-                flex-shrink: 0;
-                opacity: 0.9;
-            }
 
-            /* MEMORIES badge when used as a pill inside .event-card-header */
+            /* MEMORIES text inside .event-card-header — matches date/time plain gold style */
             .event-card-header .past-card-badge {
-                display: inline-flex;
-                align-items: center;
-                padding: 6px 14px;
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-                border-radius: 100px;
-                font-size: var(--text-eyebrow);
+                font-size: 16px;
                 font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide);
-                color: #ffffff;
-                box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 30%, transparent);
+                letter-spacing: 1.5px;
+                color: var(--gold);
                 text-transform: uppercase;
                 white-space: nowrap;
                 line-height: 1;
                 position: static;
                 top: auto;
                 left: auto;
+                background: none;
+                box-shadow: none;
+                padding: 0;
+                border-radius: 0;
             }
 
             /* Wrapper for desktop past-events-card — becomes the 1fr grid item.
@@ -3708,15 +3683,11 @@ export const homeStyles = (): string => `
                 }
 
                 .event-date {
-                    font-size: 12px;
-                    padding: 7px 16px;
-                    letter-spacing: 1.8px;
+                    font-size: 14px;
                 }
 
                 .event-time-pill {
-                    font-size: 12px;
-                    padding: 7px 16px;
-                    letter-spacing: 1.8px;
+                    font-size: 14px;
                 }
 
                 .event-title {
@@ -4168,19 +4139,11 @@ export const homeStyles = (): string => `
                 }
                 
                 .event-date {
-                    padding: 5px 11px;
-                    font-size: 8px;
+                    font-size: 11px;
                 }
 
                 .event-time-pill {
-                    padding: 5px 11px;
-                    font-size: 8px;
-                    gap: 3px;
-                }
-
-                .event-time-icon {
-                    width: 9px;
-                    height: 9px;
+                    font-size: 11px;
                 }
 
                 .event-card-header {
@@ -4907,13 +4870,11 @@ export const homeStyles = (): string => `
                     border-radius: 32px;
                 }
                 .event-date {
-                    padding: 8px 18px;
-                    font-size: var(--text-eyebrow);
+                    font-size: 17px;
                 }
 
                 .event-time-pill {
-                    padding: 8px 18px;
-                    font-size: var(--text-eyebrow);
+                    font-size: 17px;
                 }
 
                 .event-card-header {

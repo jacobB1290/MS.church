@@ -337,9 +337,9 @@ export const homeScripts = (): string => `
                         ? \`<img src="\${event.image}" alt="\${event.title}" class="flyer-image" loading="lazy" decoding="async" crossorigin="anonymous" onerror="this.style.display='none';">\`
                         : \`<div class="flyer-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;"><span style="font-size:48px;">📅</span></div>\`;
 
-                    // Time pill — only when a specific time exists (null means all-day event)
+                    // Time text — only when a specific time exists (null means all-day event)
                     const timePillHtml = event.time
-                        ? \`<span class="event-time-pill"><svg class="event-time-icon" viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="7"/><polyline points="8 4 8 8 11 10"/></svg>\${event.time}</span>\`
+                        ? \`<span class="event-time-pill">\${event.time}</span>\`
                         : \`<span></span>\`;
 
                     // Detect a link in the event description (after [CTA:...] tags are stripped).
@@ -371,7 +371,7 @@ export const homeScripts = (): string => `
                     // Description-link: gold pill button BELOW the image card (not overlaid),
                     // styled to match the "Find Us" button. Arrow icon right of text.
                     const eventLinkBtnHtml = hasDescLink
-                        ? \`<a href="\${descLinkUrl}" class="event-link-btn" target="_blank" rel="noopener noreferrer">\${descLinkText}<svg class="event-link-btn-arrow" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg></a>\`
+                        ? \`<a href="\${descLinkUrl}" class="event-link-btn" target="_blank" rel="noopener noreferrer">\${descLinkText}</a>\`
                         : '';
 
                     return \`

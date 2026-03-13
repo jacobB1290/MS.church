@@ -1,4 +1,4 @@
-// Version: 1.35.2 - Fix arrows, card bleed, button font, add page-edge fog
+// Version: 1.35.3 - Fix card centering, full-bleed outreach, refined fog
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

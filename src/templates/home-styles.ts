@@ -110,16 +110,18 @@ export const homeStyles = (): string => `
                 padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
-            /* Very thin fog at left & right page edges — softens content at viewport boundaries */
+            /* Hairline fog at viewport edges — barely-there soft fade that
+               prevents content from feeling hard-clipped at the screen boundary */
             body::before,
             body::after {
                 content: '';
                 position: fixed;
                 top: 0;
                 bottom: 0;
-                width: 6px;
+                width: 3px;
                 z-index: 9998;
                 pointer-events: none;
+                opacity: 0.6;
             }
             body::before {
                 left: 0;
@@ -840,14 +842,8 @@ export const homeStyles = (): string => `
                     display: none;
                 }
             }
-            /* ≤899px: outreach section gains 12px side padding for heading text;
-               pull carousel back out to full section width with negative margins */
-            @media (max-width: 899px) {
-                .carousel-wrapper {
-                    margin-left: -12px;
-                    margin-right: -12px;
-                }
-            }
+            /* ≤899px: no carousel-wrapper margin needed — section has no side padding,
+               so carousel naturally fills the full section/viewport width */
 
             /* Navigation: dots below, arrows float on card edges */
             .carousel-nav {
@@ -3099,23 +3095,21 @@ export const homeStyles = (): string => `
                     width: 100%;
                     max-width: 100%;
                     padding-bottom: 0;
-                    /* Side padding gives card shadows room to breathe naturally
-                       instead of being hard-clipped at the viewport edge */
-                    padding-left: 12px;
-                    padding-right: 12px;
                     box-sizing: border-box;
                     overflow: visible;
                 }
-                
+
                 .outreach .section-eyebrow {
                     display: inline-flex !important;
                     width: fit-content !important;
                     max-width: fit-content !important;
                     text-align: left;
+                    margin-left: 16px;
                 }
                 
                 .outreach .section-heading {
                     text-align: left;
+                    padding-left: 16px;
                 }
             }
             
@@ -3670,6 +3664,20 @@ export const homeStyles = (): string => `
 
                 .event-outer-card {
                     border-radius: 24px;  /* match .section-card */
+                }
+
+                /* Break outreach section out of .page padding so carousel
+                   cards reach the viewport edges — no thick side borders */
+                .outreach {
+                    width: 100vw;
+                    max-width: 100vw;
+                    margin-left: calc(50% - 50vw);
+                }
+                .outreach .section-eyebrow {
+                    margin-left: calc(clamp(3%, 5vw, 5%) + 4px);
+                }
+                .outreach .section-heading {
+                    padding-left: calc(clamp(3%, 5vw, 5%) + 4px);
                 }
 
                 .schedule-grid {

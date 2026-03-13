@@ -999,82 +999,92 @@ export const homeStyles = (): string => `
                 line-height: 1;
             }
 
-            /* Time pill — dark frosted, right side of pill row (hidden when all-day) */
+            /* Time pill — gold gradient, right side of pill row (hidden when all-day).
+               Shares all visual properties with .event-date for identical height/radius. */
             .event-time-pill {
                 display: inline-flex;
                 align-items: center;
                 gap: 5px;
-                padding: 6px 12px;
-                background: rgba(26, 26, 46, 0.82);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
+                padding: 6px 14px;
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 border-radius: 100px;
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
-                letter-spacing: 0.5px;
+                letter-spacing: var(--tracking-wide);
                 color: #ffffff;
-                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+                box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 30%, transparent);
+                text-transform: uppercase;
                 white-space: nowrap;
                 line-height: 1;
             }
 
             .event-time-icon {
                 flex-shrink: 0;
-                opacity: 0.85;
+                opacity: 0.9;
             }
 
-            /* Transparent full-card link overlay (sits above image, below [CTA:...] button) */
-            .event-full-link {
-                position: absolute;
-                inset: 0;
-                z-index: 4;
-                display: block;
-                cursor: pointer;
-                border-radius: inherit;
-            }
-
-            /* Frosted-glass hint at the bottom of a linkable card */
-            .event-desc-link {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                z-index: 5;
+            /* Description-link button — sits below the image card, gold pill matching Find Us style */
+            .event-link-btn {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 6px;
-                padding: 12px 16px;
-                background: rgba(26, 26, 46, 0.55);
-                backdrop-filter: blur(14px);
-                -webkit-backdrop-filter: blur(14px);
-                border-top: 1px solid rgba(255, 255, 255, 0.15);
-                transition: background 0.25s ease;
-                pointer-events: none;
+                gap: 8px;
+                width: 100%;
+                margin-top: 12px;
+                padding: 12px 24px;
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                border-radius: 100px;
+                font-size: var(--text-label);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                color: #ffffff;
+                text-decoration: none;
+                cursor: pointer;
+                box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-sizing: border-box;
             }
 
-            .event-flyer-linkable:hover .event-desc-link {
-                background: rgba(26, 26, 46, 0.70);
+            .event-link-btn:hover {
+                background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
+                box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
+                transform: translateY(-2px);
             }
 
-            .event-desc-link-text {
+            .event-link-btn-arrow {
+                flex-shrink: 0;
+                opacity: 0.9;
+            }
+
+            /* MEMORIES pill when used in .event-pill-row (outside the card) */
+            .event-pill-row .past-card-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 6px 14px;
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                border-radius: 100px;
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
                 color: #ffffff;
+                box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 30%, transparent);
                 text-transform: uppercase;
                 white-space: nowrap;
+                line-height: 1;
+                /* override any inherited position:absolute from inner-card rule */
+                position: static;
+                top: auto;
+                left: auto;
             }
 
-            .event-desc-link-arrow {
-                flex-shrink: 0;
-                color: var(--gold);
-                opacity: 0.9;
-            }
-
-            /* Subtle cursor affordance on the linkable wrapper */
-            .event-flyer-linkable {
-                cursor: pointer;
+            /* Wrapper for desktop past-events-card — becomes the grid item so the
+               pill row sits above the card while the grid layout is preserved */
+            .past-events-outer {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                box-sizing: border-box;
             }
 
             /* === CTA Button === */
@@ -3677,8 +3687,9 @@ export const homeStyles = (): string => `
                 }
 
                 .event-time-pill {
-                    font-size: 11px;
-                    padding: 7px 12px;
+                    font-size: 12px;
+                    padding: 7px 16px;
+                    letter-spacing: 1.8px;
                 }
 
                 .event-title {
@@ -4121,7 +4132,7 @@ export const homeStyles = (): string => `
                 }
 
                 .event-time-pill {
-                    padding: 5px 9px;
+                    padding: 5px 11px;
                     font-size: 8px;
                     gap: 3px;
                 }
@@ -4753,6 +4764,24 @@ export const homeStyles = (): string => `
                     box-sizing: border-box !important;
                 }
 
+                /* When past-events-card is wrapped in .past-events-outer, the outer
+                   becomes the 1fr grid item and carries the 3/4 aspect; the inner card
+                   fills the remaining height after the pill row */
+                .past-events-outer {
+                    width: auto !important;
+                    max-width: none !important;
+                    min-width: 0 !important;
+                    flex: none !important;
+                    box-sizing: border-box !important;
+                }
+
+                .past-events-outer .past-events-card {
+                    aspect-ratio: unset !important;
+                    flex: 1 !important;
+                    min-height: 0 !important;
+                    width: 100% !important;
+                }
+
                 .stay-tuned-card .stay-tuned-ornament { width: 40px; height: 40px; }
                 .stay-tuned-card .stay-tuned-title { font-size: var(--text-heading) !important; }
                 .stay-tuned-card .stay-tuned-text { font-size: var(--text-small) !important; line-height: var(--leading-normal); }
@@ -4837,7 +4866,7 @@ export const homeStyles = (): string => `
                 }
 
                 .event-time-pill {
-                    padding: 8px 14px;
+                    padding: 8px 18px;
                     font-size: var(--text-eyebrow);
                 }
 
@@ -4846,13 +4875,25 @@ export const homeStyles = (): string => `
                     margin-bottom: 12px;
                 }
 
-                .event-desc-link-text {
-                    font-size: 11px;
+                .event-link-btn {
+                    padding: 14px 32px;
+                    font-size: var(--text-small);
+                    margin-top: 14px;
                 }
 
-                .event-desc-link {
-                    padding: 14px 20px;
+                /* past-events-outer takes the grid slot; the inner card fills it */
+                .past-events-outer {
+                    aspect-ratio: 3/4;
                 }
+
+                .past-events-outer .past-events-card {
+                    flex: 1;
+                    min-height: 0;
+                    aspect-ratio: unset !important;
+                    height: auto !important;
+                    width: 100% !important;
+                }
+
                 .carousel-past-card {
                     border-radius: 32px;
                     padding: 32px 24px;

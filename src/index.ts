@@ -1,4 +1,4 @@
-// Version: 1.34.0 - Outreach section: date/time pills outside card, description link makes card clickable
+// Version: 1.34.1 - Outreach pills: time pill gold, same height, Address button below card, MEMORIES pill outside
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

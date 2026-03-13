@@ -308,12 +308,17 @@ export const homeScripts = (): string => `
                             <div class="stay-tuned-card" id="stay-tuned-card-el">
                                 \${stayTunedInner}
                             </div>
-                            <div class="past-events-card" id="btn-view-past-events-desktop">
-                                <span class="past-card-badge">MEMORIES</span>
-                                <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
-                                <h3 class="past-card-title">Past Events</h3>
-                                <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
-                                <span class="past-card-btn">View Gallery</span>
+                            <div class="past-events-outer">
+                                <div class="event-pill-row">
+                                    <span class="past-card-badge">MEMORIES</span>
+                                    <span></span>
+                                </div>
+                                <div class="past-events-card" id="btn-view-past-events-desktop">
+                                    <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
+                                    <h3 class="past-card-title">Past Events</h3>
+                                    <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
+                                    <span class="past-card-btn">View Gallery</span>
+                                </div>
                             </div>
                         \`;
                     } else {
@@ -361,13 +366,10 @@ export const homeScripts = (): string => `
                         ? \`<div class="event-cta"><a href="\${event.cta.link}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">\${event.cta.text}</a></div>\`
                         : '';
 
-                    // Description-link: transparent full-card overlay + frosted-glass hint at bottom.
-                    // z-index sits above the image but below any [CTA:...] button.
-                    const fullLinkHtml = hasDescLink
-                        ? \`<a href="\${descLinkUrl}" class="event-full-link" target="_blank" rel="noopener noreferrer" aria-label="\${descLinkText}"></a>\`
-                        : '';
-                    const descLinkHintHtml = hasDescLink
-                        ? \`<div class="event-desc-link" aria-hidden="true"><span class="event-desc-link-text">\${descLinkText}</span><svg class="event-desc-link-arrow" viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg></div>\`
+                    // Description-link: gold pill button BELOW the image card (not overlaid),
+                    // styled to match the "Find Us" button. Arrow icon right of text.
+                    const eventLinkBtnHtml = hasDescLink
+                        ? \`<a href="\${descLinkUrl}" class="event-link-btn" target="_blank" rel="noopener noreferrer">\${descLinkText}<svg class="event-link-btn-arrow" viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg></a>\`
                         : '';
 
                     return \`
@@ -377,12 +379,11 @@ export const homeScripts = (): string => `
                                     <span class="event-date">\${event.displayDate}</span>
                                     \${timePillHtml}
                                 </div>
-                                <div class="event-flyer-wrapper\${hasDescLink ? ' event-flyer-linkable' : ''}" data-glow-detect>
+                                <div class="event-flyer-wrapper" data-glow-detect>
                                     \${imageHtml}
-                                    \${fullLinkHtml}
-                                    \${descLinkHintHtml}
                                     \${ctaHtml}
                                 </div>
+                                \${eventLinkBtnHtml}
                             </div>
                         </div>
                     \`;
@@ -429,12 +430,17 @@ export const homeScripts = (): string => `
                     if (past.length > 0) {
                         allCards.push(\`
                             <div class="carousel-card">
-                                <div class="carousel-past-card" id="carousel-see-past">
-                                    <span class="past-card-badge">MEMORIES</span>
-                                    <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
-                                    <h3 class="past-card-title">Past Events</h3>
-                                    <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
-                                    <span class="past-card-btn">View Gallery</span>
+                                <div class="event-card">
+                                    <div class="event-pill-row">
+                                        <span class="past-card-badge">MEMORIES</span>
+                                        <span></span>
+                                    </div>
+                                    <div class="carousel-past-card" id="carousel-see-past">
+                                        <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
+                                        <h3 class="past-card-title">Past Events</h3>
+                                        <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
+                                        <span class="past-card-btn">View Gallery</span>
+                                    </div>
                                 </div>
                             </div>
                         \`);

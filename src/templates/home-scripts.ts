@@ -330,17 +330,57 @@ export const homeScripts = (): string => `
                         ? \`<img src="\${event.image}" alt="\${event.title}" class="flyer-image" loading="lazy" decoding="async" crossorigin="anonymous" onerror="this.style.display='none';">\`
                         : \`<div class="flyer-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;"><span style="font-size:48px;">📅</span></div>\`;
 
+                    // Time pill — only when a specific time exists (null means all-day event)
+                    const timePillHtml = event.time
+                        ? \`<span class="event-time-pill"><svg class="event-time-icon" viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="7"/><polyline points="8 4 8 8 11 10"/></svg>\${event.time}</span>\`
+                        : \`<span></span>\`;
+
+                    // Detect a link in the event description (after [CTA:...] tags are stripped).
+                    // Supports "Label: https://..." (uses label as button text) or a bare URL ("Learn More").
+                    let descLinkUrl = '';
+                    let descLinkText = 'Learn More';
+                    if (event.description) {
+                        // Try "Word(s): https://..." pattern first — label becomes the button text
+                        const labeledMatch = event.description.match(/([A-Za-z][A-Za-z0-9 ]{0,30}?)\\s*:\\s*(https?:\\/\\/[^\\s<>"']+)/);
+                        if (labeledMatch) {
+                            descLinkText = labeledMatch[1].trim();
+                            descLinkUrl = labeledMatch[2].replace(/[.,;)\\]]+$/, '');
+                        } else {
+                            // Fall back to any bare URL
+                            const bareMatch = event.description.match(/https?:\\/\\/[^\\s<>"']+/);
+                            if (bareMatch) {
+                                descLinkUrl = bareMatch[0].replace(/[.,;)\\]]+$/, '');
+                            }
+                        }
+                    }
+                    const hasDescLink = !!descLinkUrl;
+
+                    // [CTA:...] tag button (frosted-glass overlay on mobile, standalone button on desktop)
                     const hasRealLink = event.cta && event.cta.link && event.cta.link !== '#contact' && event.cta.link.startsWith('http');
                     const ctaHtml = hasRealLink
                         ? \`<div class="event-cta"><a href="\${event.cta.link}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">\${event.cta.text}</a></div>\`
                         : '';
 
+                    // Description-link: transparent full-card overlay + frosted-glass hint at bottom.
+                    // z-index sits above the image but below any [CTA:...] button.
+                    const fullLinkHtml = hasDescLink
+                        ? \`<a href="\${descLinkUrl}" class="event-full-link" target="_blank" rel="noopener noreferrer" aria-label="\${descLinkText}"></a>\`
+                        : '';
+                    const descLinkHintHtml = hasDescLink
+                        ? \`<div class="event-desc-link" aria-hidden="true"><span class="event-desc-link-text">\${descLinkText}</span><svg class="event-desc-link-arrow" viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg></div>\`
+                        : '';
+
                     return \`
                         <div class="carousel-card">
                             <div class="event-card">
-                                <div class="event-flyer-wrapper" data-glow-detect>
-                                    \${imageHtml}
+                                <div class="event-pill-row">
                                     <span class="event-date">\${event.displayDate}</span>
+                                    \${timePillHtml}
+                                </div>
+                                <div class="event-flyer-wrapper\${hasDescLink ? ' event-flyer-linkable' : ''}" data-glow-detect>
+                                    \${imageHtml}
+                                    \${fullLinkHtml}
+                                    \${descLinkHintHtml}
                                     \${ctaHtml}
                                 </div>
                             </div>

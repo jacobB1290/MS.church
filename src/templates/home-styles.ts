@@ -968,12 +968,24 @@ export const homeStyles = (): string => `
                 letter-spacing: 2px;
             }
 
-            /* Date pill overlaid on image */
+            /* Pill row sits above the image card — date left, time right */
+            .event-pill-row {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 4px;
+                box-sizing: border-box;
+                margin-bottom: 10px;
+                position: relative;
+                z-index: 10;
+                min-height: 28px;
+            }
+
+            /* Date pill — gold gradient, left side of pill row */
             .event-date {
-                position: absolute;
-                top: 12px;
-                left: 12px;
-                z-index: 5;
+                display: inline-flex;
+                align-items: center;
                 padding: 6px 14px;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 border-radius: 100px;
@@ -984,6 +996,85 @@ export const homeStyles = (): string => `
                 box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 30%, transparent);
                 text-transform: uppercase;
                 white-space: nowrap;
+                line-height: 1;
+            }
+
+            /* Time pill — dark frosted, right side of pill row (hidden when all-day) */
+            .event-time-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 6px 12px;
+                background: rgba(26, 26, 46, 0.82);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-radius: 100px;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
+                letter-spacing: 0.5px;
+                color: #ffffff;
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+                white-space: nowrap;
+                line-height: 1;
+            }
+
+            .event-time-icon {
+                flex-shrink: 0;
+                opacity: 0.85;
+            }
+
+            /* Transparent full-card link overlay (sits above image, below [CTA:...] button) */
+            .event-full-link {
+                position: absolute;
+                inset: 0;
+                z-index: 4;
+                display: block;
+                cursor: pointer;
+                border-radius: inherit;
+            }
+
+            /* Frosted-glass hint at the bottom of a linkable card */
+            .event-desc-link {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                padding: 12px 16px;
+                background: rgba(26, 26, 46, 0.55);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                border-top: 1px solid rgba(255, 255, 255, 0.15);
+                transition: background 0.25s ease;
+                pointer-events: none;
+            }
+
+            .event-flyer-linkable:hover .event-desc-link {
+                background: rgba(26, 26, 46, 0.70);
+            }
+
+            .event-desc-link-text {
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                color: #ffffff;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+
+            .event-desc-link-arrow {
+                flex-shrink: 0;
+                color: var(--gold);
+                opacity: 0.9;
+            }
+
+            /* Subtle cursor affordance on the linkable wrapper */
+            .event-flyer-linkable {
+                cursor: pointer;
             }
 
             /* === CTA Button === */
@@ -993,7 +1084,7 @@ export const homeStyles = (): string => `
                 bottom: 0;
                 left: 0;
                 right: 0;
-                z-index: 5;
+                z-index: 6;
                 padding: 14px 16px;
                 background: rgba(255, 255, 255, 0.2);
                 backdrop-filter: blur(16px);
@@ -3583,12 +3674,11 @@ export const homeStyles = (): string => `
                     font-size: 12px;
                     padding: 7px 16px;
                     letter-spacing: 1.8px;
-                    margin-bottom: 0;
                 }
-                
-                .event-flyer-wrapper .event-date {
-                    top: 12px;
-                    left: 24px;
+
+                .event-time-pill {
+                    font-size: 11px;
+                    padding: 7px 12px;
                 }
 
                 .event-title {
@@ -4016,7 +4106,7 @@ export const homeStyles = (): string => `
                 /* Mobile 375px Event Cards - Compact */
                 .event-card {
                     height: 86vh;
-                    padding-top: 12px;
+                    padding-top: 4px;
                 }
                 
                 .event-meta-row {
@@ -4026,13 +4116,24 @@ export const homeStyles = (): string => `
                 }
                 
                 .event-date {
-                    padding: 6px 14px;
+                    padding: 5px 11px;
                     font-size: 8px;
                 }
-                
-                .event-flyer-wrapper .event-date {
-                    top: 12px;
-                    left: 20px;
+
+                .event-time-pill {
+                    padding: 5px 9px;
+                    font-size: 8px;
+                    gap: 3px;
+                }
+
+                .event-time-icon {
+                    width: 9px;
+                    height: 9px;
+                }
+
+                .event-pill-row {
+                    padding: 0 2px;
+                    margin-bottom: 8px;
                 }
                 
                 .event-indicators {
@@ -4731,10 +4832,26 @@ export const homeStyles = (): string => `
                     border-radius: 32px;
                 }
                 .event-date {
-                    top: 16px;
-                    left: 16px;
                     padding: 8px 18px;
                     font-size: var(--text-eyebrow);
+                }
+
+                .event-time-pill {
+                    padding: 8px 14px;
+                    font-size: var(--text-eyebrow);
+                }
+
+                .event-pill-row {
+                    padding: 0 6px;
+                    margin-bottom: 12px;
+                }
+
+                .event-desc-link-text {
+                    font-size: 11px;
+                }
+
+                .event-desc-link {
+                    padding: 14px 20px;
                 }
                 .carousel-past-card {
                     border-radius: 32px;

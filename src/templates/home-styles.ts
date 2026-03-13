@@ -796,8 +796,8 @@ export const homeStyles = (): string => `
             @media (max-width: 960px) {
                 .carousel-card {
                     /* width set dynamically by JS */
-                    /* 40px padding creates gutter space for the arrow circles (32px) */
-                    padding: 0 40px;
+                    /* 16px padding = gutter where arrows sit */
+                    padding: 0 16px;
                 }
                 .carousel-viewport {
                     clip-path: inset(-60px -24px -60px -24px);
@@ -854,14 +854,15 @@ export const homeStyles = (): string => `
                 color: #1a1a2e;
             }
 
-            /* Positioned in the gray gutter OUTSIDE the white outer-card.
-               Mobile card has 40px padding; arrows at 4px sit in the gutter space. */
+            /* Positioned in the gray gutter outside the white outer-card.
+               Mobile card has 16px padding; arrows at left/right 0 center the 32px
+               circle in that gutter (half in margin, half at the outer-card edge). */
             .carousel-arrow.prev {
-                left: 4px;
+                left: 0;
             }
 
             .carousel-arrow.next {
-                right: 4px;
+                right: 0;
             }
 
             .carousel-arrow:hover {

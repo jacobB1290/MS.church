@@ -444,8 +444,8 @@ export const homeScripts = (): string => `
                                             <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
                                             <h3 class="past-card-title">Past Events</h3>
                                             <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
-                                            <span class="past-card-btn">View Gallery</span>
                                         </div>
+                                        <button class="event-link-btn" id="carousel-see-past-btn">View Gallery</button>
                                     </div>
                                 </div>
                             </div>
@@ -627,20 +627,22 @@ export const homeScripts = (): string => `
 
                     carouselTrack.innerHTML = allCards.join('');
 
-                    const seePastCard = document.getElementById('carousel-see-past');
-                    if (seePastCard && pastEventsModal && pastEvents && pastEvents.length > 0) {
-                        seePastCard.addEventListener('click', () => {
-                            pastEventsModal.classList.add('active');
-                            body.classList.add('modal-open');
-                            document.querySelectorAll('.past-event-slide').forEach((s, i) => {
-                                s.classList.remove('active', 'prev');
-                                if (i === 0) s.classList.add('active');
-                            });
-                            document.querySelectorAll('.past-events-dot').forEach((d, i) => {
-                                d.classList.toggle('active', i === 0);
-                            });
+                    const openPastModal = () => {
+                        if (!pastEventsModal || !pastEvents || pastEvents.length === 0) return;
+                        pastEventsModal.classList.add('active');
+                        body.classList.add('modal-open');
+                        document.querySelectorAll('.past-event-slide').forEach((s, i) => {
+                            s.classList.remove('active', 'prev');
+                            if (i === 0) s.classList.add('active');
                         });
-                    }
+                        document.querySelectorAll('.past-events-dot').forEach((d, i) => {
+                            d.classList.toggle('active', i === 0);
+                        });
+                    };
+                    const seePastCard = document.getElementById('carousel-see-past');
+                    if (seePastCard) seePastCard.addEventListener('click', openPastModal);
+                    const seePastBtn = document.getElementById('carousel-see-past-btn');
+                    if (seePastBtn) seePastBtn.addEventListener('click', openPastModal);
 
                     document.querySelectorAll('[data-glow-detect]').forEach(wrapper => {
                         const img = wrapper.querySelector('.flyer-image');

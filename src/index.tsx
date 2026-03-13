@@ -1,4 +1,4 @@
-// Version: 1.35.3 - Fix card centering, full-bleed outreach, refined fog
+// Version: 1.35.4 - Fix outreach section width to match page content width
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

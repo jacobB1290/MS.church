@@ -269,6 +269,20 @@ All styles are inlined in the `<style>` block inside the template string. Key de
 
 Responsive breakpoints: mobile ≤960px, desktop >960px (approximate).
 
+### Standard Width Rule
+
+**All page sections must inherit their width from the `.page` container.** No section should be wider or narrower than the standard content area defined by `.page`:
+
+- On desktop (>960px): `.page` uses `width: min(1280px, 94%)` with `max-width: 1400px`.
+- On tablet (≤899px): `.page` uses `width: 100%` (full viewport).
+- On mobile (≤480px): `.page` uses `width: 100%; padding: 0 clamp(3%, 5vw, 5%)`.
+
+**Do NOT use `width: 100vw` or full-bleed techniques** (`margin-left: calc(50% - 50vw)`) on content sections. These break sections out of the `.page` container and make them wider than sibling sections. The only exception is the hero section, which intentionally spans the full viewport.
+
+Every section (schedule, outreach, watch, contact, footer) should use `width: 100%; max-width: 100%` so they fill exactly the `.page` content area — no more, no less. Carousel cards, section-cards, and other content blocks inherit this width naturally.
+
+**Before committing any layout change**, visually verify that the modified section has the same left/right edges as the schedule `.section-card` on both mobile and desktop.
+
 ---
 
 ## Analytics

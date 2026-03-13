@@ -3666,18 +3666,17 @@ export const homeStyles = (): string => `
                     border-radius: 24px;  /* match .section-card */
                 }
 
-                /* Break outreach section out of .page padding so carousel
-                   cards reach the viewport edges — no thick side borders */
+                /* Outreach section — inherit .page width like all other sections.
+                   Carousel cards fill this width; .page padding provides edge spacing. */
                 .outreach {
-                    width: 100vw;
-                    max-width: 100vw;
-                    margin-left: calc(50% - 50vw);
+                    width: 100%;
+                    max-width: 100%;
                 }
                 .outreach .section-eyebrow {
-                    margin-left: calc(clamp(3%, 5vw, 5%) + 4px);
+                    margin-left: 4px;
                 }
                 .outreach .section-heading {
-                    padding-left: calc(clamp(3%, 5vw, 5%) + 4px);
+                    padding-left: 4px;
                 }
 
                 .schedule-grid {

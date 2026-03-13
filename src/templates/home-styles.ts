@@ -856,13 +856,13 @@ export const homeStyles = (): string => `
 
             /* Arrows pushed to section edge — negative offset places them well outside
                the white outer-card, in the gray margin. clip-path extends 24px so
-               -12px is safely within the visible area. Desktop overrides to 24px. */
+               -20px is safely within the visible area. Desktop overrides to 24px. */
             .carousel-arrow.prev {
-                left: -12px;
+                left: -20px;
             }
 
             .carousel-arrow.next {
-                right: -12px;
+                right: -20px;
             }
 
             .carousel-arrow:hover {
@@ -1046,6 +1046,8 @@ export const homeStyles = (): string => `
                 padding: 12px 24px;
                 position: relative;
                 z-index: 2;
+                border: none;
+                font-family: inherit;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 border-radius: 100px;
                 font-size: var(--text-label);

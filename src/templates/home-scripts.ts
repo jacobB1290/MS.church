@@ -445,7 +445,7 @@ export const homeScripts = (): string => `
                                             <h3 class="past-card-title">PAST EVENTS</h3>
                                             <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
                                         </div>
-                                        <button class="event-link-btn" id="carousel-see-past-btn">View Gallery</button>
+                                        <button class="event-link-btn" id="carousel-see-past-btn">VIEW GALLERY</button>
                                     </div>
                                 </div>
                             </div>

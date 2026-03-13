@@ -1,4 +1,4 @@
-// Version: 1.34.7 - No auto-scroll 1 event, responsive badge font, PAST EVENTS caps, arrows to edge
+// Version: 1.34.8 - Normalize button font, VIEW GALLERY all-caps, arrows to -20px
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

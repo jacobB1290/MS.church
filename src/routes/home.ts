@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.34.7 - No auto-scroll 1 event, responsive badge font, PAST EVENTS caps, arrows to edge -->
+<!-- v1.34.8 - Normalize button font, VIEW GALLERY all-caps, arrows to -20px -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

@@ -792,25 +792,35 @@ export const homeStyles = (): string => `
                 box-sizing: border-box;
             }
 
-            /* Mobile: one card at a time, full section width, no arrows */
+            /* Mobile: one card at a time, full viewport width, swipe-to-navigate.
+               Arrows hidden; dots remain for navigation indicator. */
             @media (max-width: 960px) {
                 .carousel-card {
-                    /* width set dynamically by JS — no padding, card fills full section width */
                     padding: 0;
                 }
                 .carousel-arrow {
                     display: none;
                 }
-                .carousel-viewport {
-                    clip-path: inset(-60px 0px -60px 0px);
-                }
                 .carousel-wrapper {
                     overflow: visible;
                 }
-                /* Fog overlays not needed without peeking adjacent cards */
+                .carousel-viewport {
+                    /* Generous vertical room for card box-shadows;
+                       horizontal inset lets shadow fade naturally to viewport edge */
+                    clip-path: inset(-60px -12px -60px -12px);
+                }
+                /* Fog overlays not needed — one card visible at a time */
                 .carousel-viewport::before,
                 .carousel-viewport::after {
                     display: none;
+                }
+            }
+            /* ≤899px: outreach section gains 12px side padding for heading text;
+               pull carousel back out to full section width with negative margins */
+            @media (max-width: 899px) {
+                .carousel-wrapper {
+                    margin-left: -12px;
+                    margin-right: -12px;
                 }
             }
 
@@ -1161,7 +1171,7 @@ export const homeStyles = (): string => `
             }
             @media (max-width: 960px) {
                 .event-outer-card {
-                    border-radius: 22px;
+                    border-radius: 32px;  /* match .section-card at this breakpoint */
                 }
             }
             .carousel-past-card .past-card-badge {
@@ -3633,6 +3643,10 @@ export const homeStyles = (): string => `
                     border-radius: 24px;
                 }
 
+                .event-outer-card {
+                    border-radius: 24px;  /* match .section-card */
+                }
+
                 .schedule-grid {
                     gap: 16px;
                 }
@@ -3692,7 +3706,7 @@ export const homeStyles = (): string => `
                 }
 
                 .event-outer-card {
-                    border-radius: 28px;
+                    border-radius: 32px;  /* match .section-card */
                     padding: 14px;
                 }
 

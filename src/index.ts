@@ -1,4 +1,4 @@
-// Version: 1.35.0 - Mobile: hide arrows, full-width card matches section width
+// Version: 1.35.1 - Full-width mobile card: negative margins, radius sync, proper breakpoints
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

@@ -1,4 +1,4 @@
-// Version: 1.34.6 - Restore card size, arrows in 16px gutter, View Gallery btn below card
+// Version: 1.34.7 - No auto-scroll 1 event, responsive badge font, PAST EVENTS caps, arrows to edge
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

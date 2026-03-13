@@ -854,15 +854,15 @@ export const homeStyles = (): string => `
                 color: #1a1a2e;
             }
 
-            /* Positioned in the gray gutter outside the white outer-card.
-               Mobile card has 16px padding; arrows at left/right 0 center the 32px
-               circle in that gutter (half in margin, half at the outer-card edge). */
+            /* Arrows pushed to section edge — negative offset places them well outside
+               the white outer-card, in the gray margin. clip-path extends 24px so
+               -12px is safely within the visible area. Desktop overrides to 24px. */
             .carousel-arrow.prev {
-                left: 0;
+                left: -12px;
             }
 
             .carousel-arrow.next {
-                right: 0;
+                right: -12px;
             }
 
             .carousel-arrow:hover {
@@ -3709,6 +3709,10 @@ export const homeStyles = (): string => `
                     font-size: 14px;
                 }
 
+                .event-card-header .past-card-badge {
+                    font-size: 14px;
+                }
+
                 .event-title {
                     font-size: clamp(26px, 5.5vw, 31px);
                     margin-bottom: 6px;
@@ -4162,6 +4166,10 @@ export const homeStyles = (): string => `
                 }
 
                 .event-time-pill {
+                    font-size: 11px;
+                }
+
+                .event-card-header .past-card-badge {
                     font-size: 11px;
                 }
 
@@ -4893,6 +4901,10 @@ export const homeStyles = (): string => `
                 }
 
                 .event-time-pill {
+                    font-size: 17px;
+                }
+
+                .event-card-header .past-card-badge {
                     font-size: 17px;
                 }
 

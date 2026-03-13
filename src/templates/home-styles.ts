@@ -110,6 +110,30 @@ export const homeStyles = (): string => `
                 padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
+            /* Very thin fog at left & right page edges — softens content at viewport boundaries */
+            body::before,
+            body::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                width: 6px;
+                z-index: 9998;
+                pointer-events: none;
+            }
+            body::before {
+                left: 0;
+                background: linear-gradient(to right,
+                    var(--bg-color, #f8f9fd) 0%,
+                    transparent 100%);
+            }
+            body::after {
+                right: 0;
+                background: linear-gradient(to left,
+                    var(--bg-color, #f8f9fd) 0%,
+                    transparent 100%);
+            }
+
             /* Body background - static, no dynamic changes */
             body.stay-tuned-active { background: var(--bg-stay-tuned); }
             
@@ -799,15 +823,16 @@ export const homeStyles = (): string => `
                     padding: 0;
                 }
                 .carousel-arrow {
-                    display: none;
+                    /* !important overrides JS inline style.display = 'flex' set by render() */
+                    display: none !important;
                 }
                 .carousel-wrapper {
                     overflow: visible;
                 }
                 .carousel-viewport {
                     /* Generous vertical room for card box-shadows;
-                       horizontal inset lets shadow fade naturally to viewport edge */
-                    clip-path: inset(-60px -12px -60px -12px);
+                       0px horizontal clips exactly at viewport edges — no adjacent card bleed */
+                    clip-path: inset(-60px 0px -60px 0px);
                 }
                 /* Fog overlays not needed — one card visible at a time */
                 .carousel-viewport::before,
@@ -1050,7 +1075,7 @@ export const homeStyles = (): string => `
                 position: relative;
                 z-index: 2;
                 border: none;
-                font-family: inherit;
+                font-family: var(--font-body), 'Inter', sans-serif;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 border-radius: 100px;
                 font-size: var(--text-label);

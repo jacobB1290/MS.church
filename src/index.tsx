@@ -1,4 +1,4 @@
-// Version: 1.35.1 - Full-width mobile card: negative margins, radius sync, proper breakpoints
+// Version: 1.35.2 - Fix arrows, card bleed, button font, add page-edge fog
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

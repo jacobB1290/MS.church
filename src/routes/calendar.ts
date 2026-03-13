@@ -14,6 +14,38 @@ function toImageUrl(fileId: string): string {
   return isVercel ? `/_vercel/image?url=${encodeURIComponent(raw)}&w=800&q=80` : raw
 }
 
+// Parse a time value directly from an ISO 8601 dateTime string (e.g. "2026-04-04T11:00:00-07:00").
+// Reads the wall-clock time embedded in the string so we never convert to UTC.
+function parseWallTime(dt: string): { h: number; m: number } | null {
+  const match = dt.match(/T(\d{2}):(\d{2})/)
+  if (!match) return null
+  return { h: parseInt(match[1]), m: parseInt(match[2]) }
+}
+
+function to12h(t: { h: number; m: number }): { digits: string; ampm: string } {
+  const ampm = t.h >= 12 ? 'PM' : 'AM'
+  const h = t.h % 12 || 12
+  const mins = t.m === 0 ? '' : `:${String(t.m).padStart(2, '0')}`
+  return { digits: `${h}${mins}`, ampm }
+}
+
+// Returns a formatted time range string like "11 AM – 3 PM" or null for all-day events.
+function formatEventTime(startDT: string, endDT?: string): string | null {
+  const start = parseWallTime(startDT)
+  if (!start) return null
+  const s = to12h(start)
+  if (endDT) {
+    const end = parseWallTime(endDT)
+    if (end) {
+      const e = to12h(end)
+      // Omit shared AM/PM on the start side when both sides share it (e.g. "11 AM – 3 PM")
+      if (s.ampm === e.ampm) return `${s.digits} – ${e.digits} ${e.ampm}`
+      return `${s.digits} ${s.ampm} – ${e.digits} ${e.ampm}`
+    }
+  }
+  return `${s.digits} ${s.ampm}`
+}
+
 export function registerCalendarRoute(app: Hono) {
   app.get('/api/calendar/events', async (c) => {
     try {
@@ -84,6 +116,7 @@ export function registerCalendarRoute(app: Hono) {
         creator?: { email?: string }
         eventType?: string
         start?: { date?: string; dateTime?: string }
+        end?: { date?: string; dateTime?: string }
         attachments?: Array<{ mimeType?: string; fileId?: string; fileUrl?: string }>
         description?: string
         id: string
@@ -99,10 +132,17 @@ export function registerCalendarRoute(app: Hono) {
           return true
         })
         .map((gcalEvent) => {
+          // All-day events use start.date; timed events use start.dateTime
+          const isAllDay = !!gcalEvent.start?.date && !gcalEvent.start?.dateTime
           const startDate = gcalEvent.start?.date ?? gcalEvent.start?.dateTime ?? ''
           const eventDate = new Date(startDate)
           const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
           const displayDate = `${months[eventDate.getMonth()]} ${eventDate.getDate()}`
+
+          // Extract wall-clock time from dateTime strings (null for all-day events)
+          const displayTime = isAllDay
+            ? null
+            : formatEventTime(gcalEvent.start?.dateTime ?? '', gcalEvent.end?.dateTime)
 
           // Resolve event flyer image from Google Drive attachment
           // Uses lh3.googleusercontent.com for reliable public image loading
@@ -139,6 +179,7 @@ export function registerCalendarRoute(app: Hono) {
             description: gcalEvent.description?.replace(/\[CTA:[^\]]+\]/, '').trim() ?? '',
             date: eventDate.toISOString().split('T')[0],
             displayDate,
+            time: displayTime,
             image: imageUrl,
             cta: { text: ctaText, link: ctaLink },
           }

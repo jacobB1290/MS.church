@@ -760,7 +760,7 @@ export const homeStyles = (): string => `
                 top: -80px;
                 bottom: -80px;
                 width: 80px;
-                z-index: 10;
+                z-index: 5;   /* below carousel-arrow at z-index 20 */
                 pointer-events: none;
             }
             .carousel-viewport::before {
@@ -796,6 +796,7 @@ export const homeStyles = (): string => `
             @media (max-width: 960px) {
                 .carousel-card {
                     /* width set dynamically by JS */
+                    /* 16px padding = gutter where arrows sit */
                     padding: 0 16px;
                 }
                 .carousel-viewport {
@@ -829,20 +830,21 @@ export const homeStyles = (): string => `
                 margin-top: 24px;
             }
 
-            /* Arrows: frosted glass floating on card sides */
+            /* Arrows: sit in the gray gutter outside the white outer-card.
+               z-index above fog ::before/::after (z-index 5). */
             .carousel-arrow {
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                z-index: 10;
-                width: 36px;
-                height: 36px;
+                z-index: 20;   /* above fog ::before/::after at z-index 5 */
+                width: 32px;
+                height: 32px;
                 border-radius: 50%;
-                background: rgba(255, 255, 255, 0.6);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.35);
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+                background: rgba(255, 255, 255, 0.82);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -852,17 +854,20 @@ export const homeStyles = (): string => `
                 color: #1a1a2e;
             }
 
+            /* Arrows pushed to section edge — negative offset places them well outside
+               the white outer-card, in the gray margin. clip-path extends 24px so
+               -20px is safely within the visible area. Desktop overrides to 24px. */
             .carousel-arrow.prev {
-                left: 24px;
+                left: -20px;
             }
 
             .carousel-arrow.next {
-                right: 24px;
+                right: -20px;
             }
 
             .carousel-arrow:hover {
-                background: rgba(255, 255, 255, 0.85);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                background: rgba(255, 255, 255, 0.96);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
                 transform: translateY(-50%) scale(1.08);
             }
 
@@ -946,6 +951,11 @@ export const homeStyles = (): string => `
                 box-shadow: 0 12px 48px rgba(40, 40, 60, 0.5), 0 6px 20px rgba(20, 20, 40, 0.3);
             }
 
+            /* Slightly tighter radius on image so the outer-card corners show through */
+            .event-outer-card .event-flyer-wrapper {
+                border-radius: 18px;
+            }
+
             .flyer-image {
                 width: 100%;
                 height: 100%;
@@ -968,22 +978,130 @@ export const homeStyles = (): string => `
                 letter-spacing: 2px;
             }
 
-            /* Date pill overlaid on image */
+            /* ─── Event Outer Card ("back card") ──────────────────────────────────
+               White frosted-glass card that houses: header (pills) + image + optional
+               link button. Creates the "card behind the card" layered look.
+               ─────────────────────────────────────────────────────────────────── */
+            .event-outer-card {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                border-radius: 26px;
+                border: 1px solid rgba(255, 255, 255, 0.7);
+                padding: 12px;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.03);
+                box-sizing: border-box;
+                transition: box-shadow 0.35s ease;
+            }
+
+            .event-outer-card:hover {
+                box-shadow: 0 8px 36px rgba(0, 0, 0, 0.11), 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+            /* Header row inside outer card — date left, time right (or MEMORIES left) */
+            .event-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                padding: 0 2px;
+                box-sizing: border-box;
+                min-height: 28px;
+            }
+
+            /* Date text — plain gold, left side of header */
             .event-date {
-                position: absolute;
-                top: 12px;
-                left: 12px;
-                z-index: 5;
-                padding: 6px 14px;
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-                border-radius: 100px;
-                font-size: var(--text-eyebrow);
+                font-size: 16px;
                 font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide);
-                color: #ffffff;
-                box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 30%, transparent);
+                letter-spacing: 1.5px;
+                color: var(--gold);
                 text-transform: uppercase;
                 white-space: nowrap;
+                line-height: 1;
+            }
+
+            /* Time text — plain gold, right side of header (hidden when all-day) */
+            .event-time-pill {
+                font-size: 16px;
+                font-weight: var(--weight-bold);
+                letter-spacing: 1.5px;
+                color: var(--gold);
+                text-transform: uppercase;
+                white-space: nowrap;
+                line-height: 1;
+            }
+
+            /* Description-link button — footer of the outer card, gold pill matching Find Us style.
+               No margin-top needed; .event-outer-card gap handles spacing. */
+            .event-link-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                width: 100%;
+                padding: 12px 24px;
+                position: relative;
+                z-index: 2;
+                border: none;
+                font-family: inherit;
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                border-radius: 100px;
+                font-size: var(--text-label);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                color: #ffffff;
+                text-decoration: none;
+                cursor: pointer;
+                box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-sizing: border-box;
+            }
+
+            .event-link-btn:hover {
+                background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
+                box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
+                transform: translateY(-2px);
+            }
+
+
+            /* MEMORIES text inside .event-card-header — matches date/time plain gold style */
+            .event-card-header .past-card-badge {
+                font-size: 16px;
+                font-weight: var(--weight-bold);
+                letter-spacing: 1.5px;
+                color: var(--gold);
+                text-transform: uppercase;
+                white-space: nowrap;
+                line-height: 1;
+                position: static;
+                top: auto;
+                left: auto;
+                background: none;
+                box-shadow: none;
+                padding: 0;
+                border-radius: 0;
+            }
+
+            /* Wrapper for desktop past-events-card — becomes the 1fr grid item.
+               The event-outer-card inside fills the available height. */
+            .past-events-outer {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .past-events-outer .event-outer-card {
+                flex: 1;
+            }
+
+            .past-events-outer .event-outer-card .past-events-card {
+                flex: 1;
             }
 
             /* === CTA Button === */
@@ -993,7 +1111,7 @@ export const homeStyles = (): string => `
                 bottom: 0;
                 left: 0;
                 right: 0;
-                z-index: 5;
+                z-index: 6;
                 padding: 14px 16px;
                 background: rgba(255, 255, 255, 0.2);
                 backdrop-filter: blur(16px);
@@ -1028,7 +1146,9 @@ export const homeStyles = (): string => `
                 transform: translateY(-1px);
             }
 
-            /* See Past Events card in carousel */
+            /* See Past Events card in carousel — content fills the outer-card.
+               Subtle shadow + inner border gives the content area its own depth so it
+               reads as a distinct surface inside the white outer-card. */
             .carousel-past-card {
                 display: flex;
                 flex-direction: column;
@@ -1036,24 +1156,19 @@ export const homeStyles = (): string => `
                 justify-content: center;
                 text-align: center;
                 width: 100%;
+                flex: 1;
                 aspect-ratio: 3/4;
-                background: rgba(255, 255, 255, 0.85);
-                border: 1px solid rgba(255,255,255,0.6);
-                backdrop-filter: blur(20px);
-                border-radius: 32px;
+                border-radius: 18px;
+                box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07),
+                            inset 0 0 0 1px rgba(0, 0, 0, 0.055);
+                background: rgba(248, 249, 253, 0.6);
                 position: relative;
                 cursor: pointer;
-                transition: all 0.4s ease;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
                 padding: 24px 16px;
             }
-            .carousel-past-card:hover {
-                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
-                transform: translateY(-4px);
-            }
             @media (max-width: 960px) {
-                .carousel-past-card {
-                    border-radius: 32px;
+                .event-outer-card {
+                    border-radius: 22px;
                 }
             }
             .carousel-past-card .past-card-badge {
@@ -1066,21 +1181,29 @@ export const homeStyles = (): string => `
             }
             .carousel-past-card .past-card-icon { font-size: 40px; margin-bottom: 10px; }
             .carousel-past-card .past-card-title {
-                font-family: var(--font-display);
-                font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e;
+                font-family: inherit;
+                font-size: var(--text-small); font-weight: var(--weight-semibold); margin: 0 0 8px 0; color: #1a1a2e;
             }
             .carousel-past-card .past-card-text {
                 font-size: var(--text-label); color: #595970;
                 line-height: var(--leading-normal); margin-bottom: 14px; max-width: 200px;
             }
             .carousel-past-card .past-card-btn {
-                display: inline-block; padding: 10px 20px;
-                background: transparent; border: 2px solid var(--gold);
-                color: var(--gold); border-radius: 24px;
-                font-size: var(--text-label); font-weight: var(--weight-semibold);
-                cursor: pointer; transition: all 0.3s ease;
+                display: flex; align-items: center; justify-content: center;
+                width: 100%; padding: 12px 24px; box-sizing: border-box;
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                border: none; color: #ffffff; border-radius: 100px;
+                font-size: var(--text-label); font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide); text-transform: uppercase;
+                cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
+                position: relative; z-index: 2;
             }
-            .carousel-past-card .past-card-btn:hover { background: var(--gold); color: #ffffff; }
+            .carousel-past-card .past-card-btn:hover {
+                background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
+                box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
+                transform: translateY(-2px);
+            }
 
             /* Hide legacy elements */
             .event-header-mobile,
@@ -3575,20 +3698,21 @@ export const homeStyles = (): string => `
                     right: 16px;
                 }
 
-                .event-card {
-                    border-radius: 32px;
+                .event-outer-card {
+                    border-radius: 28px;
+                    padding: 14px;
                 }
 
                 .event-date {
-                    font-size: 12px;
-                    padding: 7px 16px;
-                    letter-spacing: 1.8px;
-                    margin-bottom: 0;
+                    font-size: 14px;
                 }
-                
-                .event-flyer-wrapper .event-date {
-                    top: 12px;
-                    left: 24px;
+
+                .event-time-pill {
+                    font-size: 14px;
+                }
+
+                .event-card-header .past-card-badge {
+                    font-size: 14px;
                 }
 
                 .event-title {
@@ -4016,23 +4140,43 @@ export const homeStyles = (): string => `
                 /* Mobile 375px Event Cards - Compact */
                 .event-card {
                     height: 86vh;
-                    padding-top: 12px;
                 }
-                
+
+                /* Outer card fills the constrained card height */
+                .event-outer-card {
+                    height: 100%;
+                    padding: 10px;
+                    border-radius: 22px;
+                    gap: 8px;
+                }
+
+                /* Image fills remaining height after header (flex: 1) */
+                .event-outer-card .event-flyer-wrapper {
+                    flex: 1;
+                    min-height: 0;
+                    aspect-ratio: unset;
+                    border-radius: 14px;
+                }
+
                 .event-meta-row {
                     max-width: 324px;
                     padding: 0 12px;
-                    margin-bottom: 12px;
                 }
                 
                 .event-date {
-                    padding: 6px 14px;
-                    font-size: 8px;
+                    font-size: 11px;
                 }
-                
-                .event-flyer-wrapper .event-date {
-                    top: 12px;
-                    left: 20px;
+
+                .event-time-pill {
+                    font-size: 11px;
+                }
+
+                .event-card-header .past-card-badge {
+                    font-size: 11px;
+                }
+
+                .event-card-header {
+                    padding: 0 2px;
                 }
                 
                 .event-indicators {
@@ -4638,8 +4782,8 @@ export const homeStyles = (): string => `
                     box-sizing: border-box !important;
                 }
 
-                .stay-tuned-card,
-                .past-events-card {
+                /* stay-tuned-card: direct grid item, sized by aspect-ratio */
+                .stay-tuned-card {
                     width: auto !important;
                     max-width: none !important;
                     min-width: 0 !important;
@@ -4652,31 +4796,55 @@ export const homeStyles = (): string => `
                     box-sizing: border-box !important;
                 }
 
+                /* past-events-outer: the 1fr grid item that carries the 3/4 aspect.
+                   event-outer-card inside fills its height; past-events-card fills the rest. */
+                .past-events-outer {
+                    width: auto !important;
+                    max-width: none !important;
+                    min-width: 0 !important;
+                    flex: none !important;
+                    aspect-ratio: 3/4 !important;
+                    box-sizing: border-box !important;
+                }
+
+                .past-events-outer .event-outer-card {
+                    height: 100%;
+                }
+
+                .past-events-outer .event-outer-card .past-events-card {
+                    aspect-ratio: unset !important;
+                    flex: 1 !important;
+                    min-height: 0 !important;
+                    width: 100% !important;
+                    padding: 32px 24px !important;
+                }
+
                 .stay-tuned-card .stay-tuned-ornament { width: 40px; height: 40px; }
                 .stay-tuned-card .stay-tuned-title { font-size: var(--text-heading) !important; }
                 .stay-tuned-card .stay-tuned-text { font-size: var(--text-small) !important; line-height: var(--leading-normal); }
                 .stay-tuned-card .stay-tuned-rule { width: 32px; }
                 .stay-tuned-card .btn-view-past-events { font-size: var(--text-eyebrow) !important; padding: 10px 20px !important; }
 
+                /* past-events-card now sits inside event-outer-card which provides
+                   the white card background — strip own card styling to avoid double-card */
                 .past-events-card {
-                    background: rgba(255, 255, 255, 0.85);
                     display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-                    box-shadow: 0 32px 80px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.04);
-                    border: 1px solid rgba(255,255,255,0.6);
-                    backdrop-filter: blur(20px);
-                    border-radius: 32px;
-                    position: relative; overflow: visible;
-                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    background: transparent;
+                    box-shadow: none;
+                    border: none;
+                    backdrop-filter: none;
+                    border-radius: 18px;
+                    position: relative;
                     cursor: pointer;
                 }
-                .past-events-card:hover { box-shadow: 0 40px 100px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.05); transform: translateY(-4px); }
+                .past-events-outer .event-outer-card:hover { box-shadow: 0 10px 40px rgba(0,0,0,0.13), 0 3px 10px rgba(0,0,0,0.06); }
                 .stay-tuned-card { border-radius: 32px; }
-                .past-events-card .past-card-badge { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 35%, transparent); position: absolute; top: 14px; left: 14px; color: #ffffff; font-size: var(--text-eyebrow); font-weight: var(--weight-bold); padding: 6px 12px; border-radius: 100px; letter-spacing: var(--tracking-wide); }
+                .past-events-card .past-card-badge { display: none; /* badge moved to event-card-header */ }
                 .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
                 .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e; }
                 .past-events-card .past-card-text { font-size: var(--text-small); color: rgba(26,26,46,0.7); line-height: var(--leading-normal); margin-bottom: 14px; }
-                .past-events-card .past-card-btn { display: inline-block; padding: 10px 20px; background: transparent; border: 2px solid var(--gold); color: var(--gold); border-radius: 24px; font-size: var(--text-label); font-weight: var(--weight-semibold); cursor: pointer; transition: all 0.3s ease; }
-                .past-events-card .past-card-btn:hover { background: var(--gold); color: #ffffff; }
+                .past-events-card .past-card-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 24px; box-sizing: border-box; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); border: none; color: #ffffff; border-radius: 100px; font-size: var(--text-label); font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent); position: relative; z-index: 2; }
+                .past-events-card .past-card-btn:hover { background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%); box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent); transform: translateY(-2px); }
 
                 .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
 
@@ -4731,19 +4899,33 @@ export const homeStyles = (): string => `
                     border-radius: 32px;
                 }
                 .event-date {
-                    top: 16px;
-                    left: 16px;
-                    padding: 8px 18px;
-                    font-size: var(--text-eyebrow);
+                    font-size: 17px;
                 }
+
+                .event-time-pill {
+                    font-size: 17px;
+                }
+
+                .event-card-header .past-card-badge {
+                    font-size: 17px;
+                }
+
+                .event-card-header {
+                    padding: 0 4px;
+                }
+
+                .event-link-btn {
+                    padding: 14px 32px;
+                    font-size: var(--text-small);
+                }
+
                 .carousel-past-card {
                     border-radius: 32px;
                     padding: 32px 24px;
                 }
                 .carousel-past-card .past-card-icon { font-size: 48px; }
-                .carousel-past-card .past-card-title { font-size: var(--text-heading); }
                 .carousel-past-card .past-card-text { font-size: var(--text-small); max-width: 240px; }
-                .carousel-past-card .past-card-btn { padding: 12px 24px; font-size: var(--text-label); }
+                .carousel-past-card .past-card-btn { padding: 14px 32px; font-size: var(--text-label); }
 
                 .event-flyer-wrapper.glow-warm {
                     box-shadow: 0 16px 56px color-mix(in srgb, var(--gold) 55%, transparent), 0 8px 24px color-mix(in srgb, var(--gold) 35%, transparent);
@@ -4787,9 +4969,14 @@ export const homeStyles = (): string => `
                     padding: 0 12px;
                 }
                 
-                .event-card {
-                    padding: clamp(12px, 1.5vw, 18px);
+                .event-outer-card {
+                    padding: clamp(14px, 1.8vw, 20px);
                     border-radius: 32px;
+                    gap: 14px;
+                }
+
+                .event-outer-card .event-flyer-wrapper {
+                    border-radius: 22px;
                 }
                 
                 .event-cta .btn {

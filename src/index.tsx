@@ -1,4 +1,4 @@
-// Version: 1.33.0 - Desktop redesign: full-viewport hero with background image, centered overlay content
+// Version: 1.34.9 - past-card-title: Inter 14px semibold, title case (not Playfair heading)
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

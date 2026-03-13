@@ -316,7 +316,7 @@ export const homeScripts = (): string => `
                                     </div>
                                     <div class="past-events-card" id="btn-view-past-events-desktop">
                                         <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
-                                        <h3 class="past-card-title">PAST EVENTS</h3>
+                                        <h3 class="past-card-title">Past Events</h3>
                                         <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
                                         <span class="past-card-btn">View Gallery</span>
                                     </div>
@@ -442,7 +442,7 @@ export const homeScripts = (): string => `
                                         </div>
                                         <div class="carousel-past-card" id="carousel-see-past">
                                             <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
-                                            <h3 class="past-card-title">PAST EVENTS</h3>
+                                            <h3 class="past-card-title">Past Events</h3>
                                             <p class="past-card-text">Relive the moments!<br>Browse through our past outreach events.</p>
                                         </div>
                                         <button class="event-link-btn" id="carousel-see-past-btn">VIEW GALLERY</button>

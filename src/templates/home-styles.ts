@@ -1181,8 +1181,8 @@ export const homeStyles = (): string => `
             }
             .carousel-past-card .past-card-icon { font-size: 40px; margin-bottom: 10px; }
             .carousel-past-card .past-card-title {
-                font-family: var(--font-display);
-                font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e;
+                font-family: inherit;
+                font-size: var(--text-small); font-weight: var(--weight-semibold); margin: 0 0 8px 0; color: #1a1a2e;
             }
             .carousel-past-card .past-card-text {
                 font-size: var(--text-label); color: #595970;
@@ -4924,7 +4924,6 @@ export const homeStyles = (): string => `
                     padding: 32px 24px;
                 }
                 .carousel-past-card .past-card-icon { font-size: 48px; }
-                .carousel-past-card .past-card-title { font-size: var(--text-heading); }
                 .carousel-past-card .past-card-text { font-size: var(--text-small); max-width: 240px; }
                 .carousel-past-card .past-card-btn { padding: 14px 32px; font-size: var(--text-label); }
 

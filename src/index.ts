@@ -1,4 +1,4 @@
-// Version: 1.34.8 - Normalize button font, VIEW GALLERY all-caps, arrows to -20px
+// Version: 1.34.9 - past-card-title: Inter 14px semibold, title case (not Playfair heading)
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

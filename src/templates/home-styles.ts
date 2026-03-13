@@ -792,32 +792,25 @@ export const homeStyles = (): string => `
                 box-sizing: border-box;
             }
 
-            /* Mobile: one card at a time */
+            /* Mobile: one card at a time, full section width, no arrows */
             @media (max-width: 960px) {
                 .carousel-card {
-                    /* width set dynamically by JS */
-                    /* 16px padding = gutter where arrows sit */
-                    padding: 0 16px;
+                    /* width set dynamically by JS — no padding, card fills full section width */
+                    padding: 0;
+                }
+                .carousel-arrow {
+                    display: none;
                 }
                 .carousel-viewport {
-                    clip-path: inset(-60px -24px -60px -24px);
+                    clip-path: inset(-60px 0px -60px 0px);
                 }
                 .carousel-wrapper {
                     overflow: visible;
                 }
-                /* Fog inside viewport — extends inward for a gentle fade */
+                /* Fog overlays not needed without peeking adjacent cards */
                 .carousel-viewport::before,
                 .carousel-viewport::after {
-                    top: -60px;
-                    bottom: -60px;
-                    width: 56px;
-                }
-                .carousel-viewport::before {
-                    left: -24px;
-                }
-                .carousel-viewport::after {
-                    right: -24px;
-                    left: auto;
+                    display: none;
                 }
             }
 

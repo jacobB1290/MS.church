@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.35.5 - Fix hard shadow cutoffs on mobile carousel cards -->
+<!-- v1.35.6 - Fix mobile carousel cards touching viewport edges -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

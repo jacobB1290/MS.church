@@ -822,7 +822,7 @@ export const homeStyles = (): string => `
                Arrows hidden; dots remain for navigation indicator. */
             @media (max-width: 960px) {
                 .carousel-card {
-                    padding: 0;
+                    padding: 0 16px;
                 }
                 .carousel-arrow {
                     /* !important overrides JS inline style.display = 'flex' set by render() */
@@ -3426,6 +3426,12 @@ export const homeStyles = (): string => `
                     width: 100%;
                     padding: 0 clamp(3%, 5vw, 5%);
                     box-sizing: border-box;
+                }
+
+                /* .page already provides edge spacing at ≤480px via its padding;
+                   reduce .carousel-card padding to avoid double-inset */
+                .carousel-card {
+                    padding: 0 4px;
                 }
 
                 .nav-spacer {

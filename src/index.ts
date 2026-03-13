@@ -1,4 +1,4 @@
-// Version: 1.34.4 - Color glow HSL fix, auto-scroll stability, arrows inside card, past-card shadow
+// Version: 1.34.5 - Arrows in gutter, link-btn z-index, View Gallery gold pill, font standardization
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

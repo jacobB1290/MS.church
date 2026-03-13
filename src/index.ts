@@ -1,4 +1,4 @@
-// Version: 1.35.4 - Fix outreach section width to match page content width
+// Version: 1.35.5 - Fix hard shadow cutoffs on mobile carousel cards
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

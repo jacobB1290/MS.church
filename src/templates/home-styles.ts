@@ -832,14 +832,23 @@ export const homeStyles = (): string => `
                     overflow: visible;
                 }
                 .carousel-viewport {
-                    /* Generous vertical room for card box-shadows;
-                       0px horizontal clips exactly at viewport edges — no adjacent card bleed */
-                    clip-path: inset(-60px 0px -60px 0px);
+                    /* Generous room for card box-shadows on all sides;
+                       16px horizontal bleed lets shadows fade naturally (adjacent cards
+                       are a full viewport-width away, so no bleed-through risk) */
+                    clip-path: inset(-60px -16px -60px -16px);
                 }
-                /* Fog overlays not needed — one card visible at a time */
+                /* Thin fog overlays at clip edges — softens shadow falloff */
                 .carousel-viewport::before,
                 .carousel-viewport::after {
-                    display: none;
+                    width: 24px;
+                    top: -60px;
+                    bottom: -60px;
+                }
+                .carousel-viewport::before {
+                    left: -16px;
+                }
+                .carousel-viewport::after {
+                    right: -16px;
                 }
             }
             /* ≤899px: no carousel-wrapper margin needed — section has no side padding,

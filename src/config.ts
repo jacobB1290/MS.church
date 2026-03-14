@@ -27,11 +27,9 @@ export const GOOGLE_CALENDAR_CONFIG = {
 // ========================================
 // YOUTUBE PLAYLIST CONFIGURATION
 // ========================================
-// Uses the same domain-restricted API key as the Calendar API.
-// Requires YouTube Data API v3 to be enabled in Google Cloud Console.
+// Uses the public YouTube RSS feed — no API key required.
 
 export const YOUTUBE_CONFIG = {
-  API_KEY: 'AIzaSyBa2FQQolaJ0iM3vYSCCJd55vXkzmPA6Jg',
   PLAYLIST_ID: 'PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC',
   CACHE_TTL: 5 * 60 * 1000,
 }

@@ -14,57 +14,39 @@ export function registerYouTubeRoute(app: Hono) {
         return c.json(_cache.data)
       }
 
-      const apiUrl = new URL(
-        'https://www.googleapis.com/youtube/v3/playlistItems'
-      )
-      apiUrl.searchParams.set('part', 'snippet')
-      apiUrl.searchParams.set('playlistId', YOUTUBE_CONFIG.PLAYLIST_ID)
-      apiUrl.searchParams.set('maxResults', '1')
-      apiUrl.searchParams.set('key', YOUTUBE_CONFIG.API_KEY)
-
-      const response = await fetch(apiUrl.toString(), {
-        headers: { Referer: 'https://ms.church/' },
-      })
+      // Use the public YouTube RSS feed — no API key required
+      const feedUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${YOUTUBE_CONFIG.PLAYLIST_ID}`
+      const response = await fetch(feedUrl)
 
       if (!response.ok) {
-        const body = await response.text().catch(() => '')
-        let errorMessage = `HTTP ${response.status}`
-        try {
-          const errorData = JSON.parse(body) as { error?: { message?: string } }
-          errorMessage = errorData.error?.message ?? errorMessage
-        } catch {
-          // Google sometimes returns HTML error pages
-        }
-        console.error('YouTube API error:', response.status, errorMessage)
+        console.error('YouTube RSS feed error:', response.status)
         return c.json(
-          { success: false, error: `YouTube API error: ${errorMessage}`, videoId: null },
-          response.status as 400 | 401 | 403 | 404 | 500
+          { success: false, error: `YouTube RSS feed error: HTTP ${response.status}`, videoId: null },
+          response.status as 400 | 404 | 500
         )
       }
 
-      const data = (await response.json()) as {
-        items?: Array<{
-          snippet?: {
-            title?: string
-            resourceId?: { videoId?: string }
-          }
-        }>
-      }
+      const xml = await response.text()
 
-      const firstItem = data.items?.[0]
-      const videoId = firstItem?.snippet?.resourceId?.videoId
-
-      if (!videoId) {
+      // Extract first video ID from <yt:videoId> tag
+      const videoIdMatch = xml.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)
+      if (!videoIdMatch) {
         return c.json(
-          { success: false, error: 'No videos found in playlist', videoId: null },
+          { success: false, error: 'No videos found in playlist feed', videoId: null },
           404
         )
       }
 
+      const videoId = videoIdMatch[1]
+
+      // Extract title from the first <entry> block
+      const entryMatch = xml.match(/<entry>[\s\S]*?<title>([^<]+)<\/title>/)
+      const title = entryMatch ? entryMatch[1] : 'Sunday Service'
+
       const result = {
         success: true,
         videoId,
-        title: firstItem?.snippet?.title ?? 'Sunday Service',
+        title,
         thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
       }
 
@@ -73,7 +55,7 @@ export function registerYouTubeRoute(app: Hono) {
       c.header('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
       return c.json(result)
     } catch (error) {
-      console.error('YouTube API error:', error)
+      console.error('YouTube feed error:', error)
       return c.json(
         {
           success: false,

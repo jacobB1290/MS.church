@@ -2264,14 +2264,14 @@ export const homeStyles = (): string => `
             /* Play button morph-to-spinner — single SVG, no element swap */
             .video-play-btn-bg,
             .play-triangle {
-                transition: opacity 350ms cubic-bezier(0.4, 0, 0.2, 1);
+                transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .play-spinner-ring {
                 opacity: 0;
-                transform-origin: 34px 24px;
+                transform-origin: center;
                 transform-box: fill-box;
-                transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+                transition: opacity 350ms cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             /* Loading: play shapes fade out, ring fades in already spinning */
@@ -2285,7 +2285,7 @@ export const homeStyles = (): string => `
 
             .video-play-btn.is-loading .play-spinner-ring {
                 opacity: 1;
-                animation: playBtnSpin 0.9s linear infinite;
+                animation: playBtnSpin 1.1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
             }
 
             /* Revealing: ring and thumbnail fade out together */

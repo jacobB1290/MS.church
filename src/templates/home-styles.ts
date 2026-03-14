@@ -740,6 +740,13 @@ export const homeStyles = (): string => `
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
+                /* Dots (.carousel-nav) add margin-top:24px + 10px height = 34px below the
+                   last card. Pull the section bottom up by exactly that amount so the
+                   outreach→watch gap stays at the standard main gap (200px mobile /
+                   120px desktop) measured from card edge, not dot edge.
+                   Desktop (@min-width:961px) resets this via margin:0 — dots are hidden
+                   at ≤3 cards on desktop so no compensation needed there. */
+                margin-bottom: -34px;
             }
 
             .outreach .section-eyebrow {
@@ -4905,7 +4912,7 @@ export const homeStyles = (): string => `
                 .past-events-card .past-card-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 24px; box-sizing: border-box; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); border: none; color: #ffffff; border-radius: 100px; font-size: var(--text-label); font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent); position: relative; z-index: 2; }
                 .past-events-card .past-card-btn:hover { background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%); box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent); transform: translateY(-2px); }
 
-                .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
+                .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; margin-bottom: 0 !important; }
 
             /* Carousel */
                 .carousel-card {

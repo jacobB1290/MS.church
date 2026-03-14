@@ -1975,14 +1975,16 @@ export const homeStyles = (): string => `
             }
 
             .watch-card {
-                background: linear-gradient(135deg, #8B0000 0%, #5A0000 100%);
+                background: rgba(255, 255, 255, 0.85);
                 border-radius: 48px;
                 padding: 48px;
-                color: #ffffff;
-                box-shadow: 0 32px 80px rgba(139, 0, 0, 0.3);
+                color: var(--text-primary, #1a1a2e);
+                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
+                            0 12px 32px rgba(0, 0, 0, 0.04);
                 position: relative;
                 overflow: hidden;
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                backdrop-filter: blur(20px);
             }
 
             .watch-main {
@@ -1994,9 +1996,9 @@ export const homeStyles = (): string => `
             }
 
             .preview-screen {
-                background: rgba(0, 0, 0, 0.3);
+                background: rgba(248, 249, 253, 0.6);
                 border-radius: 24px;
-                border: 1px solid rgba(255, 255, 255, 0.15);
+                border: 1px solid rgba(0, 0, 0, 0.06);
                 padding: 48px;
                 display: flex;
                 flex-direction: column;
@@ -2012,10 +2014,10 @@ export const homeStyles = (): string => `
                 display: inline-flex;
                 align-items: center;
                 gap: 12px;
-                background: rgba(244, 114, 94, 0.2);
+                background: rgba(139, 0, 0, 0.1);
                 border-radius: 100px;
                 padding: 8px 20px;
-                color: #ffb5a6;
+                color: #8B0000;
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
@@ -2026,8 +2028,8 @@ export const homeStyles = (): string => `
                 width: 10px;
                 height: 10px;
                 border-radius: 50%;
-                background: #ff7761;
-                box-shadow: 0 0 16px rgba(255, 119, 97, 0.7);
+                background: #cc0000;
+                box-shadow: 0 0 16px rgba(204, 0, 0, 0.6);
                 animation: pulse 2s ease-in-out infinite;
             }
 
@@ -2037,33 +2039,34 @@ export const homeStyles = (): string => `
             }
 
             .preview-screen p {
-                color: rgba(255, 255, 255, 0.85);
+                color: rgba(26, 26, 46, 0.8);
                 line-height: var(--leading-loose);
                 font-size: var(--text-lead);
             }
 
             .preview-screen small {
                 display: block;
-                color: rgba(255, 255, 255, 0.6);
+                color: #8B0000;
                 font-size: var(--text-small);
                 margin-top: 8px;
                 letter-spacing: var(--tracking-normal);
             }
 
             .btn-outline {
-                background: rgba(255, 255, 255, 0.95);
-                border: 2px solid #ffffff;
-                color: #FF0000;
+                background: #8B0000;
+                border: 2px solid #8B0000;
+                color: #ffffff;
                 padding: 16px 38px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 font-weight: 700;
             }
 
             .btn-outline:hover {
-                background: #ffffff;
+                background: #6d0000;
+                border-color: #6d0000;
                 transform: translateY(-4px);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 8px 24px rgba(139, 0, 0, 0.4);
             }
 
             .past-streams {
@@ -2075,13 +2078,13 @@ export const homeStyles = (): string => `
 
             .stream-thumbnail {
                 aspect-ratio: 16/9;
-                background: rgba(0, 0, 0, 0.4);
+                background: rgba(0, 0, 0, 0.04);
                 border-radius: 16px;
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(0, 0, 0, 0.08);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: rgba(255, 255, 255, 0.5);
+                color: rgba(26, 26, 46, 0.5);
                 font-size: 14px;
                 font-weight: 600;
                 text-transform: uppercase;
@@ -2091,8 +2094,8 @@ export const homeStyles = (): string => `
             }
 
             .stream-thumbnail:hover {
-                background: rgba(0, 0, 0, 0.6);
-                border-color: rgba(255, 255, 255, 0.3);
+                background: rgba(0, 0, 0, 0.08);
+                border-color: rgba(139, 0, 0, 0.2);
                 transform: translateY(-4px);
             }
 
@@ -2101,7 +2104,7 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-semibold);
                 text-transform: uppercase;
                 letter-spacing: var(--tracking-wide);
-                color: rgba(255, 255, 255, 0.7);
+                color: rgba(26, 26, 46, 0.6);
                 margin-bottom: 16px;
             }
             
@@ -2114,19 +2117,22 @@ export const homeStyles = (): string => `
             }
             
             .live-verse {
-                color: rgba(255, 255, 255, 0.85);
+                color: rgba(26, 26, 46, 0.8);
                 line-height: var(--leading-loose);
                 font-size: var(--text-lead);
                 text-align: center;
                 margin: 0;
+                font-style: italic;
             }
-            
+
             .live-verse small {
                 display: block;
-                color: rgba(255, 255, 255, 0.6);
+                color: #8B0000;
                 font-size: 14px;
                 margin-top: 8px;
                 letter-spacing: 1px;
+                font-style: normal;
+                font-weight: 600;
             }
             
             /* Countdown Timer */
@@ -2140,7 +2146,7 @@ export const homeStyles = (): string => `
             }
             
             .countdown-label {
-                color: rgba(255, 255, 255, 0.7);
+                color: rgba(26, 26, 46, 0.6);
                 font-size: 10px;
                 font-weight: 600;
                 text-transform: uppercase;
@@ -2165,17 +2171,17 @@ export const homeStyles = (): string => `
             .countdown-number {
                 font-size: 24px;
                 font-weight: 700;
-                color: #ffffff;
+                color: #8B0000;
                 font-family: 'Playfair Display', serif;
                 line-height: 1;
             }
-            
+
             .countdown-label-small {
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-semibold);
                 text-transform: uppercase;
                 letter-spacing: var(--tracking-normal);
-                color: rgba(255, 255, 255, 0.9);
+                color: rgba(26, 26, 46, 0.7);
             }
             
             /* Playlist Button */
@@ -2192,10 +2198,12 @@ export const homeStyles = (): string => `
                 height: 0;
                 overflow: hidden;
                 border-radius: 16px;
-                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+                box-shadow: 0 8px 32px rgba(139, 0, 0, 0.25),
+                            0 16px 48px rgba(139, 0, 0, 0.15);
             }
             
-            .youtube-embed {
+            .youtube-embed,
+            .youtube-embed iframe {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -2204,7 +2212,75 @@ export const homeStyles = (): string => `
                 border: none;
                 border-radius: 16px;
             }
-            
+
+            /* Custom YouTube Thumbnail Overlay */
+            .video-thumbnail {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+                z-index: 2;
+                transition: opacity 250ms ease;
+                background: #0a0a0a;
+                border-radius: 16px;
+            }
+
+            .video-thumbnail.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .video-thumbnail-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 16px;
+                display: block;
+            }
+
+            .video-play-btn {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+                z-index: 3;
+                transition: transform 150ms ease;
+            }
+
+            .video-play-btn:hover {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+
+            .video-play-btn:hover .video-play-btn-bg {
+                fill: #cc0000;
+            }
+
+            .video-fallback-link {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 2;
+                background: rgba(0, 0, 0, 0.7);
+                color: #fff;
+                padding: 16px 32px;
+                border-radius: 12px;
+                font-family: var(--font-body), 'Inter', sans-serif;
+                font-size: 16px;
+                text-decoration: none;
+                transition: background 200ms ease;
+            }
+
+            .video-fallback-link:hover {
+                background: rgba(0, 0, 0, 0.85);
+            }
+
             .playlist-section {
                 display: flex;
                 flex-direction: column;
@@ -2218,8 +2294,9 @@ export const homeStyles = (): string => `
                 height: 0;
                 overflow: hidden;
                 border-radius: 16px;
-                box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
-                background: rgba(0, 0, 0, 0.3);
+                box-shadow: 0 8px 32px rgba(139, 0, 0, 0.2),
+                            0 16px 48px rgba(139, 0, 0, 0.1);
+                background: rgba(248, 249, 253, 0.6);
             }
             
             .youtube-playlist {

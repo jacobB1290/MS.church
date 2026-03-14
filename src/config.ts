@@ -23,3 +23,13 @@ export const GOOGLE_CALENDAR_CONFIG = {
   // Server-side cache TTL in milliseconds (5 minutes)
   CACHE_TTL: 5 * 60 * 1000,
 }
+
+// ========================================
+// YOUTUBE PLAYLIST CONFIGURATION
+// ========================================
+// Uses the public YouTube RSS feed — no API key required.
+
+export const YOUTUBE_CONFIG = {
+  PLAYLIST_ID: 'PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC',
+  CACHE_TTL: 5 * 60 * 1000,
+}

@@ -1130,49 +1130,56 @@ export const homeScripts = (): string => `
                 var _ytVideoId = null;
                 var _videoActivated = false;
                 var _shouldAutoPlay = false;
+                var _ytApiReady = false;
+
+                // Pre-load YouTube IFrame API so it's ready when user taps play
+                var ytTag = document.createElement('script');
+                ytTag.src = 'https://www.youtube.com/iframe_api';
+                document.head.appendChild(ytTag);
+                window.onYouTubeIframeAPIReady = function() {
+                    _ytApiReady = true;
+                    // If user already tapped play before API loaded, activate now
+                    if (_videoActivated && _ytVideoId) {
+                        createYTPlayer();
+                    }
+                };
+
+                function createYTPlayer() {
+                    var playerDiv = document.createElement('div');
+                    playerDiv.id = 'yt-player';
+                    playerDiv.className = 'youtube-embed';
+                    videoWrapper.appendChild(playerDiv);
+                    new window.YT.Player('yt-player', {
+                        videoId: _ytVideoId,
+                        playerVars: {
+                            autoplay: 1,
+                            rel: 0,
+                            modestbranding: 1,
+                            playsinline: 1
+                        },
+                        events: {
+                            onReady: function(event) {
+                                event.target.playVideo();
+                            }
+                        }
+                    });
+                    videoThumbnail.classList.add('hidden');
+                    setTimeout(function() {
+                        if (videoThumbnail.parentNode) {
+                            videoThumbnail.parentNode.removeChild(videoThumbnail);
+                        }
+                    }, 300);
+                }
 
                 function activateVideo() {
                     if (!_ytVideoId || !videoWrapper || !videoThumbnail || _videoActivated) return;
                     _videoActivated = true;
 
-                    // Load YouTube IFrame API if not already loaded
-                    if (!window.YT || !window.YT.Player) {
-                        var tag = document.createElement('script');
-                        tag.src = 'https://www.youtube.com/iframe_api';
-                        document.head.appendChild(tag);
-                        window.onYouTubeIframeAPIReady = function() {
-                            createPlayer();
-                        };
-                    } else {
-                        createPlayer();
+                    if (_ytApiReady) {
+                        // API already loaded — create player synchronously in the tap handler
+                        createYTPlayer();
                     }
-
-                    function createPlayer() {
-                        var playerDiv = document.createElement('div');
-                        playerDiv.id = 'yt-player';
-                        playerDiv.className = 'youtube-embed';
-                        videoWrapper.appendChild(playerDiv);
-                        new window.YT.Player('yt-player', {
-                            videoId: _ytVideoId,
-                            playerVars: {
-                                autoplay: 1,
-                                rel: 0,
-                                modestbranding: 1,
-                                playsinline: 1
-                            },
-                            events: {
-                                onReady: function(event) {
-                                    event.target.playVideo();
-                                }
-                            }
-                        });
-                        videoThumbnail.classList.add('hidden');
-                        setTimeout(function() {
-                            if (videoThumbnail.parentNode) {
-                                videoThumbnail.parentNode.removeChild(videoThumbnail);
-                            }
-                        }, 300);
-                    }
+                    // else: onYouTubeIframeAPIReady will call createYTPlayer when ready
                 }
 
                 function showVideoFallback() {

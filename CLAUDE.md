@@ -269,6 +269,20 @@ All styles are inlined in the `<style>` block inside the template string. Key de
 
 Responsive breakpoints: mobile ≤960px, desktop >960px (approximate).
 
+### Standard Width Rule
+
+**All page sections must inherit their width from the `.page` container.** No section should be wider or narrower than the standard content area defined by `.page`:
+
+- On desktop (>960px): `.page` uses `width: min(1280px, 94%)` with `max-width: 1400px`.
+- On tablet (≤899px): `.page` uses `width: 100%` (full viewport).
+- On mobile (≤480px): `.page` uses `width: 100%; padding: 0 clamp(3%, 5vw, 5%)`.
+
+**Do NOT use `width: 100vw` or full-bleed techniques** (`margin-left: calc(50% - 50vw)`) on content sections. These break sections out of the `.page` container and make them wider than sibling sections. The only exception is the hero section, which intentionally spans the full viewport.
+
+Every section (schedule, outreach, watch, contact, footer) should use `width: 100%; max-width: 100%` so they fill exactly the `.page` content area — no more, no less. Carousel cards, section-cards, and other content blocks inherit this width naturally.
+
+**Before committing any layout change**, visually verify that the modified section has the same left/right edges as the schedule `.section-card` on both mobile and desktop.
+
 ---
 
 ## Analytics
@@ -316,3 +330,179 @@ Vercel Analytics and Speed Insights are loaded conditionally in the client via d
 10. **Church details** — address is 3080 Wildwood St (also written as "3080 N Wildwood St"), Boise, ID 83713. Email: `morningstarchurchboise@gmail.com`. Sunday service at 9:00 AM (10:00 AM per Schema.org — verify with church before changing).
 
 11. **Calendar events** are fetched server-side in `src/routes/calendar.ts` with a 5-minute in-memory cache. The client calls `/api/calendar/events` — it does NOT call Google Calendar directly anymore. Update image URL handling in `calendar.ts` if the lh3.googleusercontent.com format changes.
+
+---
+
+## Outreach Section — Editing Guide
+
+The outreach section is the most complex part of the page. Mistakes here took many iterations to fix. Follow these rules precisely.
+
+### Where the code lives
+
+| What | File | What to search for |
+|------|------|--------------------|
+| Card HTML structure | `src/templates/home-scripts.ts` | `renderUpcomingEventCard`, `carousel-past-card` |
+| Card CSS | `src/templates/home-styles.ts` | `.event-outer-card`, `.carousel-card`, `.carousel-past-card` |
+| Carousel JS logic | `src/templates/home-scripts.ts` | `initCarousel`, `startAutoTick` |
+| Memories card HTML | `src/templates/home-scripts.ts` | `carousel-see-past-btn`, `past-card-title` |
+
+### Card structure hierarchy
+
+```
+.carousel-card          ← slot in the scroll container; controls edge spacing
+  .event-card           ← inner wrapper
+    .event-outer-card   ← visible white frosted-glass card (rounded, shadowed)
+      .event-card-header ← date (left) + time pill (right), or MEMORIES label
+      .event-flyer-wrapper / .carousel-past-card  ← image or memories content
+      .event-link-btn   ← gold pill CTA button at the bottom of the card
+```
+
+### Width and spacing rules
+
+**NEVER** change the outreach section's width beyond `width: 100%; max-width: 100%`. It must inherit from `.page` like every other section. Violations that were removed and must not return:
+- `width: 100vw` on `.outreach` — made the section wider than all siblings
+- `margin-left: calc(50% - 50vw)` or any negative-margin full-bleed trick on `.outreach` or `.carousel-wrapper` — caused asymmetric card positioning
+
+**The correct way to give cards edge spacing on mobile** is to add horizontal `padding` to `.carousel-card` in the `@media (max-width: 960px)` block:
+```css
+@media (max-width: 960px) {
+    .carousel-card {
+        padding: 0 16px;  /* breathing room from viewport edges */
+    }
+}
+```
+At `≤480px`, reduce this to `0 4px` because `.page` already adds its own `clamp(3%, 5vw, 5%)` padding at that breakpoint — stacking both would over-inset the card.
+
+### Shadow edges and the fog system
+
+This is the most misunderstood part of the outreach section. There are **three independent layers** of edge softening. They work together and must not be confused with each other.
+
+#### Layer 1 — `body::before` / `body::after` (page-edge hairline fog)
+
+```css
+body::before, body::after {
+    position: fixed;
+    width: 3px;
+    z-index: 9998;
+    opacity: 0.6;
+    /* gradient fading from --bg-color to transparent */
+}
+```
+
+- Fixed to the viewport, always visible regardless of scroll position
+- Only 3px wide at 60% opacity — nearly invisible, just enough to prevent content feeling hard-clipped at the physical screen boundary
+- **Do not widen this.** Making it larger (e.g. 6px or more) creates a visible thick border stripe at the screen edge. Keep it at 3px / opacity 0.6.
+- This layer has nothing to do with card shadows specifically — it softens the entire page at both edges
+
+#### Layer 2 — `.carousel-viewport` clip-path + `::before`/`::after` fog (desktop)
+
+```css
+/* Desktop base */
+.carousel-viewport {
+    clip-path: inset(-80px -40px -80px -40px);
+}
+.carousel-viewport::before { left: -40px; width: 80px; /* gradient → transparent */ }
+.carousel-viewport::after  { right: -40px; width: 80px; /* gradient → transparent */ }
+```
+
+On desktop, the carousel shows multiple cards simultaneously. The `clip-path` allows shadows to bleed 80px vertically and 40px horizontally beyond the viewport bounds. The `::before`/`::after` fog overlays (80px wide, z-index 5) sit on top of the viewport and fade the shadow bleed so adjacent cards don't show a hard edge at the left or right boundary.
+
+- `z-index: 5` keeps the fog below the navigation arrows (`z-index: 20`)
+- The gradient stops at 25% solid → 60% semi → 100% transparent — this multi-stop fade prevents the fog from looking like a hard border
+
+#### Layer 3 — Mobile clip-path override + thin fog
+
+```css
+/* ≤960px mobile override */
+.carousel-viewport {
+    clip-path: inset(-60px -16px -60px -16px);
+}
+.carousel-viewport::before { left: -16px; width: 24px; top: -60px; bottom: -60px; }
+.carousel-viewport::after  { right: -16px; width: 24px; top: -60px; bottom: -60px; }
+```
+
+On mobile, only one card is visible at a time. The adjacent cards are a full viewport-width away (`transform: translateX(±100%)`), so there is zero risk of them showing through. The `clip-path` uses `-16px` horizontal bleed (matching the `.carousel-card` padding) so the card's box-shadow can fade naturally instead of being hard-cut at the viewport edge. The `::before`/`::after` fog is only 24px wide here — just enough to soften the shadow falloff where it meets the clip boundary.
+
+#### What causes hard shadow edges
+
+A hard visible line at the left or right of a card on mobile means **the clip boundary is cutting the shadow too soon**. The root cause is always one of:
+
+1. `clip-path: inset(-60px 0px -60px 0px)` — zero horizontal bleed. The `0px` clips exactly at the viewport edge, slicing the shadow clean off. Fix: use `-16px` horizontal values.
+2. The `.carousel-card` padding was removed or set to `0`, so the card extends all the way to the clip boundary with no buffer. Fix: restore `padding: 0 16px` on `.carousel-card` at `≤960px`.
+3. The fog overlay dimensions (`top`, `bottom`, `left`, `right`) were not updated to match the clip-path values. If the clip path uses `-60px` vertical and `-16px` horizontal, the fog must use the same values or it will leave an unfogged gap.
+
+#### The relationship between card padding and shadow room
+
+Card padding and shadow room are coupled:
+
+```
+card padding (16px) + clip bleed (16px) = 32px total buffer between card edge and viewport edge
+```
+
+The card's box-shadow on `.event-outer-card` is `0 4px 24px rgba(0,0,0,0.08)` — at 24px spread, 32px of total buffer is enough for the shadow to fully fade to transparent before reaching the viewport edge with no hard line.
+
+If you reduce `.carousel-card` padding below 16px, reduce the clip bleed by the same amount to maintain the buffer. If you increase padding, you can optionally increase the clip bleed for more shadow room, but 16px is sufficient for the current shadow radius.
+
+### Mobile carousel: what must never be re-added
+
+These were explicitly removed and must not come back:
+
+1. **Navigation arrows on mobile** — hidden with `display: none !important` in `@media (max-width: 960px)`. The `!important` is required because JS sets `style.display = 'flex'` inline during `render()`. Without it, arrows reappear.
+
+2. **`clip-path: inset(-60px 0px)` (zero horizontal bleed)** — replaced with `inset(-60px -16px -60px -16px)`. The `0px` causes a hard shadow cutoff line at the viewport edges. Do not revert to `0px`.
+
+3. **Adjacent card bleed** — the carousel positions cards at `transform: translateX(index * 100%)` so adjacent cards are always exactly one viewport-width away. The `-16px` clip bleed is safe and will not expose them. Do not reduce the bleed to try to "prevent" bleed-through — the spacing already handles that.
+
+### CSS typography tokens — use these, not raw px
+
+```
+--text-eyebrow: 10px   ← badges, overlines (OUTREACH label, MEMORIES badge)
+--text-label:   12px   ← do NOT use for card content or buttons; too small for mobile
+--text-small:   14px   ← minimum for button text (event-link-btn uses this)
+--text-heading: clamp(20px, 2.5vw, 26px)  ← card sub-headings
+```
+
+**Minimum readable sizes for the outreach card on mobile (industry standard):**
+- Card section title (`.past-card-title`): **20px**
+- Card body text (`.past-card-description`, `.past-card-text`): **16px** — this is the iOS/Android minimum to avoid browser auto-zoom
+- Button text (`.event-link-btn`): **14px** (`--text-small`) — set at the base rule, not only at the desktop breakpoint
+
+### Button rules
+
+There are two distinct button classes in this section:
+
+| Class | Used for | Location |
+|-------|----------|----------|
+| `.event-link-btn` | CTA buttons on all carousel cards (GET DIRECTIONS, Browse Memories) | `home-scripts.ts` |
+| `.carousel-past-card .past-card-btn` | "Browse Memories" button in the desktop 2-up grid memories card | `home-scripts.ts` |
+
+Both share identical visual styling. **Both must have their font-size set at the base rule level** (not only in a desktop `min-width` override), otherwise mobile gets a smaller size than desktop.
+
+**`text-transform` on buttons:**
+- `.event-link-btn` uses `text-transform: uppercase` — correct for CTA buttons like GET DIRECTIONS
+- The **Browse Memories** button (`#carousel-see-past-btn`) overrides this with `text-transform: none; letter-spacing: 0.3px` — it is sentence case intentionally
+- Do NOT remove the `#carousel-see-past-btn` override or the button will revert to "BROWSE MEMORIES"
+
+**`font-family` on buttons:** `<button>` elements do NOT inherit `font-family` in some browsers. The `.event-link-btn` rule explicitly sets `font-family: var(--font-body), 'Inter', sans-serif`. Do not change this back to `font-family: inherit`.
+
+### Memories card copy
+
+The "Memories" card text and button label are hardcoded in `home-scripts.ts` in **two places** — the desktop 2-up grid render (search `btn-view-past-events-desktop`) and the mobile carousel render (search `carousel-see-past-btn`). When changing copy, update **both**:
+
+```
+desktop:  <span class="past-card-btn">Browse Memories</span>
+carousel: <button class="event-link-btn" id="carousel-see-past-btn">Browse Memories</button>
+```
+
+### Auto-scroll threshold
+
+`startAutoTick()` only starts if `getMaxIndex() >= 2` (i.e. there are at least 2 total carousel slots). With 1 upcoming event and 1 memories card, that's exactly 2 — auto-scroll runs. With only a Stay Tuned card (no events), there's only 1 slot — auto-scroll correctly skips. Do not lower this threshold.
+
+### Breakpoints that apply to the outreach section
+
+| Breakpoint | Key effect |
+|------------|-----------|
+| `> 960px` (desktop) | Two-column grid layout: event cards left, memories card right |
+| `≤ 960px` (mobile) | Single-column carousel; arrows hidden; `carousel-card` gets horizontal padding |
+| `≤ 899px` | `.page` loses its padding; outreach stays `width: 100%` inheriting full viewport width |
+| `≤ 480px` | `.page` regains `clamp(3%, 5vw, 5%)` padding; `carousel-card` padding reduced to `0 4px` |

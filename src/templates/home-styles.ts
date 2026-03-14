@@ -110,6 +110,32 @@ export const homeStyles = (): string => `
                 padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
+            /* Hairline fog at viewport edges — barely-there soft fade that
+               prevents content from feeling hard-clipped at the screen boundary */
+            body::before,
+            body::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                width: 3px;
+                z-index: 9998;
+                pointer-events: none;
+                opacity: 0.6;
+            }
+            body::before {
+                left: 0;
+                background: linear-gradient(to right,
+                    var(--bg-color, #f8f9fd) 0%,
+                    transparent 100%);
+            }
+            body::after {
+                right: 0;
+                background: linear-gradient(to left,
+                    var(--bg-color, #f8f9fd) 0%,
+                    transparent 100%);
+            }
+
             /* Body background - static, no dynamic changes */
             body.stay-tuned-active { background: var(--bg-stay-tuned); }
             
@@ -714,6 +740,13 @@ export const homeStyles = (): string => `
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
+                /* Dots (.carousel-nav) add margin-top:24px + 10px height = 34px below the
+                   last card. Pull the section bottom up by exactly that amount so the
+                   outreach→watch gap stays at the standard main gap (200px mobile /
+                   120px desktop) measured from card edge, not dot edge.
+                   Desktop (@min-width:961px) resets this via margin:0 — dots are hidden
+                   at ≤3 cards on desktop so no compensation needed there. */
+                margin-bottom: -34px;
             }
 
             .outreach .section-eyebrow {
@@ -792,34 +825,41 @@ export const homeStyles = (): string => `
                 box-sizing: border-box;
             }
 
-            /* Mobile: one card at a time */
+            /* Mobile: one card at a time, full viewport width, swipe-to-navigate.
+               Arrows hidden; dots remain for navigation indicator. */
             @media (max-width: 960px) {
                 .carousel-card {
-                    /* width set dynamically by JS */
-                    /* 16px padding = gutter where arrows sit */
                     padding: 0 16px;
                 }
-                .carousel-viewport {
-                    clip-path: inset(-60px -24px -60px -24px);
+                .carousel-arrow {
+                    /* !important overrides JS inline style.display = 'flex' set by render() */
+                    display: none !important;
                 }
                 .carousel-wrapper {
                     overflow: visible;
                 }
-                /* Fog inside viewport — extends inward for a gentle fade */
+                .carousel-viewport {
+                    /* Generous room for card box-shadows on all sides;
+                       16px horizontal bleed lets shadows fade naturally (adjacent cards
+                       are a full viewport-width away, so no bleed-through risk) */
+                    clip-path: inset(-60px -16px -60px -16px);
+                }
+                /* Thin fog overlays at clip edges — softens shadow falloff */
                 .carousel-viewport::before,
                 .carousel-viewport::after {
+                    width: 24px;
                     top: -60px;
                     bottom: -60px;
-                    width: 56px;
                 }
                 .carousel-viewport::before {
-                    left: -24px;
+                    left: -16px;
                 }
                 .carousel-viewport::after {
-                    right: -24px;
-                    left: auto;
+                    right: -16px;
                 }
             }
+            /* ≤899px: no carousel-wrapper margin needed — section has no side padding,
+               so carousel naturally fills the full section/viewport width */
 
             /* Navigation: dots below, arrows float on card edges */
             .carousel-nav {
@@ -1047,10 +1087,10 @@ export const homeStyles = (): string => `
                 position: relative;
                 z-index: 2;
                 border: none;
-                font-family: inherit;
+                font-family: var(--font-body), 'Inter', sans-serif;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 border-radius: 100px;
-                font-size: var(--text-label);
+                font-size: var(--text-small);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
@@ -1068,6 +1108,11 @@ export const homeStyles = (): string => `
                 transform: translateY(-2px);
             }
 
+            /* Browse Memories button — sentence case, no wide tracking */
+            #carousel-see-past-btn {
+                text-transform: none;
+                letter-spacing: 0.3px;
+            }
 
             /* MEMORIES text inside .event-card-header — matches date/time plain gold style */
             .event-card-header .past-card-badge {
@@ -1168,7 +1213,7 @@ export const homeStyles = (): string => `
             }
             @media (max-width: 960px) {
                 .event-outer-card {
-                    border-radius: 22px;
+                    border-radius: 32px;  /* match .section-card at this breakpoint */
                 }
             }
             .carousel-past-card .past-card-badge {
@@ -1182,19 +1227,19 @@ export const homeStyles = (): string => `
             .carousel-past-card .past-card-icon { font-size: 40px; margin-bottom: 10px; }
             .carousel-past-card .past-card-title {
                 font-family: inherit;
-                font-size: var(--text-small); font-weight: var(--weight-semibold); margin: 0 0 8px 0; color: #1a1a2e;
+                font-size: 20px; font-weight: var(--weight-semibold); margin: 0 0 8px 0; color: #1a1a2e;
             }
             .carousel-past-card .past-card-text {
-                font-size: var(--text-label); color: #595970;
-                line-height: var(--leading-normal); margin-bottom: 14px; max-width: 200px;
+                font-size: 16px; color: #595970;
+                line-height: var(--leading-normal); margin-bottom: 14px;
             }
             .carousel-past-card .past-card-btn {
                 display: flex; align-items: center; justify-content: center;
                 width: 100%; padding: 12px 24px; box-sizing: border-box;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 border: none; color: #ffffff; border-radius: 100px;
-                font-size: var(--text-label); font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide); text-transform: uppercase;
+                font-size: var(--text-small); font-weight: var(--weight-bold);
+                letter-spacing: 0.3px; text-transform: none;
                 cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
                 position: relative; z-index: 2;
@@ -3071,23 +3116,21 @@ export const homeStyles = (): string => `
                     width: 100%;
                     max-width: 100%;
                     padding-bottom: 0;
-                    /* Side padding gives card shadows room to breathe naturally
-                       instead of being hard-clipped at the viewport edge */
-                    padding-left: 12px;
-                    padding-right: 12px;
                     box-sizing: border-box;
                     overflow: visible;
                 }
-                
+
                 .outreach .section-eyebrow {
                     display: inline-flex !important;
                     width: fit-content !important;
                     max-width: fit-content !important;
                     text-align: left;
+                    margin-left: 16px;
                 }
                 
                 .outreach .section-heading {
                     text-align: left;
+                    padding-left: 16px;
                 }
             }
             
@@ -3397,6 +3440,12 @@ export const homeStyles = (): string => `
                     box-sizing: border-box;
                 }
 
+                /* .page already provides edge spacing at ≤480px via its padding;
+                   reduce .carousel-card padding to avoid double-inset */
+                .carousel-card {
+                    padding: 0 4px;
+                }
+
                 .nav-spacer {
                     height: 0;
                 }
@@ -3640,6 +3689,23 @@ export const homeStyles = (): string => `
                     border-radius: 24px;
                 }
 
+                .event-outer-card {
+                    border-radius: 24px;  /* match .section-card */
+                }
+
+                /* Outreach section — inherit .page width like all other sections.
+                   Carousel cards fill this width; .page padding provides edge spacing. */
+                .outreach {
+                    width: 100%;
+                    max-width: 100%;
+                }
+                .outreach .section-eyebrow {
+                    margin-left: 4px;
+                }
+                .outreach .section-heading {
+                    padding-left: 4px;
+                }
+
                 .schedule-grid {
                     gap: 16px;
                 }
@@ -3699,7 +3765,7 @@ export const homeStyles = (): string => `
                 }
 
                 .event-outer-card {
-                    border-radius: 28px;
+                    border-radius: 32px;  /* match .section-card */
                     padding: 14px;
                 }
 
@@ -4846,7 +4912,7 @@ export const homeStyles = (): string => `
                 .past-events-card .past-card-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 24px; box-sizing: border-box; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); border: none; color: #ffffff; border-radius: 100px; font-size: var(--text-label); font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent); position: relative; z-index: 2; }
                 .past-events-card .past-card-btn:hover { background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%); box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent); transform: translateY(-2px); }
 
-                .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; }
+                .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; margin-bottom: 0 !important; }
 
             /* Carousel */
                 .carousel-card {
@@ -4924,8 +4990,8 @@ export const homeStyles = (): string => `
                     padding: 32px 24px;
                 }
                 .carousel-past-card .past-card-icon { font-size: 48px; }
-                .carousel-past-card .past-card-text { font-size: var(--text-small); max-width: 240px; }
-                .carousel-past-card .past-card-btn { padding: 14px 32px; font-size: var(--text-label); }
+                .carousel-past-card .past-card-text { font-size: 16px; }
+                .carousel-past-card .past-card-btn { padding: 14px 32px; font-size: var(--text-small); }
 
                 .event-flyer-wrapper.glow-warm {
                     box-shadow: 0 16px 56px color-mix(in srgb, var(--gold) 55%, transparent), 0 8px 24px color-mix(in srgb, var(--gold) 35%, transparent);

@@ -2273,8 +2273,8 @@ export const homeStyles = (): string => `
                 width: 48px;
                 height: 48px;
                 margin: -24px 0 0 -24px;
-                border: 4px solid rgba(255, 255, 255, 0.3);
-                border-top-color: #fff;
+                border: 4px solid rgba(255, 0, 0, 0.3);
+                border-top-color: #FF0000;
                 border-radius: 50%;
                 opacity: 0;
                 transform: scale(0.5);

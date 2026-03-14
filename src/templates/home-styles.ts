@@ -2263,7 +2263,8 @@ export const homeStyles = (): string => `
 
             /* Play button morph-to-spinner animation */
             .play-icon {
-                transition: opacity 250ms ease, transform 250ms ease;
+                transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .play-spinner {
@@ -2277,27 +2278,36 @@ export const homeStyles = (): string => `
                 border-top-color: #FF0000;
                 border-radius: 50%;
                 opacity: 0;
-                transform: scale(0.5);
-                transition: opacity 250ms ease, transform 250ms ease;
+                transform: scale(0.8);
+                transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
                 pointer-events: none;
             }
 
             .video-play-btn.is-loading .play-icon {
                 opacity: 0;
-                transform: scale(0.6);
+                transform: scale(0.7);
             }
 
             .video-play-btn.is-loading .play-spinner {
                 opacity: 1;
                 transform: scale(1);
-                animation: playBtnSpin 0.8s linear infinite;
+                animation: playBtnSpin 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
             }
 
+            /* Revealing: spinner and thumbnail fade out together */
             .video-play-btn.is-revealing .play-spinner {
                 opacity: 0;
-                transform: scale(0.3);
-                transition: opacity 200ms ease, transform 200ms ease;
+                transform: scale(0.6);
+                transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
                 animation: none;
+            }
+
+            .video-thumbnail.is-revealing {
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             @keyframes playBtnSpin {

@@ -1211,24 +1211,22 @@ export const homeScripts = (): string => `
                 }
 
                 function revealVideo() {
-                    if (!videoThumbnail || videoThumbnail.classList.contains('hidden')) return;
+                    if (!videoThumbnail || videoThumbnail.classList.contains('is-revealing')) return;
                     if (_revealTimeout) { clearTimeout(_revealTimeout); _revealTimeout = null; }
 
-                    // Phase 2: Spinner shrinks away
+                    // Spinner and thumbnail fade out together in one synchronized 500ms fade
                     if (videoPlayBtn) {
                         videoPlayBtn.classList.remove('is-loading');
                         videoPlayBtn.classList.add('is-revealing');
                     }
+                    videoThumbnail.classList.add('is-revealing');
 
-                    // Phase 3: Fade out thumbnail after spinner exit animation
+                    // Clean up DOM after the 500ms fade completes
                     setTimeout(function() {
-                        videoThumbnail.classList.add('hidden');
-                        setTimeout(function() {
-                            if (videoThumbnail.parentNode) {
-                                videoThumbnail.parentNode.removeChild(videoThumbnail);
-                            }
-                        }, 300);
-                    }, 200);
+                        if (videoThumbnail.parentNode) {
+                            videoThumbnail.parentNode.removeChild(videoThumbnail);
+                        }
+                    }, 550);
                 }
 
                 function showVideoFallback() {

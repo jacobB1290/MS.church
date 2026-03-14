@@ -373,15 +373,85 @@ The outreach section is the most complex part of the page. Mistakes here took ma
 ```
 At `≤480px`, reduce this to `0 4px` because `.page` already adds its own `clamp(3%, 5vw, 5%)` padding at that breakpoint — stacking both would over-inset the card.
 
+### Shadow edges and the fog system
+
+This is the most misunderstood part of the outreach section. There are **three independent layers** of edge softening. They work together and must not be confused with each other.
+
+#### Layer 1 — `body::before` / `body::after` (page-edge hairline fog)
+
+```css
+body::before, body::after {
+    position: fixed;
+    width: 3px;
+    z-index: 9998;
+    opacity: 0.6;
+    /* gradient fading from --bg-color to transparent */
+}
+```
+
+- Fixed to the viewport, always visible regardless of scroll position
+- Only 3px wide at 60% opacity — nearly invisible, just enough to prevent content feeling hard-clipped at the physical screen boundary
+- **Do not widen this.** Making it larger (e.g. 6px or more) creates a visible thick border stripe at the screen edge. Keep it at 3px / opacity 0.6.
+- This layer has nothing to do with card shadows specifically — it softens the entire page at both edges
+
+#### Layer 2 — `.carousel-viewport` clip-path + `::before`/`::after` fog (desktop)
+
+```css
+/* Desktop base */
+.carousel-viewport {
+    clip-path: inset(-80px -40px -80px -40px);
+}
+.carousel-viewport::before { left: -40px; width: 80px; /* gradient → transparent */ }
+.carousel-viewport::after  { right: -40px; width: 80px; /* gradient → transparent */ }
+```
+
+On desktop, the carousel shows multiple cards simultaneously. The `clip-path` allows shadows to bleed 80px vertically and 40px horizontally beyond the viewport bounds. The `::before`/`::after` fog overlays (80px wide, z-index 5) sit on top of the viewport and fade the shadow bleed so adjacent cards don't show a hard edge at the left or right boundary.
+
+- `z-index: 5` keeps the fog below the navigation arrows (`z-index: 20`)
+- The gradient stops at 25% solid → 60% semi → 100% transparent — this multi-stop fade prevents the fog from looking like a hard border
+
+#### Layer 3 — Mobile clip-path override + thin fog
+
+```css
+/* ≤960px mobile override */
+.carousel-viewport {
+    clip-path: inset(-60px -16px -60px -16px);
+}
+.carousel-viewport::before { left: -16px; width: 24px; top: -60px; bottom: -60px; }
+.carousel-viewport::after  { right: -16px; width: 24px; top: -60px; bottom: -60px; }
+```
+
+On mobile, only one card is visible at a time. The adjacent cards are a full viewport-width away (`transform: translateX(±100%)`), so there is zero risk of them showing through. The `clip-path` uses `-16px` horizontal bleed (matching the `.carousel-card` padding) so the card's box-shadow can fade naturally instead of being hard-cut at the viewport edge. The `::before`/`::after` fog is only 24px wide here — just enough to soften the shadow falloff where it meets the clip boundary.
+
+#### What causes hard shadow edges
+
+A hard visible line at the left or right of a card on mobile means **the clip boundary is cutting the shadow too soon**. The root cause is always one of:
+
+1. `clip-path: inset(-60px 0px -60px 0px)` — zero horizontal bleed. The `0px` clips exactly at the viewport edge, slicing the shadow clean off. Fix: use `-16px` horizontal values.
+2. The `.carousel-card` padding was removed or set to `0`, so the card extends all the way to the clip boundary with no buffer. Fix: restore `padding: 0 16px` on `.carousel-card` at `≤960px`.
+3. The fog overlay dimensions (`top`, `bottom`, `left`, `right`) were not updated to match the clip-path values. If the clip path uses `-60px` vertical and `-16px` horizontal, the fog must use the same values or it will leave an unfogged gap.
+
+#### The relationship between card padding and shadow room
+
+Card padding and shadow room are coupled:
+
+```
+card padding (16px) + clip bleed (16px) = 32px total buffer between card edge and viewport edge
+```
+
+The card's box-shadow on `.event-outer-card` is `0 4px 24px rgba(0,0,0,0.08)` — at 24px spread, 32px of total buffer is enough for the shadow to fully fade to transparent before reaching the viewport edge with no hard line.
+
+If you reduce `.carousel-card` padding below 16px, reduce the clip bleed by the same amount to maintain the buffer. If you increase padding, you can optionally increase the clip bleed for more shadow room, but 16px is sufficient for the current shadow radius.
+
 ### Mobile carousel: what must never be re-added
 
 These were explicitly removed and must not come back:
 
 1. **Navigation arrows on mobile** — hidden with `display: none !important` in `@media (max-width: 960px)`. The `!important` is required because JS sets `style.display = 'flex'` inline during `render()`. Without it, arrows reappear.
 
-2. **`clip-path: inset(-60px 0px)` (zero horizontal bleed)** — this was replaced with `inset(-60px -16px -60px -16px)` so card box-shadows can fade naturally at the left/right edges rather than being hard-clipped. Do not revert to `0px`.
+2. **`clip-path: inset(-60px 0px)` (zero horizontal bleed)** — replaced with `inset(-60px -16px -60px -16px)`. The `0px` causes a hard shadow cutoff line at the viewport edges. Do not revert to `0px`.
 
-3. **Adjacent card bleed** — if you increase the horizontal clip beyond `-16px`, or if you accidentally remove the negative margin that keeps adjacent cards a full viewport-width away, the neighbouring card will peek through. The carousel positions cards by `transform: translateX(index * 100%)`, so they are already full-viewport-width apart. The `-16px` bleed is safe.
+3. **Adjacent card bleed** — the carousel positions cards at `transform: translateX(index * 100%)` so adjacent cards are always exactly one viewport-width away. The `-16px` clip bleed is safe and will not expose them. Do not reduce the bleed to try to "prevent" bleed-through — the spacing already handles that.
 
 ### CSS typography tokens — use these, not raw px
 

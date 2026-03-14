@@ -153,7 +153,7 @@ export function registerMiscRoutes(app: Hono) {
           <meta name="twitter:description" content="Get in touch with Morning Star Christian Church in Boise, Idaho. Submit a prayer request or connect with our community.">
           
           <!-- Safari iOS theme-color for status bar and tab bar background -->
-          <meta name="theme-color" content="#f8f9fd">
+          <meta name="theme-color" content="#faf8f5">
           <meta name="apple-mobile-web-app-status-bar-style" content="default">
           
           <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -220,7 +220,7 @@ export function registerMiscRoutes(app: Hono) {
               
               body {
                   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                  background: linear-gradient(135deg, #f8f9fd 0%, #e9ecf5 100%);
+                  background: linear-gradient(135deg, #faf8f5 0%, #f0ece6 100%);
                   min-height: 100vh;
                   display: flex;
                   flex-direction: column;

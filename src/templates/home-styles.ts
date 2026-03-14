@@ -10,10 +10,15 @@ export const homeStyles = (): string => `
                 --gold-dark:   color-mix(in srgb, var(--gold) 70%, black);
                 --gold-deeper: color-mix(in srgb, var(--gold) 55%, black);
 
+                /* ── Warm white tier system ── */
+                --bg:      #faf8f5;   /* Level 1 — page base */
+                --surface: #fdfcfa;   /* Level 2 — cards, containers */
+                --white:   #fefdfb;   /* Level 3 — hovers, focus states */
+
                 /* Solid background color for seamless Safari iOS overscroll */
-                --bg-color: #f8f9fd;
-                --bg-default: #f8f9fd;
-                --bg-stay-tuned: #f8f9fd;
+                --bg-color: var(--bg);
+                --bg-default: var(--bg);
+                --bg-stay-tuned: var(--bg);
                 /* Event backgrounds - solid colors for seamless overscroll */
                 --bg-event1: #f5e6d8; /* Muted warm terracotta */
                 --bg-event2: #e8ead8; /* Muted olive/sage */
@@ -83,7 +88,7 @@ export const homeStyles = (): string => `
                 .gift-lightbox-arrow,
                 .lightbox-instructions,
                 .contact-info-item {
-                    background: rgb(255, 255, 255) !important;
+                    background: var(--surface) !important;
                     border: 1px solid rgba(0, 0, 0, 0.08) !important;
                 }
                 /* Active (gold) state must override the white fallback above */
@@ -126,13 +131,13 @@ export const homeStyles = (): string => `
             body::before {
                 left: 0;
                 background: linear-gradient(to right,
-                    var(--bg-color, #f8f9fd) 0%,
+                    var(--bg-color, #faf8f5) 0%,
                     transparent 100%);
             }
             body::after {
                 right: 0;
                 background: linear-gradient(to left,
-                    var(--bg-color, #f8f9fd) 0%,
+                    var(--bg-color, #faf8f5) 0%,
                     transparent 100%);
             }
 
@@ -316,7 +321,7 @@ export const homeStyles = (): string => `
             .nav-cta:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-                background: rgba(255, 255, 255, 1);
+                background: var(--white);
             }
 
             main {
@@ -457,7 +462,7 @@ export const homeStyles = (): string => `
             .btn-secondary:hover {
                 transform: translateY(-4px);
                 box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-                background: #fff;
+                background: var(--white);
             }
 
             /* Hero CTA Buttons - Contact (white) and Watch (gold) */
@@ -469,7 +474,7 @@ export const homeStyles = (): string => `
             }
             
             .btn-contact:hover {
-                background: #fff !important;
+                background: var(--white) !important;
                 box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15) !important;
             }
             
@@ -560,7 +565,7 @@ export const homeStyles = (): string => `
                 top: calc(100% + 8px);
                 left: 50%;
                 transform: translateX(-50%);
-                background: white;
+                background: var(--surface);
                 border-radius: 16px;
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15),
                             0 2px 8px rgba(0, 0, 0, 0.1);
@@ -657,7 +662,7 @@ export const homeStyles = (): string => `
             /* Fallback for older devices without backdrop-filter */
             @supports not (backdrop-filter: blur(1px)) {
                 .find-us-btn {
-                    background: rgb(255, 255, 255) !important;
+                    background: var(--surface) !important;
                     border: 1px solid rgba(0, 0, 0, 0.08) !important;
                 }
                 /* On mobile, Find Us button stays gold even without backdrop-filter */
@@ -799,16 +804,16 @@ export const homeStyles = (): string => `
             .carousel-viewport::before {
                 left: -40px;
                 background: linear-gradient(to right,
-                    var(--bg-color, #f8f9fd) 25%,
-                    rgba(248, 249, 253, 0.4) 60%,
-                    rgba(248, 249, 253, 0) 100%);
+                    var(--bg-color, #faf8f5) 25%,
+                    rgba(250, 248, 245, 0.4) 60%,
+                    rgba(250, 248, 245, 0) 100%);
             }
             .carousel-viewport::after {
                 right: -40px;
                 background: linear-gradient(to left,
-                    var(--bg-color, #f8f9fd) 25%,
-                    rgba(248, 249, 253, 0.4) 60%,
-                    rgba(248, 249, 253, 0) 100%);
+                    var(--bg-color, #faf8f5) 25%,
+                    rgba(250, 248, 245, 0.4) 60%,
+                    rgba(250, 248, 245, 0) 100%);
             }
 
             /* The track is a flex row of ALL cards; translateX slides it */
@@ -906,7 +911,7 @@ export const homeStyles = (): string => `
             }
 
             .carousel-arrow:hover {
-                background: rgba(255, 255, 255, 0.96);
+                background: var(--white);
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
                 transform: translateY(-50%) scale(1.08);
             }
@@ -1186,7 +1191,7 @@ export const homeStyles = (): string => `
             }
 
             .event-cta .btn:hover {
-                background: #fff;
+                background: var(--white);
                 box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
                 transform: translateY(-1px);
             }
@@ -1206,7 +1211,7 @@ export const homeStyles = (): string => `
                 border-radius: 18px;
                 box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07),
                             inset 0 0 0 1px rgba(0, 0, 0, 0.055);
-                background: rgba(248, 249, 253, 0.6);
+                background: rgba(250, 248, 245, 0.6);
                 position: relative;
                 cursor: pointer;
                 padding: 24px 16px;
@@ -2382,7 +2387,7 @@ export const homeStyles = (): string => `
             
             .btn-see-flyer:hover {
                 transform: translateY(-2px);
-                background: rgba(255, 255, 255, 1) !important;
+                background: var(--white) !important;
                 box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
                 border-color: rgba(26, 26, 46, 0.15) !important;
             }
@@ -2465,7 +2470,7 @@ export const homeStyles = (): string => `
             .form-group textarea:focus {
                 outline: none;
                 border-color: var(--gold);
-                background: white;
+                background: var(--white);
                 box-shadow: 0 8px 24px color-mix(in srgb, var(--gold) 15%, transparent);
                 transform: translateY(-2px);
             }
@@ -2521,7 +2526,7 @@ export const homeStyles = (): string => `
             
             .form-section {
                 padding: 32px;
-                background: rgba(248, 248, 252, 0.5);
+                background: rgba(250, 248, 245, 0.5);
                 border-radius: 24px;
                 margin-bottom: 24px;
             }
@@ -2540,7 +2545,7 @@ export const homeStyles = (): string => `
             
             .child-form {
                 padding: 24px;
-                background: white;
+                background: var(--surface);
                 border-radius: 16px;
                 margin-bottom: 20px;
                 border: 2px solid color-mix(in srgb, var(--gold) 20%, transparent);
@@ -2600,7 +2605,7 @@ export const homeStyles = (): string => `
                 width: 100%;
                 /* No min-height — container matches the iframe's auto-resized height exactly,
                    eliminating the empty white space that appeared below the form */
-                background: #fff;
+                background: var(--surface);
                 border-radius: 24px;
                 border: 1px solid rgba(255, 255, 255, 0.6);
                 box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
@@ -2622,7 +2627,7 @@ export const homeStyles = (): string => `
                 left: 0;
                 right: 0;
                 height: 56px;
-                background: #fff;
+                background: var(--surface);
                 pointer-events: none;
                 z-index: 9;
                 border-radius: 0 0 24px 24px;
@@ -2762,7 +2767,7 @@ export const homeStyles = (): string => `
             .btn-calendar:hover {
                 transform: translateY(-4px);
                 box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-                background: #fff;
+                background: var(--white);
             }
             
             .calendar-icon {
@@ -2857,7 +2862,7 @@ export const homeStyles = (): string => `
                     background: #3d3a2a !important;
                 }
                 html.scrolled-past-hero {
-                    background: #f8f9fd !important;
+                    background: #faf8f5 !important;
                 }
                 body {
                     margin: 0;
@@ -2867,7 +2872,7 @@ export const homeStyles = (): string => `
                     transition: none;
                 }
                 html.scrolled-past-hero body {
-                    background: #f8f9fd !important;
+                    background: #faf8f5 !important;
                 }
             }
 
@@ -2948,7 +2953,7 @@ export const homeStyles = (): string => `
                     position: absolute;
                     inset: 0;
                     /* Dark olive at top → clear middle → page-bg white at bottom.
-                       Fading the image to #f8f9fd BEFORE the bridge blur means the
+                       Fading the image to #faf8f5 BEFORE the bridge blur means the
                        blur mixes two similar light colors instead of dark-vs-light,
                        eliminating the muddy brown band. */
                     background: linear-gradient(
@@ -2959,10 +2964,10 @@ export const homeStyles = (): string => `
                         rgba(0, 0, 0, 0.18) 30%,
                         rgba(0, 0, 0, 0.05) 55%,
                         transparent 70%,
-                        rgba(248, 249, 253, 0.35) 82%,
-                        rgba(248, 249, 253, 0.7) 90%,
-                        rgba(248, 249, 253, 0.95) 97%,
-                        #f8f9fd 100%
+                        rgba(250, 248, 245, 0.35) 82%,
+                        rgba(250, 248, 245, 0.7) 90%,
+                        rgba(250, 248, 245, 0.95) 97%,
+                        #faf8f5 100%
                     );
                     z-index: 2;
                     pointer-events: none;
@@ -4378,7 +4383,7 @@ export const homeStyles = (): string => `
                     width: calc(100% - 28px); /* Match mobile form card width */
                     height: 20px;
                     border-radius: 0 0 16px 16px;
-                    box-shadow: 0 95px 0 0 #f8f9fd; /* Taller shadow */
+                    box-shadow: 0 95px 0 0 #faf8f5; /* Taller shadow */
                 }
                 
                 .jotform-container::after {
@@ -4527,9 +4532,9 @@ export const homeStyles = (): string => `
                         rgba(0, 0, 0, 0.28) 10%,
                         rgba(0, 0, 0, 0.10) 28%,
                         rgba(0, 0, 0, 0.10) 82%,
-                        rgba(248, 249, 253, 0.18) 91%,
-                        rgba(248, 249, 253, 0.55) 96%,
-                        #f8f9fd 100%
+                        rgba(250, 248, 245, 0.18) 91%,
+                        rgba(250, 248, 245, 0.55) 96%,
+                        #faf8f5 100%
                     );
                     z-index: 2;
                     pointer-events: none;

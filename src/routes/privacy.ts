@@ -43,7 +43,7 @@ export function registerPrivacyRoute(app: Hono) {
               
               body {
                   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                  background: #f8f9fd;
+                  background: #faf8f5;
                   color: #1a1a2e;
                   line-height: 1.7;
                   min-height: 100vh;

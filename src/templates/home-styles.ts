@@ -1101,6 +1101,11 @@ export const homeStyles = (): string => `
                 transform: translateY(-2px);
             }
 
+            /* Browse Memories button — sentence case, no wide tracking */
+            #carousel-see-past-btn {
+                text-transform: none;
+                letter-spacing: 0.3px;
+            }
 
             /* MEMORIES text inside .event-card-header — matches date/time plain gold style */
             .event-card-header .past-card-badge {
@@ -1215,11 +1220,11 @@ export const homeStyles = (): string => `
             .carousel-past-card .past-card-icon { font-size: 40px; margin-bottom: 10px; }
             .carousel-past-card .past-card-title {
                 font-family: inherit;
-                font-size: var(--text-small); font-weight: var(--weight-semibold); margin: 0 0 8px 0; color: #1a1a2e;
+                font-size: 20px; font-weight: var(--weight-semibold); margin: 0 0 8px 0; color: #1a1a2e;
             }
             .carousel-past-card .past-card-text {
-                font-size: var(--text-label); color: #595970;
-                line-height: var(--leading-normal); margin-bottom: 14px; max-width: 200px;
+                font-size: 16px; color: #595970;
+                line-height: var(--leading-normal); margin-bottom: 14px;
             }
             .carousel-past-card .past-card-btn {
                 display: flex; align-items: center; justify-content: center;
@@ -1227,7 +1232,7 @@ export const homeStyles = (): string => `
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 border: none; color: #ffffff; border-radius: 100px;
                 font-size: var(--text-small); font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide); text-transform: uppercase;
+                letter-spacing: 0.3px; text-transform: none;
                 cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
                 position: relative; z-index: 2;
@@ -4978,8 +4983,8 @@ export const homeStyles = (): string => `
                     padding: 32px 24px;
                 }
                 .carousel-past-card .past-card-icon { font-size: 48px; }
-                .carousel-past-card .past-card-text { font-size: var(--text-small); max-width: 240px; }
-                .carousel-past-card .past-card-btn { padding: 14px 32px; font-size: var(--text-label); }
+                .carousel-past-card .past-card-text { font-size: 16px; }
+                .carousel-past-card .past-card-btn { padding: 14px 32px; font-size: var(--text-small); }
 
                 .event-flyer-wrapper.glow-warm {
                     box-shadow: 0 16px 56px color-mix(in srgb, var(--gold) 55%, transparent), 0 8px 24px color-mix(in srgb, var(--gold) 35%, transparent);

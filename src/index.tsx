@@ -1,4 +1,4 @@
-// Version: 1.35.7 - Fix button font size too small on mobile
+// Version: 1.35.8 - Bigger card text, Browse Memories button copy
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

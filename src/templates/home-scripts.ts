@@ -1130,56 +1130,27 @@ export const homeScripts = (): string => `
                 var _ytVideoId = null;
                 var _videoActivated = false;
                 var _shouldAutoPlay = false;
-                var _ytApiReady = false;
 
-                // Pre-load YouTube IFrame API so it's ready when user taps play
-                var ytTag = document.createElement('script');
-                ytTag.src = 'https://www.youtube.com/iframe_api';
-                document.head.appendChild(ytTag);
-                window.onYouTubeIframeAPIReady = function() {
-                    _ytApiReady = true;
-                    // If user already tapped play before API loaded, activate now
-                    if (_videoActivated && _ytVideoId) {
-                        createYTPlayer();
-                    }
-                };
+                function activateVideo() {
+                    if (!_ytVideoId || !videoWrapper || !videoThumbnail || _videoActivated) return;
+                    _videoActivated = true;
 
-                function createYTPlayer() {
-                    var playerDiv = document.createElement('div');
-                    playerDiv.id = 'yt-player';
-                    playerDiv.className = 'youtube-embed';
-                    videoWrapper.appendChild(playerDiv);
-                    new window.YT.Player('yt-player', {
-                        videoId: _ytVideoId,
-                        playerVars: {
-                            autoplay: 1,
-                            rel: 0,
-                            modestbranding: 1,
-                            playsinline: 1
-                        },
-                        events: {
-                            onReady: function(event) {
-                                event.target.playVideo();
-                            }
-                        }
-                    });
+                    // Insert a plain iframe synchronously — no API dependency.
+                    // Because this runs in the tap handler's call stack, the browser
+                    // treats autoplay=1 as user-initiated and plays immediately.
+                    var iframe = document.createElement('iframe');
+                    iframe.className = 'youtube-embed';
+                    iframe.setAttribute('allowfullscreen', '');
+                    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                    iframe.src = 'https://www.youtube.com/embed/' + _ytVideoId
+                        + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+                    videoWrapper.appendChild(iframe);
                     videoThumbnail.classList.add('hidden');
                     setTimeout(function() {
                         if (videoThumbnail.parentNode) {
                             videoThumbnail.parentNode.removeChild(videoThumbnail);
                         }
                     }, 300);
-                }
-
-                function activateVideo() {
-                    if (!_ytVideoId || !videoWrapper || !videoThumbnail || _videoActivated) return;
-                    _videoActivated = true;
-
-                    if (_ytApiReady) {
-                        // API already loaded — create player synchronously in the tap handler
-                        createYTPlayer();
-                    }
-                    // else: onYouTubeIframeAPIReady will call createYTPlayer when ready
                 }
 
                 function showVideoFallback() {

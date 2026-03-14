@@ -1134,23 +1134,45 @@ export const homeScripts = (): string => `
                 function activateVideo() {
                     if (!_ytVideoId || !videoWrapper || !videoThumbnail || _videoActivated) return;
                     _videoActivated = true;
-                    var iframe = document.createElement('iframe');
-                    iframe.className = 'youtube-embed';
-                    iframe.setAttribute('src',
-                        'https://www.youtube-nocookie.com/embed/' + _ytVideoId +
-                        '?autoplay=1&rel=0&modestbranding=1');
-                    iframe.setAttribute('title', 'Latest Sunday Service');
-                    iframe.setAttribute('frameborder', '0');
-                    iframe.setAttribute('allow',
-                        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
-                    iframe.setAttribute('allowfullscreen', '');
-                    videoWrapper.appendChild(iframe);
-                    videoThumbnail.classList.add('hidden');
-                    setTimeout(function() {
-                        if (videoThumbnail.parentNode) {
-                            videoThumbnail.parentNode.removeChild(videoThumbnail);
-                        }
-                    }, 300);
+
+                    // Load YouTube IFrame API if not already loaded
+                    if (!window.YT || !window.YT.Player) {
+                        var tag = document.createElement('script');
+                        tag.src = 'https://www.youtube.com/iframe_api';
+                        document.head.appendChild(tag);
+                        window.onYouTubeIframeAPIReady = function() {
+                            createPlayer();
+                        };
+                    } else {
+                        createPlayer();
+                    }
+
+                    function createPlayer() {
+                        var playerDiv = document.createElement('div');
+                        playerDiv.id = 'yt-player';
+                        playerDiv.className = 'youtube-embed';
+                        videoWrapper.appendChild(playerDiv);
+                        new window.YT.Player('yt-player', {
+                            videoId: _ytVideoId,
+                            playerVars: {
+                                autoplay: 1,
+                                rel: 0,
+                                modestbranding: 1,
+                                playsinline: 1
+                            },
+                            events: {
+                                onReady: function(event) {
+                                    event.target.playVideo();
+                                }
+                            }
+                        });
+                        videoThumbnail.classList.add('hidden');
+                        setTimeout(function() {
+                            if (videoThumbnail.parentNode) {
+                                videoThumbnail.parentNode.removeChild(videoThumbnail);
+                            }
+                        }, 300);
+                    }
                 }
 
                 function showVideoFallback() {

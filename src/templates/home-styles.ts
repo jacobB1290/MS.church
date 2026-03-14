@@ -2202,7 +2202,8 @@ export const homeStyles = (): string => `
                             0 16px 48px rgba(139, 0, 0, 0.15);
             }
             
-            .youtube-embed {
+            .youtube-embed,
+            .youtube-embed iframe {
                 position: absolute;
                 top: 0;
                 left: 0;

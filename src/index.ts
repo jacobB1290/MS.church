@@ -1,4 +1,4 @@
-// Version: 1.35.6 - Fix mobile carousel cards touching viewport edges
+// Version: 1.35.7 - Fix button font size too small on mobile
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

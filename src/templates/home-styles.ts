@@ -1083,7 +1083,7 @@ export const homeStyles = (): string => `
                 font-family: var(--font-body), 'Inter', sans-serif;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 border-radius: 100px;
-                font-size: var(--text-label);
+                font-size: var(--text-small);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
@@ -1226,7 +1226,7 @@ export const homeStyles = (): string => `
                 width: 100%; padding: 12px 24px; box-sizing: border-box;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 border: none; color: #ffffff; border-radius: 100px;
-                font-size: var(--text-label); font-weight: var(--weight-bold);
+                font-size: var(--text-small); font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide); text-transform: uppercase;
                 cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);

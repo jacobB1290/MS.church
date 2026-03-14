@@ -330,3 +330,109 @@ Vercel Analytics and Speed Insights are loaded conditionally in the client via d
 10. **Church details** — address is 3080 Wildwood St (also written as "3080 N Wildwood St"), Boise, ID 83713. Email: `morningstarchurchboise@gmail.com`. Sunday service at 9:00 AM (10:00 AM per Schema.org — verify with church before changing).
 
 11. **Calendar events** are fetched server-side in `src/routes/calendar.ts` with a 5-minute in-memory cache. The client calls `/api/calendar/events` — it does NOT call Google Calendar directly anymore. Update image URL handling in `calendar.ts` if the lh3.googleusercontent.com format changes.
+
+---
+
+## Outreach Section — Editing Guide
+
+The outreach section is the most complex part of the page. Mistakes here took many iterations to fix. Follow these rules precisely.
+
+### Where the code lives
+
+| What | File | What to search for |
+|------|------|--------------------|
+| Card HTML structure | `src/templates/home-scripts.ts` | `renderUpcomingEventCard`, `carousel-past-card` |
+| Card CSS | `src/templates/home-styles.ts` | `.event-outer-card`, `.carousel-card`, `.carousel-past-card` |
+| Carousel JS logic | `src/templates/home-scripts.ts` | `initCarousel`, `startAutoTick` |
+| Memories card HTML | `src/templates/home-scripts.ts` | `carousel-see-past-btn`, `past-card-title` |
+
+### Card structure hierarchy
+
+```
+.carousel-card          ← slot in the scroll container; controls edge spacing
+  .event-card           ← inner wrapper
+    .event-outer-card   ← visible white frosted-glass card (rounded, shadowed)
+      .event-card-header ← date (left) + time pill (right), or MEMORIES label
+      .event-flyer-wrapper / .carousel-past-card  ← image or memories content
+      .event-link-btn   ← gold pill CTA button at the bottom of the card
+```
+
+### Width and spacing rules
+
+**NEVER** change the outreach section's width beyond `width: 100%; max-width: 100%`. It must inherit from `.page` like every other section. Violations that were removed and must not return:
+- `width: 100vw` on `.outreach` — made the section wider than all siblings
+- `margin-left: calc(50% - 50vw)` or any negative-margin full-bleed trick on `.outreach` or `.carousel-wrapper` — caused asymmetric card positioning
+
+**The correct way to give cards edge spacing on mobile** is to add horizontal `padding` to `.carousel-card` in the `@media (max-width: 960px)` block:
+```css
+@media (max-width: 960px) {
+    .carousel-card {
+        padding: 0 16px;  /* breathing room from viewport edges */
+    }
+}
+```
+At `≤480px`, reduce this to `0 4px` because `.page` already adds its own `clamp(3%, 5vw, 5%)` padding at that breakpoint — stacking both would over-inset the card.
+
+### Mobile carousel: what must never be re-added
+
+These were explicitly removed and must not come back:
+
+1. **Navigation arrows on mobile** — hidden with `display: none !important` in `@media (max-width: 960px)`. The `!important` is required because JS sets `style.display = 'flex'` inline during `render()`. Without it, arrows reappear.
+
+2. **`clip-path: inset(-60px 0px)` (zero horizontal bleed)** — this was replaced with `inset(-60px -16px -60px -16px)` so card box-shadows can fade naturally at the left/right edges rather than being hard-clipped. Do not revert to `0px`.
+
+3. **Adjacent card bleed** — if you increase the horizontal clip beyond `-16px`, or if you accidentally remove the negative margin that keeps adjacent cards a full viewport-width away, the neighbouring card will peek through. The carousel positions cards by `transform: translateX(index * 100%)`, so they are already full-viewport-width apart. The `-16px` bleed is safe.
+
+### CSS typography tokens — use these, not raw px
+
+```
+--text-eyebrow: 10px   ← badges, overlines (OUTREACH label, MEMORIES badge)
+--text-label:   12px   ← do NOT use for card content or buttons; too small for mobile
+--text-small:   14px   ← minimum for button text (event-link-btn uses this)
+--text-heading: clamp(20px, 2.5vw, 26px)  ← card sub-headings
+```
+
+**Minimum readable sizes for the outreach card on mobile (industry standard):**
+- Card section title (`.past-card-title`): **20px**
+- Card body text (`.past-card-description`, `.past-card-text`): **16px** — this is the iOS/Android minimum to avoid browser auto-zoom
+- Button text (`.event-link-btn`): **14px** (`--text-small`) — set at the base rule, not only at the desktop breakpoint
+
+### Button rules
+
+There are two distinct button classes in this section:
+
+| Class | Used for | Location |
+|-------|----------|----------|
+| `.event-link-btn` | CTA buttons on all carousel cards (GET DIRECTIONS, Browse Memories) | `home-scripts.ts` |
+| `.carousel-past-card .past-card-btn` | "Browse Memories" button in the desktop 2-up grid memories card | `home-scripts.ts` |
+
+Both share identical visual styling. **Both must have their font-size set at the base rule level** (not only in a desktop `min-width` override), otherwise mobile gets a smaller size than desktop.
+
+**`text-transform` on buttons:**
+- `.event-link-btn` uses `text-transform: uppercase` — correct for CTA buttons like GET DIRECTIONS
+- The **Browse Memories** button (`#carousel-see-past-btn`) overrides this with `text-transform: none; letter-spacing: 0.3px` — it is sentence case intentionally
+- Do NOT remove the `#carousel-see-past-btn` override or the button will revert to "BROWSE MEMORIES"
+
+**`font-family` on buttons:** `<button>` elements do NOT inherit `font-family` in some browsers. The `.event-link-btn` rule explicitly sets `font-family: var(--font-body), 'Inter', sans-serif`. Do not change this back to `font-family: inherit`.
+
+### Memories card copy
+
+The "Memories" card text and button label are hardcoded in `home-scripts.ts` in **two places** — the desktop 2-up grid render (search `btn-view-past-events-desktop`) and the mobile carousel render (search `carousel-see-past-btn`). When changing copy, update **both**:
+
+```
+desktop:  <span class="past-card-btn">Browse Memories</span>
+carousel: <button class="event-link-btn" id="carousel-see-past-btn">Browse Memories</button>
+```
+
+### Auto-scroll threshold
+
+`startAutoTick()` only starts if `getMaxIndex() >= 2` (i.e. there are at least 2 total carousel slots). With 1 upcoming event and 1 memories card, that's exactly 2 — auto-scroll runs. With only a Stay Tuned card (no events), there's only 1 slot — auto-scroll correctly skips. Do not lower this threshold.
+
+### Breakpoints that apply to the outreach section
+
+| Breakpoint | Key effect |
+|------------|-----------|
+| `> 960px` (desktop) | Two-column grid layout: event cards left, memories card right |
+| `≤ 960px` (mobile) | Single-column carousel; arrows hidden; `carousel-card` gets horizontal padding |
+| `≤ 899px` | `.page` loses its padding; outreach stays `width: 100%` inheriting full viewport width |
+| `≤ 480px` | `.page` regains `clamp(3%, 5vw, 5%)` padding; `carousel-card` padding reduced to `0 4px` |

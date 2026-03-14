@@ -1122,28 +1122,102 @@ export const homeScripts = (): string => `
                 updateCountdown();
                 setInterval(updateCountdown, 1000);
 
+                // YouTube thumbnail-to-playback
+                var videoWrapper = document.getElementById('video-embed-wrapper');
+                var videoThumbnail = document.getElementById('video-thumbnail');
+                var videoThumbnailImg = document.getElementById('video-thumbnail-img');
+                var videoPlayBtn = document.getElementById('video-play-btn');
+                var _ytVideoId = null;
+                var _videoActivated = false;
+                var _shouldAutoPlay = false;
+
+                function activateVideo() {
+                    if (!_ytVideoId || !videoWrapper || !videoThumbnail || _videoActivated) return;
+                    _videoActivated = true;
+                    var iframe = document.createElement('iframe');
+                    iframe.className = 'youtube-embed';
+                    iframe.setAttribute('src',
+                        'https://www.youtube-nocookie.com/embed/' + _ytVideoId +
+                        '?autoplay=1&rel=0&modestbranding=1');
+                    iframe.setAttribute('title', 'Latest Sunday Service');
+                    iframe.setAttribute('frameborder', '0');
+                    iframe.setAttribute('allow',
+                        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+                    iframe.setAttribute('allowfullscreen', '');
+                    videoWrapper.appendChild(iframe);
+                    videoThumbnail.classList.add('hidden');
+                    setTimeout(function() {
+                        if (videoThumbnail.parentNode) {
+                            videoThumbnail.parentNode.removeChild(videoThumbnail);
+                        }
+                    }, 300);
+                }
+
+                function showVideoFallback() {
+                    if (!videoThumbnail || !videoWrapper) return;
+                    videoThumbnail.innerHTML = '';
+                    var link = document.createElement('a');
+                    link.className = 'video-fallback-link';
+                    link.href = 'https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC';
+                    link.target = '_blank';
+                    link.rel = 'noopener';
+                    link.textContent = 'Watch on YouTube';
+                    videoWrapper.appendChild(link);
+                    videoWrapper.style.background = '#1a1a2e';
+                }
+
+                fetch('/api/youtube/latest-video')
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (data.success && data.videoId) {
+                            _ytVideoId = data.videoId;
+                            if (videoThumbnailImg) {
+                                videoThumbnailImg.src = data.thumbnailUrl;
+                                videoThumbnailImg.onerror = function() {
+                                    this.onerror = null;
+                                    this.src = 'https://img.youtube.com/vi/' + data.videoId + '/hqdefault.jpg';
+                                };
+                            }
+                            if (videoPlayBtn) {
+                                videoPlayBtn.addEventListener('click', function(e) {
+                                    e.stopPropagation();
+                                    activateVideo();
+                                });
+                            }
+                            if (videoThumbnail) {
+                                videoThumbnail.addEventListener('click', activateVideo);
+                            }
+                            if (_shouldAutoPlay) {
+                                activateVideo();
+                            }
+                        } else {
+                            showVideoFallback();
+                        }
+                    })
+                    .catch(function() {
+                        showVideoFallback();
+                    });
+
                 // Auto-play video during Sunday service (9:00am - 9:45am MT)
                 function checkAutoPlay() {
-                    const mtNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
-                    const isSundayServiceTime = mtNow.getDay() === 0 &&
+                    var mtNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
+                    var isSundayServiceTime = mtNow.getDay() === 0 &&
                                                 mtNow.getHours() === 9 &&
                                                 mtNow.getMinutes() < 45;
                     if (isSundayServiceTime) {
-                        const youtubeEmbed = document.querySelector('.youtube-embed');
-                        if (youtubeEmbed) {
-                            const currentSrc = youtubeEmbed.getAttribute('src');
-                            if (currentSrc && !currentSrc.includes('autoplay=1')) {
-                                youtubeEmbed.setAttribute('src', currentSrc + '&autoplay=1&mute=1');
-                            }
+                        if (_ytVideoId) {
+                            activateVideo();
+                        } else {
+                            _shouldAutoPlay = true;
                         }
                     }
                 }
 
                 // Disconnect observer after first trigger to prevent memory leak
-                const watchSection = document.querySelector('#watch');
+                var watchSection = document.querySelector('#watch');
                 if (watchSection) {
-                    const observer = new IntersectionObserver((entries, obs) => {
-                        entries.forEach(entry => {
+                    var observer = new IntersectionObserver(function(entries, obs) {
+                        entries.forEach(function(entry) {
                             if (entry.isIntersecting) {
                                 checkAutoPlay();
                                 obs.disconnect();

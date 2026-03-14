@@ -2211,7 +2211,75 @@ export const homeStyles = (): string => `
                 border: none;
                 border-radius: 16px;
             }
-            
+
+            /* Custom YouTube Thumbnail Overlay */
+            .video-thumbnail {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+                z-index: 2;
+                transition: opacity 250ms ease;
+                background: #0a0a0a;
+                border-radius: 16px;
+            }
+
+            .video-thumbnail.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .video-thumbnail-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 16px;
+                display: block;
+            }
+
+            .video-play-btn {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+                z-index: 3;
+                transition: transform 150ms ease;
+            }
+
+            .video-play-btn:hover {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+
+            .video-play-btn:hover .video-play-btn-bg {
+                fill: #cc0000;
+            }
+
+            .video-fallback-link {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 2;
+                background: rgba(0, 0, 0, 0.7);
+                color: #fff;
+                padding: 16px 32px;
+                border-radius: 12px;
+                font-family: var(--font-body), 'Inter', sans-serif;
+                font-size: 16px;
+                text-decoration: none;
+                transition: background 200ms ease;
+            }
+
+            .video-fallback-link:hover {
+                background: rgba(0, 0, 0, 0.85);
+            }
+
             .playlist-section {
                 display: flex;
                 flex-direction: column;

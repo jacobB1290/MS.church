@@ -4,6 +4,7 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { registerCalendarRoute } from './routes/calendar.js'
+import { registerYouTubeRoute } from './routes/youtube.js'
 import { registerHomeRoute } from './routes/home.js'
 import { registerPrivacyRoute } from './routes/privacy.js'
 import { registerMiscRoutes } from './routes/misc.js'
@@ -13,6 +14,7 @@ const app = new Hono()
 app.use('/api/*', cors())
 
 registerCalendarRoute(app)
+registerYouTubeRoute(app)
 registerHomeRoute(app)
 registerPrivacyRoute(app)
 registerMiscRoutes(app)

@@ -2261,46 +2261,37 @@ export const homeStyles = (): string => `
                 fill: #cc0000;
             }
 
-            /* Play button morph-to-spinner animation */
-            .play-icon {
-                transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+            /* Play button morph-to-spinner — single SVG, no element swap */
+            .video-play-btn-bg,
+            .play-triangle {
+                transition: opacity 350ms cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            .play-spinner {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 48px;
-                height: 48px;
-                margin: -24px 0 0 -24px;
-                border: 4px solid rgba(255, 0, 0, 0.3);
-                border-top-color: #FF0000;
-                border-radius: 50%;
+            .play-spinner-ring {
                 opacity: 0;
-                transform: scale(0.8);
-                transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
-                pointer-events: none;
+                transform-origin: 34px 24px;
+                transform-box: fill-box;
+                transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            .video-play-btn.is-loading .play-icon {
+            /* Loading: play shapes fade out, ring fades in already spinning */
+            .video-play-btn.is-loading .video-play-btn-bg {
                 opacity: 0;
-                transform: scale(0.7);
             }
 
-            .video-play-btn.is-loading .play-spinner {
+            .video-play-btn.is-loading .play-triangle {
+                opacity: 0;
+            }
+
+            .video-play-btn.is-loading .play-spinner-ring {
                 opacity: 1;
-                transform: scale(1);
-                animation: playBtnSpin 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+                animation: playBtnSpin 0.9s linear infinite;
             }
 
-            /* Revealing: spinner and thumbnail fade out together */
-            .video-play-btn.is-revealing .play-spinner {
+            /* Revealing: ring and thumbnail fade out together */
+            .video-play-btn.is-revealing .play-spinner-ring {
                 opacity: 0;
-                transform: scale(0.6);
-                transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+                transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1);
                 animation: none;
             }
 
@@ -2311,7 +2302,8 @@ export const homeStyles = (): string => `
             }
 
             @keyframes playBtnSpin {
-                to { transform: scale(1) rotate(360deg); }
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
             }
 
             .video-fallback-link {

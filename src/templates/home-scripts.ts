@@ -1130,21 +1130,43 @@ export const homeScripts = (): string => `
                 var _ytVideoId = null;
                 var _videoActivated = false;
                 var _shouldAutoPlay = false;
+                var _preloadedIframe = null;
+
+                // Pre-embed iframe hidden behind thumbnail so it's fully loaded on tap.
+                // On tap we just postMessage "playVideo" and reveal — no iframe creation
+                // delay, no API loading, 100% synchronous in the gesture handler.
+                function preloadIframe(videoId) {
+                    if (_preloadedIframe || !videoWrapper) return;
+                    var iframe = document.createElement('iframe');
+                    iframe.className = 'youtube-embed';
+                    iframe.setAttribute('allowfullscreen', '');
+                    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                    iframe.src = 'https://www.youtube.com/embed/' + videoId
+                        + '?enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
+                    // Insert behind thumbnail (z-index 2) — iframe sits at z-index 0
+                    videoWrapper.insertBefore(iframe, videoWrapper.firstChild);
+                    _preloadedIframe = iframe;
+                }
 
                 function activateVideo() {
                     if (!_ytVideoId || !videoWrapper || !videoThumbnail || _videoActivated) return;
                     _videoActivated = true;
 
-                    // Insert a plain iframe synchronously — no API dependency.
-                    // Because this runs in the tap handler's call stack, the browser
-                    // treats autoplay=1 as user-initiated and plays immediately.
-                    var iframe = document.createElement('iframe');
-                    iframe.className = 'youtube-embed';
-                    iframe.setAttribute('allowfullscreen', '');
-                    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-                    iframe.src = 'https://www.youtube.com/embed/' + _ytVideoId
-                        + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
-                    videoWrapper.appendChild(iframe);
+                    if (_preloadedIframe) {
+                        // Iframe already loaded behind thumbnail — tell it to play
+                        _preloadedIframe.contentWindow.postMessage(
+                            '{"event":"command","func":"playVideo","args":""}', '*'
+                        );
+                    } else {
+                        // Fallback: iframe not ready yet, create one with autoplay
+                        var iframe = document.createElement('iframe');
+                        iframe.className = 'youtube-embed';
+                        iframe.setAttribute('allowfullscreen', '');
+                        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                        iframe.src = 'https://www.youtube.com/embed/' + _ytVideoId
+                            + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+                        videoWrapper.appendChild(iframe);
+                    }
                     videoThumbnail.classList.add('hidden');
                     setTimeout(function() {
                         if (videoThumbnail.parentNode) {
@@ -1171,6 +1193,8 @@ export const homeScripts = (): string => `
                     .then(function(data) {
                         if (data.success && data.videoId) {
                             _ytVideoId = data.videoId;
+                            // Pre-load the YouTube iframe behind the thumbnail
+                            preloadIframe(data.videoId);
                             if (videoThumbnailImg) {
                                 videoThumbnailImg.src = data.thumbnailUrl;
                                 videoThumbnailImg.onerror = function() {

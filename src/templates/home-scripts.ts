@@ -1122,7 +1122,7 @@ export const homeScripts = (): string => `
                 updateCountdown();
                 setInterval(updateCountdown, 1000);
 
-                // YouTube thumbnail-to-playback
+                // YouTube thumbnail-to-playback with morph-to-spinner animation
                 var videoWrapper = document.getElementById('video-embed-wrapper');
                 var videoThumbnail = document.getElementById('video-thumbnail');
                 var videoThumbnailImg = document.getElementById('video-thumbnail-img');
@@ -1131,10 +1131,10 @@ export const homeScripts = (): string => `
                 var _videoActivated = false;
                 var _shouldAutoPlay = false;
                 var _preloadedIframe = null;
+                var _playbackConfirmed = false;
+                var _revealTimeout = null;
 
                 // Pre-embed iframe hidden behind thumbnail so it's fully loaded on tap.
-                // On tap we just postMessage "playVideo" and reveal — no iframe creation
-                // delay, no API loading, 100% synchronous in the gesture handler.
                 function preloadIframe(videoId) {
                     if (_preloadedIframe || !videoWrapper) return;
                     var iframe = document.createElement('iframe');
@@ -1143,20 +1143,52 @@ export const homeScripts = (): string => `
                     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
                     iframe.src = 'https://www.youtube.com/embed/' + videoId
                         + '?enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
-                    // Insert behind thumbnail (z-index 2) — iframe sits at z-index 0
                     videoWrapper.insertBefore(iframe, videoWrapper.firstChild);
                     _preloadedIframe = iframe;
+                    iframe.addEventListener('load', function() {
+                        setTimeout(subscribeToYTEvents, 500);
+                    });
                 }
+
+                // Subscribe to YouTube iframe state change events via postMessage
+                function subscribeToYTEvents() {
+                    if (!_preloadedIframe || !_preloadedIframe.contentWindow) return;
+                    _preloadedIframe.contentWindow.postMessage(JSON.stringify({
+                        event: 'listening', id: 1
+                    }), '*');
+                    _preloadedIframe.contentWindow.postMessage(JSON.stringify({
+                        event: 'command', func: 'addEventListener', args: ['onStateChange']
+                    }), '*');
+                }
+
+                // Listen for YouTube state change — info=1 means PLAYING
+                window.addEventListener('message', function(event) {
+                    if (_playbackConfirmed || !event.data || typeof event.data !== 'string') return;
+                    try {
+                        var msg = JSON.parse(event.data);
+                        if (msg.event === 'onStateChange' && msg.info === 1) {
+                            _playbackConfirmed = true;
+                            revealVideo();
+                        }
+                    } catch (e) {}
+                });
 
                 function activateVideo() {
                     if (!_ytVideoId || !videoWrapper || !videoThumbnail || _videoActivated) return;
                     _videoActivated = true;
 
+                    // Phase 1: Morph play button into spinner
+                    if (videoPlayBtn) {
+                        videoPlayBtn.classList.add('is-loading');
+                        videoPlayBtn.style.pointerEvents = 'none';
+                    }
+
+                    // Send play command
                     if (_preloadedIframe) {
-                        // Iframe already loaded behind thumbnail — tell it to play
                         _preloadedIframe.contentWindow.postMessage(
                             '{"event":"command","func":"playVideo","args":""}', '*'
                         );
+                        subscribeToYTEvents();
                     } else {
                         // Fallback: iframe not ready yet, create one with autoplay
                         var iframe = document.createElement('iframe');
@@ -1164,15 +1196,39 @@ export const homeScripts = (): string => `
                         iframe.setAttribute('allowfullscreen', '');
                         iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
                         iframe.src = 'https://www.youtube.com/embed/' + _ytVideoId
-                            + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+                            + '?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
                         videoWrapper.appendChild(iframe);
+                        _preloadedIframe = iframe;
+                        iframe.addEventListener('load', function() {
+                            setTimeout(subscribeToYTEvents, 500);
+                        });
                     }
-                    videoThumbnail.classList.add('hidden');
+
+                    // Fallback: reveal after 3.5s if postMessage detection fails
+                    _revealTimeout = setTimeout(function() {
+                        if (!_playbackConfirmed) revealVideo();
+                    }, 3500);
+                }
+
+                function revealVideo() {
+                    if (!videoThumbnail || videoThumbnail.classList.contains('hidden')) return;
+                    if (_revealTimeout) { clearTimeout(_revealTimeout); _revealTimeout = null; }
+
+                    // Phase 2: Spinner shrinks away
+                    if (videoPlayBtn) {
+                        videoPlayBtn.classList.remove('is-loading');
+                        videoPlayBtn.classList.add('is-revealing');
+                    }
+
+                    // Phase 3: Fade out thumbnail after spinner exit animation
                     setTimeout(function() {
-                        if (videoThumbnail.parentNode) {
-                            videoThumbnail.parentNode.removeChild(videoThumbnail);
-                        }
-                    }, 300);
+                        videoThumbnail.classList.add('hidden');
+                        setTimeout(function() {
+                            if (videoThumbnail.parentNode) {
+                                videoThumbnail.parentNode.removeChild(videoThumbnail);
+                            }
+                        }, 300);
+                    }, 200);
                 }
 
                 function showVideoFallback() {

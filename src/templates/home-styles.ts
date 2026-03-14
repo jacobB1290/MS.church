@@ -2253,12 +2253,55 @@ export const homeStyles = (): string => `
                 transition: transform 150ms ease;
             }
 
-            .video-play-btn:hover {
+            .video-play-btn:hover:not(.is-loading):not(.is-revealing) {
                 transform: translate(-50%, -50%) scale(1.1);
             }
 
-            .video-play-btn:hover .video-play-btn-bg {
+            .video-play-btn:hover:not(.is-loading):not(.is-revealing) .video-play-btn-bg {
                 fill: #cc0000;
+            }
+
+            /* Play button morph-to-spinner animation */
+            .play-icon {
+                transition: opacity 250ms ease, transform 250ms ease;
+            }
+
+            .play-spinner {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 48px;
+                height: 48px;
+                margin: -24px 0 0 -24px;
+                border: 4px solid rgba(255, 255, 255, 0.3);
+                border-top-color: #fff;
+                border-radius: 50%;
+                opacity: 0;
+                transform: scale(0.5);
+                transition: opacity 250ms ease, transform 250ms ease;
+                pointer-events: none;
+            }
+
+            .video-play-btn.is-loading .play-icon {
+                opacity: 0;
+                transform: scale(0.6);
+            }
+
+            .video-play-btn.is-loading .play-spinner {
+                opacity: 1;
+                transform: scale(1);
+                animation: playBtnSpin 0.8s linear infinite;
+            }
+
+            .video-play-btn.is-revealing .play-spinner {
+                opacity: 0;
+                transform: scale(0.3);
+                transition: opacity 200ms ease, transform 200ms ease;
+                animation: none;
+            }
+
+            @keyframes playBtnSpin {
+                to { transform: scale(1) rotate(360deg); }
             }
 
             .video-fallback-link {

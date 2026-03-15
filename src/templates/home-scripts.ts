@@ -1127,9 +1127,11 @@ export const homeScripts = (): string => `
                 var videoThumbnail = document.getElementById('video-thumbnail');
                 var videoThumbnailImg = document.getElementById('video-thumbnail-img');
                 var videoPlayBtn = document.getElementById('video-play-btn');
+                var videoUnmuteBtn = document.getElementById('video-unmute-btn');
                 var _ytVideoId = null;
                 var _videoActivated = false;
                 var _shouldAutoPlay = false;
+                var _isMutedAutoPlay = false;
                 var _preloadedIframe = null;
                 var _playbackConfirmed = false;
                 var _revealTimeout = null;
@@ -1231,7 +1233,35 @@ export const homeScripts = (): string => `
                         if (videoThumbnail.parentNode) {
                             videoThumbnail.parentNode.removeChild(videoThumbnail);
                         }
+                        // Show unmute button after thumbnail is gone (muted auto-play only)
+                        if (_isMutedAutoPlay && videoUnmuteBtn) {
+                            videoUnmuteBtn.classList.add('visible');
+                        }
                     }, 650);
+                }
+
+                // Unmute handler — uses YouTube iframe API postMessage for all platforms including Safari
+                if (videoUnmuteBtn) {
+                    videoUnmuteBtn.addEventListener('click', function() {
+                        if (_preloadedIframe && _preloadedIframe.contentWindow) {
+                            // YouTube iframe API: unMute command
+                            _preloadedIframe.contentWindow.postMessage(
+                                '{"event":"command","func":"unMute","args":""}', '*'
+                            );
+                            // Also set volume to ensure audible on all platforms
+                            _preloadedIframe.contentWindow.postMessage(
+                                '{"event":"command","func":"setVolume","args":[100]}', '*'
+                            );
+                        }
+                        _isMutedAutoPlay = false;
+                        videoUnmuteBtn.classList.add('hiding');
+                        videoUnmuteBtn.classList.remove('visible');
+                        setTimeout(function() {
+                            if (videoUnmuteBtn.parentNode) {
+                                videoUnmuteBtn.parentNode.removeChild(videoUnmuteBtn);
+                            }
+                        }, 350);
+                    });
                 }
 
                 // Hardcoded fallback video ID — updated periodically, used when API is unreachable
@@ -1260,6 +1290,7 @@ export const homeScripts = (): string => `
                     if (_shouldAutoPlay) {
                         // iframe was created with autoplay=1&mute=1, so playback
                         // starts automatically — just reveal it
+                        _isMutedAutoPlay = true;
                         activateVideo();
                     }
                 }
@@ -1287,6 +1318,7 @@ export const homeScripts = (): string => `
                                                 mtNow.getMinutes() < 45;
                     if (isSundayServiceTime) {
                         _shouldAutoPlay = true;
+                        _isMutedAutoPlay = true;
                         if (_ytVideoId) {
                             // Video already loaded — rebuild iframe with autoplay+mute
                             // so the browser allows programmatic playback

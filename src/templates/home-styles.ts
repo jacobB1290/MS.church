@@ -2253,12 +2253,62 @@ export const homeStyles = (): string => `
                 transition: transform 150ms ease;
             }
 
-            .video-play-btn:hover {
+            .video-play-btn:hover:not(.is-loading):not(.is-revealing) {
                 transform: translate(-50%, -50%) scale(1.1);
             }
 
-            .video-play-btn:hover .video-play-btn-bg {
+            .video-play-btn:hover:not(.is-loading):not(.is-revealing) .video-play-btn-bg {
                 fill: #cc0000;
+            }
+
+            /* Play button morph-to-spinner — single SVG, no element swap */
+            .video-play-btn-bg,
+            .play-triangle {
+                transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .play-spinner-ring {
+                opacity: 0;
+                transform-origin: center;
+                transform-box: fill-box;
+                transition: opacity 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            /* Loading: play shapes fade out, ring fades in already spinning */
+            .video-play-btn.is-loading .video-play-btn-bg {
+                opacity: 0;
+            }
+
+            .video-play-btn.is-loading .play-triangle {
+                opacity: 0;
+            }
+
+            .video-play-btn.is-loading .play-spinner-ring {
+                opacity: 1;
+                animation: playBtnSpin 1.1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+
+            /* Revealing: spinner and thumbnail fade out together (is-loading stays on) */
+            .video-play-btn.is-revealing .play-spinner-ring {
+                opacity: 0;
+                transition: opacity 600ms cubic-bezier(0.4, 0, 0.2, 1);
+                animation: playBtnSpin 1.1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+
+            .video-play-btn.is-revealing .video-play-btn-bg,
+            .video-play-btn.is-revealing .play-triangle {
+                opacity: 0;
+            }
+
+            .video-thumbnail.is-revealing {
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 600ms cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            @keyframes playBtnSpin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
             }
 
             .video-fallback-link {

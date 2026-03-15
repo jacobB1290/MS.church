@@ -4,6 +4,15 @@ import { YOUTUBE_CONFIG } from '../config.js'
 // In-memory cache (same pattern as calendar.ts)
 let _cache: { data: unknown; ts: number } | null = null
 
+function makeResult(videoId: string, title: string) {
+  return {
+    success: true,
+    videoId,
+    title,
+    thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+  }
+}
+
 export function registerYouTubeRoute(app: Hono) {
   app.get('/api/youtube/latest-video', async (c) => {
     try {
@@ -16,54 +25,57 @@ export function registerYouTubeRoute(app: Hono) {
 
       // Use the public YouTube RSS feed — no API key required
       const feedUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${YOUTUBE_CONFIG.PLAYLIST_ID}`
-      const response = await fetch(feedUrl)
 
-      if (!response.ok) {
-        console.error('YouTube RSS feed error:', response.status)
-        return c.json(
-          { success: false, error: `YouTube RSS feed error: HTTP ${response.status}`, videoId: null },
-          response.status as 400 | 404 | 500
-        )
+      let result = null
+
+      try {
+        const response = await fetch(feedUrl)
+
+        if (response.ok) {
+          const xml = await response.text()
+
+          // Extract first video ID from <yt:videoId> tag
+          const videoIdMatch = xml.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)
+          if (videoIdMatch) {
+            const videoId = videoIdMatch[1]
+            const entryMatch = xml.match(/<entry>[\s\S]*?<title>([^<]+)<\/title>/)
+            const title = entryMatch ? entryMatch[1] : 'Sunday Service'
+            result = makeResult(videoId, title)
+          }
+        }
+      } catch (feedErr) {
+        console.error('YouTube RSS feed fetch failed:', feedErr)
       }
 
-      const xml = await response.text()
-
-      // Extract first video ID from <yt:videoId> tag
-      const videoIdMatch = xml.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)
-      if (!videoIdMatch) {
-        return c.json(
-          { success: false, error: 'No videos found in playlist feed', videoId: null },
-          404
-        )
+      // If RSS worked, cache and return
+      if (result) {
+        _cache = { data: result, ts: now }
+        c.header('X-Cache', 'MISS')
+        c.header('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
+        return c.json(result)
       }
 
-      const videoId = videoIdMatch[1]
-
-      // Extract title from the first <entry> block
-      const entryMatch = xml.match(/<entry>[\s\S]*?<title>([^<]+)<\/title>/)
-      const title = entryMatch ? entryMatch[1] : 'Sunday Service'
-
-      const result = {
-        success: true,
-        videoId,
-        title,
-        thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+      // Serve stale cache if available — better than nothing
+      if (_cache) {
+        console.error('YouTube RSS feed failed, serving stale cache')
+        c.header('X-Cache', 'STALE')
+        return c.json(_cache.data)
       }
 
-      _cache = { data: result, ts: now }
-      c.header('X-Cache', 'MISS')
-      c.header('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
-      return c.json(result)
+      // Last resort: hardcoded fallback so the player still works
+      console.error('YouTube RSS feed failed, no cache, using hardcoded fallback')
+      const fallback = makeResult(YOUTUBE_CONFIG.FALLBACK_VIDEO_ID, 'Sunday Service')
+      c.header('X-Cache', 'FALLBACK')
+      return c.json(fallback)
     } catch (error) {
-      console.error('YouTube feed error:', error)
-      return c.json(
-        {
-          success: false,
-          error: error instanceof Error ? error.message : 'Unknown error',
-          videoId: null,
-        },
-        500
-      )
+      console.error('YouTube endpoint error:', error)
+
+      // Even on unexpected errors, try stale cache or fallback
+      if (_cache) {
+        return c.json(_cache.data)
+      }
+      const fallback = makeResult(YOUTUBE_CONFIG.FALLBACK_VIDEO_ID, 'Sunday Service')
+      return c.json(fallback)
     }
   })
 }

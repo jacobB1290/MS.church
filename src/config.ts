@@ -32,4 +32,6 @@ export const GOOGLE_CALENDAR_CONFIG = {
 export const YOUTUBE_CONFIG = {
   PLAYLIST_ID: 'PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC',
   CACHE_TTL: 5 * 60 * 1000,
+  // Hardcoded fallback when RSS feed is unreachable (update periodically)
+  FALLBACK_VIDEO_ID: '8EP7I-lXdFI',
 }

@@ -1135,14 +1135,16 @@ export const homeScripts = (): string => `
                 var _revealTimeout = null;
 
                 // Pre-embed iframe hidden behind thumbnail so it's fully loaded on tap.
-                function preloadIframe(videoId) {
+                // When muted=true, adds autoplay=1&mute=1 so browsers allow auto-start.
+                function preloadIframe(videoId, muted) {
                     if (_preloadedIframe || !videoWrapper) return;
                     var iframe = document.createElement('iframe');
                     iframe.className = 'youtube-embed';
                     iframe.setAttribute('allowfullscreen', '');
                     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-                    iframe.src = 'https://www.youtube.com/embed/' + videoId
-                        + '?enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
+                    var params = 'enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
+                    if (muted) params += '&autoplay=1&mute=1';
+                    iframe.src = 'https://www.youtube.com/embed/' + videoId + '?' + params;
                     videoWrapper.insertBefore(iframe, videoWrapper.firstChild);
                     _preloadedIframe = iframe;
                     iframe.addEventListener('load', function() {
@@ -1192,12 +1194,15 @@ export const homeScripts = (): string => `
                         subscribeToYTEvents();
                     } else {
                         // Fallback: iframe not ready yet, create one with autoplay
+                        // If auto-playing (no user gesture), must include mute=1 for browser policy
                         var iframe = document.createElement('iframe');
                         iframe.className = 'youtube-embed';
                         iframe.setAttribute('allowfullscreen', '');
                         iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                        var fallbackParams = 'autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
+                        if (_shouldAutoPlay) fallbackParams += '&mute=1';
                         iframe.src = 'https://www.youtube.com/embed/' + _ytVideoId
-                            + '?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
+                            + '?' + fallbackParams;
                         videoWrapper.appendChild(iframe);
                         _preloadedIframe = iframe;
                         iframe.addEventListener('load', function() {
@@ -1234,7 +1239,8 @@ export const homeScripts = (): string => `
 
                 function setupVideo(videoId, thumbnailUrl) {
                     _ytVideoId = videoId;
-                    preloadIframe(videoId);
+                    // If auto-play is pending, preload with autoplay+mute so browsers allow it
+                    preloadIframe(videoId, _shouldAutoPlay);
                     if (videoThumbnailImg) {
                         videoThumbnailImg.src = thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg');
                         videoThumbnailImg.onerror = function() {
@@ -1252,6 +1258,8 @@ export const homeScripts = (): string => `
                         videoThumbnail.addEventListener('click', activateVideo);
                     }
                     if (_shouldAutoPlay) {
+                        // iframe was created with autoplay=1&mute=1, so playback
+                        // starts automatically — just reveal it
                         activateVideo();
                     }
                 }
@@ -1278,11 +1286,18 @@ export const homeScripts = (): string => `
                                                 mtNow.getHours() === 9 &&
                                                 mtNow.getMinutes() < 45;
                     if (isSundayServiceTime) {
+                        _shouldAutoPlay = true;
                         if (_ytVideoId) {
+                            // Video already loaded — rebuild iframe with autoplay+mute
+                            // so the browser allows programmatic playback
+                            if (_preloadedIframe && _preloadedIframe.parentNode) {
+                                _preloadedIframe.parentNode.removeChild(_preloadedIframe);
+                                _preloadedIframe = null;
+                            }
+                            preloadIframe(_ytVideoId, true);
                             activateVideo();
-                        } else {
-                            _shouldAutoPlay = true;
                         }
+                        // else: _shouldAutoPlay flag will be picked up by setupVideo()
                     }
                 }
 

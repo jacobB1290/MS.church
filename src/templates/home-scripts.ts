@@ -1229,51 +1229,46 @@ export const homeScripts = (): string => `
                     }, 650);
                 }
 
-                function showVideoFallback() {
-                    if (!videoThumbnail || !videoWrapper) return;
-                    videoThumbnail.innerHTML = '';
-                    var link = document.createElement('a');
-                    link.className = 'video-fallback-link';
-                    link.href = 'https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC';
-                    link.target = '_blank';
-                    link.rel = 'noopener';
-                    link.textContent = 'Watch on YouTube';
-                    videoWrapper.appendChild(link);
-                    videoWrapper.style.background = '#1a1a2e';
+                // Hardcoded fallback video ID — updated periodically, used when API is unreachable
+                var FALLBACK_VIDEO_ID = '8EP7I-lXdFI';
+
+                function setupVideo(videoId, thumbnailUrl) {
+                    _ytVideoId = videoId;
+                    preloadIframe(videoId);
+                    if (videoThumbnailImg) {
+                        videoThumbnailImg.src = thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg');
+                        videoThumbnailImg.onerror = function() {
+                            this.onerror = null;
+                            this.src = 'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
+                        };
+                    }
+                    if (videoPlayBtn) {
+                        videoPlayBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            activateVideo();
+                        });
+                    }
+                    if (videoThumbnail) {
+                        videoThumbnail.addEventListener('click', activateVideo);
+                    }
+                    if (_shouldAutoPlay) {
+                        activateVideo();
+                    }
                 }
 
                 fetch('/api/youtube/latest-video')
                     .then(function(r) { return r.json(); })
                     .then(function(data) {
                         if (data.success && data.videoId) {
-                            _ytVideoId = data.videoId;
-                            // Pre-load the YouTube iframe behind the thumbnail
-                            preloadIframe(data.videoId);
-                            if (videoThumbnailImg) {
-                                videoThumbnailImg.src = data.thumbnailUrl;
-                                videoThumbnailImg.onerror = function() {
-                                    this.onerror = null;
-                                    this.src = 'https://img.youtube.com/vi/' + data.videoId + '/hqdefault.jpg';
-                                };
-                            }
-                            if (videoPlayBtn) {
-                                videoPlayBtn.addEventListener('click', function(e) {
-                                    e.stopPropagation();
-                                    activateVideo();
-                                });
-                            }
-                            if (videoThumbnail) {
-                                videoThumbnail.addEventListener('click', activateVideo);
-                            }
-                            if (_shouldAutoPlay) {
-                                activateVideo();
-                            }
+                            setupVideo(data.videoId, data.thumbnailUrl);
                         } else {
-                            showVideoFallback();
+                            // API returned error — use fallback video
+                            setupVideo(FALLBACK_VIDEO_ID, null);
                         }
                     })
                     .catch(function() {
-                        showVideoFallback();
+                        // Network error — use fallback video
+                        setupVideo(FALLBACK_VIDEO_ID, null);
                     });
 
                 // Auto-play video during Sunday service (9:00am - 9:45am MT)

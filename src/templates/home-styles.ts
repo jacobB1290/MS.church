@@ -2331,6 +2331,49 @@ export const homeStyles = (): string => `
                 background: rgba(0, 0, 0, 0.85);
             }
 
+            /* Unmute overlay button — shown during muted auto-play */
+            .video-unmute-btn {
+                position: absolute;
+                bottom: 16px;
+                left: 16px;
+                z-index: 10;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: rgba(0, 0, 0, 0.75);
+                color: #fff;
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                border-radius: 8px;
+                padding: 10px 18px;
+                font-family: var(--font-body), 'Inter', sans-serif;
+                font-size: 14px;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+                cursor: pointer;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                transition: opacity 300ms ease, transform 300ms ease, background 200ms ease;
+                opacity: 0;
+                transform: translateY(8px);
+                pointer-events: none;
+            }
+            .video-unmute-btn.visible {
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+            .video-unmute-btn:hover {
+                background: rgba(0, 0, 0, 0.9);
+            }
+            .video-unmute-btn svg {
+                flex-shrink: 0;
+            }
+            .video-unmute-btn.hiding {
+                opacity: 0;
+                transform: translateY(8px);
+                pointer-events: none;
+            }
+
             .playlist-section {
                 display: flex;
                 flex-direction: column;

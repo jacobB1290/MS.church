@@ -213,6 +213,14 @@ export const homeBody = (): string => `
                                             </svg>
                                         </button>
                                     </div>
+                                    <button class="video-unmute-btn" id="video-unmute-btn" aria-label="Unmute video">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                                        </svg>
+                                        Tap to unmute
+                                    </button>
                                 </div>
 
                                 <a href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" class="btn btn-outline playlist-btn">

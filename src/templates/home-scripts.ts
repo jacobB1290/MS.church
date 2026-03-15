@@ -1168,7 +1168,8 @@ export const homeScripts = (): string => `
                         var msg = JSON.parse(event.data);
                         if (msg.event === 'onStateChange' && msg.info === 1) {
                             _playbackConfirmed = true;
-                            revealVideo();
+                            // Wait 1s after playback starts so video settles before fading overlay
+                            setTimeout(function() { revealVideo(); }, 1000);
                         }
                     } catch (e) {}
                 });
@@ -1214,19 +1215,18 @@ export const homeScripts = (): string => `
                     if (!videoThumbnail || videoThumbnail.classList.contains('is-revealing')) return;
                     if (_revealTimeout) { clearTimeout(_revealTimeout); _revealTimeout = null; }
 
-                    // Spinner and thumbnail fade out together in one synchronized 500ms fade
+                    // Spinner and thumbnail fade out together — keep is-loading so play btn never flashes back
                     if (videoPlayBtn) {
-                        videoPlayBtn.classList.remove('is-loading');
                         videoPlayBtn.classList.add('is-revealing');
                     }
                     videoThumbnail.classList.add('is-revealing');
 
-                    // Clean up DOM after the 500ms fade completes
+                    // Clean up DOM after the 600ms fade completes
                     setTimeout(function() {
                         if (videoThumbnail.parentNode) {
                             videoThumbnail.parentNode.removeChild(videoThumbnail);
                         }
-                    }, 550);
+                    }, 650);
                 }
 
                 function showVideoFallback() {

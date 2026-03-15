@@ -2288,17 +2288,22 @@ export const homeStyles = (): string => `
                 animation: playBtnSpin 1.1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
             }
 
-            /* Revealing: ring and thumbnail fade out together */
+            /* Revealing: spinner and thumbnail fade out together (is-loading stays on) */
             .video-play-btn.is-revealing .play-spinner-ring {
                 opacity: 0;
-                transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1);
-                animation: none;
+                transition: opacity 600ms cubic-bezier(0.4, 0, 0.2, 1);
+                animation: playBtnSpin 1.1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+
+            .video-play-btn.is-revealing .video-play-btn-bg,
+            .video-play-btn.is-revealing .play-triangle {
+                opacity: 0;
             }
 
             .video-thumbnail.is-revealing {
                 opacity: 0;
                 pointer-events: none;
-                transition: opacity 500ms cubic-bezier(0.4, 0, 0.2, 1);
+                transition: opacity 600ms cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             @keyframes playBtnSpin {

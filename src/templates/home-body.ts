@@ -96,7 +96,7 @@ export const homeBody = (): string => `
                             <article class="schedule-item">
                                 <span>Bible Reading</span>
                                 <h3>Tuesdays · 8:30 AM</h3>
-                                <p>Tuesday Bible Reading 8:30 AM @ <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" style="color: var(--gold); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent); font-weight: 600;">Caffiena State Street</a>.</p>
+                                <p>Tuesday Bible Reading at 8:30 AM at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" style="color: var(--gold); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent); font-weight: 600;">Caffiena State Street</a>.</p>
                             </article>
                             <article class="schedule-item">
                                 <span>Bible Study</span>

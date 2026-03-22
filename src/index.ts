@@ -1,4 +1,4 @@
-// Version: 1.36.2 - Unify schedule section wording to use "at" consistently
+// Version: 1.36.3 - Remove redundant time from Tuesday Bible Reading description
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

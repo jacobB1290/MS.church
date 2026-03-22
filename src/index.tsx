@@ -1,4 +1,4 @@
-// Version: 1.36.0 - Custom YouTube thumbnail with click-to-play transition
+// Version: 1.36.1 - Update Tuesday Bible study with Caffiena location and directions link
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

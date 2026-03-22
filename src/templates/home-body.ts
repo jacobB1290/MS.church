@@ -94,9 +94,9 @@ export const homeBody = (): string => `
                                 <p>Morning service with free community breakfast after. Free transportation from select shelters included.</p>
                             </article>
                             <article class="schedule-item">
-                                <span>Bible Study</span>
+                                <span>Bible Reading</span>
                                 <h3>Tuesdays · 8:30 AM</h3>
-                                <p>Morning Bible study with coffee at select local coffee shops.</p>
+                                <p>Tuesday Bible Reading 8:30 AM @ <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" style="color: var(--gold); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent); font-weight: 600;">Caffiena State Street</a>.</p>
                             </article>
                             <article class="schedule-item">
                                 <span>Bible Study</span>

@@ -30,11 +30,12 @@ export const homeBody = (): string => `
                     <div class="hero-blur-layer blur-2"></div>
                     <div class="hero-blur-layer blur-3"></div>
                     <div class="hero-blur-layer blur-4"></div>
-                    <h1 class="hero-title">Mending the Broken.</h1>
+                    <h1 class="hero-title">A Christian Church in Boise, Idaho</h1>
                     <div class="hero-body">
+                        <p class="hero-tagline">Mending the Broken.</p>
                         <p class="hero-service-time">Join us Sundays at 9 AM</p>
                         <div class="hero-image">
-                            <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building" loading="eager" fetchpriority="high" decoding="async">
+                            <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building in Boise, Idaho" width="1200" height="630" loading="eager" fetchpriority="high" decoding="async">
                             <!-- Find Us Button - Long frosted glass pill at bottom of image -->
                             <div class="find-us-wrapper address-dropdown-wrapper">
                                 <button class="find-us-btn address-trigger" data-address="3080 Wildwood St, Boise, Idaho">Find Us</button>
@@ -66,7 +67,7 @@ export const homeBody = (): string => `
 
                 <section class="schedule" id="schedule" style="animation-delay: 0.2s">
                     <span class="section-eyebrow">Weekly Schedule</span>
-                    <h2 class="section-heading">Three simple touchpoints to connect every week.</h2>
+                    <h2 class="section-heading">Sunday Worship, Bible Study & Fellowship in Boise</h2>
                     <address>
                         <div class="address-dropdown-wrapper">
                             <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St · Boise, Idaho</button>
@@ -109,7 +110,7 @@ export const homeBody = (): string => `
 
                 <section class="outreach" id="outreach" style="animation-delay: 0.3s">
                     <span class="section-eyebrow">Outreach</span>
-                    <h2 class="section-heading">Serving our community with love and purpose.</h2>
+                    <h2 class="section-heading">Community Outreach & Events in Boise, Idaho</h2>
 
                     <!--
                     ================================================
@@ -171,7 +172,7 @@ export const homeBody = (): string => `
                 <section class="watch" id="watch" style="animation-delay: 0.4s">
                     <div class="watch-header">
                         <span class="section-eyebrow">Watch</span>
-                        <h2 class="section-heading">Join us live every Sunday.</h2>
+                        <h2 class="section-heading">Watch Our Sunday Service Live from Boise</h2>
                     </div>
                     <div class="watch-card">
                         <div class="watch-main">
@@ -203,7 +204,8 @@ export const homeBody = (): string => `
                                 <div class="video-embed-wrapper" id="video-embed-wrapper">
                                     <div class="video-thumbnail" id="video-thumbnail">
                                         <img class="video-thumbnail-img" id="video-thumbnail-img"
-                                             alt="Latest Sunday Service"
+                                             alt="Latest Sunday Service from Morning Star Christian Church Boise"
+                                             width="1280" height="720"
                                              loading="lazy">
                                         <button class="video-play-btn" id="video-play-btn" aria-label="Play video">
                                             <svg class="play-icon" viewBox="0 0 68 48" width="68" height="48">

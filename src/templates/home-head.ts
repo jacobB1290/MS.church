@@ -8,10 +8,10 @@ export const homeHead = (): string => `
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
         <!-- Primary Meta Tags -->
-        <title>Morning Star Christian Church | Boise, Idaho - Sunday Services & Community</title>
-        <meta name="title" content="Morning Star Christian Church | Boise, Idaho - Sunday Services & Community">
-        <meta name="description" content="Welcome to Morning Star Christian Church in Boise, Idaho. Join us for Sunday worship services, community outreach, prayer meetings, and fellowship. A welcoming church family mending the broken. All are welcome!">
-        <meta name="keywords" content="Morning Star Christian Church, Boise church, Idaho church, Sunday service, Christian church Boise, worship service, community church, prayer meeting, church near me, Boise Idaho church, nondenominational church, family church">
+        <title>Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM</title>
+        <meta name="title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
+        <meta name="description" content="Morning Star Christian Church is a welcoming nondenominational church in Boise, Idaho. Join us Sundays at 9 AM for worship and free community breakfast. Bible study groups on Tuesdays and Thursdays. All are welcome — mending the broken through faith and community.">
+        <meta name="keywords" content="Morning Star Christian Church, church in Boise Idaho, Christian church Boise, nondenominational church Boise, churches near me Boise, Sunday worship service Boise, Bible study Boise, community church Boise Idaho, Boise churches, church near me, best church in Boise, new church Boise, family church Boise, Sunday service Boise Idaho">
         <meta name="author" content="Morning Star Christian Church">
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
         <meta name="googlebot" content="index, follow">
@@ -26,8 +26,8 @@ export const homeHead = (): string => `
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website">
         <meta property="og:url" content="https://ms.church/">
-        <meta property="og:title" content="Morning Star Christian Church | Boise, Idaho">
-        <meta property="og:description" content="Welcome to Morning Star Christian Church in Boise, Idaho. Join us for Sunday worship services, community outreach, and fellowship. Mending the broken - all are welcome!">
+        <meta property="og:title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
+        <meta property="og:description" content="A welcoming nondenominational church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study groups, and community outreach. All are welcome!">
         <meta property="og:image" content="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025">
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
@@ -38,8 +38,8 @@ export const homeHead = (): string => `
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:url" content="https://ms.church/">
-        <meta name="twitter:title" content="Morning Star Christian Church | Boise, Idaho">
-        <meta name="twitter:description" content="Welcome to Morning Star Christian Church in Boise, Idaho. Join us for Sunday worship, community outreach, and fellowship. All are welcome!">
+        <meta name="twitter:title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
+        <meta name="twitter:description" content="A welcoming nondenominational church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study, and community outreach.">
         <meta name="twitter:image" content="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025">
         <meta name="twitter:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
 
@@ -76,13 +76,12 @@ export const homeHead = (): string => `
             "@context": "https://schema.org",
             "@graph": [
                 {
-                    "@type": "Church",
+                    "@type": ["Church", "PlaceOfWorship"],
                     "@id": "https://ms.church/#church",
                     "name": "Morning Star Christian Church",
-                    "alternateName": "Morning Star Church",
-                    "description": "A welcoming Christian church in Boise, Idaho dedicated to mending the broken through faith, community, and service. Join us for Sunday worship services, prayer meetings, and community outreach.",
+                    "alternateName": ["Morning Star Church", "MS Church Boise"],
+                    "description": "Morning Star Christian Church is a welcoming nondenominational Christian church in Boise, Idaho. Join us Sundays at 9 AM for worship, free community breakfast, Tuesday Bible reading, and Thursday Bible study. We are dedicated to mending the broken through faith, community, and service.",
                     "url": "https://ms.church",
-                    "telephone": "+1-208-000-0000",
                     "email": "morningstarchurchboise@gmail.com",
                     "address": {
                         "@type": "PostalAddress",
@@ -101,6 +100,7 @@ export const homeHead = (): string => `
                     "logo": "https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025",
                     "sameAs": [
                         "https://www.instagram.com/morningstarboise/",
+                        "https://www.instagram.com/mschurchboise",
                         "https://www.facebook.com/MorningStarBoise/",
                         "https://www.youtube.com/@morningstarboise"
                     ],
@@ -108,21 +108,43 @@ export const homeHead = (): string => `
                         {
                             "@type": "OpeningHoursSpecification",
                             "dayOfWeek": "Sunday",
-                            "opens": "10:00",
-                            "closes": "12:00",
-                            "description": "Sunday Worship Service"
+                            "opens": "09:00",
+                            "closes": "11:00",
+                            "description": "Sunday Worship Service with free community breakfast"
+                        },
+                        {
+                            "@type": "OpeningHoursSpecification",
+                            "dayOfWeek": "Tuesday",
+                            "opens": "08:30",
+                            "closes": "10:00",
+                            "description": "Tuesday Bible Reading at Caffiena State Street"
+                        },
+                        {
+                            "@type": "OpeningHoursSpecification",
+                            "dayOfWeek": "Thursday",
+                            "opens": "18:00",
+                            "closes": "19:30",
+                            "description": "Thursday Evening Bible Study"
                         }
                     ],
                     "hasOfferCatalog": {
                         "@type": "OfferCatalog",
-                        "name": "Church Services",
+                        "name": "Church Services & Programs",
                         "itemListElement": [
                             {
                                 "@type": "Offer",
                                 "itemOffered": {
                                     "@type": "Service",
                                     "name": "Sunday Worship Service",
-                                    "description": "Weekly worship service with live streaming available"
+                                    "description": "Weekly Sunday worship service at 9 AM with live streaming on YouTube and free community breakfast"
+                                }
+                            },
+                            {
+                                "@type": "Offer",
+                                "itemOffered": {
+                                    "@type": "Service",
+                                    "name": "Bible Study & Reading Groups",
+                                    "description": "Tuesday morning Bible reading and Thursday evening Bible study with free coffee"
                                 }
                             },
                             {
@@ -130,7 +152,7 @@ export const homeHead = (): string => `
                                 "itemOffered": {
                                     "@type": "Service",
                                     "name": "Community Outreach",
-                                    "description": "Serving our community with love and purpose"
+                                    "description": "Community breakfast, shelter transportation, and serving Boise with love and purpose"
                                 }
                             },
                             {
@@ -138,44 +160,69 @@ export const homeHead = (): string => `
                                 "itemOffered": {
                                     "@type": "Service",
                                     "name": "Prayer Requests",
-                                    "description": "Submit prayer requests through our contact form"
+                                    "description": "Submit prayer requests through our online contact form"
                                 }
                             }
                         ]
                     },
-                    "areaServed": {
-                        "@type": "City",
-                        "name": "Boise",
-                        "containedInPlace": {
-                            "@type": "State",
-                            "name": "Idaho"
+                    "areaServed": [
+                        {
+                            "@type": "City",
+                            "name": "Boise",
+                            "containedInPlace": {
+                                "@type": "State",
+                                "name": "Idaho",
+                                "containedInPlace": {
+                                    "@type": "Country",
+                                    "name": "United States"
+                                }
+                            }
+                        },
+                        {
+                            "@type": "City",
+                            "name": "Meridian"
+                        },
+                        {
+                            "@type": "City",
+                            "name": "Eagle"
+                        },
+                        {
+                            "@type": "City",
+                            "name": "Garden City"
                         }
-                    },
-                    "priceRange": "Free"
+                    ],
+                    "priceRange": "Free",
+                    "isAccessibleForFree": true,
+                    "publicAccess": true
                 },
                 {
                     "@type": "WebSite",
                     "@id": "https://ms.church/#website",
                     "url": "https://ms.church",
                     "name": "Morning Star Christian Church",
-                    "description": "Official website of Morning Star Christian Church in Boise, Idaho",
+                    "description": "Official website of Morning Star Christian Church — a nondenominational Christian church in Boise, Idaho",
                     "publisher": {
                         "@id": "https://ms.church/#church"
                     },
-                    "inLanguage": "en-US"
+                    "inLanguage": "en-US",
+                    "potentialAction": {
+                        "@type": "SearchAction",
+                        "target": "https://ms.church/?q={search_term_string}",
+                        "query-input": "required name=search_term_string"
+                    }
                 },
                 {
                     "@type": "WebPage",
                     "@id": "https://ms.church/#webpage",
                     "url": "https://ms.church",
-                    "name": "Morning Star Christian Church | Boise, Idaho - Sunday Services & Community",
+                    "name": "Morning Star Christian Church in Boise, Idaho | Sunday Worship, Bible Study & Community Outreach",
                     "isPartOf": {
                         "@id": "https://ms.church/#website"
                     },
                     "about": {
                         "@id": "https://ms.church/#church"
                     },
-                    "description": "Welcome to Morning Star Christian Church in Boise, Idaho. Join us for Sunday worship services, community outreach, and fellowship.",
+                    "description": "Morning Star Christian Church is a welcoming nondenominational church in Boise, Idaho. Sunday worship at 9 AM, Tuesday Bible reading, Thursday Bible study, community outreach, and free breakfast. All are welcome.",
                     "inLanguage": "en-US",
                     "potentialAction": [
                         {
@@ -203,6 +250,7 @@ export const homeHead = (): string => `
                     },
                     "sameAs": [
                         "https://www.instagram.com/morningstarboise/",
+                        "https://www.instagram.com/mschurchboise",
                         "https://www.facebook.com/MorningStarBoise/",
                         "https://www.youtube.com/@morningstarboise"
                     ]
@@ -218,6 +266,47 @@ export const homeHead = (): string => `
                             "item": "https://ms.church"
                         }
                     ]
+                },
+                {
+                    "@type": "Event",
+                    "@id": "https://ms.church/#sunday-service",
+                    "name": "Sunday Worship Service at Morning Star Christian Church",
+                    "description": "Join Morning Star Christian Church for Sunday worship at 9 AM in Boise, Idaho. Free community breakfast served after service. Free transportation from select shelters. Live stream available on YouTube.",
+                    "startDate": "2026-03-29T09:00:00-06:00",
+                    "endDate": "2026-03-29T11:00:00-06:00",
+                    "eventSchedule": {
+                        "@type": "Schedule",
+                        "repeatFrequency": "P1W",
+                        "byDay": "https://schema.org/Sunday",
+                        "startTime": "09:00:00",
+                        "endTime": "11:00:00",
+                        "scheduleTimezone": "America/Boise"
+                    },
+                    "eventAttendanceMode": "https://schema.org/MixedEventAttendanceMode",
+                    "eventStatus": "https://schema.org/EventScheduled",
+                    "location": [
+                        {
+                            "@type": "Place",
+                            "name": "Morning Star Christian Church",
+                            "address": {
+                                "@type": "PostalAddress",
+                                "streetAddress": "3080 Wildwood St",
+                                "addressLocality": "Boise",
+                                "addressRegion": "ID",
+                                "postalCode": "83713",
+                                "addressCountry": "US"
+                            }
+                        },
+                        {
+                            "@type": "VirtualLocation",
+                            "url": "https://www.youtube.com/@morningstarboise"
+                        }
+                    ],
+                    "organizer": {
+                        "@id": "https://ms.church/#church"
+                    },
+                    "isAccessibleForFree": true,
+                    "image": "https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025"
                 }
             ]
         }

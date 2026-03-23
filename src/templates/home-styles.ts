@@ -401,7 +401,7 @@ export const homeStyles = (): string => `
                 50% { transform: translateY(-8px); }
             }
 
-            .hero h1 {
+            .hero .hero-tagline {
                 font-family: var(--font-display);
                 font-size: var(--text-hero);
                 line-height: var(--leading-tight);
@@ -3224,11 +3224,14 @@ export const homeStyles = (): string => `
                 }
 
                 .hero .hero-title {
+                    position: static !important;
                     color: #ffffff !important;
+                    font-family: var(--font-body), 'Inter', sans-serif !important;
                     font-size: 19px !important;
-                    font-weight: 600;
-                    letter-spacing: 2px;
-                    text-transform: uppercase;
+                    font-weight: 600 !important;
+                    letter-spacing: 2px !important;
+                    text-transform: uppercase !important;
+                    white-space: normal !important;
                     text-shadow:
                         0 2px 12px rgba(0, 0, 0, 1),
                         0 4px 30px rgba(0, 0, 0, 1),
@@ -3236,9 +3239,10 @@ export const homeStyles = (): string => `
                         0 10px 100px rgba(0, 0, 0, 0.9),
                         0 0 160px rgba(0, 0, 0, 0.8),
                         0 0 220px rgba(0, 0, 0, 0.6) !important;
-                    margin: 0 0 4px 0;
+                    margin: 0 0 4px 0 !important;
                     max-width: none !important;
                     line-height: 1.4 !important;
+                    padding: 0 !important;
                 }
 
                 .hero-service-time {
@@ -4305,7 +4309,7 @@ export const homeStyles = (): string => `
                     letter-spacing: 1.2px;
                 }
                 
-                .hero h1 {
+                .hero .hero-tagline {
                     font-size: clamp(36px, 9.5vw, 48px);
                     line-height: 0.90;
                     letter-spacing: -0.8px;
@@ -4767,8 +4771,8 @@ export const homeStyles = (): string => `
                     backdrop-filter: blur(32px);
                 }
 
-                /* Hero title — white, large, centered above overlay, single line */
-                .hero h1 {
+                /* Hero tagline — white, large, centered above overlay, single line */
+                .hero .hero-tagline {
                     position: relative;
                     z-index: 4;
                     color: #ffffff;
@@ -5216,8 +5220,8 @@ export const homeStyles = (): string => `
                Prevents awkward proportions when resizing
                ======================================== */
             @media (min-width: 961px) and (max-width: 1199px) {
-                /* Scale down hero title for intermediate widths */
-                .hero h1 {
+                /* Scale down hero tagline for intermediate widths */
+                .hero .hero-tagline {
                     font-size: clamp(48px, 5.5vw, 72px);
                 }
 

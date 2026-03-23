@@ -3189,21 +3189,22 @@ export const homeStyles = (): string => `
                 }
 
                 /* h1 — centered in upper portion, clear of church building */
-                .hero .hero-title {
+                .hero .hero-tagline {
                     position: absolute;
-                    top: 21vh;
+                    top: 23.5vh;
                     left: 0;
                     right: 0;
                     text-align: center;
                     z-index: 3;
                     color: white !important;
-                    font-size: clamp(22px, 5vw, 32px);
-                    font-weight: 600;
+                    font-family: var(--font-heading), 'Playfair Display', serif;
+                    font-size: clamp(64px, 16vw, 88px);
+                    font-weight: 700;
                     text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
                     padding: 0 20px;
-                    line-height: 1.2;
-                    letter-spacing: 2px;
-                    text-transform: uppercase;
+                    line-height: 1.0;
+                    letter-spacing: -1.5px;
+                    margin: 0;
                 }
 
                 /* Bottom content area — stacked: Find Us button + info text */
@@ -3222,22 +3223,22 @@ export const homeStyles = (): string => `
                     text-align: center;
                 }
 
-                .hero-tagline {
+                .hero .hero-title {
                     color: #ffffff !important;
-                    font-family: var(--font-heading), 'Playfair Display', serif;
-                    font-size: clamp(36px, 9vw, 52px);
-                    font-weight: 700;
-                    font-style: italic;
-                    letter-spacing: -0.5px;
-                    line-height: 1.1;
+                    font-size: 19px !important;
+                    font-weight: 600;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
                     text-shadow:
                         0 2px 12px rgba(0, 0, 0, 1),
                         0 4px 30px rgba(0, 0, 0, 1),
                         0 6px 60px rgba(0, 0, 0, 0.95),
                         0 10px 100px rgba(0, 0, 0, 0.9),
-                        0 0 160px rgba(0, 0, 0, 0.8);
-                    margin: 8px 0 4px 0;
+                        0 0 160px rgba(0, 0, 0, 0.8),
+                        0 0 220px rgba(0, 0, 0, 0.6) !important;
+                    margin: 0 0 4px 0;
                     max-width: none !important;
+                    line-height: 1.4 !important;
                 }
 
                 .hero-service-time {

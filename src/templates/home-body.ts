@@ -30,9 +30,9 @@ export const homeBody = (): string => `
                     <div class="hero-blur-layer blur-2"></div>
                     <div class="hero-blur-layer blur-3"></div>
                     <div class="hero-blur-layer blur-4"></div>
-                    <h1 class="hero-title">A Christian Church in Boise, Idaho</h1>
+                    <p class="hero-tagline">Mending the Broken.</p>
                     <div class="hero-body">
-                        <p class="hero-tagline">Mending the Broken.</p>
+                        <h1 class="hero-title">A Christian Church in Boise, Idaho</h1>
                         <p class="hero-service-time">Join us Sundays at 9 AM</p>
                         <div class="hero-image">
                             <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building in Boise, Idaho" width="1200" height="630" loading="eager" fetchpriority="high" decoding="async">

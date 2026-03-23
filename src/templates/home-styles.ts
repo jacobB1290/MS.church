@@ -59,6 +59,19 @@ export const homeStyles = (): string => `
                 --tracking-wider:   0.25em; /* Eyebrows, brand subtitles */
             }
 
+            /* Screen-reader-only utility — visually hidden but accessible to crawlers */
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+
             * {
                 margin: 0;
                 padding: 0;
@@ -5325,6 +5338,39 @@ export const homeStyles = (): string => `
                 fill: currentColor;
             }
             
+            .footer-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+                margin-top: 20px;
+                text-align: center;
+            }
+
+            .footer-address {
+                font-style: normal;
+                font-size: var(--text-small);
+                color: #595970;
+                letter-spacing: 0.02em;
+            }
+
+            .footer-email {
+                font-size: var(--text-small);
+                color: var(--gold);
+                text-decoration: none;
+                transition: opacity 0.3s ease;
+            }
+
+            .footer-email:hover {
+                opacity: 0.8;
+            }
+
+            .footer-schedule {
+                font-size: var(--text-small);
+                color: #6b6b80;
+                letter-spacing: 0.02em;
+            }
+
             .footer-divider {
                 display: none;
             }

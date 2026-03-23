@@ -20,15 +20,15 @@ export const homeHead = (): string => `
         <!-- Geographic Meta Tags (Local SEO) -->
         <meta name="geo.region" content="US-ID">
         <meta name="geo.placename" content="Boise, Idaho">
-        <meta name="geo.position" content="43.6150;-116.2023">
-        <meta name="ICBM" content="43.6150, -116.2023">
+        <meta name="geo.position" content="43.6185;-116.2816">
+        <meta name="ICBM" content="43.6185, -116.2816">
 
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website">
         <meta property="og:url" content="https://ms.church/">
         <meta property="og:title" content="Morning Star Christian Church | Boise, Idaho">
         <meta property="og:description" content="Welcome to Morning Star Christian Church in Boise, Idaho. Join us for Sunday worship services, community outreach, and fellowship. Mending the broken - all are welcome!">
-        <meta property="og:image" content="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025">
+        <meta property="og:image" content="https://ms.church/static/church-building.jpg">
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
         <meta property="og:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
@@ -40,7 +40,7 @@ export const homeHead = (): string => `
         <meta name="twitter:url" content="https://ms.church/">
         <meta name="twitter:title" content="Morning Star Christian Church | Boise, Idaho">
         <meta name="twitter:description" content="Welcome to Morning Star Christian Church in Boise, Idaho. Join us for Sunday worship, community outreach, and fellowship. All are welcome!">
-        <meta name="twitter:image" content="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025">
+        <meta name="twitter:image" content="https://ms.church/static/church-building.jpg">
         <meta name="twitter:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
 
         <!-- Safari iOS theme-color — olive green blends with hero image top -->
@@ -60,15 +60,13 @@ export const homeHead = (): string => `
         <!-- Preconnect for Performance -->
         <link rel="preconnect" href="https://www.youtube-nocookie.com">
         <link rel="preconnect" href="https://www.jotform.com">
-        <link rel="preconnect" href="https://page.gensparksite.com">
         <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
         <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
         <link rel="dns-prefetch" href="https://www.jotform.com">
-        <link rel="dns-prefetch" href="https://page.gensparksite.com">
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
 
         <!-- Preload LCP hero image -->
-        <link rel="preload" as="image" href="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" fetchpriority="high">
+        <link rel="preload" as="image" href="/static/church-building.jpg" fetchpriority="high">
 
         <!-- Schema.org Structured Data for Rich Results -->
         <script type="application/ld+json">
@@ -79,14 +77,13 @@ export const homeHead = (): string => `
                     "@type": "Church",
                     "@id": "https://ms.church/#church",
                     "name": "Morning Star Christian Church",
-                    "alternateName": "Morning Star Church",
-                    "description": "A welcoming Christian church in Boise, Idaho dedicated to mending the broken through faith, community, and service. Join us for Sunday worship services, prayer meetings, and community outreach.",
+                    "alternateName": "MS Church",
+                    "description": "Morning Star Christian Church is a welcoming, nondenominational church in Boise, Idaho. Join us Sundays at 9 AM for worship, Bible teaching, and a free community breakfast. Serving the Treasure Valley.",
                     "url": "https://ms.church",
-                    "telephone": "+1-208-000-0000",
-                    "email": "morningstarchurchboise@gmail.com",
+                    "email": "support@ms.church",
                     "address": {
                         "@type": "PostalAddress",
-                        "streetAddress": "3080 Wildwood St",
+                        "streetAddress": "3080 N Wildwood St",
                         "addressLocality": "Boise",
                         "addressRegion": "ID",
                         "postalCode": "83713",
@@ -94,23 +91,37 @@ export const homeHead = (): string => `
                     },
                     "geo": {
                         "@type": "GeoCoordinates",
-                        "latitude": 43.6150,
-                        "longitude": -116.2023
+                        "latitude": 43.6185,
+                        "longitude": -116.2816
                     },
-                    "image": "https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025",
-                    "logo": "https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025",
+                    "image": "https://ms.church/static/church-building.jpg",
+                    "logo": "https://ms.church/static/church-building.jpg",
                     "sameAs": [
-                        "https://www.instagram.com/morningstarboise/",
-                        "https://www.facebook.com/MorningStarBoise/",
+                        "https://www.instagram.com/mschurchboise",
+                        "https://www.facebook.com/61564924058156/",
                         "https://www.youtube.com/@morningstarboise"
                     ],
                     "openingHoursSpecification": [
                         {
                             "@type": "OpeningHoursSpecification",
                             "dayOfWeek": "Sunday",
-                            "opens": "10:00",
-                            "closes": "12:00",
+                            "opens": "09:00",
+                            "closes": "11:00",
                             "description": "Sunday Worship Service"
+                        },
+                        {
+                            "@type": "OpeningHoursSpecification",
+                            "dayOfWeek": "Tuesday",
+                            "opens": "08:30",
+                            "closes": "10:00",
+                            "description": "Tuesday Bible Reading"
+                        },
+                        {
+                            "@type": "OpeningHoursSpecification",
+                            "dayOfWeek": "Thursday",
+                            "opens": "18:00",
+                            "closes": "20:00",
+                            "description": "Thursday Bible Study"
                         }
                     ],
                     "hasOfferCatalog": {
@@ -143,14 +154,16 @@ export const homeHead = (): string => `
                             }
                         ]
                     },
-                    "areaServed": {
-                        "@type": "City",
-                        "name": "Boise",
-                        "containedInPlace": {
-                            "@type": "State",
-                            "name": "Idaho"
-                        }
-                    },
+                    "areaServed": [
+                        { "@type": "City", "name": "Boise", "addressRegion": "ID" },
+                        { "@type": "City", "name": "Meridian", "addressRegion": "ID" },
+                        { "@type": "City", "name": "Eagle", "addressRegion": "ID" },
+                        { "@type": "City", "name": "Star", "addressRegion": "ID" },
+                        { "@type": "City", "name": "Kuna", "addressRegion": "ID" },
+                        { "@type": "City", "name": "Garden City", "addressRegion": "ID" },
+                        { "@type": "City", "name": "Nampa", "addressRegion": "ID" }
+                    ],
+                    "hasMap": "https://maps.app.goo.gl/nmYV7hSLXKVGexu38",
                     "priceRange": "Free"
                 },
                 {
@@ -191,19 +204,19 @@ export const homeHead = (): string => `
                     "url": "https://ms.church",
                     "logo": {
                         "@type": "ImageObject",
-                        "url": "https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025",
+                        "url": "https://ms.church/static/church-building.jpg",
                         "width": 1200,
                         "height": 630
                     },
                     "contactPoint": {
                         "@type": "ContactPoint",
                         "contactType": "customer service",
-                        "email": "morningstarchurchboise@gmail.com",
+                        "email": "support@ms.church",
                         "availableLanguage": "English"
                     },
                     "sameAs": [
-                        "https://www.instagram.com/morningstarboise/",
-                        "https://www.facebook.com/MorningStarBoise/",
+                        "https://www.instagram.com/mschurchboise",
+                        "https://www.facebook.com/61564924058156/",
                         "https://www.youtube.com/@morningstarboise"
                     ]
                 },
@@ -220,6 +233,108 @@ export const homeHead = (): string => `
                     ]
                 }
             ]
+        }
+        </script>
+
+        <!-- FAQ Schema for Rich Results -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "What time are services at Morning Star Christian Church?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Sunday worship starts at 9:00 AM with a free community breakfast following the service. Bible studies are held Tuesdays at 8:30 AM and Thursdays at 6:00 PM."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Is Morning Star Church a nondenominational church?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes, Morning Star Christian Church is a nondenominational, Bible-based church in Boise, Idaho welcoming people from all backgrounds."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Does Morning Star Church offer free transportation?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes, Morning Star Christian Church provides free transportation from select shelters in the Boise area for Sunday services."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Does Morning Star Church have a youth group?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes, Morning Star has an active youth group that meets on Friday nights. Follow @mstaryouth on Instagram for updates."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Does Morning Star Church have a free community breakfast?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes, every Sunday after the 9 AM worship service, Morning Star provides a completely free breakfast for everyone — church members and visitors alike."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Where is Morning Star Christian Church located?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Morning Star Christian Church is located at 3080 N Wildwood St, Boise, ID 83713, serving Boise, Meridian, Eagle, Star, Kuna, and the greater Treasure Valley."
+                    }
+                }
+            ]
+        }
+        </script>
+
+        <!-- Event Schema for Weekly Sunday Service -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Event",
+            "name": "Sunday Worship Service at Morning Star Christian Church",
+            "description": "Weekly Sunday worship service with free community breakfast after. Free transportation from select shelters included. All are welcome.",
+            "startDate": "${(() => { const now = new Date(); const day = now.getUTCDay(); const daysUntilSunday = day === 0 ? 0 : 7 - day; const next = new Date(now); next.setUTCDate(next.getUTCDate() + daysUntilSunday); return next.toISOString().split('T')[0]; })()}T09:00:00-07:00",
+            "endDate": "${(() => { const now = new Date(); const day = now.getUTCDay(); const daysUntilSunday = day === 0 ? 0 : 7 - day; const next = new Date(now); next.setUTCDate(next.getUTCDate() + daysUntilSunday); return next.toISOString().split('T')[0]; })()}T11:00:00-07:00",
+            "eventSchedule": {
+                "@type": "Schedule",
+                "repeatFrequency": "P1W",
+                "byDay": "https://schema.org/Sunday",
+                "startTime": "09:00:00",
+                "endTime": "11:00:00"
+            },
+            "eventAttendanceMode": "https://schema.org/MixedEventAttendanceMode",
+            "eventStatus": "https://schema.org/EventScheduled",
+            "isAccessibleForFree": true,
+            "location": {
+                "@type": "Place",
+                "name": "Morning Star Christian Church",
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "3080 N Wildwood St",
+                    "addressLocality": "Boise",
+                    "addressRegion": "ID",
+                    "postalCode": "83713",
+                    "addressCountry": "US"
+                }
+            },
+            "organizer": {
+                "@id": "https://ms.church/#church"
+            },
+            "image": "https://ms.church/static/church-building.jpg",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock"
+            }
         }
         </script>
 

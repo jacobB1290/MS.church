@@ -30,14 +30,15 @@ export const homeBody = (): string => `
                     <div class="hero-blur-layer blur-2"></div>
                     <div class="hero-blur-layer blur-3"></div>
                     <div class="hero-blur-layer blur-4"></div>
-                    <h1 class="hero-title">Mending the Broken.</h1>
+                    <h1 class="sr-only">Morning Star Christian Church — Nondenominational Church in Boise, Idaho</h1>
+                    <p class="hero-title" aria-hidden="true">Mending the Broken.</p>
                     <div class="hero-body">
-                        <p class="hero-service-time">Join us Sundays at 9 AM</p>
+                        <p class="hero-service-time">Join us Sundays at <time datetime="09:00">9 AM</time></p>
                         <div class="hero-image">
-                            <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building" loading="eager" fetchpriority="high" decoding="async">
+                            <img src="/static/church-building.jpg" alt="Morning Star Christian Church building" loading="eager" fetchpriority="high" decoding="async">
                             <!-- Find Us Button - Long frosted glass pill at bottom of image -->
                             <div class="find-us-wrapper address-dropdown-wrapper">
-                                <button class="find-us-btn address-trigger" data-address="3080 Wildwood St, Boise, Idaho">Find Us</button>
+                                <button class="find-us-btn address-trigger" data-address="3080 N Wildwood St, Boise, Idaho">Find Us</button>
                                 <div class="address-dropdown">
                                     <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
                                         <span class="address-dropdown-icon">🍎</span>
@@ -47,7 +48,7 @@ export const homeBody = (): string => `
                                         <span class="address-dropdown-icon">🗺️</span>
                                         <span>Google Maps</span>
                                     </a>
-                                    <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
+                                    <button class="address-dropdown-item copy-address" data-address="3080 N Wildwood St, Boise, Idaho">
                                         <span class="address-dropdown-icon">📋</span>
                                         <span>Copy Address</span>
                                     </button>
@@ -69,7 +70,7 @@ export const homeBody = (): string => `
                     <h2 class="section-heading">Three simple touchpoints to connect every week.</h2>
                     <address>
                         <div class="address-dropdown-wrapper">
-                            <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St · Boise, Idaho</button>
+                            <button class="address-trigger" data-address="3080 N Wildwood St, Boise, Idaho">3080 N Wildwood St · Boise, Idaho</button>
                             <div class="address-dropdown">
                                 <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
                                     <span class="address-dropdown-icon">🍎</span>
@@ -79,7 +80,7 @@ export const homeBody = (): string => `
                                     <span class="address-dropdown-icon">🗺️</span>
                                     <span>Google Maps</span>
                                 </a>
-                                <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
+                                <button class="address-dropdown-item copy-address" data-address="3080 N Wildwood St, Boise, Idaho">
                                     <span class="address-dropdown-icon">📋</span>
                                     <span>Copy Address</span>
                                 </button>
@@ -90,17 +91,17 @@ export const homeBody = (): string => `
                         <div class="schedule-grid">
                             <article class="schedule-item">
                                 <span>Sunday Gatherings</span>
-                                <h3>Sundays · 9:00 AM</h3>
+                                <h3>Sundays · <time datetime="09:00">9:00 AM</time></h3>
                                 <p>Morning service with free community breakfast after. Free transportation from select shelters included.</p>
                             </article>
                             <article class="schedule-item">
                                 <span>Bible Reading</span>
-                                <h3>Tuesdays · 8:30 AM</h3>
+                                <h3>Tuesdays · <time datetime="08:30">8:30 AM</time></h3>
                                 <p>Tuesday Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" style="color: var(--gold); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent); font-weight: 600;">Caffiena State Street</a>.</p>
                             </article>
                             <article class="schedule-item">
                                 <span>Bible Study</span>
-                                <h3>Thursdays · 6:00 PM</h3>
+                                <h3>Thursdays · <time datetime="18:00">6:00 PM</time></h3>
                                 <p>Evening Bible study at the church with free coffee.</p>
                             </article>
                         </div>
@@ -241,7 +242,7 @@ export const homeBody = (): string => `
 
                         <address>
                             <div class="address-dropdown-wrapper">
-                                <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St, Boise, Idaho</button>
+                                <button class="address-trigger" data-address="3080 N Wildwood St, Boise, Idaho">3080 N Wildwood St, Boise, Idaho</button>
                                 <div class="address-dropdown">
                                     <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
                                         <span class="address-dropdown-icon">🍎</span>
@@ -251,7 +252,7 @@ export const homeBody = (): string => `
                                         <span class="address-dropdown-icon">🗺️</span>
                                         <span>Google Maps</span>
                                     </a>
-                                    <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
+                                    <button class="address-dropdown-item copy-address" data-address="3080 N Wildwood St, Boise, Idaho">
                                         <span class="address-dropdown-icon">📋</span>
                                         <span>Copy Address</span>
                                     </button>
@@ -289,6 +290,12 @@ export const homeBody = (): string => `
                                 <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                             </svg>
                         </a>
+                    </div>
+
+                    <div class="footer-info">
+                        <address class="footer-address">3080 N Wildwood St, Boise, ID 83713</address>
+                        <a href="mailto:support@ms.church" class="footer-email">support@ms.church</a>
+                        <p class="footer-schedule">Sundays <time datetime="09:00">9 AM</time> · Tuesdays <time datetime="08:30">8:30 AM</time> · Thursdays <time datetime="18:00">6 PM</time></p>
                     </div>
 
                     <div class="footer-divider"></div>

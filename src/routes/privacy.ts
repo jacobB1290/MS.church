@@ -360,7 +360,7 @@ export function registerPrivacyRoute(app: Hono) {
                   <p style="margin-left: 20px;">
                       <strong>Morning Star Christian Church</strong><br>
                       Attn: Privacy Request<br>
-                      3080 Wildwood St<br>
+                      3080 N Wildwood St<br>
                       Boise, Idaho 83713
                   </p>
                   <p>Please include in your written request:</p>
@@ -408,7 +408,7 @@ export function registerPrivacyRoute(app: Hono) {
                       <p style="margin-left: 20px;">
                           Morning Star Christian Church<br>
                           Attn: Privacy<br>
-                          3080 Wildwood St<br>
+                          3080 N Wildwood St<br>
                           Boise, Idaho 83713
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
@@ -449,7 +449,7 @@ export function registerPrivacyRoute(app: Hono) {
                   <p style="margin-left: 20px;">
                       Morning Star Christian Church<br>
                       Attn: Copyright Complaint<br>
-                      3080 Wildwood St<br>
+                      3080 N Wildwood St<br>
                       Boise, Idaho 83713
                   </p>
                   <p>You may also submit a notice by email to <a href="mailto:support@ms.church">support@ms.church</a> with the subject line "Copyright Complaint" as a convenience, though mail is preferred. Please include a description of the copyrighted work, the location (URL) of the allegedly infringing material on our Site, and your contact information. We will review and respond to valid copyright complaints in accordance with applicable law.</p>
@@ -531,7 +531,7 @@ export function registerPrivacyRoute(app: Hono) {
                       <p style="margin-left: 20px;">
                           Morning Star Christian Church<br>
                           Attn: Terms Inquiry<br>
-                          3080 Wildwood St<br>
+                          3080 N Wildwood St<br>
                           Boise, Idaho 83713
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
@@ -618,7 +618,7 @@ export function registerPrivacyRoute(app: Hono) {
                       <p style="margin-left: 20px;">
                           Morning Star Christian Church<br>
                           Attn: Accessibility<br>
-                          3080 Wildwood St<br>
+                          3080 N Wildwood St<br>
                           Boise, Idaho 83713
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>

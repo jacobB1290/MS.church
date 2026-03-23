@@ -30,7 +30,8 @@ export const homeBody = (): string => `
                     <div class="hero-blur-layer blur-2"></div>
                     <div class="hero-blur-layer blur-3"></div>
                     <div class="hero-blur-layer blur-4"></div>
-                    <h1 class="hero-tagline">Mending the Broken.</h1>
+                    <h1 class="sr-only">Morning Star Christian Church — A Welcoming Christian Church in Boise, Idaho</h1>
+                    <p class="hero-tagline">Mending the Broken.</p>
                     <div class="hero-body">
                         <p class="hero-service-time">Join us Sundays at 9 AM</p>
                         <div class="hero-image">

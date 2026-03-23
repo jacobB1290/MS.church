@@ -1,4 +1,4 @@
-// Version: 1.37.0 - SEO audit: keyword-targeted H1/headings, Schema.org overhaul, Event schema, security headers, 404 page, sitemap cleanup
+// Version: 1.38.0 - SEO audit scoring fixes: dynamic Event dates, DST-aware timezone, FAQPage schema, Tuesday/Thursday Event schemas, viewport accessibility, Twitter card typo, aria-live carousel
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

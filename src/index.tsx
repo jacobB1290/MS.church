@@ -1,4 +1,4 @@
-// Version: 1.36.3 - Remove redundant time from Tuesday Bible Reading description
+// Version: 1.37.0 - SEO audit: keyword-targeted H1/headings, Schema.org overhaul, Event schema, security headers, 404 page, sitemap cleanup
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

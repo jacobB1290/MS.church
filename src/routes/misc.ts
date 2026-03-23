@@ -23,7 +23,7 @@ export function registerMiscRoutes(app: Hono) {
   # Block common bot paths that don't apply
   Disallow: /api/
   Disallow: /static/
-  Disallow: /*.json$
+  Disallow: /*.json
   
   # Google-specific
   User-agent: Googlebot
@@ -45,79 +45,31 @@ export function registerMiscRoutes(app: Hono) {
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
           http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-      
-      <!-- Homepage - highest priority -->
+
+      <!-- Homepage -->
       <url>
           <loc>https://ms.church/</loc>
           <lastmod>${today}</lastmod>
           <changefreq>weekly</changefreq>
           <priority>1.0</priority>
       </url>
-      
-      <!-- Contact section (anchor on homepage) -->
+
+      <!-- Contact form page -->
       <url>
-          <loc>https://ms.church/#contact</loc>
+          <loc>https://ms.church/form</loc>
           <lastmod>${today}</lastmod>
           <changefreq>monthly</changefreq>
-          <priority>0.9</priority>
-      </url>
-      
-      <!-- Outreach section (anchor on homepage) -->
-      <url>
-          <loc>https://ms.church/#outreach</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>weekly</changefreq>
           <priority>0.8</priority>
       </url>
-      
-      <!-- Watch section (anchor on homepage) -->
-      <url>
-          <loc>https://ms.church/#watch</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>weekly</changefreq>
-          <priority>0.8</priority>
-      </url>
-      
+
       <!-- Legal/Privacy page -->
       <url>
           <loc>https://ms.church/privacy</loc>
           <lastmod>${today}</lastmod>
           <changefreq>monthly</changefreq>
-          <priority>0.5</priority>
-      </url>
-      
-      <!-- Privacy Policy section -->
-      <url>
-          <loc>https://ms.church/privacy#privacy</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>monthly</changefreq>
           <priority>0.4</priority>
       </url>
-      
-      <!-- Terms of Service section -->
-      <url>
-          <loc>https://ms.church/privacy#terms</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>monthly</changefreq>
-          <priority>0.4</priority>
-      </url>
-      
-      <!-- Accessibility section -->
-      <url>
-          <loc>https://ms.church/privacy#accessibility</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>monthly</changefreq>
-          <priority>0.4</priority>
-      </url>
-      
-      <!-- Standalone contact form page -->
-      <url>
-          <loc>https://ms.church/form</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>monthly</changefreq>
-          <priority>0.7</priority>
-      </url>
-      
+
   </urlset>`, 200, {
       'Content-Type': 'application/xml; charset=utf-8'
     });

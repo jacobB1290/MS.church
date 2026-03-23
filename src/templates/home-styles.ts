@@ -99,6 +99,19 @@ export const homeStyles = (): string => `
                 }
             }
 
+            /* Screen-reader only — visible to crawlers and assistive tech, invisible to sighted users */
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+
             body {
                 font-family: var(--font-body);
                 font-size: var(--text-body);
@@ -401,7 +414,7 @@ export const homeStyles = (): string => `
                 50% { transform: translateY(-8px); }
             }
 
-            .hero h1 {
+            .hero .hero-tagline {
                 font-family: var(--font-display);
                 font-size: var(--text-hero);
                 line-height: var(--leading-tight);
@@ -3189,7 +3202,7 @@ export const homeStyles = (): string => `
                 }
 
                 /* h1 — centered in upper portion, clear of church building */
-                .hero .hero-title {
+                .hero .hero-tagline {
                     position: absolute;
                     top: 23.5vh;
                     left: 0;
@@ -3197,11 +3210,14 @@ export const homeStyles = (): string => `
                     text-align: center;
                     z-index: 3;
                     color: white !important;
+                    font-family: var(--font-heading), 'Playfair Display', serif;
                     font-size: clamp(64px, 16vw, 88px);
+                    font-weight: 700;
                     text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
                     padding: 0 20px;
                     line-height: 1.0;
                     letter-spacing: -1.5px;
+                    margin: 0;
                 }
 
                 /* Bottom content area — stacked: Find Us button + info text */
@@ -3218,6 +3234,28 @@ export const homeStyles = (): string => `
                     width: 100%;
                     box-sizing: border-box;
                     text-align: center;
+                }
+
+                .hero .hero-title {
+                    position: static !important;
+                    color: #ffffff !important;
+                    font-family: var(--font-body), 'Inter', sans-serif !important;
+                    font-size: 19px !important;
+                    font-weight: 600 !important;
+                    letter-spacing: 2px !important;
+                    text-transform: uppercase !important;
+                    white-space: normal !important;
+                    text-shadow:
+                        0 2px 12px rgba(0, 0, 0, 1),
+                        0 4px 30px rgba(0, 0, 0, 1),
+                        0 6px 60px rgba(0, 0, 0, 0.95),
+                        0 10px 100px rgba(0, 0, 0, 0.9),
+                        0 0 160px rgba(0, 0, 0, 0.8),
+                        0 0 220px rgba(0, 0, 0, 0.6) !important;
+                    margin: 0 0 4px 0 !important;
+                    max-width: none !important;
+                    line-height: 1.4 !important;
+                    padding: 0 !important;
                 }
 
                 .hero-service-time {
@@ -4284,7 +4322,7 @@ export const homeStyles = (): string => `
                     letter-spacing: 1.2px;
                 }
                 
-                .hero h1 {
+                .hero .hero-tagline {
                     font-size: clamp(36px, 9.5vw, 48px);
                     line-height: 0.90;
                     letter-spacing: -0.8px;
@@ -4746,8 +4784,8 @@ export const homeStyles = (): string => `
                     backdrop-filter: blur(32px);
                 }
 
-                /* Hero title — white, large, centered above overlay, single line */
-                .hero h1 {
+                /* Hero tagline — white, large, centered above overlay, single line */
+                .hero .hero-tagline {
                     position: relative;
                     z-index: 4;
                     color: #ffffff;
@@ -5195,8 +5233,8 @@ export const homeStyles = (): string => `
                Prevents awkward proportions when resizing
                ======================================== */
             @media (min-width: 961px) and (max-width: 1199px) {
-                /* Scale down hero title for intermediate widths */
-                .hero h1 {
+                /* Scale down hero tagline for intermediate widths */
+                .hero .hero-tagline {
                     font-size: clamp(48px, 5.5vw, 72px);
                 }
 

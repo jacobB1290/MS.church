@@ -273,15 +273,6 @@ export const homeBody = (): string => `
                             m.parentNode.insertBefore(sc,m);
                         })(document, 'script', '//d2p078bqz5urf7.cloudfront.net/jsapi/ehform.js?v' + new Date().getHours());
                         </script>
-                        <script>
-                        (window.EhDynamicRef ||= []).push(() => {
-                            EhForms.create({
-                                "formId": "5064126720901120",
-                                "target": "",
-                                "onFormReady": function(el, setValue) {}
-                            });
-                        });
-                        </script>
                     </div>
                 </section>
             </main>

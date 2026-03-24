@@ -262,7 +262,16 @@ export const homeBody = (): string => `
                         </address>
                     </div>
                     <div class="jotform-container" id="contact-form">
-                        <script type="text/javascript" src="https://form.jotform.com/jsform/260056249984062"></script>
+                        <div class="engage-hub-form-embed" id="eh_form_5064126720901120" data-id="5064126720901120"></div>
+                        <script>
+                        (window.EhDynamicRef ||= []).push(() => {
+                            EhForms.create({
+                                "formId": "5064126720901120",
+                                "target": "",
+                                "onFormReady": function(el, setValue) {}
+                            });
+                        });
+                        </script>
                     </div>
                 </section>
             </main>

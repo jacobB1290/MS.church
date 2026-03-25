@@ -35,7 +35,7 @@ export const homeScripts = (): string => `
                 // Switches html+body from olive (hero) to white (schedule+)
                 // so Safari's status bar tint matches the current section.
                 // ========================================
-                if (window.innerWidth <= 899) {
+                if (window.innerWidth <= 960) {
                     const heroEl = document.querySelector('.hero');
                     if (heroEl) {
                         const htmlEl = document.documentElement;
@@ -576,10 +576,8 @@ export const homeScripts = (): string => `
                 let lastNavScrollY = 0;
                 function getScrollThreshold() {
                     const width = window.innerWidth;
-                    if (width <= 375) return 130 * 0.10;
-                    if (width <= 480) return 190 * 0.10;
-                    if (width <= 960) return 190 * 0.10;
-                    return 320 * 0.10;
+                    if (width <= 960) return 19; // mobile
+                    return 32; // desktop
                 }
                 let scrollUpAtTopCount = 0;
                 let isNavigatingHome = false;
@@ -588,7 +586,7 @@ export const homeScripts = (): string => `
                     const currentScrollY = window.scrollY;
                     const scrollThreshold = getScrollThreshold();
 
-                    if (window.innerWidth <= 1199) {
+                    if (window.innerWidth <= 960) {
                         if (isNavigatingHome) {
                             if (currentScrollY === 0) isNavigatingHome = false;
                             lastNavScrollY = currentScrollY;
@@ -880,7 +878,7 @@ export const homeScripts = (): string => `
                         const targetId = this.getAttribute('href');
 
                         if (targetId === '#home' || targetId === '#') {
-                            if (window.innerWidth <= 1199) {
+                            if (window.innerWidth <= 960) {
                                 navShell.classList.remove('scrolled-mobile');
                                 isNavigatingHome = true;
                             }
@@ -890,27 +888,23 @@ export const homeScripts = (): string => `
 
                         const target = document.querySelector(targetId);
                         if (target) {
-                            let navOffset = 45;
+                            let navOffset = window.innerWidth <= 960 ? 30 : 60;
 
                             if (targetId === '#outreach') {
                                 const outreachRect = target.getBoundingClientRect();
                                 const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
-                                if (window.innerWidth <= 899) navOffset = 30;
-                                else if (window.innerWidth <= 1199) navOffset = -20;
-                                else navOffset = 60;
                                 window.scrollTo({ top: outreachAbsoluteTop - navOffset, behavior: 'smooth' });
                                 return;
                             }
 
                             if (targetId === '#gift-form') {
-                                navOffset = window.innerWidth <= 899 ? 100 : 150;
+                                navOffset = window.innerWidth <= 960 ? 100 : 150;
                                 const elementRect = target.getBoundingClientRect();
                                 const absoluteElementTop = elementRect.top + window.pageYOffset;
                                 window.scrollTo({ top: absoluteElementTop - navOffset, behavior: 'smooth' });
                                 return;
                             }
 
-                            if (window.innerWidth <= 899) navOffset = 30;
                             const elementRect = target.getBoundingClientRect();
                             const absoluteElementTop = elementRect.top + window.pageYOffset;
                             window.scrollTo({ top: absoluteElementTop - navOffset, behavior: 'smooth' });

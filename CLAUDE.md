@@ -267,15 +267,14 @@ All styles are inlined in the `<style>` block inside the template string. Key de
 | Font (headings) | `Playfair Display` | Serif, via Google Fonts |
 | Font (body) | `Inter` | Sans-serif, via Google Fonts |
 
-Responsive breakpoints: mobile ≤960px, desktop >960px (approximate).
+Responsive breakpoints: **2-tier system** — mobile ≤960px, desktop ≥961px. All values within each tier use fluid `clamp()` expressions for smooth scaling with no layout jumps.
 
 ### Standard Width Rule
 
 **All page sections must inherit their width from the `.page` container.** No section should be wider or narrower than the standard content area defined by `.page`:
 
-- On desktop (>960px): `.page` uses `width: min(1280px, 94%)` with `max-width: 1400px`.
-- On tablet (≤899px): `.page` uses `width: 100%` (full viewport).
-- On mobile (≤480px): `.page` uses `width: 100%; padding: 0 clamp(3%, 5vw, 5%)`.
+- On desktop (≥961px): `.page` uses `width: min(1280px, 94%)` with `max-width: 1400px`.
+- On mobile (≤960px): `.page` uses `width: 100%; padding: 0 clamp(0px, 2.5vw, 5%)`. Fluid padding scales from 0 on tablets to side padding on small phones.
 
 **Do NOT use `width: 100vw` or full-bleed techniques** (`margin-left: calc(50% - 50vw)`) on content sections. These break sections out of the `.page` container and make them wider than sibling sections. The only exception is the hero section, which intentionally spans the full viewport.
 
@@ -367,11 +366,11 @@ The outreach section is the most complex part of the page. Mistakes here took ma
 ```css
 @media (max-width: 960px) {
     .carousel-card {
-        padding: 0 16px;  /* breathing room from viewport edges */
+        padding: 0 clamp(4px, 2vw, 16px);  /* fluid: scales from 4px on small phones to 16px on tablets */
     }
 }
 ```
-At `≤480px`, reduce this to `0 4px` because `.page` already adds its own `clamp(3%, 5vw, 5%)` padding at that breakpoint — stacking both would over-inset the card.
+The fluid `clamp()` automatically reduces padding on smaller screens where `.page` provides its own side spacing — no separate breakpoint needed.
 
 ### Shadow edges and the fog system
 
@@ -502,7 +501,5 @@ carousel: <button class="event-link-btn" id="carousel-see-past-btn">Browse Memor
 
 | Breakpoint | Key effect |
 |------------|-----------|
-| `> 960px` (desktop) | Two-column grid layout: event cards left, memories card right |
-| `≤ 960px` (mobile) | Single-column carousel; arrows hidden; `carousel-card` gets horizontal padding |
-| `≤ 899px` | `.page` loses its padding; outreach stays `width: 100%` inheriting full viewport width |
-| `≤ 480px` | `.page` regains `clamp(3%, 5vw, 5%)` padding; `carousel-card` padding reduced to `0 4px` |
+| `≥ 961px` (desktop) | Two-column grid layout: event cards left, memories card right |
+| `≤ 960px` (mobile) | Single-column carousel; arrows hidden; `.page` goes full-width; `carousel-card` gets fluid horizontal padding via `clamp(4px, 2vw, 16px)` |

@@ -3091,7 +3091,7 @@ export const homeStyles = (): string => `
                     gap: 0;
                     background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
-                    background-position: center 20%;
+                    background-position: center 60%;
                     border-radius: 0;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
@@ -3213,17 +3213,19 @@ export const homeStyles = (): string => `
                     top: 23.5vh;
                     left: 0;
                     right: 0;
+                    width: 100%;
                     text-align: center;
                     z-index: 3;
                     color: white !important;
                     font-family: var(--font-display);
-                    font-size: clamp(64px, 16vw, 88px);
+                    font-size: clamp(48px, 12vw, 80px);
                     font-weight: 700;
                     text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
-                    padding: 0 20px;
-                    line-height: 1.0;
+                    padding: 0 24px;
+                    line-height: 1.05;
                     letter-spacing: -1.5px;
                     margin: 0;
+                    box-sizing: border-box;
                 }
 
                 /* Bottom content area — stacked: Find Us button + info text */

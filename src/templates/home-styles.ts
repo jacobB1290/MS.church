@@ -3216,7 +3216,7 @@ export const homeStyles = (): string => `
                     text-align: center;
                     z-index: 3;
                     color: white !important;
-                    font-family: var(--font-heading), 'Playfair Display', serif;
+                    font-family: var(--font-display);
                     font-size: clamp(64px, 16vw, 88px);
                     font-weight: 700;
                     text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);

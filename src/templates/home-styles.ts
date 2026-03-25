@@ -3211,18 +3211,17 @@ export const homeStyles = (): string => `
                 .hero .hero-tagline {
                     position: absolute;
                     top: 23.5vh;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: max-content;
-                    max-width: calc(100% - 48px);
+                    left: 0;
+                    right: 0;
+                    width: 100%;
                     text-align: center;
                     z-index: 3;
                     color: white !important;
                     font-family: var(--font-display);
-                    font-size: clamp(42px, 10vw, 72px);
+                    font-size: clamp(56px, 14vw, 88px);
                     font-weight: 700;
                     text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
-                    padding: 0;
+                    padding: 0 5%;
                     line-height: 1.05;
                     letter-spacing: -1.5px;
                     margin: 0;

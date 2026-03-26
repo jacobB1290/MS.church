@@ -972,6 +972,52 @@ export const homeScripts = (): string => `
                     }, false);
                 }
 
+                // EngageBay form container auto-shrink
+                // The SDK sets inline heights on wrapper divs when content grows
+                // but never removes them when content shrinks. We observe textareas
+                // for resize and clear only the wrapper-level inline heights,
+                // leaving the SDK's deeper layout elements untouched.
+                {
+                    const container = document.querySelector('.jotform-container');
+                    if (container) {
+                        const resetWrapperHeights = () => {
+                            const embed = container.querySelector('.engage-hub-form-embed');
+                            if (!embed) return;
+                            if (embed.style.height) embed.style.height = '';
+                            for (const child of embed.children) {
+                                if (child.style && child.style.height) child.style.height = '';
+                            }
+                        };
+
+                        // Textarea resize ends on mouseup anywhere in the document
+                        let watching = false;
+                        const startWatch = () => {
+                            if (!watching) {
+                                watching = true;
+                                document.addEventListener('mouseup', () => {
+                                    watching = false;
+                                    resetWrapperHeights();
+                                }, { once: true });
+                            }
+                        };
+
+                        // Attach to textareas (SDK may add them after load)
+                        const bindTextareas = () => {
+                            container.querySelectorAll('textarea').forEach(ta => {
+                                if (!ta.dataset.watched) {
+                                    ta.dataset.watched = '1';
+                                    ta.addEventListener('mousedown', startWatch);
+                                    new ResizeObserver(resetWrapperHeights).observe(ta);
+                                }
+                            });
+                        };
+
+                        // Run once SDK renders, then watch for new elements
+                        bindTextareas();
+                        new MutationObserver(bindTextareas).observe(container, { childList: true, subtree: true });
+                    }
+                }
+
                 // JotForm Submission Handler (legacy — kept for EngageBay compat)
                 window.addEventListener('message', function(e) {
                     if (typeof e.data === 'object' && e.data.action === 'submission-completed') {

@@ -2791,8 +2791,9 @@ export const homeStyles = (): string => `
                 border: 1px solid rgba(255, 255, 255, 0.6);
                 box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
                             0 12px 32px rgba(0, 0, 0, 0.04);
-                overflow: hidden;
+                overflow: visible;
                 position: relative;
+                padding: 32px;
             }
 
             .jotform-container::before {
@@ -2801,16 +2802,6 @@ export const homeStyles = (): string => `
 
             .jotform-container::after {
                 display: none;
-            }
-
-            /* Force EngageBay form to auto-size — prevent SDK from keeping
-               stale explicit heights after textarea resize */
-            .jotform-container .engage-hub-form-embed,
-            .jotform-container .engage-hub-form-embed div {
-                height: auto !important;
-                min-height: 0 !important;
-                max-height: none !important;
-                transition: none !important;
             }
             
             /* Prevent zoom on form inputs - Mobile Safari Fix */

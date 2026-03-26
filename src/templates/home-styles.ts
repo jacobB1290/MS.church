@@ -2806,9 +2806,10 @@ export const homeStyles = (): string => `
             /* Force EngageBay form to auto-size — prevent SDK from keeping
                stale explicit heights after textarea resize */
             .jotform-container .engage-hub-form-embed,
-            .jotform-container .engage-hub-form-embed > div {
+            .jotform-container .engage-hub-form-embed div {
                 height: auto !important;
                 min-height: 0 !important;
+                max-height: none !important;
                 transition: none !important;
             }
             

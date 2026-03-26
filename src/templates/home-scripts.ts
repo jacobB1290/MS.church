@@ -972,7 +972,25 @@ export const homeScripts = (): string => `
                     }, false);
                 }
 
-                // JotForm Submission Handler
+                // EngageBay form container auto-resize
+                // The SDK sets explicit heights on wrapper elements that don't
+                // shrink back when a textarea is made smaller. A MutationObserver
+                // resets any inline height to let the container fit its content.
+                {
+                    const formRoot = document.getElementById('eh_form_5064126720901120');
+                    if (formRoot) {
+                        const clearHeights = () => {
+                            formRoot.querySelectorAll('[style*="height"]').forEach(el => {
+                                el.style.height = 'auto';
+                            });
+                            if (formRoot.style.height) formRoot.style.height = 'auto';
+                        };
+                        const mo = new MutationObserver(clearHeights);
+                        mo.observe(formRoot, { attributes: true, attributeFilter: ['style'], subtree: true, childList: true });
+                    }
+                }
+
+                // JotForm Submission Handler (legacy — kept for EngageBay compat)
                 window.addEventListener('message', function(e) {
                     if (typeof e.data === 'object' && e.data.action === 'submission-completed') {
                         showSuccessState();

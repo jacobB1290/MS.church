@@ -32,30 +32,18 @@ export const homeScripts = (): string => `
 
                 // ========================================
                 // iOS STATUS BAR COLOR (mobile only)
-                // Switches html+body from olive (hero) to white (schedule+)
-                // so Safari's status bar tint matches the current section.
+                // Adds .hero-in-view to <html> when the hero section is visible,
+                // so the mobile CSS can tint the iOS Safari status bar olive.
+                // Default is light — olive only when JS confirms hero is on-screen.
                 // ========================================
                 {
                     const heroEl = document.querySelector('.hero');
                     if (heroEl) {
                         const htmlEl = document.documentElement;
                         const statusBarObserver = new IntersectionObserver((entries) => {
-                            if (entries[0].isIntersecting) {
-                                htmlEl.classList.remove('scrolled-past-hero');
-                            } else {
-                                htmlEl.classList.add('scrolled-past-hero');
-                            }
+                            htmlEl.classList.toggle('hero-in-view', entries[0].isIntersecting);
                         }, { threshold: 0.20 });
                         statusBarObserver.observe(heroEl);
-
-                        // Re-sync class immediately on breakpoint change to prevent
-                        // olive background flash when resizing from desktop to mobile
-                        const mql = window.matchMedia('(max-width: 960px)');
-                        mql.addEventListener('change', () => {
-                            const rect = heroEl.getBoundingClientRect();
-                            const heroVisible = rect.bottom > 0 && rect.top < window.innerHeight * 0.8;
-                            htmlEl.classList.toggle('scrolled-past-hero', !heroVisible);
-                        });
                     }
                 }
 

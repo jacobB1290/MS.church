@@ -3043,25 +3043,28 @@ export const homeStyles = (): string => `
                ======================================== */
 
             /* iOS status bar: Safari reads body's background-color for the
-               status bar tint. Defaults to olive; JS adds .scrolled-past-hero
-               to switch to white when user scrolls past the hero section.
+               status bar tint. Defaults to light; JS adds .hero-in-view
+               to set olive only when the hero is confirmed visible.
                .page wrapper always has light bg to cover visible content. */
+            /* iOS status bar tint: default to light; JS adds .hero-in-view
+               only when the hero is confirmed visible, so there is never a
+               flash of olive when crossing the 960px breakpoint on desktop. */
             @media (max-width: 960px) {
                 html {
-                    background: #3d3a2a !important;
-                }
-                html.scrolled-past-hero {
                     background: #faf8f5 !important;
+                }
+                html.hero-in-view {
+                    background: #3d3a2a !important;
                 }
                 body {
                     margin: 0;
                     padding: 0;
-                    background: #3d3a2a !important;
+                    background: #faf8f5 !important;
                     background-image: none !important;
                     transition: none;
                 }
-                html.scrolled-past-hero body {
-                    background: #faf8f5 !important;
+                html.hero-in-view body {
+                    background: #3d3a2a !important;
                 }
             }
 

@@ -35,7 +35,7 @@ export const homeScripts = (): string => `
                 // Switches html+body from olive (hero) to white (schedule+)
                 // so Safari's status bar tint matches the current section.
                 // ========================================
-                if (window.innerWidth <= 960) {
+                {
                     const heroEl = document.querySelector('.hero');
                     if (heroEl) {
                         const htmlEl = document.documentElement;
@@ -47,6 +47,15 @@ export const homeScripts = (): string => `
                             }
                         }, { threshold: 0.20 });
                         statusBarObserver.observe(heroEl);
+
+                        // Re-sync class immediately on breakpoint change to prevent
+                        // olive background flash when resizing from desktop to mobile
+                        const mql = window.matchMedia('(max-width: 960px)');
+                        mql.addEventListener('change', () => {
+                            const rect = heroEl.getBoundingClientRect();
+                            const heroVisible = rect.bottom > 0 && rect.top < window.innerHeight * 0.8;
+                            htmlEl.classList.toggle('scrolled-past-hero', !heroVisible);
+                        });
                     }
                 }
 

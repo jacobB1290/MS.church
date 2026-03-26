@@ -2783,17 +2783,15 @@ export const homeStyles = (): string => `
                 cursor: pointer;
             }
             
-            /* JotForm Container Styles */
+            /* Engage Hub Form Container */
             .jotform-container {
                 width: 100%;
-                /* No min-height — container matches the iframe's auto-resized height exactly,
-                   eliminating the empty white space that appeared below the form */
                 background: var(--surface);
                 border-radius: 24px;
                 border: 1px solid rgba(255, 255, 255, 0.6);
                 box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
                             0 12px 32px rgba(0, 0, 0, 0.04);
-                overflow: visible;
+                overflow: hidden;
                 position: relative;
             }
 
@@ -2801,27 +2799,17 @@ export const homeStyles = (): string => `
                 display: none;
             }
 
-            /* Solid cover for JotForm branding at the very bottom of the iframe.
-               Solid (not gradient) so button shadow doesn't bleed through. */
             .jotform-container::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 56px;
-                background: var(--surface);
-                pointer-events: none;
-                z-index: 9;
-                border-radius: 0 0 24px 24px;
+                display: none;
             }
 
-            .jotform-container iframe {
-                width: 100%;
-                border: none;
-                min-height: 800px;
-                border-radius: 24px; /* Clips iframe pixels to match container corners */
-                display: block;
+            /* Force EngageBay form to auto-size — prevent SDK from keeping
+               stale explicit heights after textarea resize */
+            .jotform-container .engage-hub-form-embed,
+            .jotform-container .engage-hub-form-embed > div {
+                height: auto !important;
+                min-height: 0 !important;
+                transition: none !important;
             }
             
             /* Prevent zoom on form inputs - Mobile Safari Fix */
@@ -3977,18 +3965,8 @@ export const homeStyles = (): string => `
                     font-size: 14px;
                 }
 
-                /* Jotform container - mobile sizing */
+                /* Form container - mobile sizing */
                 .jotform-container {
-                    border-radius: clamp(16px, 2.5vw, 24px);
-                }
-
-                .jotform-container::after {
-                    height: clamp(56px, 7vw, 70px);
-                    border-radius: 0 0 clamp(16px, 2.5vw, 24px) clamp(16px, 2.5vw, 24px);
-                }
-
-                .jotform-container iframe {
-                    min-height: clamp(600px, 95vw, 900px);
                     border-radius: clamp(16px, 2.5vw, 24px);
                 }
 

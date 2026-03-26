@@ -136,8 +136,8 @@ export const homeBody = (): string => `
 
                     <!-- Carousel for upcoming events -->
                     <div class="carousel-wrapper" id="carousel-wrapper" style="display: none;">
-                        <div class="carousel-viewport">
-                            <div class="carousel-track" id="carousel-track">
+                        <div class="carousel-viewport" aria-live="polite" aria-atomic="false">
+                            <div class="carousel-track" id="carousel-track" role="list">
                                 <!-- Cards rendered by JS; track slides via translateX -->
                             </div>
                         </div>

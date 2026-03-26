@@ -1,4 +1,4 @@
-// Version: 1.38.0 - Replace Jotform embed with Engage Hub form
+// Version: 1.38.0 - Engage Hub form, SEO fixes, 2-tier breakpoints
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

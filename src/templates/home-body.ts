@@ -136,8 +136,8 @@ export const homeBody = (): string => `
 
                     <!-- Carousel for upcoming events -->
                     <div class="carousel-wrapper" id="carousel-wrapper" style="display: none;">
-                        <div class="carousel-viewport">
-                            <div class="carousel-track" id="carousel-track">
+                        <div class="carousel-viewport" aria-live="polite" aria-atomic="false">
+                            <div class="carousel-track" id="carousel-track" role="list">
                                 <!-- Cards rendered by JS; track slides via translateX -->
                             </div>
                         </div>
@@ -262,7 +262,17 @@ export const homeBody = (): string => `
                         </address>
                     </div>
                     <div class="jotform-container" id="contact-form">
-                        <script type="text/javascript" src="https://form.jotform.com/jsform/260056249984062"></script>
+                        <div class="engage-hub-form-embed" id="eh_form_5064126720901120" data-id="5064126720901120"></div>
+                        <script type="text/javascript">
+                        var EhAPI = EhAPI || {}; EhAPI.after_load = function(){
+                            EhAPI.set_account('trohddh7jp05vmrl417ue6lbpm', 'gmailidoy');
+                            EhAPI.execute('rules');
+                        };(function(d,s,f) {
+                            var sc=document.createElement(s);sc.type='text/javascript';
+                            sc.async=true;sc.src=f;var m=document.getElementsByTagName(s)[0];
+                            m.parentNode.insertBefore(sc,m);
+                        })(document, 'script', '//d2p078bqz5urf7.cloudfront.net/jsapi/ehform.js?v' + new Date().getHours());
+                        </script>
                     </div>
                 </section>
             </main>

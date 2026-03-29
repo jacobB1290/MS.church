@@ -32,19 +32,16 @@ export const homeScripts = (): string => `
 
                 // ========================================
                 // iOS STATUS BAR COLOR (mobile only)
-                // Switches html+body from olive (hero) to white (schedule+)
-                // so Safari's status bar tint matches the current section.
+                // Adds .hero-in-view to <html> when the hero section is visible,
+                // so the mobile CSS can tint the iOS Safari status bar olive.
+                // Default is light — olive only when JS confirms hero is on-screen.
                 // ========================================
-                if (window.innerWidth <= 899) {
+                {
                     const heroEl = document.querySelector('.hero');
                     if (heroEl) {
                         const htmlEl = document.documentElement;
                         const statusBarObserver = new IntersectionObserver((entries) => {
-                            if (entries[0].isIntersecting) {
-                                htmlEl.classList.remove('scrolled-past-hero');
-                            } else {
-                                htmlEl.classList.add('scrolled-past-hero');
-                            }
+                            htmlEl.classList.toggle('hero-in-view', entries[0].isIntersecting);
                         }, { threshold: 0.20 });
                         statusBarObserver.observe(heroEl);
                     }
@@ -576,10 +573,8 @@ export const homeScripts = (): string => `
                 let lastNavScrollY = 0;
                 function getScrollThreshold() {
                     const width = window.innerWidth;
-                    if (width <= 375) return 130 * 0.10;
-                    if (width <= 480) return 190 * 0.10;
-                    if (width <= 960) return 190 * 0.10;
-                    return 320 * 0.10;
+                    if (width <= 960) return 19; // mobile
+                    return 32; // desktop
                 }
                 let scrollUpAtTopCount = 0;
                 let isNavigatingHome = false;
@@ -588,7 +583,7 @@ export const homeScripts = (): string => `
                     const currentScrollY = window.scrollY;
                     const scrollThreshold = getScrollThreshold();
 
-                    if (window.innerWidth <= 1199) {
+                    if (window.innerWidth <= 960) {
                         if (isNavigatingHome) {
                             if (currentScrollY === 0) isNavigatingHome = false;
                             lastNavScrollY = currentScrollY;
@@ -880,7 +875,7 @@ export const homeScripts = (): string => `
                         const targetId = this.getAttribute('href');
 
                         if (targetId === '#home' || targetId === '#') {
-                            if (window.innerWidth <= 1199) {
+                            if (window.innerWidth <= 960) {
                                 navShell.classList.remove('scrolled-mobile');
                                 isNavigatingHome = true;
                             }
@@ -890,27 +885,23 @@ export const homeScripts = (): string => `
 
                         const target = document.querySelector(targetId);
                         if (target) {
-                            let navOffset = 45;
+                            let navOffset = window.innerWidth <= 960 ? 30 : 60;
 
                             if (targetId === '#outreach') {
                                 const outreachRect = target.getBoundingClientRect();
                                 const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
-                                if (window.innerWidth <= 899) navOffset = 30;
-                                else if (window.innerWidth <= 1199) navOffset = -20;
-                                else navOffset = 60;
                                 window.scrollTo({ top: outreachAbsoluteTop - navOffset, behavior: 'smooth' });
                                 return;
                             }
 
                             if (targetId === '#gift-form') {
-                                navOffset = window.innerWidth <= 899 ? 100 : 150;
+                                navOffset = window.innerWidth <= 960 ? 100 : 150;
                                 const elementRect = target.getBoundingClientRect();
                                 const absoluteElementTop = elementRect.top + window.pageYOffset;
                                 window.scrollTo({ top: absoluteElementTop - navOffset, behavior: 'smooth' });
                                 return;
                             }
 
-                            if (window.innerWidth <= 899) navOffset = 30;
                             const elementRect = target.getBoundingClientRect();
                             const absoluteElementTop = elementRect.top + window.pageYOffset;
                             window.scrollTo({ top: absoluteElementTop - navOffset, behavior: 'smooth' });
@@ -981,7 +972,53 @@ export const homeScripts = (): string => `
                     }, false);
                 }
 
-                // JotForm Submission Handler
+                // EngageBay form container auto-shrink
+                // The SDK sets inline heights on wrapper divs when content grows
+                // but never removes them when content shrinks. We observe textareas
+                // for resize and clear only the wrapper-level inline heights,
+                // leaving the SDK's deeper layout elements untouched.
+                {
+                    const container = document.querySelector('.jotform-container');
+                    if (container) {
+                        const resetWrapperHeights = () => {
+                            const embed = container.querySelector('.engage-hub-form-embed');
+                            if (!embed) return;
+                            if (embed.style.height) embed.style.height = '';
+                            for (const child of embed.children) {
+                                if (child.style && child.style.height) child.style.height = '';
+                            }
+                        };
+
+                        // Textarea resize ends on mouseup anywhere in the document
+                        let watching = false;
+                        const startWatch = () => {
+                            if (!watching) {
+                                watching = true;
+                                document.addEventListener('mouseup', () => {
+                                    watching = false;
+                                    resetWrapperHeights();
+                                }, { once: true });
+                            }
+                        };
+
+                        // Attach to textareas (SDK may add them after load)
+                        const bindTextareas = () => {
+                            container.querySelectorAll('textarea').forEach(ta => {
+                                if (!ta.dataset.watched) {
+                                    ta.dataset.watched = '1';
+                                    ta.addEventListener('mousedown', startWatch);
+                                    new ResizeObserver(resetWrapperHeights).observe(ta);
+                                }
+                            });
+                        };
+
+                        // Run once SDK renders, then watch for new elements
+                        bindTextareas();
+                        new MutationObserver(bindTextareas).observe(container, { childList: true, subtree: true });
+                    }
+                }
+
+                // JotForm Submission Handler (legacy — kept for EngageBay compat)
                 window.addEventListener('message', function(e) {
                     if (typeof e.data === 'object' && e.data.action === 'submission-completed') {
                         showSuccessState();

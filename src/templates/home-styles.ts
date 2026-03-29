@@ -654,7 +654,7 @@ export const homeStyles = (): string => `
                     border: 1px solid rgba(0, 0, 0, 0.08) !important;
                 }
                 /* On mobile, Find Us button stays gold even without backdrop-filter */
-                @media (max-width: 899px) {
+                @media (max-width: 960px) {
                     .find-us-btn {
                         background: var(--gold) !important;
                         border: 1px solid rgba(255, 255, 255, 0.25) !important;
@@ -822,7 +822,7 @@ export const homeStyles = (): string => `
                Arrows hidden; dots remain for navigation indicator. */
             @media (max-width: 960px) {
                 .carousel-card {
-                    padding: 0 16px;
+                    padding: 0 clamp(4px, 2vw, 16px);
                 }
                 .carousel-arrow {
                     /* !important overrides JS inline style.display = 'flex' set by render() */
@@ -1748,18 +1748,18 @@ export const homeStyles = (): string => `
             }
             
             /* Mobile adjustments for modal */
-            @media (max-width: 520px) {
+            @media (max-width: 960px) {
                 .past-events-modal { padding: 16px; }
                 .past-events-modal-content { max-width: 100%; }
                 .past-events-slides { max-width: 100%; }
-                
+
                 .past-events-nav.prev { left: 8px; }
                 .past-events-nav.next { right: 8px; }
-                
+
                 .past-events-nav {
-                    width: 36px;
-                    height: 36px;
-                    font-size: 18px;
+                    width: clamp(36px, 5vw, 44px);
+                    height: clamp(36px, 5vw, 44px);
+                    font-size: clamp(18px, 2.5vw, 22px);
                     background: rgba(0, 0, 0, 0.6);
                 }
             }
@@ -2758,11 +2758,9 @@ export const homeStyles = (): string => `
                 cursor: pointer;
             }
             
-            /* JotForm Container Styles */
+            /* Engage Hub Form Container */
             .jotform-container {
                 width: 100%;
-                /* No min-height — container matches the iframe's auto-resized height exactly,
-                   eliminating the empty white space that appeared below the form */
                 background: var(--surface);
                 border-radius: 24px;
                 border: 1px solid rgba(255, 255, 255, 0.6);
@@ -2770,33 +2768,15 @@ export const homeStyles = (): string => `
                             0 12px 32px rgba(0, 0, 0, 0.04);
                 overflow: visible;
                 position: relative;
+                padding: 32px;
             }
 
             .jotform-container::before {
                 display: none;
             }
 
-            /* Solid cover for JotForm branding at the very bottom of the iframe.
-               Solid (not gradient) so button shadow doesn't bleed through. */
             .jotform-container::after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 56px;
-                background: var(--surface);
-                pointer-events: none;
-                z-index: 9;
-                border-radius: 0 0 24px 24px;
-            }
-
-            .jotform-container iframe {
-                width: 100%;
-                border: none;
-                min-height: 800px;
-                border-radius: 24px; /* Clips iframe pixels to match container corners */
-                display: block;
+                display: none;
             }
             
             /* Prevent zoom on form inputs - Mobile Safari Fix */
@@ -3011,30 +2991,39 @@ export const homeStyles = (): string => `
                This matches the original working version from GitHub
                ======================================== */
 
+            /* ========================================
+               MOBILE STYLES (≤960px)
+               Single consolidated mobile breakpoint.
+               All values use fluid clamp() for smooth scaling from 320px → 960px.
+               ======================================== */
+
             /* iOS status bar: Safari reads body's background-color for the
-               status bar tint. Defaults to olive; JS adds .scrolled-past-hero
-               to switch to white when user scrolls past the hero section.
+               status bar tint. Defaults to light; JS adds .hero-in-view
+               to set olive only when the hero is confirmed visible.
                .page wrapper always has light bg to cover visible content. */
-            @media (max-width: 899px) {
+            /* iOS status bar tint: default to light; JS adds .hero-in-view
+               only when the hero is confirmed visible, so there is never a
+               flash of olive when crossing the 960px breakpoint on desktop. */
+            @media (max-width: 960px) {
                 html {
-                    background: #3d3a2a !important;
-                }
-                html.scrolled-past-hero {
                     background: #faf8f5 !important;
+                }
+                html.hero-in-view {
+                    background: #3d3a2a !important;
                 }
                 body {
                     margin: 0;
                     padding: 0;
-                    background: #3d3a2a !important;
+                    background: #faf8f5 !important;
                     background-image: none !important;
                     transition: none;
                 }
-                html.scrolled-past-hero body {
-                    background: #faf8f5 !important;
+                html.hero-in-view body {
+                    background: #3d3a2a !important;
                 }
             }
 
-            @media (max-width: 899px) {
+            @media (max-width: 960px) {
                 /* Phone nav-spacer - zero since hero is fullscreen behind nav */
                 .nav-spacer {
                     height: 0;
@@ -3060,7 +3049,7 @@ export const homeStyles = (): string => `
                     gap: 0;
                     background-image: url('/static/IMG_7331.jpeg');
                     background-size: cover;
-                    background-position: center 20%;
+                    background-position: center 60%;
                     border-radius: 0;
                     width: 100vw;
                     margin-left: calc(-50vw + 50%);
@@ -3182,17 +3171,19 @@ export const homeStyles = (): string => `
                     top: 23.5vh;
                     left: 0;
                     right: 0;
+                    width: 100%;
                     text-align: center;
                     z-index: 3;
                     color: white !important;
                     font-family: var(--font-display), 'Playfair Display', serif;
-                    font-size: clamp(64px, 16vw, 88px);
+                    font-size: clamp(68px, 17vw, 96px);
                     font-weight: 700;
                     text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
-                    padding: 0 20px;
-                    line-height: 1.0;
-                    letter-spacing: -1.5px;
+                    padding: 0 5%;
+                    line-height: 1.05;
+                    letter-spacing: -2px;
                     margin: 0;
+                    box-sizing: border-box;
                 }
 
                 /* Bottom content area — stacked: Find Us button + info text */
@@ -3322,7 +3313,7 @@ export const homeStyles = (): string => `
                 }
             }
             
-            @media (max-width: 899px) {
+            @media (max-width: 960px) {
                 .event-content {
                     grid-template-columns: 1fr;
                     gap: 0;
@@ -3353,16 +3344,17 @@ export const homeStyles = (): string => `
 
             }
 
-            @media (max-width: 899px) {
+            @media (max-width: 960px) {
                 /* NAV - Centered layout matching mobile design */
                 .nav-shell {
                     flex-wrap: wrap;
                     justify-content: center;
-                    border-radius: 40px;
+                    border-radius: clamp(32px, 8vw, 40px);
                     gap: 16px;
                     margin: 20px auto 50px;
-                    padding: 16px 20px;
-                    top: calc(env(safe-area-inset-top, 0px) + 8px);
+                    padding: clamp(12px, 3.5vw, 16px) clamp(15px, 4.5vw, 20px);
+                    top: calc(env(safe-area-inset-top, 0px) + clamp(8px, 1.2vw, 12px));
+                    width: clamp(94%, 96vw, 100%);
                     /* Low opacity white + heavy blur = warm frosted glass that
                        picks up the olive/earth tones from the hero behind it */
                     background: rgba(255, 255, 255, 0.72);
@@ -3371,291 +3363,22 @@ export const homeStyles = (): string => `
                     border: 1px solid rgba(255, 255, 255, 0.4);
                     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
                                 0 2px 8px rgba(0, 0, 0, 0.06);
-                }
-                
-                .nav-shell.scrolled-mobile {
-                    border-radius: 100px;
-                    padding: 8px 20px;
-                    gap: 0;
-                    margin-bottom: 30px;
-                    top: 8px;
-                    background: rgba(255, 255, 255, 0.72);
-                }
-
-                nav ul {
-                    width: 100%;
-                    justify-content: center;  /* Center nav links */
-                    flex-wrap: nowrap; /* Prevent wrapping */
-                    gap: clamp(8px, 3vw, 18px); /* Responsive gap */
-                    order: 1;  /* Nav links first */
-                }
-                
-                .nav-shell.scrolled-mobile nav ul {
-                    gap: clamp(8px, 3vw, 16px);
-                }
-
-                .brand {
-                    align-items: center;
-                    width: 100%;
-                    text-align: center;
-                    order: 0;  /* Brand at top */
-                }
-
-                .nav-cta {
-                    width: 100%;
-                    padding: 10px 24px;
-                    font-size: 12px;
-                    text-align: center;
-                    order: 2;  /* CTA button last */
-                    white-space: nowrap;
-                }
-                
-                /* Contact button - shift right when compressed */
-                .nav-shell.scrolled-mobile .nav-cta {
-                    width: auto;
-                    margin-left: auto;
-                    padding: 8px 20px;
-                }
-
-                .brand-title {
-                    font-size: 19px;
-                    letter-spacing: 2px;
-                    white-space: nowrap;
-                }
-
-                .brand-subtitle {
-                    font-size: 11px;
-                    letter-spacing: 3px;
-                    white-space: nowrap;
-                }
-
-                nav a {
-                    font-size: clamp(11px, 2.8vw, 13px);
-                    letter-spacing: clamp(1px, 0.4vw, 2px);
-                    white-space: nowrap;
-                }
-
-                /* .hero h1 and .hero p — see main mobile hero block below */
-
-                .section-heading {
-                    font-size: clamp(32px, 6vw, 48px);
-                }
-
-                .section-lead {
-                    font-size: 18px;
-                }
-
-                .schedule-grid {
-                    grid-template-columns: 1fr;
-                    gap: 24px;
-                }
-
-                .schedule-item {
-                    padding: 28px;
-                }
-            }
-
-            @media (max-width: 899px) {
-                .page {
-                    width: 100%;
-                    background: var(--bg-color); /* light bg covers olive body */
-                    box-sizing: border-box;
-                }
-
-                main {
-                    gap: 64px;
-                    margin-bottom: 64px;
-                }
-
-                section {
-                    padding: 0;
-                }
-
-                /* Schedule must sit above the bridge blur (z:2) */
-                .schedule {
-                    position: relative;
-                    z-index: 3;
-                }
-
-                .hero {
-                    padding: 0;
-                }
-
-                /* .hero h1 inherits from .hero-title in main mobile hero block above */
-
-                .btn {
-                    padding: 16px 32px;
-                    font-size: 11px;
-                }
-
-                .section-card {
-                    padding: 36px 28px;
-                    border-radius: 32px;
-                }
-
-                .schedule-item {
-                    border-radius: 24px;
-                }
-
-                .section-eyebrow {
-                    font-size: 9px;
-                    padding: 10px 20px;
-                    letter-spacing: 2.5px;
-                    margin-bottom: 20px;
-                }
-
-                .section-heading {
-                    font-size: clamp(28px, 5.5vw, 40px);
-                    margin-bottom: 20px;
-                }
-
-                .section-lead {
-                    font-size: 16px;
-                    line-height: 1.7;
-                }
-
-                address {
-                    font-size: 11px;
-                    letter-spacing: 2px;
-                    margin-bottom: 32px;
-                }
-
-                .schedule-item h3 {
-                    font-size: 22px;
-                }
-
-                .schedule-item p {
-                    font-size: 15px;
-                }
-
-                /* Mobile/Tablet Event Cards - Centered layout */
-
-
-                .watch {
-                    gap: 20px;
-                }
-
-                .watch-card {
-                    padding: 32px 24px;
-                    border-radius: 32px;
-                }
-
-                .contact {
-                    gap: 28px;
-                }
-
-                .preview-screen {
-                    padding: 32px 24px;
-                    min-height: 280px;
-                }
-
-                .preview-screen p {
-                    font-size: 16px;
-                    line-height: 1.7;
-                }
-
-                .preview-screen small {
-                    font-size: 13px;
-                }
-
-                .past-streams {
-                    grid-template-columns: 1fr;
-                    gap: 16px;
-                }
-                
-                /* Contact Section Tablet */
-                .contact-card {
-                    padding: 48px 36px;
-                    border-radius: 32px;
-                    grid-template-columns: 1fr;
-                    gap: 48px;
-                }
-                
-                .form-row {
-                    grid-template-columns: 1fr;
-                }
-                
-                .form-row-3 {
-                    grid-template-columns: 1fr;
-                }
-                
-                .form-section {
-                    padding: 20px;
-                }
-                
-                .form-section-title {
-                    font-size: 20px;
-                }
-                
-                .child-form {
-                    padding: 16px;
-                }
-                
-                .form-success {
-                    padding: 48px 28px;
-                    min-height: 500px;
-                }
-                
-                .success-icon {
-                    font-size: 72px;
-                }
-                
-                .success-heading {
-                    font-size: clamp(28px, 6vw, 36px);
-                }
-                
-                .success-message {
-                    font-size: 18px;
-                }
-                
-                .calendar-buttons {
-                    flex-direction: column;
-                    gap: 12px;
-                }
-                
-                .btn-calendar {
-                    width: 100%;
-                    min-width: auto;
-                }
-            }
-
-            /* Small Phones - Industry Standard Responsive Scaling (320px-480px) */
-            /* Uses clamp() with 960px values as MAX to preserve iPhone 17 Pro Max perfection */
-            @media (max-width: 480px) {
-                .page {
-                    width: 100%;
-                    padding: 0 clamp(3%, 5vw, 5%);
-                    box-sizing: border-box;
-                }
-
-                /* .page already provides edge spacing at ≤480px via its padding;
-                   reduce .carousel-card padding to avoid double-inset */
-                .carousel-card {
-                    padding: 0 4px;
-                }
-
-                .nav-spacer {
-                    height: 0;
-                }
-
-                .nav-shell {
-                    padding: clamp(12px, 3.5vw, 16px) clamp(15px, 4.5vw, 20px);
-                    border-radius: clamp(32px, 8vw, 40px);
-                    top: clamp(8px, 2.5vw, 12px);
-                    width: 94%;
                     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
-                
+
                 .nav-shell.scrolled-mobile {
                     border-radius: 100px;
                     padding: clamp(6px, 1.8vw, 8px) clamp(15px, 4.5vw, 20px);
+                    gap: 0;
+                    margin-bottom: 30px;
                     top: clamp(6px, 1.8vw, 8px);
+                    background: rgba(255, 255, 255, 0.72);
                 }
-                
+
                 .nav-shell.scrolled-mobile .nav-cta {
                     display: none;
                 }
-                
+
                 .nav-form-btn {
                     display: none;
                     padding: 6px 14px;
@@ -3679,7 +3402,7 @@ export const homeStyles = (): string => `
                     position: absolute;
                     right: 18px;
                 }
-                
+
                 .nav-shell.scrolled-mobile .nav-form-btn {
                     display: inline-flex;
                     opacity: 1;
@@ -3688,7 +3411,7 @@ export const homeStyles = (): string => `
                     margin-left: 8px;
                     right: auto;
                 }
-                
+
                 /* Active state for Contact button */
                 .nav-form-btn.active {
                     font-weight: 900;
@@ -3700,12 +3423,526 @@ export const homeStyles = (): string => `
                     box-shadow: 0 8px 24px color-mix(in srgb, var(--gold) 40%, transparent),
                                 0 4px 12px color-mix(in srgb, var(--gold) 20%, transparent);
                 }
-                
 
-                
+                nav ul {
+                    width: 100%;
+                    justify-content: center;
+                    flex-wrap: nowrap;
+                    gap: clamp(6px, 2.5vw, 18px);
+                    order: 1;
+                }
+
+                .nav-shell.scrolled-mobile nav ul {
+                    gap: clamp(6px, 2.5vw, 16px);
+                }
+
+                nav {
+                    text-align: center;
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                nav ul {
+                    margin: 0;
+                    padding: 0;
+                }
+
+                .brand {
+                    align-items: center;
+                    width: 100%;
+                    text-align: center;
+                    order: 0;
+                }
+
+                .nav-cta {
+                    width: 100%;
+                    padding: clamp(6px, 2vw, 10px) clamp(12px, 3.5vw, 24px);
+                    font-size: clamp(10px, 2.5vw, 12px);
+                    text-align: center;
+                    order: 2;
+                    white-space: nowrap;
+                    letter-spacing: clamp(1px, 0.3vw, 1.5px);
+                }
+
+                /* Contact button - shift right when compressed */
+                .nav-shell.scrolled-mobile .nav-cta {
+                    width: auto;
+                    margin-left: auto;
+                    padding: 8px 20px;
+                }
+
+                .brand-title {
+                    font-size: clamp(16px, 4.5vw, 19px);
+                    letter-spacing: clamp(1.5px, 0.5vw, 2px);
+                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    white-space: nowrap;
+                }
+
+                .brand-subtitle {
+                    font-size: clamp(9px, 2.5vw, 11px);
+                    letter-spacing: clamp(2.5px, 0.7vw, 3px);
+                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    white-space: nowrap;
+                }
+
+                nav a {
+                    font-size: clamp(10px, 2.5vw, 13px);
+                    letter-spacing: clamp(0.8px, 0.3vw, 2px);
+                    white-space: nowrap;
+                }
+
+                .nav-shell.scrolled-mobile nav a {
+                    font-size: clamp(10px, 2.5vw, 12px);
+                    letter-spacing: clamp(0.8px, 0.3vw, 1.5px);
+                    white-space: nowrap;
+                }
+
+                .schedule-grid {
+                    grid-template-columns: 1fr;
+                    gap: clamp(16px, 2.5vw, 24px);
+                }
+
+                .schedule-item {
+                    padding: clamp(16px, 3vw, 28px);
+                }
+            }
+
+            @media (max-width: 960px) {
+                .page {
+                    width: 100%;
+                    padding: 0 clamp(3%, 3vw, 0%);
+                    background: var(--bg-color); /* light bg covers olive body */
+                    box-sizing: border-box;
+                }
+
+                main {
+                    gap: clamp(64px, 10vw, 100px);
+                    margin-bottom: clamp(20px, 6vw, 64px);
+                }
+
+                section {
+                    padding: 0;
+                }
+
+                /* Schedule must sit above the bridge blur (z:2) */
+                .schedule {
+                    position: relative;
+                    z-index: 3;
+                }
+
+                .hero {
+                    padding: 0;
+                }
+
+                /* .hero h1 inherits from .hero-title in main mobile hero block above */
+
+                .cta-group {
+                    flex-direction: column;
+                    gap: 12px;
+                    width: 100%;
+                    align-items: stretch;
+                }
+
+                .btn {
+                    width: 100% !important;
+                    padding: 16px 32px;
+                    font-size: clamp(11px, 1.4vw, 14px);
+                    letter-spacing: var(--tracking-wide);
+                }
+
+                .section-card {
+                    padding: clamp(18px, 4vw, 36px) clamp(16px, 3vw, 28px);
+                    border-radius: clamp(24px, 3.5vw, 32px);
+                }
+
+                .schedule-item {
+                    border-radius: clamp(16px, 2.5vw, 24px);
+                }
+
+                .section-eyebrow {
+                    font-size: clamp(9px, 1.2vw, 10px);
+                    padding: 10px 20px;
+                    letter-spacing: clamp(2px, 0.3vw, 2.5px);
+                    margin-bottom: clamp(16px, 2.2vw, 20px);
+                }
+
+                .section-heading {
+                    font-size: clamp(28px, 6vw, 48px);
+                    margin-bottom: clamp(16px, 2.2vw, 20px);
+                    line-height: 1.2;
+                }
+
+                .section-lead {
+                    font-size: clamp(16px, 2vw, 18px);
+                    line-height: 1.7;
+                }
+
+                address {
+                    font-size: clamp(11px, 1.5vw, 13px);
+                    letter-spacing: 2px;
+                    margin-bottom: clamp(20px, 3.5vw, 32px);
+                }
+
+                .schedule-item h3 {
+                    font-size: clamp(22px, 3vw, 26px);
+                }
+
+                .schedule-item p {
+                    font-size: clamp(14px, 1.7vw, 15px);
+                }
+
+                /* Mobile/Tablet Event Cards - Centered layout */
+
+
+                .watch {
+                    gap: clamp(16px, 2.2vw, 20px);
+                }
+
+                .watch-card {
+                    padding: clamp(28px, 3.5vw, 32px) clamp(20px, 2.8vw, 24px);
+                    border-radius: clamp(24px, 3.5vw, 32px);
+                }
+
+                .contact {
+                    gap: clamp(28px, 3.5vw, 32px);
+                }
+
+                .preview-screen {
+                    padding: clamp(28px, 3.5vw, 32px) clamp(20px, 2.8vw, 24px);
+                    min-height: clamp(240px, 30vw, 280px);
+                }
+
+                .preview-screen p {
+                    font-size: 16px;
+                    line-height: 1.7;
+                }
+
+                .preview-screen small {
+                    font-size: clamp(13px, 1.7vw, 16px);
+                }
+
+                .past-streams {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+
+                /* Contact Section */
+                .contact-card {
+                    padding: clamp(32px, 5vw, 48px) clamp(24px, 4vw, 36px);
+                    border-radius: clamp(24px, 3.5vw, 32px);
+                    grid-template-columns: 1fr;
+                    gap: clamp(40px, 5vw, 48px);
+                }
+
+                .form-row {
+                    grid-template-columns: 1fr;
+                }
+
+                .form-row-3 {
+                    grid-template-columns: 1fr;
+                }
+
+                .form-section {
+                    padding: 20px;
+                }
+
+                .form-section-title {
+                    font-size: 20px;
+                }
+
+                .child-form {
+                    padding: 16px;
+                }
+
+                .form-success {
+                    padding: clamp(40px, 5vw, 48px) clamp(24px, 3vw, 28px);
+                    min-height: clamp(450px, 55vw, 500px);
+                }
+
+                .success-icon {
+                    font-size: clamp(64px, 8vw, 72px);
+                }
+
+                .success-heading {
+                    font-size: clamp(26px, 5.5vw, 36px);
+                }
+
+                .success-message {
+                    font-size: clamp(16px, 2vw, 18px);
+                }
+
+                .calendar-buttons {
+                    flex-direction: column;
+                    gap: 12px;
+                }
+
+                .btn-calendar {
+                    width: 100%;
+                    min-width: auto;
+                    font-size: clamp(12px, 1.5vw, 14px);
+                    padding: clamp(14px, 1.8vw, 16px) clamp(20px, 2.5vw, 24px);
+                }
+
+                .calendar-icon {
+                    font-size: clamp(18px, 2.2vw, 22px);
+                }
+
+                /* Outreach section — inherit .page width */
+                .outreach {
+                    width: 100%;
+                    max-width: 100%;
+                }
+
+                .outreach .section-eyebrow {
+                    display: inline-flex !important;
+                    width: fit-content !important;
+                    max-width: fit-content !important;
+                    margin-left: clamp(4px, 1vw, 16px);
+                    margin-bottom: 10px;
+                }
+
+                .outreach .section-heading {
+                    text-align: left;
+                    padding-left: clamp(4px, 1vw, 16px);
+                    margin-bottom: 24px;
+                }
+
+                .outreach-title-sticky {
+                    top: 60px;
+                    padding: 6px 0;
+                    margin-bottom: 20px;
+                }
+
+                .outreach-title-sticky h2 {
+                    font-size: clamp(26px, 5vw, 34px);
+                }
+
+                .event-outer-card {
+                    border-radius: clamp(24px, 3.5vw, 32px);
+                    padding: clamp(14px, 1.8vw, 20px);
+                }
+
+                .event-date {
+                    font-size: clamp(14px, 1.7vw, 17px);
+                }
+
+                .event-time-pill {
+                    font-size: clamp(14px, 1.7vw, 17px);
+                }
+
+                .event-card-header .past-card-badge {
+                    font-size: clamp(14px, 1.7vw, 17px);
+                }
+
+                .event-title {
+                    font-size: clamp(26px, 5.5vw, 31px);
+                    margin-bottom: 6px;
+                    line-height: 1.2;
+                }
+
+                .event-time {
+                    font-size: 14px;
+                    margin-bottom: 0;
+                }
+
+                .event-content {
+                    grid-template-columns: 1fr;
+                    gap: 0;
+                    min-height: auto;
+                }
+
+                .event-flyer-container {
+                    order: -1;
+                    padding: 32px;
+                }
+
+                .event-description {
+                    padding: clamp(0px, 2vw, 32px) clamp(20px, 3vw, 32px) clamp(20px, 3vw, 32px);
+                    gap: 14px;
+                }
+
+                .event-description p {
+                    font-size: clamp(16px, 2vw, 17px);
+                    line-height: 1.65;
+                }
+
+                .event-description ul {
+                    gap: 8px;
+                }
+
+                .event-description li {
+                    font-size: 16px;
+                    line-height: 1.6;
+                }
+
+                .event-description li::before {
+                    width: 6px;
+                    height: 6px;
+                    margin-top: 6px;
+                }
+
+                .event-header {
+                    padding: 32px 32px 24px 32px;
+                }
+
+                .flyer-frame {
+                    max-width: 100%;
+                }
+
+                .placeholder-flyer {
+                    aspect-ratio: 3/4;
+                    border-radius: clamp(24px, 3.5vw, 32px);
+                }
+
+                .event-cta {
+                    padding: 0 clamp(14px, 3.5vw, 20px);
+                    margin-bottom: clamp(14px, 3.2vw, 16px);
+                    max-width: clamp(340px, 80vw, 400px);
+                    margin-top: 4px;
+                }
+
+                .event-cta .btn {
+                    padding: clamp(12px, 3vw, 16px) clamp(24px, 5vw, 32px);
+                    font-size: clamp(11px, 2.8vw, 13px);
+                    border-radius: 16px;
+                }
+
+                .event-indicators {
+                    display: flex;
+                    right: 16px;
+                }
+
+                .schedule-item span {
+                    font-size: clamp(11px, 1.4vw, 13px);
+                    letter-spacing: clamp(1.5px, 0.2vw, 1.8px);
+                }
+
+                .live-status {
+                    font-size: clamp(8px, 1.5vw, 13px);
+                    padding: clamp(4px, 0.8vw, 7px) clamp(12px, 1.6vw, 18px);
+                    letter-spacing: clamp(1px, 0.2vw, 2px);
+                }
+
+                .live-dot {
+                    width: clamp(6px, 1vw, 9px);
+                    height: clamp(6px, 1vw, 9px);
+                }
+
+                .btn-outline {
+                    padding: 16px 38px;
+                    font-size: var(--text-small);
+                    letter-spacing: 1.5px;
+                    width: 100%;
+                    max-width: 400px;
+                }
+
+                .past-streams-label {
+                    font-size: clamp(10px, 1.7vw, 16px);
+                    letter-spacing: clamp(1px, 0.2vw, 2px);
+                    margin-bottom: clamp(7px, 1.3vw, 12px);
+                }
+
+                .stream-thumbnail {
+                    font-size: clamp(11px, 1.7vw, 16px);
+                    border-radius: clamp(8px, 1.3vw, 12px);
+                }
+
+                /* Contact Section Mobile */
+                .contact-header {
+                    text-align: left !important;
+                    padding: 0;
+                    margin-left: 0;
+                    margin-right: auto;
+                }
+
+                .contact-header .section-eyebrow {
+                    text-align: left !important;
+                    margin-left: 0 !important;
+                    margin-right: auto;
+                }
+
+                .contact-header .section-heading,
+                .contact-header .section-lead {
+                    text-align: left !important;
+                }
+
+                /* Gift Gallery Mobile */
+                .gift-gallery {
+                    gap: clamp(1%, 1.5vw, 1.5%);
+                    margin: clamp(16px, 2.5vw, 24px) 0;
+                }
+
+                .gift-image {
+                    border-radius: clamp(8px, 1.3vw, 12px);
+                }
+
+                .btn-see-flyer {
+                    padding: clamp(6px, 0.8vw, 7px) clamp(16px, 2vw, 20px);
+                    font-size: clamp(9px, 1.2vw, 10px);
+                    margin: clamp(5px, 0.8vw, 6px) auto clamp(10px, 1.3vw, 12px);
+                }
+
+                .form-group label {
+                    font-size: 14px;
+                }
+
+                .form-group input,
+                .form-group select,
+                .form-group textarea {
+                    padding: 14px 18px;
+                    font-size: 15px;
+                    border-radius: 12px;
+                }
+
+                .form-group textarea {
+                    min-height: 120px;
+                }
+
+                .btn-submit {
+                    padding: 16px 32px;
+                    font-size: 14px;
+                }
+
+                .contact-info {
+                    gap: 20px;
+                }
+
+                .contact-info-item {
+                    padding: 20px;
+                    border-radius: 16px;
+                }
+
+                .contact-icon {
+                    font-size: 28px;
+                }
+
+                .contact-text h4 {
+                    font-size: 15px;
+                }
+
+                .contact-text p {
+                    font-size: 17px;
+                }
+
+                .success-details {
+                    padding: clamp(12px, 2vw, 20px);
+                }
+
+                .detail-label,
+                .detail-value {
+                    font-size: 14px;
+                }
+
+                /* Form container - mobile sizing */
+                .jotform-container {
+                    border-radius: clamp(16px, 2.5vw, 24px);
+                    padding: 8px 0;
+                }
+
                 /* Mobile Stay Tuned Card styling */
                 .stay-tuned-card {
-                    padding: 40px 24px;
+                    padding: clamp(24px, 4vw, 40px) clamp(16px, 3vw, 24px);
                     border-radius: 32px;
                 }
 
@@ -3732,7 +3969,7 @@ export const homeStyles = (): string => `
                 .stay-tuned-rule {
                     width: 36px;
                 }
-                
+
                 .btn-view-past-events {
                     margin-top: 12px;
                     padding: 8px 16px;
@@ -3741,915 +3978,31 @@ export const homeStyles = (): string => `
                     border-color: var(--gold);
                     color: #ffffff;
                 }
-                
+
                 /* Mobile stay-tuned overrides */
                 .stay-tuned-only {
                     min-height: auto !important;
                     padding-bottom: 0 !important;
                 }
-                
-                .placeholder-flyer {
-                    border-radius: 32px;
-                }
-                
-                .event-cta {
-                    padding: 0 clamp(14px, 3.5vw, 16px);
-                    margin-bottom: clamp(14px, 3.2vw, 16px);
-                    max-width: clamp(340px, 80vw, 360px);
-                }
-                
-                .event-cta .btn {
-                    padding: clamp(15px, 3.8vw, 16px) clamp(28px, 7vw, 32px);
-                    font-size: clamp(12px, 3.2vw, 13px);
-                    border-radius: 16px;
-                }
 
-                .brand-title {
-                    font-size: clamp(16px, 4.5vw, 19px);
-                    letter-spacing: clamp(1.5px, 0.5vw, 2px);
-                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-                    white-space: nowrap;
-                }
-
-                .brand-subtitle {
-                    font-size: clamp(9px, 2.5vw, 11px);
-                    letter-spacing: clamp(2.5px, 0.7vw, 3px);
-                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-                    white-space: nowrap;
-                }
-
-                nav ul {
-                    gap: clamp(6px, 2.5vw, 14px);
-                    flex-wrap: nowrap;
-                    justify-content: center;
-                }
-                
-                nav {
-                    text-align: center;
-                    flex: 1;
-                    display: flex;
-                    justify-content: center;
-                }
-                
-                nav ul {
-                    margin: 0;
-                    padding: 0;
-                }
-                
-                .nav-shell.scrolled-mobile nav ul {
-                    gap: clamp(6px, 2.5vw, 12px);
-                    flex-wrap: nowrap;
-                    justify-content: center;
-                }
-
-                nav a {
-                    font-size: clamp(10px, 2.5vw, 12px);
-                    letter-spacing: clamp(0.8px, 0.3vw, 1.5px);
-                    white-space: nowrap;
-                }
-
-                .nav-shell.scrolled-mobile nav a {
-                    font-size: clamp(10px, 2.5vw, 12px);
-                    letter-spacing: clamp(0.8px, 0.3vw, 1.5px);
-                    white-space: nowrap;
-                }
-
-                .nav-cta {
-                    padding: clamp(6px, 2vw, 8px) clamp(12px, 3.5vw, 16px);
-                    font-size: clamp(10px, 2.5vw, 11px);
-                    letter-spacing: clamp(1px, 0.3vw, 1.5px);
-                    white-space: nowrap;
-                }
-
-                main {
-                    gap: 100px;
-                    margin-bottom: 20px; /* Reduced from 80px - contact section sits closer to footer */
-                }
-
-                /* 480px hero rules removed — 899px breakpoint handles all mobile hero layout.
-                   Only keep non-hero overrides and minor refinements here. */
-
-                .cta-group {
-                    flex-direction: column;
-                    gap: 12px;
-                    width: 100%;
-                    align-items: stretch;
-                }
-
-                .btn {
-                    width: 100% !important;
-                    padding: 16px 32px;
-                    font-size: var(--text-small);
-                    letter-spacing: var(--tracking-wide);
-                }
-
-                .section-eyebrow {
-                    font-size: var(--text-eyebrow);
-                    padding: 10px 20px;
-                    letter-spacing: var(--tracking-wider);
-                    margin-bottom: 16px;
-                }
-
-                .section-heading {
-                    font-size: clamp(34px, 7vw, 43px);
-                    margin-bottom: 16px;
-                    line-height: 1.2;
-                }
-
-                .watch {
-                    gap: 16px;
-                }
-
-                .section-lead {
-                    font-size: 16px;
-                    line-height: 1.7;
-                    margin-bottom: 12px;
-                }
-
-                address {
-                    font-size: 13px;
-                    letter-spacing: 2px;
-                    margin-bottom: 20px;
-                }
-
-                .section-card {
-                    padding: 18px 16px;
-                    border-radius: 24px;
-                }
-
-                .event-outer-card {
-                    border-radius: 24px;  /* match .section-card */
-                }
-
-                /* Outreach section — inherit .page width like all other sections.
-                   Carousel cards fill this width; .page padding provides edge spacing. */
-                .outreach {
-                    width: 100%;
-                    max-width: 100%;
-                }
-                .outreach .section-eyebrow {
-                    margin-left: 4px;
-                }
-                .outreach .section-heading {
-                    padding-left: 4px;
-                }
-
-                .schedule-grid {
-                    gap: 16px;
-                }
-
-                .schedule-item {
-                    padding: 16px 14px;
-                    border-radius: 16px;
-                    gap: 8px;
-                }
-
-                .schedule-item span {
-                    font-size: 11px;
-                    letter-spacing: 1.8px;
-                }
-
-                .schedule-item h3 {
-                    font-size: 26px;
-                }
-
-                .schedule-item p {
-                    font-size: 14px;
-                    line-height: 1.5;
-                }
-
-                .outreach-title-sticky {
-                    top: 60px;
-                    padding: 6px 0;
-                    margin-bottom: 20px;
-                }
-
-                .outreach-title-sticky h2 {
-                    font-size: clamp(26px, 5vw, 34px);
-                }
-                
-                /* Outreach section spacing */
-                .outreach .section-heading {
-                    margin-bottom: 24px;
-                }
-                
-                .outreach .section-eyebrow {
-                    display: inline-flex !important;
-                    width: fit-content !important;
-                    max-width: fit-content !important;
-                    margin-bottom: 10px;
-                }
-                
-                .outreach-scroll-container,
-                .sticky-wrapper,
-                .scroll-spacer,
-                .events-container {
-                    /* Legacy classes no longer used */
-                }
-                
-                .event-indicators {
-                    display: flex;
-                    right: 16px;
-                }
-
-                .event-outer-card {
-                    border-radius: 32px;  /* match .section-card */
-                    padding: 14px;
-                }
-
-                .event-date {
-                    font-size: 14px;
-                }
-
-                .event-time-pill {
-                    font-size: 14px;
-                }
-
-                .event-card-header .past-card-badge {
-                    font-size: 14px;
-                }
-
-                .event-title {
-                    font-size: clamp(26px, 5.5vw, 31px);
-                    margin-bottom: 6px;
-                    line-height: 1.2;
-                }
-
-                .event-time {
-                    font-size: 14px;
-                    margin-bottom: 0;
-                }
-                
-                .event-content {
-                    min-height: auto;
-                }
-
-                .event-description {
-                    padding: 0 20px 20px 20px;
-                    gap: 14px;
-                }
-
-                .event-description p {
-                    font-size: 17px;
-                    line-height: 1.65;
-                }
-
-                .event-description ul {
-                    gap: 8px;
-                }
-
-                .event-description li {
-                    font-size: 16px;
-                    line-height: 1.6;
-                }
-
-                .event-description li::before {
-                    width: 6px;
-                    height: 6px;
-                    margin-top: 6px;
-                }
-                
-                .event-cta {
-                    margin-top: 4px;
-                }
-                
-                .event-cta .btn {
-                    padding: 12px 24px;
-                    font-size: 11px;
-                }
-                
-                .placeholder-flyer {
-                    aspect-ratio: 3/4;
-                }
-
-                .placeholder-flyer {
-                    font-size: 17px;
-                    letter-spacing: 1.5px;
-                    border-radius: 32px;
-                }
-
-                .watch-card {
-                    padding: 28px 20px;
-                    border-radius: 24px;
-                }
-
-                .preview-screen {
-                    padding: 28px 20px;
-                    min-height: 240px;
-                    gap: 20px;
-                    border-radius: 16px;
-                }
-
-                .live-status {
-                    font-size: 13px;
-                    padding: 7px 18px;
-                    letter-spacing: 2px;
-                }
-
-                .live-dot {
-                    width: 9px;
-                    height: 9px;
-                }
-
-                .preview-screen p {
-                    font-size: 16px;
-                    line-height: 1.7;
-                }
-
-                .preview-screen small {
-                    font-size: 16px;
-                    margin-top: 6px;
-                }
-
-                .btn-outline {
-                    padding: 15px 34px;
-                    font-size: 13px;
-                    letter-spacing: 2px;
-                }
-
-                .past-streams-label {
-                    font-size: 16px;
-                    letter-spacing: 2px;
-                    margin-bottom: 12px;
-                }
-
-                .stream-thumbnail {
-                    font-size: 16px;
-                    border-radius: 12px;
-                }
-                
-                /* Contact Section Mobile */
-                .contact {
-                    gap: 32px;
-                }
-                
-                .contact-header {
-                    text-align: left !important;
-                    padding: 0;
-                    margin-left: 0;
-                    margin-right: auto;
-                }
-                
-                .contact-header .section-eyebrow {
-                    text-align: left !important;
-                    margin-left: 0 !important;
-                    margin-right: auto;
-                }
-                
-                .contact-header .section-heading,
-                .contact-header .section-lead {
-                    text-align: left !important;
-                }
-                
-                /* Gift Gallery Mobile - Keep in row, smaller gap */
-                .gift-gallery {
-                    gap: 1.5%;
-                    margin: 24px 0;
-                }
-                
-                .gift-image {
-                    border-radius: 12px;
-                }
-                
-                .btn-see-flyer {
-                    padding: 7px 20px;
-                    font-size: 10px;
-                    margin: 6px auto 12px;
-                }
-                
-                .contact-card {
-                    padding: 32px 24px;
-                    border-radius: 24px;
-                    grid-template-columns: 1fr;
-                    gap: 40px;
-                }
-                
-                .form-row {
-                    grid-template-columns: 1fr;
-                    gap: 20px;
-                }
-                
-                .form-group label {
-                    font-size: 14px;
-                }
-                
-                .form-group input,
-                .form-group select,
-                .form-group textarea {
-                    padding: 14px 18px;
-                    font-size: 15px;
-                    border-radius: 12px;
-                }
-                
-                .form-group textarea {
-                    min-height: 120px;
-                }
-                
-                .btn-submit {
-                    padding: 16px 32px;
-                    font-size: 14px;
-                }
-                
-                .contact-info {
-                    gap: 20px;
-                }
-                
-                .contact-info-item {
-                    padding: 20px;
-                    border-radius: 16px;
-                }
-                
-                .contact-icon {
-                    font-size: 28px;
-                }
-                
-                .form-success {
-                    padding: 40px 24px;
-                    min-height: 450px;
-                    gap: 24px;
-                }
-                
-                .success-icon {
-                    font-size: 64px;
-                }
-                
-                .success-heading {
-                    font-size: clamp(26px, 5.5vw, 32px);
-                }
-                
-                .success-message {
-                    font-size: 16px;
-                }
-                
-                .success-details {
-                    padding: 20px;
-                }
-                
-                .detail-label,
-                .detail-value {
-                    font-size: 14px;
-                }
-                
-                .btn-calendar {
-                    font-size: 12px;
-                    padding: 14px 20px;
-                }
-                
-                .calendar-icon {
-                    font-size: 18px;
-                }
-                
-                .contact-text h4 {
-                    font-size: 15px;
-                }
-                
-                .contact-text p {
-                    font-size: 17px;
-                }
-
-                /* Jotform container - mobile sizing */
-                .jotform-container {
-                    border-radius: 24px;
-                }
-
-                .jotform-container::after {
-                    height: 56px;
-                    border-radius: 0 0 24px 24px;
-                }
-
-                .jotform-container iframe {
-                    min-height: 900px;
-                    border-radius: 24px;
-                }
-            }
-
-            /* 375px breakpoint REMOVED - Using fluid clamp() scaling in 480px breakpoint instead */
-            /* This ensures smooth scaling from 320px to 960px with iPhone 17 Pro Max values as maximum */
-            @media (max-width: 0px) {
-                .page {
-                    width: 100%;
-                    padding: 0 3%;
-                }
-                
-                /* Navigation - More Compact */
-                .nav-spacer {
-                    height: 130px;
-                }
-                
-                .nav-shell {
-                    padding: 8px 10px;
-                    border-radius: 16px;
-                    top: 5px;
-                    width: 94%;
-                }
-                
-                .nav-shell.scrolled-mobile {
-                    padding: 4px 10px;
-                    top: 2px;
-                }
-                
-                .brand-title {
-                    font-size: 14px;
-                    letter-spacing: 1px;
-                    white-space: nowrap;
-                }
-
-                .brand-subtitle {
-                    font-size: 9px;
-                    letter-spacing: 1.8px;
-                    white-space: nowrap;
-                }
-
-                nav a {
-                    font-size: 11px;
-                    letter-spacing: 1px;
-                    white-space: nowrap;
-                }
-
-                .nav-shell.scrolled-mobile nav a {
-                    font-size: 10px;
-                    letter-spacing: 0.8px;
-                    white-space: nowrap;
-                }
-
-                .nav-cta {
-                    padding: 6px 12px;
-                    font-size: 10px;
-                    letter-spacing: 0.8px;
-                    white-space: nowrap;
-                }
-                
-                /* Main Content Spacing */
-                main {
-                    gap: 48px;
-                    margin-bottom: 48px;
-                }
-                
-                /* Hero Section - Add padding to push text down */
-                .hero {
-                    padding: 40px 0 20px;
-                    gap: 10px;
-                }
-                
-                .hero .eyebrow {
-                    padding: 7px 14px;
-                    font-size: 9px;
-                    letter-spacing: 1.2px;
-                }
-                
-                .hero .hero-tagline {
-                    font-size: clamp(36px, 9.5vw, 48px);
-                    line-height: 0.90;
-                    letter-spacing: -0.8px;
-                    margin-bottom: 10px;
-                }
-                
-                .hero p {
-                    font-size: 13px;
-                    line-height: 1.5;
-                }
-                
-                .hero-image {
-                    min-height: 220px;
-                    border-radius: 16px;
-                }
-                
-                /* Find Us Button - Smaller on small phones */
-                .find-us-wrapper {
-                    bottom: 10px;
-                    left: 10px;
-                    right: 10px;
-                }
-                
-                .find-us-btn {
-                    padding: 6px 20px;
-                    font-size: 10px;
-                    font-weight: 500;
-                    letter-spacing: 1.5px;
-                }
-                
-                .btn {
-                    padding: 11px 22px;
-                    font-size: 10px;
-                    letter-spacing: 1px;
-                }
-                
-                /* Section Headers */
-                .section-eyebrow {
-                    font-size: 8px;
-                    padding: 9px 16px;
-                    letter-spacing: 1.5px;
-                    margin-bottom: 12px;
-                }
-                
-                .section-heading {
-                    font-size: clamp(22px, 5.5vw, 28px);
-                    margin-bottom: 2px;
-                    line-height: 1.1;
-                }
-                
-                .section-lead {
-                    font-size: 13px;
-                    line-height: 1.5;
-                    margin-bottom: 0px;
-                }
-                
-                address {
-                    font-size: 9px;
-                    letter-spacing: 1px;
-                    margin-bottom: 2px;
-                }
-                
-                /* Schedule Section - Move sections up */
-                
-                .section-card {
-                    padding: 12px 10px;
-                    border-radius: 16px;
-                }
-                
-                .schedule-grid {
-                    gap: 10px;
-                }
-                
-                .schedule-item {
-                    padding: 10px 8px;
-                    border-radius: 12px;
-                    gap: 4px;
-                }
-                
-                .schedule-item span {
-                    font-size: 8px;
-                    letter-spacing: 1px;
-                }
-                
-                .schedule-item h3 {
-                    font-size: 18px;
-                }
-                
-                .schedule-item p {
-                    font-size: 11px;
-                    line-height: 1.3;
-                }
-                
-                /* Mobile 375px Event Cards - Compact */
-                .event-card {
-                    height: 86vh;
-                }
-
-                /* Outer card fills the constrained card height */
-                .event-outer-card {
-                    height: 100%;
-                    padding: 10px;
-                    border-radius: 22px;
-                    gap: 8px;
-                }
-
-                /* Image fills remaining height after header (flex: 1) */
-                .event-outer-card .event-flyer-wrapper {
-                    flex: 1;
-                    min-height: 0;
-                    aspect-ratio: unset;
-                    border-radius: 14px;
-                }
-
-                .event-meta-row {
-                    max-width: 324px;
-                    padding: 0 12px;
-                }
-                
-                .event-date {
-                    font-size: 11px;
-                }
-
-                .event-time-pill {
-                    font-size: 11px;
-                }
-
-                .event-card-header .past-card-badge {
-                    font-size: 11px;
-                }
-
-                .event-card-header {
-                    padding: 0 2px;
-                }
-                
-                .event-indicators {
-                    gap: 8px;
-                }
-                
-                .event-dot {
-                    width: 7px;
-                    height: 7px;
-                }
-                
-                .event-dot.active {
-                    width: 9px;
-                    height: 9px;
-                }
-                
-                .event-flyer-wrapper {
-                    max-width: 373px;
-                    padding: 0 12px;
-                    margin-bottom: 14px;
-                }
-                
-                .placeholder-flyer {
-                    border-radius: 32px;
-                }
-                
-                .event-cta {
-                    padding: 0 12px;
-                    margin-bottom: 14px;
-                    max-width: 324px;
-                }
-                
-                .event-cta .btn {
-                    padding: 14px 28px;
-                    font-size: 12px;
-                    border-radius: 16px;
-                }
-                
-                /* Watch Section */
-                .watch {
-                    gap: 12px;
-                }
-                
-                .watch-header {
-                    margin-bottom: -4px;
-                }
-                
-                .watch-card {
-                    padding: 20px 14px;
-                    border-radius: 16px;
-                }
-
-                .preview-screen {
-                    padding: 20px 14px;
-                    min-height: 190px;
-                    border-radius: 12px;
-                }
-                
-                .live-status {
-                    font-size: 8px;
-                    padding: 4px 12px;
-                    letter-spacing: 1px;
-                }
-                
-                .live-dot {
-                    width: 6px;
-                    height: 6px;
-                }
-                
-                .preview-screen p {
-                    font-size: 13px;
-                    line-height: 1.5;
-                }
-                
-                .preview-screen small {
-                    font-size: 10px;
-                }
-                
-                .btn-outline {
-                    padding: 10px 20px;
-                    font-size: 9px;
-                    letter-spacing: 1px;
-                }
-                
-                .past-streams-label {
-                    font-size: 10px;
-                    letter-spacing: 1px;
-                    margin-bottom: 7px;
-                }
-                
-                .stream-thumbnail {
-                    font-size: 11px;
-                    border-radius: 8px;
-                }
-                
-                /* Contact Section */
-                .contact {
-                    gap: 12px;
-                }
-                
-                .contact-header {
-                    margin-bottom: -4px;
-                }
-                
-                /* Gift Gallery 375px - Tighter spacing */
-                .gift-gallery {
-                    gap: 1%;
-                    margin: 16px 0;
-                }
-                
-                .gift-image {
-                    border-radius: 8px;
-                }
-                
-                .btn-see-flyer {
-                    padding: 6px 16px;
-                    font-size: 9px;
-                    margin: 5px auto 10px;
-                }
-                
-                .contact-card {
-                    padding: 16px 14px;
-                    border-radius: 16px;
-                    gap: 16px;
-                }
-                
-                .jotform-container {
-                    min-height: 600px;
-                }
-                
-                .jotform-container::before {
-                    bottom: 85px; /* Higher up on mobile */
-                    width: calc(100% - 28px); /* Match mobile form card width */
-                    height: 20px;
-                    border-radius: 0 0 16px 16px;
-                    box-shadow: 0 95px 0 0 #faf8f5; /* Taller shadow */
-                }
-                
-                .jotform-container::after {
-                    height: 85px; /* Taller to meet the ::before */
-                }
-                
-                .jotform-container iframe {
-                    min-height: 600px;
-                }
-                
-                /* Form Success State - Smaller */
-                .form-success {
-                    padding: 24px 14px;
-                    min-height: 330px;
-                    gap: 16px;
-                }
-                
-                .success-icon {
-                    font-size: 44px;
-                }
-                
-                .success-heading {
-                    font-size: clamp(20px, 5vw, 24px);
-                }
-                
-                .success-message {
-                    font-size: 12px;
-                    line-height: 1.4;
-                }
-                
-                .success-details {
-                    padding: 12px;
-                    gap: 8px;
-                }
-                
-                .detail-item {
-                    padding: 7px 0;
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 4px;
-                }
-                
-                .detail-label {
-                    font-size: 11px;
-                }
-                
-                .detail-value {
-                    font-size: 11px;
-                    text-align: left;
-                    font-weight: 700;
-                }
-                
-                .calendar-buttons {
-                    gap: 7px;
-                }
-                
-                .btn-calendar {
-                    padding: 10px 14px;
-                    font-size: 9px;
-                    letter-spacing: 0.5px;
-                }
-                
-                .calendar-icon {
-                    font-size: 14px;
-                }
-                
-                /* Lightbox - Smaller Close Button */
+                /* Lightbox */
                 .lightbox-close {
-                    width: 32px;
-                    height: 32px;
+                    width: clamp(32px, 4vw, 40px);
+                    height: clamp(32px, 4vw, 40px);
                     top: 10px;
                     right: 10px;
-                    font-size: 20px;
+                    font-size: clamp(20px, 2.5vw, 24px);
                 }
-                
+
                 .lightbox-instructions {
                     bottom: 14px;
                     padding: 7px 14px;
-                    font-size: 8px;
+                    font-size: clamp(8px, 1.1vw, 10px);
                     letter-spacing: 0.5px;
                 }
             }
-            
+
+            /* REMOVED: Old 480px and 0px breakpoints — values merged into 960px block via fluid clamp() */
             
             /* ========================================
                DESKTOP STYLES (≥961px)
@@ -4670,8 +4023,8 @@ export const homeStyles = (): string => `
                 }
 
                 main {
-                    gap: 120px;
-                    margin-bottom: 120px;
+                    gap: clamp(80px, 10vw, 120px);
+                    margin-bottom: clamp(80px, 10vw, 120px);
                 }
 
                 /* ─── Desktop Hero Section - FULL VIEWPORT ───────────────────────
@@ -4764,7 +4117,7 @@ export const homeStyles = (): string => `
                     position: relative;
                     z-index: 4;
                     color: #ffffff;
-                    font-size: clamp(48px, 7.5vw, 120px);
+                    font-size: clamp(48px, 6.5vw, 120px);
                     line-height: 1.1;
                     letter-spacing: -0.02em;
                     text-align: center;
@@ -4951,7 +4304,7 @@ export const homeStyles = (): string => `
                 }
 
                 .watch-card {
-                    padding: 48px 56px;
+                    padding: clamp(32px, 4vw, 48px) clamp(40px, 4.5vw, 56px);
                     max-width: 100%;
                     margin: 0;
                 }
@@ -4999,14 +4352,14 @@ export const homeStyles = (): string => `
                 }
 
                 .contact-card {
-                    padding: 72px 80px;
+                    padding: clamp(48px, 6vw, 72px) clamp(56px, 6.5vw, 80px);
                     max-width: 100%;
                 }
                 
                 /* Desktop Schedule Section */
                 .schedule-grid {
                     grid-template-columns: repeat(3, 1fr);
-                    gap: 32px;
+                    gap: clamp(16px, 2.5vw, 32px);
                     width: 100%;
                     max-width: unset;
                     margin: 0;
@@ -5202,64 +4555,9 @@ export const homeStyles = (): string => `
 
             }
 
-            /* ========================================
-               INTERMEDIATE BREAKPOINT (961px - 1199px)
-               Ensures desktop layout scales properly for narrow desktop windows
-               Prevents awkward proportions when resizing
-               ======================================== */
-            @media (min-width: 961px) and (max-width: 1199px) {
-                /* Scale down hero tagline for intermediate widths */
-                .hero .hero-tagline {
-                    font-size: clamp(48px, 5.5vw, 72px);
-                }
+            /* REMOVED: Intermediate 961-1199px breakpoint — values merged into desktop block via fluid clamp() */
 
-                .hero p {
-                    font-size: clamp(16px, 1.6vw, 20px);
-                }
-                
-                /* Scale down event grid for intermediate widths */
-                .events-container {
-                    gap: clamp(16px, 2vw, 24px);
-                    padding: 0 12px;
-                }
-                
-                .event-outer-card {
-                    padding: clamp(14px, 1.8vw, 20px);
-                    border-radius: 32px;
-                    gap: 14px;
-                }
 
-                .event-outer-card .event-flyer-wrapper {
-                    border-radius: 22px;
-                }
-                
-                .event-cta .btn {
-                    padding: clamp(10px, 1.2vw, 12px) clamp(16px, 2vw, 20px);
-                    font-size: clamp(10px, 1vw, 11px);
-                }
-                
-                /* Scale down watch section */
-                .watch-card {
-                    padding: 32px 40px;
-                }
-                
-                /* Scale down contact section */
-                .contact-card {
-                    padding: 48px 56px;
-                }
-                
-                /* Scale down schedule grid */
-                .schedule-grid {
-                    gap: clamp(16px, 2vw, 24px);
-                }
-                
-                /* Adjust main gaps */
-                main {
-                    gap: 80px;
-                    margin-bottom: 80px;
-                }
-            }
-            
             /* ========================================
                FOOTER
                ======================================== */
@@ -5369,34 +4667,34 @@ export const homeStyles = (): string => `
                 text-align: center;
             }
             
-            @media (max-width: 480px) {
+            @media (max-width: 960px) {
                 .site-footer {
-                    padding: 48px 0 32px;
+                    padding: clamp(48px, 6vw, 60px) 0 clamp(32px, 4vw, 40px);
                     /* Safari iOS safe area - add extra padding for home indicator on mobile */
-                    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
-                    margin-top: 0; /* Reduced from 24px - footer sits right against jotform */
+                    padding-bottom: calc(clamp(32px, 4vw, 40px) + env(safe-area-inset-bottom, 0px));
+                    margin-top: 0;
                 }
-                
+
                 .footer-content {
-                    gap: 24px;
+                    gap: clamp(24px, 3vw, 32px);
                 }
-                
+
                 .footer-brand-title {
-                    font-size: 20px;
+                    font-size: clamp(20px, 2.5vw, 24px);
                 }
-                
+
                 .footer-social {
-                    gap: 16px;
+                    gap: clamp(16px, 2vw, 24px);
                 }
-                
+
                 .footer-social a {
-                    width: 40px;
-                    height: 40px;
+                    width: clamp(40px, 5vw, 44px);
+                    height: clamp(40px, 5vw, 44px);
                 }
-                
+
                 .footer-social svg {
-                    width: 18px;
-                    height: 18px;
+                    width: clamp(18px, 2.2vw, 20px);
+                    height: clamp(18px, 2.2vw, 20px);
                 }
             }
 

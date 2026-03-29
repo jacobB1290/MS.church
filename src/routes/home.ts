@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.37.2 - Remove body edge fog overlays (white lines on screen edges) -->
+<!-- v1.38.0 - Engage Hub form, SEO fixes, 2-tier breakpoints -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

@@ -1,4 +1,4 @@
-// Version: 1.37.2 - Remove body edge fog overlays (white lines on screen edges)
+// Version: 1.38.0 - Engage Hub form, SEO fixes, 2-tier breakpoints
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

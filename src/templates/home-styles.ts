@@ -128,31 +128,6 @@ export const homeStyles = (): string => `
                 padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
-            /* Hairline fog at viewport edges — barely-there soft fade that
-               prevents content from feeling hard-clipped at the screen boundary */
-            body::before,
-            body::after {
-                content: '';
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                width: 3px;
-                z-index: 9998;
-                pointer-events: none;
-                opacity: 0.6;
-            }
-            body::before {
-                left: 0;
-                background: linear-gradient(to right,
-                    var(--bg-color, #faf8f5) 0%,
-                    transparent 100%);
-            }
-            body::after {
-                right: 0;
-                background: linear-gradient(to left,
-                    var(--bg-color, #faf8f5) 0%,
-                    transparent 100%);
-            }
 
             /* Body background - static, no dynamic changes */
             body.stay-tuned-active { background: var(--bg-stay-tuned); }

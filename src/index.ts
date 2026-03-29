@@ -1,4 +1,4 @@
-// Version: 1.37.1 - Fix mobile hero font using correct CSS variable (--font-display)
+// Version: 1.37.2 - Remove body edge fog overlays (white lines on screen edges)
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

@@ -3968,7 +3968,7 @@ export const homeStyles = (): string => `
                 /* Form container - mobile sizing */
                 .jotform-container {
                     border-radius: clamp(16px, 2.5vw, 24px);
-                    padding: 16px 8px;
+                    padding: 8px 0;
                 }
 
                 /* Mobile Stay Tuned Card styling */

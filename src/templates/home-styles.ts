@@ -153,6 +153,12 @@ export const homeStyles = (): string => `
                     var(--bg-color, #faf8f5) 0%,
                     transparent 100%);
             }
+            @media (max-width: 960px) {
+                body::before,
+                body::after {
+                    display: none;
+                }
+            }
 
             /* Body background - static, no dynamic changes */
             body.stay-tuned-active { background: var(--bg-stay-tuned); }
@@ -3201,12 +3207,12 @@ export const homeStyles = (): string => `
                     z-index: 3;
                     color: white !important;
                     font-family: var(--font-display);
-                    font-size: clamp(56px, 14vw, 88px);
+                    font-size: clamp(68px, 17vw, 96px);
                     font-weight: 700;
                     text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
                     padding: 0 5%;
                     line-height: 1.05;
-                    letter-spacing: -1.5px;
+                    letter-spacing: -2px;
                     margin: 0;
                     box-sizing: border-box;
                 }
@@ -3855,9 +3861,11 @@ export const homeStyles = (): string => `
                 }
 
                 .btn-outline {
-                    padding: clamp(10px, 1.6vw, 15px) clamp(20px, 3.5vw, 34px);
-                    font-size: clamp(9px, 1.5vw, 13px);
-                    letter-spacing: clamp(1px, 0.2vw, 2px);
+                    padding: 16px 38px;
+                    font-size: var(--text-small);
+                    letter-spacing: 1.5px;
+                    width: 100%;
+                    max-width: 400px;
                 }
 
                 .past-streams-label {
@@ -3960,6 +3968,7 @@ export const homeStyles = (): string => `
                 /* Form container - mobile sizing */
                 .jotform-container {
                     border-radius: clamp(16px, 2.5vw, 24px);
+                    padding: 16px 8px;
                 }
 
                 /* Mobile Stay Tuned Card styling */

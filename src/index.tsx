@@ -1,4 +1,4 @@
-// Version: 1.37.0 - SEO audit: keyword-targeted H1/headings, Schema.org overhaul, Event schema, security headers, 404 page, sitemap cleanup
+// Version: 1.37.1 - Fix mobile hero font using correct CSS variable (--font-display)
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

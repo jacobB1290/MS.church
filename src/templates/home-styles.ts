@@ -128,37 +128,6 @@ export const homeStyles = (): string => `
                 padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
-            /* Hairline fog at viewport edges — barely-there soft fade that
-               prevents content from feeling hard-clipped at the screen boundary */
-            body::before,
-            body::after {
-                content: '';
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                width: 3px;
-                z-index: 9998;
-                pointer-events: none;
-                opacity: 0.6;
-            }
-            body::before {
-                left: 0;
-                background: linear-gradient(to right,
-                    var(--bg-color, #faf8f5) 0%,
-                    transparent 100%);
-            }
-            body::after {
-                right: 0;
-                background: linear-gradient(to left,
-                    var(--bg-color, #faf8f5) 0%,
-                    transparent 100%);
-            }
-            @media (max-width: 960px) {
-                body::before,
-                body::after {
-                    display: none;
-                }
-            }
 
             /* Body background - static, no dynamic changes */
             body.stay-tuned-active { background: var(--bg-stay-tuned); }
@@ -3206,7 +3175,7 @@ export const homeStyles = (): string => `
                     text-align: center;
                     z-index: 3;
                     color: white !important;
-                    font-family: var(--font-display);
+                    font-family: var(--font-display), 'Playfair Display', serif;
                     font-size: clamp(68px, 17vw, 96px);
                     font-weight: 700;
                     text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);

@@ -1,4 +1,4 @@
-// Version: 1.38.0 - Engage Hub form, SEO fixes, 2-tier breakpoints
+// Version: 1.38.1 - Fix timezone bug in event date categorization
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

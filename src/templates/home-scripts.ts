@@ -83,23 +83,28 @@ export const homeScripts = (): string => `
                     }
                 }
 
+                function parseLocalDate(dateStr) {
+                    const parts = dateStr.split('-');
+                    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                }
+
                 function categorizeEvents(allEvents) {
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
 
-                    allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    allEvents.sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
 
                     const upcoming = [];
                     const past = [];
 
                     allEvents.forEach(event => {
-                        const eventDate = new Date(event.date);
+                        const eventDate = parseLocalDate(event.date);
                         eventDate.setHours(23, 59, 59, 999);
                         if (eventDate >= today) upcoming.push(event);
                         else past.push(event);
                     });
 
-                    past.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    past.sort((a, b) => parseLocalDate(b.date) - parseLocalDate(a.date));
                     return { upcoming, past };
                 }
 

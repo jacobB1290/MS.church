@@ -1,4 +1,4 @@
-// Version: 1.38.1 - Fix timezone bug in event date categorization
+// Version: 1.39.0 - Add Friday 7 PM youth service to weekly schedule
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

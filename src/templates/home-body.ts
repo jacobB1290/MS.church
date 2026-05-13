@@ -104,6 +104,11 @@ export const homeBody = (): string => `
                                 <h3>Thursdays · 6:00 PM</h3>
                                 <p>Evening Bible study at the church with free coffee.</p>
                             </article>
+                            <article class="schedule-item">
+                                <span>Youth Service</span>
+                                <h3>Fridays · 7:00 PM</h3>
+                                <p>Youth service at the church — worship, teaching, and fellowship for our next generation.</p>
+                            </article>
                         </div>
                     </div>
                 </section>

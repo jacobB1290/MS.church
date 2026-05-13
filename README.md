@@ -1,7 +1,25 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.24.0
+## 🔢 CURRENT VERSION: v1.39.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.39.0 - Friday Youth Service Added to Weekly Schedule
+**Added a fourth weekly recurring gathering to the schedule section**
+
+**Changes Made:**
+
+1. **Schedule Section (`src/templates/home-body.ts`)**
+   - Added a new `.schedule-item` for "Youth Service · Fridays · 7:00 PM"
+   - Copy: "Youth service at the church — worship, teaching, and fellowship for our next generation."
+
+2. **SEO / Schema.org (`src/templates/home-head.ts`)**
+   - Added Friday `OpeningHoursSpecification` (19:00–20:30)
+   - Added "Youth Service" entry to the `OfferCatalog`
+   - Updated long-form `description` and meta `description` to mention Friday youth service
+
+**Result:** Visitors can now see the Friday 7 PM youth service in the weekly schedule, and search engines see it as part of the church's recurring programs.
+
+---
 
 ### v1.24.0 - Hero Find Us Button with Frosted Glass Effect
 **Replaced hero CTA buttons with a single "Find Us" button overlaid on the hero image**

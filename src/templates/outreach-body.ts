@@ -14,7 +14,7 @@ export const outreachBody = (): string => `
     <body>
         <div class="page">
             ${subpageHeader()}
-            <div class="nav-spacer"></div>
+            <div class="subpage-spacer"></div>
             <main>
                 <section id="outreach-intro">
                     <span class="section-eyebrow">Outreach</span>

@@ -12,7 +12,7 @@ export const aboutBody = (): string => `
     <body>
         <div class="page">
             ${subpageHeader()}
-            <div class="nav-spacer"></div>
+            <div class="subpage-spacer"></div>
             <main>
                 <section id="about-intro">
                     <span class="section-eyebrow">About Us</span>

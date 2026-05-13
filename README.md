@@ -1,7 +1,25 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.42.2
+## 🔢 CURRENT VERSION: v1.42.3
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.42.3 - Subpage Header Refinement + Anchor Scroll Alignment
+**Refinement pass on the subpage experience. All changes follow the existing site patterns (scrolled-mobile direction tracking, `--gold` token, `--text-eyebrow`/`--tracking-wider` typography, the existing nav-spacer model).**
+
+1. **No pill around the brand wordmark on subpages.** The logo is now a standalone fixed element with a tapered radial-frost backdrop (a pseudo-element with `backdrop-filter: blur` + `mask: radial-gradient(...)`) so it fades into the page edges instead of sitting in a defined pill outline.
+
+2. **Brand hides on scroll-down, returns on scroll-up.** Direction-tracked via `lastY` (same rAF-throttled pattern home-scripts uses for `.scrolled-mobile`). Below the 40px threshold the brand stays visible. Click-through to `/` unchanged.
+
+3. **Back button is gold and persistent.** Uses the `linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%)` and `color-mix(...gold 35%, transparent)` shadow tokens that `.event-link-btn` uses — same visual language as every other gold pill on the site. Pinned to top-left at all times.
+
+4. **`.subpage-spacer` pushes content below the floating brand + back zone.** 110px desktop, 84px mobile. Stops the eyebrow/heading from being covered when the page is scrolled to the top.
+
+5. **`scroll-margin-top` on every section[id] inside `.page main`** (100px desktop, 84px mobile) so anchor jumps line up correctly:
+   - Cross-page nav (`/outreach#cooking-ministry` from home) — native scroll-to-hash respects the offset.
+   - Same-page anchors on subpages — `scrollIntoView` respects the offset.
+   - Same-page anchors on home still use the existing manual-scroll JS (untouched).
+
+---
 
 ### v1.42.2 - Mobile Fixes: long-content stacking + dissolved subpage header
 **Targeted mobile-only fixes. Desktop layouts are unchanged.**

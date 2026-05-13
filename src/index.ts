@@ -1,4 +1,4 @@
-// Version: 1.42.2 - Mobile fixes: stack long-content sections, dissolve subpage shell into 2 floating pills, events to top of /outreach
+// Version: 1.42.3 - Subpage header: standalone gold back + tapered-frost brand, scroll-margin-top for anchors
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

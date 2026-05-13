@@ -819,84 +819,134 @@ export const homeStyles = (): string => `
             }
 
             /* ============================================================
-               SUBPAGE HEADER — minimal header for /about and /outreach.
-               Reuses .nav-shell + .brand styles; replaces nav links with
-               a single "Back" pill on the right.
-
-               Desktop: keeps the unified .nav-shell appearance.
-               Mobile: dissolves the shell — the brand wordmark gets its own
-                       flared frosted pill, and the back button floats
-                       independently on the left as a standalone pill.
+               SUBPAGE HEADER — /about and /outreach.
+               Two independent fixed-position elements (no unified shell):
+               • .subpage-brand — wordmark with a tapered radial-frost
+                 backdrop; hides on scroll-down, returns on scroll-up.
+               • .subpage-back — gold pill, always visible (mirrors the
+                 .event-link-btn gradient + shadow tokens).
                ============================================================ */
-            .nav-shell.subpage-shell {
-                /* Override grid/justify-content from .nav-shell to give us
-                   left (brand) + right (back) layout regardless of the
-                   default flex pattern. */
-                justify-content: space-between;
+            .subpage-brand {
+                position: fixed;
+                top: 24px;
+                left: 50%;
+                transform: translateX(-50%) translateY(0);
+                z-index: 1000;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                line-height: 1;
+                gap: 4px;
+                padding: 14px 56px;
+                text-decoration: none;
+                color: inherit;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                            opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
+            .subpage-brand::before {
+                content: '';
+                position: absolute;
+                inset: -6px 0;
+                background: radial-gradient(ellipse 70% 90% at center,
+                    rgba(248, 249, 253, 0.92) 0%,
+                    rgba(248, 249, 253, 0.65) 45%,
+                    rgba(248, 249, 253, 0) 85%);
+                -webkit-backdrop-filter: blur(14px);
+                backdrop-filter: blur(14px);
+                -webkit-mask: radial-gradient(ellipse 70% 90% at center, black 35%, transparent 85%);
+                mask: radial-gradient(ellipse 70% 90% at center, black 35%, transparent 85%);
+                z-index: -1;
+                pointer-events: none;
+            }
+            .subpage-brand .brand-title {
+                font-family: var(--font-display);
+                font-size: 22px;
+                font-weight: var(--weight-bold);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: #1a1a2e;
+                white-space: nowrap;
+            }
+            .subpage-brand .brand-subtitle {
+                font-size: var(--text-eyebrow);
+                letter-spacing: var(--tracking-wider);
+                text-transform: uppercase;
+                color: #6b6b80;
+                font-weight: var(--weight-semibold);
+                white-space: nowrap;
+            }
+            .subpage-brand.hidden {
+                transform: translateX(-50%) translateY(-150%);
+                opacity: 0;
+            }
+
             .subpage-back {
+                position: fixed;
+                top: 24px;
+                left: clamp(12px, 3vw, 28px);
+                z-index: 1001;
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
-                background: rgba(255, 255, 255, 0.85);
-                color: #1a1a2e;
-                border: 1px solid rgba(255, 255, 255, 0.5);
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-                backdrop-filter: blur(10px);
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                color: #ffffff;
+                border: none;
                 border-radius: 100px;
                 padding: 12px 22px;
+                font-family: var(--font-body), 'Inter', sans-serif;
                 font-size: var(--text-label);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 text-decoration: none;
                 white-space: nowrap;
+                box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
             .subpage-back:hover {
-                background: var(--white);
+                background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
+                box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
                 transform: translateY(-2px);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
             }
             .subpage-back-arrow {
                 font-size: 16px;
                 line-height: 1;
             }
 
-            /* Mobile-only: dissolve the shell and turn the brand into its
-               own flared frosted pill so logo and back-button read as two
-               independent floating elements rather than a single bar. */
+            /* Spacer that pushes subpage content below the floating brand +
+               back button area (analogue of .nav-spacer on home). */
+            .subpage-spacer {
+                height: 110px;
+                pointer-events: none;
+            }
+
+            /* Subpage sections compensate for the floating top zone when
+               anchored to via #hash (same-page click OR cross-page nav). */
+            .page main > section[id] {
+                scroll-margin-top: 100px;
+            }
+
             @media (max-width: 960px) {
-                .nav-shell.subpage-shell {
-                    background: transparent !important;
-                    border: none !important;
-                    box-shadow: none !important;
-                    backdrop-filter: none !important;
-                    padding: 0 !important;
-                    gap: 12px;
-                    align-items: center;
+                .subpage-brand {
+                    top: 16px;
+                    padding: 10px 40px;
                 }
-                .nav-shell.subpage-shell .brand {
-                    background: rgba(255, 255, 255, 0.85);
-                    border: 1px solid rgba(255, 255, 255, 0.5);
-                    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
-                    backdrop-filter: blur(10px);
-                    border-radius: 100px;
-                    padding: 10px 24px;
-                    /* Title beside subtitle — flared horizontal pill */
-                    flex-direction: row;
-                    align-items: baseline;
-                    gap: 10px;
+                .subpage-brand .brand-title {
+                    font-size: 17px;
                 }
-                .nav-shell.subpage-shell .brand-title {
-                    font-size: 16px;
-                }
-                .nav-shell.subpage-shell .brand-subtitle {
+                .subpage-brand .brand-subtitle {
                     font-size: 9px;
                 }
-                .nav-shell.subpage-shell .subpage-back {
+                .subpage-back {
+                    top: 16px;
                     padding: 10px 18px;
                     font-size: 11px;
+                }
+                .subpage-spacer {
+                    height: 84px;
+                }
+                .page main > section[id] {
+                    scroll-margin-top: 84px;
                 }
             }
 

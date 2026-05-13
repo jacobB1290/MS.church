@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.42.2 - Mobile fixes: stack long-content sections, dissolve subpage shell into 2 floating pills, events to top of /outreach -->
+<!-- v1.42.3 - Subpage header: standalone gold back + tapered-frost brand, scroll-margin-top for anchors -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

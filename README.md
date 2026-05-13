@@ -1,7 +1,17 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.42.3
+## 🔢 CURRENT VERSION: v1.42.4
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.42.4 - Full-width Top Fog on Subpages + Footer Logo Link
+
+1. **Top frost spans the entire viewport width.** The small radial frost behind the brand wordmark is replaced with a single full-width `.subpage-top-fog` strip pinned to the top of the viewport. Uses the `--bg` page color in its gradient (`rgba(250, 248, 245, ...)`) so the bottom of the fog blends into the page seamlessly. `backdrop-filter: blur(16px)` plus a vertical mask gradient taper the frost from fully applied at top to invisible at the bottom — no hard edge. Height: 160px desktop, 120px mobile.
+
+2. **Brand wordmark no longer carries its own backdrop.** It sits inside the top fog. Still hides on scroll-down / returns on scroll-up; clicks `/`.
+
+3. **Footer logo is now a link to `/`.** Clicking the Morning Star wordmark in the footer scrolls back up to the hero / lands you on the home page from any subpage. `text-decoration: none; color: inherit` so the anchor looks identical to the previous `<div>`; subtle `translateY(-2px)` on hover matches the header brand behavior.
+
+---
 
 ### v1.42.3 - Subpage Header Refinement + Anchor Scroll Alignment
 **Refinement pass on the subpage experience. All changes follow the existing site patterns (scrolled-mobile direction tracking, `--gold` token, `--text-eyebrow`/`--tracking-wider` typography, the existing nav-spacer model).**

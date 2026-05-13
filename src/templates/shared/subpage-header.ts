@@ -11,7 +11,8 @@
 // handleMobileNav — same approach).
 
 export function subpageHeader(): string {
-  return `<a class="subpage-back" href="/" id="subpage-back-link" aria-label="Go back">
+  return `<div class="subpage-top-fog" aria-hidden="true"></div>
+            <a class="subpage-back" href="/" id="subpage-back-link" aria-label="Go back">
                 <span class="subpage-back-arrow" aria-hidden="true">&#8592;</span>
                 <span class="subpage-back-label">Back</span>
             </a>

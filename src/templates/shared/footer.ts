@@ -4,10 +4,10 @@
 export function footer(): string {
   return `<footer class="site-footer">
                 <div class="footer-content">
-                    <div class="footer-brand">
+                    <a class="footer-brand" href="/" aria-label="Morning Star Christian Church — Home">
                         <span class="footer-brand-title">Morning Star</span>
                         <span class="footer-brand-subtitle">Christian Church</span>
-                    </div>
+                    </a>
 
                     <div class="footer-social">
                         <a href="https://www.instagram.com/mschurchboise" target="_blank" rel="noopener" aria-label="Instagram">

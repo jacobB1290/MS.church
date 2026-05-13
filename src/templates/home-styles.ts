@@ -820,12 +820,42 @@ export const homeStyles = (): string => `
 
             /* ============================================================
                SUBPAGE HEADER — /about and /outreach.
-               Two independent fixed-position elements (no unified shell):
-               • .subpage-brand — wordmark with a tapered radial-frost
-                 backdrop; hides on scroll-down, returns on scroll-up.
+               Three independent fixed-position elements (no unified shell):
+               • .subpage-top-fog — full-width frosted strip across the top
+                 of the viewport that tapers vertically into the page bg.
+                 Provides the soft atmospheric backdrop the brand sits in.
+               • .subpage-brand — wordmark; hides on scroll-down, returns on
+                 scroll-up. No own background — sits within .subpage-top-fog.
                • .subpage-back — gold pill, always visible (mirrors the
                  .event-link-btn gradient + shadow tokens).
                ============================================================ */
+            .subpage-top-fog {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 160px;
+                z-index: 999;
+                pointer-events: none;
+                -webkit-backdrop-filter: blur(16px);
+                backdrop-filter: blur(16px);
+                background: linear-gradient(180deg,
+                    rgba(250, 248, 245, 0.85) 0%,
+                    rgba(250, 248, 245, 0.55) 45%,
+                    rgba(250, 248, 245, 0.18) 80%,
+                    rgba(250, 248, 245, 0) 100%);
+                -webkit-mask: linear-gradient(180deg,
+                    black 0%,
+                    rgba(0, 0, 0, 0.95) 35%,
+                    rgba(0, 0, 0, 0.55) 70%,
+                    transparent 100%);
+                mask: linear-gradient(180deg,
+                    black 0%,
+                    rgba(0, 0, 0, 0.95) 35%,
+                    rgba(0, 0, 0, 0.55) 70%,
+                    transparent 100%);
+            }
+
             .subpage-brand {
                 position: fixed;
                 top: 24px;
@@ -837,26 +867,11 @@ export const homeStyles = (): string => `
                 align-items: center;
                 line-height: 1;
                 gap: 4px;
-                padding: 14px 56px;
+                padding: 8px 24px;
                 text-decoration: none;
                 color: inherit;
                 transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                             opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-            .subpage-brand::before {
-                content: '';
-                position: absolute;
-                inset: -6px 0;
-                background: radial-gradient(ellipse 70% 90% at center,
-                    rgba(248, 249, 253, 0.92) 0%,
-                    rgba(248, 249, 253, 0.65) 45%,
-                    rgba(248, 249, 253, 0) 85%);
-                -webkit-backdrop-filter: blur(14px);
-                backdrop-filter: blur(14px);
-                -webkit-mask: radial-gradient(ellipse 70% 90% at center, black 35%, transparent 85%);
-                mask: radial-gradient(ellipse 70% 90% at center, black 35%, transparent 85%);
-                z-index: -1;
-                pointer-events: none;
             }
             .subpage-brand .brand-title {
                 font-family: var(--font-display);
@@ -927,9 +942,12 @@ export const homeStyles = (): string => `
             }
 
             @media (max-width: 960px) {
+                .subpage-top-fog {
+                    height: 120px;
+                }
                 .subpage-brand {
                     top: 16px;
-                    padding: 10px 40px;
+                    padding: 6px 20px;
                 }
                 .subpage-brand .brand-title {
                     font-size: 17px;
@@ -4859,6 +4877,12 @@ export const homeStyles = (): string => `
                 align-items: center;
                 line-height: 1;
                 text-align: center;
+                text-decoration: none;
+                color: inherit;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .footer-brand:hover {
+                transform: translateY(-2px);
             }
             
             .footer-brand-title {

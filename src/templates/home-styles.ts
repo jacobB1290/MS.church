@@ -881,49 +881,6 @@ export const homeStyles = (): string => `
                 padding: 14px 32px;
             }
 
-            /* About teaser — single card. Removes the previous double-card
-               look (section-card wrapping a schedule-item) and lets the image
-               run flush to the section-card's rounded edges. Image fills one
-               half on desktop, sits on top of the text on mobile. */
-            .section-card.about-teaser-card {
-                padding: 0;
-                overflow: hidden;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 0;
-                align-items: stretch;
-            }
-            .about-teaser-card .about-teaser-image {
-                width: 100%;
-                min-height: 360px;
-                border-radius: 0;
-                aspect-ratio: auto;
-            }
-            .about-teaser-card .about-teaser-text {
-                padding: clamp(36px, 4.5vw, 56px);
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                gap: 18px;
-            }
-            .about-teaser-card .about-teaser-text p {
-                color: rgba(26, 26, 46, 0.7);
-                line-height: var(--leading-loose);
-                font-size: var(--text-body);
-            }
-            @media (max-width: 960px) {
-                .section-card.about-teaser-card {
-                    grid-template-columns: 1fr;
-                }
-                .about-teaser-card .about-teaser-image {
-                    aspect-ratio: 16 / 10;
-                    min-height: 0;
-                }
-                .about-teaser-card .about-teaser-text {
-                    padding: clamp(20px, 5vw, 32px);
-                }
-            }
-
             /* Centered CTA row for the How We Serve teaser and the Visit Us CTA. */
             .teaser-cta-row,
             .subpage-cta-row {

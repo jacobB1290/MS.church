@@ -54,17 +54,21 @@ export const homeScripts = (): string => `
                 // banner to that slide and activates the card. Auto-cycles
                 // every 6s; pauses while the user is hovering or focused
                 // inside the section; respects prefers-reduced-motion.
+                // Wrapped in an IIFE so any internal early-return only exits
+                // this block — must NOT short-circuit the outer DOMContentLoaded
+                // handler (which still has to register the nav scroll-compress
+                // listener and everything else below).
                 // ========================================
-                {
+                (() => {
                     const banner = document.getElementById('schedule-banner');
                     const tabs = document.querySelectorAll('.schedule-tab');
                     const slides = banner ? banner.querySelectorAll('.schedule-banner-slide') : [];
-                    if (banner && tabs.length && tabs.length === slides.length) {
-                        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                        // Banner is hidden on mobile via CSS — skip the carousel logic entirely
-                        // so no auto-cycle timer runs and tap targets stay plain card buttons.
-                        const isMobile = window.matchMedia('(max-width: 960px)').matches;
-                        if (isMobile) return;
+                    if (!banner || !tabs.length || tabs.length !== slides.length) return;
+                    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    // Banner is hidden on mobile via CSS — skip the carousel logic entirely
+                    // so no auto-cycle timer runs and tap targets stay plain card buttons.
+                    const isMobile = window.matchMedia('(max-width: 960px)').matches;
+                    if (isMobile) return;
                         const AUTO_MS = 6000;
                         const RESUME_MS = 12000;
                         let activeIndex = 0;
@@ -125,10 +129,9 @@ export const homeScripts = (): string => `
                             visObserver.observe(banner);
                         }
 
-                        setActive(0);
-                        startAuto();
-                    }
-                }
+                    setActive(0);
+                    startAuto();
+                })();
 
                 // ========================================
                 // DYNAMIC EVENT MANAGER

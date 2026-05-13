@@ -1,4 +1,4 @@
-// Version: 1.45.6 - Mobile: remove schedule banner; plain stacked card list
+// Version: 1.45.7 - Fix: schedule carousel early-return was killing the nav scroll-compress on mobile
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

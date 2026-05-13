@@ -1,7 +1,17 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.45.6
+## 🔢 CURRENT VERSION: v1.45.7
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.45.7 - Fix: schedule carousel early-return was killing mobile nav scroll-compress
+
+User reported: "The nav on mobile isn't shifting into compressed one anymore."
+
+Root cause traced to v1.45.6: when I added `if (isMobile) return;` to skip the schedule carousel on mobile, that `return` was inside a plain `{ ... }` block — **not a function** — so it returned from the *outer* `DOMContentLoaded` arrow handler instead. Every feature defined below the schedule carousel block (the scroll listener that toggles `.scrolled-mobile` on `.nav-shell`, the active-nav-link updater, the carousel controller, the YouTube embed, the countdown, etc.) was getting skipped on mobile.
+
+**Fix:** wrapped the schedule carousel block in an IIFE (`(() => { … })()`) so the early-return only exits the carousel block, not the surrounding handler.
+
+Verified via Playwright at 390×844: at scroll=0, `.nav-shell.scrolled-mobile === false`; after 600px scroll, `.nav-shell.scrolled-mobile === true`. No JS errors.
 
 ### v1.45.6 - Mobile: remove schedule banner; plain stacked card list
 

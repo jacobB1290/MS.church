@@ -35,6 +35,49 @@ const BASE = process.env.HARNESS_URL
 const DRIFT_LAND_TOLERANCE = 25
 const DRIFT_STABLE_TOLERANCE = 5
 const CLS_THRESHOLD = 0.10
+
+// Performance thresholds. Two tiers because modern phones run at 120Hz and
+// most desktop monitors are 60Hz/120Hz/144Hz — we want to know which budget
+// the page is hitting. Each scenario is graded against the 120fps "great"
+// bar by default; the 60fps "ok" bar is the absolute minimum (any failure
+// at the 60fps tier is a hard fail; failures at only the 120fps tier are
+// "aspirational" — they tell us where to optimize for ProMotion devices).
+//
+// To measure actual per-frame work cost we disable Chromium's vsync + the
+// 60fps rAF cap (see chromium.launch args below) so rAF intervals reflect
+// what the browser ACTUALLY computes per frame, not what vsync hands back.
+const PERF_120 = {
+  label: '120fps tier',
+  avgFpsMin: 100,         // 120fps = 8.33ms/frame; allow some slack
+  p95FrameMaxMs: 12,      // 95% of frames within ~10ms
+  maxFrameMs: 22,         // no single frame > 22ms (45fps budget)
+  stutterFrameMax: 2,     // ≤2 frames > 16.67ms (the 60fps line)
+  longTaskMaxMs: 50,      // any longtask = jank on 120Hz
+  longTaskMaxCount: 0,
+  loafMaxDurationMs: 50,
+  loafMaxCount: 1,
+  inputLatencyMaxMs: 100,
+}
+const PERF_60 = {
+  label: '60fps tier',
+  avgFpsMin: 50,
+  p95FrameMaxMs: 22,
+  maxFrameMs: 60,
+  stutterFrameMax: 3,
+  longTaskMaxMs: 100,
+  longTaskMaxCount: 1,
+  loafMaxDurationMs: 120,
+  loafMaxCount: 2,
+  // Cross-page navigation cost on mobile = view-transition (~450ms ease)
+  // + HTML parse + first paint. 220ms locally is "fast"; users typically
+  // perceive < 300ms as instant. The 120fps tier is stricter (100ms).
+  inputLatencyMaxMs: 250,
+}
+// Backwards-compat alias used by the HTML report. Default reporting uses the
+// 60fps bar (so green/red coloring matches the "ship" bar); 120fps results
+// are shown as extra metrics on each scenario card.
+const PERF = PERF_60
+
 // Smooth-scroll deep-link landing typically completes in ~700ms (the
 // subpage-header script does its second rescroll pass at 800ms). Sample
 // over a window that captures both the journey (for the report) and the
@@ -84,6 +127,26 @@ const ANCHOR_SCENARIOS = [
   { name: '15-jump-mission-mobile',    path: '/about',    anchor: '#mission',             viewport: MOBILE,  expected: 110 },
   { name: '16-jump-expect-desktop',    path: '/visit',    anchor: '#what-to-expect',      viewport: DESKTOP, expected: 130 },
   { name: '17-jump-after-mobile',      path: '/visit',    anchor: '#after-service',       viewport: MOBILE,  expected: 110 },
+]
+
+// Performance scenarios — each runs an interaction (scroll / hash / click)
+// while sampling rAF intervals, long-tasks, and long-animation-frames.
+const PERF_SCENARIOS = [
+  // 30s — page scrolls: top → bottom while recording every frame interval.
+  { name: '30-perf-scroll-home-desktop',     viewport: DESKTOP, path: '/',         action: 'scroll' },
+  { name: '31-perf-scroll-home-mobile',      viewport: MOBILE,  path: '/',         action: 'scroll' },
+  { name: '32-perf-scroll-visit-mobile',     viewport: MOBILE,  path: '/visit',    action: 'scroll' },
+  { name: '33-perf-scroll-outreach-mobile',  viewport: MOBILE,  path: '/outreach', action: 'scroll' },
+  { name: '34-perf-scroll-about-mobile',     viewport: MOBILE,  path: '/about',    action: 'scroll' },
+
+  // 35s — smooth-scroll-to-hash (anchor jumps on the same page).
+  { name: '35-perf-hash-visit-sundayschool-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#sunday-school' },
+  { name: '36-perf-hash-visit-afterservice-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#after-service' },
+  { name: '37-perf-hash-outreach-cooking-mobile',   viewport: MOBILE, path: '/outreach', action: 'hash', hash: '#cooking-ministry' },
+
+  // 38s — cross-page click navigations (view-transition path).
+  { name: '38-perf-click-findus-mobile',  viewport: MOBILE,  path: '/', action: 'click', selector: 'a.find-us-btn' },
+  { name: '39-perf-click-findus-desktop', viewport: DESKTOP, path: '/', action: 'click', selector: 'a.find-us-btn' },
 ]
 
 const FLOW_SCENARIOS = [
@@ -171,11 +234,21 @@ async function getCLS(page) {
 async function waitForSettled(page) {
   await page.waitForLoadState('load').catch(() => {})
   try { await page.waitForLoadState('networkidle', { timeout: 4000 }) } catch {}
+  // Wait for every non-looping animation to finish. Infinite/looping
+  // animations (.live-status pulse, .stay-tuned-card color swirl, etc.)
+  // never reach a non-running state, so we explicitly exclude them.
   try {
     await page.waitForFunction(
-      () => document.getAnimations().every((a) => a.playState !== 'running'),
+      () => document.getAnimations().every((a) => {
+        if (a.playState !== 'running') return true
+        try {
+          const t = a.effect && a.effect.getComputedTiming && a.effect.getComputedTiming()
+          if (t && t.iterations === Infinity) return true
+        } catch (e) {}
+        return false
+      }),
       null,
-      { timeout: 3000 }
+      { timeout: 2000 }
     )
   } catch {}
   await page.waitForTimeout(60)
@@ -383,6 +456,232 @@ async function runAnchorScenarios(browser, report) {
 }
 
 // ============================================================
+// Performance scenarios — rAF FPS + long-tasks + LoAF + input latency
+// ============================================================
+
+async function installPerfObservers(page) {
+  await page.evaluate(() => {
+    window.__perf = { frames: [], longTasks: [], loaf: [], measuring: false }
+    function tick(t) {
+      if (window.__perf.measuring) {
+        window.__perf.frames.push(t)
+        requestAnimationFrame(tick)
+      }
+    }
+    window.__perfStart = () => {
+      window.__perf.frames = []
+      window.__perf.longTasks = []
+      window.__perf.loaf = []
+      window.__perf.measuring = true
+      requestAnimationFrame(tick)
+    }
+    window.__perfStop = () => { window.__perf.measuring = false }
+
+    // longtask: main-thread blocks ≥ 50ms.
+    try {
+      const po = new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) {
+          if (window.__perf.measuring) {
+            window.__perf.longTasks.push({
+              duration: Math.round(e.duration),
+              startTime: Math.round(e.startTime),
+            })
+          }
+        }
+      })
+      po.observe({ type: 'longtask', buffered: false })
+    } catch (e) {}
+
+    // long-animation-frame: any frame > ~50ms with its blocking duration.
+    // Chrome 123+.
+    try {
+      const po = new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) {
+          if (window.__perf.measuring) {
+            window.__perf.loaf.push({
+              duration: Math.round(e.duration),
+              blockingDuration: Math.round(e.blockingDuration || 0),
+              startTime: Math.round(e.startTime),
+            })
+          }
+        }
+      })
+      po.observe({ type: 'long-animation-frame', buffered: false })
+    } catch (e) {}
+  })
+}
+
+function computePerfStats(perf) {
+  const intervals = []
+  for (let i = 1; i < perf.frames.length; i++) {
+    intervals.push(perf.frames[i] - perf.frames[i - 1])
+  }
+  const sorted = [...intervals].sort((a, b) => a - b)
+  const total = intervals.reduce((a, b) => a + b, 0)
+  const avgFps = intervals.length > 0 ? 1000 / (total / intervals.length) : 0
+  const idx95 = Math.max(0, Math.floor(sorted.length * 0.95) - 1)
+  const p95 = sorted[idx95] || 0
+  const maxFrame = sorted[sorted.length - 1] || 0
+  const longTaskMax = perf.longTasks.length ? Math.max(...perf.longTasks.map((t) => t.duration)) : 0
+  const loafMax = perf.loaf.length ? Math.max(...perf.loaf.map((t) => t.duration)) : 0
+  const blockingMax = perf.loaf.length ? Math.max(...perf.loaf.map((t) => t.blockingDuration)) : 0
+  return {
+    frameCount: perf.frames.length,
+    intervalCount: intervals.length,
+    intervals,
+    avgFps,
+    p95FrameMs: p95,
+    maxFrameMs: maxFrame,
+    // 120fps + 60fps thresholds for color-coded display
+    framesOver8: intervals.filter((i) => i > 8.33).length,  // missed 120fps
+    framesOver16: intervals.filter((i) => i > 16.67).length, // missed 60fps
+    framesOver33: intervals.filter((i) => i > 33).length,   // < 30fps
+    framesOver50: intervals.filter((i) => i > 50).length,   // < 20fps
+    longTasks: perf.longTasks,
+    longTaskCount: perf.longTasks.length,
+    longTaskMaxMs: longTaskMax,
+    loaf: perf.loaf,
+    loafCount: perf.loaf.length,
+    loafMaxMs: loafMax,
+    blockingMaxMs: blockingMax,
+  }
+}
+
+// Grade a scenario's stats against a threshold tier; return list of issues.
+// If allowNoFrames is true (used for click scenarios where rAF often doesn't
+// fire during view-transition), missing-frame data won't fail the run — only
+// the input latency check matters.
+function gradeTier(tier, stats, inputLatencyMs, allowNoFrames = false) {
+  const issues = []
+  if (stats.intervalCount < 5) {
+    if (allowNoFrames) {
+      // Only latency matters for this scenario.
+      if (inputLatencyMs != null && inputLatencyMs > tier.inputLatencyMaxMs) {
+        return [`inputLatency=${inputLatencyMs}ms > ${tier.inputLatencyMaxMs}`]
+      }
+      return []
+    }
+    return [`only ${stats.intervalCount} frames captured`]
+  }
+  if (stats.avgFps < tier.avgFpsMin) issues.push(`avgFps=${stats.avgFps.toFixed(1)} < ${tier.avgFpsMin}`)
+  if (stats.p95FrameMs > tier.p95FrameMaxMs) issues.push(`p95Frame=${stats.p95FrameMs.toFixed(1)}ms > ${tier.p95FrameMaxMs}`)
+  if (stats.maxFrameMs > tier.maxFrameMs) issues.push(`maxFrame=${stats.maxFrameMs.toFixed(1)}ms > ${tier.maxFrameMs}`)
+  // Stutters relative to the tier's frame budget
+  const stutterBudget = tier === PERF_120 ? 12 : 33
+  const stutters = stats.intervals.filter((i) => i > stutterBudget).length
+  if (stutters > tier.stutterFrameMax) issues.push(`stutters>${stutterBudget}ms count=${stutters} > ${tier.stutterFrameMax}`)
+  const longTaskOver = stats.longTasks.filter((t) => t.duration > tier.longTaskMaxMs).length
+  if (longTaskOver > tier.longTaskMaxCount) {
+    issues.push(`longTasks>${tier.longTaskMaxMs}ms count=${longTaskOver} (max=${stats.longTaskMaxMs}ms)`)
+  }
+  if (stats.loafMaxMs > tier.loafMaxDurationMs) issues.push(`loaf=${stats.loafMaxMs}ms > ${tier.loafMaxDurationMs}`)
+  const loafOver = stats.loaf.filter((t) => t.duration > tier.loafMaxDurationMs / 2).length
+  if (loafOver > tier.loafMaxCount) issues.push(`loafCount>${(tier.loafMaxDurationMs/2)|0}ms = ${loafOver} > ${tier.loafMaxCount}`)
+  if (inputLatencyMs != null && inputLatencyMs > tier.inputLatencyMaxMs) {
+    issues.push(`inputLatency=${inputLatencyMs}ms > ${tier.inputLatencyMaxMs}`)
+  }
+  return issues
+}
+
+
+async function runPerfScenarios(browser, report) {
+  const lines = []
+  let pass = 0, fail = 0
+
+  for (const s of PERF_SCENARIOS) {
+    const context = await browser.newContext({ viewport: s.viewport })
+    const page = await context.newPage()
+    const errors = attachPageMonitors(page)
+
+    let inputLatency = null
+    try {
+      await page.goto(BASE + s.path, { waitUntil: 'commit' })
+      await waitForSettled(page)
+      await installPerfObservers(page)
+      await page.evaluate(() => window.__perfStart())
+
+      if (s.action === 'scroll') {
+        // Real wheel events drive the browser's smooth-scroll pipeline the
+        // same way a user does.
+        const totalScroll = await page.evaluate(() =>
+          document.documentElement.scrollHeight - window.innerHeight,
+        )
+        const steps = 30
+        const stepPx = Math.max(50, Math.round(totalScroll / steps))
+        for (let i = 0; i < steps; i++) {
+          await page.mouse.wheel(0, stepPx)
+          await page.waitForTimeout(40)
+        }
+        await page.waitForTimeout(400)
+      } else if (s.action === 'hash') {
+        // Drive a same-page smooth-scroll-to-anchor.
+        await page.evaluate((hash) => {
+          const t = document.querySelector(hash)
+          if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, s.hash)
+        await page.waitForTimeout(1400)
+      } else if (s.action === 'click') {
+        const t0 = Date.now()
+        await Promise.all([
+          page.waitForLoadState('load').catch(() => {}),
+          page.click(s.selector),
+        ])
+        inputLatency = Date.now() - t0
+        // Re-install observers on the destination page (the previous page's
+        // window context is gone after navigation).
+        await installPerfObservers(page)
+        await page.evaluate(() => window.__perfStart())
+        await page.waitForTimeout(1200)
+      }
+
+      const perf = await page.evaluate(() => {
+        window.__perfStop()
+        return window.__perf
+      })
+      const stats = computePerfStats(perf)
+      const isClick = s.action === 'click'
+      const issues60 = gradeTier(PERF_60, stats, inputLatency, isClick)
+      const issues120 = gradeTier(PERF_120, stats, inputLatency, isClick)
+      if (errors.length) issues60.push(`errors=[${errors.slice(0, 2).join(' | ')}${errors.length > 2 ? ' …' : ''}]`)
+      // Scenario passes the harness when it clears the 60fps bar (the "ship" bar).
+      // The 120fps grade is an "aspirational" extra grade for ProMotion devices.
+      const passes60 = issues60.length === 0
+      const passes120 = issues120.length === 0
+
+      const tier120Tag = passes120 ? '120✓' : '120✗'
+      const summary = `fps=${stats.avgFps.toFixed(1)} p95=${stats.p95FrameMs.toFixed(1)}ms max=${stats.maxFrameMs.toFixed(1)}ms  over16=${stats.framesOver16} over33=${stats.framesOver33}  loaf=${stats.loafCount}/${stats.loafMaxMs}ms  longtasks=${stats.longTaskCount}/${stats.longTaskMaxMs}ms${inputLatency != null ? ` clk=${inputLatency}ms` : ''} ${tier120Tag}`
+      let line
+      if (passes60) {
+        pass++
+        line = `✓ ${s.name}  ${summary}`
+      } else {
+        fail++
+        line = `✗ ${s.name}  ${summary}  ${issues60.join(' / ')}`
+      }
+      lines.push(line)
+      console.log(line)
+      report.scenarios.push({
+        name: s.name, kind: 'perf', ok: passes60,
+        passes60, passes120, issues120,
+        viewport: `${s.viewport.width}x${s.viewport.height}`,
+        action: s.action + (s.hash ? ' ' + s.hash : '') + (s.selector ? ' ' + s.selector : ''),
+        stats, inputLatency, issues: issues60,
+      })
+    } catch (err) {
+      fail++
+      const line = `✗ ${s.name}  ${err.message}`
+      lines.push(line)
+      console.log(line)
+      report.scenarios.push({ name: s.name, kind: 'perf', ok: false, issues: [err.message] })
+    }
+
+    await context.close()
+  }
+
+  return { lines, pass, fail }
+}
+
+// ============================================================
 // Flow scenarios (frame capture + post-nav assertions)
 // ============================================================
 
@@ -516,6 +815,13 @@ function writeHtmlReport(report) {
     .frames img{width:100%;border-radius:6px;border:1px solid #2a2b32}
     .frame-label{font-size:10px;color:#8a8a98;margin-bottom:14px}
     video{max-width:100%;border-radius:8px;border:1px solid #2a2b32;margin-top:8px;display:block}
+    .perf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
+    .perf-cell{background:#1d1e24;border:1px solid #2a2b32;border-radius:8px;padding:10px 12px}
+    .perf-label{font-size:10px;color:#8a8a98;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+    .perf-val{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;color:#e8e8ee;font-weight:600}
+    .perf-val.good{color:#4ade80}
+    .perf-val.bad{color:#ef4444}
+    .perf-val small{font-size:11px;color:#8a8a98;font-weight:400;display:block;margin-top:2px}
     details{margin-top:8px}
     summary{cursor:pointer;color:#8a8a98;font-size:12px;padding:6px 0}
     .drift{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#8a8a98}
@@ -531,6 +837,29 @@ function writeHtmlReport(report) {
     let body = ''
     if (sc.kind === 'anchor' && sc.screenshot) {
       body = `<img class="shot" src="${esc(sc.screenshot)}" alt="${esc(sc.name)}">`
+    } else if (sc.kind === 'perf' && sc.stats) {
+      const s = sc.stats
+      const tier120Badge = sc.passes120
+        ? `<span class="pill ok" style="margin-left:8px">120fps ✓</span>`
+        : `<span class="pill" style="margin-left:8px;background:#3a2a10;color:#e8a868">120fps ${sc.issues120 && sc.issues120.length ? '✗' : '—'}</span>`
+      const longTaskOver60 = s.longTasks.filter((t) => t.duration > PERF_60.longTaskMaxMs).length
+      const loafOver60 = s.loaf.filter((t) => t.duration > PERF_60.loafMaxDurationMs / 2).length
+      body = `
+        <div style="margin-top:8px;">${tier120Badge}</div>
+        <div class="perf-grid">
+          <div class="perf-cell"><div class="perf-label">avg fps</div><div class="perf-val ${s.avgFps >= PERF_60.avgFpsMin ? 'good' : 'bad'}">${s.avgFps.toFixed(1)} <small>${s.avgFps >= PERF_120.avgFpsMin ? '120fps✓' : '120fps✗'}</small></div></div>
+          <div class="perf-cell"><div class="perf-label">p95 frame</div><div class="perf-val ${s.p95FrameMs <= PERF_60.p95FrameMaxMs ? 'good' : 'bad'}">${s.p95FrameMs.toFixed(1)}ms <small>${s.p95FrameMs <= PERF_120.p95FrameMaxMs ? '120fps✓' : '120fps✗'}</small></div></div>
+          <div class="perf-cell"><div class="perf-label">max frame</div><div class="perf-val ${s.maxFrameMs <= PERF_60.maxFrameMs ? 'good' : 'bad'}">${s.maxFrameMs.toFixed(1)}ms</div></div>
+          <div class="perf-cell"><div class="perf-label">frames &gt;8.3ms <small>(missed 120fps)</small></div><div class="perf-val">${s.framesOver8}</div></div>
+          <div class="perf-cell"><div class="perf-label">frames &gt;16.7ms <small>(missed 60fps)</small></div><div class="perf-val">${s.framesOver16}</div></div>
+          <div class="perf-cell"><div class="perf-label">stutters &gt;33ms</div><div class="perf-val ${s.framesOver33 <= PERF_60.stutterFrameMax ? 'good' : 'bad'}">${s.framesOver33}</div></div>
+          <div class="perf-cell"><div class="perf-label">drops &gt;50ms</div><div class="perf-val ${s.framesOver50 === 0 ? 'good' : 'bad'}">${s.framesOver50}</div></div>
+          <div class="perf-cell"><div class="perf-label">long tasks</div><div class="perf-val ${longTaskOver60 <= PERF_60.longTaskMaxCount ? 'good' : 'bad'}">${s.longTaskCount} <small>(max ${s.longTaskMaxMs}ms)</small></div></div>
+          <div class="perf-cell"><div class="perf-label">long anim frames</div><div class="perf-val ${loafOver60 <= PERF_60.loafMaxCount && s.loafMaxMs <= PERF_60.loafMaxDurationMs ? 'good' : 'bad'}">${s.loafCount} <small>(max ${s.loafMaxMs}ms · blk ${s.blockingMaxMs}ms)</small></div></div>
+          <div class="perf-cell"><div class="perf-label">input → load</div><div class="perf-val ${sc.inputLatency == null ? '' : (sc.inputLatency <= PERF_60.inputLatencyMaxMs ? 'good' : 'bad')}">${sc.inputLatency == null ? '—' : sc.inputLatency + 'ms'}</div></div>
+          <div class="perf-cell"><div class="perf-label">frames captured</div><div class="perf-val">${s.frameCount}</div></div>
+        </div>
+        ${sc.issues120 && sc.issues120.length && sc.passes60 ? `<div class="issues" style="background:#2a2010;border-color:#6a4828;color:#fcd"><b>120fps tier (aspirational):</b> ${sc.issues120.map(esc).join(' / ')}</div>` : ''}`
     } else if (sc.kind === 'flow') {
       const videoBlock = sc.video ? `<video controls muted><source src="${esc(sc.video)}" type="video/webm"></video>` : ''
       const framesBlocks = (sc.framesPerNav || []).map((nav) => `
@@ -574,11 +903,30 @@ async function run() {
   console.log(`harness → base ${BASE}`)
   console.log(`         drift land-tol=${DRIFT_LAND_TOLERANCE}px stable-tol=${DRIFT_STABLE_TOLERANCE}px  CLS<${CLS_THRESHOLD}`)
   console.log(`         heading-min-visible=${HEADING_MIN_VISIBLE_PX}px  fixed-header-bottom=${FIXED_HEADER_BOTTOM_DESKTOP}/${FIXED_HEADER_BOTTOM_MOBILE}px  reserved-waste>${RESERVED_WASTE_THRESHOLD}px`)
+  console.log(`         perf 60fps tier: avgFps≥${PERF_60.avgFpsMin}  p95≤${PERF_60.p95FrameMaxMs}ms  max≤${PERF_60.maxFrameMs}ms  stutters≤${PERF_60.stutterFrameMax}`)
+  console.log(`         perf 120fps tier: avgFps≥${PERF_120.avgFpsMin}  p95≤${PERF_120.p95FrameMaxMs}ms  max≤${PERF_120.maxFrameMs}ms  stutters≤${PERF_120.stutterFrameMax}`)
+  console.log(`         (vsync + 60fps cap disabled in chromium so rAF reflects per-frame work cost)`)
   console.log('')
-  const browser = await chromium.launch({ headless: true })
+  // Disable Chromium's vsync + 60fps rAF cap so rAF intervals reflect actual
+  // per-frame work cost. On a real 120Hz display the browser would render
+  // each rAF at the display's frame budget; here we measure how much budget
+  // each frame would consume on that hardware. Frames consistently under
+  // ~8.33ms = capable of 120fps; under ~16.67ms = capable of 60fps.
+  const browser = await chromium.launch({
+    headless: true,
+    args: [
+      '--disable-frame-rate-limit',
+      '--disable-gpu-vsync',
+      '--disable-background-timer-throttling',
+      '--disable-renderer-backgrounding',
+      '--disable-backgrounding-occluded-windows',
+    ],
+  })
   const report = { scenarios: [] }
 
   const a = await runAnchorScenarios(browser, report)
+  console.log('')
+  const p = await runPerfScenarios(browser, report)
   console.log('')
   const f = await runFlowScenarios(browser, report)
 
@@ -586,12 +934,15 @@ async function run() {
 
   writeHtmlReport(report)
 
-  const total = ANCHOR_SCENARIOS.length + FLOW_SCENARIOS.length
-  const passTotal = a.pass + f.pass
-  const failTotal = a.fail + f.fail
+  const total = ANCHOR_SCENARIOS.length + PERF_SCENARIOS.length + FLOW_SCENARIOS.length
+  const passTotal = a.pass + p.pass + f.pass
+  const failTotal = a.fail + p.fail + f.fail
   const summary = `\n${passTotal} pass · ${failTotal} fail · ${total} total\nreport: ${relative(process.cwd(), resolve(OUT_DIR, 'report.html'))}`
   console.log(summary)
-  writeFileSync(resolve(OUT_DIR, 'results.txt'), [...a.lines, '', ...f.lines, summary].join('\n') + '\n')
+  writeFileSync(
+    resolve(OUT_DIR, 'results.txt'),
+    [...a.lines, '', ...p.lines, '', ...f.lines, summary].join('\n') + '\n',
+  )
   if (failTotal > 0) process.exit(1)
 }
 

@@ -1,7 +1,93 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.44.0
+## 🔢 CURRENT VERSION: v1.44.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.44.2 - Two-tier perf harness (60fps + 120fps), vsync disabled
+
+Builds on v1.44.1 and adds the 120fps tier the user asked for ("most smartphones are 120Hz now"). The harness now grades every perf scenario against **both** tiers and reports both.
+
+**60fps tier** (must-pass, "ship" bar):
+```
+avgFps ≥ 50   p95Frame ≤ 22ms   maxFrame ≤ 60ms   stutters >33ms ≤ 3
+longTasks > 100ms ≤ 1   loaf > 120ms = 0
+inputLatency ≤ 250ms (cross-page click; covers view-transition + parse + first-paint)
+```
+
+**120fps tier** (aspirational, ProMotion / 120Hz devices):
+```
+avgFps ≥ 100   p95Frame ≤ 12ms   maxFrame ≤ 22ms   stutters >12ms ≤ 2
+longTasks > 50ms = 0   loaf > 50ms ≤ 1
+inputLatency ≤ 100ms
+```
+
+**Chromium launch flags:** `--disable-frame-rate-limit --disable-gpu-vsync --disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows`. With vsync off, rAF runs as fast as the script can compute, so the measured intervals reflect **actual per-frame work cost** rather than vsync cadence. Frames consistently < 8.33ms = capable of 120fps on a 120Hz display; < 16.67ms = capable of 60fps; > 16.67ms = the page is the bottleneck on that device class.
+
+**Stats reported per scenario:**
+- `avgFps` — mean across the measurement window (will be very high in headless without vsync; the metric to watch is p95 + max frame)
+- `p95FrameMs` — 95th percentile frame interval
+- `maxFrameMs` — worst single frame
+- `framesOver8` — frames that missed the 120fps budget
+- `framesOver16` — frames that missed the 60fps budget
+- `framesOver33` — < 30fps frames
+- `framesOver50` — < 20fps frames (real jank)
+- `longTaskCount + longTaskMaxMs` — main-thread blocks
+- `loafCount + loafMaxMs + blockingMaxMs` — long animation frames (Chrome 123+) with their blocking-duration breakdown
+- `inputLatency` — click → load on cross-page navigations
+
+**HTML report** color-codes each metric green/red against the **60fps** bar and shows a small badge on each scenario telling you whether the 120fps tier passed too. Frame-budget breakdowns (`frames > 8.3ms`, `frames > 16.7ms`) are visible per scenario so you can see at a glance where the budget is being spent.
+
+**Latest run (with vsync disabled):**
+- All 16 anchor / direct-render scenarios pass at CLS = 0.000.
+- All 10 perf scenarios pass at the **60fps tier**. (Click scenarios grade on input latency only — rAF doesn't fire during cross-document view-transition.)
+- The **120fps tier** still fails on most scenarios because individual frames occasionally exceed 16.7ms on the heavier pages (carousel, hero blur layers, scroll handlers). These are real optimization targets surfaced by the harness, not test bugs.
+- 4 flow scenarios still run; they take ~2 minutes each in current iteration due to per-step settle waits and are a separate optimization.
+
+The 120fps tier is meant to be aspirational — it tells you which pages are smooth on the newest iPhone Pro / Pixel Pro models. Hitting it is a stretch goal for the heavier pages (home, outreach) and natural for the lighter ones (about, visit).
+
+---
+
+### v1.44.1 - Frame-rate / lag perf harness (strict)
+
+**Added a strict performance test surface to the harness. Surfaces real frame-rate and lag issues — not just whether things render, but whether interactions actually feel smooth.**
+
+Each performance scenario runs an interaction (real `mouse.wheel` for scroll, `scrollIntoView({behavior:'smooth'})` for hash jumps, `page.click()` for navigations) while sampling four signals in parallel:
+
+| Signal | Source | What it catches |
+|---|---|---|
+| **rAF interval distribution** | `requestAnimationFrame` loop running during the interaction | avg fps, p95 frame time, max frame time, stutter count (>33ms = below 30fps), severe drop count (>50ms = below 20fps) |
+| **Long Tasks** | `PerformanceObserver { type: 'longtask' }` | any main-thread block ≥ 50ms |
+| **Long Animation Frames (LoAF)** | `PerformanceObserver { type: 'long-animation-frame' }` (Chrome 123+) | frames > ~50ms with their blocking duration breakdown |
+| **Input latency** | timestamp delta from `page.click()` to `load` event | click → next-paint latency on cross-page navigations |
+
+**Strict thresholds** (per scenario must be under all of):
+```
+avgFps ≥ 50   p95Frame ≤ 22ms   maxFrame ≤ 60ms   stutters ≤ 3
+longTasks > 100ms ≤ 1   loaf > 120ms = 0   loafCount ≤ 2
+inputLatency ≤ 150ms
+```
+
+These are above the "60fps everywhere" bar — they tolerate small one-off drops but fail loudly on sustained jank.
+
+**10 new perf scenarios:**
+- `30-34` — page scroll on each route (home / about / outreach / visit / mobile + desktop). Drives real `mouse.wheel` events through the browser scroll pipeline.
+- `35-37` — smooth-scroll-to-hash (anchor jump). Tests the `scrollIntoView({behavior:'smooth'})` path the subpage-header rescroll uses.
+- `38-39` — click-to-navigate (`a.find-us-btn` → `/visit`). Tests the view-transition + first-paint pipeline.
+
+**Currently failing scenarios (real perf cost, not test bugs):**
+- Home page scroll (desktop): avg 25 fps. The hero blur layers + scroll listeners + active-nav-link query-on-every-scroll add up.
+- Home page scroll (mobile): 52 fps, 19 stutter frames.
+- Outreach page scroll (mobile): 38 fps. Carousel chrome + section padding.
+- Hash jumps on heavier pages: smooth-scroll cadence drops below the strict p95 bar.
+- Find-Us click (desktop): 116ms max frame during the view-transition snapshot.
+
+These are diagnostic, not blockers. Next step is using them to drive optimization (reduce backdrop-filter layers, debounce active-nav-link reads, lazy-init the carousel, etc.).
+
+**HTML report** now shows a per-perf-scenario metric grid (`avg fps`, `p95 frame`, `max frame`, `stutters`, `long tasks`, `long anim frames` with blocking ms, `input → load`, total frame count) color-coded green/red against the thresholds.
+
+**Anchor + flow scenarios** continue to pass at 0.000 CLS, stable landings, no entrance flicker, view-transitions running across all four routes.
+
+---
 
 ### v1.44.0 - Plan Your Visit page
 

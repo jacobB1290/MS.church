@@ -1,4 +1,4 @@
-// Version: 1.44.0 - Plan Your Visit page: map + service flow + Sunday School + after-service + CTA; hero Find Us links to it
+// Version: 1.44.2 - Perf harness: 60fps + 120fps tiers; vsync disabled so rAF reflects per-frame work cost
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

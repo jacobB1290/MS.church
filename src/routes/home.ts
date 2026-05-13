@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.44.2 - Perf harness: 60fps + 120fps tiers; vsync disabled so rAF reflects per-frame work cost -->
+<!-- v1.45.0 - Schedule: banner carousel + tab cards; +Wednesday Activity Day; durations on Sun/Thu/Fri -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

@@ -806,6 +806,162 @@ export const homeStyles = (): string => `
             }
 
             /* ============================================================
+               SCHEDULE LAYOUT — banner image carousel (left) + vertical
+               card tab list (right). Cards drive the banner: clicking any
+               tab crossfades the banner to the matching slide. On mobile
+               the banner sits on top and the card list stacks below.
+               ============================================================ */
+            .schedule-card {
+                /* Tighten outer card so the banner can fill its own bounds */
+                padding: clamp(20px, 2.4vw, 32px);
+            }
+            .schedule-layout {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+                gap: clamp(20px, 2.5vw, 32px);
+                align-items: stretch;
+            }
+            /* Banner: occupies the left column. Slides stack absolutely and
+               crossfade via opacity. Stays at the same height as the card
+               list via align-items: stretch on the grid. */
+            .schedule-banner {
+                position: relative;
+                overflow: hidden;
+                border-radius: 24px;
+                background: linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+                min-height: 360px;
+            }
+            .schedule-banner-slide {
+                position: absolute;
+                inset: 0;
+                opacity: 0;
+                transition: opacity 700ms cubic-bezier(0.4, 0, 0.2, 1);
+                display: grid;
+                place-items: center;
+                pointer-events: none;
+            }
+            .schedule-banner-slide.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .schedule-banner-slide {
+                    transition: none;
+                }
+            }
+            .schedule-banner-slide img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+            /* Placeholder variant — themed surface for each slide so the
+               crossfade is visible before real photos exist. The hue tint
+               rotates per slide via :nth-child for a hint of variety. */
+            .schedule-banner-placeholder {
+                background:
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+                color: rgba(26, 26, 46, 0.30);
+                border: 1px dashed rgba(26, 26, 46, 0.12);
+                border-radius: inherit;
+            }
+            .schedule-banner-placeholder:nth-child(2) {
+                background:
+                    linear-gradient(135deg, rgba(184, 168, 212, 0.14) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+            }
+            .schedule-banner-placeholder:nth-child(3) {
+                background:
+                    linear-gradient(135deg, rgba(168, 212, 184, 0.14) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+            }
+            .schedule-banner-placeholder:nth-child(4) {
+                background:
+                    linear-gradient(135deg, rgba(212, 196, 168, 0.16) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+            }
+            .schedule-banner-placeholder:nth-child(5) {
+                background:
+                    linear-gradient(135deg, rgba(212, 168, 184, 0.14) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+            }
+            .schedule-banner-placeholder svg {
+                width: 18%;
+                max-width: 64px;
+                height: auto;
+            }
+
+            /* Card list: vertical stack of tab buttons on desktop. */
+            .schedule-list {
+                display: flex;
+                flex-direction: column;
+                gap: clamp(10px, 1.2vw, 14px);
+            }
+            .schedule-tab {
+                /* Reset button defaults */
+                appearance: none;
+                background: rgba(255, 255, 255, 0.85);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                border-left: 4px solid transparent;
+                border-radius: 20px;
+                padding: clamp(16px, 1.8vw, 22px) clamp(18px, 2vw, 24px);
+                text-align: left;
+                cursor: pointer;
+                display: grid;
+                gap: 8px;
+                font-family: inherit;
+                color: inherit;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+                transition: background 280ms cubic-bezier(0.4, 0, 0.2, 1),
+                            border-color 280ms cubic-bezier(0.4, 0, 0.2, 1),
+                            box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
+                            transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+                flex: 1 1 0;
+                min-width: 0;
+            }
+            .schedule-tab:hover {
+                background: rgba(255, 255, 255, 0.95);
+                box-shadow: 0 10px 26px rgba(0, 0, 0, 0.07);
+            }
+            .schedule-tab:focus-visible {
+                outline: 2px solid var(--gold);
+                outline-offset: 3px;
+            }
+            .schedule-tab.active {
+                background: linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(255, 255, 255, 0.95) 100%);
+                border-left-color: var(--gold);
+                box-shadow: 0 12px 30px rgba(212, 165, 116, 0.18);
+            }
+            .schedule-tab-eyebrow {
+                font-family: var(--font-body), 'Inter', sans-serif;
+                font-size: var(--text-eyebrow, 10px);
+                font-weight: var(--weight-semibold, 600);
+                letter-spacing: var(--tracking-wide, 2.5px);
+                text-transform: uppercase;
+                color: var(--gold);
+            }
+            .schedule-tab-title {
+                font-family: var(--font-heading), 'Playfair Display', serif;
+                font-size: clamp(20px, 2vw, 24px);
+                font-weight: 600;
+                color: var(--text-primary, #1a1a2e);
+                line-height: 1.25;
+            }
+            .schedule-tab-desc {
+                font-family: var(--font-body), 'Inter', sans-serif;
+                font-size: clamp(14px, 1.4vw, 15px);
+                line-height: 1.6;
+                color: rgba(26, 26, 46, 0.72);
+            }
+            .schedule-tab-link {
+                color: var(--gold);
+                text-decoration: underline;
+                text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent);
+                font-weight: 600;
+            }
+
+            /* ============================================================
                VERTICAL VIDEO FRAME — 9:16 phone-sized preview.
                Stacks on top of the section text inside a .section-card-video
                wrapper. Big enough to actually watch the preview, mirrors the
@@ -4103,6 +4259,33 @@ export const homeStyles = (): string => `
                 .schedule-item-text {
                     padding: clamp(2px, 1vw, 6px);
                     gap: 10px;
+                }
+
+                /* Schedule banner + cards: stack on mobile. Banner sits on
+                   top with a 16/9 aspect ratio; cards become a single-column
+                   list below. Tabs remain interactive — tap to crossfade. */
+                .schedule-layout {
+                    grid-template-columns: 1fr;
+                    gap: clamp(16px, 3vw, 22px);
+                }
+                .schedule-banner {
+                    aspect-ratio: 16 / 9;
+                    min-height: 0;
+                    border-radius: 20px;
+                }
+                .schedule-list {
+                    gap: clamp(10px, 2.2vw, 14px);
+                }
+                .schedule-tab {
+                    border-radius: 18px;
+                    padding: clamp(14px, 3.5vw, 18px) clamp(16px, 4vw, 20px);
+                    gap: 6px;
+                }
+                .schedule-tab-title {
+                    font-size: clamp(18px, 4.4vw, 22px);
+                }
+                .schedule-tab-desc {
+                    font-size: clamp(14px, 3.6vw, 15px);
                 }
             }
 

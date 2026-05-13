@@ -1,7 +1,38 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.44.2
+## 🔢 CURRENT VERSION: v1.45.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.45.0 - Schedule: banner carousel + tab cards; +Wednesday Activity Day
+
+The schedule outgrew the per-card image pattern once it reached five weekly gatherings. Restructured into a tabbed control: one shared **banner image carousel** on the left, a vertical **tab card list** on the right (stacks on mobile, banner on top). Clicking a card crossfades the banner to that card's image and marks the card active.
+
+**New + updated content:**
+- **NEW: Wednesdays · 6:00 PM · 3 hrs — Activity Day.** Open gym for basketball and volleyball, plus a crochet circle to learn the craft and grow your skills.
+- **Sundays · 9:00 AM · 1 hr** (duration added)
+- **Thursdays · 6:00 PM · 45 min** (duration added)
+- **Fridays · 7:00 PM · 1 hr** (duration added)
+- Durations appear inline with the title using the existing `·` separator — one clean info line per card, no extra chrome.
+
+**Why this layout (banner LEFT + cards RIGHT on desktop):**
+- Stronger spatial link between active card and the image — eye doesn't travel up/down
+- Handles any card count cleanly — vertical list scales past 5 without awkward grid math
+- Reads as a tab/panel control — familiar pattern that signals "click a card to see its image"
+- Mobile naturally stacks (banner on top, single-column tabs below) with no media-query gymnastics
+
+**Interaction details:**
+- Crossfade (not slide) — calmer feel for a 6s auto-cycle, less motion sickness
+- Auto-cycle every 6s; pauses on hover, on focus, and when the section is off-screen via IntersectionObserver
+- User click → snaps to that index and pauses auto-cycle for 12s
+- Respects `prefers-reduced-motion`: no transitions, no auto-cycle
+- Tabs use proper button semantics + `role="tab"` + `aria-selected` for screen-reader support
+- Active card visual: 4px gold left border + subtle gold gradient tint + soft gold shadow
+
+**Files changed:**
+- `src/templates/home-body.ts` — new `.schedule-layout` markup with banner + 5 tab buttons
+- `src/templates/home-styles.ts` — full schedule-banner + schedule-tab rule set + mobile override
+- `src/templates/home-scripts.ts` — `SCHEDULE BANNER CAROUSEL` block: click/focus/visibility sync
+- Version bump → 1.45.0 across `src/index.tsx`, `src/index.ts`, `src/routes/home.ts`
 
 ### v1.44.2 - Two-tier perf harness (60fps + 120fps), vsync disabled
 

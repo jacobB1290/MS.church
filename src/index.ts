@@ -1,4 +1,4 @@
-// Version: 1.44.2 - Perf harness: 60fps + 120fps tiers; vsync disabled so rAF reflects per-frame work cost
+// Version: 1.45.0 - Schedule: banner carousel + tab cards; +Wednesday Activity Day; durations on Sun/Thu/Fri
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

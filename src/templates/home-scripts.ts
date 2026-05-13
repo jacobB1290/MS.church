@@ -48,6 +48,85 @@ export const homeScripts = (): string => `
                 }
 
                 // ========================================
+                // SCHEDULE BANNER CAROUSEL
+                // Banner crossfades through schedule images. Clicking any tab
+                // (Sunday / Tuesday / Wednesday / Thursday / Friday) snaps the
+                // banner to that slide and activates the card. Auto-cycles
+                // every 6s; pauses while the user is hovering or focused
+                // inside the section; respects prefers-reduced-motion.
+                // ========================================
+                {
+                    const banner = document.getElementById('schedule-banner');
+                    const tabs = document.querySelectorAll('.schedule-tab');
+                    const slides = banner ? banner.querySelectorAll('.schedule-banner-slide') : [];
+                    if (banner && tabs.length && tabs.length === slides.length) {
+                        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                        const AUTO_MS = 6000;
+                        const RESUME_MS = 12000;
+                        let activeIndex = 0;
+                        let autoTimer = null;
+                        let paused = false;
+                        let resumeTimer = null;
+
+                        function setActive(i) {
+                            activeIndex = ((i % tabs.length) + tabs.length) % tabs.length;
+                            tabs.forEach((t, idx) => {
+                                const on = idx === activeIndex;
+                                t.classList.toggle('active', on);
+                                t.setAttribute('aria-selected', on ? 'true' : 'false');
+                            });
+                            slides.forEach((s, idx) => s.classList.toggle('active', idx === activeIndex));
+                        }
+
+                        function startAuto() {
+                            if (reducedMotion || autoTimer) return;
+                            autoTimer = setInterval(() => {
+                                if (!paused) setActive(activeIndex + 1);
+                            }, AUTO_MS);
+                        }
+
+                        function pauseFor(ms) {
+                            paused = true;
+                            if (resumeTimer) clearTimeout(resumeTimer);
+                            resumeTimer = setTimeout(() => { paused = false; }, ms);
+                        }
+
+                        tabs.forEach((tab, i) => {
+                            tab.addEventListener('click', () => {
+                                setActive(i);
+                                pauseFor(RESUME_MS);
+                            });
+                            tab.addEventListener('focus', () => {
+                                setActive(i);
+                                pauseFor(RESUME_MS);
+                            });
+                        });
+
+                        const scheduleSection = document.getElementById('schedule');
+                        if (scheduleSection) {
+                            scheduleSection.addEventListener('mouseenter', () => { paused = true; });
+                            scheduleSection.addEventListener('mouseleave', () => {
+                                if (!resumeTimer) paused = false;
+                            });
+                        }
+
+                        // Pause auto-cycle while the section isn't visible
+                        // (saves work + prevents users returning to an unexpected slide).
+                        if ('IntersectionObserver' in window) {
+                            const visObserver = new IntersectionObserver((entries) => {
+                                const visible = entries[0].isIntersecting;
+                                if (!visible) paused = true;
+                                else if (!resumeTimer) paused = false;
+                            }, { threshold: 0.25 });
+                            visObserver.observe(banner);
+                        }
+
+                        setActive(0);
+                        startAuto();
+                    }
+                }
+
+                // ========================================
                 // DYNAMIC EVENT MANAGER
                 // Fetches from /api/calendar/events (server-side proxy with 5-min cache)
                 // Auto-archives past events, handles 0-3+ upcoming events

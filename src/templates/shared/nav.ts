@@ -17,9 +17,9 @@ type NavItem = {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', target: { kind: 'anchor', hash: 'home' } },
   { label: 'Schedule', target: { kind: 'anchor', hash: 'schedule' } },
-  { label: 'Outreach', target: { kind: 'anchor', hash: 'outreach' } },
+  { label: 'About', target: { kind: 'page', path: '/about' } },
+  { label: 'Outreach', target: { kind: 'page', path: '/outreach' } },
   { label: 'Watch', target: { kind: 'anchor', hash: 'watch' } },
 ]
 

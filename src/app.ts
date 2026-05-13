@@ -6,6 +6,8 @@ import { cors } from 'hono/cors'
 import { registerCalendarRoute } from './routes/calendar.js'
 import { registerYouTubeRoute } from './routes/youtube.js'
 import { registerHomeRoute } from './routes/home.js'
+import { registerAboutRoute } from './routes/about.js'
+import { registerOutreachRoute } from './routes/outreach.js'
 import { registerPrivacyRoute } from './routes/privacy.js'
 import { registerMiscRoutes } from './routes/misc.js'
 import { GOLD } from './design-tokens.js'
@@ -27,6 +29,8 @@ app.use('/api/*', cors())
 registerCalendarRoute(app)
 registerYouTubeRoute(app)
 registerHomeRoute(app)
+registerAboutRoute(app)
+registerOutreachRoute(app)
 registerPrivacyRoute(app)
 registerMiscRoutes(app)
 

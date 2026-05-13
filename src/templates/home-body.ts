@@ -81,7 +81,7 @@ export const homeBody = (): string => `
                                 <div class="schedule-item-text">
                                     <span>Sunday Gatherings</span>
                                     <h3>Sundays · 9:00 AM</h3>
-                                    <p>Morning service with free community breakfast after. Free transportation from select shelters included.</p>
+                                    <p>Morning service with free community breakfast after. Free transportation from select shelters included. <a href="/outreach#sunday-school" style="color: var(--gold); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent); font-weight: 600;">Sunday School info →</a></p>
                                 </div>
                                 <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -121,66 +121,50 @@ export const homeBody = (): string => `
                     </div>
                 </section>
 
-                <section class="outreach" id="outreach" style="animation-delay: 0.3s">
-                    <span class="section-eyebrow">Outreach</span>
-                    <h2 class="section-heading">Community Outreach & Events in Boise, Idaho</h2>
-
-                    <!--
-                    ================================================
-                    GOOGLE CALENDAR POWERED EVENTS
-                    ================================================
-                    Events are pulled from the server's /api/calendar/events endpoint,
-                    which proxies Google Calendar (morningstarchurchboise@gmail.com).
-
-                    HOW TO ADD EVENTS:
-                    1. Create an event in Google Calendar
-                    2. Attach a flyer image from Google Drive (must be shared publicly)
-                    3. Optionally add CTA in description: [CTA: BUTTON TEXT | #contact]
-
-                    The website will:
-                    - Pull the event title, date, and attached image
-                    - Auto-sort into Upcoming vs Past events
-                    - Show "Stay Tuned" when no upcoming events exist
-                    ================================================
-                    -->
-
-                    <!-- Stay Tuned Card - shown when no upcoming events -->
-                    <div class="stay-tuned-container" id="stay-tuned-container" style="display: none;"></div>
-
-                    <!-- Carousel for upcoming events -->
-                    <div class="carousel-wrapper" id="carousel-wrapper" style="display: none;">
-                        <div class="carousel-viewport" aria-live="polite" aria-atomic="false">
-                            <div class="carousel-track" id="carousel-track" role="list">
-                                <!-- Cards rendered by JS; track slides via translateX -->
-                            </div>
+                <!-- About Teaser — links to /about for the full page -->
+                <section class="home-teaser" id="about" style="animation-delay: 0.3s">
+                    <div class="home-teaser-grid">
+                        <div class="home-teaser-text">
+                            <span class="section-eyebrow">About Us</span>
+                            <h2 class="section-heading-sm">A welcoming church in the heart of Boise.</h2>
+                            <p>Morning Star is a small, nondenominational community where every story, every age, and every burden is met with grace and a seat at the table. We exist to point people to Jesus and to mend the broken — through faith, family, and serving the city we love.</p>
+                            <a class="home-teaser-cta" href="/about">Learn more about us →</a>
                         </div>
-                        <button class="carousel-arrow prev" id="carousel-prev" aria-label="Previous event">&#8249;</button>
-                        <button class="carousel-arrow next" id="carousel-next" aria-label="Next event">&#8250;</button>
-                        <div class="carousel-nav" id="carousel-nav">
-                            <div class="carousel-dots" id="carousel-dots"></div>
+                        <div class="home-teaser-image schedule-item-image-placeholder" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                         </div>
                     </div>
                 </section>
 
-                <!-- Past Events Modal - Overlay Carousel (outside normal page flow) -->
-                <div class="past-events-modal" id="past-events-modal">
-                    <div class="past-events-modal-content">
-                        <div class="past-events-modal-header">
-                            <h3 class="past-events-modal-title">Past Events</h3>
-                            <button class="past-events-modal-close" id="close-past-events" aria-label="Close past events">&times;</button>
-                        </div>
-                        <div class="past-events-carousel">
-                            <button class="past-events-nav prev" id="past-prev" aria-label="Previous event">&#8249;</button>
-                            <div class="past-events-slides" id="past-events-slides">
-                                <!-- Past event slides dynamically generated -->
+                <!-- Outreach Teaser — links to /outreach for full ministries hub + events -->
+                <section class="home-teaser home-teaser-outreach" id="outreach" style="animation-delay: 0.4s">
+                    <span class="section-eyebrow">How We Serve</span>
+                    <h2 class="section-heading-sm">A few ways we live out our mission in Boise.</h2>
+                    <div class="serve-grid">
+                        <a class="serve-card" href="/outreach#sunday-school">
+                            <div class="serve-card-image schedule-item-image-placeholder" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                             </div>
-                            <button class="past-events-nav next" id="past-next" aria-label="Next event">&#8250;</button>
-                        </div>
-                        <div class="past-events-dots" id="past-events-dots">
-                            <!-- Dots dynamically generated -->
-                        </div>
+                            <h3 class="serve-card-title">Sunday School</h3>
+                            <p class="serve-card-meta">Sundays during the 9 AM service</p>
+                        </a>
+                        <a class="serve-card" href="/outreach#cooking-ministry">
+                            <div class="serve-card-image schedule-item-image-placeholder" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            </div>
+                            <h3 class="serve-card-title">Cooking Ministry</h3>
+                            <p class="serve-card-meta">Monthly · Boise homeless shelters</p>
+                        </a>
+                        <a class="serve-card" href="/outreach#events">
+                            <div class="serve-card-image schedule-item-image-placeholder" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            </div>
+                            <h3 class="serve-card-title">Community Events</h3>
+                            <p class="serve-card-meta">Year-round · Open to all</p>
+                        </a>
                     </div>
-                </div>
+                    <a class="home-teaser-cta" href="/outreach">Explore our outreach →</a>
+                </section>
 
                 <section class="watch" id="watch" style="animation-delay: 0.4s">
                     <div class="watch-header">

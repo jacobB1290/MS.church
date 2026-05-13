@@ -11,6 +11,8 @@ export function registerMiscRoutes(app: Hono) {
   
   # Main pages
   Allow: /
+  Allow: /about
+  Allow: /outreach
   Allow: /privacy
   Allow: /form
   
@@ -52,6 +54,22 @@ export function registerMiscRoutes(app: Hono) {
           <lastmod>${today}</lastmod>
           <changefreq>weekly</changefreq>
           <priority>1.0</priority>
+      </url>
+
+      <!-- About page -->
+      <url>
+          <loc>https://ms.church/about</loc>
+          <lastmod>${today}</lastmod>
+          <changefreq>monthly</changefreq>
+          <priority>0.9</priority>
+      </url>
+
+      <!-- Outreach & Ministries page -->
+      <url>
+          <loc>https://ms.church/outreach</loc>
+          <lastmod>${today}</lastmod>
+          <changefreq>weekly</changefreq>
+          <priority>0.9</priority>
       </url>
 
       <!-- Contact form page -->
@@ -337,9 +355,9 @@ export function registerMiscRoutes(app: Hono) {
                       <span>CHRISTIAN CHURCH</span>
                   </div>
                   <nav>
-                      <a href="/#home">HOME</a>
                       <a href="/#schedule">SCHEDULE</a>
-                      <a href="/#outreach">OUTREACH</a>
+                      <a href="/about">ABOUT</a>
+                      <a href="/outreach">OUTREACH</a>
                       <a href="/#watch">WATCH</a>
                       <a href="/form">SUBMIT THE FORM</a>
                   </nav>

@@ -40,7 +40,7 @@ export const homeHead = (): string => {
         <!-- Primary Meta Tags -->
         <title>Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM</title>
         <meta name="title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
-        <meta name="description" content="Morning Star Christian Church is a welcoming nondenominational church in Boise, Idaho. Join us Sundays at 9 AM for worship and free community breakfast. Bible study Tuesdays and Thursdays, youth service Fridays at 7 PM. All are welcome — mending the broken through faith and community.">
+        <meta name="description" content="Morning Star Christian Church is a welcoming nondenominational church in Boise, Idaho. Sundays at 9 AM with free community breakfast, Bible study Tuesdays & Thursdays, youth service Fridays. Sunday School, monthly homeless-shelter cooking, and community outreach — mending the broken through faith and community.">
         <meta name="keywords" content="Morning Star Christian Church, church in Boise Idaho, Christian church Boise, nondenominational church Boise, churches near me Boise, Sunday worship service Boise, Bible study Boise, community church Boise Idaho, Boise churches, church near me, best church in Boise, new church Boise, family church Boise, Sunday service Boise Idaho">
         <meta name="author" content="Morning Star Christian Church">
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">

@@ -1,7 +1,55 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.41.0
+## 🔢 CURRENT VERSION: v1.42.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.42.0 - Multi-page: /about + /outreach, Restructured Home (Phase 2)
+**Splits content across dedicated pages so the home page stays focused while About and Outreach get the real estate they need.**
+
+**New pages:**
+
+1. **`/about`** — full About Us page
+   - Sections: Mission, Our Story, What We Believe (4-card grid), Leadership, Plan Your First Sunday CTA
+   - Per-page SEO: unique `<title>`, `<meta description>`, canonical, OG/Twitter tags, `AboutPage` Schema.org with church entity reference + BreadcrumbList
+
+2. **`/outreach`** — Ministries hub + Events
+   - Ministry sections: Sunday School, Cooking at the Shelters (monthly), Free Community Breakfast, Seasonal Events
+   - Events carousel + past-events modal (migrated from home — same Google Calendar integration, no API change)
+   - Per-page SEO: unique tags + `CollectionPage` Schema.org listing all ministries as `Service` items + BreadcrumbList
+
+**Home page changes:**
+
+3. **Nav restructured** — new order: SCHEDULE · ABOUT · OUTREACH · WATCH + Contact pill. ABOUT and OUTREACH now navigate to their own pages. Same 5-item count as before — no nav crowding.
+
+4. **About teaser section added** (`#about` anchor) — 1-2 paragraphs + image placeholder + "Learn more about us →" CTA to `/about`. Slots between Schedule and the new How We Serve teaser.
+
+5. **Outreach carousel replaced with "How We Serve" teaser** — 3 small ministry cards (Sunday School, Cooking Ministry, Community Events) + "Explore our outreach →" CTA to `/outreach`. Always populated (no more empty "Stay Tuned" state). Each card deep-links to its section on `/outreach`.
+
+6. **Sunday Gatherings schedule card** gains a "Sunday School info →" link to `/outreach#sunday-school`.
+
+**Shared infrastructure:**
+
+7. **`src/templates/shared/page-head.ts`** — parameterized head with title, description, canonical, OG image, optional page-specific JSON-LD. Includes geo tags, theme color, fonts, analytics, and the shared CSS bundle. Used by `/about` and `/outreach`.
+
+8. **`src/templates/shared/nav-scripts.ts`** — minimal nav scripts for subpages (scroll-mobile toggle + same-page smooth scroll).
+
+9. **`src/routes/misc.ts`** — sitemap includes `/about` (priority 0.9) and `/outreach` (priority 0.9, weekly changefreq for event freshness). Robots.txt explicitly allows both.
+
+**SEO impact (positive across the board):**
+- Each new page has its own indexable URL with unique title/description/canonical.
+- Open Graph and Twitter Card metadata per page for clean social previews.
+- Schema.org `AboutPage` + `CollectionPage` + `BreadcrumbList` on each page (rich-result eligible).
+- Internal linking from home teasers + nav improves crawl coverage.
+- Sitemap explicitly lists every page with appropriate priority/changefreq.
+
+**Mobile behavior preserved:**
+- Nav still wraps cleanly with the new label set (same item count as v1.41).
+- `.scrolled-mobile` compressed state works on all three pages.
+- Subpage grids stack to single column; images move to top of card on mobile.
+
+**Placeholder images:** All new image slots use the v1.40.0 dashed-box placeholder pattern. Replace each `<div class="schedule-item-image-placeholder">` (or `.serve-card-image .schedule-item-image-placeholder`, `.about-image .schedule-item-image-placeholder`, etc.) with `<img src="/static/{name}.jpg" alt="..." loading="lazy">` when real photography is ready.
+
+---
 
 ### v1.41.0 - Refactor: Shared Nav + Footer Templates (Phase 1 of multi-page architecture)
 **Pure refactor with no user-visible changes. Sets up shared templates so the upcoming /about and /outreach pages stay consistent with home.**

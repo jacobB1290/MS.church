@@ -1,4 +1,4 @@
-// Version: 1.41.0 - Refactor: extract shared nav + footer templates (Phase 1 of multi-page)
+// Version: 1.42.0 - Multi-page: add /about and /outreach, restructure home with teasers
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

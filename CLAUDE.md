@@ -153,6 +153,65 @@ npm run vercel-build   # equivalent to: vite build
 
 ---
 
+## Visual + Performance Harness
+
+The site has a Playwright-driven harness at `scripts/harness/run.mjs` for validating visual layout, cross-page anchor accuracy, animation smoothness, and frame-rate / lag performance. It is committed and intended to evolve with the codebase.
+
+**Use it. Iterate on it. Extend it.** It is not a fixed checklist — it is the project's standing test surface. Any new section, page, transition, interaction, or perf concern should grow a corresponding scenario. There is no upper bound on what it can cover; if a future change introduces a behavior worth verifying (visual regression, scroll alignment, gesture latency, lazy-load timing, video stutter, layout shift on calendar event load, accessibility tab order, color contrast — anything), add it to the harness.
+
+### Location
+
+- `scripts/harness/run.mjs` — the harness (committed)
+- `scripts/harness/output/` — generated artifacts (screenshots, `.webm` videos, `report.html`, `results.txt`); gitignored, regenerated on each run
+
+### How to run
+
+```bash
+npm run dev                                   # start dev server (default port 5173)
+node scripts/harness/run.mjs                  # run full suite against http://localhost:5173
+HARNESS_URL=http://localhost:5174 node scripts/harness/run.mjs   # override port if Vite picks a different one
+```
+
+After it finishes, open `scripts/harness/output/report.html` in a browser — color-coded grid of every scenario with screenshots, video links, and per-metric pass/fail.
+
+### What it covers today (baseline, not a ceiling)
+
+| Suite | Purpose |
+|---|---|
+| `ANCHOR_SCENARIOS` | 16 direct-render + cross-page hash-jump checks (home, /about, /outreach, /visit, deep anchors like `/outreach#cooking`, `/visit#sunday-school`). Verifies anchor scroll lands on-section, not in dead space. |
+| `PERF_SCENARIOS` | Scrolls + hash jumps + clicks measured against both a **60fps tier** and **120fps tier** (`PERF_60` / `PERF_120` thresholds). Captures rAF interval distribution, longtasks, long-animation-frame (LoAF), CLS via `PerformanceObserver`, and input latency. Chromium runs with `--disable-frame-rate-limit --disable-gpu-vsync` so rAF reflects actual per-frame work cost rather than display refresh. |
+| `FLOW_SCENARIOS` | Click-through navigation flows recorded as `.webm` video + per-frame PNGs (e.g. home → outreach → back, hero "Plan a Visit" → /visit → back). Lets a human review actual transition smoothness, not just metrics. |
+
+### When to run it
+
+- After any layout, CSS, animation, view-transition, or scroll-related change.
+- Before merging any visual or interaction work.
+- After bumps to Hono, Vite, or anything affecting bundle size or hydration timing.
+- Whenever a user reports "feels janky" / "off-screen on jump" / "flickers" — reproduce in the harness first, then fix.
+
+### How to extend it
+
+The harness is structured so new scenarios are additive:
+
+- **New anchor / page check** → push an entry to `ANCHOR_SCENARIOS` with `{ name, url, viewport, expectAnchor? }`.
+- **New perf scenario** → push to `PERF_SCENARIOS` with `{ name, url, viewport, action, tier }`. `action` is an async function that receives the Playwright `page` — do whatever you want (scroll, click, hover, dispatch input, wait for an animation, etc.). `tier` is `'60'` or `'120'`.
+- **New flow video** → push to `FLOW_SCENARIOS` with `{ name, viewport, steps }`. Each step is an async function on the `page`.
+- **New thresholds or signals** → adjust `PERF_60` / `PERF_120` objects, or extend the in-page metric collector (the script injected via `page.addInitScript`) to capture additional `PerformanceObserver` entry types.
+- **New tier** (e.g. a 30fps "old Android" tier, or a strict "zero CLS" tier) → clone the `PERF_120` block and add a third grading function call alongside `gradeTier(...)`.
+- **Non-perf checks** (a11y axe scan, visual diff against a baseline image, Lighthouse subset, network throttling, touch-gesture simulation, prefers-reduced-motion behavior) → wire as a new suite next to the existing three. Keep the same shape: a `*_SCENARIOS` array + a `run*Scenarios()` function + a section in the HTML report.
+
+The HTML report renderer at the bottom of `run.mjs` is template-string-based — add a new section by appending another `<section>` block. Keep it color-coded (green/yellow/red) so a glance reveals regressions.
+
+### Conventions for harness work
+
+- Never delete a scenario to make the suite pass — fix the underlying code or tighten/loosen the threshold with an explanation.
+- Treat `output/report.html` as ephemeral; never commit `output/`.
+- If you add a dependency (e.g. `axe-core`, `pixelmatch`), add it under `devDependencies` and note it here.
+- The harness boots its own Playwright Chromium — no global install required, but the first run downloads the browser.
+- Keep total runtime reasonable. Flow scenarios with video are the slowest (~30s each); prefer adding anchor or perf scenarios unless a video genuinely helps.
+
+---
+
 ## Versioning Convention
 
 The project uses a manual version number tracked in two places:

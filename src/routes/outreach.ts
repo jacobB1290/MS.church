@@ -53,10 +53,10 @@ const OUTREACH_JSON_LD = JSON.stringify({
           {
             '@type': 'Service',
             position: 4,
-            name: 'Seasonal Outreach & Events',
+            name: 'Seasonal & Community Events',
             description:
-              'Year-round community events open to the city — Friendsgiving, holiday outreach, and more.',
-            url: 'https://ms.church/outreach#seasonal-outreach',
+              'Year-round open-door gatherings — Friendsgiving in the fall, community events around major holidays, and city-wide outreach throughout the year.',
+            url: 'https://ms.church/outreach#events',
           },
         ],
       },

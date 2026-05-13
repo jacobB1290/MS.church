@@ -1,7 +1,19 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.42.5
+## 🔢 CURRENT VERSION: v1.42.6
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.42.6 - Events Section Consolidation + Non-interactive Card Hover Removed
+
+1. **Merged the "Seasonal Events" section into the "Events" section** on `/outreach`. The two were saying the same thing in different ways. Now there's one section with the calendar carousel + past-events modal, and a new `.section-lead` paragraph below the heading carries the seasonal context ("Friendsgiving, holidays, city-wide outreach…") so visitors get the framing whether or not there are upcoming events.
+
+2. **Stay Tuned card now shows seasonal event tags.** When no upcoming events are loaded, the card displays three gold-outlined frosted pills ("Friendsgiving · Holiday gatherings · City-wide outreach") below the main message — incorporates the former section's content visually inside the empty state instead of as a duplicate sibling section.
+
+3. **Removed hover lift from non-interactive `.schedule-item` cards.** The previous global `.schedule-item:hover { transform: translateY(-6px); box-shadow: ... }` rule was implying clickability on the informational Schedule, About, Outreach ministry, and Belief cards. Lift is preserved on `.schedule-item.teaser-link-card` (the three clickable outreach teaser cards on home) where the card is actually a link.
+
+4. **Schema.org cleanup.** The `Seasonal & Community Events` Service item on `/outreach`'s JSON-LD now points at `#events` instead of the removed `#seasonal-outreach` anchor.
+
+---
 
 ### v1.42.5 - Differentiated Clickable Cards on Home Outreach Teaser
 **Schedule and Outreach teaser sections previously looked identical but behaved differently (schedule = informational, outreach teaser = links to /outreach). This change makes the clickable cards read as clickable at any state, not just on hover.**

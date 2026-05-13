@@ -706,10 +706,10 @@ export const homeStyles = (): string => `
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            .schedule-item:hover {
-                transform: translateY(-6px);
-                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-            }
+            /* Hover lift removed from base .schedule-item — these cards are
+               informational, not interactive. Lift remains on
+               .schedule-item.teaser-link-card (defined below) where the card
+               is actually a link. */
 
             /* Alternate sides: odd items keep text-left, even items get image-left */
             .schedule-item:nth-child(even) .schedule-item-image {
@@ -1796,6 +1796,34 @@ export const homeStyles = (): string => `
                 text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(255, 255, 255, 0.8);
                 max-width: 240px;
                 font-style: italic;
+            }
+
+            /* Seasonal event-type tags inside the Stay Tuned card.
+               Visible at all times so the empty-events state still tells the
+               user what kind of gatherings to expect (incorporated from the
+               former standalone "Seasonal Events" section). */
+            .stay-tuned-tags {
+                list-style: none;
+                margin: 18px 0 0;
+                padding: 0;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                max-width: 280px;
+            }
+            .stay-tuned-tags li {
+                background: rgba(255, 255, 255, 0.6);
+                border: 1px solid rgba(212, 165, 116, 0.3);
+                color: var(--gold-deeper);
+                padding: 6px 14px;
+                border-radius: 100px;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
             }
 
             /* View Past Events Button - stands out against swirl */

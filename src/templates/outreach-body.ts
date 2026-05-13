@@ -25,6 +25,7 @@ export const outreachBody = (): string => `
                 <section class="outreach" id="events">
                     <span class="section-eyebrow">Events</span>
                     <h2 class="section-heading">Upcoming &amp; Past Events</h2>
+                    <p class="section-lead">Year-round, Morning Star hosts open-door gatherings designed to feed people, build friendships, and welcome the city — from Friendsgiving in the fall to community-wide events around major holidays. Browse what's coming up next, or scroll back through past gatherings.</p>
 
                     <!-- Stay Tuned Card - shown when no upcoming events -->
                     <div class="stay-tuned-container" id="stay-tuned-container" style="display: none;"></div>
@@ -80,19 +81,6 @@ export const outreachBody = (): string => `
                             <div class="schedule-item-text">
                                 <p>Every Sunday morning after worship, breakfast is on us — for guests, members, neighbors, and anyone passing through. We also offer free transportation from select Boise shelters so the table is open to people who need it most.</p>
                                 <p style="margin-top: 14px;"><a href="/#schedule" style="color: var(--gold); font-weight: 600;">See the full schedule →</a></p>
-                            </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="seasonal-outreach">
-                    <span class="section-eyebrow">Seasonal Events</span>
-                    <h2 class="section-heading">Year-round · Open to the city</h2>
-                    <div class="section-card">
-                        <div class="schedule-item long-content">
-                            <div class="schedule-item-text">
-                                <p>From Friendsgiving in the fall to community-wide events around major holidays, Morning Star regularly hosts open-door gatherings designed to feed people, build friendships, and welcome neighbors who may not have a church home. See what's coming up above.</p>
                             </div>
                             <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
                         </div>

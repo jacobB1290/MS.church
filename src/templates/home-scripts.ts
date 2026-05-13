@@ -299,12 +299,7 @@ export const homeScripts = (): string => `
                             </div>
                             <h3 class="stay-tuned-title">Stay Tuned</h3>
                             <div class="stay-tuned-rule"></div>
-                            <p class="stay-tuned-text">New events are on the horizon.</p>
-                            <ul class="stay-tuned-tags" aria-label="Event types">
-                                <li>Friendsgiving</li>
-                                <li>Holiday gatherings</li>
-                                <li>City-wide outreach</li>
-                            </ul>
+                            <p class="stay-tuned-text">New events are on the horizon.<br>Check back soon for what's next.</p>
                             \${hasPastEvents && !isDesktop ? '<button class="btn-view-past-events" id="btn-view-past-events">View Past Events</button>' : ''}
                         </div>
                     \`;

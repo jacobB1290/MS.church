@@ -1,4 +1,4 @@
-// Version: 1.42.6 - Merge Seasonal Events into Events section; remove non-interactive schedule card hover lift
+// Version: 1.42.7 - Remove Stay Tuned tags; Sunday School gets a 9:16 video placeholder
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

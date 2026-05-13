@@ -1,7 +1,15 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.42.6
+## 🔢 CURRENT VERSION: v1.42.7
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.42.7 - Stay Tuned Pills Removed; Sunday School Video Placeholder
+
+1. **Stay Tuned card returns to its original two-line message.** The Friendsgiving / Holiday gatherings / City-wide outreach pills introduced in v1.42.6 are removed. The seasonal framing still lives in the new `.section-lead` paragraph below the "Upcoming & Past Events" heading, which is enough — the empty state doesn't need to repeat it.
+
+2. **Sunday School placeholder is now a 9:16 video placeholder.** Same dashed-border surface as the picture placeholder so the design system stays consistent, but with portrait aspect ratio (`aspect-ratio: 9 / 16; max-width: 240px; margin-inline: auto`) and a play-button SVG. Indicates that the real asset will be a vertical phone-shot clip rather than a still image. Implemented via a new `.schedule-item-video-placeholder` modifier class on top of the existing `.schedule-item-image-placeholder`.
+
+---
 
 ### v1.42.6 - Events Section Consolidation + Non-interactive Card Hover Removed
 

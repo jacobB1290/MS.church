@@ -752,6 +752,22 @@ export const homeStyles = (): string => `
                 height: auto;
             }
 
+            /* Video placeholder — 9:16 portrait variant of the image placeholder.
+               Used where the real asset will be a vertical video (e.g. a phone-shot
+               Sunday School clip). Same dashed-border surface; just a different
+               aspect ratio and a play-button icon instead of the picture icon. */
+            .schedule-item-image.schedule-item-video-placeholder,
+            .schedule-item.long-content .schedule-item-image.schedule-item-video-placeholder {
+                aspect-ratio: 9 / 16;
+                max-width: 240px;
+                margin-inline: auto;
+            }
+            .schedule-item-video-placeholder svg {
+                width: 22%;
+                max-width: 48px;
+                height: auto;
+            }
+
             /* Teaser CTA buttons on home are intrinsically sized (not full-width). */
             .event-link-btn.teaser-cta {
                 width: auto;
@@ -1796,34 +1812,6 @@ export const homeStyles = (): string => `
                 text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(255, 255, 255, 0.8);
                 max-width: 240px;
                 font-style: italic;
-            }
-
-            /* Seasonal event-type tags inside the Stay Tuned card.
-               Visible at all times so the empty-events state still tells the
-               user what kind of gatherings to expect (incorporated from the
-               former standalone "Seasonal Events" section). */
-            .stay-tuned-tags {
-                list-style: none;
-                margin: 18px 0 0;
-                padding: 0;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 8px;
-                max-width: 280px;
-            }
-            .stay-tuned-tags li {
-                background: rgba(255, 255, 255, 0.6);
-                border: 1px solid rgba(212, 165, 116, 0.3);
-                color: var(--gold-deeper);
-                padding: 6px 14px;
-                border-radius: 100px;
-                font-size: var(--text-eyebrow);
-                font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide);
-                text-transform: uppercase;
-                backdrop-filter: blur(8px);
-                -webkit-backdrop-filter: blur(8px);
             }
 
             /* View Past Events Button - stands out against swirl */

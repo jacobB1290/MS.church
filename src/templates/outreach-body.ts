@@ -9,6 +9,7 @@ import { footer } from './shared/footer.js'
 // Section order: intro → events (top of fold) → ministries → past-events modal.
 
 const PLACEHOLDER_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`
+const VIDEO_PLACEHOLDER_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>`
 
 export const outreachBody = (): string => `
     <body>
@@ -54,7 +55,7 @@ export const outreachBody = (): string => `
                                 <p>Children's Sunday School runs during the main service so families can worship together and kids can dive into scripture at their level. Curriculum focuses on the gospel, the Bible's storyline, and what it means to follow Jesus. Safe, warm, and joyful — drop-off is welcome any Sunday.</p>
                                 <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: 600;">Ask about Sunday School →</a></p>
                             </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
+                            <div class="schedule-item-image schedule-item-image-placeholder schedule-item-video-placeholder" aria-hidden="true">${VIDEO_PLACEHOLDER_SVG}</div>
                         </div>
                     </div>
                 </section>

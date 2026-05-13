@@ -49,13 +49,26 @@ export const outreachBody = (): string => `
                 <section id="sunday-school">
                     <span class="section-eyebrow">Sunday School</span>
                     <h2 class="section-heading">Sundays · During the 9 AM service</h2>
-                    <div class="section-card">
-                        <div class="schedule-item long-content">
-                            <div class="schedule-item-text">
-                                <p>Children's Sunday School runs during the main service so families can worship together and kids can dive into scripture at their level. Curriculum focuses on the gospel, the Bible's storyline, and what it means to follow Jesus. Safe, warm, and joyful — drop-off is welcome any Sunday.</p>
-                                <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: 600;">Ask about Sunday School →</a></p>
-                            </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder schedule-item-video-placeholder" aria-hidden="true">${VIDEO_PLACEHOLDER_SVG}</div>
+                    <div class="section-card section-card-video">
+                        <div class="vertical-video-frame" id="sunday-school-video">
+                            <div class="vertical-video-placeholder" aria-hidden="true">${VIDEO_PLACEHOLDER_SVG}</div>
+                            <!-- When real footage is dropped in, replace the placeholder above with:
+                                 <video autoplay muted loop playsinline preload="metadata" poster="...">
+                                     <source src="/static/sunday-school.mp4" type="video/mp4">
+                                 </video>
+                                 The .video-unmute-btn below mirrors the watch section pattern. -->
+                            <button class="video-unmute-btn visible" id="sunday-school-unmute" type="button" aria-label="Unmute video">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                    <line x1="23" y1="9" x2="17" y2="15"></line>
+                                    <line x1="17" y1="9" x2="23" y2="15"></line>
+                                </svg>
+                                Tap to unmute
+                            </button>
+                        </div>
+                        <div class="section-card-text">
+                            <p>Children's Sunday School runs during the main service so families can worship together and kids can dive into scripture at their level. Curriculum focuses on the gospel, the Bible's storyline, and what it means to follow Jesus. Safe, warm, and joyful — drop-off is welcome any Sunday.</p>
+                            <p><a href="/#contact" class="section-card-link">Ask about Sunday School &rarr;</a></p>
                         </div>
                     </div>
                 </section>
@@ -111,4 +124,47 @@ export const outreachBody = (): string => `
 
             ${footer()}
         </div>
+        <script>
+            (function() {
+                // Sunday School vertical-video controls.
+                // Mirrors the watch section pattern: unmute button overlays the
+                // muted-autoplay video; tap hides the button and unmutes (when a
+                // real <video> is present). Tap on the frame itself requests
+                // fullscreen.
+                var frame = document.getElementById('sunday-school-video');
+                var unmuteBtn = document.getElementById('sunday-school-unmute');
+                if (!frame) return;
+
+                var videoEl = frame.querySelector('video');
+
+                if (unmuteBtn) {
+                    unmuteBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (videoEl) {
+                            videoEl.muted = false;
+                            try { videoEl.play(); } catch (err) {}
+                        }
+                        unmuteBtn.classList.add('hiding');
+                        unmuteBtn.classList.remove('visible');
+                        setTimeout(function() {
+                            if (unmuteBtn.parentNode) {
+                                unmuteBtn.parentNode.removeChild(unmuteBtn);
+                            }
+                        }, 320);
+                    });
+                }
+
+                // Tap the frame itself → fullscreen the video element (when present).
+                frame.addEventListener('click', function() {
+                    if (!videoEl) return;
+                    var req = videoEl.requestFullscreen
+                        || videoEl.webkitRequestFullscreen
+                        || videoEl.webkitEnterFullscreen
+                        || videoEl.msRequestFullscreen;
+                    if (req) {
+                        try { req.call(videoEl); } catch (err) {}
+                    }
+                });
+            })();
+        </script>
     </body>`

@@ -752,20 +752,73 @@ export const homeStyles = (): string => `
                 height: auto;
             }
 
-            /* Video placeholder — 9:16 portrait variant of the image placeholder.
-               Used where the real asset will be a vertical video (e.g. a phone-shot
-               Sunday School clip). Same dashed-border surface; just a different
-               aspect ratio and a play-button icon instead of the picture icon. */
-            .schedule-item-image.schedule-item-video-placeholder,
-            .schedule-item.long-content .schedule-item-image.schedule-item-video-placeholder {
-                aspect-ratio: 9 / 16;
-                max-width: 240px;
-                margin-inline: auto;
+            /* ============================================================
+               VERTICAL VIDEO FRAME — 9:16 phone-sized preview.
+               Stacks on top of the section text inside a .section-card-video
+               wrapper. Big enough to actually watch the preview, mirrors the
+               watch section's .video-unmute-btn overlay pattern.
+               When a real <video autoplay muted loop playsinline> drops in, it
+               replaces the inner .vertical-video-placeholder; the frame and
+               unmute button stay structurally the same.
+               ============================================================ */
+            .section-card.section-card-video {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: clamp(24px, 3vw, 36px);
             }
-            .schedule-item-video-placeholder svg {
+            .vertical-video-frame {
+                position: relative;
+                width: min(360px, 80vw);
+                aspect-ratio: 9 / 16;
+                border-radius: 28px;
+                overflow: hidden;
+                background: linear-gradient(180deg, #1a1a2e 0%, #2a2a4e 100%);
+                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18),
+                            0 8px 20px rgba(0, 0, 0, 0.06);
+                cursor: pointer;
+            }
+            .vertical-video-frame video,
+            .vertical-video-frame iframe {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                border: none;
+            }
+            .vertical-video-placeholder {
+                position: absolute;
+                inset: 0;
+                display: grid;
+                place-items: center;
+                background:
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+                color: rgba(26, 26, 46, 0.30);
+                border: 1px dashed rgba(26, 26, 46, 0.12);
+                border-radius: inherit;
+            }
+            .vertical-video-placeholder svg {
                 width: 22%;
-                max-width: 48px;
+                max-width: 56px;
                 height: auto;
+            }
+            .section-card-text {
+                width: 100%;
+                max-width: 720px;
+                color: rgba(26, 26, 46, 0.7);
+                font-size: var(--text-body);
+                line-height: var(--leading-loose);
+            }
+            .section-card-text p + p {
+                margin-top: 14px;
+            }
+            .section-card-text .section-card-link {
+                color: var(--gold);
+                font-weight: var(--weight-semibold);
+                text-decoration: none;
             }
 
             /* Teaser CTA buttons on home are intrinsically sized (not full-width). */

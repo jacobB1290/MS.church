@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.42.7 - Remove Stay Tuned tags; Sunday School gets a 9:16 video placeholder -->
+<!-- v1.42.8 - Sunday School: big phone-sized 9:16 vertical video frame with unmute overlay + fullscreen-on-tap -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

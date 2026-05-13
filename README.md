@@ -1,7 +1,28 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.42.7
+## 🔢 CURRENT VERSION: v1.42.8
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.42.8 - Sunday School: Phone-sized Vertical Video Frame
+
+**Replaces the tiny 240px image-cell placeholder with a proper watchable vertical-video frame, big enough to preview before tapping into fullscreen — same unmute-overlay pattern as the watch section so the design language is consistent.**
+
+1. **Stacked, phone-sized layout** (`.section-card.section-card-video`). Video frame sits on top of the section text, both centered within the section card. Same on every breakpoint, so the experience is consistent.
+
+2. **New `.vertical-video-frame`** — `width: min(360px, 80vw)`, `aspect-ratio: 9/16`, `border-radius: 28px`, dark gradient background (so a real video sits inside cleanly), `overflow: hidden`, drop shadow. ~360×640 on desktop, scales with viewport on mobile.
+
+3. **Unmute overlay** — reuses the existing `.video-unmute-btn` class from the watch section verbatim (frosted-dark pill with speaker-muted icon + "Tap to unmute" label, positioned `absolute` `bottom-left` of the frame). Same component, two contexts.
+
+4. **JS hooks** added inline at the bottom of `outreach-body.ts`:
+   - Tap on `.video-unmute-btn` → `video.muted = false; videoEl.play()`, then animates the button out and removes it.
+   - Tap on `.vertical-video-frame` → requests fullscreen on the video element (with `webkitRequestFullscreen` and `webkitEnterFullscreen` fallbacks for iOS).
+   - All wrapped in feature checks so the script no-ops cleanly until a real `<video>` is dropped in.
+
+5. **Drop-in instructions** are inline-commented in `outreach-body.ts` next to the placeholder. To go live: replace `<div class="vertical-video-placeholder">…</div>` with `<video autoplay muted loop playsinline preload="metadata" poster="…"><source src="/static/sunday-school.mp4" type="video/mp4"></video>`. No JS changes required.
+
+6. **Removed** the old `.schedule-item-video-placeholder` modifier from v1.42.7 (the 240px squashed variant) — the new `.vertical-video-frame` system replaces it.
+
+---
 
 ### v1.42.7 - Stay Tuned Pills Removed; Sunday School Video Placeholder
 

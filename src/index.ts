@@ -1,4 +1,4 @@
-// Version: 1.42.7 - Remove Stay Tuned tags; Sunday School gets a 9:16 video placeholder
+// Version: 1.42.8 - Sunday School: big phone-sized 9:16 vertical video frame with unmute overlay + fullscreen-on-tap
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

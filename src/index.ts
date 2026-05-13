@@ -1,4 +1,4 @@
-// Version: 1.43.0 - View transitions + opacity-only fade (no translateY drift) + flush About teaser + Playwright harness
+// Version: 1.43.1 - Smooth navigation system: hash stashing kills CLS, smart entrance on fresh loads only, hardened harness
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

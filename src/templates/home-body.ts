@@ -13,7 +13,7 @@ export const homeBody = (): string => `
             ${nav()}
             <div class="nav-spacer"></div>
             <main>
-                <section class="hero" id="home" style="animation-delay: 0.1s">
+                <section class="hero" id="home">
                     <div class="hero-blur-layer blur-1"></div>
                     <div class="hero-blur-layer blur-2"></div>
                     <div class="hero-blur-layer blur-3"></div>
@@ -53,7 +53,7 @@ export const homeBody = (): string => `
                     <div class="hero-bridge-blur bridge-blur-3"></div>
                 </div>
 
-                <section class="schedule" id="schedule" style="animation-delay: 0.2s">
+                <section class="schedule" id="schedule">
                     <span class="section-eyebrow">Weekly Schedule</span>
                     <h2 class="section-heading">Sunday Worship, Bible Study & Fellowship in Boise</h2>
                     <address>
@@ -122,7 +122,7 @@ export const homeBody = (): string => `
                 </section>
 
                 <!-- About teaser — single card, image goes to the edges (no double-card nesting) -->
-                <section id="about" style="animation-delay: 0.3s">
+                <section id="about">
                     <span class="section-eyebrow">About Us</span>
                     <h2 class="section-heading">A welcoming church in the heart of Boise.</h2>
                     <div class="section-card about-teaser-card">
@@ -137,7 +137,7 @@ export const homeBody = (): string => `
                 </section>
 
                 <!-- Outreach teaser — How We Serve cards, routes to /outreach for full hub + events -->
-                <section id="outreach" style="animation-delay: 0.4s">
+                <section id="outreach">
                     <span class="section-eyebrow">How We Serve</span>
                     <h2 class="section-heading">A few ways we live out our mission in Boise.</h2>
                     <div class="section-card">
@@ -182,7 +182,7 @@ export const homeBody = (): string => `
                     </div>
                 </section>
 
-                <section class="watch" id="watch" style="animation-delay: 0.4s">
+                <section class="watch" id="watch">
                     <div class="watch-header">
                         <span class="section-eyebrow">Watch</span>
                         <h2 class="section-heading">Watch Our Sunday Service Live from Boise</h2>
@@ -246,7 +246,7 @@ export const homeBody = (): string => `
                     </div>
                 </section>
 
-                <section class="contact" id="contact" style="animation-delay: 0.5s">
+                <section class="contact" id="contact">
                     <div class="contact-header">
                         <span class="section-eyebrow">Get In Touch</span>
                         <h2 class="section-heading">Contact Us</h2>

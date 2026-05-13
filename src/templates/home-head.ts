@@ -33,6 +33,35 @@ export const homeHead = (): string => {
     return `
     <head>
         <meta charset="UTF-8">
+        <script>
+            /* Synchronously, before any layout:
+               1) Skip section entrance animation on non-fresh visits.
+               2) Stash + strip the URL hash so the browser doesn't do its
+                  native scroll-to-fragment (which would scroll to the section's
+                  CURRENT position before async events fill in, leaving the
+                  visitor 600+ pixels above the target once events settle, and
+                  spiking CLS to 0.4+). We re-scroll smoothly and put the hash
+                  back into the URL once layout is stable. */
+            (function(){
+                var skip=false;
+                if(location.hash) skip=true;
+                try{
+                    var n=performance.getEntriesByType('navigation')[0];
+                    if(n&&(n.type==='back_forward'||n.type==='reload')) skip=true;
+                }catch(e){}
+                if(document.referrer&&document.referrer.indexOf(location.origin)===0) skip=true;
+                if(skip) document.documentElement.classList.add('no-entrance');
+                addEventListener('pageshow',function(e){
+                    if(e.persisted) document.documentElement.classList.add('no-entrance');
+                });
+                if(location.hash && location.hash !== '#'){
+                    window.__targetHash = location.hash;
+                    try {
+                        history.replaceState(null, '', location.pathname + location.search);
+                    } catch(e){}
+                }
+            })();
+        </script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
         <!-- iOS: make status bar blend with hero image olive tones -->
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">

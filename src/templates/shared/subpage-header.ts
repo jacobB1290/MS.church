@@ -35,6 +35,33 @@ export function subpageHeader(): string {
                         });
                     }
 
+                    // ----- Hash deep-link landing -----
+                    // The inline <head> script stashed location.hash on
+                    // window.__targetHash and cleared the URL so the browser
+                    // didn't do its native scroll-to-fragment. Now scroll
+                    // smoothly once layout is stable (covers /about which
+                    // has no async loads AND /outreach which waits for the
+                    // calendar fetch), then restore the URL hash so the
+                    // deep link stays shareable.
+                    var hash = window.__targetHash;
+                    if (hash) {
+                        var land = function() {
+                            var t = document.querySelector(hash);
+                            if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        };
+                        // First attempt: layout should be stable for /about
+                        // and most fast paths.
+                        setTimeout(land, 200);
+                        // Second attempt: catches /outreach's async carousel
+                        // expanding the document height.
+                        setTimeout(function() {
+                            land();
+                            try {
+                                history.replaceState(null, '', location.pathname + location.search + hash);
+                            } catch (e) {}
+                        }, 800);
+                    }
+
                     // Brand: hide on scroll-down, show on scroll-up.
                     var brand = document.getElementById('subpage-brand-link');
                     if (!brand) return;

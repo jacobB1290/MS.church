@@ -1,7 +1,45 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.43.0
+## 🔢 CURRENT VERSION: v1.43.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.43.1 - Real Smoothness Pass + Hardened Harness
+
+**The previous pass shipped half-fixes — transitions still flickered because animations were fighting view transitions, async events were causing 0.4+ CLS, and the test harness was only checking final state. This pass rebuilds the navigation system end-to-end and builds a harness that actually catches the bugs.**
+
+**Navigation system (the hard part):**
+
+1. **Synchronous `<head>` hash stashing.** Inline script at the top of every page detects `location.hash`, copies it to `window.__targetHash`, and `history.replaceState`s the URL to remove the hash. This runs *before* layout, so the browser's native scroll-to-fragment never fires. Without this, the browser was scrolling to the section's stale (pre-events-load) position, causing CLS of 0.4+ and the visitor landing hundreds of pixels above the actual section.
+
+2. **Smart entrance animation.** Same `<head>` script tags `<html class="no-entrance">` synchronously when the visit is non-fresh (URL has a hash, navigation type is back/forward/reload, referrer is same-origin, or page was restored from bfcache). The section entrance animation (a quick 8px opacity rise, 600ms, 60ms stagger) only plays on a truly fresh first visit. This fixes the "half animate, half not" feeling — animations no longer compete with view-transition crossfades or replay on every back-button press.
+
+3. **Hash landing in `shared/subpage-header.ts`.** Single shared rescroll routine: reads `window.__targetHash`, smooth-scrolls via `scrollIntoView({ block: 'start' })` at 200ms then again at 800ms (catches /outreach's async carousel expanding the document), then `history.replaceState`s the hash back into the URL so it stays a shareable deep link. Works for both `/about` (no async) and `/outreach` (carousel loads ~200ms in).
+
+4. **View Transitions** timing customized to 0.45s ease (default 0.25s reads as a blink). `view-transition-name: site-brand` on `.brand` and `.subpage-brand` lets the wordmark morph as one element across page boundaries.
+
+5. **`section#events` min-height + `.stay-tuned-card` max-width: 420px.** Combined, these stop the events section from growing from 0 to ~1400px after the calendar fetch resolves. CLS went from 0.41 → 0.00.
+
+6. **`navShell` + countdown null guards in `home-scripts.ts`.** This script is reused on `/outreach`, where neither `.nav-shell` nor the home countdown `#days`/`#hours`/`#minutes`/`#seconds` elements exist. Adding guards killed two classes of console errors.
+
+**Hardened harness (`scripts/harness/run.mjs`):**
+
+The harness now grades five different things per scenario, not just one:
+
+| Check | What it catches |
+|---|---|
+| **Drift timeline** | Position of the anchored section at 100/400/1200/1800/2600ms. Final 3 samples must be stable (< 5px between). Catches the "lands wrong, snaps later" flicker. |
+| **Cumulative Layout Shift** | PerformanceObserver running for the scenario. CLS must be < 0.10 (Google's "good" bar). |
+| **Console errors** | All `pageerror` / `console.error` / `requestfailed` events. External-CDN noise (Vercel analytics, Google Fonts, YouTube etc.) is filtered out via known-patterns list. |
+| **In-flight section animations** | `document.getAnimations()` filtered to `<section>` elements after settle. Catches the bug where sections were mid-animation when the user clicked away. |
+| **Visual probes** | Heading covered by floating header? Reserved space wasted (min-height > content + threshold)? Horizontal overflow? Header oversized? |
+| **Frame capture** | For click-through flows, 9 screenshots taken across a 720ms transition window so you can flip through and see what the user actually sees. |
+| **HTML report** | `output/report.html` — all scenarios in one scrollable page, pass/fail pills, drift numbers, issues, screenshots, transition frame strips, embedded `.webm` videos. |
+
+**Current run (15 scenarios): 15 pass · 0 fail · CLS=0.000 across the board.**
+
+Iterate: `npm run dev` in one terminal, `npm run harness` in another, open `scripts/harness/output/report.html`.
+
+---
 
 ### v1.43.0 - View Transitions, Drift-free Animations, Flush About Teaser, Test Harness
 

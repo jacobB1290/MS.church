@@ -326,28 +326,69 @@ export const homeStyles = (): string => `
                 margin-bottom: 200px;
             }
 
-            /* Cross-document view transitions — gives same-origin page
-               navigation an app-like crossfade in supporting browsers
-               (Chrome 126+, Safari 18+). Firefox falls back to normal
-               navigation. No JS router needed. */
+            /* ============================================================
+               MOTION SYSTEM
+               One layer of motion at a time. Smooth, refined, intentional.
+
+               Strategy:
+                 • Cross-document navigation → handled by @view-transition
+                   crossfade. Customized to 0.45s ease (default 0.25s blinks).
+                 • Brand wordmark → tagged with view-transition-name so it
+                   morphs as one element between home and subpages rather
+                   than crossfading in two places.
+                 • First fresh visit → subtle 8px section rise, staggered.
+                 • Any subsequent visit (back/forward, refresh, cross-page,
+                   bfcache, hash-load) → no section entrance animation. The
+                   <head> script tags <html class="no-entrance"> synchronously
+                   so there's no opacity-0 flash before the class lands.
+               ============================================================ */
             @view-transition {
                 navigation: auto;
+            }
+
+            ::view-transition-old(root),
+            ::view-transition-new(root) {
+                animation-duration: 0.45s;
+                animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            /* Brand morph across pages — the wordmark stays as one element
+               that morphs from home's nav-shell position to the subpage
+               centered-top position rather than crossfading in both places. */
+            .brand,
+            .subpage-brand {
+                view-transition-name: site-brand;
             }
 
             section {
                 width: 100%;
                 opacity: 0;
-                animation: fadeIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                transform: translateY(8px);
+                animation: gentleRise 600ms cubic-bezier(0.4, 0, 0.2, 1) both;
             }
 
-            /* Pure opacity fade — no translateY. The previous fadeInUp shifted
-               each section's visible position by 60px during the first second,
-               which meant anchor jumps (e.g. /outreach#cooking-ministry) always
-               landed 60px below the target until the animation finished.
-               Keeping the entrance animation, just without the visual offset. */
-            @keyframes fadeIn {
+            /* Stagger — quick, not draggy. 60ms between siblings, capped. */
+            section:nth-of-type(1) { animation-delay: 0ms; }
+            section:nth-of-type(2) { animation-delay: 60ms; }
+            section:nth-of-type(3) { animation-delay: 120ms; }
+            section:nth-of-type(4) { animation-delay: 180ms; }
+            section:nth-of-type(5) { animation-delay: 240ms; }
+            section:nth-of-type(6) { animation-delay: 300ms; }
+            section:nth-of-type(n+7) { animation-delay: 320ms; }
+
+            /* Skip the entrance on any non-fresh load (back/forward, refresh,
+               same-origin nav, bfcache, hash-load). Set synchronously by the
+               inline script in <head> before sections paint. */
+            html.no-entrance section {
+                opacity: 1;
+                transform: none;
+                animation: none;
+            }
+
+            @keyframes gentleRise {
                 to {
                     opacity: 1;
+                    transform: translateY(0);
                 }
             }
 
@@ -984,7 +1025,12 @@ export const homeStyles = (): string => `
                 top: 0;
                 left: 0;
                 right: 0;
-                height: 160px;
+                /* Shorter than before so the fog ends ABOVE where anchor
+                   landings put a section's eyebrow pill (which lives at
+                   scroll-margin-top: 100px desktop / 84px mobile). The
+                   previous 160px reached well below the eyebrow's top
+                   edge — visually it looked like the heading was covered. */
+                height: 110px;
                 z-index: 999;
                 pointer-events: none;
                 -webkit-backdrop-filter: blur(16px);
@@ -996,13 +1042,13 @@ export const homeStyles = (): string => `
                     rgba(250, 248, 245, 0) 100%);
                 -webkit-mask: linear-gradient(180deg,
                     black 0%,
-                    rgba(0, 0, 0, 0.95) 35%,
-                    rgba(0, 0, 0, 0.55) 70%,
+                    rgba(0, 0, 0, 0.95) 30%,
+                    rgba(0, 0, 0, 0.4) 65%,
                     transparent 100%);
                 mask: linear-gradient(180deg,
                     black 0%,
-                    rgba(0, 0, 0, 0.95) 35%,
-                    rgba(0, 0, 0, 0.55) 70%,
+                    rgba(0, 0, 0, 0.95) 30%,
+                    rgba(0, 0, 0, 0.4) 65%,
                     transparent 100%);
             }
 
@@ -1086,14 +1132,16 @@ export const homeStyles = (): string => `
             }
 
             /* Subpage sections compensate for the floating top zone when
-               anchored to via #hash (same-page click OR cross-page nav). */
+               anchored to via #hash. Value = fog height + comfortable
+               buffer so the section's eyebrow pill lands fully below the
+               fog's bottom edge, not behind its tapered fade. */
             .page main > section[id] {
-                scroll-margin-top: 100px;
+                scroll-margin-top: 130px;
             }
 
             @media (max-width: 960px) {
                 .subpage-top-fog {
-                    height: 120px;
+                    height: 88px;
                 }
                 .subpage-brand {
                     top: 16px;
@@ -1111,10 +1159,10 @@ export const homeStyles = (): string => `
                     font-size: 11px;
                 }
                 .subpage-spacer {
-                    height: 84px;
+                    height: 100px;
                 }
                 .page main > section[id] {
-                    scroll-margin-top: 84px;
+                    scroll-margin-top: 110px;
                 }
             }
 
@@ -1177,6 +1225,20 @@ export const homeStyles = (): string => `
             /* Stay Tuned container */
             .stay-tuned-container {
                 margin-bottom: 0;
+            }
+
+            /* Reserve approximate vertical space for the async events area on
+               /outreach so the carousel/stay-tuned load doesn't shift the
+               ministry sections below by ~600px once events arrive. Without
+               this, CLS on a hash-jump to #cooking-ministry was 0.36–0.62
+               (Google's "good" threshold is < 0.10). */
+            section#events {
+                min-height: 560px;
+            }
+            @media (max-width: 960px) {
+                section#events {
+                    min-height: 460px;
+                }
             }
             
             /* ========================================
@@ -1695,8 +1757,14 @@ export const homeStyles = (): string => `
                 position: relative;
                 overflow: hidden;
                 transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                /* Bound the card so width-100% + aspect-ratio 3/4 can't grow
+                   into a 1500px-tall block on desktop (which was causing
+                   CLS=0.4 on /outreach and looked absurd visually). 420px
+                   wide keeps it "phone-shaped" at any breakpoint. */
                 aspect-ratio: 3/4;
                 width: 100%;
+                max-width: 420px;
+                margin: 0 auto;
             }
 
             .stay-tuned-card::before {

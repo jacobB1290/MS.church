@@ -560,39 +560,25 @@ export const homeScripts = (): string => `
                     }, { passive: true });
                 }
 
-                // Re-scroll to URL hash after the events section finishes
-                // rendering. Async loads (carousel / stay-tuned) expand the
-                // section from 0px to its real height, which would otherwise
-                // leave any subpage anchor target (sunday-school, cooking-
-                // ministry, etc.) hundreds of pixels off. scrollIntoView
-                // respects the scroll-margin-top declared in home-styles.
-                if (window.location.hash && window.location.hash !== '#') {
-                    const _rescrollToHash = () => {
-                        const t = document.querySelector(window.location.hash);
-                        if (t) t.scrollIntoView({ behavior: 'auto', block: 'start' });
-                    };
-                    requestAnimationFrame(_rescrollToHash);
-                    // A second pass catches any later layout shifts (image
-                    // loads, font swap) without a visible flicker.
-                    setTimeout(_rescrollToHash, 600);
-                }
-
                 })(); // End of async event initialization IIFE
+                // (Subpage hash landing is handled in shared/subpage-header.ts,
+                //  which runs on every subpage regardless of homeScripts.)
 
-                // Handle hash in URL on page load (HOME PAGE ONLY).
-                // The home-page flow scrollTo(0,0) and then triggers the nav
-                // link click so the manual smooth-scroll JS (with navOffset)
-                // takes over. On subpages this would strand the visitor at
-                // the top — they're handled inside the async events block
-                // above instead, via scrollIntoView + scroll-margin-top.
+                // HOME-page hash flow: the inline <head> script already
+                // stripped the hash, so the browser did NOT auto-scroll. Now
+                // run the existing manual scroll: click the matching nav link
+                // (which uses the home-page smooth-scroll JS with navOffset).
                 const _isHomePage = window.location.pathname === '/' || window.location.pathname === '';
-                if (_isHomePage && window.location.hash && window.location.hash !== '#' && window.location.hash !== '') {
-                    const hash = window.location.hash;
+                const _homeStashedHash = window.__targetHash || '';
+                if (_isHomePage && _homeStashedHash) {
                     window.scrollTo(0, 0);
                     window.addEventListener('load', () => {
                         setTimeout(() => {
-                            const navLink = document.querySelector('a[href="' + hash + '"]');
+                            const navLink = document.querySelector('a[href="' + _homeStashedHash + '"]');
                             if (navLink) navLink.click();
+                            try {
+                                history.replaceState(null, '', location.pathname + location.search + _homeStashedHash);
+                            } catch (e) {}
                         }, 800);
                     }, { once: true });
                 }
@@ -608,6 +594,10 @@ export const homeScripts = (): string => `
                 let isNavigatingHome = false;
 
                 function handleMobileNav() {
+                    // This script also runs on /outreach where there's no
+                    // .nav-shell — guard every classList access so the
+                    // subpage doesn't throw "Cannot read properties of null".
+                    if (!navShell) return;
                     const currentScrollY = window.scrollY;
                     const scrollThreshold = getScrollThreshold();
 
@@ -904,7 +894,7 @@ export const homeScripts = (): string => `
 
                         if (targetId === '#home' || targetId === '#') {
                             if (window.innerWidth <= 960) {
-                                navShell.classList.remove('scrolled-mobile');
+                                if (navShell) navShell.classList.remove('scrolled-mobile');
                                 isNavigatingHome = true;
                             }
                             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1178,10 +1168,18 @@ export const homeScripts = (): string => `
                     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-                    document.getElementById('days').textContent = days;
-                    document.getElementById('hours').textContent = hours;
-                    document.getElementById('minutes').textContent = minutes;
-                    document.getElementById('seconds').textContent = seconds;
+                    // Guard each lookup — these elements only exist on the
+                    // home page (watch section countdown). On /outreach this
+                    // same script runs but the IDs don't exist.
+                    const daysEl = document.getElementById('days');
+                    const hoursEl = document.getElementById('hours');
+                    const minutesEl = document.getElementById('minutes');
+                    const secondsEl = document.getElementById('seconds');
+                    if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+                    daysEl.textContent = days;
+                    hoursEl.textContent = hours;
+                    minutesEl.textContent = minutes;
+                    secondsEl.textContent = seconds;
                 }
 
                 updateCountdown();

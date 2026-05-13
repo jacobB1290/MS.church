@@ -30,6 +30,28 @@ export function pageHead({
   return `
     <head>
         <meta charset="UTF-8">
+        <script>
+            /* See home-head.ts for the rationale. Same script. */
+            (function(){
+                var skip=false;
+                if(location.hash) skip=true;
+                try{
+                    var n=performance.getEntriesByType('navigation')[0];
+                    if(n&&(n.type==='back_forward'||n.type==='reload')) skip=true;
+                }catch(e){}
+                if(document.referrer&&document.referrer.indexOf(location.origin)===0) skip=true;
+                if(skip) document.documentElement.classList.add('no-entrance');
+                addEventListener('pageshow',function(e){
+                    if(e.persisted) document.documentElement.classList.add('no-entrance');
+                });
+                if(location.hash && location.hash !== '#'){
+                    window.__targetHash = location.hash;
+                    try {
+                        history.replaceState(null, '', location.pathname + location.search);
+                    } catch(e){}
+                }
+            })();
+        </script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 

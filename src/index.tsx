@@ -1,4 +1,4 @@
-// Version: 1.45.2 - Schedule: restore eyebrow/title/desc; larger eyebrow; visible banner placeholder
+// Version: 1.45.3 - Schedule: restore old typography tokens; durations woven into descriptions
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

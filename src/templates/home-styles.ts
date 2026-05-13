@@ -920,31 +920,31 @@ export const homeStyles = (): string => `
                 box-shadow: 0 14px 32px rgba(212, 165, 116, 0.22),
                             0 4px 12px rgba(26, 26, 46, 0.06);
             }
-            /* Eyebrow: now the "what is this gathering" lead label.
-               Bumped from the standard 10px eyebrow to ~16-18px so it
-               carries real visual weight as a header — but keeps the
-               uppercase + tracking + gold treatment consistent with
-               the site's eyebrow design language. */
+            /* Typography mirrors the site's existing .schedule-item span /
+               h3 / p rules — same gray uppercase eyebrow, same Playfair
+               heading, same loose-leading body — so the new tab cards
+               read with the exact same voice as the rest of the page.
+               The only override is bumping the eyebrow size: it's now
+               the primary "what is this gathering" label and needs real
+               visual weight. */
             .schedule-tab-eyebrow {
-                font-family: var(--font-body), 'Inter', sans-serif;
-                font-size: clamp(15px, 1.5vw, 18px);
-                font-weight: var(--weight-semibold, 600);
-                letter-spacing: clamp(2px, 0.25vw, 3px);
                 text-transform: uppercase;
-                color: var(--gold);
+                letter-spacing: var(--tracking-wide);
+                font-size: clamp(13px, 1.4vw, 16px); /* larger than --text-eyebrow (10px) */
+                font-weight: var(--weight-bold);
+                color: #6b6b80;
             }
             .schedule-tab-title {
-                font-family: var(--font-heading), 'Playfair Display', serif;
-                font-size: clamp(20px, 2vw, 24px);
-                font-weight: 600;
-                color: var(--text-primary, #1a1a2e);
-                line-height: 1.25;
+                font-size: var(--text-heading);
+                font-weight: var(--weight-bold);
+                color: #1a1a2e;
+                font-family: var(--font-display);
+                line-height: var(--leading-snug);
             }
             .schedule-tab-desc {
-                font-family: var(--font-body), 'Inter', sans-serif;
-                font-size: clamp(14px, 1.4vw, 15px);
-                line-height: 1.6;
-                color: rgba(26, 26, 46, 0.72);
+                color: rgba(26, 26, 46, 0.65);
+                line-height: var(--leading-loose);
+                font-size: var(--text-body);
             }
             .schedule-tab-link {
                 color: var(--gold);

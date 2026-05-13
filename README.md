@@ -1,7 +1,18 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.45.2
+## 🔢 CURRENT VERSION: v1.45.3
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.45.3 - Schedule: restore old typography; durations woven into descriptions
+
+Two corrections on top of v1.45.2:
+
+- **Old typography restored.** The new schedule tab cards now use the exact same typography tokens as the site's existing `.schedule-item` cards: gray (`#6b6b80`) bold uppercase eyebrow, Playfair Display heading, loose-leading body prose. Previously I'd inadvertently switched the eyebrow to gold semibold and tightened the description line-height — the schedule now reads with the same voice as the rest of the page. Only override: eyebrow size is bumped (`clamp(13px, 1.4vw, 16px)`) so the category label carries the lead-header weight.
+- **Durations integrated into descriptions naturally.** Title row goes back to two elements (`Sundays · 9:00 AM`), and the duration is woven into the description as natural prose:
+  - "Morning service, **about an hour**, with free community breakfast after…"
+  - "Open gym for basketball and volleyball, plus a crochet circle… — **about three hours**."
+  - "**A 45-minute** evening Bible study at the church with free coffee."
+  - "Worship, teaching, and fellowship for our next generation — **about an hour**."
 
 ### v1.45.2 - Schedule: restore v1.45.0 structure; larger eyebrow; visible banner placeholder
 

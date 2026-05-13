@@ -88,8 +88,8 @@ export const homeBody = (): string => `
                             <div class="schedule-list" role="tablist" aria-label="Weekly gatherings">
                                 <button class="schedule-tab active" data-index="0" type="button" role="tab" aria-selected="true">
                                     <span class="schedule-tab-eyebrow">Sunday Gatherings</span>
-                                    <span class="schedule-tab-title">Sundays · 9:00 AM · 1 hr</span>
-                                    <span class="schedule-tab-desc">Morning service with free community breakfast after. Free transportation from select shelters included. <a href="/visit#sunday-school" class="schedule-tab-link">Sunday School info →</a></span>
+                                    <span class="schedule-tab-title">Sundays · 9:00 AM</span>
+                                    <span class="schedule-tab-desc">Morning service, about an hour, with free community breakfast after. Free transportation from select shelters included. <a href="/visit#sunday-school" class="schedule-tab-link">Sunday School info →</a></span>
                                 </button>
                                 <button class="schedule-tab" data-index="1" type="button" role="tab" aria-selected="false">
                                     <span class="schedule-tab-eyebrow">Bible Reading</span>
@@ -98,18 +98,18 @@ export const homeBody = (): string => `
                                 </button>
                                 <button class="schedule-tab" data-index="2" type="button" role="tab" aria-selected="false">
                                     <span class="schedule-tab-eyebrow">Activity Day</span>
-                                    <span class="schedule-tab-title">Wednesdays · 6:00 PM · 3 hrs</span>
-                                    <span class="schedule-tab-desc">Open gym for basketball and volleyball, with a crochet circle to learn the craft and grow your skills.</span>
+                                    <span class="schedule-tab-title">Wednesdays · 6:00 PM</span>
+                                    <span class="schedule-tab-desc">Open gym for basketball and volleyball, plus a crochet circle to learn the craft and grow your skills — about three hours.</span>
                                 </button>
                                 <button class="schedule-tab" data-index="3" type="button" role="tab" aria-selected="false">
                                     <span class="schedule-tab-eyebrow">Bible Study</span>
-                                    <span class="schedule-tab-title">Thursdays · 6:00 PM · 45 min</span>
-                                    <span class="schedule-tab-desc">Evening Bible study at the church with free coffee.</span>
+                                    <span class="schedule-tab-title">Thursdays · 6:00 PM</span>
+                                    <span class="schedule-tab-desc">A 45-minute evening Bible study at the church with free coffee.</span>
                                 </button>
                                 <button class="schedule-tab" data-index="4" type="button" role="tab" aria-selected="false">
                                     <span class="schedule-tab-eyebrow">Youth Service</span>
-                                    <span class="schedule-tab-title">Fridays · 7:00 PM · 1 hr</span>
-                                    <span class="schedule-tab-desc">Youth service at the church — worship, teaching, and fellowship for our next generation.</span>
+                                    <span class="schedule-tab-title">Fridays · 7:00 PM</span>
+                                    <span class="schedule-tab-desc">Worship, teaching, and fellowship for our next generation — about an hour.</span>
                                 </button>
                             </div>
                         </div>

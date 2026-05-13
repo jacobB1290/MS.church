@@ -881,35 +881,34 @@ export const homeStyles = (): string => `
                 padding: 14px 32px;
             }
 
-            /* About teaser inner card — visually identical to the standalone
-               card we had before nesting (image flush to the inner card's
-               rounded edges, same generous text padding, same min-height),
-               but now wrapped inside an outer .section-card with the CTA
-               at the bottom (so the structure matches the outreach teaser).
+            /* About teaser inner card — image on top spanning the full width
+               of the inner card (both upper corners), text below. Edge-to-
+               edge image, no border-radius gap (overflow: hidden on the
+               inner card clips the image to its rounded corners).
                Scoped to #about so the same .schedule-item component on
-               other routes keeps its standard inner padding. */
+               /about / /outreach / /visit keeps its standard side-by-side
+               layout and inner padding. */
             #about .schedule-item.long-content {
+                grid-template-columns: 1fr;
                 padding: 0;
                 overflow: hidden;
-                align-items: stretch;
-            }
-            #about .schedule-item.long-content .schedule-item-text {
-                padding: clamp(36px, 4.5vw, 56px);
-                align-self: center;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                gap: 18px;
+                gap: 0;
             }
             #about .schedule-item.long-content .schedule-item-image {
+                order: -1; /* image above text on every breakpoint */
                 border-radius: 0;
-                aspect-ratio: auto;
-                min-height: 360px;
+                aspect-ratio: 16 / 9;
+                width: 100%;
+            }
+            #about .schedule-item.long-content .schedule-item-text {
+                padding: clamp(28px, 4vw, 48px);
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
             }
             @media (max-width: 960px) {
                 #about .schedule-item.long-content .schedule-item-image {
                     aspect-ratio: 16 / 10;
-                    min-height: 0;
                 }
                 #about .schedule-item.long-content .schedule-item-text {
                     padding: clamp(20px, 5vw, 32px);

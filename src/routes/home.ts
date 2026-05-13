@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.42.9 - Fix cross-page anchor scroll: scope home hash handler + re-scroll after async events + :target animation skip -->
+<!-- v1.43.0 - View transitions + opacity-only fade (no translateY drift) + flush About teaser + Playwright harness -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

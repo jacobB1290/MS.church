@@ -8,7 +8,8 @@
     "deploy": "npm run build && wrangler pages deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "vercel-build": "NODE_OPTIONS='--no-deprecation' vite build",
-    "sync-check": "bash scripts/sync-check.sh"
+    "sync-check": "bash scripts/sync-check.sh",
+    "harness": "node scripts/harness/run.mjs"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",
@@ -21,6 +22,7 @@
     "@hono/vite-build": "^1.2.0",
     "@hono/vite-dev-server": "^0.18.2",
     "@types/node": "^24.10.0",
+    "playwright": "^1.60.0",
     "typescript": "^5.9.3",
     "vite": "^6.3.5",
     "wrangler": "^4.4.0"

@@ -326,28 +326,28 @@ export const homeStyles = (): string => `
                 margin-bottom: 200px;
             }
 
+            /* Cross-document view transitions — gives same-origin page
+               navigation an app-like crossfade in supporting browsers
+               (Chrome 126+, Safari 18+). Firefox falls back to normal
+               navigation. No JS router needed. */
+            @view-transition {
+                navigation: auto;
+            }
+
             section {
                 width: 100%;
                 opacity: 0;
-                transform: translateY(60px);
-                animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                animation: fadeIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             }
 
-            /* When a section is the target of a URL hash, skip the entrance
-               animation. The translateY(60px) initial state would otherwise
-               leave the section visibly 60px below where the browser scrolled
-               to and then animate it up — visually distracting after an
-               anchor jump. */
-            section:target {
-                opacity: 1;
-                transform: none;
-                animation: none;
-            }
-
-            @keyframes fadeInUp {
+            /* Pure opacity fade — no translateY. The previous fadeInUp shifted
+               each section's visible position by 60px during the first second,
+               which meant anchor jumps (e.g. /outreach#cooking-ministry) always
+               landed 60px below the target until the animation finished.
+               Keeping the entrance animation, just without the visual offset. */
+            @keyframes fadeIn {
                 to {
                     opacity: 1;
-                    transform: translateY(0);
                 }
             }
 
@@ -837,6 +837,49 @@ export const homeStyles = (): string => `
                 width: auto;
                 align-self: start;
                 padding: 14px 32px;
+            }
+
+            /* About teaser — single card. Removes the previous double-card
+               look (section-card wrapping a schedule-item) and lets the image
+               run flush to the section-card's rounded edges. Image fills one
+               half on desktop, sits on top of the text on mobile. */
+            .section-card.about-teaser-card {
+                padding: 0;
+                overflow: hidden;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0;
+                align-items: stretch;
+            }
+            .about-teaser-card .about-teaser-image {
+                width: 100%;
+                min-height: 360px;
+                border-radius: 0;
+                aspect-ratio: auto;
+            }
+            .about-teaser-card .about-teaser-text {
+                padding: clamp(36px, 4.5vw, 56px);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 18px;
+            }
+            .about-teaser-card .about-teaser-text p {
+                color: rgba(26, 26, 46, 0.7);
+                line-height: var(--leading-loose);
+                font-size: var(--text-body);
+            }
+            @media (max-width: 960px) {
+                .section-card.about-teaser-card {
+                    grid-template-columns: 1fr;
+                }
+                .about-teaser-card .about-teaser-image {
+                    aspect-ratio: 16 / 10;
+                    min-height: 0;
+                }
+                .about-teaser-card .about-teaser-text {
+                    padding: clamp(20px, 5vw, 32px);
+                }
             }
 
             /* Centered CTA row for the How We Serve teaser and the Visit Us CTA. */

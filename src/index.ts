@@ -1,4 +1,4 @@
-// Version: 1.42.9 - Fix cross-page anchor scroll: scope home hash handler + re-scroll after async events + :target animation skip
+// Version: 1.43.0 - View transitions + opacity-only fade (no translateY drift) + flush About teaser + Playwright harness
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

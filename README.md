@@ -1,7 +1,25 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.42.9
+## 🔢 CURRENT VERSION: v1.43.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.43.0 - View Transitions, Drift-free Animations, Flush About Teaser, Test Harness
+
+**Cleans up the cross-page navigation experience and introduces a Playwright-based harness so we can verify scroll alignment without manual clicking.**
+
+1. **Section entrance animation is now opacity-only.** The previous `fadeInUp` used `transform: translateY(60px)` which made the visible position of every section differ from its document position by 60px during the first second of load — that was the entire reason anchor jumps "felt off" even when scroll-margin-top was correct. New animation is just `@keyframes fadeIn { to { opacity: 1 } }`. Sections still fade in (the entrance still feels intentional), just no positional offset. Anchor jumps now land pixel-perfect.
+
+2. **CSS View Transitions enabled** for cross-document navigation: `@view-transition { navigation: auto }`. In Chrome 126+ / Safari 18+ / Edge, same-origin page navigations now crossfade instead of doing the white-flash full reload. Firefox falls back to normal navigation. Zero JS, zero router, no rewrite needed.
+
+3. **About teaser collapsed to a single card** (`.about-teaser-card`). Removed the old `.section-card > .schedule-item` nesting that was reading as two stacked cards. The placeholder image now runs flush to the section-card's rounded edges (image fills one side at desktop, runs full-width on top at mobile). `overflow: hidden` on the section-card + `border-radius: 0` on the image + zero padding on the outer container makes the image extend cleanly to the card's rounded corners.
+
+4. **Removed the now-unnecessary `section:target` rule** introduced in v1.42.9 — the opacity-only animation makes it redundant.
+
+5. **New Playwright test harness** at `scripts/harness/run.mjs` (npm run harness). Headless Chromium drives the site through 12 scenarios: 6 page-render checks (home/about/outreach × desktop/mobile) and 6 cross-page anchor landings (#cooking-ministry, #sunday-school, #community-breakfast, #mission). For each anchor scenario it reads the target element's `getBoundingClientRect().top` after layout settles and asserts the drift is within ±25px of the expected `scroll-margin-top` value (100px desktop, 84px mobile). Full-page screenshots land in `scripts/harness/output/`. Current run: **12 pass · 0 fail**, with measured drift of exactly 0px on every anchor.
+
+To iterate: `npm run dev` in one terminal, `npm run harness` in another. Override the base URL with `HARNESS_URL=http://localhost:5182 npm run harness` if vite picked a different port.
+
+---
 
 ### v1.42.9 - Cross-page Anchor Scroll Alignment
 

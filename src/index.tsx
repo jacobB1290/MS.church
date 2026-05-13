@@ -1,4 +1,4 @@
-// Version: 1.45.1 - Schedule polish: prose descriptions, larger headings, no side tab, stronger placeholder
+// Version: 1.45.2 - Schedule: restore eyebrow/title/desc; larger eyebrow; visible banner placeholder
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

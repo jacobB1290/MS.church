@@ -855,43 +855,28 @@ export const homeStyles = (): string => `
                 object-fit: cover;
                 display: block;
             }
-            /* Placeholder variant — themed surface for each slide so the
-               crossfade is visible before real photos exist. Stronger
-               dashed border + larger icon match the .schedule-item-image-
-               placeholder pattern used elsewhere on the site so it reads
-               unmistakably as "image placeholder". */
+            /* Placeholder variant — mirrors the site's existing
+               .schedule-item-image-placeholder visual so the banner reads
+               as "image goes here" exactly like every other placeholder
+               on the page. Same gradient, same dashed border, same icon
+               proportions. */
             .schedule-banner-placeholder {
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.12) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                color: rgba(26, 26, 46, 0.35);
-                border: 2px dashed rgba(26, 26, 46, 0.22);
+                color: rgba(26, 26, 46, 0.30);
+                border: 1px dashed rgba(26, 26, 46, 0.12);
                 border-radius: inherit;
                 box-sizing: border-box;
             }
-            .schedule-banner-placeholder:nth-child(2) {
-                background:
-                    linear-gradient(135deg, rgba(184, 168, 212, 0.16) 0%, rgba(26, 26, 46, 0.06) 100%),
-                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-            }
-            .schedule-banner-placeholder:nth-child(3) {
-                background:
-                    linear-gradient(135deg, rgba(168, 212, 184, 0.16) 0%, rgba(26, 26, 46, 0.06) 100%),
-                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-            }
-            .schedule-banner-placeholder:nth-child(4) {
-                background:
-                    linear-gradient(135deg, rgba(212, 196, 168, 0.18) 0%, rgba(26, 26, 46, 0.06) 100%),
-                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-            }
-            .schedule-banner-placeholder:nth-child(5) {
-                background:
-                    linear-gradient(135deg, rgba(212, 168, 184, 0.16) 0%, rgba(26, 26, 46, 0.06) 100%),
-                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-            }
+            /* Icon scales with the banner: bigger than the small
+               .schedule-item-image-placeholder cap (56px) because the
+               banner is a much larger surface — same visual language,
+               proportional. */
             .schedule-banner-placeholder svg {
-                width: 26%;
-                max-width: 96px;
+                width: 22%;
+                max-width: 140px;
+                min-width: 72px;
                 height: auto;
             }
 
@@ -935,20 +920,31 @@ export const homeStyles = (): string => `
                 box-shadow: 0 14px 32px rgba(212, 165, 116, 0.22),
                             0 4px 12px rgba(26, 26, 46, 0.06);
             }
-            .schedule-tab-heading {
+            /* Eyebrow: now the "what is this gathering" lead label.
+               Bumped from the standard 10px eyebrow to ~16-18px so it
+               carries real visual weight as a header — but keeps the
+               uppercase + tracking + gold treatment consistent with
+               the site's eyebrow design language. */
+            .schedule-tab-eyebrow {
+                font-family: var(--font-body), 'Inter', sans-serif;
+                font-size: clamp(15px, 1.5vw, 18px);
+                font-weight: var(--weight-semibold, 600);
+                letter-spacing: clamp(2px, 0.25vw, 3px);
+                text-transform: uppercase;
+                color: var(--gold);
+            }
+            .schedule-tab-title {
                 font-family: var(--font-heading), 'Playfair Display', serif;
-                font-size: clamp(24px, 2.4vw, 30px);
+                font-size: clamp(20px, 2vw, 24px);
                 font-weight: 600;
                 color: var(--text-primary, #1a1a2e);
-                line-height: 1.2;
-                margin: 0;
+                line-height: 1.25;
             }
             .schedule-tab-desc {
                 font-family: var(--font-body), 'Inter', sans-serif;
                 font-size: clamp(14px, 1.4vw, 15px);
-                line-height: 1.65;
+                line-height: 1.6;
                 color: rgba(26, 26, 46, 0.72);
-                margin: 0;
             }
             .schedule-tab-link {
                 color: var(--gold);

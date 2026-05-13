@@ -1,7 +1,17 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.45.1
+## 🔢 CURRENT VERSION: v1.45.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.45.2 - Schedule: restore v1.45.0 structure; larger eyebrow; visible banner placeholder
+
+Walking back v1.45.1's restructure. Brings back the **eyebrow + day·time·duration title + description** three-line tab structure that worked, with two refinements:
+
+- **Bigger eyebrow** ("Sunday Gatherings", "Bible Reading", "Activity Day", etc.) — bumped from 10px to **clamp(15px, 1.5vw, 18px)** uppercase. It carries the "what is this gathering" signal, so it now has real visual weight without abandoning the site's eyebrow design language (uppercase + tracking + gold).
+- **Day · time · duration restored** — `Sundays · 9:00 AM · 1 hr` stays as the second line. Reading flow is "category → when → details".
+- **Banner placeholder actually visible** — root cause of the previous miss was the `max-width: 56px` cap on the icon, which made it dwarfed in the tall banner. Replaced with `width: 22%; max-width: 140px; min-width: 72px;` so the icon scales with the banner and reads as a real placeholder at any height. Same dashed border + gradient as `.schedule-item-image-placeholder` elsewhere on the site.
+
+Active-state treatment from v1.45.1 stays — solid white + warm gold glow shadow, no side-tab accent.
 
 ### v1.45.1 - Schedule polish pass
 

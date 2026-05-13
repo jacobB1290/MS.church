@@ -1,4 +1,4 @@
-// Version: 1.45.1 - Schedule polish: prose descriptions, larger headings, no side tab, stronger placeholder
+// Version: 1.45.2 - Schedule: restore eyebrow/title/desc; larger eyebrow; visible banner placeholder
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

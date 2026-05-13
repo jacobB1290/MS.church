@@ -560,10 +560,33 @@ export const homeScripts = (): string => `
                     }, { passive: true });
                 }
 
+                // Re-scroll to URL hash after the events section finishes
+                // rendering. Async loads (carousel / stay-tuned) expand the
+                // section from 0px to its real height, which would otherwise
+                // leave any subpage anchor target (sunday-school, cooking-
+                // ministry, etc.) hundreds of pixels off. scrollIntoView
+                // respects the scroll-margin-top declared in home-styles.
+                if (window.location.hash && window.location.hash !== '#') {
+                    const _rescrollToHash = () => {
+                        const t = document.querySelector(window.location.hash);
+                        if (t) t.scrollIntoView({ behavior: 'auto', block: 'start' });
+                    };
+                    requestAnimationFrame(_rescrollToHash);
+                    // A second pass catches any later layout shifts (image
+                    // loads, font swap) without a visible flicker.
+                    setTimeout(_rescrollToHash, 600);
+                }
+
                 })(); // End of async event initialization IIFE
 
-                // Handle hash in URL on page load (e.g., ms.church/#contact)
-                if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '') {
+                // Handle hash in URL on page load (HOME PAGE ONLY).
+                // The home-page flow scrollTo(0,0) and then triggers the nav
+                // link click so the manual smooth-scroll JS (with navOffset)
+                // takes over. On subpages this would strand the visitor at
+                // the top — they're handled inside the async events block
+                // above instead, via scrollIntoView + scroll-margin-top.
+                const _isHomePage = window.location.pathname === '/' || window.location.pathname === '';
+                if (_isHomePage && window.location.hash && window.location.hash !== '#' && window.location.hash !== '') {
                     const hash = window.location.hash;
                     window.scrollTo(0, 0);
                     window.addEventListener('load', () => {

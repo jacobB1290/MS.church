@@ -333,6 +333,17 @@ export const homeStyles = (): string => `
                 animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             }
 
+            /* When a section is the target of a URL hash, skip the entrance
+               animation. The translateY(60px) initial state would otherwise
+               leave the section visibly 60px below where the browser scrolled
+               to and then animate it up — visually distracting after an
+               anchor jump. */
+            section:target {
+                opacity: 1;
+                transform: none;
+                animation: none;
+            }
+
             @keyframes fadeInUp {
                 to {
                     opacity: 1;

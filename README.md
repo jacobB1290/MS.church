@@ -1,7 +1,19 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.42.8
+## 🔢 CURRENT VERSION: v1.42.9
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.42.9 - Cross-page Anchor Scroll Alignment
+
+**Anchor jumps into `/outreach#sunday-school` (and similar) were landing way off because (a) the existing hash handler in `home-scripts.ts` was hard-coded for the home page, so on subpages it forced `scrollTo(0, 0)` and then looked for a nav link that didn't exist, leaving the visitor at the top; and (b) the events carousel / Stay Tuned card start `display: none` and only expand once the Google Calendar fetch completes — by then any section below the events was hundreds of pixels lower than where the browser had scrolled to.**
+
+1. **Scoped the existing home-page hash handler to home only.** `const _isHomePage = window.location.pathname === '/' || ...` gates the `scrollTo(0,0)` + nav-link-click flow so subpages stop hitting it.
+
+2. **Subpages now re-scroll to the hash after async events render.** Inside the events init IIFE, once the carousel or Stay Tuned card is in place, `requestAnimationFrame(_rescrollToHash)` aligns to the section using `scrollIntoView({ block: 'start' })` — which honors the `scroll-margin-top: 100px / 84px` declared on `.page main > section[id]`. A second pass at 600ms catches any later font-swap or lazy-image shifts.
+
+3. **`section:target { opacity: 1; transform: none; animation: none }`.** The base `section` rule starts at `translateY(60px)` and animates up via `fadeInUp` — fine for first-paint, but on an anchor jump the section ended up visibly 60px below where the browser had scrolled to until the animation finished. Skipping the entrance animation when the section is the URL hash target keeps the visible position aligned with the document position from frame one.
+
+---
 
 ### v1.42.8 - Sunday School: Phone-sized Vertical Video Frame
 

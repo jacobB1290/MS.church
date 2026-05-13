@@ -881,6 +881,32 @@ export const homeStyles = (): string => `
                 padding: 14px 32px;
             }
 
+            /* About teaser inner card — same nested-card pattern as the
+               outreach teaser, but the image runs flush to the inner
+               schedule-item's rounded edges (no padding between image and
+               card border). Scoped to #about so the same .schedule-item
+               component on other pages keeps its standard inner padding. */
+            #about .schedule-item.long-content {
+                padding: 0;
+                overflow: hidden;
+                align-items: stretch;
+            }
+            #about .schedule-item.long-content .schedule-item-text {
+                padding: clamp(24px, 4vw, 40px);
+                align-self: center;
+            }
+            #about .schedule-item.long-content .schedule-item-image {
+                border-radius: 0;
+                aspect-ratio: auto;
+                min-height: 280px;
+            }
+            @media (max-width: 960px) {
+                #about .schedule-item.long-content .schedule-item-image {
+                    aspect-ratio: 16 / 9;
+                    min-height: 0;
+                }
+            }
+
             /* Centered CTA row for the How We Serve teaser and the Visit Us CTA. */
             .teaser-cta-row,
             .subpage-cta-row {

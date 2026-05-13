@@ -1,7 +1,16 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.45.0
+## 🔢 CURRENT VERSION: v1.45.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.45.1 - Schedule polish pass
+
+Refinements to v1.45.0 after the first design review:
+
+- **Prose descriptions, no rigid title line.** Day + time + duration are now woven into the description sentence ("Sundays at 9:00 AM for about an hour. Morning service with…"). Removes the awkward `Sundays · 9:00 AM · 1 hr` chrome line in favor of natural reading flow.
+- **Bigger category headings.** "Sunday Gatherings", "Bible Reading", "Activity Day", etc. are now the visual lead at 24–30px serif (was a small 10px uppercase eyebrow). They carry the most important "what is this" signal so they get the weight.
+- **No side tab on active card.** Removed the 4px gold border-left accent — felt like a vestigial tab strip. Active state is now communicated entirely by solid white background + warm gold glow shadow, giving the card real weight against the translucent inactive siblings.
+- **Stronger banner placeholder.** Bumped dashed border to 2px @ 22% alpha and the icon from 18% → 26% width so it unmistakably reads as "image goes here", matching the placeholder pattern used elsewhere on the site.
 
 ### v1.45.0 - Schedule: banner carousel + tab cards; +Wednesday Activity Day
 

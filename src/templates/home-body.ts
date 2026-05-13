@@ -87,29 +87,24 @@ export const homeBody = (): string => `
                             </div>
                             <div class="schedule-list" role="tablist" aria-label="Weekly gatherings">
                                 <button class="schedule-tab active" data-index="0" type="button" role="tab" aria-selected="true">
-                                    <span class="schedule-tab-eyebrow">Sunday Gatherings</span>
-                                    <span class="schedule-tab-title">Sundays · 9:00 AM · 1 hr</span>
-                                    <span class="schedule-tab-desc">Morning service with free community breakfast after. Free transportation from select shelters included. <a href="/visit#sunday-school" class="schedule-tab-link">Sunday School info →</a></span>
+                                    <h3 class="schedule-tab-heading">Sunday Gatherings</h3>
+                                    <p class="schedule-tab-desc">Sundays at 9:00 AM for about an hour. Morning service with free community breakfast after. Free transportation from select shelters included. <a href="/visit#sunday-school" class="schedule-tab-link">Sunday School info →</a></p>
                                 </button>
                                 <button class="schedule-tab" data-index="1" type="button" role="tab" aria-selected="false">
-                                    <span class="schedule-tab-eyebrow">Bible Reading</span>
-                                    <span class="schedule-tab-title">Tuesdays · 8:30 AM</span>
-                                    <span class="schedule-tab-desc">Tuesday Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffiena State Street</a>.</span>
+                                    <h3 class="schedule-tab-heading">Bible Reading</h3>
+                                    <p class="schedule-tab-desc">Tuesday mornings at 8:30 AM at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffiena State Street</a> — relaxed group reading and conversation over coffee.</p>
                                 </button>
                                 <button class="schedule-tab" data-index="2" type="button" role="tab" aria-selected="false">
-                                    <span class="schedule-tab-eyebrow">Activity Day</span>
-                                    <span class="schedule-tab-title">Wednesdays · 6:00 PM · 3 hrs</span>
-                                    <span class="schedule-tab-desc">Open gym for basketball and volleyball, with a crochet circle to learn the craft and grow your skills.</span>
+                                    <h3 class="schedule-tab-heading">Activity Day</h3>
+                                    <p class="schedule-tab-desc">Wednesday evenings at 6:00 PM for about three hours. Open gym for basketball and volleyball, plus a crochet circle to learn the craft and grow your skills.</p>
                                 </button>
                                 <button class="schedule-tab" data-index="3" type="button" role="tab" aria-selected="false">
-                                    <span class="schedule-tab-eyebrow">Bible Study</span>
-                                    <span class="schedule-tab-title">Thursdays · 6:00 PM · 45 min</span>
-                                    <span class="schedule-tab-desc">Evening Bible study at the church with free coffee.</span>
+                                    <h3 class="schedule-tab-heading">Bible Study</h3>
+                                    <p class="schedule-tab-desc">Thursday evenings at 6:00 PM for about 45 minutes. Evening Bible study at the church with free coffee.</p>
                                 </button>
                                 <button class="schedule-tab" data-index="4" type="button" role="tab" aria-selected="false">
-                                    <span class="schedule-tab-eyebrow">Youth Service</span>
-                                    <span class="schedule-tab-title">Fridays · 7:00 PM · 1 hr</span>
-                                    <span class="schedule-tab-desc">Youth service at the church — worship, teaching, and fellowship for our next generation.</span>
+                                    <h3 class="schedule-tab-heading">Youth Service</h3>
+                                    <p class="schedule-tab-desc">Friday nights at 7:00 PM for about an hour. Worship, teaching, and fellowship for our next generation.</p>
                                 </button>
                             </div>
                         </div>

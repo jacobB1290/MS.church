@@ -1,4 +1,4 @@
-// Version: 1.45.0 - Schedule: banner carousel + tab cards; +Wednesday Activity Day; durations on Sun/Thu/Fri
+// Version: 1.45.1 - Schedule polish: prose descriptions, larger headings, no side tab, stronger placeholder
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

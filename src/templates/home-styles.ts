@@ -856,39 +856,42 @@ export const homeStyles = (): string => `
                 display: block;
             }
             /* Placeholder variant — themed surface for each slide so the
-               crossfade is visible before real photos exist. The hue tint
-               rotates per slide via :nth-child for a hint of variety. */
+               crossfade is visible before real photos exist. Stronger
+               dashed border + larger icon match the .schedule-item-image-
+               placeholder pattern used elsewhere on the site so it reads
+               unmistakably as "image placeholder". */
             .schedule-banner-placeholder {
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.12) 0%, rgba(26, 26, 46, 0.06) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                color: rgba(26, 26, 46, 0.30);
-                border: 1px dashed rgba(26, 26, 46, 0.12);
+                color: rgba(26, 26, 46, 0.35);
+                border: 2px dashed rgba(26, 26, 46, 0.22);
                 border-radius: inherit;
+                box-sizing: border-box;
             }
             .schedule-banner-placeholder:nth-child(2) {
                 background:
-                    linear-gradient(135deg, rgba(184, 168, 212, 0.14) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(184, 168, 212, 0.16) 0%, rgba(26, 26, 46, 0.06) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
             }
             .schedule-banner-placeholder:nth-child(3) {
                 background:
-                    linear-gradient(135deg, rgba(168, 212, 184, 0.14) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(168, 212, 184, 0.16) 0%, rgba(26, 26, 46, 0.06) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
             }
             .schedule-banner-placeholder:nth-child(4) {
                 background:
-                    linear-gradient(135deg, rgba(212, 196, 168, 0.16) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(212, 196, 168, 0.18) 0%, rgba(26, 26, 46, 0.06) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
             }
             .schedule-banner-placeholder:nth-child(5) {
                 background:
-                    linear-gradient(135deg, rgba(212, 168, 184, 0.14) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(212, 168, 184, 0.16) 0%, rgba(26, 26, 46, 0.06) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
             }
             .schedule-banner-placeholder svg {
-                width: 18%;
-                max-width: 64px;
+                width: 26%;
+                max-width: 96px;
                 height: auto;
             }
 
@@ -901,22 +904,19 @@ export const homeStyles = (): string => `
             .schedule-tab {
                 /* Reset button defaults */
                 appearance: none;
-                background: rgba(255, 255, 255, 0.85);
+                background: rgba(255, 255, 255, 0.78);
                 border: 1px solid rgba(255, 255, 255, 0.6);
-                border-left: 4px solid transparent;
                 border-radius: 20px;
-                padding: clamp(16px, 1.8vw, 22px) clamp(18px, 2vw, 24px);
+                padding: clamp(18px, 2vw, 24px) clamp(20px, 2.2vw, 26px);
                 text-align: left;
                 cursor: pointer;
                 display: grid;
-                gap: 8px;
+                gap: 10px;
                 font-family: inherit;
                 color: inherit;
                 box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
                 transition: background 280ms cubic-bezier(0.4, 0, 0.2, 1),
-                            border-color 280ms cubic-bezier(0.4, 0, 0.2, 1),
-                            box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
-                            transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+                            box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
                 flex: 1 1 0;
                 min-width: 0;
             }
@@ -928,31 +928,27 @@ export const homeStyles = (): string => `
                 outline: 2px solid var(--gold);
                 outline-offset: 3px;
             }
+            /* Active state: solid white surface + warm gold glow shadow.
+               No side accent — the heavier card weight is the indicator. */
             .schedule-tab.active {
-                background: linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(255, 255, 255, 0.95) 100%);
-                border-left-color: var(--gold);
-                box-shadow: 0 12px 30px rgba(212, 165, 116, 0.18);
+                background: #ffffff;
+                box-shadow: 0 14px 32px rgba(212, 165, 116, 0.22),
+                            0 4px 12px rgba(26, 26, 46, 0.06);
             }
-            .schedule-tab-eyebrow {
-                font-family: var(--font-body), 'Inter', sans-serif;
-                font-size: var(--text-eyebrow, 10px);
-                font-weight: var(--weight-semibold, 600);
-                letter-spacing: var(--tracking-wide, 2.5px);
-                text-transform: uppercase;
-                color: var(--gold);
-            }
-            .schedule-tab-title {
+            .schedule-tab-heading {
                 font-family: var(--font-heading), 'Playfair Display', serif;
-                font-size: clamp(20px, 2vw, 24px);
+                font-size: clamp(24px, 2.4vw, 30px);
                 font-weight: 600;
                 color: var(--text-primary, #1a1a2e);
-                line-height: 1.25;
+                line-height: 1.2;
+                margin: 0;
             }
             .schedule-tab-desc {
                 font-family: var(--font-body), 'Inter', sans-serif;
                 font-size: clamp(14px, 1.4vw, 15px);
-                line-height: 1.6;
+                line-height: 1.65;
                 color: rgba(26, 26, 46, 0.72);
+                margin: 0;
             }
             .schedule-tab-link {
                 color: var(--gold);
@@ -4278,11 +4274,11 @@ export const homeStyles = (): string => `
                 }
                 .schedule-tab {
                     border-radius: 18px;
-                    padding: clamp(14px, 3.5vw, 18px) clamp(16px, 4vw, 20px);
-                    gap: 6px;
+                    padding: clamp(16px, 4vw, 22px) clamp(18px, 4.5vw, 24px);
+                    gap: 8px;
                 }
-                .schedule-tab-title {
-                    font-size: clamp(18px, 4.4vw, 22px);
+                .schedule-tab-heading {
+                    font-size: clamp(22px, 5.6vw, 28px);
                 }
                 .schedule-tab-desc {
                     font-size: clamp(14px, 3.6vw, 15px);

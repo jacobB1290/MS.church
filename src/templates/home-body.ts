@@ -24,23 +24,9 @@ export const homeBody = (): string => `
                         <p class="hero-service-time">Join us Sundays at 9 AM</p>
                         <div class="hero-image">
                             <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building in Boise, Idaho" width="1200" height="630" loading="eager" fetchpriority="high" decoding="async">
-                            <!-- Find Us Button - Long frosted glass pill at bottom of image -->
-                            <div class="find-us-wrapper address-dropdown-wrapper">
-                                <button class="find-us-btn address-trigger" data-address="3080 Wildwood St, Boise, Idaho">Find Us</button>
-                                <div class="address-dropdown">
-                                    <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
-                                        <span class="address-dropdown-icon">🍎</span>
-                                        <span>Apple Maps</span>
-                                    </a>
-                                    <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
-                                        <span class="address-dropdown-icon">🗺️</span>
-                                        <span>Google Maps</span>
-                                    </a>
-                                    <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
-                                        <span class="address-dropdown-icon">📋</span>
-                                        <span>Copy Address</span>
-                                    </button>
-                                </div>
+                            <!-- Find Us button — links to the /visit page (map + service flow + Sunday School + after-service) -->
+                            <div class="find-us-wrapper">
+                                <a class="find-us-btn find-us-link" href="/visit">Find Us</a>
                             </div>
                         </div>
                     </div>
@@ -81,7 +67,7 @@ export const homeBody = (): string => `
                                 <div class="schedule-item-text">
                                     <span>Sunday Gatherings</span>
                                     <h3>Sundays · 9:00 AM</h3>
-                                    <p>Morning service with free community breakfast after. Free transportation from select shelters included. <a href="/outreach#sunday-school" style="color: var(--gold); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent); font-weight: 600;">Sunday School info →</a></p>
+                                    <p>Morning service with free community breakfast after. Free transportation from select shelters included. <a href="/visit#sunday-school" style="color: var(--gold); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent); font-weight: 600;">Sunday School info →</a></p>
                                 </div>
                                 <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -142,11 +128,11 @@ export const homeBody = (): string => `
                     <h2 class="section-heading">A few ways we live out our mission in Boise.</h2>
                     <div class="section-card">
                         <div class="schedule-grid">
-                            <a class="schedule-item teaser-link-card" href="/outreach#sunday-school">
+                            <a class="schedule-item teaser-link-card" href="/outreach#community-breakfast">
                                 <div class="schedule-item-text">
                                     <span>Ministry</span>
-                                    <h3>Sunday School</h3>
-                                    <p>Sundays during the 9 AM service — kids dive into scripture while families worship together.</p>
+                                    <h3>Community Breakfast</h3>
+                                    <p>Free breakfast every Sunday after the service. Transportation from select shelters included.</p>
                                     <span class="teaser-more">Learn more <span class="teaser-more-arrow" aria-hidden="true">&rarr;</span></span>
                                 </div>
                                 <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">

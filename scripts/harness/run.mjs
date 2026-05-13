@@ -73,13 +73,17 @@ const ANCHOR_SCENARIOS = [
   { name: '04-about-mobile',           path: '/about',                             viewport: MOBILE,  headingSelector: '.section-eyebrow' },
   { name: '05-outreach-desktop',       path: '/outreach',                          viewport: DESKTOP, headingSelector: '.section-eyebrow' },
   { name: '06-outreach-mobile',        path: '/outreach',                          viewport: MOBILE,  headingSelector: '.section-eyebrow' },
+  { name: '07-visit-desktop',          path: '/visit',                             viewport: DESKTOP, headingSelector: '.section-eyebrow' },
+  { name: '08-visit-mobile',           path: '/visit',                             viewport: MOBILE,  headingSelector: '.section-eyebrow' },
 
   { name: '10-jump-cooking-desktop',   path: '/outreach', anchor: '#cooking-ministry',    viewport: DESKTOP, expected: 130 },
   { name: '11-jump-cooking-mobile',    path: '/outreach', anchor: '#cooking-ministry',    viewport: MOBILE,  expected: 110 },
-  { name: '12-jump-sunday-desktop',    path: '/outreach', anchor: '#sunday-school',       viewport: DESKTOP, expected: 130 },
-  { name: '13-jump-sunday-mobile',     path: '/outreach', anchor: '#sunday-school',       viewport: MOBILE,  expected: 110 },
+  { name: '12-jump-sunday-desktop',    path: '/visit',    anchor: '#sunday-school',       viewport: DESKTOP, expected: 130 },
+  { name: '13-jump-sunday-mobile',     path: '/visit',    anchor: '#sunday-school',       viewport: MOBILE,  expected: 110 },
   { name: '14-jump-breakfast-mobile',  path: '/outreach', anchor: '#community-breakfast', viewport: MOBILE,  expected: 110 },
   { name: '15-jump-mission-mobile',    path: '/about',    anchor: '#mission',             viewport: MOBILE,  expected: 110 },
+  { name: '16-jump-expect-desktop',    path: '/visit',    anchor: '#what-to-expect',      viewport: DESKTOP, expected: 130 },
+  { name: '17-jump-after-mobile',      path: '/visit',    anchor: '#after-service',       viewport: MOBILE,  expected: 110 },
 ]
 
 const FLOW_SCENARIOS = [
@@ -108,6 +112,15 @@ const FLOW_SCENARIOS = [
     steps: [
       { type: 'goto', url: '/' },
       { type: 'navigate', kind: 'click', selector: 'a[href="/about"]', captureFrames: true },
+      { type: 'navigate', kind: 'goBack', captureFrames: true },
+    ],
+  },
+  {
+    name: '23-flow-home-find-us-to-visit-and-back-mobile',
+    viewport: MOBILE,
+    steps: [
+      { type: 'goto', url: '/' },
+      { type: 'navigate', kind: 'click', selector: 'a.find-us-btn', captureFrames: true },
       { type: 'navigate', kind: 'goBack', captureFrames: true },
     ],
   },

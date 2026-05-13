@@ -18,25 +18,17 @@ const OUTREACH_JSON_LD = JSON.stringify({
       url: 'https://ms.church/outreach',
       name: 'Outreach & Ministries at Morning Star Christian Church',
       description:
-        "Morning Star Christian Church's ministries and community outreach in Boise, Idaho — Sunday School, monthly homeless-shelter cooking, free community breakfast, and seasonal events.",
+        "Morning Star Christian Church's community outreach in Boise, Idaho — monthly homeless-shelter cooking, free community breakfast, and seasonal events.",
       isPartOf: { '@id': 'https://ms.church/#website' },
       about: { '@id': 'https://ms.church/#church' },
       inLanguage: 'en-US',
       mainEntity: {
         '@type': 'ItemList',
-        name: 'Ministries & Outreach Programs',
+        name: 'Outreach Programs',
         itemListElement: [
           {
             '@type': 'Service',
             position: 1,
-            name: 'Sunday School',
-            description:
-              "Children's Sunday School during the 9:00 AM service — gospel-centered teaching for kids while families worship together.",
-            url: 'https://ms.church/outreach#sunday-school',
-          },
-          {
-            '@type': 'Service',
-            position: 2,
             name: 'Cooking at the Homeless Shelters',
             description:
               'Once-a-month cooking and serving meals at homeless shelters in Boise.',
@@ -44,7 +36,7 @@ const OUTREACH_JSON_LD = JSON.stringify({
           },
           {
             '@type': 'Service',
-            position: 3,
+            position: 2,
             name: 'Free Community Breakfast',
             description:
               'Free breakfast every Sunday after the morning service, with transportation from select shelters.',
@@ -52,7 +44,7 @@ const OUTREACH_JSON_LD = JSON.stringify({
           },
           {
             '@type': 'Service',
-            position: 4,
+            position: 3,
             name: 'Seasonal & Community Events',
             description:
               'Year-round open-door gatherings — Friendsgiving in the fall, community events around major holidays, and city-wide outreach throughout the year.',
@@ -80,7 +72,7 @@ export function registerOutreachRoute(app: Hono) {
 ${pageHead({
   title: 'Outreach & Ministries | Morning Star Christian Church, Boise',
   description:
-    "Morning Star Christian Church's ministries and outreach in Boise — Sunday School, monthly homeless-shelter cooking, free community breakfast, and seasonal events. Browse upcoming and past events.",
+    "Morning Star Christian Church's community outreach in Boise — monthly homeless-shelter cooking, free community breakfast, and seasonal events. Browse upcoming and past events.",
   canonical: 'https://ms.church/outreach',
   ogImageAlt: 'Morning Star Christian Church outreach and ministries in Boise, Idaho',
   jsonLd: OUTREACH_JSON_LD,

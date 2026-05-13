@@ -13,6 +13,7 @@ export function registerMiscRoutes(app: Hono) {
   Allow: /
   Allow: /about
   Allow: /outreach
+  Allow: /visit
   Allow: /privacy
   Allow: /form
   
@@ -70,6 +71,14 @@ export function registerMiscRoutes(app: Hono) {
           <lastmod>${today}</lastmod>
           <changefreq>weekly</changefreq>
           <priority>0.9</priority>
+      </url>
+
+      <!-- Plan Your Visit page -->
+      <url>
+          <loc>https://ms.church/visit</loc>
+          <lastmod>${today}</lastmod>
+          <changefreq>monthly</changefreq>
+          <priority>0.95</priority>
       </url>
 
       <!-- Contact form page -->

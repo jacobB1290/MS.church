@@ -683,6 +683,7 @@ export const homeStyles = (): string => `
                 text-transform: uppercase;
                 color: #1a1a2e;
                 cursor: pointer;
+                text-decoration: none; /* anchor form (links to /visit) */
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
                             0 4px 12px rgba(0, 0, 0, 0.05);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1007,6 +1008,121 @@ export const homeStyles = (): string => `
                 .schedule-item.long-content:nth-child(even) .schedule-item-image {
                     order: -1;
                 }
+            }
+
+            /* ============================================================
+               /visit PAGE — Map card + What-to-Expect service-flow timeline
+               ============================================================ */
+            .section-card.visit-map-card {
+                padding: 0;
+                overflow: hidden;
+            }
+            .visit-map-frame {
+                width: 100%;
+                aspect-ratio: 16 / 10;
+                background: linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                            linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+            }
+            .visit-map {
+                width: 100%;
+                height: 100%;
+                border: 0;
+                display: block;
+            }
+            .visit-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                justify-content: center;
+                padding: clamp(20px, 3vw, 32px);
+            }
+            .visit-actions .event-link-btn {
+                width: auto;
+                padding: 14px 32px;
+            }
+            @media (max-width: 960px) {
+                .visit-map-frame {
+                    aspect-ratio: 4 / 3;
+                }
+            }
+
+            /* What-to-Expect: numbered service-flow timeline */
+            .service-flow {
+                list-style: none;
+                counter-reset: flow;
+                display: flex;
+                flex-direction: column;
+                gap: clamp(24px, 3vw, 32px);
+                padding: 0;
+                margin: 0;
+            }
+            .service-flow li {
+                display: grid;
+                grid-template-columns: 52px 1fr;
+                gap: clamp(16px, 2vw, 24px);
+                align-items: start;
+                position: relative;
+            }
+            .service-flow-step {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                color: #fff;
+                display: grid;
+                place-items: center;
+                font-family: var(--font-display);
+                font-size: 18px;
+                font-weight: var(--weight-bold);
+                box-shadow: 0 6px 16px color-mix(in srgb, var(--gold) 30%, transparent);
+                counter-increment: flow;
+                position: relative;
+                z-index: 1;
+            }
+            .service-flow-step::before {
+                content: counter(flow);
+            }
+            /* Connecting line between numbered steps */
+            .service-flow li:not(:last-child) .service-flow-step::after {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 100%;
+                width: 2px;
+                height: calc(100% + clamp(24px, 3vw, 32px) - 22px);
+                background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 35%, transparent), color-mix(in srgb, var(--gold) 0%, transparent));
+                transform: translateX(-50%);
+                margin-top: 4px;
+            }
+            .service-flow-text h3 {
+                font-family: var(--font-display);
+                font-size: clamp(18px, 1.8vw, 22px);
+                font-weight: var(--weight-bold);
+                color: #1a1a2e;
+                line-height: var(--leading-snug);
+                margin-bottom: 6px;
+            }
+            .service-flow-text p {
+                color: rgba(26, 26, 46, 0.7);
+                line-height: var(--leading-loose);
+                font-size: var(--text-body);
+                margin: 0;
+            }
+
+            /* Visit final CTA card — centered text inside a section-card */
+            .section-card.visit-final-cta {
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .section-card.visit-final-cta .section-lead {
+                margin: 0;
+            }
+            .section-card.visit-final-cta .event-link-btn {
+                width: auto;
+                padding: 14px 36px;
             }
 
             /* ============================================================

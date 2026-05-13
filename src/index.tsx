@@ -1,4 +1,4 @@
-// Version: 1.43.1 - Smooth navigation system: hash stashing kills CLS, smart entrance on fresh loads only, hardened harness
+// Version: 1.44.0 - Plan Your Visit page: map + service flow + Sunday School + after-service + CTA; hero Find Us links to it
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

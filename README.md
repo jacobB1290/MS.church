@@ -1,7 +1,35 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.43.1
+## 🔢 CURRENT VERSION: v1.44.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.44.0 - Plan Your Visit page
+
+**New `/visit` route designed to be the visitor-onboarding landing page. The hero "Find Us" button now opens it instead of a maps dropdown.**
+
+Sections (in order):
+1. **Intro** — "We can't wait to meet you" eyebrow + heading + lead.
+2. **Find Us** — Google Maps iframe embed (search-style URL, no API key) showing 3080 Wildwood St, with two action buttons: gold "Get Directions" (Google Maps directions URL) and a secondary "Open in Apple Maps".
+3. **What to Expect** — numbered service-flow timeline (`.service-flow`) showing the six-step Sunday rhythm: Welcome, Two Worship Songs, Greet One Another, Teaching, Closing Song, Dismissal. Each step has a gold gradient circle with the number, a thin gold gradient line connects them top-to-bottom. Mentions service runs ~1 hour up front.
+4. **Sunday School** — moved here from `/outreach`. Same vertical 9:16 video frame + tap-to-unmute + tap-to-fullscreen pattern.
+5. **After Service** — fellowship time + free breakfast for everyone, including free transportation from select shelters.
+6. **Contact CTA** — centered card with the gold pill linking to `/#contact`.
+
+Wiring:
+- New `src/routes/visit.ts` registers `/visit` and emits `WebPage` + `Church` + `hasMap` + `BreadcrumbList` JSON-LD.
+- New `src/templates/visit-body.ts` (route body) + new CSS block in `home-styles.ts` (`.visit-map-card`, `.visit-map-frame`, `.visit-actions`, `.service-flow`, `.service-flow-step`, `.service-flow-text`, `.section-card.visit-final-cta`).
+- Hero `<button class="find-us-btn">` (with its address dropdown) replaced with `<a class="find-us-btn find-us-link" href="/visit">`. The dropdown's three options (Apple Maps / Google Maps / Copy Address) are no longer needed — the visit page has the map directly.
+- Sunday School removed from `/outreach` body + JSON-LD (it's a visitor onboarding concern, not a community-service ministry). All `/outreach#sunday-school` links across the codebase now point at `/visit#sunday-school`.
+- Home outreach teaser card replaced "Sunday School" with "Community Breakfast" since Sunday School isn't an outreach item anymore.
+- Sitemap adds `/visit` with priority 0.95 (above /about and /outreach since it's the conversion page for new visitors).
+- Robots.txt allows `/visit`.
+
+Harness expanded:
+- 4 new direct-render scenarios: `07-visit-desktop`, `08-visit-mobile`, plus the `#sunday-school` jumps moved from `/outreach` to `/visit`, plus new `#what-to-expect` and `#after-service` jumps.
+- 1 new flow: `23-flow-home-find-us-to-visit-and-back-mobile` verifies clicking the hero Find Us link navigates to /visit, the page settles, and going back returns to home with no-entrance behavior intact.
+- **Current run: 20 pass · 0 fail. CLS = 0.000 everywhere. Anchor landings stable at the expected offsets.**
+
+---
 
 ### v1.43.1 - Real Smoothness Pass + Hardened Harness
 

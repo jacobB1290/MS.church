@@ -8,6 +8,7 @@ import { registerYouTubeRoute } from './routes/youtube.js'
 import { registerHomeRoute } from './routes/home.js'
 import { registerAboutRoute } from './routes/about.js'
 import { registerOutreachRoute } from './routes/outreach.js'
+import { registerVisitRoute } from './routes/visit.js'
 import { registerPrivacyRoute } from './routes/privacy.js'
 import { registerMiscRoutes } from './routes/misc.js'
 import { GOLD } from './design-tokens.js'
@@ -31,6 +32,7 @@ registerYouTubeRoute(app)
 registerHomeRoute(app)
 registerAboutRoute(app)
 registerOutreachRoute(app)
+registerVisitRoute(app)
 registerPrivacyRoute(app)
 registerMiscRoutes(app)
 

@@ -1,7 +1,32 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.42.0
+## 🔢 CURRENT VERSION: v1.42.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.42.1 - Design System Cleanup: Anchor-only Nav + Subpage Header
+**Fixes two issues with the v1.42 multi-page rollout: the nav semantics and reuse of the design system.**
+
+**Nav model corrected:**
+
+1. **Home nav is anchor-only.** SCHEDULE · ABOUT · OUTREACH · WATCH all scroll to sections on `/`. ABOUT and OUTREACH are now anchors to the teaser sections (`#about`, `#outreach`) on home — not page links.
+2. **Subpages (`/about`, `/outreach`) have no nav.** They get a minimal `subpage-header` with just the Morning Star wordmark (links to `/`) and a "← Back" pill (uses `history.back()` with `/` fallback for direct entries).
+3. **`shared/subpage-header.ts`** is a new template that reuses the existing `.nav-shell` and `.brand` styling so the subpage header looks like part of the same site.
+
+**Design system reuse:**
+
+4. Every new page now uses the standardized classes from `home-styles.ts`:
+   - `.section-eyebrow` (white frosted pill, 100px radius, --text-eyebrow)
+   - `.section-heading` (--text-title, --font-display, --tracking-tight)
+   - `.section-lead` (--text-lead, --leading-loose)
+   - `.section-card` (48px radius, 56px/64px padding, frosted-glass)
+   - `.schedule-item` (alternating image+text card)
+   - `.event-link-btn` (gold gradient pill, --text-small uppercase) + a new `.event-link-btn-secondary` variant (white pill with same shape)
+5. **Removed** all bespoke classes I had introduced (`.home-teaser*`, `.serve-*`, `.subpage-hero/heading/lead`, `.about-*`, `.beliefs-*`, `.belief-card`, `.ministry-*`, `.about-cta*`, `.section-heading-sm`). The single new pattern is `.schedule-item.belief-item` (text-only variant of `.schedule-item` — `grid-template-columns: 1fr` instead of 1fr 1fr).
+6. **Section spacing** is consistent everywhere — the existing `main { gap: 200px }` rule handles it; no per-section padding overrides on subpages.
+
+**Result:** Subpages now look and feel like part of the same site, every heading/eyebrow/button/card has identical shape & spacing to the home page, and the nav model matches the user's mental model (anchors → home sections, teaser CTAs → full pages).
+
+---
 
 ### v1.42.0 - Multi-page: /about + /outreach, Restructured Home (Phase 2)
 **Splits content across dedicated pages so the home page stays focused while About and Outreach get the real estate they need.**

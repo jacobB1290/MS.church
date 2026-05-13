@@ -10,7 +10,7 @@ import { footer } from './shared/footer.js'
 export const homeBody = (): string => `
     <body>
         <div class="page">
-            ${nav('/')}
+            ${nav()}
             <div class="nav-spacer"></div>
             <main>
                 <section class="hero" id="home" style="animation-delay: 0.1s">
@@ -121,49 +121,64 @@ export const homeBody = (): string => `
                     </div>
                 </section>
 
-                <!-- About Teaser — links to /about for the full page -->
-                <section class="home-teaser" id="about" style="animation-delay: 0.3s">
-                    <div class="home-teaser-grid">
-                        <div class="home-teaser-text">
-                            <span class="section-eyebrow">About Us</span>
-                            <h2 class="section-heading-sm">A welcoming church in the heart of Boise.</h2>
-                            <p>Morning Star is a small, nondenominational community where every story, every age, and every burden is met with grace and a seat at the table. We exist to point people to Jesus and to mend the broken — through faith, family, and serving the city we love.</p>
-                            <a class="home-teaser-cta" href="/about">Learn more about us →</a>
-                        </div>
-                        <div class="home-teaser-image schedule-item-image-placeholder" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                <!-- About teaser — short intro, routes to /about for full page -->
+                <section id="about" style="animation-delay: 0.3s">
+                    <span class="section-eyebrow">About Us</span>
+                    <h2 class="section-heading">A welcoming church in the heart of Boise.</h2>
+                    <div class="section-card">
+                        <div class="schedule-item">
+                            <div class="schedule-item-text">
+                                <p>Morning Star is a small, nondenominational community where every story, every age, and every burden is met with grace and a seat at the table. We exist to point people to Jesus and to mend the broken — through faith, family, and serving the city we love.</p>
+                                <a class="event-link-btn teaser-cta" href="/about">Learn More About Us</a>
+                            </div>
+                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- Outreach Teaser — links to /outreach for full ministries hub + events -->
-                <section class="home-teaser home-teaser-outreach" id="outreach" style="animation-delay: 0.4s">
+                <!-- Outreach teaser — How We Serve cards, routes to /outreach for full hub + events -->
+                <section id="outreach" style="animation-delay: 0.4s">
                     <span class="section-eyebrow">How We Serve</span>
-                    <h2 class="section-heading-sm">A few ways we live out our mission in Boise.</h2>
-                    <div class="serve-grid">
-                        <a class="serve-card" href="/outreach#sunday-school">
-                            <div class="serve-card-image schedule-item-image-placeholder" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                            </div>
-                            <h3 class="serve-card-title">Sunday School</h3>
-                            <p class="serve-card-meta">Sundays during the 9 AM service</p>
-                        </a>
-                        <a class="serve-card" href="/outreach#cooking-ministry">
-                            <div class="serve-card-image schedule-item-image-placeholder" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                            </div>
-                            <h3 class="serve-card-title">Cooking Ministry</h3>
-                            <p class="serve-card-meta">Monthly · Boise homeless shelters</p>
-                        </a>
-                        <a class="serve-card" href="/outreach#events">
-                            <div class="serve-card-image schedule-item-image-placeholder" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                            </div>
-                            <h3 class="serve-card-title">Community Events</h3>
-                            <p class="serve-card-meta">Year-round · Open to all</p>
-                        </a>
+                    <h2 class="section-heading">A few ways we live out our mission in Boise.</h2>
+                    <div class="section-card">
+                        <div class="schedule-grid">
+                            <a class="schedule-item teaser-link-card" href="/outreach#sunday-school">
+                                <div class="schedule-item-text">
+                                    <span>Ministry</span>
+                                    <h3>Sunday School</h3>
+                                    <p>Sundays during the 9 AM service — kids dive into scripture while families worship together.</p>
+                                </div>
+                                <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                                </div>
+                            </a>
+                            <a class="schedule-item teaser-link-card" href="/outreach#cooking-ministry">
+                                <div class="schedule-item-text">
+                                    <span>Ministry</span>
+                                    <h3>Cooking Ministry</h3>
+                                    <p>Once a month our team cooks and serves hot meals at homeless shelters across Boise.</p>
+                                </div>
+                                <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                                </div>
+                            </a>
+                            <a class="schedule-item teaser-link-card" href="/outreach#events">
+                                <div class="schedule-item-text">
+                                    <span>Events</span>
+                                    <h3>Community Events</h3>
+                                    <p>Year-round open-door gatherings — Friendsgiving, holidays, and city-wide outreach.</p>
+                                </div>
+                                <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="teaser-cta-row">
+                            <a class="event-link-btn teaser-cta" href="/outreach">Explore Our Outreach</a>
+                        </div>
                     </div>
-                    <a class="home-teaser-cta" href="/outreach">Explore our outreach →</a>
                 </section>
 
                 <section class="watch" id="watch" style="animation-delay: 0.4s">

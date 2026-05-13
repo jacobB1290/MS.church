@@ -46,7 +46,7 @@ export function registerAboutRoute(app: Hono) {
   app.get('/about', (c) => {
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.42.0 - About page -->
+<!-- v1.42.1 - About page (refined design system) -->
 <html lang="en">
 ${pageHead({
   title: 'About Morning Star Christian Church | Boise, Idaho',

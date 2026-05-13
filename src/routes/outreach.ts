@@ -75,7 +75,7 @@ export function registerOutreachRoute(app: Hono) {
   app.get('/outreach', (c) => {
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.42.0 - Outreach hub -->
+<!-- v1.42.1 - Outreach hub (refined design system) -->
 <html lang="en">
 ${pageHead({
   title: 'Outreach & Ministries | Morning Star Christian Church, Boise',

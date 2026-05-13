@@ -356,8 +356,8 @@ export function registerMiscRoutes(app: Hono) {
                   </div>
                   <nav>
                       <a href="/#schedule">SCHEDULE</a>
-                      <a href="/about">ABOUT</a>
-                      <a href="/outreach">OUTREACH</a>
+                      <a href="/#about">ABOUT</a>
+                      <a href="/#outreach">OUTREACH</a>
                       <a href="/#watch">WATCH</a>
                       <a href="/form">SUBMIT THE FORM</a>
                   </nav>

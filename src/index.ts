@@ -1,4 +1,4 @@
-// Version: 1.42.0 - Multi-page: add /about and /outreach, restructure home with teasers
+// Version: 1.42.1 - Refine multi-page: anchor-only nav on home, logo+back header on subpages, reuse design system
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

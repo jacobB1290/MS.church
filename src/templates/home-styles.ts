@@ -752,292 +752,89 @@ export const homeStyles = (): string => `
                 height: auto;
             }
 
-            /* ========================================
-               HOME TEASERS — About + How We Serve
-               (introduced in v1.42.0; route to /about and /outreach)
-               ======================================== */
-            .home-teaser {
-                padding: clamp(40px, 6vw, 72px) 0;
-                display: grid;
-                gap: clamp(20px, 3vw, 36px);
+            /* Teaser CTA buttons on home are intrinsically sized (not full-width). */
+            .event-link-btn.teaser-cta {
+                width: auto;
+                align-self: start;
+                padding: 14px 32px;
             }
 
-            .home-teaser-grid {
-                display: grid;
-                grid-template-columns: 1.1fr 1fr;
-                gap: clamp(24px, 4vw, 56px);
-                align-items: center;
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 32px;
-                padding: clamp(20px, 3vw, 40px);
-                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
-                border: 1px solid rgba(255, 255, 255, 0.6);
-            }
-
-            .home-teaser-text {
-                display: grid;
-                gap: 16px;
-            }
-
-            .home-teaser-text p {
-                color: rgba(26, 26, 46, 0.65);
-                line-height: var(--leading-loose);
-                font-size: var(--text-body);
-            }
-
-            .home-teaser-image {
-                aspect-ratio: 4 / 3;
-                border-radius: 20px;
-                overflow: hidden;
-            }
-
-            .home-teaser-cta {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                color: var(--gold, #d4a574);
-                font-weight: 600;
-                font-size: 14px;
-                text-decoration: none;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                transition: gap 0.3s ease;
-                justify-self: start;
-            }
-            .home-teaser-cta:hover {
-                gap: 14px;
-            }
-
-            /* How We Serve — 3-card teaser linking to /outreach */
-            .home-teaser-outreach {
-                text-align: center;
-            }
-            .home-teaser-outreach .section-heading-sm {
-                margin-bottom: clamp(20px, 3vw, 28px);
-            }
-            .home-teaser-outreach .home-teaser-cta {
-                justify-self: center;
-            }
-
-            .serve-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: clamp(16px, 2.5vw, 28px);
-                margin: clamp(8px, 2vw, 20px) 0 clamp(20px, 3vw, 32px);
-            }
-
-            .serve-card {
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 24px;
-                padding: clamp(14px, 2vw, 20px);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.6);
-                text-decoration: none;
-                color: inherit;
-                display: grid;
-                gap: 12px;
-                text-align: left;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-            .serve-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 18px 44px rgba(0, 0, 0, 0.09);
-            }
-
-            .serve-card-image {
-                aspect-ratio: 4 / 3;
-                border-radius: 16px;
-                overflow: hidden;
-            }
-
-            .serve-card-title {
-                font-family: var(--font-display);
-                font-size: clamp(18px, 1.8vw, 22px);
-                font-weight: var(--weight-bold);
-                color: #1a1a2e;
-                line-height: var(--leading-snug);
-            }
-
-            .serve-card-meta {
-                font-size: 13px;
-                color: rgba(26, 26, 46, 0.55);
-                letter-spacing: 0.3px;
-            }
-
-            /* Section heading variant: smaller, page-flow heading */
-            .section-heading-sm {
-                font-family: var(--font-display);
-                font-size: clamp(22px, 3vw, 32px);
-                font-weight: var(--weight-bold);
-                color: #1a1a2e;
-                line-height: var(--leading-snug);
-            }
-
-            /* ========================================
-               SUBPAGE (about, outreach) SHARED STYLES
-               ======================================== */
-            .subpage-hero {
-                padding: clamp(32px, 6vw, 64px) 0 clamp(20px, 3vw, 36px);
-                display: grid;
-                gap: 16px;
-                text-align: center;
-            }
-            .subpage-hero .section-eyebrow {
-                justify-self: center;
-            }
-            .subpage-heading {
-                font-family: var(--font-display);
-                font-size: clamp(32px, 5vw, 52px);
-                font-weight: var(--weight-bold);
-                color: #1a1a2e;
-                line-height: var(--leading-snug);
-                max-width: 800px;
-                margin: 0 auto;
-            }
-            .subpage-lead {
-                color: rgba(26, 26, 46, 0.7);
-                font-size: clamp(15px, 1.4vw, 18px);
-                line-height: var(--leading-loose);
-                max-width: 720px;
-                margin: 0 auto;
-            }
-
-            .about-section {
-                padding: clamp(24px, 4vw, 56px) 0;
-                display: grid;
-                gap: clamp(16px, 2.5vw, 28px);
-            }
-
-            .about-grid {
-                display: grid;
-                grid-template-columns: 1.1fr 1fr;
-                gap: clamp(20px, 3vw, 44px);
-                align-items: center;
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 32px;
-                padding: clamp(20px, 3vw, 40px);
-                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
-                border: 1px solid rgba(255, 255, 255, 0.6);
-            }
-            .about-grid-right {
-                /* keep the same DOM order; flip visually on desktop */
-            }
-
-            .about-text-card {
-                display: grid;
-                gap: 14px;
-            }
-            .about-text-card p {
-                color: rgba(26, 26, 46, 0.7);
-                line-height: var(--leading-loose);
-                font-size: var(--text-body);
-            }
-            .about-text-card a {
-                color: var(--gold, #d4a574);
-                font-weight: 600;
-            }
-            .about-leader-meta {
-                font-size: 14px;
-            }
-
-            .about-image {
-                aspect-ratio: 4 / 3;
-                border-radius: 20px;
-                overflow: hidden;
-            }
-
-            .beliefs-grid {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: clamp(14px, 2vw, 24px);
-            }
-            .belief-card {
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 24px;
-                padding: clamp(20px, 2.5vw, 28px);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.6);
-                display: grid;
-                gap: 10px;
-            }
-            .belief-card h3 {
-                font-family: var(--font-display);
-                font-size: clamp(18px, 1.6vw, 22px);
-                font-weight: var(--weight-bold);
-                color: #1a1a2e;
-            }
-            .belief-card p {
-                color: rgba(26, 26, 46, 0.65);
-                font-size: 15px;
-                line-height: var(--leading-loose);
-            }
-
-            .about-cta {
-                text-align: center;
-            }
-            .about-cta p {
-                color: rgba(26, 26, 46, 0.7);
-                font-size: clamp(15px, 1.3vw, 17px);
-                line-height: var(--leading-loose);
-                max-width: 680px;
-                margin: 0 auto;
-            }
-            .about-cta-row {
+            /* Centered CTA row for the How We Serve teaser and the Visit Us CTA. */
+            .teaser-cta-row,
+            .subpage-cta-row {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
                 gap: 12px;
-                margin-top: clamp(16px, 2vw, 24px);
+                margin-top: clamp(16px, 2.5vw, 28px);
             }
-            .about-cta-btn {
-                display: inline-flex;
-                align-items: center;
-                background: rgba(255, 255, 255, 0.9);
+            .subpage-cta-row .event-link-btn {
+                width: auto;
+                padding: 14px 32px;
+            }
+            /* Secondary variant of the gold pill — white surface, dark text. */
+            .event-link-btn.event-link-btn-secondary {
+                background: rgba(255, 255, 255, 0.95);
                 color: #1a1a2e;
-                border: 1px solid rgba(26, 26, 46, 0.12);
-                border-radius: 100px;
-                padding: 14px 28px;
-                font-size: 13px;
-                font-weight: 700;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                text-decoration: none;
-                transition: all 0.3s ease;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
             }
-            .about-cta-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
-            }
-            .about-cta-btn.primary {
-                background: var(--gold, #d4a574);
-                color: white;
-                border-color: transparent;
+            .event-link-btn.event-link-btn-secondary:hover {
+                background: var(--white);
+                box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
             }
 
-            /* Ministry cards on /outreach reuse .about-grid scaffolding */
-            .ministry-card {
-                margin: clamp(12px, 2vw, 20px) 0;
+            /* Schedule items used as teaser links (How We Serve cards) on home. */
+            .schedule-item.teaser-link-card {
+                text-decoration: none;
+                color: inherit;
             }
-            .ministry-card .about-grid {
-                padding: clamp(20px, 2.5vw, 36px);
+            .schedule-item.teaser-link-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
             }
-            .ministry-meta {
-                text-transform: uppercase;
-                letter-spacing: var(--tracking-wide);
-                font-size: var(--text-eyebrow);
-                font-weight: var(--weight-bold);
-                color: var(--gold, #d4a574);
+
+            /* Belief items: text-only schedule-item variant (no image column). */
+            .schedule-item.belief-item {
+                grid-template-columns: 1fr;
             }
-            .ministry-heading {
-                font-family: var(--font-display);
-                font-size: clamp(22px, 2.4vw, 30px);
-                font-weight: var(--weight-bold);
+
+            /* ============================================================
+               SUBPAGE HEADER — minimal header for /about and /outreach.
+               Reuses .nav-shell + .brand styles; replaces nav links with
+               a single "Back" pill on the right.
+               ============================================================ */
+            .nav-shell.subpage-shell {
+                /* Override grid/justify-content from .nav-shell to give us
+                   left (brand) + right (back) layout regardless of the
+                   default flex pattern. */
+                justify-content: space-between;
+            }
+            .subpage-back {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: rgba(255, 255, 255, 0.85);
                 color: #1a1a2e;
-                line-height: var(--leading-snug);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+                backdrop-filter: blur(10px);
+                border-radius: 100px;
+                padding: 12px 22px;
+                font-size: var(--text-label);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                text-decoration: none;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            .ministry-cta {
-                font-size: 14px;
-                margin-top: 4px;
+            .subpage-back:hover {
+                background: var(--white);
+                transform: translateY(-2px);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+            }
+            .subpage-back-arrow {
+                font-size: 16px;
+                line-height: 1;
             }
 
             .schedule-item span {
@@ -3859,52 +3656,14 @@ export const homeStyles = (): string => `
                 }
             }
 
-            /* Mobile: stack teasers + subpage grids */
+            /* Mobile: tighten subpage back-button padding */
             @media (max-width: 960px) {
-                .home-teaser-grid,
-                .about-grid {
-                    grid-template-columns: 1fr;
-                    gap: clamp(16px, 4vw, 24px);
+                .subpage-back {
+                    padding: 10px 16px;
+                    font-size: 11px;
                 }
-                .serve-grid {
-                    grid-template-columns: 1fr;
-                    gap: clamp(12px, 3vw, 18px);
-                }
-                .serve-card {
-                    display: grid;
-                    grid-template-columns: clamp(96px, 28vw, 120px) 1fr;
-                    align-items: center;
-                    gap: 14px;
-                    padding: 14px;
-                }
-                .serve-card-image {
-                    aspect-ratio: 1 / 1;
-                    border-radius: 14px;
-                    margin: 0;
-                }
-                .serve-card-title {
-                    font-size: 16px;
-                }
-                .serve-card-meta {
-                    font-size: 12px;
-                }
-                .beliefs-grid {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-                .subpage-heading {
-                    font-size: clamp(28px, 7vw, 38px);
-                }
-                /* Mobile: always show image on top regardless of desktop alternation */
-                .about-grid .about-image,
-                .home-teaser-grid .home-teaser-image {
-                    order: -1;
-                }
-            }
-
-            /* Very tiny phones: collapse beliefs to single column */
-            @media (max-width: 480px) {
-                .beliefs-grid {
-                    grid-template-columns: 1fr;
+                .subpage-back-label {
+                    /* keep visible — short label fits */
                 }
             }
 

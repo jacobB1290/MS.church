@@ -1,7 +1,31 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.40.0
+## 🔢 CURRENT VERSION: v1.41.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.41.0 - Refactor: Shared Nav + Footer Templates (Phase 1 of multi-page architecture)
+**Pure refactor with no user-visible changes. Sets up shared templates so the upcoming /about and /outreach pages stay consistent with home.**
+
+**Changes Made:**
+
+1. **New shared templates (`src/templates/shared/`)**
+   - `nav.ts` — exports `nav(currentPath)` returning the `<header class="nav-shell">` block. Anchor links rewrite from `#foo` to `/#foo` automatically when invoked from a non-home page. `aria-current="page"` is applied to the matching link when on a dedicated page route (will be used by `/about`, `/outreach` in Phase 2).
+   - `footer.ts` — exports `footer()` returning the existing footer block.
+
+2. **Home refactor (`src/templates/home-body.ts`)**
+   - Inline nav and footer markup replaced with `${nav('/')}` and `${footer()}` calls.
+   - Brand wordmark is now a proper `<a href="/">` link with `aria-label="Morning Star Christian Church — Home"` (SEO + accessibility positive — clearer internal linking, screen readers identify it as the home link).
+   - `<nav>` element has `aria-label="Primary"` for clearer landmarks.
+
+3. **CSS (`src/templates/home-styles.ts`)**
+   - `.brand` gains `text-decoration: none; color: inherit` so the new anchor looks identical to the old div.
+   - New rule `.nav-shell nav a[aria-current="page"] { color: var(--gold) }` — subtle gold highlight for active page (no-op on `/` since no nav link currently matches the home path; activates on `/about` / `/outreach` in Phase 2).
+
+**SEO impact:** Positive. Brand is now a semantic internal link to `/`, the `<nav aria-label="Primary">` landmark is more crawler-friendly, and per-page meta data on home is unchanged. Phase 2 will add per-page titles/descriptions/canonical/schema for `/about` and `/outreach`.
+
+**Visual impact:** None. Rendered HTML is character-for-character equivalent except for the brand wrapper element changing from `<div>` to `<a>` with the same children.
+
+---
 
 ### v1.40.0 - Schedule: Alternating Image/Text Cards (Placeholder Images)
 **Redesigned the weekly schedule so each item is a horizontal card with an image and text, alternating sides for visual rhythm**

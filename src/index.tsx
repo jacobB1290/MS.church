@@ -1,4 +1,4 @@
-// Version: 1.40.0 - Schedule items: 2x2 grid with alternating image/text cards (placeholders)
+// Version: 1.41.0 - Refactor: extract shared nav + footer templates (Phase 1 of multi-page)
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

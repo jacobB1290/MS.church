@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.40.0 - Schedule items: 2x2 grid with alternating image/text cards (placeholders) -->
+<!-- v1.41.0 - Refactor: extract shared nav + footer templates (Phase 1 of multi-page) -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

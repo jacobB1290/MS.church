@@ -209,11 +209,18 @@ export const homeStyles = (): string => `
                 display: flex;
                 flex-direction: column;
                 line-height: 1;
+                text-decoration: none;
+                color: inherit;
                 transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .brand:hover {
                 transform: translateY(-2px);
+            }
+
+            /* Active page indicator for multi-page nav (Phase 2 uses this) */
+            .nav-shell nav a[aria-current="page"] {
+                color: var(--gold, #d4a574);
             }
 
             .brand-title {

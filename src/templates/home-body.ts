@@ -149,6 +149,7 @@ export const homeBody = (): string => `
                                     <span>Ministry</span>
                                     <h3>Sunday School</h3>
                                     <p>Sundays during the 9 AM service — kids dive into scripture while families worship together.</p>
+                                    <span class="teaser-more">Learn more <span class="teaser-more-arrow" aria-hidden="true">&rarr;</span></span>
                                 </div>
                                 <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -159,6 +160,7 @@ export const homeBody = (): string => `
                                     <span>Ministry</span>
                                     <h3>Cooking Ministry</h3>
                                     <p>Once a month our team cooks and serves hot meals at homeless shelters across Boise.</p>
+                                    <span class="teaser-more">Learn more <span class="teaser-more-arrow" aria-hidden="true">&rarr;</span></span>
                                 </div>
                                 <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -169,6 +171,7 @@ export const homeBody = (): string => `
                                     <span>Events</span>
                                     <h3>Community Events</h3>
                                     <p>Year-round open-door gatherings — Friendsgiving, holidays, and city-wide outreach.</p>
+                                    <span class="teaser-more">Learn more <span class="teaser-more-arrow" aria-hidden="true">&rarr;</span></span>
                                 </div>
                                 <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>

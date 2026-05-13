@@ -783,14 +783,41 @@ export const homeStyles = (): string => `
                 box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
             }
 
-            /* Schedule items used as teaser links (How We Serve cards) on home. */
+            /* Schedule items used as teaser links (How We Serve cards) on home.
+               A small gold "Learn more →" cue (.teaser-more) inside the card
+               differentiates these clickable cards from the visually identical
+               but non-interactive .schedule-item cards in the Schedule section. */
             .schedule-item.teaser-link-card {
                 text-decoration: none;
                 color: inherit;
+                cursor: pointer;
+                border: 1px solid rgba(212, 165, 116, 0.18);
+                box-shadow: 0 18px 44px rgba(0, 0, 0, 0.07),
+                            0 0 0 1px rgba(255, 255, 255, 0.4) inset;
             }
             .schedule-item.teaser-link-card:hover {
                 transform: translateY(-6px);
-                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+                border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+                box-shadow: 0 24px 56px rgba(0, 0, 0, 0.11),
+                            0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            }
+            .teaser-more {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                margin-top: clamp(8px, 1.2vw, 14px);
+                color: var(--gold);
+                font-size: var(--text-label);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+            }
+            .teaser-more-arrow {
+                display: inline-block;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .teaser-link-card:hover .teaser-more-arrow {
+                transform: translateX(4px);
             }
 
             /* Belief items: text-only schedule-item variant (no image column). */

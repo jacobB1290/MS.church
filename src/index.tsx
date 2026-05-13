@@ -1,4 +1,4 @@
-// Version: 1.42.4 - Full-width tapered top fog on subpages; footer logo links home
+// Version: 1.42.5 - Differentiate clickable outreach teaser cards (gold cue + border) from informational schedule cards
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

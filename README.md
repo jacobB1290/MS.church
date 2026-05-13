@@ -1,7 +1,19 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.42.4
+## 🔢 CURRENT VERSION: v1.42.5
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.42.5 - Differentiated Clickable Cards on Home Outreach Teaser
+**Schedule and Outreach teaser sections previously looked identical but behaved differently (schedule = informational, outreach teaser = links to /outreach). This change makes the clickable cards read as clickable at any state, not just on hover.**
+
+1. **Inline "Learn more →" cue** at the bottom of each `.teaser-link-card` (Sunday School, Cooking Ministry, Community Events). Gold uppercase, `--text-label` / `--tracking-wide` — matches the existing inline-link pattern used by "Sunday School info →", "Send us a message →" etc.
+2. **Animated arrow** shifts right 4px on hover (`.teaser-more-arrow { transition: transform }`).
+3. **Persistent gold-tinted border** on `.schedule-item.teaser-link-card` (`rgba(212, 165, 116, 0.18)`) plus a slightly stronger base shadow — a subtle "this is interactive" signal at rest, before the user hovers.
+4. **Hover lift unchanged** but border now intensifies to gold (`color-mix(in srgb, var(--gold) 45%, transparent)`).
+
+Schedule cards (`.schedule-item` without `.teaser-link-card`) stay completely unchanged — neutral, informational.
+
+---
 
 ### v1.42.4 - Full-width Top Fog on Subpages + Footer Logo Link
 

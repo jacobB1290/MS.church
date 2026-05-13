@@ -1,7 +1,14 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.45.3
+## 🔢 CURRENT VERSION: v1.45.4
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.45.4 - Schedule: bigger mobile title; visible placeholder on white section card
+
+Two bug fixes on top of v1.45.3:
+
+- **Mobile title was falling back to desktop size.** The mobile `@media (max-width: 960px)` block still referenced the old `.schedule-tab-heading` class name (a leftover from the v1.45.1 restructure that got rolled back). Updated to `.schedule-tab-title` with `clamp(24px, 6vw, 30px)` so day/time reads at the larger size it used to be at — also added a mobile eyebrow size bump.
+- **Placeholder was rendering but invisible** on the section card. The original `.schedule-item-image-placeholder` sits on a frosted-translucent card that gives the dashed border contrast — the banner sits directly on the white `.section-card`, so the 1px/0.12-alpha border was lost. Strengthened to a 2px/0.22-alpha dashed border + slightly darker gray gradient (`#e6e9f0 → #d6dae3` instead of `#eef0f5 → #e2e5ec`) so the placeholder reads clearly.
 
 ### v1.45.3 - Schedule: restore old typography; durations woven into descriptions
 

@@ -1,4 +1,4 @@
-// Version: 1.45.3 - Schedule: restore old typography tokens; durations woven into descriptions
+// Version: 1.45.4 - Schedule: bigger mobile title; visible placeholder on white section card
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

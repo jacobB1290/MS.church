@@ -855,17 +855,20 @@ export const homeStyles = (): string => `
                 object-fit: cover;
                 display: block;
             }
-            /* Placeholder variant — mirrors the site's existing
-               .schedule-item-image-placeholder visual so the banner reads
-               as "image goes here" exactly like every other placeholder
-               on the page. Same gradient, same dashed border, same icon
-               proportions. */
+            /* Placeholder variant — same visual language as
+               .schedule-item-image-placeholder (gold-tinted gradient +
+               dashed border + centered icon) but with higher contrast
+               so it reads as "image goes here" against the surrounding
+               white section-card. The card the original placeholder lives
+               on is itself frosted-translucent, which gives the dashed
+               border its contrast — the banner sits directly on white,
+               so the border needs to be a touch heavier to register. */
             .schedule-banner-placeholder {
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
-                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                color: rgba(26, 26, 46, 0.30);
-                border: 1px dashed rgba(26, 26, 46, 0.12);
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.16) 0%, rgba(26, 26, 46, 0.08) 100%),
+                    linear-gradient(180deg, #e6e9f0 0%, #d6dae3 100%);
+                color: rgba(26, 26, 46, 0.40);
+                border: 2px dashed rgba(26, 26, 46, 0.22);
                 border-radius: inherit;
                 box-sizing: border-box;
             }
@@ -4271,10 +4274,16 @@ export const homeStyles = (): string => `
                 .schedule-tab {
                     border-radius: 18px;
                     padding: clamp(16px, 4vw, 22px) clamp(18px, 4.5vw, 24px);
-                    gap: 8px;
+                    gap: 10px;
                 }
-                .schedule-tab-heading {
-                    font-size: clamp(22px, 5.6vw, 28px);
+                /* Bigger eyebrow + title on mobile — title matches the
+                   weight the old .schedule-item h3 mobile rule used to
+                   give the day/time line. */
+                .schedule-tab-eyebrow {
+                    font-size: clamp(13px, 3.5vw, 16px);
+                }
+                .schedule-tab-title {
+                    font-size: clamp(24px, 6vw, 30px);
                 }
                 .schedule-tab-desc {
                     font-size: clamp(14px, 3.6vw, 15px);

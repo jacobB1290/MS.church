@@ -1,7 +1,27 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.39.0
+## 🔢 CURRENT VERSION: v1.40.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.40.0 - Schedule: Alternating Image/Text Cards (Placeholder Images)
+**Redesigned the weekly schedule so each item is a horizontal card with an image and text, alternating sides for visual rhythm**
+
+**Changes Made:**
+
+1. **Markup (`src/templates/home-body.ts`)**
+   - Each `.schedule-item` now contains a `.schedule-item-text` div (existing eyebrow/h3/p) plus a `.schedule-item-image` placeholder div
+   - Placeholder uses a dashed neutral box with a centered "image" SVG icon — drop-in replaceable with `<img>` when real photos are ready
+
+2. **Layout (`src/templates/home-styles.ts`)**
+   - `.schedule-item` is now `grid-template-columns: 1fr 1fr` (50/50 image + text), centered vertically
+   - `:nth-child(even)` flips image to the left side, producing the alternating Sunday-text / Tuesday-image / Thursday-text / Friday-image pattern
+   - Desktop `.schedule-grid` switched from `repeat(3, 1fr)` to `repeat(2, 1fr)` — 2×2 grid removes the Friday orphan row
+   - Mobile padding tightened; safety override at `≤380px` shrinks image column slightly so text isn't squeezed on tiny phones
+   - Placeholder image style: subtle gradient + dashed border + low-opacity icon — clearly signals "image goes here" without distracting
+
+**Replacing the placeholders later:** swap each `<div class="schedule-item-image schedule-item-image-placeholder" ...>...</div>` with `<div class="schedule-item-image"><img src="/static/schedule-{day}.jpg" alt="..." loading="lazy"></div>`.
+
+---
 
 ### v1.39.0 - Friday Youth Service Added to Weekly Schedule
 **Added a fourth weekly recurring gathering to the schedule section**

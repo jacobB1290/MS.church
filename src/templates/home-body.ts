@@ -90,24 +90,44 @@ export const homeBody = (): string => `
                     <div class="section-card">
                         <div class="schedule-grid">
                             <article class="schedule-item">
-                                <span>Sunday Gatherings</span>
-                                <h3>Sundays · 9:00 AM</h3>
-                                <p>Morning service with free community breakfast after. Free transportation from select shelters included.</p>
+                                <div class="schedule-item-text">
+                                    <span>Sunday Gatherings</span>
+                                    <h3>Sundays · 9:00 AM</h3>
+                                    <p>Morning service with free community breakfast after. Free transportation from select shelters included.</p>
+                                </div>
+                                <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                                </div>
                             </article>
                             <article class="schedule-item">
-                                <span>Bible Reading</span>
-                                <h3>Tuesdays · 8:30 AM</h3>
-                                <p>Tuesday Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" style="color: var(--gold); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent); font-weight: 600;">Caffiena State Street</a>.</p>
+                                <div class="schedule-item-text">
+                                    <span>Bible Reading</span>
+                                    <h3>Tuesdays · 8:30 AM</h3>
+                                    <p>Tuesday Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" style="color: var(--gold); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent); font-weight: 600;">Caffiena State Street</a>.</p>
+                                </div>
+                                <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                                </div>
                             </article>
                             <article class="schedule-item">
-                                <span>Bible Study</span>
-                                <h3>Thursdays · 6:00 PM</h3>
-                                <p>Evening Bible study at the church with free coffee.</p>
+                                <div class="schedule-item-text">
+                                    <span>Bible Study</span>
+                                    <h3>Thursdays · 6:00 PM</h3>
+                                    <p>Evening Bible study at the church with free coffee.</p>
+                                </div>
+                                <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                                </div>
                             </article>
                             <article class="schedule-item">
-                                <span>Youth Service</span>
-                                <h3>Fridays · 7:00 PM</h3>
-                                <p>Youth service at the church — worship, teaching, and fellowship for our next generation.</p>
+                                <div class="schedule-item-text">
+                                    <span>Youth Service</span>
+                                    <h3>Fridays · 7:00 PM</h3>
+                                    <p>Youth service at the church — worship, teaching, and fellowship for our next generation.</p>
+                                </div>
+                                <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                                </div>
                             </article>
                         </div>
                     </div>

@@ -689,17 +689,60 @@ export const homeStyles = (): string => `
             .schedule-item {
                 background: rgba(255, 255, 255, 0.9);
                 border-radius: 32px;
-                padding: 36px;
+                padding: clamp(14px, 2vw, 22px);
                 box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
                 border: 1px solid rgba(255, 255, 255, 0.6);
                 display: grid;
-                gap: 16px;
+                grid-template-columns: 1fr 1fr;
+                gap: clamp(16px, 2vw, 28px);
+                align-items: center;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .schedule-item:hover {
                 transform: translateY(-6px);
                 box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Alternate sides: odd items keep text-left, even items get image-left */
+            .schedule-item:nth-child(even) .schedule-item-image {
+                order: -1;
+            }
+
+            .schedule-item-text {
+                display: grid;
+                gap: 14px;
+                padding: clamp(6px, 1vw, 14px);
+                min-width: 0;
+            }
+
+            .schedule-item-image {
+                aspect-ratio: 1 / 1;
+                border-radius: 20px;
+                overflow: hidden;
+            }
+
+            .schedule-item-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .schedule-item-image-placeholder {
+                background:
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+                display: grid;
+                place-items: center;
+                color: rgba(26, 26, 46, 0.30);
+                border: 1px dashed rgba(26, 26, 46, 0.12);
+            }
+
+            .schedule-item-image-placeholder svg {
+                width: 28%;
+                max-width: 56px;
+                height: auto;
             }
 
             .schedule-item span {
@@ -3504,7 +3547,20 @@ export const homeStyles = (): string => `
                 }
 
                 .schedule-item {
-                    padding: clamp(16px, 3vw, 28px);
+                    padding: clamp(12px, 3vw, 18px);
+                    gap: clamp(12px, 3.5vw, 20px);
+                }
+
+                .schedule-item-text {
+                    padding: clamp(2px, 1vw, 6px);
+                    gap: 10px;
+                }
+            }
+
+            /* Tiny phones (<380px): give text a touch more room */
+            @media (max-width: 380px) {
+                .schedule-item {
+                    grid-template-columns: 0.85fr 1fr;
                 }
             }
 
@@ -4358,8 +4414,8 @@ export const homeStyles = (): string => `
                 
                 /* Desktop Schedule Section */
                 .schedule-grid {
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: clamp(16px, 2.5vw, 32px);
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: clamp(20px, 2.5vw, 36px);
                     width: 100%;
                     max-width: unset;
                     margin: 0;

@@ -6,6 +6,7 @@ import { footer } from './shared/footer.js'
 // .schedule-item / .event-link-btn classes — no bespoke styles.
 // The events carousel + past-events modal are migrated from home; the
 // Google Calendar JS lives in home-scripts.ts (still bundled on this page).
+// Section order: intro → events (top of fold) → ministries → past-events modal.
 
 const PLACEHOLDER_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`
 
@@ -19,61 +20,6 @@ export const outreachBody = (): string => `
                     <span class="section-eyebrow">Outreach</span>
                     <h1 class="section-heading">How We Serve Boise</h1>
                     <p class="section-lead">Faith without works is dead. Here's how Morning Star puts love into action — through weekly ministries, monthly community service, and seasonal events open to anyone in the city.</p>
-                </section>
-
-                <section id="sunday-school">
-                    <span class="section-eyebrow">Sunday School</span>
-                    <h2 class="section-heading">Sundays · During the 9 AM service</h2>
-                    <div class="section-card">
-                        <div class="schedule-item">
-                            <div class="schedule-item-text">
-                                <p>Children's Sunday School runs during the main service so families can worship together and kids can dive into scripture at their level. Curriculum focuses on the gospel, the Bible's storyline, and what it means to follow Jesus. Safe, warm, and joyful — drop-off is welcome any Sunday.</p>
-                                <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: 600;">Ask about Sunday School →</a></p>
-                            </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="cooking-ministry">
-                    <span class="section-eyebrow">Cooking Ministry</span>
-                    <h2 class="section-heading">Monthly · Boise homeless shelters</h2>
-                    <div class="section-card">
-                        <div class="schedule-item">
-                            <div class="schedule-item-text">
-                                <p>Once a month, a team from Morning Star cooks and serves a full hot meal at local homeless shelters in Boise. It's hands-on, it's humble, and it's one of the most concrete ways we live "mending the broken." No experience required — only willing hands.</p>
-                                <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: 600;">Join the next cook →</a></p>
-                            </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="community-breakfast">
-                    <span class="section-eyebrow">Community Breakfast</span>
-                    <h2 class="section-heading">Every Sunday · After service</h2>
-                    <div class="section-card">
-                        <div class="schedule-item">
-                            <div class="schedule-item-text">
-                                <p>Every Sunday morning after worship, breakfast is on us — for guests, members, neighbors, and anyone passing through. We also offer free transportation from select Boise shelters so the table is open to people who need it most.</p>
-                                <p style="margin-top: 14px;"><a href="/#schedule" style="color: var(--gold); font-weight: 600;">See the full schedule →</a></p>
-                            </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="seasonal-outreach">
-                    <span class="section-eyebrow">Seasonal Events</span>
-                    <h2 class="section-heading">Year-round · Open to the city</h2>
-                    <div class="section-card">
-                        <div class="schedule-item">
-                            <div class="schedule-item-text">
-                                <p>From Friendsgiving in the fall to community-wide events around major holidays, Morning Star regularly hosts open-door gatherings designed to feed people, build friendships, and welcome neighbors who may not have a church home. See what's coming up below.</p>
-                            </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
-                        </div>
-                    </div>
                 </section>
 
                 <section class="outreach" id="events">
@@ -94,6 +40,61 @@ export const outreachBody = (): string => `
                         <button class="carousel-arrow next" id="carousel-next" aria-label="Next event">&#8250;</button>
                         <div class="carousel-nav" id="carousel-nav">
                             <div class="carousel-dots" id="carousel-dots"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="sunday-school">
+                    <span class="section-eyebrow">Sunday School</span>
+                    <h2 class="section-heading">Sundays · During the 9 AM service</h2>
+                    <div class="section-card">
+                        <div class="schedule-item long-content">
+                            <div class="schedule-item-text">
+                                <p>Children's Sunday School runs during the main service so families can worship together and kids can dive into scripture at their level. Curriculum focuses on the gospel, the Bible's storyline, and what it means to follow Jesus. Safe, warm, and joyful — drop-off is welcome any Sunday.</p>
+                                <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: 600;">Ask about Sunday School →</a></p>
+                            </div>
+                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="cooking-ministry">
+                    <span class="section-eyebrow">Cooking Ministry</span>
+                    <h2 class="section-heading">Monthly · Boise homeless shelters</h2>
+                    <div class="section-card">
+                        <div class="schedule-item long-content">
+                            <div class="schedule-item-text">
+                                <p>Once a month, a team from Morning Star cooks and serves a full hot meal at local homeless shelters in Boise. It's hands-on, it's humble, and it's one of the most concrete ways we live "mending the broken." No experience required — only willing hands.</p>
+                                <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: 600;">Join the next cook →</a></p>
+                            </div>
+                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="community-breakfast">
+                    <span class="section-eyebrow">Community Breakfast</span>
+                    <h2 class="section-heading">Every Sunday · After service</h2>
+                    <div class="section-card">
+                        <div class="schedule-item long-content">
+                            <div class="schedule-item-text">
+                                <p>Every Sunday morning after worship, breakfast is on us — for guests, members, neighbors, and anyone passing through. We also offer free transportation from select Boise shelters so the table is open to people who need it most.</p>
+                                <p style="margin-top: 14px;"><a href="/#schedule" style="color: var(--gold); font-weight: 600;">See the full schedule →</a></p>
+                            </div>
+                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="seasonal-outreach">
+                    <span class="section-eyebrow">Seasonal Events</span>
+                    <h2 class="section-heading">Year-round · Open to the city</h2>
+                    <div class="section-card">
+                        <div class="schedule-item long-content">
+                            <div class="schedule-item-text">
+                                <p>From Friendsgiving in the fall to community-wide events around major holidays, Morning Star regularly hosts open-door gatherings designed to feed people, build friendships, and welcome neighbors who may not have a church home. See what's coming up above.</p>
+                            </div>
+                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
                         </div>
                     </div>
                 </section>

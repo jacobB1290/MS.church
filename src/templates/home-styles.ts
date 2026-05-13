@@ -798,10 +798,35 @@ export const homeStyles = (): string => `
                 grid-template-columns: 1fr;
             }
 
+            /* Long-content variant — used by sections with full paragraphs (the
+               About teaser on home, every /about and /outreach section). On
+               desktop the 2-column image+text layout is kept; on mobile the
+               narrow text column with a side image looks cramped, so we stack
+               image-on-top + text below. */
+            @media (max-width: 960px) {
+                .schedule-item.long-content {
+                    grid-template-columns: 1fr;
+                    gap: clamp(14px, 3vw, 20px);
+                }
+                .schedule-item.long-content .schedule-item-image {
+                    order: -1;
+                    aspect-ratio: 16 / 9;
+                }
+                /* Reset the alternation rule from .schedule-item:nth-child(even) */
+                .schedule-item.long-content:nth-child(even) .schedule-item-image {
+                    order: -1;
+                }
+            }
+
             /* ============================================================
                SUBPAGE HEADER — minimal header for /about and /outreach.
                Reuses .nav-shell + .brand styles; replaces nav links with
                a single "Back" pill on the right.
+
+               Desktop: keeps the unified .nav-shell appearance.
+               Mobile: dissolves the shell — the brand wordmark gets its own
+                       flared frosted pill, and the back button floats
+                       independently on the left as a standalone pill.
                ============================================================ */
             .nav-shell.subpage-shell {
                 /* Override grid/justify-content from .nav-shell to give us
@@ -825,6 +850,7 @@ export const homeStyles = (): string => `
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 text-decoration: none;
+                white-space: nowrap;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
             .subpage-back:hover {
@@ -835,6 +861,43 @@ export const homeStyles = (): string => `
             .subpage-back-arrow {
                 font-size: 16px;
                 line-height: 1;
+            }
+
+            /* Mobile-only: dissolve the shell and turn the brand into its
+               own flared frosted pill so logo and back-button read as two
+               independent floating elements rather than a single bar. */
+            @media (max-width: 960px) {
+                .nav-shell.subpage-shell {
+                    background: transparent !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    backdrop-filter: none !important;
+                    padding: 0 !important;
+                    gap: 12px;
+                    align-items: center;
+                }
+                .nav-shell.subpage-shell .brand {
+                    background: rgba(255, 255, 255, 0.85);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+                    backdrop-filter: blur(10px);
+                    border-radius: 100px;
+                    padding: 10px 24px;
+                    /* Title beside subtitle — flared horizontal pill */
+                    flex-direction: row;
+                    align-items: baseline;
+                    gap: 10px;
+                }
+                .nav-shell.subpage-shell .brand-title {
+                    font-size: 16px;
+                }
+                .nav-shell.subpage-shell .brand-subtitle {
+                    font-size: 9px;
+                }
+                .nav-shell.subpage-shell .subpage-back {
+                    padding: 10px 18px;
+                    font-size: 11px;
+                }
             }
 
             .schedule-item span {
@@ -1225,6 +1288,7 @@ export const homeStyles = (): string => `
                 color: #ffffff;
                 text-decoration: none;
                 cursor: pointer;
+                white-space: nowrap;
                 box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 box-sizing: border-box;

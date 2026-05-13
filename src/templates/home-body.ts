@@ -126,7 +126,7 @@ export const homeBody = (): string => `
                     <span class="section-eyebrow">About Us</span>
                     <h2 class="section-heading">A welcoming church in the heart of Boise.</h2>
                     <div class="section-card">
-                        <div class="schedule-item">
+                        <div class="schedule-item long-content">
                             <div class="schedule-item-text">
                                 <p>Morning Star is a small, nondenominational community where every story, every age, and every burden is met with grace and a seat at the table. We exist to point people to Jesus and to mend the broken — through faith, family, and serving the city we love.</p>
                                 <a class="event-link-btn teaser-cta" href="/about">Learn More About Us</a>

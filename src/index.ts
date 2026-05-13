@@ -1,4 +1,4 @@
-// Version: 1.42.1 - Refine multi-page: anchor-only nav on home, logo+back header on subpages, reuse design system
+// Version: 1.42.2 - Mobile fixes: stack long-content sections, dissolve subpage shell into 2 floating pills, events to top of /outreach
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

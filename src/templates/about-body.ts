@@ -24,7 +24,7 @@ export const aboutBody = (): string => `
                     <span class="section-eyebrow">Our Mission</span>
                     <h2 class="section-heading">Faith, family, and a city we love.</h2>
                     <div class="section-card">
-                        <div class="schedule-item">
+                        <div class="schedule-item long-content">
                             <div class="schedule-item-text">
                                 <p>We exist to point people to Jesus, to build a family that bears one another's burdens, and to serve Boise with the same compassion we've been shown. "Mending the Broken" is not a slogan — it's the lens we view every Sunday morning, every Tuesday coffee, every Thursday study, every Friday youth night, and every meal we cook for our city's most vulnerable.</p>
                             </div>
@@ -37,7 +37,7 @@ export const aboutBody = (): string => `
                     <span class="section-eyebrow">Our Story</span>
                     <h2 class="section-heading">A small church with a big heart.</h2>
                     <div class="section-card">
-                        <div class="schedule-item">
+                        <div class="schedule-item long-content">
                             <div class="schedule-item-text">
                                 <p>Morning Star was planted in Boise to be a place where people who never thought church was for them could find belonging. We're young, we're small, and we believe that the gospel is the most powerful force in any city — including ours. Whether you've grown up in church or you're walking through the door for the first time, you'll find friendly faces, honest teaching, and free breakfast every Sunday.</p>
                             </div>
@@ -87,7 +87,7 @@ export const aboutBody = (): string => `
                     <span class="section-eyebrow">Leadership</span>
                     <h2 class="section-heading">Meet our pastor.</h2>
                     <div class="section-card">
-                        <div class="schedule-item">
+                        <div class="schedule-item long-content">
                             <div class="schedule-item-text">
                                 <p>Our church is shepherded by a small, accessible leadership team rooted in scripture and committed to walking with our congregation through every season. Reach out any time — we'd love to meet you, answer questions, or pray for you.</p>
                                 <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: 600;">Send us a message →</a></p>

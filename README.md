@@ -1,7 +1,24 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.42.1
+## 🔢 CURRENT VERSION: v1.42.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.42.2 - Mobile Fixes: long-content stacking + dissolved subpage header
+**Targeted mobile-only fixes. Desktop layouts are unchanged.**
+
+1. **New `.schedule-item.long-content` modifier.** Same 2-column desktop layout as the regular `.schedule-item`, but at `@media (max-width: 960px)` it collapses to a single column with the image stacked on top. Applied to the home About teaser and every section on `/about` and `/outreach`. Fixes the "image on the right + tall thin text column with a 3-line wrapped button" issue on mobile.
+
+2. **Defensive `white-space: nowrap`** added to `.event-link-btn` so the pill never wraps its label, even in narrow containers. Belt-and-suspenders with the `.long-content` fix above.
+
+3. **Subpage header redesigned for mobile.** On desktop, the unified `.nav-shell` look is preserved. On mobile (`@media (max-width: 960px)`):
+   - The shell background, border, and shadow are dissolved.
+   - The brand wordmark gets its own flared horizontal frosted-glass pill (title beside subtitle, rounded ends).
+   - The back button floats independently on the left as its own pill.
+   - The two read as standalone elements, not as a single header bar.
+
+4. **Events carousel moved to the top of `/outreach`** (right after the intro). New order is: Intro → Events → Sunday School → Cooking Ministry → Community Breakfast → Seasonal Events. Visitors who came for "what's happening" see it first.
+
+---
 
 ### v1.42.1 - Design System Cleanup: Anchor-only Nav + Subpage Header
 **Fixes two issues with the v1.42 multi-page rollout: the nav semantics and reuse of the design system.**

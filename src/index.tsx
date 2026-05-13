@@ -1,4 +1,4 @@
-// Version: 1.45.4 - Schedule: bigger mobile title; visible placeholder on white section card
+// Version: 1.45.5 - Schedule banner edge-to-edge on mobile; fixes specificity collision with section-card
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

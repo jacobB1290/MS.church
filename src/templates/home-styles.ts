@@ -811,8 +811,10 @@ export const homeStyles = (): string => `
                tab crossfades the banner to the matching slide. On mobile
                the banner sits on top and the card list stacks below.
                ============================================================ */
-            .schedule-card {
-                /* Tighten outer card so the banner can fill its own bounds */
+            /* Two-class selector beats the generic .section-card rule at
+               equal specificity later in the cascade — needed because the
+               mobile .section-card rule sits below this one in the file. */
+            .section-card.schedule-card {
                 padding: clamp(20px, 2.4vw, 32px);
             }
             .schedule-layout {
@@ -4256,19 +4258,30 @@ export const homeStyles = (): string => `
                     gap: 10px;
                 }
 
-                /* Schedule banner + cards: stack on mobile. Banner sits on
-                   top with a 16/9 aspect ratio; cards become a single-column
-                   list below. Tabs remain interactive — tap to crossfade. */
+                /* Schedule layout on mobile: banner spans the section
+                   card edge-to-edge at the top, cards stack below in a
+                   single column. To achieve this:
+                     • the outer .schedule-card drops its padding to 0
+                       and clips overflow to its rounded corners, so
+                       the banner's top corners get the same radius
+                     • the banner loses its own border-radius
+                     • the card list reclaims internal padding so the
+                       tabs still have breathing room from the edges */
+                .section-card.schedule-card {
+                    padding: 0;
+                    overflow: hidden;
+                }
                 .schedule-layout {
                     grid-template-columns: 1fr;
-                    gap: clamp(16px, 3vw, 22px);
+                    gap: 0;
                 }
                 .schedule-banner {
                     aspect-ratio: 16 / 9;
-                    min-height: 0;
-                    border-radius: 20px;
+                    min-height: 200px;
+                    border-radius: 0;
                 }
                 .schedule-list {
+                    padding: clamp(20px, 5vw, 32px) clamp(16px, 4vw, 24px);
                     gap: clamp(10px, 2.2vw, 14px);
                 }
                 .schedule-tab {

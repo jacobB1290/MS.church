@@ -1,7 +1,19 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.45.4
+## 🔢 CURRENT VERSION: v1.45.5
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.45.5 - Schedule banner: edge-to-edge with section-card on mobile
+
+Root cause of the "I still don't see the placeholder" report in v1.45.4: my `.schedule-card { padding: 0 }` mobile override sat *before* the generic `.section-card { padding: clamp(18px, 4vw, 36px) … }` rule in the cascade. Both selectors had equal specificity (0,1,0), so the later one won — leaving the banner inset by the section-card's padding instead of going edge-to-edge.
+
+**Fix:** bumped the selector to `.section-card.schedule-card` (0,2,0 specificity) — wins regardless of source order. Now on mobile:
+
+- Outer `.section-card` drops its padding to 0 and clips overflow to its rounded corners
+- Banner has no border-radius, sits flush against the section-card's content area (top + both sides)
+- `.schedule-list` reclaims internal padding (`clamp(20px, 5vw, 32px) clamp(16px, 4vw, 24px)`) so the tab cards keep their breathing room from the card edges
+
+Verified via Playwright at 390×844 viewport: banner is 205px tall, 364×205px, sits flush against the section-card's content rect, placeholder SVG renders at 79×79px clearly centered.
 
 ### v1.45.4 - Schedule: bigger mobile title; visible placeholder on white section card
 

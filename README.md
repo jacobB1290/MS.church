@@ -1,7 +1,21 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.45.5
+## 🔢 CURRENT VERSION: v1.45.6
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.45.6 - Mobile: remove schedule banner; plain stacked card list
+
+The banner image was always going to compete with the cards for vertical space on a narrow viewport, and a single shared image with no card it spatially "belongs to" was confusing on mobile where you only see one card at a time anyway. Removed it.
+
+**On mobile (≤960px):**
+- `.schedule-banner { display: none }` — banner is gone entirely
+- `.section-card.schedule-card` gets its standard padding back (no banner to make edge-to-edge for)
+- Active-state styling is neutralized — every card looks identical, since there's no banner for "active" to control
+- JS schedule-carousel block early-returns on mobile via `matchMedia('(max-width: 960px)')` — no auto-cycle timer wasted, no IntersectionObserver attached
+
+**On desktop (≥961px):** unchanged — banner sits left of the cards, crossfades on hover/click/auto-cycle, exactly as v1.45.5.
+
+Verified both viewports via Playwright: mobile renders a plain stacked card list (no banner element visible), desktop keeps the banner-left + tabs-right layout.
 
 ### v1.45.5 - Schedule banner: edge-to-edge with section-card on mobile
 

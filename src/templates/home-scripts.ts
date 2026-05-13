@@ -61,6 +61,10 @@ export const homeScripts = (): string => `
                     const slides = banner ? banner.querySelectorAll('.schedule-banner-slide') : [];
                     if (banner && tabs.length && tabs.length === slides.length) {
                         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                        // Banner is hidden on mobile via CSS — skip the carousel logic entirely
+                        // so no auto-cycle timer runs and tap targets stay plain card buttons.
+                        const isMobile = window.matchMedia('(max-width: 960px)').matches;
+                        if (isMobile) return;
                         const AUTO_MS = 6000;
                         const RESUME_MS = 12000;
                         let activeIndex = 0;

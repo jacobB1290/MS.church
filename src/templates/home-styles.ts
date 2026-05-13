@@ -4258,31 +4258,30 @@ export const homeStyles = (): string => `
                     gap: 10px;
                 }
 
-                /* Schedule layout on mobile: banner spans the section
-                   card edge-to-edge at the top, cards stack below in a
-                   single column. To achieve this:
-                     • the outer .schedule-card drops its padding to 0
-                       and clips overflow to its rounded corners, so
-                       the banner's top corners get the same radius
-                     • the banner loses its own border-radius
-                     • the card list reclaims internal padding so the
-                       tabs still have breathing room from the edges */
+                /* Schedule on mobile: banner hidden — the section becomes
+                   a plain stacked list of weekly gathering cards. Section-
+                   card returns to its standard padding (no banner to make
+                   edge-to-edge for), and the .schedule-tab active state
+                   is neutralized so no single card is arbitrarily
+                   highlighted (there's no banner for it to control). */
+                .schedule-banner {
+                    display: none;
+                }
                 .section-card.schedule-card {
-                    padding: 0;
-                    overflow: hidden;
+                    padding: clamp(18px, 4vw, 36px) clamp(16px, 3vw, 28px);
+                    overflow: visible;
                 }
                 .schedule-layout {
                     grid-template-columns: 1fr;
                     gap: 0;
                 }
-                .schedule-banner {
-                    aspect-ratio: 16 / 9;
-                    min-height: 200px;
-                    border-radius: 0;
-                }
                 .schedule-list {
-                    padding: clamp(20px, 5vw, 32px) clamp(16px, 4vw, 24px);
+                    padding: 0;
                     gap: clamp(10px, 2.2vw, 14px);
+                }
+                .schedule-tab.active {
+                    background: rgba(255, 255, 255, 0.78);
+                    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
                 }
                 .schedule-tab {
                     border-radius: 18px;

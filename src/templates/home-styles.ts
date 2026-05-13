@@ -881,29 +881,38 @@ export const homeStyles = (): string => `
                 padding: 14px 32px;
             }
 
-            /* About teaser inner card — same nested-card pattern as the
-               outreach teaser, but the image runs flush to the inner
-               schedule-item's rounded edges (no padding between image and
-               card border). Scoped to #about so the same .schedule-item
-               component on other pages keeps its standard inner padding. */
+            /* About teaser inner card — visually identical to the standalone
+               card we had before nesting (image flush to the inner card's
+               rounded edges, same generous text padding, same min-height),
+               but now wrapped inside an outer .section-card with the CTA
+               at the bottom (so the structure matches the outreach teaser).
+               Scoped to #about so the same .schedule-item component on
+               other routes keeps its standard inner padding. */
             #about .schedule-item.long-content {
                 padding: 0;
                 overflow: hidden;
                 align-items: stretch;
             }
             #about .schedule-item.long-content .schedule-item-text {
-                padding: clamp(24px, 4vw, 40px);
+                padding: clamp(36px, 4.5vw, 56px);
                 align-self: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 18px;
             }
             #about .schedule-item.long-content .schedule-item-image {
                 border-radius: 0;
                 aspect-ratio: auto;
-                min-height: 280px;
+                min-height: 360px;
             }
             @media (max-width: 960px) {
                 #about .schedule-item.long-content .schedule-item-image {
-                    aspect-ratio: 16 / 9;
+                    aspect-ratio: 16 / 10;
                     min-height: 0;
+                }
+                #about .schedule-item.long-content .schedule-item-text {
+                    padding: clamp(20px, 5vw, 32px);
                 }
             }
 

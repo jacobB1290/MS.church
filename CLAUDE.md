@@ -189,6 +189,22 @@ After it finishes, open `scripts/harness/output/report.html` in a browser — co
 - After bumps to Hono, Vite, or anything affecting bundle size or hydration timing.
 - Whenever a user reports "feels janky" / "off-screen on jump" / "flickers" — reproduce in the harness first, then fix.
 
+### MUST run it: animation + design work (beyond trivial)
+
+**Before pushing any animation change, scroll/anchor behavior change, layout-shift fix, transform/transition tweak, reveal-observer change, or design change beyond a one-line copy edit, run the harness, read the report, and ITERATE until it passes.** Push only after a green run.
+
+This rule exists because animation and design regressions have repeatedly shipped because the harness wasn't run between iterations:
+
+- A scrollTo that lands 40px off because `getBoundingClientRect()` includes a transform — invisible on localhost without network throttle, visible in production.
+- A snap-correct racing a smooth-scroll that produces "page sits, then jumps."
+- A fade-in that completes before layout settles, exposing layout shifts as visible jumps.
+
+If the change you're making could conceivably show up in a harness scenario (anchor landing, perf timing, flow recording, reveal-fire count, CLS, view-transition snapshot), assume it could regress and run the harness. The harness takes ~2.5 minutes; that's cheap insurance vs. a user noticing on production.
+
+If the harness doesn't have a scenario that would catch the bug class you're touching, ADD one before fixing, then fix and re-run. The new throttled-network anchor scenarios (18–19) and perf scenarios (80–82) exist exactly because the harness was too fast on localhost to catch "calendar mounts after scrollTo" — they're now routine checks because the user explicitly asked for that.
+
+**Trivial / exempt changes:** copy text, single-color swap, comment-only edits, README, version bump alone. Anything that touches layout, motion, scroll, transforms, or interaction state is NOT trivial and the harness must run.
+
 ### How to extend it
 
 The harness is structured so new scenarios are additive:
@@ -381,7 +397,7 @@ Vercel Analytics and Speed Insights are loaded conditionally in the client via d
 
 7. **SEO metadata is extensive.** The `<head>` section (`src/templates/home-head.ts`) includes Schema.org JSON-LD, Open Graph, Twitter Card, geo tags, and canonical URL. Preserve and update these when changing page content.
 
-8. **No test suite exists.** There are no automated tests. Validate changes visually by running `npm run dev`.
+8. **The harness IS the test suite.** `node scripts/harness/run.mjs` runs Playwright-driven anchor + perf + flow scenarios. **For any animation, scroll/anchor, layout-shift, transform/transition, reveal-observer, or non-trivial design change, run the harness, read `output/report.html`, and iterate until it passes BEFORE pushing.** Push only after a green run. If the bug class you're touching isn't covered, ADD a scenario, then fix. See the "MUST run it" subsection above. Validate visually with `npm run dev` too, but harness is the gate.
 
 9. **The README.md is a changelog**, not typical documentation. Add a new version entry there for any significant changes.
 

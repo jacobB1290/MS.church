@@ -1,4 +1,4 @@
-// Version: 1.47.1 - Section eyebrows match nav text exactly (Schedule / About / Outreach / Watch / Contact)
+// Version: 1.47.2 - Outreach teaser cards: edge-to-edge images (padding 0 + overflow hidden on card)
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

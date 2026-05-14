@@ -1,7 +1,20 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.47.1
+## 🔢 CURRENT VERSION: v1.47.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.47.2 - Outreach teaser cards: edge-to-edge images
+
+The 3 Outreach teaser cards previously had their image insets by the card's inner padding (`clamp(14px, 2vw, 22px)` + the image's own 20px radius). User asked for the image to run flush to the card's outer edge.
+
+**Scoped fix (`#outreach .schedule-item.teaser-link-card` only):**
+- Card `padding: 0; gap: 0; overflow: hidden;` — strips inner padding and clips the image to the card's outer rounded corners
+- Image cell `height: 100%; width: 100%; border-radius: 0;` — fills its grid cell to the card edges, lets the card's `overflow: hidden` handle the corner rounding
+- Text cell reclaims internal padding (`clamp(20px, 2.2vw, 28px)` desktop / `clamp(16px, 4vw, 22px)` mobile) so prose still has breathing room
+
+The existing `:nth-child(even) .schedule-item-image { order: -1 }` alternation still applies — card 1 has image flush right, card 2 has image flush left, card 3 has image flush right.
+
+Scoped to `#outreach` so the same `.teaser-link-card` pattern keeps its standard inner padding everywhere else.
 
 ### v1.47.1 - Section eyebrows match nav text exactly
 

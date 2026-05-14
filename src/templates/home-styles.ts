@@ -1432,6 +1432,39 @@ export const homeStyles = (): string => `
                 transform: translateX(4px);
             }
 
+            /* ============================================================
+               OUTREACH TEASER CARDS — edge-to-edge images
+               The card's outer padding is removed and overflow is clipped
+               so each card's placeholder image runs flush to its three
+               outer edges (top, bottom, and whichever side it sits on —
+               right for odd cards, left for even cards via the existing
+               :nth-child(even) order: -1 rule). Text gets its own internal
+               padding to keep breathing room.
+               Scoped to #outreach so the schedule-item pattern keeps its
+               standard inner padding everywhere else on the site.
+               ============================================================ */
+            #outreach .schedule-item.teaser-link-card {
+                padding: 0;
+                gap: 0;
+                overflow: hidden;
+            }
+            #outreach .schedule-item.teaser-link-card .schedule-item-text {
+                padding: clamp(20px, 2.2vw, 28px);
+                display: grid;
+                gap: 12px;
+            }
+            #outreach .schedule-item.teaser-link-card .schedule-item-image {
+                border-radius: 0;
+                height: 100%;
+                width: 100%;
+            }
+            @media (max-width: 960px) {
+                #outreach .schedule-item.teaser-link-card .schedule-item-text {
+                    padding: clamp(16px, 4vw, 22px);
+                    gap: 10px;
+                }
+            }
+
             /* Belief items: text-only schedule-item variant (no image column). */
             .schedule-item.belief-item {
                 grid-template-columns: 1fr;

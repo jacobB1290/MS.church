@@ -253,8 +253,44 @@ async function getCLS(page) {
   return await page.evaluate(() => window.__cls || 0)
 }
 
+// withTimeout — race any promise against a deadline so a hung Playwright
+// call (screenshot, waitForLoadState, etc.) can't stall the whole harness.
+// Returns the promise's result on success, throws { timedOut: true } on
+// expiry. Always pass a label so the error message names what stalled.
+async function withTimeout(promise, ms, label) {
+  let timer
+  const sentinel = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      const err = new Error(`timeout(${ms}ms): ${label}`)
+      err.timedOut = true
+      reject(err)
+    }, ms)
+  })
+  try {
+    return await Promise.race([promise, sentinel])
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+// Hard per-scenario budget. The harness uses this to bound any single
+// anchor/perf/flow run — if a scenario blows past this, it's marked
+// failed and the rest of the suite continues.
+const SCENARIO_BUDGET_MS = 60_000
+
+// Best-effort screenshot — never throws, never hangs. Returns true on
+// success, false on any error (page closed, timeout, etc).
+async function safeScreenshot(page, opts) {
+  try {
+    await withTimeout(page.screenshot(opts), 5000, `screenshot ${opts.path || ''}`)
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function waitForSettled(page) {
-  await page.waitForLoadState('load').catch(() => {})
+  try { await withTimeout(page.waitForLoadState('load'), 5000, 'waitForLoadState load') } catch {}
   try { await page.waitForLoadState('networkidle', { timeout: 4000 }) } catch {}
   // Wait for every non-looping animation to finish. Infinite/looping
   // animations (.live-status pulse, .stay-tuned-card color swirl, etc.)
@@ -279,17 +315,21 @@ async function waitForSettled(page) {
 async function captureTransitionFrames(page, dir, prefix, action, durationMs = 720, frameCount = 9) {
   mkdirSync(dir, { recursive: true })
   const interval = durationMs / frameCount
-  const actionPromise = action()
+  // Don't await the action inside the loop — its job is to trigger the
+  // transition. Catch the promise rejection on its own (so an unhandled
+  // rejection doesn't kill the process) but never block on it.
+  const actionPromise = action().catch(() => {})
   for (let i = 0; i < frameCount; i++) {
     const t = Math.round(i * interval)
-    try {
-      await page.screenshot({
-        path: resolve(dir, `${prefix}-${String(i).padStart(2, '0')}-${t}ms.png`),
-      })
-    } catch (e) {}
+    // safeScreenshot has its own 5s timeout — a crashed page can't hang us.
+    await safeScreenshot(page, {
+      path: resolve(dir, `${prefix}-${String(i).padStart(2, '0')}-${t}ms.png`),
+    })
     await new Promise((r) => setTimeout(r, interval))
   }
-  await actionPromise.catch(() => {})
+  // Cap how long we wait for the action to settle so a stuck navigation
+  // doesn't pin the whole scenario.
+  await withTimeout(actionPromise, 10_000, 'transition action settle').catch(() => {})
 }
 
 // Visual quality probes — run in the page context after settle.
@@ -389,11 +429,16 @@ async function runAnchorScenarios(browser, report) {
     await installCLSObserver(context)
     const page = await context.newPage()
     const errors = attachPageMonitors(page)
+    let pageDead = false
+    page.on('crash', () => { pageDead = true; errors.push('page crashed') })
+    page.on('close', () => { pageDead = true })
     const issues = []
     const url = BASE + s.path + (s.anchor || '')
+    const t0 = Date.now()
+    process.stdout.write(`▶ ${s.name} `)
 
-    try {
-      await page.goto(url, { waitUntil: 'commit' })
+    const anchorBody = (async () => {
+      await withTimeout(page.goto(url, { waitUntil: 'commit' }), 10_000, `goto ${url}`)
 
       let driftMeasurements = null
       if (s.anchor) {
@@ -445,33 +490,41 @@ async function runAnchorScenarios(browser, report) {
       if (errors.length) issues.push(`errors=[${errors.slice(0, 2).join(' | ')}${errors.length > 2 ? ' …' : ''}]`)
 
       const screenshotPath = resolve(OUT_DIR, `${s.name}.png`)
-      await page.screenshot({ path: screenshotPath })
+      await safeScreenshot(page, { path: screenshotPath })
 
       const driftStr = driftMeasurements
         ? ` top@${driftMeasurements.map((m) => `${m.t}=${m.top}`).join(' ')}`
         : ''
+      const elapsed = Date.now() - t0
       let line
       if (issues.length === 0) {
         pass++
-        line = `✓ ${s.name}${driftStr}  cls=${cls.toFixed(3)}`
+        line = `✓ ${s.name}${driftStr}  cls=${cls.toFixed(3)}  (${elapsed}ms)`
       } else {
         fail++
-        line = `✗ ${s.name}${driftStr}  ${issues.join(' / ')}`
+        line = `✗ ${s.name}${driftStr}  ${issues.join(' / ')}  (${elapsed}ms)`
       }
       report.scenarios.push({
         name: s.name, kind: 'anchor', ok: issues.length === 0,
         url, viewport: `${s.viewport.width}x${s.viewport.height}`,
-        screenshot: `${s.name}.png`, drift: driftMeasurements, cls, issues,
+        screenshot: `${s.name}.png`, drift: driftMeasurements, cls, issues, elapsedMs: elapsed,
       })
       lines.push(line)
+      console.log('  ' + (issues.length === 0 ? '✓' : '✗') + ' ' + elapsed + 'ms')
+    })()
+
+    try {
+      await withTimeout(anchorBody, 30_000, `anchor ${s.name}`)
     } catch (err) {
       fail++
-      lines.push(`✗ ${s.name}  ${err.message}`)
-      report.scenarios.push({ name: s.name, kind: 'anchor', ok: false, url, issues: [err.message] })
+      const elapsed = Date.now() - t0
+      const msg = err.timedOut ? `BUDGET EXCEEDED (30s)` : err.message
+      lines.push(`✗ ${s.name}  ${msg}  (${elapsed}ms)`)
+      console.log('  ✗ ' + msg + ' ' + elapsed + 'ms')
+      report.scenarios.push({ name: s.name, kind: 'anchor', ok: false, url, issues: [msg], elapsedMs: elapsed })
     }
 
-    console.log(lines[lines.length - 1])
-    await context.close()
+    try { await withTimeout(context.close(), 3_000, 'context.close').catch(() => {}) } catch {}
   }
 
   return { lines, pass, fail }
@@ -614,10 +667,15 @@ async function runPerfScenarios(browser, report) {
     const context = await browser.newContext({ viewport: s.viewport })
     const page = await context.newPage()
     const errors = attachPageMonitors(page)
+    let pageDead = false
+    page.on('crash', () => { pageDead = true; errors.push('page crashed') })
+    page.on('close', () => { pageDead = true })
 
     let inputLatency = null
-    try {
-      await page.goto(BASE + s.path, { waitUntil: 'commit' })
+    const t0 = Date.now()
+    process.stdout.write(`▶ ${s.name} `)
+    const perfBody = (async () => {
+      await withTimeout(page.goto(BASE + s.path, { waitUntil: 'commit' }), 10_000, `goto ${s.path}`)
       await waitForSettled(page)
       await installPerfObservers(page)
       await page.evaluate(() => window.__perfStart())
@@ -643,12 +701,13 @@ async function runPerfScenarios(browser, report) {
         }, s.hash)
         await page.waitForTimeout(1400)
       } else if (s.action === 'click') {
-        const t0 = Date.now()
+        const clickStart = Date.now()
         await Promise.all([
-          page.waitForLoadState('load').catch(() => {}),
-          page.click(s.selector),
+          withTimeout(page.waitForLoadState('load'), 8_000, 'click waitForLoad').catch(() => {}),
+          withTimeout(page.click(s.selector), 8_000, `click ${s.selector}`),
         ])
-        inputLatency = Date.now() - t0
+        inputLatency = Date.now() - clickStart
+        if (pageDead) throw new Error('page closed/crashed after click')
         // Re-install observers on the destination page (the previous page's
         // window context is gone after navigation).
         await installPerfObservers(page)
@@ -672,32 +731,38 @@ async function runPerfScenarios(browser, report) {
 
       const tier120Tag = passes120 ? '120✓' : '120✗'
       const summary = `fps=${stats.avgFps.toFixed(1)} p95=${stats.p95FrameMs.toFixed(1)}ms max=${stats.maxFrameMs.toFixed(1)}ms  over16=${stats.framesOver16} over33=${stats.framesOver33}  loaf=${stats.loafCount}/${stats.loafMaxMs}ms  longtasks=${stats.longTaskCount}/${stats.longTaskMaxMs}ms${inputLatency != null ? ` clk=${inputLatency}ms` : ''} ${tier120Tag}`
+      const elapsed = Date.now() - t0
       let line
       if (passes60) {
         pass++
-        line = `✓ ${s.name}  ${summary}`
+        line = `✓ ${s.name}  ${summary}  (${elapsed}ms)`
       } else {
         fail++
-        line = `✗ ${s.name}  ${summary}  ${issues60.join(' / ')}`
+        line = `✗ ${s.name}  ${summary}  ${issues60.join(' / ')}  (${elapsed}ms)`
       }
       lines.push(line)
-      console.log(line)
+      console.log('  ' + (passes60 ? '✓' : '✗') + ' ' + elapsed + 'ms')
       report.scenarios.push({
         name: s.name, kind: 'perf', ok: passes60,
         passes60, passes120, issues120,
         viewport: `${s.viewport.width}x${s.viewport.height}`,
         action: s.action + (s.hash ? ' ' + s.hash : '') + (s.selector ? ' ' + s.selector : ''),
-        stats, inputLatency, issues: issues60,
+        stats, inputLatency, issues: issues60, elapsedMs: elapsed,
       })
+    })()
+
+    try {
+      await withTimeout(perfBody, 40_000, `perf ${s.name}`)
     } catch (err) {
       fail++
-      const line = `✗ ${s.name}  ${err.message}`
-      lines.push(line)
-      console.log(line)
-      report.scenarios.push({ name: s.name, kind: 'perf', ok: false, issues: [err.message] })
+      const elapsed = Date.now() - t0
+      const msg = err.timedOut ? `BUDGET EXCEEDED (40s)` : err.message
+      lines.push(`✗ ${s.name}  ${msg}  (${elapsed}ms)`)
+      console.log('  ✗ ' + msg + ' ' + elapsed + 'ms')
+      report.scenarios.push({ name: s.name, kind: 'perf', ok: false, issues: [msg], elapsedMs: elapsed })
     }
 
-    await context.close()
+    try { await withTimeout(context.close(), 3_000, 'context.close').catch(() => {}) } catch {}
   }
 
   return { lines, pass, fail }
@@ -724,15 +789,26 @@ async function runFlowScenarios(browser, report) {
     await installCLSObserver(context)
     const page = await context.newPage()
     const errors = attachPageMonitors(page)
+    // Track page crashes / closures so we can detect them and abort the
+    // scenario instead of hanging trying to interact with a dead page.
+    let pageDead = false
+    page.on('crash', () => { pageDead = true; errors.push('page crashed') })
+    page.on('close', () => { pageDead = true })
     const issues = []
     const motionStates = []
     const framesPerNav = []
+    const t0 = Date.now()
+    process.stdout.write(`▶ ${s.name} `)
 
     let navIdx = 0
-    try {
+    const scenarioBody = (async () => {
       for (const step of s.steps) {
+        if (pageDead) throw new Error('page closed/crashed mid-scenario')
         if (step.type === 'goto') {
-          await page.goto(BASE + step.url, { waitUntil: 'commit' })
+          await withTimeout(
+            page.goto(BASE + step.url, { waitUntil: 'commit' }),
+            10_000, `goto ${step.url}`
+          )
           await waitForSettled(page)
         } else if (step.type === 'scroll') {
           // Smooth incremental scroll so reveals are visible in the recorded
@@ -772,12 +848,17 @@ async function runFlowScenarios(browser, report) {
           navIdx++
           const prefix = `nav${String(navIdx).padStart(2, '0')}-${step.kind}`
           const trigger = async () => {
+            // Bound the load-state wait so a navigation that never fires
+            // `load` (e.g. after a renderer crash) doesn't pin us forever.
+            const loadWait = withTimeout(
+              page.waitForLoadState('load'), 8_000, `${step.kind} waitForLoad`
+            ).catch(() => {})
             if (step.kind === 'click') {
-              await Promise.all([page.waitForLoadState('load').catch(() => {}), page.click(step.selector)])
+              await Promise.all([loadWait, withTimeout(page.click(step.selector), 8_000, `click ${step.selector}`)])
             } else if (step.kind === 'goBack') {
-              await Promise.all([page.waitForLoadState('load').catch(() => {}), page.goBack()])
+              await Promise.all([loadWait, withTimeout(page.goBack(), 8_000, 'goBack')])
             } else if (step.kind === 'goForward') {
-              await Promise.all([page.waitForLoadState('load').catch(() => {}), page.goForward()])
+              await Promise.all([loadWait, withTimeout(page.goForward(), 8_000, 'goForward')])
             }
           }
           if (step.captureFrames) {
@@ -790,46 +871,66 @@ async function runFlowScenarios(browser, report) {
           } else {
             await trigger()
           }
+          if (pageDead) {
+            issues.push(`step ${navIdx} (${step.kind}): page died after navigation`)
+            break
+          }
           await waitForSettled(page)
 
-          const noEntrance = await page.evaluate(() => document.documentElement.classList.contains('no-entrance'))
-          motionStates.push(`${step.kind}=${noEntrance ? 'noEntrance' : 'ANIMATED'}`)
-          if (!noEntrance) issues.push(`step ${navIdx} (${step.kind}): entrance animation NOT suppressed`)
+          const noEntrance = await withTimeout(
+            page.evaluate(() => document.documentElement.classList.contains('no-entrance')),
+            3_000, 'check no-entrance'
+          ).catch(() => null)
+          motionStates.push(`${step.kind}=${noEntrance === null ? 'unknown' : noEntrance ? 'noEntrance' : 'ANIMATED'}`)
+          if (noEntrance === false) issues.push(`step ${navIdx} (${step.kind}): entrance animation NOT suppressed`)
 
-          const stillAnim = await getInflightSectionAnimations(page)
+          const stillAnim = await withTimeout(getInflightSectionAnimations(page), 3_000, 'inflight anims').catch(() => [])
           if (stillAnim.length) issues.push(`step ${navIdx}: sections still animating after settle`)
         }
       }
 
-      const cls = await getCLS(page)
+      const cls = pageDead ? 0 : await withTimeout(getCLS(page), 3_000, 'getCLS').catch(() => 0)
       if (cls > CLS_THRESHOLD) issues.push(`CLS=${cls.toFixed(3)}>${CLS_THRESHOLD}`)
-      const probes = await visualProbes(page)
-      if (probes.issues.length) issues.push(...probes.issues)
+      if (!pageDead) {
+        const probes = await withTimeout(visualProbes(page), 5_000, 'visualProbes').catch(() => ({ issues: [] }))
+        if (probes.issues.length) issues.push(...probes.issues)
+      }
       if (errors.length) issues.push(`errors=[${errors.slice(0, 2).join(' | ')}${errors.length > 2 ? ' …' : ''}]`)
 
+      const elapsed = Date.now() - t0
       let line
       if (issues.length === 0) {
         pass++
-        line = `✓ ${s.name}  ${motionStates.join(', ')}  cls=${cls.toFixed(3)}`
+        line = `✓ ${s.name}  ${motionStates.join(', ')}  cls=${cls.toFixed(3)}  (${elapsed}ms)`
       } else {
         fail++
-        line = `✗ ${s.name}  ${motionStates.join(', ')}  ${issues.join(' / ')}`
+        line = `✗ ${s.name}  ${motionStates.join(', ')}  ${issues.join(' / ')}  (${elapsed}ms)`
       }
       report.scenarios.push({
         name: s.name, kind: 'flow', ok: issues.length === 0,
         viewport: `${s.viewport.width}x${s.viewport.height}`,
         motionStates, framesPerNav, cls, issues,
-        video: `${s.name}.webm`,
+        video: `${s.name}.webm`, elapsedMs: elapsed,
       })
       lines.push(line)
+      console.log('  ' + (issues.length === 0 ? '✓' : '✗') + ' ' + elapsed + 'ms')
+    })()
+
+    try {
+      await withTimeout(scenarioBody, SCENARIO_BUDGET_MS, `scenario ${s.name}`)
     } catch (err) {
       fail++
-      lines.push(`✗ ${s.name}  ${err.message}`)
-      report.scenarios.push({ name: s.name, kind: 'flow', ok: false, issues: [err.message] })
+      const elapsed = Date.now() - t0
+      const msg = err.timedOut ? `BUDGET EXCEEDED (${SCENARIO_BUDGET_MS}ms)` : err.message
+      lines.push(`✗ ${s.name}  ${msg}  (${elapsed}ms)`)
+      console.log('  ✗ ' + msg + ' ' + elapsed + 'ms')
+      report.scenarios.push({ name: s.name, kind: 'flow', ok: false, issues: [msg], elapsedMs: elapsed })
     }
 
-    await page.close()
-    await context.close()
+    // Force-close the page even if scenario timed out. Wrapped in try/catch
+    // because the page might already be closed from a crash.
+    try { await withTimeout(page.close(), 3_000, 'page.close').catch(() => {}) } catch {}
+    try { await withTimeout(context.close(), 5_000, 'context.close').catch(() => {}) } catch {}
 
     try {
       const files = readdirSync(videoDir)

@@ -1,4 +1,4 @@
-// Version: 1.48.0 - Custom rAF anchor-scroll animator w/ trapezoidal velocity (peak ratio 1.18x), distance/2 duration
+// Version: 1.48.1 - Faster anchor scroll: distance/4 (~700ms for 2851px, matches home's native speed) + trapezoidal velocity for smoothness
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

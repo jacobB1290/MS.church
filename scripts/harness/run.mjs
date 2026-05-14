@@ -83,16 +83,11 @@ const PERF = PERF_60
 // over a window that captures both the journey (for the report) and the
 // final stable state. Stability is asserted across the last three samples.
 // Sample windows tuned for the v1.48 custom rAF animator: subpage-header.ts
-// schedules a smooth scroll at DOMContentLoaded + 220ms with up to 1800ms
-// duration (for long scrolls like /visit#sunday-school = 2851px). Add the
-// snap-correct delay of 2200ms; samples in the last three positions need
-// to land after that. [100, 600, 2400, 3000, 3600] gives:
-//   100  — pre-scroll baseline
-//   600  — mid-scroll snapshot (informational)
-//   2400 — post-scroll, post-snap (should match expected landing)
-//   3000 — stable check
-//   3600 — stable check
-const DRIFT_SAMPLES_MS = [100, 600, 2400, 3000, 3600]
+// schedules a smooth scroll at DOMContentLoaded + 220ms with up to 1000ms
+// duration (matches browser-native smooth scroll for snappy feel; the
+// trapezoidal velocity curve keeps per-frame visual jumps small even
+// at that pace). Snap-correct fires at 1400ms.
+const DRIFT_SAMPLES_MS = [100, 500, 1500, 2000, 2600]
 const DRIFT_STABLE_SAMPLES = 3 // last N samples must be within DRIFT_STABLE_TOLERANCE
 
 // Visual quality knobs
@@ -681,23 +676,37 @@ function computePerfStats(perf) {
       scrollDeltaMax = Math.max(...deltas)
       scrollTotalPx = sum
     }
-    // Bucket scrollY into display-rate windows. Find the biggest jump
-    // between consecutive window-end positions — that's what the user
-    // sees frame-to-frame on a display of that refresh rate.
-    for (const windowMs of [16.67, 8.33]) {
-      const bucketEnds = []
-      let bucketStart = perf.frames[0]
-      let lastY = perf.scrollYs[0]
-      for (let i = 1; i < perf.frames.length; i++) {
-        if (perf.frames[i] - bucketStart >= windowMs) {
-          bucketEnds.push(perf.scrollYs[i])
-          bucketStart = perf.frames[i]
-        }
-        lastY = perf.scrollYs[i]
+    // INTERPOLATE scrollY at exact display-frame intervals (16.67ms for
+    // 60Hz, 8.33ms for 120Hz). This is what the user would see on a
+    // real display: the browser commits the latest scrollY at each
+    // vsync, so per-frame jump = scrollY(t + frameMs) - scrollY(t).
+    //
+    // The previous bucket-end method overstated jumps by ~2x because
+    // rAF intervals are irregular under --disable-gpu-vsync: a bucket
+    // could span up to ~31ms (waiting for the next sample past 16.67ms),
+    // capturing 2 display-frames worth of scroll instead of 1. The
+    // interpolation method always uses an exact display-frame window.
+    function interpolateY(t) {
+      if (!perf.frames || perf.frames.length < 2) return perf.scrollYs[0] || 0
+      if (t <= perf.frames[0]) return perf.scrollYs[0]
+      if (t >= perf.frames[perf.frames.length - 1]) return perf.scrollYs[perf.scrollYs.length - 1]
+      // Binary search for the bracketing samples
+      let lo = 0, hi = perf.frames.length - 1
+      while (lo < hi - 1) {
+        const mid = (lo + hi) >> 1
+        if (perf.frames[mid] <= t) lo = mid
+        else hi = mid
       }
+      const t0 = perf.frames[lo], y0 = perf.scrollYs[lo]
+      const t1 = perf.frames[hi], y1 = perf.scrollYs[hi]
+      return t1 === t0 ? y0 : y0 + (y1 - y0) * (t - t0) / (t1 - t0)
+    }
+    const startT = perf.frames[0]
+    const endT = perf.frames[perf.frames.length - 1]
+    for (const windowMs of [16.67, 8.33]) {
       let mj = 0
-      for (let i = 1; i < bucketEnds.length; i++) {
-        mj = Math.max(mj, Math.abs(bucketEnds[i] - bucketEnds[i - 1]))
+      for (let t = startT; t + windowMs < endT; t += windowMs) {
+        mj = Math.max(mj, Math.abs(interpolateY(t + windowMs) - interpolateY(t)))
       }
       if (windowMs === 16.67) maxJumpPer60Hz = mj
       else maxJumpPer120Hz = mj
@@ -796,12 +805,10 @@ async function runPerfScenarios(browser, report) {
       await withTimeout(page.goto(url, { waitUntil: 'commit' }), 10_000, `goto ${url}`)
 
       if (isHashload) {
-        // Install observer ASAP after document commit, then start
-        // measuring. The page's setTimeout(220ms) hasn't fired yet.
         await installPerfObservers(page)
         await page.evaluate(() => window.__perfStart())
-        // 220ms init + up-to-1800ms scroll + 2200ms snap-check + buffer
-        await page.waitForTimeout(2700)
+        // 220ms init + up-to-1000ms scroll + 1400ms snap-check + buffer
+        await page.waitForTimeout(1800)
       } else {
         await waitForSettled(page)
         await installPerfObservers(page)

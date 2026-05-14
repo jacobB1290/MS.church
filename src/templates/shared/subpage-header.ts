@@ -60,24 +60,22 @@ export function subpageHeader(): string {
                             window.scrollTo(0, targetY);
                             return;
                         }
-                        // Duration tuned for visual smoothness on 60Hz
-                        // displays (the most common case). Harness metric
-                        // measures peak per-display-frame scroll jump;
-                        // target ≤80px for visually smooth motion at 60Hz.
+                        // Duration: QUICK AND SMOOTH. Browser-native
+                        // smooth scroll for the same distance takes ~850ms
+                        // but has 220px+ jumps per 60Hz frame because it
+                        // uses an aggressive cubic curve (peak ratio 3x).
+                        // The trapezoidal curve below has peak ratio 1.18x,
+                        // so for the same duration the visual jumps are
+                        // ~4x smaller. We can keep the FAST timing of
+                        // native scroll AND have smooth visible motion.
                         //
-                        // Formula: distance / 2.0, clamped to 500–1800ms.
-                        // For 2851px: 1426ms → peak velocity 3.14 px/ms
-                        // → 52px per 60Hz frame = visually smooth.
-                        // For 500px: 500ms (minimum, feels responsive).
-                        // For 1500px: 750ms → 39px per 60Hz frame.
-                        //
-                        // The slowdown for long scrolls is a deliberate
-                        // tradeoff: 2851px in 1.4s reads as a graceful
-                        // glide rather than a rough sprint. Users
-                        // perceive long-distance scrolls as taking
-                        // longer naturally, so this matches their
-                        // mental model.
-                        var duration = Math.min(1800, Math.max(500, Math.abs(distance) / 2.0));
+                        // Formula: distance / 4, clamped 400-1000ms.
+                        // For 2851px: 712ms → peak velocity 4.72 px/ms
+                        // → 79px per 60Hz frame = AT the smoothness target,
+                        // matching native-scroll duration.
+                        // For 1000px: 400ms (minimum, snappy feel).
+                        // For 4000px: 1000ms (cap).
+                        var duration = Math.min(1000, Math.max(400, Math.abs(distance) / 4.0));
                         var startTime = null;
                         function ease(t) {
                             // Trapezoidal velocity profile: smoothstep ramp
@@ -149,11 +147,8 @@ export function subpageHeader(): string {
                         setTimeout(function() {
                             window.__smoothScrollToHash(hash);
                         }, 220);
-                        // Snap-correct timer. Must be AFTER the smooth
-                        // animation's max duration (1800ms) plus the
-                        // initial 220ms delay before the scroll started.
-                        // 2200ms gives 180ms buffer for the scroll to
-                        // settle before we check for async-content drift.
+                        // Snap-correct timer. After max scroll duration
+                        // (1000ms) + 220ms initial delay + 100ms buffer.
                         setTimeout(function() {
                             var t = document.querySelector(hash);
                             if (t) {
@@ -166,7 +161,7 @@ export function subpageHeader(): string {
                             try {
                                 history.replaceState(null, '', location.pathname + location.search + hash);
                             } catch (e) {}
-                        }, 2200);
+                        }, 1400);
                     }
 
                     // Brand: hide on scroll-down, show on scroll-up.

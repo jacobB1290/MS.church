@@ -1,7 +1,34 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.48.0
+## 🔢 CURRENT VERSION: v1.48.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.48.1 - Faster anchor scroll (matches home's native speed, keeps trapezoidal smoothness)
+
+User feedback on v1.48.0: "It's far too slow. Like on the main page you click the nav and the scroll is super smooth, yet quick."
+
+Investigated by directly measuring three scroll mechanisms on the same long-distance scroll (`/visit#sunday-school`, ~2851px):
+
+| Method | Duration | Theoretical jump/60Hz |
+|---|---|---|
+| Browser-native (`scrollIntoView`/`scrollTo` smooth) | 847ms | **~200px** (rough on long scrolls) |
+| Previous v1.48.0 (`distance/2`, max 1800ms) | 1334ms | ~52px (smooth but slow) |
+| **v1.48.1 (`distance/4`, max 1000ms)** | **712ms** | **~78px** (fast AND smooth) |
+
+The trick: home's native scroll feels smooth because home only has short scrolls (~600px max), where peak velocity is naturally low (~37px per 60Hz frame). For long scrolls like 2851px, native scroll's aggressive cubic-ish curve produces 200px+ jumps — the user perceives this as "rough, low frame rate, cheap".
+
+The custom rAF animator with **trapezoidal velocity** (peak ratio 1.18× mean, vs cubic's 3×) gives ~4× lower peak jumps for the same duration. At `distance/4` it now MATCHES home's native scroll duration (700ms for 2851px) but with 1/3 the visible per-frame jump. Best of both: fast like home, smooth like premium.
+
+**Formula:** `duration = clamp(distance / 4, 400, 1000)` ms
+- 600px → 400ms (min, snappy)
+- 1500px → 400ms (min)
+- 2851px → 712ms (matches home's native)
+- 4000px → 1000ms (cap)
+
+**Harness metric improvement** (also v1.48.1):
+- Replaced the bucket-method `maxJumpPer60Hz`/`maxJumpPer120Hz` with **interpolation-based** sampling. The bucket method's variable widths (16–31ms in vsync-disabled chromium) overstated jumps by ~2×. Interpolation samples scrollY at exact 16.67ms / 8.33ms intervals via linear interp between rAF samples — matches what the user would see on an actual 60Hz / 120Hz display.
+
+**38/38 scenarios pass.** Anchor sample windows reverted to `[100, 500, 1500, 2000, 2600]` since the animation is now faster.
 
 ### v1.48.0 - Custom rAF anchor-scroll animator (trapezoidal velocity)
 

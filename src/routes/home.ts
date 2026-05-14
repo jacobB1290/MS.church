@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.48.0 - Custom rAF anchor-scroll animator w/ trapezoidal velocity (peak ratio 1.18x), distance/2 duration -->
+<!-- v1.48.1 - Faster anchor scroll: distance/4 (~700ms for 2851px, matches home's native speed) + trapezoidal velocity for smoothness -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

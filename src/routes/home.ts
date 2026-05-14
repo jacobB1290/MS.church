@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.8 - Home reveal-eyebrow now slides in from the left (translateX -10→0) instead of pure opacity, so section labels read as "label arrives, heading settles in." 720ms duration matches reveal-rise. Subpage eyebrows untouched. -->
+<!-- v1.49.9 - Narrow the left-slide eyebrow motion to ONLY the section-heading pills (Schedule, About, Outreach, Watch, Contact). Schedule tab eyebrows revert to pure opacity. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

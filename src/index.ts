@@ -1,4 +1,4 @@
-// Version: 1.49.8 - Home reveal-eyebrow now slides in from the left (translateX -10→0) instead of pure opacity. Reads as "label arrives, heading settles in" — reinforces eyebrow → heading cascade read order. 720ms matches reveal-rise so the eyebrow and heading land on the same beat. Only affects home page; subpage eyebrows are untouched.
+// Version: 1.49.9 - Narrow the left-slide eyebrow motion to ONLY the section-heading pills (Schedule, About, Outreach, Watch, Contact). Schedule tab eyebrows (Sunday Gatherings, Bible Reading, Activity Day, Bible Study, Youth Service) revert to pure opacity (their previous motion). Selector scoped via .section-eyebrow.reveal-eyebrow. Subpage eyebrows still untouched.
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

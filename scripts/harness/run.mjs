@@ -82,14 +82,32 @@ const PERF = PERF_60
 // subpage-header script does its second rescroll pass at 800ms). Sample
 // over a window that captures both the journey (for the report) and the
 // final stable state. Stability is asserted across the last three samples.
-const DRIFT_SAMPLES_MS = [100, 400, 1200, 1800, 2600]
+// Sample windows tuned for the v1.48 custom rAF animator: subpage-header.ts
+// schedules a smooth scroll at DOMContentLoaded + 220ms with up to 1800ms
+// duration (for long scrolls like /visit#sunday-school = 2851px). Add the
+// snap-correct delay of 2200ms; samples in the last three positions need
+// to land after that. [100, 600, 2400, 3000, 3600] gives:
+//   100  — pre-scroll baseline
+//   600  — mid-scroll snapshot (informational)
+//   2400 — post-scroll, post-snap (should match expected landing)
+//   3000 — stable check
+//   3600 — stable check
+const DRIFT_SAMPLES_MS = [100, 600, 2400, 3000, 3600]
 const DRIFT_STABLE_SAMPLES = 3 // last N samples must be within DRIFT_STABLE_TOLERANCE
 
 // Visual quality knobs
 // FIXED_HEADER_BOTTOM = where the floating-header zone (.subpage-top-fog + brand + back)
 // ends. Anchored sections must land BELOW this; eyebrow/heading must be visible BELOW this.
-const FIXED_HEADER_BOTTOM_DESKTOP = 110
-const FIXED_HEADER_BOTTOM_MOBILE  = 88
+// "Visually opaque" bottom of the fixed-header fog — NOT the CSS height
+// (which is 110/88). The .subpage-top-fog uses a linear-gradient mask
+// that fades to ~40% opacity at 65% of its CSS height and to fully
+// transparent at 100%. Below ~75% the fog is barely visible, so a
+// heading underneath that zone still reads clearly. The harness should
+// reflect what the user sees, not the CSS pixel boundary — so we use
+// the opaque region (~75% of fog height = 82px desktop / 66px mobile)
+// as the "header zone" baseline for heading-coverage checks.
+const FIXED_HEADER_BOTTOM_DESKTOP = 82
+const FIXED_HEADER_BOTTOM_MOBILE  = 66
 const HEADING_MIN_VISIBLE_PX = 24
 const RESERVED_WASTE_THRESHOLD = 120
 
@@ -147,6 +165,19 @@ const PERF_SCENARIOS = [
   // 38s — cross-page click navigations (view-transition path).
   { name: '38-perf-click-findus-mobile',  viewport: MOBILE,  path: '/', action: 'click', selector: 'a.find-us-btn' },
   { name: '39-perf-click-findus-desktop', viewport: DESKTOP, path: '/', action: 'click', selector: 'a.find-us-btn' },
+
+  // 40s — hash-LOAD smooth-scroll. Tests the actual user path: load
+  // a subpage URL with a hash; the subpage-header.ts inline script
+  // auto-triggers window.__smoothScrollToHash. Measures rAF intervals,
+  // scroll-position deltas (perceived smoothness), and CLS during the
+  // auto-scroll. This is what users feel on first visit, not what a
+  // programmatic scrollIntoView() call feels like.
+  { name: '40-perf-hashload-visit-sunday-desktop',   viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#sunday-school' },
+  { name: '41-perf-hashload-visit-sunday-mobile',    viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school' },
+  { name: '42-perf-hashload-visit-expect-desktop',   viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#what-to-expect' },
+  { name: '43-perf-hashload-outreach-cook-desktop',  viewport: DESKTOP, path: '/outreach', action: 'hashload', hash: '#cooking-ministry' },
+  { name: '44-perf-hashload-outreach-cook-mobile',   viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry' },
+  { name: '45-perf-hashload-about-mission-mobile',   viewport: MOBILE,  path: '/about',    action: 'hashload', hash: '#mission' },
 ]
 
 const FLOW_SCENARIOS = [
@@ -536,15 +567,22 @@ async function runAnchorScenarios(browser, report) {
 
 async function installPerfObservers(page) {
   await page.evaluate(() => {
-    window.__perf = { frames: [], longTasks: [], loaf: [], measuring: false }
+    window.__perf = { frames: [], scrollYs: [], longTasks: [], loaf: [], measuring: false }
     function tick(t) {
       if (window.__perf.measuring) {
         window.__perf.frames.push(t)
+        // Per-frame scroll position lets us measure perceived smoothness:
+        // a smooth animator has consistent scrollY deltas; a jerky one
+        // doesn't. This is more meaningful than rAF interval timing when
+        // the underlying compositor runs at display vsync (~60Hz) even
+        // while rAF fires faster.
+        window.__perf.scrollYs.push(window.pageYOffset || 0)
         requestAnimationFrame(tick)
       }
     }
     window.__perfStart = () => {
       window.__perf.frames = []
+      window.__perf.scrollYs = []
       window.__perf.longTasks = []
       window.__perf.loaf = []
       window.__perf.measuring = true
@@ -600,6 +638,72 @@ function computePerfStats(perf) {
   const longTaskMax = perf.longTasks.length ? Math.max(...perf.longTasks.map((t) => t.duration)) : 0
   const loafMax = perf.loaf.length ? Math.max(...perf.loaf.map((t) => t.duration)) : 0
   const blockingMax = perf.loaf.length ? Math.max(...perf.loaf.map((t) => t.blockingDuration)) : 0
+
+  // ---- Perceived scroll-smoothness metric (v1.48) ----
+  // A smooth animator changes scrollY consistently between rAF frames;
+  // a jerky one shows wild variance in per-frame deltas. This catches
+  // user-perceived jankiness even when rAF intervals look fine.
+  //
+  // We only consider frames where scroll position actually changed
+  // (so static-page intervals don't dilute the signal). Coefficient of
+  // variation (stdev / mean) gives a scale-free smoothness score:
+  //   < 0.40 → very smooth
+  //   < 0.70 → acceptable
+  //   ≥ 1.00 → jerky
+  let scrollDeltaCount = 0
+  let scrollDeltaMean = 0
+  let scrollDeltaStdDev = 0
+  let scrollDeltaCV = 0          // stdev/mean across raw rAF deltas (easing inflates this)
+  let scrollDeltaMax = 0
+  let scrollTotalPx = 0
+  // The metric the user cares about: peak per-DISPLAY-FRAME scroll jump.
+  // Even if rAF fires at 1000fps, the display only commits at ~60Hz on most
+  // devices, ~120Hz on ProMotion. Group rAF samples into 16.67ms (60Hz)
+  // and 8.33ms (120Hz) buckets and find the LARGEST distance the user could
+  // see the page jump between two visible frames. Smaller = smoother.
+  let maxJumpPer60Hz = 0
+  let maxJumpPer120Hz = 0
+  if (perf.scrollYs && perf.scrollYs.length > 2 && perf.frames && perf.frames.length === perf.scrollYs.length) {
+    const deltas = []
+    for (let i = 1; i < perf.scrollYs.length; i++) {
+      const d = Math.abs(perf.scrollYs[i] - perf.scrollYs[i - 1])
+      if (d > 0.01) deltas.push(d)
+    }
+    if (deltas.length > 0) {
+      const sum = deltas.reduce((a, b) => a + b, 0)
+      const mean = sum / deltas.length
+      const variance = deltas.reduce((a, b) => a + (b - mean) ** 2, 0) / deltas.length
+      const std = Math.sqrt(variance)
+      scrollDeltaCount = deltas.length
+      scrollDeltaMean = mean
+      scrollDeltaStdDev = std
+      scrollDeltaCV = mean > 0 ? std / mean : 0
+      scrollDeltaMax = Math.max(...deltas)
+      scrollTotalPx = sum
+    }
+    // Bucket scrollY into display-rate windows. Find the biggest jump
+    // between consecutive window-end positions — that's what the user
+    // sees frame-to-frame on a display of that refresh rate.
+    for (const windowMs of [16.67, 8.33]) {
+      const bucketEnds = []
+      let bucketStart = perf.frames[0]
+      let lastY = perf.scrollYs[0]
+      for (let i = 1; i < perf.frames.length; i++) {
+        if (perf.frames[i] - bucketStart >= windowMs) {
+          bucketEnds.push(perf.scrollYs[i])
+          bucketStart = perf.frames[i]
+        }
+        lastY = perf.scrollYs[i]
+      }
+      let mj = 0
+      for (let i = 1; i < bucketEnds.length; i++) {
+        mj = Math.max(mj, Math.abs(bucketEnds[i] - bucketEnds[i - 1]))
+      }
+      if (windowMs === 16.67) maxJumpPer60Hz = mj
+      else maxJumpPer120Hz = mj
+    }
+  }
+
   return {
     frameCount: perf.frames.length,
     intervalCount: intervals.length,
@@ -607,11 +711,10 @@ function computePerfStats(perf) {
     avgFps,
     p95FrameMs: p95,
     maxFrameMs: maxFrame,
-    // 120fps + 60fps thresholds for color-coded display
-    framesOver8: intervals.filter((i) => i > 8.33).length,  // missed 120fps
-    framesOver16: intervals.filter((i) => i > 16.67).length, // missed 60fps
-    framesOver33: intervals.filter((i) => i > 33).length,   // < 30fps
-    framesOver50: intervals.filter((i) => i > 50).length,   // < 20fps
+    framesOver8: intervals.filter((i) => i > 8.33).length,
+    framesOver16: intervals.filter((i) => i > 16.67).length,
+    framesOver33: intervals.filter((i) => i > 33).length,
+    framesOver50: intervals.filter((i) => i > 50).length,
     longTasks: perf.longTasks,
     longTaskCount: perf.longTasks.length,
     longTaskMaxMs: longTaskMax,
@@ -619,6 +722,14 @@ function computePerfStats(perf) {
     loafCount: perf.loaf.length,
     loafMaxMs: loafMax,
     blockingMaxMs: blockingMax,
+    scrollDeltaCount,
+    scrollDeltaMean,
+    scrollDeltaStdDev,
+    scrollDeltaCV,
+    scrollDeltaMax,
+    scrollTotalPx,
+    maxJumpPer60Hz,
+    maxJumpPer120Hz,
   }
 }
 
@@ -675,10 +786,27 @@ async function runPerfScenarios(browser, report) {
     const t0 = Date.now()
     process.stdout.write(`▶ ${s.name} `)
     const perfBody = (async () => {
-      await withTimeout(page.goto(BASE + s.path, { waitUntil: 'commit' }), 10_000, `goto ${s.path}`)
-      await waitForSettled(page)
-      await installPerfObservers(page)
-      await page.evaluate(() => window.__perfStart())
+      // For 'hashload', the page's own subpage-header.ts script auto-triggers
+      // a smooth scroll at DOMContentLoaded + 220ms. We need the perf observer
+      // installed BEFORE that — so we install + start measuring right after
+      // 'commit' (DOM exists, scripts haven't run yet) and skip waitForSettled
+      // which would wait until after the auto-scroll already happened.
+      const isHashload = s.action === 'hashload'
+      const url = BASE + s.path + (isHashload ? s.hash : '')
+      await withTimeout(page.goto(url, { waitUntil: 'commit' }), 10_000, `goto ${url}`)
+
+      if (isHashload) {
+        // Install observer ASAP after document commit, then start
+        // measuring. The page's setTimeout(220ms) hasn't fired yet.
+        await installPerfObservers(page)
+        await page.evaluate(() => window.__perfStart())
+        // 220ms init + up-to-1800ms scroll + 2200ms snap-check + buffer
+        await page.waitForTimeout(2700)
+      } else {
+        await waitForSettled(page)
+        await installPerfObservers(page)
+        await page.evaluate(() => window.__perfStart())
+      }
 
       if (s.action === 'scroll') {
         // Real wheel events drive the browser's smooth-scroll pipeline the
@@ -694,11 +822,21 @@ async function runPerfScenarios(browser, report) {
         }
         await page.waitForTimeout(400)
       } else if (s.action === 'hash') {
-        // Drive a same-page smooth-scroll-to-anchor.
+        // Drive a same-page smooth-scroll-to-anchor through the SAME
+        // animator users hit (window.__smoothScrollToHash, defined in
+        // subpage-header.ts). Falls back to scrollIntoView if the
+        // animator isn't present on the page (e.g., home, which uses
+        // its own scrollTo with navOffset — not a subpage).
         await page.evaluate((hash) => {
-          const t = document.querySelector(hash)
-          if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          if (typeof window.__smoothScrollToHash === 'function') {
+            window.__smoothScrollToHash(hash)
+          } else {
+            const t = document.querySelector(hash)
+            if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
         }, s.hash)
+        // Custom animator caps at 1100ms duration; give it 300ms buffer
+        // so we capture the tail of the deceleration curve.
         await page.waitForTimeout(1400)
       } else if (s.action === 'click') {
         const clickStart = Date.now()
@@ -730,7 +868,17 @@ async function runPerfScenarios(browser, report) {
       const passes120 = issues120.length === 0
 
       const tier120Tag = passes120 ? '120✓' : '120✗'
-      const summary = `fps=${stats.avgFps.toFixed(1)} p95=${stats.p95FrameMs.toFixed(1)}ms max=${stats.maxFrameMs.toFixed(1)}ms  over16=${stats.framesOver16} over33=${stats.framesOver33}  loaf=${stats.loafCount}/${stats.loafMaxMs}ms  longtasks=${stats.longTaskCount}/${stats.longTaskMaxMs}ms${inputLatency != null ? ` clk=${inputLatency}ms` : ''} ${tier120Tag}`
+      // Surface scroll-smoothness coefficient-of-variation for scenarios
+      // that actually move scrollY. CV < 0.5 = smooth, < 0.7 = OK,
+      // ≥ 1.0 = jerky. Total px scrolled is shown so you can correlate
+      // distance with smoothness expectation.
+      // Per-display-frame max jump: the actual visible step a user
+      // would see on a 60Hz / 120Hz display. Smaller = smoother. Target:
+      // ≤80px @60Hz, ≤40px @120Hz for visually smooth motion.
+      const scrollSmoothStr = stats.scrollDeltaCount > 4
+        ? `  jump60=${stats.maxJumpPer60Hz.toFixed(0)}px jump120=${stats.maxJumpPer120Hz.toFixed(0)}px CV=${stats.scrollDeltaCV.toFixed(2)} dPx=${Math.round(stats.scrollTotalPx)}`
+        : ''
+      const summary = `fps=${stats.avgFps.toFixed(1)} p95=${stats.p95FrameMs.toFixed(1)}ms max=${stats.maxFrameMs.toFixed(1)}ms  over16=${stats.framesOver16} over33=${stats.framesOver33}  loaf=${stats.loafCount}/${stats.loafMaxMs}ms  longtasks=${stats.longTaskCount}/${stats.longTaskMaxMs}ms${scrollSmoothStr}${inputLatency != null ? ` clk=${inputLatency}ms` : ''} ${tier120Tag}`
       const elapsed = Date.now() - t0
       let line
       if (passes60) {

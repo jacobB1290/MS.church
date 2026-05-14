@@ -1,4 +1,4 @@
-// Version: 1.47.5 - Subpage anchor scroll: smaller gap (90/75 vs 130/110) + smoother (no double-call jaggedness)
+// Version: 1.48.0 - Custom rAF anchor-scroll animator w/ trapezoidal velocity (peak ratio 1.18x), distance/2 duration
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

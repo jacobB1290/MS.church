@@ -1,7 +1,36 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.47.5
+## 🔢 CURRENT VERSION: v1.48.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.48.0 - Custom rAF anchor-scroll animator (trapezoidal velocity)
+
+User report: "actual scrolling motion to the position is rough, abrupt, looks low frame rate and cheap". Browser-native `scrollIntoView({behavior:'smooth'})` produces unspecified easing that reads as cheap on subpages.
+
+**Replaced with a custom requestAnimationFrame animator** in `subpage-header.ts`, exposed as `window.__smoothScrollTo` / `window.__smoothScrollToHash`. Iterated 3 times against the harness:
+
+**Iteration 1**: `easeInOutCubic`, `distance/4` duration capped 1100ms. Peak velocity ratio 3.0x mean — too aggressive on long scrolls (125px+ jumps per 60Hz frame on 2800px scrolls).
+
+**Iteration 2**: `easeInOutSine` (peak ratio 1.57x), `distance/2` duration capped 1800ms. Improved but still 92–107px jumps on the longest scrolls.
+
+**Iteration 3 (final)**: **Trapezoidal velocity profile** — `smoothstep` ramp over first/last 15%, **constant velocity through the middle 70%**. Peak velocity ratio drops to **1.18x** mean (vs sine's 1.57x). All scrolls now ≤81px per 60Hz frame:
+
+| Scroll target | Distance | Final jump60 | Final jump120 |
+|---|---|---|---|
+| /visit#sunday-school | 2438–2851px | 79–81px | 56–61px |
+| /visit#what-to-expect | 916–1524px | 55–59px | 42–54px |
+| /outreach#cooking-ministry | 1152–1370px | 49–72px | 32–54px |
+| /about#mission | 349px | 28px | 21px |
+
+**rAF runs at 500–1700 fps avg** with `--disable-gpu-vsync` (the chromium harness flags), meaning on a real 120Hz device the animator will commit one updated scroll position per display vsync — buttery on ProMotion / 120Hz hardware.
+
+**Harness improvements:**
+- 6 new **`hashload`** perf scenarios (40–45) that test the actual user path: load `/visit#sunday-school` etc. with hash in URL, the page's auto-trigger fires `__smoothScrollToHash`, observer measures the auto-scroll smoothness. Was previously only testing programmatically-invoked `scrollIntoView` which wasn't the user-facing code path.
+- New **scroll-smoothness metric** `maxJumpPer60Hz` / `maxJumpPer120Hz` — bucket rAF samples into display-refresh windows and measure the largest visible scroll-position jump. Smaller = smoother visible motion. More meaningful than rAF intervals (which the harness's vsync-disabled chromium sees as 700–1700 fps but the user's 60Hz device only sees 60).
+- Sample windows for anchor scenarios extended from `[100, 400, 1200, 1800, 2600]` to `[100, 600, 2400, 3000, 3600]` to give the new longer animator time to land.
+- `FIXED_HEADER_BOTTOM` constants in the visual-probes corrected from CSS fog height (110/88) to opaque-region (82/66), matching what the user actually sees (the fog mask tapers to transparent at ~70% of its CSS height).
+
+**38/38 scenarios pass** in the final run — 16 anchor jumps + 16 perf (incl. 6 new hashload) + 6 flow.
 
 ### v1.47.5 - Subpage anchor scroll: closer landing + smoother motion
 

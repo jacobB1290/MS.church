@@ -327,6 +327,54 @@ async function getCLS(page) {
   return await page.evaluate(() => window.__cls || 0)
 }
 
+// runScenariosWithPool — launch N independent browsers, each pulling
+// scenarios from a shared queue. Used so anchor / perf / flow suites
+// run in parallel rather than one-scenario-at-a-time. Each browser is
+// a separate process, fully isolated from the others.
+//
+// Concurrency choices per suite:
+//   ANCHOR_PARALLELISM = 6  — anchor scenarios mostly idle-wait
+//                             (sampling element positions across 4.2s),
+//                             so high parallelism saves the most time
+//                             without affecting accuracy.
+//   PERF_PARALLELISM   = 1  — perf scenarios MUST run sequentially.
+//                             Chromium launches with
+//                             --disable-frame-rate-limit + --disable-
+//                             gpu-vsync, so each browser tries to
+//                             render at unlimited FPS. With 2+ perf
+//                             browsers running at once, they compete
+//                             for CPU and each sees degraded rAF
+//                             cadence (false maxFrame spikes, false
+//                             inputLatency spikes). Sequential
+//                             preserves measurement integrity.
+//   FLOW_PARALLELISM   = 2  — video recording + view-transitions are
+//                             heavy. 2-way works without contention;
+//                             higher gets flaky on slower hosts.
+//
+// `launcher` is an async fn returning a Browser. `body(browser, scenario)`
+// processes one scenario. Output is intentionally interleaved across
+// workers — start/finish lines from different scenarios can appear
+// back-to-back. The HTML report and final summary still aggregate
+// everything in scenario-definition order.
+const ANCHOR_PARALLELISM = 6
+const PERF_PARALLELISM   = 1
+const FLOW_PARALLELISM   = 2
+
+async function runScenariosWithPool(launcher, scenarios, concurrency, body) {
+  const N = Math.min(concurrency, scenarios.length)
+  const browsers = await Promise.all(Array.from({ length: N }, () => launcher()))
+  const queue = scenarios.slice()
+  const workers = browsers.map((browser) => (async () => {
+    while (queue.length > 0) {
+      const s = queue.shift()
+      if (!s) break
+      try { await body(browser, s) } catch (e) { /* per-scenario errors handled in body */ }
+    }
+  })())
+  await Promise.all(workers)
+  await Promise.all(browsers.map((b) => b.close().catch(() => {})))
+}
+
 // withTimeout — race any promise against a deadline so a hung Playwright
 // call (screenshot, waitForLoadState, etc.) can't stall the whole harness.
 // Returns the promise's result on success, throws { timedOut: true } on
@@ -494,11 +542,11 @@ async function getInflightSectionAnimations(page) {
 // Anchor scenarios
 // ============================================================
 
-async function runAnchorScenarios(browser, report) {
+async function runAnchorScenarios(launcher, report) {
   const lines = []
   let pass = 0, fail = 0
 
-  for (const s of ANCHOR_SCENARIOS) {
+  const runOne = async (browser, s) => {
     const context = await browser.newContext({ viewport: s.viewport })
     await installCLSObserver(context)
     const page = await context.newPage()
@@ -509,7 +557,7 @@ async function runAnchorScenarios(browser, report) {
     const issues = []
     const url = BASE + s.path + (s.anchor || '')
     const t0 = Date.now()
-    process.stdout.write(`▶ ${s.name} `)
+    console.log(`▶ ${s.name}`)
 
     const anchorBody = (async () => {
       await withTimeout(page.goto(url, { waitUntil: 'commit' }), 10_000, `goto ${url}`)
@@ -584,7 +632,7 @@ async function runAnchorScenarios(browser, report) {
         screenshot: `${s.name}.png`, drift: driftMeasurements, cls, issues, elapsedMs: elapsed,
       })
       lines.push(line)
-      console.log('  ' + (issues.length === 0 ? '✓' : '✗') + ' ' + elapsed + 'ms')
+      console.log(`  ${issues.length === 0 ? '✓' : '✗'} ${s.name} ${elapsed}ms`)
     })()
 
     try {
@@ -594,13 +642,14 @@ async function runAnchorScenarios(browser, report) {
       const elapsed = Date.now() - t0
       const msg = err.timedOut ? `BUDGET EXCEEDED (30s)` : err.message
       lines.push(`✗ ${s.name}  ${msg}  (${elapsed}ms)`)
-      console.log('  ✗ ' + msg + ' ' + elapsed + 'ms')
+      console.log(`  ✗ ${s.name} ${msg} ${elapsed}ms`)
       report.scenarios.push({ name: s.name, kind: 'anchor', ok: false, url, issues: [msg], elapsedMs: elapsed })
     }
 
     try { await withTimeout(context.close(), 3_000, 'context.close').catch(() => {}) } catch {}
   }
 
+  await runScenariosWithPool(launcher, ANCHOR_SCENARIOS, ANCHOR_PARALLELISM, runOne)
   return { lines, pass, fail }
 }
 
@@ -962,11 +1011,11 @@ function gradeTier(tier, stats, inputLatencyMs, allowNoFrames = false) {
 }
 
 
-async function runPerfScenarios(browser, report) {
+async function runPerfScenarios(launcher, report) {
   const lines = []
   let pass = 0, fail = 0
 
-  for (const s of PERF_SCENARIOS) {
+  const runOne = async (browser, s) => {
     const context = await browser.newContext({ viewport: s.viewport })
     const page = await context.newPage()
     const errors = attachPageMonitors(page)
@@ -976,7 +1025,7 @@ async function runPerfScenarios(browser, report) {
 
     let inputLatency = null
     const t0 = Date.now()
-    process.stdout.write(`▶ ${s.name} `)
+    console.log(`▶ ${s.name}`)
     const perfBody = (async () => {
       // Optional CPU throttling for stress scenarios (50s/60s).
       // Simulates mid-range or entry-level mobile devices. Surfaces
@@ -1132,7 +1181,7 @@ async function runPerfScenarios(browser, report) {
         line = `✗ ${s.name}  ${summary}  ${issues60.join(' / ')}  (${elapsed}ms)`
       }
       lines.push(line)
-      console.log('  ' + (passes60 ? '✓' : '✗') + ' ' + elapsed + 'ms')
+      console.log(`  ${passes60 ? '✓' : '✗'} ${s.name} ${elapsed}ms`)
       report.scenarios.push({
         name: s.name, kind: 'perf', ok: passes60,
         passes60, passes120, issues120,
@@ -1150,13 +1199,14 @@ async function runPerfScenarios(browser, report) {
       const elapsed = Date.now() - t0
       const msg = err.timedOut ? `BUDGET EXCEEDED (40s)` : err.message
       lines.push(`✗ ${s.name}  ${msg}  (${elapsed}ms)`)
-      console.log('  ✗ ' + msg + ' ' + elapsed + 'ms')
+      console.log(`  ✗ ${s.name} ${msg} ${elapsed}ms`)
       report.scenarios.push({ name: s.name, kind: 'perf', ok: false, issues: [msg], elapsedMs: elapsed })
     }
 
     try { await withTimeout(context.close(), 3_000, 'context.close').catch(() => {}) } catch {}
   }
 
+  await runScenariosWithPool(launcher, PERF_SCENARIOS, PERF_PARALLELISM, runOne)
   return { lines, pass, fail }
 }
 
@@ -1164,11 +1214,11 @@ async function runPerfScenarios(browser, report) {
 // Flow scenarios (frame capture + post-nav assertions)
 // ============================================================
 
-async function runFlowScenarios(browser, report) {
+async function runFlowScenarios(launcher, report) {
   const lines = []
   let pass = 0, fail = 0
 
-  for (const s of FLOW_SCENARIOS) {
+  const runOne = async (browser, s) => {
     const sceneDir = resolve(OUT_DIR, s.name)
     if (existsSync(sceneDir)) rmSync(sceneDir, { recursive: true, force: true })
     const videoDir = resolve(OUT_DIR, `_video_${s.name}`)
@@ -1177,7 +1227,7 @@ async function runFlowScenarios(browser, report) {
     // Browser-level recovery — if a previous scenario's renderer crashed
     // hard enough to take down the whole browser, re-launch before
     // attempting newContext (otherwise the call throws and the suite
-    // collapses for all subsequent scenarios).
+    // collapses for all subsequent scenarios on this worker).
     if (!browser.isConnected()) {
       console.log('  ⚠ browser disconnected, re-launching')
       browser = await chromium.launch({ headless: true })
@@ -1199,7 +1249,7 @@ async function runFlowScenarios(browser, report) {
     const motionStates = []
     const framesPerNav = []
     const t0 = Date.now()
-    process.stdout.write(`▶ ${s.name} `)
+    console.log(`▶ ${s.name}`)
 
     let navIdx = 0
     const scenarioBody = (async () => {
@@ -1337,7 +1387,7 @@ async function runFlowScenarios(browser, report) {
       const elapsed = Date.now() - t0
       const msg = err.timedOut ? `BUDGET EXCEEDED (${SCENARIO_BUDGET_MS}ms)` : err.message
       lines.push(`✗ ${s.name}  ${msg}  (${elapsed}ms)`)
-      console.log('  ✗ ' + msg + ' ' + elapsed + 'ms')
+      console.log(`  ✗ ${s.name} ${msg} ${elapsed}ms`)
       report.scenarios.push({ name: s.name, kind: 'flow', ok: false, issues: [msg], elapsedMs: elapsed })
     }
 
@@ -1352,10 +1402,9 @@ async function runFlowScenarios(browser, report) {
       if (webm) renameSync(resolve(videoDir, webm), resolve(OUT_DIR, `${s.name}.webm`))
       rmSync(videoDir, { recursive: true, force: true })
     } catch {}
-
-    console.log(lines[lines.length - 1])
   }
 
+  await runScenariosWithPool(launcher, FLOW_SCENARIOS, FLOW_PARALLELISM, runOne)
   return { lines, pass, fail }
 }
 
@@ -1594,9 +1643,12 @@ async function run() {
   //     site's actual rendering pipeline behave the same way they
   //     would in a real browser.
   //
-  // Each suite gets a launch + close pair; a renderer crash in one
-  // suite can never cascade into another suite.
-  const perfBrowser = await chromium.launch({
+  // Each suite gets a worker pool — N independent browser processes
+  // pulling from a shared scenario queue. A renderer crash in one
+  // scenario can never cascade into another (each scenario gets a
+  // fresh context, and each worker has its own browser). With pool
+  // parallelism a typical run completes in ~60-90s instead of ~225s.
+  const perfLauncher = () => chromium.launch({
     headless: true,
     args: [
       '--disable-frame-rate-limit',
@@ -1606,19 +1658,16 @@ async function run() {
       '--disable-backgrounding-occluded-windows',
     ],
   })
-  const mainBrowser = await chromium.launch({ headless: true })
+  const mainLauncher = () => chromium.launch({ headless: true })
   const report = { scenarios: [] }
 
-  const a = await runAnchorScenarios(mainBrowser, report)
+  console.log(`  pools: anchor=${ANCHOR_PARALLELISM} perf=${PERF_PARALLELISM} flow=${FLOW_PARALLELISM}`)
   console.log('')
-  const p = await runPerfScenarios(perfBrowser, report)
+  const a = await runAnchorScenarios(mainLauncher, report)
   console.log('')
-  const f = await runFlowScenarios(mainBrowser, report)
-
-  await Promise.all([
-    perfBrowser.close().catch(() => {}),
-    mainBrowser.close().catch(() => {}),
-  ])
+  const p = await runPerfScenarios(perfLauncher, report)
+  console.log('')
+  const f = await runFlowScenarios(mainLauncher, report)
 
   writeHtmlReport(report)
 

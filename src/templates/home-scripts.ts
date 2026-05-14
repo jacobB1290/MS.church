@@ -134,6 +134,58 @@ export const homeScripts = (): string => `
                 })();
 
                 // ========================================
+                // SCROLL-DRIVEN REVEALS
+                // Adds .is-revealed to .reveal / .reveal-scale elements
+                // when they enter the viewport. Stagger via per-element
+                // --reveal-delay CSS variable, set here based on each
+                // element's index within its [data-reveal-group] parent.
+                // Wrapped in an IIFE so any early-return stays local.
+                // ========================================
+                (() => {
+                    const html = document.documentElement;
+                    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    // Enable the CSS layer that hides .reveal elements before
+                    // they're observed. Always add the class so the no-JS path
+                    // (no class set) keeps everything visible.
+                    html.classList.add('js-reveals');
+
+                    // Assign per-element stagger delays for siblings inside
+                    // any [data-reveal-group] container.
+                    document.querySelectorAll('[data-reveal-group]').forEach((group) => {
+                        const baseDelay = parseInt(group.getAttribute('data-reveal-delay') || '70', 10);
+                        const maxDelay = parseInt(group.getAttribute('data-reveal-max') || '480', 10);
+                        const items = group.querySelectorAll(':scope > .reveal, :scope > .reveal-scale');
+                        items.forEach((item, i) => {
+                            item.style.setProperty('--reveal-delay', Math.min(i * baseDelay, maxDelay) + 'ms');
+                        });
+                    });
+
+                    const targets = document.querySelectorAll('.reveal, .reveal-scale');
+                    if (!targets.length) return;
+
+                    // Reduced-motion: mark everything revealed immediately,
+                    // skip the observer entirely.
+                    if (reducedMotion) {
+                        targets.forEach((el) => el.classList.add('is-revealed'));
+                        return;
+                    }
+
+                    // Above-the-fold elements may already be intersecting
+                    // when the observer is created. IntersectionObserver
+                    // fires for those on the next tick — no extra work needed.
+                    const revealObserver = new IntersectionObserver((entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('is-revealed');
+                                revealObserver.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.14, rootMargin: '0px 0px -6% 0px' });
+
+                    targets.forEach((el) => revealObserver.observe(el));
+                })();
+
+                // ========================================
                 // DYNAMIC EVENT MANAGER
                 // Fetches from /api/calendar/events (server-side proxy with 5-min cache)
                 // Auto-archives past events, handles 0-3+ upcoming events

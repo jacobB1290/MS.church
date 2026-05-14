@@ -392,6 +392,61 @@ export const homeStyles = (): string => `
                 }
             }
 
+            /* ============================================================
+               SCROLL-DRIVEN REVEALS
+
+               Granular fade/rise animations for individual elements as
+               they enter the viewport — independent of the page-load
+               section entrance above. Each section's motion is rooted in
+               the section's meaning:
+
+                 • schedule: rhythm — heading + cards float up sequentially
+                 • about:    settle — image scales in like a placed photo
+                 • outreach: offering — cards rise w/ subtle scale stagger
+                 • watch:    power-on — video frame scales in
+                 • contact:  open door — heading rises, form fades in
+                 • footer:   peaceful exit — plain fade
+
+               Progressive enhancement: only activates when <html> has the
+               .js-reveals class (set by JS on DOMContentLoaded). Without
+               JS, content is fully visible — there is no hidden state.
+               Respects prefers-reduced-motion: animations are removed
+               entirely under reduced-motion preference.
+
+               Stagger: per-element delays set via the --reveal-delay CSS
+               custom property; default 0ms. JS assigns increasing delays
+               to siblings inside [data-reveal-group] containers (default
+               60ms per item, capped via data-reveal-max).
+               ============================================================ */
+            .js-reveals .reveal,
+            .js-reveals .reveal-scale {
+                opacity: 0;
+                will-change: opacity, transform;
+                transition: opacity 720ms cubic-bezier(0.16, 1, 0.3, 1),
+                            transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+                transition-delay: var(--reveal-delay, 0ms);
+            }
+            .js-reveals .reveal {
+                transform: translateY(22px);
+            }
+            .js-reveals .reveal-scale {
+                transform: scale(0.96);
+            }
+            .js-reveals .reveal.is-revealed,
+            .js-reveals .reveal-scale.is-revealed {
+                opacity: 1;
+                transform: none;
+            }
+            /* Reduced-motion: skip all reveals, render immediately. */
+            @media (prefers-reduced-motion: reduce) {
+                .js-reveals .reveal,
+                .js-reveals .reveal-scale {
+                    opacity: 1;
+                    transform: none;
+                    transition: none;
+                }
+            }
+
             /* Hero Section - Base (minimal, universal only) */
             .hero {
                 width: 100%;

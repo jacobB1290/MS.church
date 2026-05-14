@@ -187,6 +187,28 @@ const FLOW_SCENARIOS = [
       { type: 'navigate', kind: 'goBack', captureFrames: true },
     ],
   },
+  // Scroll-through scenarios — capture video of home page top-to-bottom so
+  // a human can review the scroll-driven reveals (schedule tabs floating up,
+  // about image scaling in, outreach cards offering forward, watch frame
+  // powering on, contact form fading in). Reveal sanity-check is included in
+  // the step handler: it fails the scenario if any .reveal target failed to
+  // fire after the page reached the bottom.
+  {
+    name: '24-flow-home-reveal-scroll-desktop',
+    viewport: DESKTOP,
+    steps: [
+      { type: 'goto', url: '/' },
+      { type: 'scroll', to: 'bottom', durationMs: 5000, checkReveals: true },
+    ],
+  },
+  {
+    name: '25-flow-home-reveal-scroll-mobile',
+    viewport: MOBILE,
+    steps: [
+      { type: 'goto', url: '/' },
+      { type: 'scroll', to: 'bottom', durationMs: 5500, checkReveals: true },
+    ],
+  },
 ]
 
 // ============================================================
@@ -712,6 +734,40 @@ async function runFlowScenarios(browser, report) {
         if (step.type === 'goto') {
           await page.goto(BASE + step.url, { waitUntil: 'commit' })
           await waitForSettled(page)
+        } else if (step.type === 'scroll') {
+          // Smooth incremental scroll so reveals are visible in the recorded
+          // video. Step count keeps each delta below typical reveal threshold
+          // so each .reveal element has time to fire and finish its 720ms
+          // transition before the next chunk scrolls past it.
+          const totalScroll = await page.evaluate(() => Math.max(0, document.body.scrollHeight - window.innerHeight))
+          const stepCount = 40
+          const stepPx = totalScroll / stepCount
+          const delayMs = Math.max(60, Math.round((step.durationMs || 5000) / stepCount))
+          for (let i = 0; i < stepCount; i++) {
+            await page.evaluate((px) => window.scrollBy(0, px), stepPx)
+            await page.waitForTimeout(delayMs)
+          }
+          await waitForSettled(page)
+          // Linger so the final reveals (and their 720ms transitions) finish
+          // before the video ends.
+          await page.waitForTimeout(900)
+          if (step.checkReveals) {
+            const status = await page.evaluate(() => {
+              const all = document.querySelectorAll('.reveal, .reveal-scale')
+              const fired = document.querySelectorAll('.reveal.is-revealed, .reveal-scale.is-revealed')
+              const stillHidden = []
+              all.forEach((el) => {
+                if (!el.classList.contains('is-revealed')) {
+                  stillHidden.push(el.className.split(' ').slice(0, 3).join(' '))
+                }
+              })
+              return { total: all.length, fired: fired.length, stillHidden: stillHidden.slice(0, 5) }
+            })
+            if (status.total > 0 && status.fired < status.total) {
+              issues.push(`reveals: only ${status.fired}/${status.total} fired (e.g. ${status.stillHidden.join('; ')})`)
+            }
+            motionStates.push(`reveals=${status.fired}/${status.total}`)
+          }
         } else if (step.type === 'navigate') {
           navIdx++
           const prefix = `nav${String(navIdx).padStart(2, '0')}-${step.kind}`

@@ -1,7 +1,33 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.45.7
+## 🔢 CURRENT VERSION: v1.46.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.46.0 - Scroll-driven reveals across home; per-section motion rooted in section meaning
+
+The home page now has scroll-triggered animations on each section, designed around what each section is trying to convey:
+
+| Section | Meaning | Motion |
+|---|---|---|
+| **Schedule** | Rhythm of community — different days, different ways to gather | Eyebrow + heading float up; cards reveal one after another (80ms stagger) like days being marked on a calendar |
+| **About** | "Settle into who we are" | Image softly **scales in** (0.96 → 1) like a photograph being placed on a table; text + CTA fade up after (140ms stagger) |
+| **Outreach** | Action — going beyond the four walls | 3 ministry cards rise like offerings being placed forward (90ms stagger) |
+| **Watch** | A screen coming alive | Video frame **scales in** (0.96 → 1) like a TV powering on; heading rises before it |
+| **Contact** | Open door — invitation to connect | Eyebrow + heading float up; form fades in |
+
+**Infrastructure:**
+- Single CSS vocabulary — `.reveal` (fade up) and `.reveal-scale` (fade + soft scale-in) — both use the same 720ms `cubic-bezier(0.16, 1, 0.3, 1)` so the page has a consistent rhythm
+- Per-element stagger via the `--reveal-delay` CSS variable, assigned by JS based on each element's index within its `[data-reveal-group]` parent (delays cap at `data-reveal-max`, default 480ms)
+- IntersectionObserver with `threshold: 0.14` + `rootMargin: '0px 0px -6% 0px'` so elements reveal slightly before they hit the viewport edge, not at the last moment
+- Progressive enhancement: `.js-reveals` is added to `<html>` by JS — no-JS users see fully visible content (no hidden state without the script)
+- Respects `prefers-reduced-motion`: all transitions stripped, elements marked revealed immediately, observer never created
+
+**Hardware-friendly:** only `opacity` and `transform` change (compositor-only properties), no layout thrash, `will-change: opacity, transform` hint on each reveal target.
+
+**Harness additions:**
+- New `type: 'scroll'` step in FLOW_SCENARIOS that smooth-scrolls the page top-to-bottom across 40 increments, capturing video for human review
+- New scenarios `24-flow-home-reveal-scroll-desktop` and `25-flow-home-reveal-scroll-mobile` exercise the reveals end-to-end; the step handler also fails the scenario if any `.reveal` target hasn't fired by the time the page reaches the bottom
+- Existing PERF scroll scenarios (`30-perf-scroll-home-desktop`, `31-perf-scroll-home-mobile`) naturally now stress-test the reveal animations at both 60fps and 120fps tiers without modification
 
 ### v1.45.7 - Fix: schedule carousel early-return was killing mobile nav scroll-compress
 

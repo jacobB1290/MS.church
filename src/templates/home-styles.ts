@@ -429,7 +429,7 @@ export const homeStyles = (): string => `
             .js-reveals .reveal-photo,
             .js-reveals .reveal-power {
                 opacity: 0;
-                will-change: opacity, transform, filter;
+                will-change: opacity, transform;
                 transition-delay: var(--reveal-delay, 0ms);
             }
             /* Light lead-in for category labels — short throw, faster. */
@@ -455,14 +455,18 @@ export const homeStyles = (): string => `
                 transition: opacity 820ms cubic-bezier(0.22, 1, 0.36, 1),
                             transform 820ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            /* Photograph developing — scale + blur fade combined.
-               The blur is the differentiator from a generic scale-in. */
+            /* Photograph "developing" — long-throw scale + opacity.
+               Earlier versions of this rule also transitioned filter:blur,
+               which gave a true print-developing feel but cost ~73ms on
+               peak frames during scroll (filter transitions force the
+               compositor to allocate an offscreen buffer per frame). The
+               extended 1100ms duration on a compositor-cheap transform
+               carries the same "settles into focus" intent without the
+               frame-time hit. */
             .js-reveals .reveal-photo {
                 transform: scale(0.94);
-                filter: blur(6px);
                 transition: opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 1100ms cubic-bezier(0.22, 1, 0.36, 1),
-                            filter 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+                            transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
             }
             /* Screen powering on — scale with a touch of overshoot
                easing so the final ~10% feels like the picture "snapping"
@@ -484,18 +488,12 @@ export const homeStyles = (): string => `
                 filter: none;
             }
 
-            /* Subtle ken-burns drift on the schedule banner once revealed —
-               adds slow life to the focal image while it's on screen.
-               Only on desktop where the banner is visible. */
-            @media (min-width: 961px) {
-                .schedule-banner.is-revealed .schedule-banner-slide.active {
-                    animation: scheduleBannerDrift 14s ease-in-out infinite alternate;
-                }
-            }
-            @keyframes scheduleBannerDrift {
-                from { transform: scale(1) translate(0, 0); }
-                to   { transform: scale(1.025) translate(-0.5%, -0.5%); }
-            }
+            /* (Removed: ken-burns infinite drift animation on the active
+               banner slide. v1.46.1's 14s alternate scale+translate kept
+               running while the section scrolled past, contributing a
+               LoAF spike to perf scroll measurements. The reveal-power
+               settle is what carries the "this is the focal image"
+               signal — the continuous drift was redundant cost.) */
 
             /* Backwards-compat shim — the older .reveal / .reveal-scale
                classes used by earlier home-body markup map to the new
@@ -507,13 +505,11 @@ export const homeStyles = (): string => `
                             transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
                 transition-delay: var(--reveal-delay, 0ms);
             }
-            .js-reveals .reveal-scale { /* maps to reveal-photo */
+            .js-reveals .reveal-scale { /* maps to reveal-photo (compositor-cheap variant) */
                 opacity: 0;
                 transform: scale(0.94);
-                filter: blur(6px);
                 transition: opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 1100ms cubic-bezier(0.22, 1, 0.36, 1),
-                            filter 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+                            transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
                 transition-delay: var(--reveal-delay, 0ms);
             }
             .js-reveals .reveal.is-revealed,
@@ -534,11 +530,7 @@ export const homeStyles = (): string => `
                 .js-reveals .reveal-power {
                     opacity: 1;
                     transform: none;
-                    filter: none;
                     transition: none;
-                }
-                .schedule-banner.is-revealed .schedule-banner-slide.active {
-                    animation: none;
                 }
             }
 

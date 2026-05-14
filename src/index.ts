@@ -1,4 +1,4 @@
-// Version: 1.46.1 - Reveals: five intent classes (eyebrow/rise/settle/photo/power), eased stagger, ken-burns banner
+// Version: 1.46.2 - Reveal perf fix: drop filter:blur + ken-burns (LoAF/maxFrame regressions caught by harness)
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

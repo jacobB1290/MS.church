@@ -838,8 +838,12 @@ async function runFlowScenarios(browser, report) {
           await page.waitForTimeout(900)
           if (step.checkReveals) {
             const status = await page.evaluate(() => {
-              const all = document.querySelectorAll('.reveal, .reveal-scale')
-              const fired = document.querySelectorAll('.reveal.is-revealed, .reveal-scale.is-revealed')
+              // Covers both the v1.46.0 generic classes and the v1.46.1
+              // intent vocabulary (eyebrow/rise/settle/photo/power).
+              const SEL = '.reveal, .reveal-scale, .reveal-eyebrow, .reveal-rise, .reveal-settle, .reveal-photo, .reveal-power'
+              const FIRED_SEL = SEL.split(',').map(s => s.trim() + '.is-revealed').join(', ')
+              const all = document.querySelectorAll(SEL)
+              const fired = document.querySelectorAll(FIRED_SEL)
               const stillHidden = []
               all.forEach((el) => {
                 if (!el.classList.contains('is-revealed')) {
@@ -848,7 +852,9 @@ async function runFlowScenarios(browser, report) {
               })
               return { total: all.length, fired: fired.length, stillHidden: stillHidden.slice(0, 5) }
             })
-            if (status.total > 0 && status.fired < status.total) {
+            if (status.total === 0) {
+              issues.push(`reveals: scenario expected reveal targets but found 0 — selector drift?`)
+            } else if (status.fired < status.total) {
               issues.push(`reveals: only ${status.fired}/${status.total} fired (e.g. ${status.stillHidden.join('; ')})`)
             }
             motionStates.push(`reveals=${status.fired}/${status.total}`)

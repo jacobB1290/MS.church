@@ -1,7 +1,21 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.46.1
+## 🔢 CURRENT VERSION: v1.46.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.46.2 - Reveal perf fix: drop filter:blur + ken-burns
+
+v1.46.1 introduced two compositor-expensive effects that the perf harness caught on the next run:
+
+- `30-perf-scroll-home-desktop`: **maxFrame=73.7ms** (60fps tier limit is 60ms) + LoAF 1/62ms
+- `31-perf-scroll-home-mobile`: **maxFrame=71.3ms** + LoAF 1/67ms
+
+**Two regressions, two fixes:**
+
+1. **`.reveal-photo` no longer transitions `filter: blur(6px → 0)`.** Filter transitions force the compositor to allocate a fresh offscreen buffer every frame of the transition — expensive enough to bump peak frame time past the 60ms budget. The extended 1100ms duration on a transform-only motion (`scale(0.94 → 1)`) carries the same "settles into focus" intent without the GPU cost.
+2. **Removed the schedule banner ken-burns infinite animation.** The 14s `alternate` scale+translate kept running while the section was on screen — including during scroll, which is precisely when frame budgets are tightest. The reveal-power scale-in is what actually says "this is the focal image"; the continuous drift was redundant cost.
+
+Harness selector was also updated to match the v1.46.1 intent classes (was still selecting only the legacy `.reveal, .reveal-scale`).
 
 ### v1.46.1 - Reveals: motion vocabulary, intent-named per element type
 

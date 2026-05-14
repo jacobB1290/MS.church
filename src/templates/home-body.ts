@@ -24,7 +24,7 @@ export const homeBody = (): string => `
                         <p class="hero-service-time">Join us Sundays at 9 AM</p>
                         <div class="hero-image">
                             <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building in Boise, Idaho" width="1200" height="630" loading="eager" fetchpriority="high" decoding="async">
-                            <!-- Plan a Visit button — links to the /visit page (map + service flow + Sunday School + after-service) -->
+                            <!-- Plan a Visit button — links to the /visit page (map + 7-step service flow incl. breakfast + Sunday School) -->
                             <div class="find-us-wrapper">
                                 <a class="find-us-btn find-us-link" href="/visit">Plan a Visit</a>
                             </div>

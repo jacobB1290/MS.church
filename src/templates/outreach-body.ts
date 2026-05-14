@@ -64,7 +64,7 @@ export const outreachBody = (): string => `
                         <div class="schedule-item long-content">
                             <div class="schedule-item-text">
                                 <p>Every Sunday morning after worship, breakfast is on us — for guests, members, neighbors, and anyone passing through. We also offer free transportation from select Boise shelters so the table is open to people who need it most.</p>
-                                <p style="margin-top: 14px;"><a href="/visit#after-service" style="color: var(--gold); font-weight: 600;">More about Sunday morning →</a></p>
+                                <p style="margin-top: 14px;"><a href="/visit#what-to-expect" style="color: var(--gold); font-weight: 600;">More about Sunday morning →</a></p>
                             </div>
                             <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
                         </div>

@@ -1,7 +1,26 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.47.3
+## 🔢 CURRENT VERSION: v1.47.4
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.47.4 - /visit: "Stay for Breakfast" becomes step 7 of the service flow
+
+The dedicated `<section id="after-service">` block is gone; its copy is now a 7th step in the What-to-Expect timeline. The full Sunday at Morning Star reads as a single continuous 7-step flow:
+
+1. Welcome
+2. Two Worship Songs
+3. Greet One Another
+4. Teaching
+5. Closing Song
+6. Dismissal (now: "Pastor closes us in prayer — a final blessing before we head into fellowship." — no longer double-mentions breakfast)
+7. **Stay for Breakfast** — full copy from the previous after-service section, slightly trimmed
+
+**Cross-references updated:**
+- `outreach-body.ts` cooking-ministry section: `/visit#after-service` → `/visit#what-to-expect`
+- `home-body.ts` Plan a Visit button comment: dropped after-service mention
+- Harness scenarios `17-jump-after-mobile` → `17-jump-sundayschool-mobile`; `36-perf-hash-visit-afterservice-mobile` → `36-perf-hash-visit-whattoexpect-mobile`
+
+PLACEHOLDER_SVG constant removed from visit-body.ts (only the after-service section used it).
 
 ### v1.47.3 - Schedule: drop the outer .section-card wrapper
 

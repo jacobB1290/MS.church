@@ -1,4 +1,4 @@
-// Version: 1.47.3 - Schedule: drop outer .section-card wrapper, layout sits directly on page bg
+// Version: 1.47.4 - /visit: 'Stay for Breakfast' becomes step 7 of the service flow timeline
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

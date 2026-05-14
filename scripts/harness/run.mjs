@@ -126,7 +126,7 @@ const ANCHOR_SCENARIOS = [
   { name: '14-jump-breakfast-mobile',  path: '/outreach', anchor: '#community-breakfast', viewport: MOBILE,  expected: 110 },
   { name: '15-jump-mission-mobile',    path: '/about',    anchor: '#mission',             viewport: MOBILE,  expected: 110 },
   { name: '16-jump-expect-desktop',    path: '/visit',    anchor: '#what-to-expect',      viewport: DESKTOP, expected: 130 },
-  { name: '17-jump-after-mobile',      path: '/visit',    anchor: '#after-service',       viewport: MOBILE,  expected: 110 },
+  { name: '17-jump-sundayschool-mobile', path: '/visit',  anchor: '#sunday-school',       viewport: MOBILE,  expected: 110 },
 ]
 
 // Performance scenarios — each runs an interaction (scroll / hash / click)
@@ -141,7 +141,7 @@ const PERF_SCENARIOS = [
 
   // 35s — smooth-scroll-to-hash (anchor jumps on the same page).
   { name: '35-perf-hash-visit-sundayschool-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#sunday-school' },
-  { name: '36-perf-hash-visit-afterservice-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#after-service' },
+  { name: '36-perf-hash-visit-whattoexpect-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#what-to-expect' },
   { name: '37-perf-hash-outreach-cooking-mobile',   viewport: MOBILE, path: '/outreach', action: 'hash', hash: '#cooking-ministry' },
 
   // 38s — cross-page click navigations (view-transition path).

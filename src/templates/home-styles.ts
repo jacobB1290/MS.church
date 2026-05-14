@@ -1725,11 +1725,14 @@ export const homeStyles = (): string => `
             }
 
             /* Subpage sections compensate for the floating top zone when
-               anchored to via #hash. Value = fog height + comfortable
-               buffer so the section's eyebrow pill lands fully below the
-               fog's bottom edge, not behind its tapered fade. */
+               anchored to via #hash. Value lands the section's top just
+               below the fog's tapered edge — close enough that there's no
+               visible gap, but past the dense top portion of the fog so
+               the section heading is fully readable. Matches the JS
+               offset in subpage-header.ts (90px desktop / 75px mobile)
+               so JS-driven and browser-native scrolls agree. */
             .page main > section[id] {
-                scroll-margin-top: 130px;
+                scroll-margin-top: 90px;
             }
 
             @media (max-width: 960px) {
@@ -1755,7 +1758,7 @@ export const homeStyles = (): string => `
                     height: 100px;
                 }
                 .page main > section[id] {
-                    scroll-margin-top: 110px;
+                    scroll-margin-top: 75px;
                 }
             }
 

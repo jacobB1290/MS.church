@@ -1,4 +1,4 @@
-// Version: 1.47.4 - /visit: 'Stay for Breakfast' becomes step 7 of the service flow timeline
+// Version: 1.47.5 - Subpage anchor scroll: smaller gap (90/75 vs 130/110) + smoother (no double-call jaggedness)
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

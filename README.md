@@ -1,7 +1,21 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.47.4
+## 🔢 CURRENT VERSION: v1.47.5
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.47.5 - Subpage anchor scroll: closer landing + smoother motion
+
+User report: "in the separate pages when jumping to a specific section it never scrolls down far enough and leaves a gap at the top … the scroll is a little jagged."
+
+**Two coordinated fixes:**
+
+1. **Closer landing** — `scroll-margin-top` on subpage sections reduced from **130/110px** (desktop/mobile) to **90/75px**. The 130px value was 20px beyond the subpage-top-fog's 110px height; the section landed *visibly below* the fog with a gap. 90px lands the section's top just past the fog's tapered transparent edge — no gap.
+
+2. **Smoother motion** — `subpage-header.ts` previously called `scrollIntoView({ behavior: 'smooth' })` twice (200ms + 800ms). On pages with async content (`/outreach`'s calendar) the second call restarted the in-flight smooth animation, looking jagged. Replaced with:
+   - **Single smooth `scrollIntoView` at 220ms** — the only motion the user sees
+   - **At 900ms, an instant snap-correct (behavior: 'auto')** *only if* the section drifted >20px from the expected landing (async content arrived). Instant snap doesn't restart the smooth animation mid-flight, so the user sees one clean scroll plus a tiny invisible correction iff actually needed.
+
+The harness's 8 cross-page anchor scenarios were updated to assert the new expected positions (90 desktop / 75 mobile) and all pass with drifts of 0–18px. The 25px `DRIFT_LAND_TOLERANCE` is unchanged.
 
 ### v1.47.4 - /visit: "Stay for Breakfast" becomes step 7 of the service flow
 

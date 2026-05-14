@@ -38,28 +38,50 @@ export function subpageHeader(): string {
                     // ----- Hash deep-link landing -----
                     // The inline <head> script stashed location.hash on
                     // window.__targetHash and cleared the URL so the browser
-                    // didn't do its native scroll-to-fragment. Now scroll
-                    // smoothly once layout is stable (covers /about which
-                    // has no async loads AND /outreach which waits for the
-                    // calendar fetch), then restore the URL hash so the
-                    // deep link stays shareable.
+                    // didn't do its native scroll-to-fragment. We now do
+                    // ONE smooth scroll to the target using scrollIntoView
+                    // (the browser respects each section's scroll-margin-top
+                    // CSS, so JS math isn't needed and stays in lockstep).
+                    //
+                    // The previous implementation called scrollIntoView
+                    // twice (200ms + 800ms). On pages with async content
+                    // (/outreach's calendar) the second smooth scroll
+                    // RESTARTED the in-flight animation and looked jagged.
+                    // We fix it by:
+                    //   • single smooth scrollIntoView at 220ms
+                    //   • at 900ms, an instant snap-correct (behavior:
+                    //     'auto') ONLY if the section has actually drifted
+                    //     more than 20px from the desired landing zone
+                    //     (i.e., async content arrived after our first
+                    //     scroll). Instant snap doesn't restart the
+                    //     smooth animation mid-flight, so the user sees a
+                    //     clean scroll once, plus a tiny correction iff
+                    //     needed.
                     var hash = window.__targetHash;
                     if (hash) {
-                        var land = function() {
+                        setTimeout(function() {
                             var t = document.querySelector(hash);
                             if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        };
-                        // First attempt: layout should be stable for /about
-                        // and most fast paths.
-                        setTimeout(land, 200);
-                        // Second attempt: catches /outreach's async carousel
-                        // expanding the document height.
+                        }, 220);
                         setTimeout(function() {
-                            land();
+                            var t = document.querySelector(hash);
+                            if (t) {
+                                // Where is the section's top right now?
+                                // scroll-margin-top isn't reflected in
+                                // getBoundingClientRect; we hardcode the
+                                // expected landing (matching the CSS).
+                                var expected = window.innerWidth <= 960 ? 75 : 90;
+                                var actual = t.getBoundingClientRect().top;
+                                if (Math.abs(actual - expected) > 20) {
+                                    // Drift detected — snap instantly so we
+                                    // don't restart smooth scroll mid-flight.
+                                    t.scrollIntoView({ behavior: 'auto', block: 'start' });
+                                }
+                            }
                             try {
                                 history.replaceState(null, '', location.pathname + location.search + hash);
                             } catch (e) {}
-                        }, 800);
+                        }, 900);
                     }
 
                     // Brand: hide on scroll-down, show on scroll-up.

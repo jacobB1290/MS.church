@@ -1,7 +1,38 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.46.2
+## 🔢 CURRENT VERSION: v1.46.3
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.46.3 - Per-element motion: inner-card choreography, 11 motion variants
+
+v1.46.1 introduced five intent classes, but they applied to entire cards as units. Reading the home page felt rhythmic but uniform — every section was "things rising up". This pass adds **inner-card choreography**: every individual element gets its own motion personality, with cascades happening *within* cards.
+
+**11 motion variants, each with a distinct duration, easing, and transform:**
+
+| Class | For | Duration | Motion |
+|---|---|---|---|
+| `.reveal-eyebrow` | Category labels | 320ms | translateY(12px) — quick snap-in |
+| `.reveal-rise` | Headings, prose | 560ms | translateY(20px) — settled rise |
+| `.reveal-rise-slow` | Verses, leads | 880ms | translateY(18px) — deliberate, reverent |
+| `.reveal-tight` | Card inner body text | 480ms | translateY(10px) — small follow throw |
+| `.reveal-from-left` | Left-most cards | 700ms | translateX(-18px) — converges from left |
+| `.reveal-from-right` | Right-most cards | 700ms | translateX(18px) — converges from right |
+| `.reveal-from-above` | Images placed onto page | 900ms | translateY(-16px) — drops down |
+| `.reveal-settle` | Cards being placed | 820ms | translateY(28px) + rotate(-0.6deg) |
+| `.reveal-photo` | Image/media (no blur) | 1100ms | scale(0.94) — slow develop |
+| `.reveal-power` | Focal video/banner | 900ms | scale(0.92) + overshoot easing |
+| `.reveal-pop` | CTAs, badges, buttons | 420ms | scale(0.88) + spring overshoot (1.56) |
+
+**Inner-card choreography:**
+- **Schedule tab cards** (5 stacked): each card is its own `[data-reveal-group]`. As a card enters the viewport, its eyebrow → title → desc cascade in 70ms apart. Card itself stays still — only its contents move.
+- **Outreach cards** (3 horizontal): card 1 arrives from the **left**, card 2 rises from below, card 3 arrives from the **right** — three cards converging from three directions instead of marching.
+- **About teaser**: image **drops in from above** like a photo placed onto the table; the paragraph below uses `reveal-rise-slow` (deliberate); CTA pops with spring.
+- **Watch card**: countdown rises, verse is **slow + reverent**, video frame powers-on with overshoot, "View Full Playlist" CTA pops.
+- **Contact**: lead paragraph uses `reveal-rise-slow`; form gets a subtle scale-pop.
+
+**JS supports nested reveal groups** with delay compounding — a parent group sets stagger across cards, each card's own group sets stagger across its inner elements. Both cascades multiply for orchestrated motion across the full page.
+
+**Verified via Playwright on both desktop (1440×900) and mobile (390×844)**: 40/40 reveal targets fire correctly.
 
 ### v1.46.2 - Reveal perf fix: drop filter:blur + ken-burns
 

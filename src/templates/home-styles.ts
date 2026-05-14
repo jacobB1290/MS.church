@@ -425,9 +425,15 @@ export const homeStyles = (): string => `
                ============================================================ */
             .js-reveals .reveal-eyebrow,
             .js-reveals .reveal-rise,
+            .js-reveals .reveal-rise-slow,
+            .js-reveals .reveal-tight,
+            .js-reveals .reveal-from-left,
+            .js-reveals .reveal-from-right,
+            .js-reveals .reveal-from-above,
             .js-reveals .reveal-settle,
             .js-reveals .reveal-photo,
-            .js-reveals .reveal-power {
+            .js-reveals .reveal-power,
+            .js-reveals .reveal-pop {
                 opacity: 0;
                 will-change: opacity, transform;
                 transition-delay: var(--reveal-delay, 0ms);
@@ -435,15 +441,49 @@ export const homeStyles = (): string => `
             /* Light lead-in for category labels — short throw, faster. */
             .js-reveals .reveal-eyebrow {
                 transform: translateY(12px);
-                transition: opacity 540ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 540ms cubic-bezier(0.22, 1, 0.36, 1);
+                transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
             }
             /* Prose: longer throw, more time to land — gives the reader
                a sense of weight as it arrives. */
             .js-reveals .reveal-rise {
                 transform: translateY(20px);
-                transition: opacity 760ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
+                transition: opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Slow, deliberate rise — for verses, leads, prose that wants
+               to be read with weight. Longer duration, gentler curve. */
+            .js-reveals .reveal-rise-slow {
+                transform: translateY(18px);
+                transition: opacity 880ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 880ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Tight follow — small throw for the inner body text of a card,
+               so it arrives just after the title without competing with it. */
+            .js-reveals .reveal-tight {
+                transform: translateY(10px);
+                transition: opacity 480ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Directional reveals — for elements that should arrive from a
+               specific edge. The 3-card outreach grid uses left/up/right
+               for spatial coherence (cards converge to center). */
+            .js-reveals .reveal-from-left {
+                transform: translateX(-18px);
+                transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .js-reveals .reveal-from-right {
+                transform: translateX(18px);
+                transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* From-above — image or media that should feel like it's being
+               placed onto the page. About teaser photo uses this. */
+            .js-reveals .reveal-from-above {
+                transform: translateY(-16px);
+                transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
             }
             /* Cards being placed onto a surface — the micro-rotation
                (anchored bottom-left) is what makes it feel "set down"
@@ -476,16 +516,30 @@ export const homeStyles = (): string => `
                 transition: opacity 900ms cubic-bezier(0.34, 1.18, 0.64, 1),
                             transform 900ms cubic-bezier(0.34, 1.18, 0.64, 1);
             }
+            /* Pop — small starting scale with overshoot. For CTAs and
+               badges that should feel "tappable" the moment they arrive.
+               Curve has a stronger overshoot than .reveal-power so the
+               button feels lively. */
+            .js-reveals .reveal-pop {
+                transform: scale(0.88);
+                transition: opacity 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
+                            transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
 
             /* Resolved state — applies to every variant uniformly. */
             .js-reveals .reveal-eyebrow.is-revealed,
             .js-reveals .reveal-rise.is-revealed,
+            .js-reveals .reveal-rise-slow.is-revealed,
+            .js-reveals .reveal-tight.is-revealed,
+            .js-reveals .reveal-from-left.is-revealed,
+            .js-reveals .reveal-from-right.is-revealed,
+            .js-reveals .reveal-from-above.is-revealed,
             .js-reveals .reveal-settle.is-revealed,
             .js-reveals .reveal-photo.is-revealed,
-            .js-reveals .reveal-power.is-revealed {
+            .js-reveals .reveal-power.is-revealed,
+            .js-reveals .reveal-pop.is-revealed {
                 opacity: 1;
                 transform: none;
-                filter: none;
             }
 
             /* (Removed: ken-burns infinite drift animation on the active
@@ -525,9 +579,15 @@ export const homeStyles = (): string => `
                 .js-reveals .reveal-scale,
                 .js-reveals .reveal-eyebrow,
                 .js-reveals .reveal-rise,
+                .js-reveals .reveal-rise-slow,
+                .js-reveals .reveal-tight,
+                .js-reveals .reveal-from-left,
+                .js-reveals .reveal-from-right,
+                .js-reveals .reveal-from-above,
                 .js-reveals .reveal-settle,
                 .js-reveals .reveal-photo,
-                .js-reveals .reveal-power {
+                .js-reveals .reveal-power,
+                .js-reveals .reveal-pop {
                     opacity: 1;
                     transform: none;
                     transition: none;

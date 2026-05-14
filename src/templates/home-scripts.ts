@@ -150,27 +150,56 @@ export const homeScripts = (): string => `
                     html.classList.add('js-reveals');
 
                     // All reveal class variants — the v1.46 motion vocabulary
-                    // plus the v1.46.0 generic .reveal/.reveal-scale kept
-                    // for backwards compat.
-                    const REVEAL_SEL = '.reveal, .reveal-scale, .reveal-eyebrow, .reveal-rise, .reveal-settle, .reveal-photo, .reveal-power';
+                    // (plus the v1.46.0 generic .reveal/.reveal-scale kept
+                    // for backwards compat). When adding a new variant,
+                    // include it here so the observer picks it up.
+                    const REVEAL_SEL = [
+                        '.reveal', '.reveal-scale',
+                        '.reveal-eyebrow', '.reveal-rise', '.reveal-rise-slow', '.reveal-tight',
+                        '.reveal-from-left', '.reveal-from-right', '.reveal-from-above',
+                        '.reveal-settle', '.reveal-photo', '.reveal-power', '.reveal-pop',
+                    ].join(', ');
 
-                    // Assign per-element stagger delays for siblings inside
-                    // any [data-reveal-group] container. The stagger uses
-                    // a slight ease-out curve on the delay itself — earlier
-                    // items get more separation, later items compress toward
-                    // each other so the group "settles" rather than running
-                    // in a strict metronome.
-                    document.querySelectorAll('[data-reveal-group]').forEach((group) => {
+                    // Compute per-element stagger delays. Each [data-reveal-group]
+                    // distributes its direct-child reveal targets across an
+                    // i^0.85 curve (early items distinct, tail compresses).
+                    // Nested groups compound: a card that has its own group
+                    // inherits the parent group's delay as a "base offset"
+                    // for its own children's delays. This makes 5 stacked
+                    // cards each with an inner eyebrow/title/desc cascade
+                    // animate as a coherent staircase.
+                    function applyGroupDelays(group, parentOffset) {
                         const baseDelay = parseInt(group.getAttribute('data-reveal-delay') || '90', 10);
                         const maxDelay = parseInt(group.getAttribute('data-reveal-max') || '520', 10);
+                        const offset = parentOffset || 0;
+                        // Direct-child reveal targets within this group.
                         const items = Array.from(group.children).filter((c) => c.matches(REVEAL_SEL));
                         const n = items.length;
                         items.forEach((item, i) => {
-                            // Soft ease-out distribution: i^0.85 instead of linear i.
-                            // Keeps the first 2 items distinct, compresses the tail.
                             const t = n > 1 ? Math.pow(i / (n - 1), 0.85) * (n - 1) : 0;
-                            item.style.setProperty('--reveal-delay', Math.min(t * baseDelay, maxDelay) + 'ms');
+                            const own = Math.min(t * baseDelay, maxDelay);
+                            item.style.setProperty('--reveal-delay', (offset + own) + 'ms');
                         });
+                        // Direct-child nested groups inherit a base offset
+                        // so their children's delays start after the parent's
+                        // staircase would have placed them.
+                        Array.from(group.children).forEach((child, idx) => {
+                            if (child.matches('[data-reveal-group]')) {
+                                // Determine this child's position within the parent's stagger.
+                                const directIndex = items.indexOf(child);
+                                const t = (directIndex >= 0 && n > 1)
+                                    ? Math.pow(directIndex / (n - 1), 0.85) * (n - 1)
+                                    : idx * 0.5; // group not in items: rough fallback
+                                const childOffset = offset + Math.min(t * baseDelay, maxDelay);
+                                applyGroupDelays(child, childOffset);
+                            }
+                        });
+                    }
+                    // Top-level groups only (not nested under another group).
+                    document.querySelectorAll('[data-reveal-group]').forEach((group) => {
+                        if (!group.parentElement || !group.parentElement.closest('[data-reveal-group]')) {
+                            applyGroupDelays(group, 0);
+                        }
                     });
 
                     const targets = document.querySelectorAll(REVEAL_SEL);

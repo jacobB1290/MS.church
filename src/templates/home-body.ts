@@ -85,31 +85,31 @@ export const homeBody = (): string => `
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                                 </div>
                             </div>
-                            <div class="schedule-list" role="tablist" aria-label="Weekly gatherings" data-reveal-group data-reveal-delay="90">
-                                <button class="schedule-tab active reveal-settle" data-index="0" type="button" role="tab" aria-selected="true">
-                                    <span class="schedule-tab-eyebrow">Sunday Gatherings</span>
-                                    <span class="schedule-tab-title">Sundays · 9:00 AM</span>
-                                    <span class="schedule-tab-desc">Morning service, about an hour, with free community breakfast after. Free transportation from select shelters included. <a href="/visit#sunday-school" class="schedule-tab-link">Sunday School info →</a></span>
+                            <div class="schedule-list" role="tablist" aria-label="Weekly gatherings" data-reveal-group data-reveal-delay="120">
+                                <button class="schedule-tab active" data-index="0" type="button" role="tab" aria-selected="true" data-reveal-group data-reveal-delay="70">
+                                    <span class="schedule-tab-eyebrow reveal-eyebrow">Sunday Gatherings</span>
+                                    <span class="schedule-tab-title reveal-rise">Sundays · 9:00 AM</span>
+                                    <span class="schedule-tab-desc reveal-tight">Morning service, about an hour, with free community breakfast after. Free transportation from select shelters included. <a href="/visit#sunday-school" class="schedule-tab-link">Sunday School info →</a></span>
                                 </button>
-                                <button class="schedule-tab reveal-settle" data-index="1" type="button" role="tab" aria-selected="false">
-                                    <span class="schedule-tab-eyebrow">Bible Reading</span>
-                                    <span class="schedule-tab-title">Tuesdays · 8:30 AM</span>
-                                    <span class="schedule-tab-desc">Tuesday Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffiena State Street</a>.</span>
+                                <button class="schedule-tab" data-index="1" type="button" role="tab" aria-selected="false" data-reveal-group data-reveal-delay="70">
+                                    <span class="schedule-tab-eyebrow reveal-eyebrow">Bible Reading</span>
+                                    <span class="schedule-tab-title reveal-rise">Tuesdays · 8:30 AM</span>
+                                    <span class="schedule-tab-desc reveal-tight">Tuesday Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffiena State Street</a>.</span>
                                 </button>
-                                <button class="schedule-tab reveal-settle" data-index="2" type="button" role="tab" aria-selected="false">
-                                    <span class="schedule-tab-eyebrow">Activity Day</span>
-                                    <span class="schedule-tab-title">Wednesdays · 6:00 PM</span>
-                                    <span class="schedule-tab-desc">Open gym for basketball and volleyball, plus a crochet circle to learn the craft and grow your skills — about three hours.</span>
+                                <button class="schedule-tab" data-index="2" type="button" role="tab" aria-selected="false" data-reveal-group data-reveal-delay="70">
+                                    <span class="schedule-tab-eyebrow reveal-eyebrow">Activity Day</span>
+                                    <span class="schedule-tab-title reveal-rise">Wednesdays · 6:00 PM</span>
+                                    <span class="schedule-tab-desc reveal-tight">Open gym for basketball and volleyball, plus a crochet circle to learn the craft and grow your skills — about three hours.</span>
                                 </button>
-                                <button class="schedule-tab reveal-settle" data-index="3" type="button" role="tab" aria-selected="false">
-                                    <span class="schedule-tab-eyebrow">Bible Study</span>
-                                    <span class="schedule-tab-title">Thursdays · 6:00 PM</span>
-                                    <span class="schedule-tab-desc">A 45-minute evening Bible study at the church with free coffee.</span>
+                                <button class="schedule-tab" data-index="3" type="button" role="tab" aria-selected="false" data-reveal-group data-reveal-delay="70">
+                                    <span class="schedule-tab-eyebrow reveal-eyebrow">Bible Study</span>
+                                    <span class="schedule-tab-title reveal-rise">Thursdays · 6:00 PM</span>
+                                    <span class="schedule-tab-desc reveal-tight">A 45-minute evening Bible study at the church with free coffee.</span>
                                 </button>
-                                <button class="schedule-tab reveal-settle" data-index="4" type="button" role="tab" aria-selected="false">
-                                    <span class="schedule-tab-eyebrow">Youth Service</span>
-                                    <span class="schedule-tab-title">Fridays · 7:00 PM</span>
-                                    <span class="schedule-tab-desc">Worship, teaching, and fellowship for our next generation — about an hour.</span>
+                                <button class="schedule-tab" data-index="4" type="button" role="tab" aria-selected="false" data-reveal-group data-reveal-delay="70">
+                                    <span class="schedule-tab-eyebrow reveal-eyebrow">Youth Service</span>
+                                    <span class="schedule-tab-title reveal-rise">Fridays · 7:00 PM</span>
+                                    <span class="schedule-tab-desc reveal-tight">Worship, teaching, and fellowship for our next generation — about an hour.</span>
                                 </button>
                             </div>
                         </div>
@@ -123,15 +123,15 @@ export const homeBody = (): string => `
                     <span class="section-eyebrow reveal-eyebrow">About Us</span>
                     <h2 class="section-heading reveal-rise">A welcoming church in the heart of Boise.</h2>
                     <div class="section-card">
-                        <div class="schedule-item long-content" data-reveal-group data-reveal-delay="160">
-                            <div class="schedule-item-image schedule-item-image-placeholder reveal-photo" aria-hidden="true">
+                        <div class="schedule-item long-content" data-reveal-group data-reveal-delay="220">
+                            <div class="schedule-item-image schedule-item-image-placeholder reveal-from-above" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                             </div>
-                            <div class="schedule-item-text reveal-rise">
+                            <div class="schedule-item-text reveal-rise-slow">
                                 <p>Morning Star is a small, nondenominational community where every story, every age, and every burden is met with grace and a seat at the table. We exist to point people to Jesus and to mend the broken — through faith, family, and serving the city we love.</p>
                             </div>
                         </div>
-                        <div class="teaser-cta-row reveal-rise">
+                        <div class="teaser-cta-row reveal-pop">
                             <a class="event-link-btn teaser-cta" href="/about">Learn More About Us</a>
                         </div>
                     </div>
@@ -142,8 +142,8 @@ export const homeBody = (): string => `
                     <span class="section-eyebrow reveal-eyebrow">How We Serve</span>
                     <h2 class="section-heading reveal-rise">A few ways we live out our mission in Boise.</h2>
                     <div class="section-card">
-                        <div class="schedule-grid" data-reveal-group data-reveal-delay="110">
-                            <a class="schedule-item teaser-link-card reveal-settle" href="/outreach#community-breakfast">
+                        <div class="schedule-grid" data-reveal-group data-reveal-delay="120">
+                            <a class="schedule-item teaser-link-card reveal-from-left" href="/outreach#community-breakfast">
                                 <div class="schedule-item-text">
                                     <span>Ministry</span>
                                     <h3>Community Breakfast</h3>
@@ -154,7 +154,7 @@ export const homeBody = (): string => `
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                                 </div>
                             </a>
-                            <a class="schedule-item teaser-link-card reveal-settle" href="/outreach#cooking-ministry">
+                            <a class="schedule-item teaser-link-card reveal-rise" href="/outreach#cooking-ministry">
                                 <div class="schedule-item-text">
                                     <span>Ministry</span>
                                     <h3>Cooking Ministry</h3>
@@ -165,7 +165,7 @@ export const homeBody = (): string => `
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                                 </div>
                             </a>
-                            <a class="schedule-item teaser-link-card reveal-settle" href="/outreach#events">
+                            <a class="schedule-item teaser-link-card reveal-from-right" href="/outreach#events">
                                 <div class="schedule-item-text">
                                     <span>Events</span>
                                     <h3>Community Events</h3>
@@ -177,7 +177,7 @@ export const homeBody = (): string => `
                                 </div>
                             </a>
                         </div>
-                        <div class="teaser-cta-row reveal-rise">
+                        <div class="teaser-cta-row reveal-pop">
                             <a class="event-link-btn teaser-cta" href="/outreach">Explore Our Outreach</a>
                         </div>
                     </div>
@@ -188,11 +188,11 @@ export const homeBody = (): string => `
                         <span class="section-eyebrow reveal-eyebrow">Watch</span>
                         <h2 class="section-heading reveal-rise">Watch Our Sunday Service Live from Boise</h2>
                     </div>
-                    <div class="watch-card reveal-power">
+                    <div class="watch-card">
                         <div class="watch-main">
-                            <div class="live-stream-container">
+                            <div class="live-stream-container" data-reveal-group data-reveal-delay="160">
                                 <span class="live-status"><span class="live-dot"></span><span class="live-status-text">Live Soon</span></span>
-                                <div class="countdown-container">
+                                <div class="countdown-container reveal-rise">
                                     <div class="countdown-label">Next service starts in:</div>
                                     <div class="countdown-timer">
                                         <div class="countdown-item">
@@ -213,9 +213,9 @@ export const homeBody = (): string => `
                                         </div>
                                     </div>
                                 </div>
-                                <p class="live-verse">"Consequently, faith comes from hearing the message, and the message is heard through the word about Christ."<small>Romans 10:17</small></p>
+                                <p class="live-verse reveal-rise-slow">"Consequently, faith comes from hearing the message, and the message is heard through the word about Christ."<small>Romans 10:17</small></p>
 
-                                <div class="video-embed-wrapper" id="video-embed-wrapper">
+                                <div class="video-embed-wrapper reveal-power" id="video-embed-wrapper">
                                     <div class="video-thumbnail" id="video-thumbnail">
                                         <img class="video-thumbnail-img" id="video-thumbnail-img"
                                              alt="Latest Sunday Service from Morning Star Christian Church Boise"
@@ -239,7 +239,7 @@ export const homeBody = (): string => `
                                     </button>
                                 </div>
 
-                                <a href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" class="btn btn-outline playlist-btn">
+                                <a href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" class="btn btn-outline playlist-btn reveal-pop">
                                     View Full Playlist
                                 </a>
                             </div>
@@ -251,7 +251,7 @@ export const homeBody = (): string => `
                     <div class="contact-header">
                         <span class="section-eyebrow reveal-eyebrow">Get In Touch</span>
                         <h2 class="section-heading reveal-rise">Contact Us</h2>
-                        <p class="section-lead reveal-rise">
+                        <p class="section-lead reveal-rise-slow">
                             We'd love to hear from you! Whether you have questions, prayer requests, or just want to connect, fill out the form below and someone from our team will get back to you.
                         </p>
 
@@ -275,7 +275,7 @@ export const homeBody = (): string => `
                             </div>
                         </address>
                     </div>
-                    <div class="jotform-container reveal-rise" id="contact-form">
+                    <div class="jotform-container reveal-pop" id="contact-form">
                         <div class="engage-hub-form-embed" id="eh_form_5064126720901120" data-id="5064126720901120"></div>
                         <script type="text/javascript">
                         var EhAPI = EhAPI || {}; EhAPI.after_load = function(){

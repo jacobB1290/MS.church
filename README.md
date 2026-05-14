@@ -1,7 +1,19 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.46.6
+## 🔢 CURRENT VERSION: v1.46.7
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.46.7 - Reveals fire a little earlier (no longer pinned to the bottom edge)
+
+User report: "most of the motion happens at the bottom edge of the screen, just a little earlier".
+
+Previous trigger: `threshold: 0.14, rootMargin: '0px 0px -6% 0px'` — the negative bottom margin actually *shrunk* the effective viewport, requiring 14% of the element to be visible *above* the bottom 6% of the screen. Result: elements fired late, animations playing out right at the bottom edge as the user kept scrolling.
+
+New trigger: `threshold: 0, rootMargin: '0px 0px 8% 0px'` — positive bottom margin *extends* the effective viewport 8% below the screen, and threshold 0 fires as soon as any part of the element enters that extended region. Net shift: about **126px earlier** on a 900px viewport (~17% earlier in scroll distance).
+
+Result: reveals start while the element is still just below the visible viewport. By the time the user has scrolled it into clear view, the animation is well underway or nearly complete — motion now happens in the user's reading zone rather than pinned to the bottom edge.
+
+Applied to both the standard per-element observer and the v1.46.6 sync-parent observer. 40/40 reveals still fire correctly on both viewports.
 
 ### v1.46.6 - Synced motion within cards: same beat, different choreography
 

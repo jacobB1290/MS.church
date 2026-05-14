@@ -1,4 +1,4 @@
-// Version: 1.46.6 - data-reveal-sync: card-inner elements land as one beat instead of cascading
+// Version: 1.46.7 - Reveals fire a little earlier (rootMargin +8% bottom, threshold 0)
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

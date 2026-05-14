@@ -430,7 +430,6 @@ export const homeStyles = (): string => `
             .js-reveals .reveal-from-left,
             .js-reveals .reveal-from-right,
             .js-reveals .reveal-from-above,
-            .js-reveals .reveal-settle,
             .js-reveals .reveal-photo,
             .js-reveals .reveal-power,
             .js-reveals .reveal-pop {
@@ -438,92 +437,85 @@ export const homeStyles = (): string => `
                 will-change: opacity, transform;
                 transition-delay: var(--reveal-delay, 0ms);
             }
-            /* Light lead-in for category labels — short throw, faster. */
+            /* Refined motion language (v1.46.4) — restraint over flourish.
+               Single unified easing curve, no overshoots/springs, throw
+               distances scaled down ~40%, scales tightened toward 1.0 so
+               nothing reads as "dramatic". The variety still comes from
+               WHICH transform (translate vs scale vs direction) and from
+               duration, never from easing character.
+
+               Easing: cubic-bezier(0.22, 1, 0.36, 1) — clean ease-out,
+               smooth deceleration to a hard stop, no overshoot.
+               Same curve everywhere = unified character. */
+
+            /* Pure opacity — for very small labels that don't need to move.
+               Eyebrow labels are tiny chips; their movement was distracting
+               more than communicative. */
             .js-reveals .reveal-eyebrow {
-                transform: translateY(12px);
-                transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+                /* opacity-only; no transform */
+                transition: opacity 440ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            /* Prose: longer throw, more time to land — gives the reader
-               a sense of weight as it arrives. */
+            /* Prose rise — small throw, considered timing. */
             .js-reveals .reveal-rise {
-                transform: translateY(20px);
-                transition: opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+                transform: translateY(12px);
+                transition: opacity 540ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 540ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            /* Slow, deliberate rise — for verses, leads, prose that wants
-               to be read with weight. Longer duration, gentler curve. */
+            /* Slow rise — for verses, leads. Longer duration carries weight
+               without any bigger throw — the duration alone says "read me". */
             .js-reveals .reveal-rise-slow {
-                transform: translateY(18px);
-                transition: opacity 880ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 880ms cubic-bezier(0.22, 1, 0.36, 1);
+                transform: translateY(12px);
+                transition: opacity 760ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            /* Tight follow — small throw for the inner body text of a card,
-               so it arrives just after the title without competing with it. */
+            /* Tight follow — minimal throw so inner body text arrives just
+               after the title without competing for attention. */
             .js-reveals .reveal-tight {
-                transform: translateY(10px);
-                transition: opacity 480ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+                transform: translateY(6px);
+                transition: opacity 440ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 440ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            /* Directional reveals — for elements that should arrive from a
-               specific edge. The 3-card outreach grid uses left/up/right
-               for spatial coherence (cards converge to center). */
+            /* Directional — same easing/duration as rise, just different
+               axis. Outreach 3-card row uses left+right+center for spatial
+               coherence; the smaller throw keeps it from feeling theatrical. */
             .js-reveals .reveal-from-left {
-                transform: translateX(-18px);
-                transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+                transform: translateX(-10px);
+                transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
             }
             .js-reveals .reveal-from-right {
-                transform: translateX(18px);
+                transform: translateX(10px);
+                transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* From-above — small drop. About image uses this; the smaller
+               distance + opacity is enough to feel "placed onto the page". */
+            .js-reveals .reveal-from-above {
+                transform: translateY(-10px);
                 transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
                             transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            /* From-above — image or media that should feel like it's being
-               placed onto the page. About teaser photo uses this. */
-            .js-reveals .reveal-from-above {
-                transform: translateY(-16px);
-                transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            /* Cards being placed onto a surface — the micro-rotation
-               (anchored bottom-left) is what makes it feel "set down"
-               instead of "slid up". 0.6deg is barely perceptible
-               individually, but reads clearly across a staggered group. */
-            .js-reveals .reveal-settle {
-                transform: translateY(28px) rotate(-0.6deg);
-                transform-origin: bottom left;
+            /* Photo — a touch of scale + opacity, slow tempo. */
+            .js-reveals .reveal-photo {
+                transform: scale(0.97);
                 transition: opacity 820ms cubic-bezier(0.22, 1, 0.36, 1),
                             transform 820ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            /* Photograph "developing" — long-throw scale + opacity.
-               Earlier versions of this rule also transitioned filter:blur,
-               which gave a true print-developing feel but cost ~73ms on
-               peak frames during scroll (filter transitions force the
-               compositor to allocate an offscreen buffer per frame). The
-               extended 1100ms duration on a compositor-cheap transform
-               carries the same "settles into focus" intent without the
-               frame-time hit. */
-            .js-reveals .reveal-photo {
-                transform: scale(0.94);
-                transition: opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            /* Screen powering on — scale with a touch of overshoot
-               easing so the final ~10% feels like the picture "snapping"
-               into shape, not gliding to a stop. */
+            /* Power — focal media. Same curve as photo, just tighter, so
+               video/banner reads as "settling in" rather than "powering on
+               with a snap". The previous overshoot was the loudest motion
+               in the system. */
             .js-reveals .reveal-power {
-                transform: scale(0.92);
-                transition: opacity 900ms cubic-bezier(0.34, 1.18, 0.64, 1),
-                            transform 900ms cubic-bezier(0.34, 1.18, 0.64, 1);
+                transform: scale(0.97);
+                transition: opacity 720ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            /* Pop — small starting scale with overshoot. For CTAs and
-               badges that should feel "tappable" the moment they arrive.
-               Curve has a stronger overshoot than .reveal-power so the
-               button feels lively. */
+            /* Pop — CTAs and badges. Small scale, no overshoot. Springs
+               felt playful next to restrained text reveals. */
             .js-reveals .reveal-pop {
-                transform: scale(0.88);
-                transition: opacity 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
-                            transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+                transform: scale(0.96);
+                transition: opacity 460ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
             }
 
             /* Resolved state — applies to every variant uniformly. */
@@ -534,7 +526,6 @@ export const homeStyles = (): string => `
             .js-reveals .reveal-from-left.is-revealed,
             .js-reveals .reveal-from-right.is-revealed,
             .js-reveals .reveal-from-above.is-revealed,
-            .js-reveals .reveal-settle.is-revealed,
             .js-reveals .reveal-photo.is-revealed,
             .js-reveals .reveal-power.is-revealed,
             .js-reveals .reveal-pop.is-revealed {
@@ -584,7 +575,6 @@ export const homeStyles = (): string => `
                 .js-reveals .reveal-from-left,
                 .js-reveals .reveal-from-right,
                 .js-reveals .reveal-from-above,
-                .js-reveals .reveal-settle,
                 .js-reveals .reveal-photo,
                 .js-reveals .reveal-power,
                 .js-reveals .reveal-pop {

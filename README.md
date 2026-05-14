@@ -1,7 +1,32 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.46.3
+## 🔢 CURRENT VERSION: v1.46.4
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.46.4 - Motion refinement: elegance, regiment, restraint
+
+v1.46.3 introduced per-element motion variety. Reading the result, the dial was set too loud — large throws, two different overshoot/spring curves, varied easings per variant. This pass refines toward what the user asked for: **elegance, regiment, restraint.**
+
+**Three coordinated changes:**
+
+1. **Single unified easing.** Every variant now uses `cubic-bezier(0.22, 1, 0.36, 1)` — clean ease-out, smooth deceleration, no overshoot. The previous `cubic-bezier(0.34, 1.18, 0.64, 1)` (power) and `cubic-bezier(0.34, 1.56, 0.64, 1)` (pop) spring curves were the loudest motion in the system; they read as playful, not elegant. Variety in motion now comes from *which transform* (translate vs scale vs direction) and *duration*, not from easing character.
+
+2. **Smaller throws.** Transform distances reduced ~40% across the board:
+   - `.reveal-rise`: 20px → **12px**
+   - `.reveal-rise-slow`: 18px → **12px** (same throw; duration is the differentiator)
+   - `.reveal-tight`: 10px → **6px**
+   - `.reveal-from-left/right`: 18px → **10px**
+   - `.reveal-from-above`: 16px → **10px**
+   - `.reveal-photo`: scale 0.94 → **0.97**
+   - `.reveal-power`: scale 0.92 → **0.97** (and no overshoot)
+   - `.reveal-pop`: scale 0.88 → **0.96** (and no spring)
+   - `.reveal-eyebrow`: now **opacity-only** (tiny chips don't need to move; the motion was distracting more than communicative)
+
+3. **Tighter staggers.** Inner card stagger 70ms → **50ms**, outer card stagger 120ms → **80–90ms**, about-teaser stagger 220ms → **160ms**, watch-card stagger 160ms → **110ms**. Faster sequencing reads as orchestrated; slow sequencing reads as a metronome.
+
+**Removed unused `.reveal-settle`** — its `rotate(-0.6deg)` accent fell out of the markup in v1.46.3 (replaced by directional reveals) but the rule lingered. Pure removal, no functional impact.
+
+**Verified via Playwright** on both 1440×900 and 390×844: 40/40 reveal targets still fire correctly.
 
 ### v1.46.3 - Per-element motion: inner-card choreography, 11 motion variants
 

@@ -1,4 +1,4 @@
-// Version: 1.46.3 - Per-element motion: inner-card choreography, 11 motion variants, directional variety
+// Version: 1.46.4 - Refined motion: single curve, no springs, smaller throws, tighter staggers
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

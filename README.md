@@ -1,7 +1,33 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.46.9
+## 🔢 CURRENT VERSION: v1.47.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.47.0 - About teaser redesign: editorial split (no card)
+
+User asked to "drop the card design" on the About preview. Reviewed five candidate layouts (editorial split / centered hero / portrait-quote / cinematic banner / text-leads-inline), self-argued, picked the editorial split:
+
+- The site has card-heavy sections directly above (Schedule) and below (Outreach). Dropping the card here calls for a layout *different in character* — quiet, breathable, editorial — to create rhythm between the card-heavy neighbors.
+- Asymmetric splits (Apple, Stripe, MIT) read as confident/refined more often than centered-symmetric.
+- Centered hero wastes horizontal space on desktop; editorial split uses it.
+
+**Desktop (≥961px) — 2-column editorial split:**
+- Grid: `minmax(0, 7fr) minmax(0, 6fr)` with `gap: clamp(40px, 5vw, 80px)`, `align-items: center`
+- Image left at **5:4 aspect** (community-photo proportions), `border-radius: clamp(20px, 2vw, 28px)`, soft drop shadow to lift it off the page since there's no card frame
+- Text right: paragraph 17–19px Inter, `line-height: 1.7`, `max-width: 50ch` for comfortable measure
+- CTA intrinsic-width, left-aligned in the text column
+
+**Mobile (≤960px) — stacked, image-as-banner:**
+- Single column, image on top
+- Image: **16:10 aspect** (wider/banner-style) — feels substantial without eating scroll
+- Text below: paragraph 15–16px Inter, `line-height: 1.65`, no max-width (column is naturally narrow)
+- CTA intrinsic-width, left-aligned
+
+**Reveal choreography preserved** (same `data-reveal-sync` pattern from v1.46.6): image drops from above, paragraph rises slowly, CTA fills in left-to-right — all on the same beat when the section enters viewport.
+
+Removed the now-unused `#about .schedule-item.long-content` rules (~30 lines of CSS).
+
+Verified Playwright at 1440×900 and 390×844: 40/40 reveals fire correctly; both viewports screenshot cleanly.
 
 ### v1.46.9 - Mobile schedule compression (no content change)
 

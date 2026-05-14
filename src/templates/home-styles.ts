@@ -1268,37 +1268,106 @@ export const homeStyles = (): string => `
                 padding: 14px 32px;
             }
 
-            /* About teaser inner card — image on top spanning the full width
-               of the inner card (both upper corners), text below. Edge-to-
-               edge image, no border-radius gap (overflow: hidden on the
-               inner card clips the image to its rounded corners).
-               Scoped to #about so the same .schedule-item component on
-               /about / /outreach / /visit keeps its standard side-by-side
-               layout and inner padding. */
-            #about .schedule-item.long-content {
-                grid-template-columns: 1fr;
-                padding: 0;
-                overflow: hidden;
-                gap: 0;
+            /* ============================================================
+               ABOUT TEASER — editorial split layout (no .section-card)
+
+               The About teaser deliberately drops the boxed card frame
+               used by Schedule and Outreach. Content sits directly on
+               the page background — quieter visual weight, more
+               personal, gives the section breathing room between two
+               card-heavy neighbors.
+
+               Desktop (≥961px): 7fr / 6fr grid — image left, text right,
+                                 vertically centered. Image at 5:4 aspect.
+                                 Paragraph max-width 50ch for comfortable
+                                 measure.
+
+               Mobile (≤960px):  Single column, image on top at 16:10
+                                 aspect (banner-style, doesn't eat scroll),
+                                 paragraph + CTA below.
+
+               Both share the same reveal choreography: image drops in
+               from above, paragraph rises slowly, CTA fills in left to
+               right — all on the same beat via data-reveal-sync.
+               ============================================================ */
+            .about-content {
+                display: grid;
+                grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
+                gap: clamp(40px, 5vw, 80px);
+                align-items: center;
             }
-            #about .schedule-item.long-content .schedule-item-image {
-                order: -1; /* image above text on every breakpoint */
-                border-radius: 0;
-                aspect-ratio: 16 / 9;
+            .about-image {
+                position: relative;
+                aspect-ratio: 5 / 4;
                 width: 100%;
+                border-radius: clamp(20px, 2vw, 28px);
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(26, 26, 46, 0.10),
+                            0 6px 16px rgba(26, 26, 46, 0.04);
+                /* Placeholder styling (same gradient + dashed border as
+                   .schedule-item-image-placeholder so it reads as "image
+                   goes here" the way other placeholders on the page do). */
+                background:
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+                border: 1px dashed rgba(26, 26, 46, 0.14);
+                display: grid;
+                place-items: center;
+                color: rgba(26, 26, 46, 0.32);
             }
-            #about .schedule-item.long-content .schedule-item-text {
-                padding: clamp(28px, 4vw, 48px);
+            .about-image > svg {
+                width: 18%;
+                max-width: 96px;
+                min-width: 56px;
+                height: auto;
+            }
+            .about-image > img {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .about-text {
                 display: flex;
                 flex-direction: column;
-                gap: 16px;
+                gap: clamp(24px, 3vw, 36px);
+            }
+            .about-paragraph {
+                margin: 0;
+                font-family: var(--font-body), 'Inter', sans-serif;
+                font-size: clamp(17px, 1.5vw, 19px);
+                line-height: 1.7;
+                color: rgba(26, 26, 46, 0.72);
+                max-width: 50ch;
+            }
+            .about-cta.event-link-btn {
+                /* Intrinsic width, left-aligned in text column.
+                   Overrides the default full-width on .event-link-btn. */
+                width: auto;
+                align-self: flex-start;
+                padding: 14px 32px;
             }
             @media (max-width: 960px) {
-                #about .schedule-item.long-content .schedule-item-image {
-                    aspect-ratio: 16 / 10;
+                .about-content {
+                    grid-template-columns: 1fr;
+                    gap: clamp(24px, 4.5vw, 32px);
+                    align-items: stretch;
                 }
-                #about .schedule-item.long-content .schedule-item-text {
-                    padding: clamp(20px, 5vw, 32px);
+                .about-image {
+                    aspect-ratio: 16 / 10;
+                    border-radius: clamp(16px, 3vw, 22px);
+                }
+                .about-text {
+                    gap: clamp(18px, 4vw, 24px);
+                }
+                .about-paragraph {
+                    font-size: clamp(15px, 4vw, 16px);
+                    line-height: 1.65;
+                    max-width: none;
+                }
+                .about-cta.event-link-btn {
+                    padding: 13px 26px;
                 }
             }
 

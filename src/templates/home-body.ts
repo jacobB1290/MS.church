@@ -116,23 +116,22 @@ export const homeBody = (): string => `
                     </div>
                 </section>
 
-                <!-- About teaser — same nested-card pattern as the Outreach teaser:
-                     outer .section-card wraps a single .schedule-item, with the CTA
-                     centered at the bottom of the outer card. -->
+                <!-- About teaser — editorial split layout, no section-card frame.
+                     Image on the left (~55%), text + CTA on the right, vertically
+                     centered. Stacks cleanly on mobile (image on top, text below).
+                     Drops the boxed card design used elsewhere on the page so the
+                     About section reads with quieter visual weight — a deliberate
+                     contrast against the card-heavy Schedule + Outreach sections. -->
                 <section id="about">
                     <span class="section-eyebrow reveal-eyebrow">About Us</span>
                     <h2 class="section-heading reveal-rise">A welcoming church in the heart of Boise.</h2>
-                    <div class="section-card">
-                        <div class="schedule-item long-content" data-reveal-sync>
-                            <div class="schedule-item-image schedule-item-image-placeholder reveal-from-above" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                            </div>
-                            <div class="schedule-item-text reveal-rise-slow">
-                                <p>Morning Star is a small, nondenominational community where every story, every age, and every burden is met with grace and a seat at the table. We exist to point people to Jesus and to mend the broken — through faith, family, and serving the city we love.</p>
-                            </div>
+                    <div class="about-content" data-reveal-sync>
+                        <div class="about-image reveal-from-above" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                         </div>
-                        <div class="teaser-cta-row">
-                            <a class="event-link-btn teaser-cta reveal-fill" href="/about">Learn More About Us</a>
+                        <div class="about-text">
+                            <p class="about-paragraph reveal-rise-slow">Morning Star is a small, nondenominational community where every story, every age, and every burden is met with grace and a seat at the table. We exist to point people to Jesus and to mend the broken — through faith, family, and serving the city we love.</p>
+                            <a class="event-link-btn about-cta reveal-fill" href="/about">Learn More About Us</a>
                         </div>
                     </div>
                 </section>

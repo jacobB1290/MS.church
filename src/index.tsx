@@ -1,4 +1,4 @@
-// Version: 1.46.9 - Mobile schedule: gentle compression (padding/gap/type/line-height) without changing content
+// Version: 1.47.0 - About teaser redesign: editorial split layout, no section-card frame
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

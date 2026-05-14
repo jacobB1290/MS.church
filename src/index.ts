@@ -1,4 +1,4 @@
-// Version: 1.46.5 - Slower motion + .reveal-fill: CTAs draw in left-to-right via ::before wipe
+// Version: 1.46.6 - data-reveal-sync: card-inner elements land as one beat instead of cascading
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

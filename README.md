@@ -1,7 +1,29 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.46.5
+## 🔢 CURRENT VERSION: v1.46.6
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.46.6 - Synced motion within cards: same beat, different choreography
+
+v1.46.5 had inner-card cascades — within a card, the eyebrow appeared, then the title, then the description, then the CTA. Reading the result, the per-element delays made the page feel messy: motion never "landed", it always trickled.
+
+Refined to a **two-tier model**:
+- **ACROSS sibling cards** (the 5 stacked schedule tabs, scrolled-through one by one): still stagger — they enter viewport at different scroll positions anyway, so a small delay between them feels natural.
+- **WITHIN a card** (eyebrow + title + desc, or image + text, or badge + countdown + verse + video): **sync** — all inner elements fire at the *same moment* the card enters viewport, each with its own transform/duration/easing.
+
+The result: each card lands as a single beat. Inside that beat, different elements move differently (the eyebrow uses opacity-only; the title rises; the description follows with a tight throw; the CTA fills in left-to-right). Multiple motions on the same downbeat reads as orchestrated, not scattered.
+
+**New attribute: `data-reveal-sync`.** Applied to:
+- Each of the 5 schedule tab buttons (inner eyebrow/title/desc fire together)
+- About teaser `.schedule-item.long-content` (image + text fire together)
+- Outreach 3-card `.schedule-grid` (all 3 cards converge from L/center/R simultaneously)
+- Watch `.live-stream-container` (countdown + verse + video + playlist fire together)
+
+**JS mechanics:** a separate IntersectionObserver attaches to each `[data-reveal-sync]` parent. When the parent intersects, the JS adds `.is-revealed` to every reveal-class descendant at once. Children of sync parents are skipped by the standard per-element observer to avoid double-firing. The `applyGroupDelays` function also detects `data-reveal-sync` and forces per-child delays to 0 within that group.
+
+Stagger preserved for: the 5 schedule tabs across each other, section eyebrow → heading lead-in, sections themselves across scroll.
+
+Verified Playwright at 1440×900 and 390×844: 40/40 reveals fire correctly, no console errors.
 
 ### v1.46.5 - Slower tempo + button "fill in" reveal
 

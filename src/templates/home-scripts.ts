@@ -168,11 +168,21 @@ export const homeScripts = (): string => `
                     // for its own children's delays. This makes 5 stacked
                     // cards each with an inner eyebrow/title/desc cascade
                     // animate as a coherent staircase.
+                    //
+                    // [data-reveal-sync] is a special form of group — its
+                    // children all fire at the same moment (delay 0 across
+                    // them) when the parent enters viewport. Each child
+                    // keeps its own transform/duration/easing so they still
+                    // move differently, just on the same beat. Used where
+                    // a set of inner elements should land as "one moment"
+                    // rather than a cascade.
                     function applyGroupDelays(group, parentOffset) {
-                        const baseDelay = parseInt(group.getAttribute('data-reveal-delay') || '90', 10);
+                        const isSync = group.hasAttribute('data-reveal-sync');
+                        const baseDelay = isSync
+                            ? 0
+                            : parseInt(group.getAttribute('data-reveal-delay') || '90', 10);
                         const maxDelay = parseInt(group.getAttribute('data-reveal-max') || '520', 10);
                         const offset = parentOffset || 0;
-                        // Direct-child reveal targets within this group.
                         const items = Array.from(group.children).filter((c) => c.matches(REVEAL_SEL));
                         const n = items.length;
                         items.forEach((item, i) => {
@@ -180,26 +190,32 @@ export const homeScripts = (): string => `
                             const own = Math.min(t * baseDelay, maxDelay);
                             item.style.setProperty('--reveal-delay', (offset + own) + 'ms');
                         });
-                        // Direct-child nested groups inherit a base offset
-                        // so their children's delays start after the parent's
-                        // staircase would have placed them.
+                        // Direct-child nested groups inherit a base offset.
                         Array.from(group.children).forEach((child, idx) => {
-                            if (child.matches('[data-reveal-group]')) {
-                                // Determine this child's position within the parent's stagger.
+                            if (child.matches('[data-reveal-group], [data-reveal-sync]')) {
                                 const directIndex = items.indexOf(child);
                                 const t = (directIndex >= 0 && n > 1)
                                     ? Math.pow(directIndex / (n - 1), 0.85) * (n - 1)
-                                    : idx * 0.5; // group not in items: rough fallback
+                                    : idx * 0.5;
                                 const childOffset = offset + Math.min(t * baseDelay, maxDelay);
                                 applyGroupDelays(child, childOffset);
                             }
                         });
                     }
-                    // Top-level groups only (not nested under another group).
-                    document.querySelectorAll('[data-reveal-group]').forEach((group) => {
-                        if (!group.parentElement || !group.parentElement.closest('[data-reveal-group]')) {
+                    // Top-level groups only.
+                    document.querySelectorAll('[data-reveal-group], [data-reveal-sync]').forEach((group) => {
+                        if (!group.parentElement || !group.parentElement.closest('[data-reveal-group], [data-reveal-sync]')) {
                             applyGroupDelays(group, 0);
                         }
+                    });
+
+                    // Collect children of sync parents — they should NOT be
+                    // observed individually. Instead, the sync observer
+                    // fires them all together when the parent intersects.
+                    const syncParents = Array.from(document.querySelectorAll('[data-reveal-sync]'));
+                    const syncedChildren = new Set();
+                    syncParents.forEach((p) => {
+                        p.querySelectorAll(REVEAL_SEL).forEach((c) => syncedChildren.add(c));
                     });
 
                     const targets = document.querySelectorAll(REVEAL_SEL);
@@ -212,9 +228,7 @@ export const homeScripts = (): string => `
                         return;
                     }
 
-                    // Above-the-fold elements may already be intersecting
-                    // when the observer is created. IntersectionObserver
-                    // fires for those on the next tick — no extra work needed.
+                    // Standard observer — fires per-element as each enters viewport.
                     const revealObserver = new IntersectionObserver((entries) => {
                         entries.forEach((entry) => {
                             if (entry.isIntersecting) {
@@ -224,19 +238,49 @@ export const homeScripts = (): string => `
                         });
                     }, { threshold: 0.14, rootMargin: '0px 0px -6% 0px' });
 
+                    // Sync observer — observes [data-reveal-sync] parents and,
+                    // when one enters viewport, marks ALL its reveal-class
+                    // children .is-revealed simultaneously. Used so a card's
+                    // inner elements land as one beat instead of cascading.
+                    const syncObserver = new IntersectionObserver((entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                entry.target.querySelectorAll(REVEAL_SEL).forEach((c) => {
+                                    c.classList.add('is-revealed');
+                                });
+                                syncObserver.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.14, rootMargin: '0px 0px -6% 0px' });
+
                     targets.forEach((el) => {
                         // Skip elements that aren't in the layout — e.g. the
                         // schedule banner which is display:none on mobile.
                         // IntersectionObserver never fires for zero-area
-                        // elements, so they'd sit at opacity:0 forever. Mark
-                        // them revealed immediately so they're "ready" if a
-                        // resize ever brings them into the layout.
+                        // elements, so they'd sit hidden forever. Mark them
+                        // revealed immediately so they're ready if a resize
+                        // ever brings them into the layout.
                         const r = el.getBoundingClientRect();
                         if (r.width === 0 && r.height === 0) {
                             el.classList.add('is-revealed');
                             return;
                         }
+                        // Sync-managed children are fired by the sync observer
+                        // via their parent — don't observe them individually
+                        // or the topmost one would fire early.
+                        if (syncedChildren.has(el)) return;
                         revealObserver.observe(el);
+                    });
+
+                    // Attach the sync observer to each sync parent.
+                    syncParents.forEach((p) => {
+                        const r = p.getBoundingClientRect();
+                        if (r.width === 0 && r.height === 0) {
+                            // Hidden parent — mark all children revealed too.
+                            p.querySelectorAll(REVEAL_SEL).forEach((c) => c.classList.add('is-revealed'));
+                            return;
+                        }
+                        syncObserver.observe(p);
                     });
                 })();
 

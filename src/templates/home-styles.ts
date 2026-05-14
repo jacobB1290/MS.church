@@ -1292,29 +1292,45 @@ export const homeStyles = (): string => `
             }
 
             /* ============================================================
-               VERTICAL VIDEO FRAME — 9:16 phone-sized preview.
-               Stacks on top of the section text inside a .section-card-video
-               wrapper. Big enough to actually watch the preview, mirrors the
-               watch section's .video-unmute-btn overlay pattern.
-               When a real <video autoplay muted loop playsinline> drops in, it
-               replaces the inner .vertical-video-placeholder; the frame and
-               unmute button stay structurally the same.
+               SUNDAY SCHOOL — editorial split, no card.
+
+               The old design wrapped the 9:16 phone-preview video inside
+               a .section-card and stacked text below. That made the
+               section ~900px tall on desktop (560px video + card padding
+               + text) and forced the video to ~533px on mobile. The
+               video dominated; the section read as "watch this video,
+               oh and some text I guess."
+
+               New treatment (v1.49.12):
+                 1. Drop the .section-card box — content sits directly
+                    on the page background like the About teaser.
+                 2. Desktop ≥961px: 2-column editorial split inside an
+                    880px max-width centered container. Video left (280px
+                    column, capped at max-height 440px so the 9:16 frame
+                    is ~247×440 instead of the old 360×640). Text right
+                    with paragraph + scannable facts list + CTA link;
+                    the facts pull existing info into a denser format so
+                    the text column visually balances the video height.
+                 3. Mobile ≤960px: single column stack. Video centered,
+                    capped at max-height 420px (~236×420). That puts
+                    side-air at ~15% per side on a typical phone, which
+                    reads as intentional centering rather than dead
+                    space. Below the video, the same facts list fills
+                    the full mobile width — turns the would-be empty
+                    space into useful scannable content.
+
+               .vertical-video-frame is now used only here; sizing
+               defaults moved to the .sunday-school-video modifier so
+               the base frame stays neutral if reused elsewhere later.
                ============================================================ */
-            .section-card.section-card-video {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: clamp(24px, 3vw, 36px);
-            }
             .vertical-video-frame {
                 position: relative;
-                width: min(360px, 80vw);
                 aspect-ratio: 9 / 16;
-                border-radius: 28px;
+                border-radius: 24px;
                 overflow: hidden;
                 background: linear-gradient(180deg, #1a1a2e 0%, #2a2a4e 100%);
-                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18),
-                            0 8px 20px rgba(0, 0, 0, 0.06);
+                box-shadow: 0 20px 48px rgba(0, 0, 0, 0.16),
+                            0 6px 16px rgba(0, 0, 0, 0.05);
                 cursor: pointer;
             }
             .vertical-video-frame video,
@@ -1344,20 +1360,115 @@ export const homeStyles = (): string => `
                 max-width: 56px;
                 height: auto;
             }
-            .section-card-text {
+
+            /* Editorial split wrapper. Centered 880px column on desktop;
+               full-width single column on mobile. */
+            .sunday-school-content {
+                display: grid;
+                grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+                column-gap: clamp(40px, 5vw, 64px);
+                row-gap: clamp(24px, 4vw, 32px);
+                align-items: center;
+                max-width: 880px;
+                margin: 0 auto;
                 width: 100%;
-                max-width: 720px;
-                color: rgba(26, 26, 46, 0.7);
-                font-size: var(--text-body);
-                line-height: var(--leading-loose);
             }
-            .section-card-text p + p {
-                margin-top: 14px;
+            .sunday-school-video.vertical-video-frame {
+                width: 100%;
+                max-height: 440px;
+                /* aspect-ratio + max-height clamps width to ~247px on
+                   desktop; the 280px grid column gives modest breathing
+                   room to the right of the frame. */
+                justify-self: center;
             }
-            .section-card-text .section-card-link {
+            .sunday-school-text {
+                display: flex;
+                flex-direction: column;
+                gap: clamp(16px, 1.8vw, 22px);
+            }
+            .sunday-school-text > p {
+                margin: 0;
+                color: rgba(26, 26, 46, 0.72);
+                font-size: clamp(16px, 1.35vw, 17px);
+                line-height: 1.7;
+                max-width: 52ch;
+            }
+            .sunday-school-facts {
+                margin: 0;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+                border-top: 1px solid rgba(26, 26, 46, 0.10);
+                border-bottom: 1px solid rgba(26, 26, 46, 0.10);
+                padding: clamp(14px, 2vw, 18px) 0;
+            }
+            .sunday-school-facts > div {
+                display: grid;
+                grid-template-columns: 92px 1fr;
+                gap: 16px;
+                align-items: baseline;
+            }
+            .sunday-school-facts dt {
+                font-family: var(--font-display);
+                font-size: 11px;
+                font-weight: var(--weight-bold);
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--gold-dark);
+                margin: 0;
+            }
+            .sunday-school-facts dd {
+                margin: 0;
+                color: rgba(26, 26, 46, 0.78);
+                font-size: 15px;
+                line-height: 1.5;
+            }
+            .sunday-school-link {
                 color: var(--gold);
                 font-weight: var(--weight-semibold);
                 text-decoration: none;
+                align-self: flex-start;
+                font-size: 15px;
+            }
+            .sunday-school-link:hover {
+                text-decoration: underline;
+                text-underline-offset: 4px;
+            }
+            @media (max-width: 960px) {
+                /* Single-column stack. Wrapper stretches to section width
+                   so it aligns with the eyebrow + heading above; inner
+                   elements use their own caps. Video gets a hard width
+                   cap (240px) and text gets a readable cap (540px) — both
+                   centered within the wrapper. */
+                .sunday-school-content {
+                    grid-template-columns: 1fr;
+                    column-gap: 0;
+                    row-gap: clamp(20px, 4vw, 28px);
+                    align-items: stretch;
+                    justify-items: center;
+                    max-width: none;
+                }
+                .sunday-school-video.vertical-video-frame {
+                    width: 100%;
+                    max-width: 240px;
+                    max-height: 426px;
+                    border-radius: 20px;
+                }
+                .sunday-school-text {
+                    width: 100%;
+                    max-width: 540px;
+                    align-items: flex-start;
+                }
+                .sunday-school-text > p {
+                    max-width: none;
+                }
+                .sunday-school-facts {
+                    width: 100%;
+                }
+                .sunday-school-facts > div {
+                    grid-template-columns: 80px 1fr;
+                    gap: 12px;
+                }
             }
 
             /* Teaser CTA buttons on home are intrinsically sized (not full-width). */

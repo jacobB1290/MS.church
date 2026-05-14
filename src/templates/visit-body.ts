@@ -79,9 +79,9 @@ export const visitBody = (): string => `
 
                 <section id="sunday-school">
                     <span class="section-eyebrow">Sunday School</span>
-                    <h2 class="section-heading">Sundays · During the 9 AM service</h2>
-                    <div class="section-card section-card-video">
-                        <div class="vertical-video-frame" id="sunday-school-video">
+                    <h2 class="section-heading">Sundays &middot; During the 9 AM service</h2>
+                    <div class="sunday-school-content">
+                        <div class="vertical-video-frame sunday-school-video" id="sunday-school-video">
                             <div class="vertical-video-placeholder" aria-hidden="true">${VIDEO_PLACEHOLDER_SVG}</div>
                             <button class="video-unmute-btn visible" id="sunday-school-unmute" type="button" aria-label="Unmute video">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -92,9 +92,14 @@ export const visitBody = (): string => `
                                 Tap to unmute
                             </button>
                         </div>
-                        <div class="section-card-text">
-                            <p>Children's Sunday School runs in a separate room during the main service, so families can worship together and kids can dive into scripture at their level. The curriculum focuses on the gospel, the Bible's storyline, and what it means to follow Jesus. Safe, warm, and joyful — drop-off is welcome any Sunday.</p>
-                            <p><a href="/#contact" class="section-card-link">Ask about Sunday School &rarr;</a></p>
+                        <div class="sunday-school-text">
+                            <p>Children's Sunday School runs in a separate room during the main service, so families can worship together and kids can dive into scripture at their level. Safe, warm, and joyful — drop-off is welcome any Sunday.</p>
+                            <dl class="sunday-school-facts">
+                                <div><dt>When</dt><dd>During the 9 AM service</dd></div>
+                                <div><dt>Focus</dt><dd>Gospel-centered, Bible storyline</dd></div>
+                                <div><dt>Drop-in</dt><dd>Welcome any Sunday &mdash; no signup</dd></div>
+                            </dl>
+                            <a href="/#contact" class="sunday-school-link">Ask about Sunday School &rarr;</a>
                         </div>
                     </div>
                 </section>

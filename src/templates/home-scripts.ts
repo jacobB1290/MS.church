@@ -236,7 +236,7 @@ export const homeScripts = (): string => `
                                 revealObserver.unobserve(entry.target);
                             }
                         });
-                    }, { threshold: 0, rootMargin: '0px 0px 8% 0px' });
+                    }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
 
                     // Sync observer — observes [data-reveal-sync] parents and,
                     // when one enters viewport, marks ALL its reveal-class
@@ -251,7 +251,7 @@ export const homeScripts = (): string => `
                                 syncObserver.unobserve(entry.target);
                             }
                         });
-                    }, { threshold: 0, rootMargin: '0px 0px 8% 0px' });
+                    }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
 
                     targets.forEach((el) => {
                         // Skip elements that aren't in the layout — e.g. the

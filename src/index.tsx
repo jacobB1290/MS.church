@@ -1,4 +1,4 @@
-// Version: 1.46.7 - Reveals fire a little earlier (rootMargin +8% bottom, threshold 0)
+// Version: 1.46.8 - Reveals fire later, into the viewing area (rootMargin -12% bottom, threshold 0)
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

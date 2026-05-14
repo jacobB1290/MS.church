@@ -1,7 +1,15 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.46.7
+## 🔢 CURRENT VERSION: v1.46.8
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.46.8 - Reveals fire later, into the viewing area
+
+v1.46.7 misread the original request: "earlier in scroll" was interpreted as "fires sooner" which actually pushed the animations *off-screen* (firing before the element was visible). The user clarified the intent: motion should happen **higher on the screen**, away from the bottom edge — which means firing **later in scroll** (after the element has scrolled further into the viewport).
+
+New trigger: `threshold: 0, rootMargin: '0px 0px -12% 0px'`. The negative bottom margin pulls the effective viewport bottom up by 12%, so the reveal fires only after the element has scrolled into the upper 88% of the viewport. On a 900px screen, that's ~108px above the bottom edge — the element appears at the bottom, the user scrolls a bit more, then the animation triggers in their comfortable viewing zone.
+
+Applied to both observers (standard per-element + sync-parent). 40/40 reveals fire correctly on both viewports.
 
 ### v1.46.7 - Reveals fire a little earlier (no longer pinned to the bottom edge)
 

@@ -4497,12 +4497,19 @@ export const homeStyles = (): string => `
                    card returns to its standard padding (no banner to make
                    edge-to-edge for), and the .schedule-tab active state
                    is neutralized so no single card is arbitrarily
-                   highlighted (there's no banner for it to control). */
+                   highlighted (there's no banner for it to control).
+
+                   v1.46.9: gentle compression pass — tightens padding,
+                   gaps, type sizes, and description line-height on
+                   mobile so the 5-card list reads as a unit rather than
+                   a long scroll. Each lever moves only slightly; the
+                   compound effect is ~150–200px saved without changing
+                   any content. */
                 .schedule-banner {
                     display: none;
                 }
                 .section-card.schedule-card {
-                    padding: clamp(18px, 4vw, 36px) clamp(16px, 3vw, 28px);
+                    padding: clamp(14px, 3.4vw, 28px) clamp(14px, 3vw, 24px);
                     overflow: visible;
                 }
                 .schedule-layout {
@@ -4511,28 +4518,26 @@ export const homeStyles = (): string => `
                 }
                 .schedule-list {
                     padding: 0;
-                    gap: clamp(10px, 2.2vw, 14px);
+                    gap: clamp(8px, 1.8vw, 12px);
                 }
                 .schedule-tab.active {
                     background: rgba(255, 255, 255, 0.78);
                     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
                 }
                 .schedule-tab {
-                    border-radius: 18px;
-                    padding: clamp(16px, 4vw, 22px) clamp(18px, 4.5vw, 24px);
-                    gap: 10px;
+                    border-radius: 16px;
+                    padding: clamp(13px, 3.2vw, 18px) clamp(16px, 3.8vw, 20px);
+                    gap: 6px;
                 }
-                /* Bigger eyebrow + title on mobile — title matches the
-                   weight the old .schedule-item h3 mobile rule used to
-                   give the day/time line. */
                 .schedule-tab-eyebrow {
-                    font-size: clamp(13px, 3.5vw, 16px);
+                    font-size: clamp(12px, 3.2vw, 14px);
                 }
                 .schedule-tab-title {
-                    font-size: clamp(24px, 6vw, 30px);
+                    font-size: clamp(21px, 5.4vw, 27px);
                 }
                 .schedule-tab-desc {
                     font-size: clamp(14px, 3.6vw, 15px);
+                    line-height: 1.55;
                 }
             }
 

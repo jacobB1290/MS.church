@@ -1,4 +1,4 @@
-// Version: 1.46.8 - Reveals fire later, into the viewing area (rootMargin -12% bottom, threshold 0)
+// Version: 1.46.9 - Mobile schedule: gentle compression (padding/gap/type/line-height) without changing content
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

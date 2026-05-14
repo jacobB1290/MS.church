@@ -1,7 +1,30 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.46.8
+## 🔢 CURRENT VERSION: v1.46.9
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.46.9 - Mobile schedule compression (no content change)
+
+The 5-card weekly schedule on mobile felt long because each lever was generous in isolation: card padding 16–22px vertical, inner gap 10px, list gap 10–14px, description `line-height: 1.8`, title `clamp(24px, 6vw, 30px)`, eyebrow `clamp(13px, 3.5vw, 16px)`, section-card padding `clamp(18px, 4vw, 36px)`. Together it added up.
+
+Each lever tightened slightly — gentle, not aggressive:
+
+| Lever | v1.46.8 | v1.46.9 |
+|---|---|---|
+| Card padding (Y / X) | 16–22 / 18–24 | **13–18 / 16–20** |
+| Card inner gap | 10px | **6px** |
+| Card border-radius | 18px | **16px** |
+| Title size | clamp(24, 6vw, 30) | **clamp(21, 5.4vw, 27)** |
+| Eyebrow size | clamp(13, 3.5vw, 16) | **clamp(12, 3.2vw, 14)** |
+| Description line-height | 1.8 (loose) | **1.55** |
+| List gap | 10–14 | **8–12** |
+| Section-card padding | 18–36 / 16–28 | **14–28 / 14–24** |
+
+**No content was changed.** Description text is unchanged.
+
+**Measured on iPhone-13 viewport (390×844):** schedule section went from ~1100px → 933px. About 4 cards visible in a single screenshot now where ~3 fit before. Sunday card (longest description) is 168px; the others are 125–147px.
+
+Desktop (≥961px) untouched — only mobile rules in `@media (max-width: 960px)` changed.
 
 ### v1.46.8 - Reveals fire later, into the viewing area
 

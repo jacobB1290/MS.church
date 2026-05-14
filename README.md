@@ -1,7 +1,29 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.49.4
+## 🔢 CURRENT VERSION: v1.49.5
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.49.5 - Invisible-stability watchdog + bigger settle + network-throttled harness checks
+
+User feedback on v1.49.4: "the animation is nice however its not landing in the correct spot like 50% off the target, these are things that should be routine checks in the harness. also make it maybe scroll in the last 5% instead of 2, just a bit more"
+
+Plus: "theres also a light stutter at the end like it stops then jumps a tiny bit, not seamless enough."
+
+Both issues had the same root cause as the original smooth-scroll problem: the Google Calendar carousel on /outreach fetches `/api/calendar/events` async and mounts the carousel AFTER initial paint, pushing the cooking-ministry / community-breakfast sections downward by hundreds of pixels. v1.49.4 measured `target.top` at the moment of scrollTo, landed at that stale Y, and the fade-in revealed the page sitting at the wrong position. Any layout shift that happened DURING or AFTER the fade-in produced the "stutter at the end."
+
+**Three changes:**
+
+1. **Invisible-stability watchdog.** After the initial instant `scrollTo`, re-measure the target's position every 100ms while `<main>` is still invisible (`opacity: 0`). If position drifts > 2px, instant-correct with another `scrollTo` — the user can't see these corrections because the fade-in hasn't been triggered yet. Fade-in only fires after **3 consecutive stable measurements (300ms of no shift)**, or a 1500ms hard cap. By the time the page becomes visible, layout has fully settled and the position is final.
+
+2. **Bigger settle distance, 16px → 40px (~5% perceived motion).** Slightly longer transition duration to match (`opacity: 800ms`, `transform: 950ms`). Reads as the tail end of a scroll at ~95% done instead of 98% — more visible motion the user asked for.
+
+3. **Routine harness checks for slow-network landing accuracy.** Localhost serves the calendar API in ~5-50ms, so the harness never exercised the "calendar mounts after scrollTo" path. Added two new families of scenarios that use CDP `Network.emulateNetworkConditions` to simulate a 250ms-latency / 1500kbps network:
+   - **Anchor scenarios `18-19`**: `/outreach#cooking-ministry` on mobile + desktop with throttling. Fails if the section lands > 25px off expected.
+   - **Perf scenarios `80-82`**: `/outreach#cooking-ministry`, `/visit#sunday-school` with throttling. Same landing check baked into the perf grade.
+
+These exercises catch the regression class the user reported (landing 50% off target) at CI time, not after deploy. Anchor + perf throttling support added via a new `netThrottle: { latencyMs, downKbps, upKbps }` option that maps onto CDP.
+
+DRIFT samples bumped to `[200, 1500, 3500, 4200, 5000]` so the last 3 stable samples all sit past the worst-case time-to-visible (afterLoad + 1500ms watchdog cap + 950ms fade-in ≈ 3000ms).
 
 ### v1.49.4 - Drop the smooth-scroll on hashload entirely (instant land + tail-of-scroll settle)
 

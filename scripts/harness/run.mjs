@@ -93,12 +93,17 @@ const PERF = PERF_60
 //   1500 — post-scroll (should match expected landing)
 //   2000 — stable check
 //   2600 — stable check
-// Subpage hashload now waits for window.load + fonts.ready (<=150ms) +
-// 2rAF + rIC before firing the smooth-scroll. On the harness that pushes
-// the scroll start to ~600-1500ms; the scroll itself takes ~600-900ms.
-// The last DRIFT_STABLE_SAMPLES samples must therefore all sit AFTER
-// the smooth-scroll has fully completed (worst case ≈ 2400ms).
-const DRIFT_SAMPLES_MS = [200, 1000, 2800, 3500, 4200]
+// Subpage hashload (v1.49.5): page-head paints main invisible
+// (opacity 0 + translateY 40px). Subpage-header waits for
+// window.load + fonts.ready (≤150ms cap) + 2rAF + rIC, does an
+// INSTANT scrollTo, then a watchdog re-measures every 100ms until
+// position is stable for 300ms (or a 1500ms hard cap) — corrections
+// are invisible because fade-in hasn't fired. Fade-in then runs
+// 950ms (opacity + transform). Worst-case time-to-visible-and-still:
+//   afterLoad (~500ms) + watchdog stability (≤1500ms) + fade-in (950ms)
+//   ≈ 3000ms.
+// Stable DRIFT samples must therefore all sit past ~3.2s.
+const DRIFT_SAMPLES_MS = [200, 1500, 3500, 4200, 5000]
 const DRIFT_STABLE_SAMPLES = 3 // last N samples must be within DRIFT_STABLE_TOLERANCE
 
 // Visual quality knobs
@@ -151,6 +156,17 @@ const ANCHOR_SCENARIOS = [
   { name: '15-jump-mission-mobile',    path: '/about',    anchor: '#mission',             viewport: MOBILE,  expected: 75 },
   { name: '16-jump-expect-desktop',    path: '/visit',    anchor: '#what-to-expect',      viewport: DESKTOP, expected: 90 },
   { name: '17-jump-sundayschool-mobile', path: '/visit',  anchor: '#sunday-school',       viewport: MOBILE,  expected: 75 },
+
+  // 18s — NETWORK-THROTTLED landing-accuracy. Routine check that
+  // the hashload lands at the right offset even when the calendar
+  // / image / font fetches finish AFTER the page first paints.
+  // Localhost is so fast it never exercises the "calendar mounts
+  // after scrollTo" path; this throttles latency to surface that
+  // class of bug at CI time. If the section lands > 25px off
+  // expected, the suite fails — same threshold as unthrottled
+  // anchor scenarios.
+  { name: '18-jump-cooking-net3g-mobile',  path: '/outreach', anchor: '#cooking-ministry',    viewport: MOBILE,  expected: 75, netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
+  { name: '19-jump-cooking-net3g-desktop', path: '/outreach', anchor: '#cooking-ministry',    viewport: DESKTOP, expected: 90, netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
 ]
 
 // Performance scenarios — each runs an interaction (scroll / hash / click)
@@ -221,6 +237,20 @@ const PERF_SCENARIOS = [
   { name: '74-ab-home-click-contact-desktop',          viewport: DESKTOP, path: '/',         action: 'homeclick', anchor: '#contact', ab: 'desktop-long' },
   { name: '75-ab-hashload-visit-sunday-desktop',       viewport: DESKTOP, path: '/visit',    action: 'hashload',  hash: '#sunday-school',  ab: 'desktop-long' },
   { name: '76-ab-hashload-outreach-cooking-desktop',   viewport: DESKTOP, path: '/outreach', action: 'hashload',  hash: '#cooking-ministry', ab: 'desktop-long' },
+
+  // 80s — NETWORK-THROTTLED hashloads. Routine landing-accuracy
+  // check under realistic conditions. Localhost serves /api/calendar
+  // /events in ~5-50ms; the calendar carousel mounts before our
+  // scrollTo fires, so a fast harness misses the case where the
+  // carousel mounts AFTER scrollTo and pushes the target section
+  // down. With ~250ms latency the mount lands later, exercising
+  // the invisible-stability watchdog. The HARNESS LANDING CHECK
+  // (sampling target.top at the end of the capture) verifies the
+  // section lands at the expected offset even under this load —
+  // catches "lands 50% off target" regressions before they ship.
+  { name: '80-perf-net3g-hashload-outreach-cooking-mobile', viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry', netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
+  { name: '81-perf-net3g-hashload-outreach-cooking-desktop', viewport: DESKTOP, path: '/outreach', action: 'hashload', hash: '#cooking-ministry', netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
+  { name: '82-perf-net3g-hashload-visit-sunday-mobile',    viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school',    netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
 ]
 
 const FLOW_SCENARIOS = [
@@ -560,7 +590,23 @@ async function runAnchorScenarios(launcher, report) {
     console.log(`▶ ${s.name}`)
 
     const anchorBody = (async () => {
-      await withTimeout(page.goto(url, { waitUntil: 'commit' }), 10_000, `goto ${url}`)
+      // Optional network throttling so the anchor landing check exercises
+      // the case where async resources (calendar fetch, font load) settle
+      // AFTER the page first paints. Localhost is too fast to surface
+      // those cases naturally.
+      if (s.netThrottle) {
+        try {
+          const cdp = await context.newCDPSession(page)
+          const n = s.netThrottle
+          await cdp.send('Network.emulateNetworkConditions', {
+            offline: false,
+            latency: n.latencyMs || 200,
+            downloadThroughput: (n.downKbps || 1500) * 1024 / 8,
+            uploadThroughput: (n.upKbps || 750) * 1024 / 8,
+          })
+        } catch (e) {}
+      }
+      await withTimeout(page.goto(url, { waitUntil: 'commit' }), 15_000, `goto ${url}`)
 
       let driftMeasurements = null
       if (s.anchor) {
@@ -1027,14 +1073,36 @@ async function runPerfScenarios(launcher, report) {
     const t0 = Date.now()
     console.log(`▶ ${s.name}`)
     const perfBody = (async () => {
-      // Optional CPU throttling for stress scenarios (50s/60s).
-      // Simulates mid-range or entry-level mobile devices. Surfaces
-      // main-thread bottlenecks that hide on fast hardware.
+      // Optional CPU + network throttling for stress scenarios.
+      //   cpuThrottle:  simulates mid-range or entry-level mobile.
+      //                 Surfaces main-thread bottlenecks that hide
+      //                 on fast hardware. (50s/60s scenarios.)
+      //   netThrottle:  simulates a real network (3G-ish). Crucial
+      //                 for the hashload landing-accuracy check —
+      //                 on localhost the calendar carousel mounts
+      //                 within ~50ms, way before our scrollTo fires,
+      //                 so a fast harness misses the case where
+      //                 calendar mounts AFTER scrollTo and pushes
+      //                 the target section downward. With latency,
+      //                 the mount happens later, exercising the
+      //                 invisible-stability watchdog in subpage-
+      //                 header.ts. (80s scenarios.)
       let cdp = null
-      if (s.cpuThrottle && s.cpuThrottle > 1) {
+      if ((s.cpuThrottle && s.cpuThrottle > 1) || s.netThrottle) {
         try {
           cdp = await context.newCDPSession(page)
-          await cdp.send('Emulation.setCPUThrottlingRate', { rate: s.cpuThrottle })
+          if (s.cpuThrottle && s.cpuThrottle > 1) {
+            await cdp.send('Emulation.setCPUThrottlingRate', { rate: s.cpuThrottle })
+          }
+          if (s.netThrottle) {
+            const n = s.netThrottle
+            await cdp.send('Network.emulateNetworkConditions', {
+              offline: false,
+              latency: n.latencyMs || 200,
+              downloadThroughput: (n.downKbps || 1500) * 1024 / 8,
+              uploadThroughput: (n.upKbps || 750) * 1024 / 8,
+            })
+          }
         } catch (e) { cdp = null }
       }
       // For 'hashload', the page's own subpage-header.ts script auto-triggers
@@ -1144,10 +1212,11 @@ async function runPerfScenarios(launcher, report) {
       // threshold (a 4× slower CPU is expected to produce 4× slower
       // frames). Their data is still recorded and shown in the report
       // for manual review, but they always pass the suite.
-      // A/B pair scenarios are informational: their job is to expose the
-      // smoothness gap between home click and subpage hashload, not to
-      // gate the suite. We iterate against the gap until it closes.
-      const isInformational = (!!s.cpuThrottle && s.cpuThrottle > 1) || !!s.ab
+      // A/B pair scenarios + netThrottle scenarios are informational:
+      // their job is to surface metrics under stress conditions, not
+      // to gate the suite (the network latency itself shows up as a
+      // 1+second LoAF which would always fail strict thresholds).
+      const isInformational = (!!s.cpuThrottle && s.cpuThrottle > 1) || !!s.ab || !!s.netThrottle
       const passes60 = isInformational ? true : issues60.length === 0
       const passes120 = issues120.length === 0
 

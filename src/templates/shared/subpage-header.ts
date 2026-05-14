@@ -87,53 +87,118 @@ export function subpageHeader(): string {
                     // the smooth-scroll's vsync-bound paint pipeline was
                     // trying to commit each frame.
                     //
-                    // v1.49.4: replaced the smooth-scroll-from-top approach
-                    // entirely. Every prior iteration (custom rAF easing →
-                    // browser-native scrollTo → defer-until-load → watchdog
-                    // re-targeting → snap-correct) had the same fundamental
-                    // problem: a long visible scroll animation competing
-                    // with main-thread work AND fighting layout shifts as
-                    // async content (calendar carousel, image decodes) lands
-                    // mid-flight. The motion was perceived as jagged or
-                    // landing-then-jumping no matter how we tuned it.
+                    // v1.49.5: instant scroll + invisible-stability watchdog.
                     //
-                    // New approach (paired with .hash-fade CSS in
-                    // home-styles.ts):
+                    // v1.49.4 dropped the smooth-scroll but landed at the
+                    // wrong spot when async content (e.g. /outreach calendar
+                    // carousel) mounted AFTER our initial scrollTo. The
+                    // page faded in at the wrong position, and any final
+                    // layout shift produced a visible jump-after-settle.
+                    //
+                    // Fix: keep main invisible until layout has been
+                    // stable for 300ms. Re-do the instant scrollTo every
+                    // 100ms while we're waiting; each correction is
+                    // invisible because the fade-in hasn't started.
+                    //
+                    // Flow:
                     //   1. page-head sets .hash-fade on <html> before first
-                    //      paint → main renders at opacity 0, translateY(16px).
+                    //      paint → main renders at opacity 0, translateY(40px).
                     //   2. We wait for window.load + fonts.ready + 2rAF +
-                    //      rIC so the page is fully laid out (calendar has
-                    //      mounted, images decoded, fonts loaded).
-                    //   3. We do an INSTANT scrollTo(0, targetY) — accurate
-                    //      because layout has settled and predictable
-                    //      because there's no animation to be janky.
-                    //   4. We add .hash-fade-in → CSS transitions opacity
-                    //      0→1 and transform translateY(16)→0 over ~800ms
-                    //      with a strong easeOut curve. Reads as the tail
-                    //      end of a smooth-scroll that's 98% done.
+                    //      rIC.
+                    //   3. Initial INSTANT scrollTo to the measured target.
+                    //   4. Watchdog re-measures every 100ms. If position
+                    //      drifts > 2px (layout shift somewhere), re-do
+                    //      the instant scrollTo. Reset stability counter.
+                    //   5. After 3 consecutive stable measurements (300ms
+                    //      of no shift), add .hash-fade-in → CSS fades
+                    //      opacity 0→1 and transforms translateY 40→0
+                    //      over ~900ms with strong easeOut. Reads as the
+                    //      tail end of a smooth-scroll at 95% done.
+                    //   6. Hard cap 1500ms — if layout never stabilizes
+                    //      (unlikely), we fade-in anyway.
                     //
-                    // The 16px settle gives the perception of motion
-                    // without the cost of a visible long scroll. The user
-                    // never sees the page at the wrong position because
-                    // the scrollTo runs while main is still invisible.
+                    // The 40px settle (~5% perceived motion) gives a more
+                    // visible tail-of-scroll feel than v1.49.4's 16px.
+                    // User never sees corrections because they happen
+                    // while main is at opacity 0.
                     var hash = window.__targetHash;
                     if (hash) {
                         var fired = false;
-                        var fireScroll = function() {
-                            if (fired) return;
-                            fired = true;
-                            var t = document.querySelector(hash);
-                            if (t) {
-                                var offset = window.innerWidth <= 960 ? 75 : 90;
-                                var targetY = Math.max(0, t.getBoundingClientRect().top + window.pageYOffset - offset);
-                                window.scrollTo(0, targetY);
-                            }
-                            // Trigger the fade-in even if target is missing
-                            // so we never leave the page sitting invisible.
+                        var fadeInFired = false;
+                        var fireFadeIn = function() {
+                            if (fadeInFired) return;
+                            fadeInFired = true;
                             document.documentElement.classList.add('hash-fade-in');
                             try {
                                 history.replaceState(null, '', location.pathname + location.search + hash);
                             } catch (e) {}
+                        };
+                        var fireScroll = function() {
+                            if (fired) return;
+                            fired = true;
+                            var t = document.querySelector(hash);
+                            if (!t) {
+                                fireFadeIn();
+                                return;
+                            }
+                            var offset = window.innerWidth <= 960 ? 75 : 90;
+                            var mainEl = document.querySelector('main');
+                            // CRITICAL: getBoundingClientRect().top includes
+                            // ALL applied transforms. While main is in the
+                            // pre-fade state it carries translateY(40px),
+                            // so the rect.top is 40px LARGER than the
+                            // layout position. If we scrollTo that value,
+                            // the target appears at the offset during the
+                            // invisible phase — but when fade-in completes
+                            // and translateY unwinds to 0, the target
+                            // moves UP by 40px to land 40px above offset
+                            // (visibly off). We must subtract the active
+                            // transform Y so scrollTo targets the
+                            // POST-fade position.
+                            var getTransformY = function() {
+                                if (!mainEl) return 0;
+                                var cs = window.getComputedStyle(mainEl).transform;
+                                if (!cs || cs === 'none') return 0;
+                                var m = cs.match(/matrix\(([^)]+)\)/);
+                                if (m) {
+                                    var parts = m[1].split(',');
+                                    return parseFloat(parts[5]) || 0;
+                                }
+                                var m3 = cs.match(/matrix3d\(([^)]+)\)/);
+                                if (m3) {
+                                    var p3 = m3[1].split(',');
+                                    return parseFloat(p3[13]) || 0;
+                                }
+                                return 0;
+                            };
+                            var measureTargetY = function() {
+                                var rectTop = t.getBoundingClientRect().top;
+                                var transformY = getTransformY();
+                                return Math.max(0, rectTop - transformY + window.pageYOffset - offset);
+                            };
+                            var lastY = measureTargetY();
+                            window.scrollTo(0, lastY);
+                            var stableCount = 0;
+                            var watchdog = setInterval(function() {
+                                var newY = measureTargetY();
+                                if (Math.abs(newY - lastY) > 2) {
+                                    window.scrollTo(0, newY);
+                                    lastY = newY;
+                                    stableCount = 0;
+                                } else {
+                                    stableCount++;
+                                    if (stableCount >= 3) {
+                                        clearInterval(watchdog);
+                                        fireFadeIn();
+                                    }
+                                }
+                            }, 100);
+                            // Hard cap so we don't sit invisible forever
+                            // if layout never stabilizes.
+                            setTimeout(function() {
+                                clearInterval(watchdog);
+                                fireFadeIn();
+                            }, 1500);
                         };
                         var afterLoad = function() {
                             // Race fonts.ready against a 150ms cap so a slow

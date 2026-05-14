@@ -423,15 +423,15 @@ export const homeStyles = (): string => `
                ============================================================ */
             html.hash-fade main {
                 opacity: 0;
-                transform: translateY(16px);
+                transform: translateY(40px);
             }
 
             html.hash-fade.hash-fade-in main {
                 opacity: 1;
                 transform: translateY(0);
                 transition:
-                    opacity 750ms cubic-bezier(0.16, 1, 0.3, 1),
-                    transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
+                    opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
             }
 
             @media (prefers-reduced-motion: reduce) {

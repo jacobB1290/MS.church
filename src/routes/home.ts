@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.4 - Drop smooth-scroll on hashload. Instant scrollTo target on a still-invisible page, then transition opacity 0→1 + translateY 16→0 over ~800ms. Reads as the tail end of a scroll that's 98% done — no long animation to be janky, no fighting layout shifts. -->
+<!-- v1.49.5 - Hashload landing accuracy: invisible-stability watchdog. After scrollTo, re-measure every 100ms; if position shifts (e.g. calendar carousel mounts late), instant-correct. Fade-in waits for 300ms of layout stability before firing. Settle bumped 16→40px (~5%). Harness adds network-throttled scenarios. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

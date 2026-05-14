@@ -182,7 +182,20 @@ export const homeScripts = (): string => `
                         });
                     }, { threshold: 0.14, rootMargin: '0px 0px -6% 0px' });
 
-                    targets.forEach((el) => revealObserver.observe(el));
+                    targets.forEach((el) => {
+                        // Skip elements that aren't in the layout — e.g. the
+                        // schedule banner which is display:none on mobile.
+                        // IntersectionObserver never fires for zero-area
+                        // elements, so they'd sit at opacity:0 forever. Mark
+                        // them revealed immediately so they're "ready" if a
+                        // resize ever brings them into the layout.
+                        const r = el.getBoundingClientRect();
+                        if (r.width === 0 && r.height === 0) {
+                            el.classList.add('is-revealed');
+                            return;
+                        }
+                        revealObserver.observe(el);
+                    });
                 })();
 
                 // ========================================

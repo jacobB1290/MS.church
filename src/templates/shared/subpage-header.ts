@@ -35,93 +35,29 @@ export function subpageHeader(): string {
                         });
                     }
 
-                    // ----- Custom smooth-scroll animator (v1.48) -----
-                    // Replaces browser-native scrollIntoView({behavior:'smooth'})
-                    // which uses an unspecified easing and tends to feel
-                    // cheap / low-frame-rate. This implementation:
-                    //   • drives scrollY per-frame via requestAnimationFrame
-                    //     (renders as fast as the display refreshes — 60,
-                    //     90, 120 Hz alike, no fixed 60fps cap)
-                    //   • eases via easeInOutCubic — ramps up at start,
-                    //     decelerates as it approaches the target
-                    //   • scales duration to distance (~4000px/sec
-                    //     perceived velocity), clamped 450–1100ms
-                    //   • respects prefers-reduced-motion (instant jump)
+                    // ----- Smooth-scroll wrapper (v1.48.2) -----
+                    // Browser-native scrollTo({behavior:'smooth'}) — same code
+                    // path as home-scripts.ts. The home page uses this for
+                    // ALL its nav-anchor scrolls (including hero→contact,
+                    // which is ~3000px) and it feels smooth at every
+                    // distance. So we use the exact same primitive on
+                    // subpages instead of a custom rAF animator.
                     //
-                    // Exposed globally as window.__smoothScrollTo so the
-                    // harness can call it directly to measure frame
-                    // smoothness on the same code path users hit.
+                    // Previous iterations tried custom rAF + trapezoidal
+                    // easing on the theory that browser-native peak velocity
+                    // would be too rough. In real-world testing the user
+                    // confirmed native feels smoother than any custom curve,
+                    // so we defer to the platform.
+                    //
+                    // Exposed globally so the harness can drive the same
+                    // primitive the user hits.
                     window.__smoothScrollTo = function(targetY) {
                         targetY = Math.max(0, targetY);
-                        var startY = window.pageYOffset;
-                        var distance = targetY - startY;
-                        if (Math.abs(distance) < 1) return;
                         if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                             window.scrollTo(0, targetY);
                             return;
                         }
-                        // Duration: QUICK AND SMOOTH. Browser-native
-                        // smooth scroll for the same distance takes ~850ms
-                        // but has 220px+ jumps per 60Hz frame because it
-                        // uses an aggressive cubic curve (peak ratio 3x).
-                        // The trapezoidal curve below has peak ratio 1.18x,
-                        // so for the same duration the visual jumps are
-                        // ~4x smaller. We can keep the FAST timing of
-                        // native scroll AND have smooth visible motion.
-                        //
-                        // Formula: distance / 4, clamped 400-1000ms.
-                        // For 2851px: 712ms → peak velocity 4.72 px/ms
-                        // → 79px per 60Hz frame = AT the smoothness target,
-                        // matching native-scroll duration.
-                        // For 1000px: 400ms (minimum, snappy feel).
-                        // For 4000px: 1000ms (cap).
-                        var duration = Math.min(1000, Math.max(400, Math.abs(distance) / 4.0));
-                        var startTime = null;
-                        function ease(t) {
-                            // Trapezoidal velocity profile: smoothstep ramp
-                            // over the first/last 15%, CONSTANT VELOCITY
-                            // across the middle 70%. Peak-velocity ratio
-                            // drops to ~1.18x mean (vs sine 1.57x, cubic
-                            // 3.0x), which means per-display-frame visual
-                            // jumps stay small even on long scrolls.
-                            //
-                            // Computed in closed form via two smoothstep
-                            // ramps that integrate to a total of 1.0.
-                            // Math: total area under trapezoidal velocity
-                            // = vMax * (rampIn/2 + middle + rampOut/2)
-                            // = vMax * 0.85 = 1 → vMax = 1/0.85 = 1.176.
-                            // Position(t) is the integral, computed
-                            // piecewise below.
-                            var rIn = 0.15, rOut = 0.85;
-                            var vMax = 1 / 0.85; // ~1.176
-                            if (t <= rIn) {
-                                // Acceleration phase: position = vMax * smoothstep-integral
-                                var u = t / rIn;
-                                // ∫(3u² - 2u³) du from 0 to u = u³ - u⁴/2
-                                return vMax * rIn * (u * u * u - u * u * u * u / 2);
-                            } else if (t < rOut) {
-                                // Constant-velocity middle.
-                                // Position at end of ramp-in: vMax * rIn * (1 - 1/2) = vMax * rIn / 2
-                                return vMax * rIn / 2 + vMax * (t - rIn);
-                            } else {
-                                // Deceleration phase: symmetric to ramp-in.
-                                var u2 = (t - rOut) / (1 - rOut);
-                                // Position at start of ramp-out: vMax * rIn / 2 + vMax * (rOut - rIn)
-                                var posStart = vMax * rIn / 2 + vMax * (rOut - rIn);
-                                // Add ramp-out integral: vMax * (1 - rOut) * (u - smoothstep_integral)
-                                // For deceleration: velocity = vMax * (1 - smoothstep(u))
-                                // ∫(1 - 3u² + 2u³) du = u - u³ + u⁴/2
-                                var rampOutPos = vMax * (1 - rOut) * (u2 - u2 * u2 * u2 + u2 * u2 * u2 * u2 / 2);
-                                return posStart + rampOutPos;
-                            }
-                        }
-                        function step(now) {
-                            if (startTime === null) startTime = now;
-                            var t = Math.min((now - startTime) / duration, 1);
-                            window.scrollTo(0, startY + distance * ease(t));
-                            if (t < 1) requestAnimationFrame(step);
-                        }
-                        requestAnimationFrame(step);
+                        window.scrollTo({ top: targetY, behavior: 'smooth' });
                     };
                     window.__smoothScrollToHash = function(hash) {
                         var t = document.querySelector(hash);
@@ -134,21 +70,34 @@ export function subpageHeader(): string {
                     // The inline <head> script stashed location.hash on
                     // window.__targetHash and cleared the URL so the browser
                     // didn't do its native scroll-to-fragment.
-                    //   • One smooth-scroll animator runs at 220ms (after
-                    //     initial layout settles) — clean rAF-driven scroll
-                    //     with easeInOutCubic.
-                    //   • At 1500ms (after the smooth-scroll has finished),
-                    //     INSTANT snap-correct ONLY if the section drifted
-                    //     >20px because async content (/outreach calendar)
-                    //     arrived after our scroll. Instant snap doesn't
-                    //     restart the smooth animation mid-flight.
+                    //
+                    // Trigger the smooth-scroll via requestIdleCallback so
+                    // it fires as soon as the main thread has finished its
+                    // initial work — DOMContentLoaded handlers, carousel
+                    // init, image decode, etc. On fast devices this is
+                    // ~50ms after DOMContentLoaded; on CPU-throttled cheap
+                    // phones it can be ~300ms+. Either way, the scroll
+                    // starts on a quiet main thread instead of fighting
+                    // initial JS work, which under load was causing
+                    // 100ms+ long-animation-frames during the scroll.
+                    //
+                    // 350ms timeout cap so a perpetually-busy main thread
+                    // can't delay the scroll forever — falls back to a
+                    // forced fire after that.
+                    //
+                    // The 1500ms snap-correct catches async layout shifts
+                    // (e.g., /outreach calendar render) that happen after
+                    // the smooth-scroll lands.
                     var hash = window.__targetHash;
                     if (hash) {
-                        setTimeout(function() {
+                        var fireScroll = function() {
                             window.__smoothScrollToHash(hash);
-                        }, 220);
-                        // Snap-correct timer. After max scroll duration
-                        // (1000ms) + 220ms initial delay + 100ms buffer.
+                        };
+                        if (window.requestIdleCallback) {
+                            requestIdleCallback(fireScroll, { timeout: 350 });
+                        } else {
+                            setTimeout(fireScroll, 220);
+                        }
                         setTimeout(function() {
                             var t = document.querySelector(hash);
                             if (t) {

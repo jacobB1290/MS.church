@@ -1,4 +1,4 @@
-// Version: 1.48.1 - Faster anchor scroll: distance/4 (~700ms for 2851px, matches home's native speed) + trapezoidal velocity for smoothness
+// Version: 1.48.2 - Subpage anchor scroll uses browser-native scrollTo (matches home); idle-callback trigger; 6 CPU-throttled stress scenarios
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

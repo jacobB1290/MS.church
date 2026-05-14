@@ -1,4 +1,4 @@
-// Version: 1.49.2 - Fix: layout-shift-aware smooth-scroll. The hashload target Y can shift mid-animation (e.g. /outreach calendar mounts async after window.load and pushes sections down). A 100ms watchdog re-fires scrollTo({behavior:'smooth'}) toward the updated target whenever the section moves >10px while scrolling, so motion curves smoothly into the new position instead of landing wrong then snapping. Final correction is also smooth, never a jump.
+// Version: 1.49.3 - Hashload fade-in: subpage <main> paints at opacity 0 and animates to 1 over 1100ms concurrent with the smooth-scroll. Hides the wait-for-settle delay + any late layout shift behind a single coherent motion. Brand + back stay anchored so chrome doesn't move. Respects prefers-reduced-motion.
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

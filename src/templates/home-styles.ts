@@ -393,6 +393,44 @@ export const homeStyles = (): string => `
             }
 
             /* ============================================================
+               HASHLOAD FADE-IN (v1.49.3)
+
+               When a subpage is opened with a #fragment URL (e.g.
+               /outreach#cooking-ministry), the page-head inline script
+               adds .hash-fade to html synchronously, before first
+               paint. The content area then fades from 0 to 1 over
+               1100ms concurrent with the smooth-scroll that runs after
+               window.load + fonts.ready + 2rAF + rIC.
+
+               Effect: instead of seeing a static page at top while we
+               wait to scroll, the user sees a single coherent motion —
+               the page emerging into view as it slides to the target
+               section. Hides both the firing latency and any late
+               layout shift (e.g. /outreach calendar carousel mount)
+               behind the fade.
+
+               Only <main> fades — subpage brand + back button stay
+               anchored so the page chrome is steady throughout the
+               motion. Footer is outside main so it remains visible at
+               the bottom of the page (user won't see it until they
+               scroll back up anyway).
+               ============================================================ */
+            html.hash-fade main {
+                animation: hashFadeIn 1100ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+            }
+
+            @keyframes hashFadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                html.hash-fade main {
+                    animation: none;
+                }
+            }
+
+            /* ============================================================
                SCROLL-DRIVEN REVEALS — motion vocabulary
 
                Five distinct intent classes, each rooted in what the

@@ -1,7 +1,17 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.49.2
+## 🔢 CURRENT VERSION: v1.49.3
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.49.3 - Hashload fade-in (page emerges as it scrolls to target)
+
+Polish: when a subpage is opened with a `#fragment` URL, the content area now fades from opacity 0 → 1 over 1100ms, concurrent with the smooth-scroll firing. Two wins:
+
+1. **Hides the wait-for-settle delay.** v1.49.0 added a ~100-400ms delay before the scroll fires (waiting for window.load + fonts.ready + 2rAF + rIC). With the fade, the user sees the page emerging into view rather than staring at a static top-of-page wondering if anything is happening.
+
+2. **Hides remaining layout shifts behind motion.** Even with v1.49.2's watchdog correcting target Y mid-scroll, any micro-shifts during the fade-up phase happen against a fading background, so they're not perceived as jumps.
+
+Implementation: the inline page-head script adds `hash-fade` to `<html>` synchronously before first paint (no opacity-1 flash). CSS animates `html.hash-fade main { animation: hashFadeIn 1100ms cubic-bezier(0.25, 0.1, 0.25, 1) both; }` from `opacity: 0 → 1`. Only `<main>` fades — subpage brand + back button stay anchored so the chrome doesn't move during the entrance. Footer remains visible (user is mid-scroll, won't see it anyway). Respects `prefers-reduced-motion: reduce`.
 
 ### v1.49.2 - Fix: layout-shift-aware smooth-scroll (smooth scroll lands wrong, then snaps)
 

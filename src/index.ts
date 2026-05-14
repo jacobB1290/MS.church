@@ -1,4 +1,4 @@
-// Version: 1.46.4 - Refined motion: single curve, no springs, smaller throws, tighter staggers
+// Version: 1.46.5 - Slower motion + .reveal-fill: CTAs draw in left-to-right via ::before wipe
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

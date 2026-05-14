@@ -1,7 +1,33 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.46.4
+## 🔢 CURRENT VERSION: v1.46.5
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.46.5 - Slower tempo + button "fill in" reveal
+
+Two coordinated changes on top of v1.46.4:
+
+**1. Durations bumped ~30%** (still subtle — small throws, no springs — just slower):
+
+| Variant | v1.46.4 | v1.46.5 |
+|---|---|---|
+| `.reveal-eyebrow` | 440ms | **600ms** |
+| `.reveal-rise` | 540ms | **720ms** |
+| `.reveal-rise-slow` | 760ms | **1000ms** |
+| `.reveal-tight` | 440ms | **580ms** |
+| `.reveal-from-left/right` | 600ms | **800ms** |
+| `.reveal-from-above` | 700ms | **900ms** |
+| `.reveal-photo` | 820ms | **1000ms** |
+| `.reveal-power` | 720ms | **900ms** |
+| `.reveal-pop` | 460ms | **620ms** |
+
+**2. New `.reveal-fill` for CTAs** — buttons draw in left-to-right as the user scrolls toward them, like they're being filled with color.
+
+The button uses opacity (so IntersectionObserver fires correctly — clip-path or scaleX(0) on the host element makes the observer report `isIntersecting: false` even when the layout box is in view). A `::before` pseudo-element overlays the button with the page background color and slides off to the right via `transform: scaleX(1) → 0`, transform-origin right, revealing the gold gradient underneath. 1100ms duration, 200ms delay after the button starts fading in — gives the visual sequence: button outline arrives → gold flows in to fill it.
+
+Applied to the three primary CTAs: **About** ("Learn More About Us"), **Outreach** ("Explore Our Outreach"), **Watch** ("View Full Playlist"). Other gold-pill buttons elsewhere on the page are unaffected.
+
+Verified via Playwright on both 1440×900 and 390×844: 40/40 reveal targets fire correctly, including the 3 new fill buttons.
 
 ### v1.46.4 - Motion refinement: elegance, regiment, restraint
 

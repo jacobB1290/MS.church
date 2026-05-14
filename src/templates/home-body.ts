@@ -131,8 +131,8 @@ export const homeBody = (): string => `
                                 <p>Morning Star is a small, nondenominational community where every story, every age, and every burden is met with grace and a seat at the table. We exist to point people to Jesus and to mend the broken — through faith, family, and serving the city we love.</p>
                             </div>
                         </div>
-                        <div class="teaser-cta-row reveal-pop">
-                            <a class="event-link-btn teaser-cta" href="/about">Learn More About Us</a>
+                        <div class="teaser-cta-row">
+                            <a class="event-link-btn teaser-cta reveal-fill" href="/about">Learn More About Us</a>
                         </div>
                     </div>
                 </section>
@@ -177,8 +177,8 @@ export const homeBody = (): string => `
                                 </div>
                             </a>
                         </div>
-                        <div class="teaser-cta-row reveal-pop">
-                            <a class="event-link-btn teaser-cta" href="/outreach">Explore Our Outreach</a>
+                        <div class="teaser-cta-row">
+                            <a class="event-link-btn teaser-cta reveal-fill" href="/outreach">Explore Our Outreach</a>
                         </div>
                     </div>
                 </section>
@@ -239,7 +239,7 @@ export const homeBody = (): string => `
                                     </button>
                                 </div>
 
-                                <a href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" class="btn btn-outline playlist-btn reveal-pop">
+                                <a href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" class="btn btn-outline playlist-btn reveal-fill">
                                     View Full Playlist
                                 </a>
                             </div>

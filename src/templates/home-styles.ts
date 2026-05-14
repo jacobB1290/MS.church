@@ -437,88 +437,127 @@ export const homeStyles = (): string => `
                 will-change: opacity, transform;
                 transition-delay: var(--reveal-delay, 0ms);
             }
-            /* Refined motion language (v1.46.4) — restraint over flourish.
+            /* .reveal-fill manages its own opacity in the rule above
+               (it needs different transition properties than the rest of
+               the variants, plus a ::before for the wipe). */
+            /* Refined motion language (v1.46.5) — slower, still restrained.
                Single unified easing curve, no overshoots/springs, throw
-               distances scaled down ~40%, scales tightened toward 1.0 so
-               nothing reads as "dramatic". The variety still comes from
-               WHICH transform (translate vs scale vs direction) and from
-               duration, never from easing character.
+               distances kept small. Durations are slower than v1.46.4
+               (~30% longer) for a more deliberate, considered tempo.
+               The variety still comes from WHICH transform (translate vs
+               scale vs direction vs fill) and from duration, never from
+               easing character.
 
                Easing: cubic-bezier(0.22, 1, 0.36, 1) — clean ease-out,
-               smooth deceleration to a hard stop, no overshoot.
-               Same curve everywhere = unified character. */
+               smooth deceleration, no overshoot. Same curve everywhere. */
 
-            /* Pure opacity — for very small labels that don't need to move.
-               Eyebrow labels are tiny chips; their movement was distracting
-               more than communicative. */
+            /* Pure opacity — for very small labels that don't need to move. */
             .js-reveals .reveal-eyebrow {
-                /* opacity-only; no transform */
-                transition: opacity 440ms cubic-bezier(0.22, 1, 0.36, 1);
+                transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1);
             }
             /* Prose rise — small throw, considered timing. */
             .js-reveals .reveal-rise {
                 transform: translateY(12px);
-                transition: opacity 540ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 540ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            /* Slow rise — for verses, leads. Longer duration carries weight
-               without any bigger throw — the duration alone says "read me". */
-            .js-reveals .reveal-rise-slow {
-                transform: translateY(12px);
-                transition: opacity 760ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            /* Tight follow — minimal throw so inner body text arrives just
-               after the title without competing for attention. */
-            .js-reveals .reveal-tight {
-                transform: translateY(6px);
-                transition: opacity 440ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 440ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            /* Directional — same easing/duration as rise, just different
-               axis. Outreach 3-card row uses left+right+center for spatial
-               coherence; the smaller throw keeps it from feeling theatrical. */
-            .js-reveals .reveal-from-left {
-                transform: translateX(-10px);
-                transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            .js-reveals .reveal-from-right {
-                transform: translateX(10px);
-                transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            /* From-above — small drop. About image uses this; the smaller
-               distance + opacity is enough to feel "placed onto the page". */
-            .js-reveals .reveal-from-above {
-                transform: translateY(-10px);
-                transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            /* Photo — a touch of scale + opacity, slow tempo. */
-            .js-reveals .reveal-photo {
-                transform: scale(0.97);
-                transition: opacity 820ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 820ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            /* Power — focal media. Same curve as photo, just tighter, so
-               video/banner reads as "settling in" rather than "powering on
-               with a snap". The previous overshoot was the loudest motion
-               in the system. */
-            .js-reveals .reveal-power {
-                transform: scale(0.97);
                 transition: opacity 720ms cubic-bezier(0.22, 1, 0.36, 1),
                             transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            /* Pop — CTAs and badges. Small scale, no overshoot. Springs
-               felt playful next to restrained text reveals. */
+            /* Slow rise — for verses, leads. Longer duration carries weight. */
+            .js-reveals .reveal-rise-slow {
+                transform: translateY(12px);
+                transition: opacity 1000ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Tight follow — minimal throw for inner body text. */
+            .js-reveals .reveal-tight {
+                transform: translateY(6px);
+                transition: opacity 580ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 580ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Directional — same easing/duration as rise, just different axis. */
+            .js-reveals .reveal-from-left {
+                transform: translateX(-10px);
+                transition: opacity 800ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .js-reveals .reveal-from-right {
+                transform: translateX(10px);
+                transition: opacity 800ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* From-above — small drop. */
+            .js-reveals .reveal-from-above {
+                transform: translateY(-10px);
+                transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Photo — slow scale + opacity. */
+            .js-reveals .reveal-photo {
+                transform: scale(0.97);
+                transition: opacity 1000ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Power — focal media. Same curve as photo, slightly faster. */
+            .js-reveals .reveal-power {
+                transform: scale(0.97);
+                transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Pop — small scale for non-button elements (e.g. form). */
             .js-reveals .reveal-pop {
                 transform: scale(0.96);
-                transition: opacity 460ms cubic-bezier(0.22, 1, 0.36, 1),
-                            transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
+                transition: opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Fill — for buttons / CTAs. The button itself fades in via
+               opacity (so IntersectionObserver fires correctly — clip-path
+               or scale(0) on the host element makes the observer report
+               isIntersecting: false even when the layout box is in view).
+               A ::before pseudo-element paints over the button's gold
+               with the page background and slides off to the right,
+               creating the "fills in from left" feel.
+
+               Layout is unaffected: ::before is absolutely positioned
+               and its scaleX is purely visual.
+
+               The host button keeps its existing background, text color,
+               border, shadow — nothing about the button's appearance
+               changes; the ::before just hides it initially. */
+            .js-reveals .reveal-fill {
+                opacity: 0;
+                position: relative;
+                isolation: isolate;
+                overflow: hidden;
+                transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1);
+                transition-delay: var(--reveal-delay, 0ms);
+            }
+            .js-reveals .reveal-fill::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: var(--bg-color, #faf8f5);
+                transform: scaleX(1);
+                transform-origin: right center;
+                transition: transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+                /* Start the wipe a moment after the button starts fading in,
+                   so the user sees the button's outline arrive, then the
+                   gold flow in to fill it. */
+                transition-delay: calc(var(--reveal-delay, 0ms) + 200ms);
+                border-radius: inherit;
+                pointer-events: none;
+                z-index: 2;
+                will-change: transform;
+            }
+            .js-reveals .reveal-fill.is-revealed {
+                opacity: 1;
+            }
+            .js-reveals .reveal-fill.is-revealed::before {
+                transform: scaleX(0);
             }
 
-            /* Resolved state — applies to every variant uniformly. */
+            /* Resolved state — applies to every variant uniformly.
+               .reveal-fill handles its own resolved state via the
+               clip-path rule above; including it here would set opacity
+               but it never went to 0 anyway. */
             .js-reveals .reveal-eyebrow.is-revealed,
             .js-reveals .reveal-rise.is-revealed,
             .js-reveals .reveal-rise-slow.is-revealed,
@@ -577,10 +616,13 @@ export const homeStyles = (): string => `
                 .js-reveals .reveal-from-above,
                 .js-reveals .reveal-photo,
                 .js-reveals .reveal-power,
-                .js-reveals .reveal-pop {
+                .js-reveals .reveal-pop,
+                .js-reveals .reveal-fill {
                     opacity: 1;
                     transform: none;
                     transition: none;
+                    clip-path: none;
+                    -webkit-clip-path: none;
                 }
             }
 

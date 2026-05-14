@@ -157,7 +157,7 @@ export const homeScripts = (): string => `
                         '.reveal', '.reveal-scale',
                         '.reveal-eyebrow', '.reveal-rise', '.reveal-rise-slow', '.reveal-tight',
                         '.reveal-from-left', '.reveal-from-right', '.reveal-from-above',
-                        '.reveal-settle', '.reveal-photo', '.reveal-power', '.reveal-pop',
+                        '.reveal-photo', '.reveal-power', '.reveal-pop', '.reveal-fill',
                     ].join(', ');
 
                     // Compute per-element stagger delays. Each [data-reveal-group]

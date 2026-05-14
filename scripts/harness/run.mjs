@@ -782,6 +782,15 @@ async function runFlowScenarios(browser, report) {
     const videoDir = resolve(OUT_DIR, `_video_${s.name}`)
     if (existsSync(videoDir)) rmSync(videoDir, { recursive: true, force: true })
 
+    // Browser-level recovery — if a previous scenario's renderer crashed
+    // hard enough to take down the whole browser, re-launch before
+    // attempting newContext (otherwise the call throws and the suite
+    // collapses for all subsequent scenarios).
+    if (!browser.isConnected()) {
+      console.log('  ⚠ browser disconnected, re-launching')
+      browser = await chromium.launch({ headless: true })
+    }
+
     const context = await browser.newContext({
       viewport: s.viewport,
       recordVideo: { dir: videoDir, size: s.viewport },
@@ -1069,7 +1078,24 @@ async function run() {
   // each rAF at the display's frame budget; here we measure how much budget
   // each frame would consume on that hardware. Frames consistently under
   // ~8.33ms = capable of 120fps; under ~16.67ms = capable of 60fps.
-  const browser = await chromium.launch({
+  //
+  // Two browsers are launched intentionally:
+  //
+  //   * perfBrowser — vsync + frame-rate cap disabled. Necessary for
+  //     PERF scenarios so rAF intervals reflect per-frame work, not
+  //     display refresh. NOT usable for view-transition flows: the
+  //     uncapped rAF schedules new frames before the View Transition
+  //     API's snapshot pipeline settles, which raises an uncaught
+  //     "Transition was skipped" exception and kills the renderer.
+  //
+  //   * mainBrowser — default Chromium flags. Used for ANCHOR and
+  //     FLOW scenarios so view-transitions, scroll-snap, and the
+  //     site's actual rendering pipeline behave the same way they
+  //     would in a real browser.
+  //
+  // Each suite gets a launch + close pair; a renderer crash in one
+  // suite can never cascade into another suite.
+  const perfBrowser = await chromium.launch({
     headless: true,
     args: [
       '--disable-frame-rate-limit',
@@ -1079,15 +1105,19 @@ async function run() {
       '--disable-backgrounding-occluded-windows',
     ],
   })
+  const mainBrowser = await chromium.launch({ headless: true })
   const report = { scenarios: [] }
 
-  const a = await runAnchorScenarios(browser, report)
+  const a = await runAnchorScenarios(mainBrowser, report)
   console.log('')
-  const p = await runPerfScenarios(browser, report)
+  const p = await runPerfScenarios(perfBrowser, report)
   console.log('')
-  const f = await runFlowScenarios(browser, report)
+  const f = await runFlowScenarios(mainBrowser, report)
 
-  await browser.close()
+  await Promise.all([
+    perfBrowser.close().catch(() => {}),
+    mainBrowser.close().catch(() => {}),
+  ])
 
   writeHtmlReport(report)
 

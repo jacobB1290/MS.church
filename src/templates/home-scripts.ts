@@ -212,10 +212,27 @@ export const homeScripts = (): string => `
                     // Collect children of sync parents — they should NOT be
                     // observed individually. Instead, the sync observer
                     // fires them all together when the parent intersects.
+                    //
+                    // EXCEPTION: .reveal-fill (CTA buttons) is opted out of
+                    // sync grouping. Fill is a high-attention motion — the
+                    // gold wash flowing across the button is meant to be
+                    // watched. When a fill button sits at the bottom of a
+                    // tall sync parent (e.g. About CTA below the paragraph,
+                    // Playlist button below the video), firing it the moment
+                    // the parent's top enters viewport means the entire
+                    // 1300ms animation completes while the button is still
+                    // below the fold. By the time the user scrolls to it,
+                    // the wipe is over and the button is just sitting
+                    // there static. Individual observation makes the fill
+                    // wait until the button itself reaches viewport.
                     const syncParents = Array.from(document.querySelectorAll('[data-reveal-sync]'));
                     const syncedChildren = new Set();
                     syncParents.forEach((p) => {
-                        p.querySelectorAll(REVEAL_SEL).forEach((c) => syncedChildren.add(c));
+                        p.querySelectorAll(REVEAL_SEL).forEach((c) => {
+                            if (!c.classList.contains('reveal-fill')) {
+                                syncedChildren.add(c);
+                            }
+                        });
                     });
 
                     const targets = document.querySelectorAll(REVEAL_SEL);
@@ -242,10 +259,14 @@ export const homeScripts = (): string => `
                     // when one enters viewport, marks ALL its reveal-class
                     // children .is-revealed simultaneously. Used so a card's
                     // inner elements land as one beat instead of cascading.
+                    // .reveal-fill is intentionally skipped here (see the
+                    // syncedChildren build above) so fill buttons wait for
+                    // their own viewport entry.
                     const syncObserver = new IntersectionObserver((entries) => {
                         entries.forEach((entry) => {
                             if (entry.isIntersecting) {
                                 entry.target.querySelectorAll(REVEAL_SEL).forEach((c) => {
+                                    if (c.classList.contains('reveal-fill')) return;
                                     c.classList.add('is-revealed');
                                 });
                                 syncObserver.unobserve(entry.target);

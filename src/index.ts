@@ -1,4 +1,4 @@
-// Version: 1.49.9 - Narrow the left-slide eyebrow motion to ONLY the section-heading pills (Schedule, About, Outreach, Watch, Contact). Schedule tab eyebrows (Sunday Gatherings, Bible Reading, Activity Day, Bible Study, Youth Service) revert to pure opacity (their previous motion). Selector scoped via .section-eyebrow.reveal-eyebrow. Subpage eyebrows still untouched.
+// Version: 1.49.10 - Opt .reveal-fill (CTA buttons) out of [data-reveal-sync] grouping so the gold-wash fill animation no longer fires the moment a tall section's parent enters viewport. Affected: About teaser CTA (was firing with the about image), Playlist button (was firing with the video card), Outreach teaser CTA (defensive — already sibling of sync). Now each fill button waits for its own viewport entry so the 1300ms wipe plays while the user is actually looking at the button.
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

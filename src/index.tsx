@@ -1,4 +1,4 @@
-// Version: 1.49.7 - Flip hashload settle direction (translateY -40→0 instead of +40→0) so content slides DOWN from above its final spot — reads as "page auto-scrolled DOWN to reveal this section." Animation now applies to ALL subpage content (brand, back, top fog, main, footer) so the whole viewport slides in together — previously only main animated which felt frozen-everywhere-except-one-element.
+// Version: 1.49.8 - Home reveal-eyebrow now slides in from the left (translateX -10→0) instead of pure opacity. Reads as "label arrives, heading settles in" — reinforces eyebrow → heading cascade read order. 720ms matches reveal-rise so the eyebrow and heading land on the same beat. Only affects home page; subpage eyebrows are untouched.
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

@@ -538,9 +538,17 @@ export const homeStyles = (): string => `
                Easing: cubic-bezier(0.22, 1, 0.36, 1) — clean ease-out,
                smooth deceleration, no overshoot. Same curve everywhere. */
 
-            /* Pure opacity — for very small labels that don't need to move. */
+            /* Eyebrow lead-in — slide from the left, light directional throw.
+               Section eyebrows precede the heading prose rise; sliding in
+               from the left reads as "label arrives, then the heading
+               settles in", reinforcing the read order. Distance is small
+               (10px) so the motion stays a "lead-in" rather than a hero
+               move. Duration matches reveal-rise (720ms) so the
+               eyebrow → heading cascade lands on the same beat. */
             .js-reveals .reveal-eyebrow {
-                transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1);
+                transform: translateX(-10px);
+                transition: opacity 720ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
             }
             /* Prose rise — small throw, considered timing. */
             .js-reveals .reveal-rise {

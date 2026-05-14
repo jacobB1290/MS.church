@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.7 - Hashload settle: direction flipped to slide DOWN from above + whole subpage (brand, back, fog, main, footer) animates together so the entrance reads as a coherent auto-scroll-down rather than one element moving in a frozen page. -->
+<!-- v1.49.8 - Home reveal-eyebrow now slides in from the left (translateX -10→0) instead of pure opacity, so section labels read as "label arrives, heading settles in." 720ms duration matches reveal-rise. Subpage eyebrows untouched. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

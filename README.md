@@ -1,7 +1,19 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.47.2
+## 🔢 CURRENT VERSION: v1.47.3
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.47.3 - Schedule: drop the outer .section-card wrapper
+
+Matches the new About teaser pattern (v1.47.0). The schedule banner + 5 tab cards now sit directly on the page background, with no frosted-glass container around them.
+
+**Markup change:** the wrapping `<div class="section-card schedule-card">` in `home-body.ts` is gone. The `.schedule-layout` sits directly inside `<section id="schedule">`.
+
+**CSS cleanup:** the two `.section-card.schedule-card` rules — one desktop (`padding: clamp(20px, 2.4vw, 32px)`) and one mobile (`padding: clamp(14px, 3.4vw, 28px) clamp(14px, 3vw, 24px); overflow: visible`) — are removed. They no longer match any element.
+
+The individual `.schedule-tab` cards keep their own backgrounds, borders, and shadows — they're self-contained. The banner keeps its dashed-border placeholder styling. Nothing else needed changing.
+
+**Verified:** 40/40 reveals still fire on both viewports. Section height: desktop ~1265px, mobile ~859px (down ~70px from the carded version on mobile due to the lost outer padding).
 
 ### v1.47.2 - Outreach teaser cards: edge-to-edge images
 

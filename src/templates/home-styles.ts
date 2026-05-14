@@ -1044,13 +1044,10 @@ export const homeStyles = (): string => `
                card tab list (right). Cards drive the banner: clicking any
                tab crossfades the banner to the matching slide. On mobile
                the banner sits on top and the card list stacks below.
+               No .section-card wrapper — the layout sits directly on the
+               page background (v1.47.3) for a quieter editorial feel,
+               matching the About teaser.
                ============================================================ */
-            /* Two-class selector beats the generic .section-card rule at
-               equal specificity later in the cascade — needed because the
-               mobile .section-card rule sits below this one in the file. */
-            .section-card.schedule-card {
-                padding: clamp(20px, 2.4vw, 32px);
-            }
             .schedule-layout {
                 display: grid;
                 grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
@@ -4609,10 +4606,6 @@ export const homeStyles = (): string => `
                    any content. */
                 .schedule-banner {
                     display: none;
-                }
-                .section-card.schedule-card {
-                    padding: clamp(14px, 3.4vw, 28px) clamp(14px, 3vw, 24px);
-                    overflow: visible;
                 }
                 .schedule-layout {
                     grid-template-columns: 1fr;

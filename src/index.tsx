@@ -1,4 +1,4 @@
-// Version: 1.47.2 - Outreach teaser cards: edge-to-edge images (padding 0 + overflow hidden on card)
+// Version: 1.47.3 - Schedule: drop outer .section-card wrapper, layout sits directly on page bg
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

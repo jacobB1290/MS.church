@@ -62,56 +62,54 @@ export const homeBody = (): string => `
                         </div>
                     </address>
                     <!-- Schedule layout: banner image carousel on the left, vertical
-                         card list on the right (desktop). On mobile, banner sits on top
-                         and cards stack below. Clicking a card crossfades the banner to
-                         that card's image and marks the card active. Auto-cycles every
-                         6s, pauses on hover/focus, respects prefers-reduced-motion. -->
-                    <div class="section-card schedule-card">
-                        <div class="schedule-layout">
-                            <div class="schedule-banner reveal-power" id="schedule-banner" aria-live="polite">
-                                <div class="schedule-banner-slide schedule-banner-placeholder active" data-index="0" role="img" aria-label="Sunday Gatherings">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                                </div>
-                                <div class="schedule-banner-slide schedule-banner-placeholder" data-index="1" role="img" aria-label="Tuesday Bible Reading">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                                </div>
-                                <div class="schedule-banner-slide schedule-banner-placeholder" data-index="2" role="img" aria-label="Wednesday Activity Day">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                                </div>
-                                <div class="schedule-banner-slide schedule-banner-placeholder" data-index="3" role="img" aria-label="Thursday Bible Study">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                                </div>
-                                <div class="schedule-banner-slide schedule-banner-placeholder" data-index="4" role="img" aria-label="Friday Youth Service">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                                </div>
+                         card list on the right (desktop). On mobile, banner is hidden
+                         and the cards stack as a plain list. No .section-card wrapper —
+                         the layout sits directly on the page background like the About
+                         teaser, for a quieter editorial feel. -->
+                    <div class="schedule-layout">
+                        <div class="schedule-banner reveal-power" id="schedule-banner" aria-live="polite">
+                            <div class="schedule-banner-slide schedule-banner-placeholder active" data-index="0" role="img" aria-label="Sunday Gatherings">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                             </div>
-                            <div class="schedule-list" role="tablist" aria-label="Weekly gatherings" data-reveal-group data-reveal-delay="80">
-                                <button class="schedule-tab active" data-index="0" type="button" role="tab" aria-selected="true" data-reveal-sync>
-                                    <span class="schedule-tab-eyebrow reveal-eyebrow">Sunday Gatherings</span>
-                                    <span class="schedule-tab-title reveal-rise">Sundays · 9:00 AM</span>
-                                    <span class="schedule-tab-desc reveal-tight">Morning service, about an hour, with free community breakfast after. Free transportation from select shelters included. <a href="/visit#sunday-school" class="schedule-tab-link">Sunday School info →</a></span>
-                                </button>
-                                <button class="schedule-tab" data-index="1" type="button" role="tab" aria-selected="false" data-reveal-sync>
-                                    <span class="schedule-tab-eyebrow reveal-eyebrow">Bible Reading</span>
-                                    <span class="schedule-tab-title reveal-rise">Tuesdays · 8:30 AM</span>
-                                    <span class="schedule-tab-desc reveal-tight">Tuesday Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffiena State Street</a>.</span>
-                                </button>
-                                <button class="schedule-tab" data-index="2" type="button" role="tab" aria-selected="false" data-reveal-sync>
-                                    <span class="schedule-tab-eyebrow reveal-eyebrow">Activity Day</span>
-                                    <span class="schedule-tab-title reveal-rise">Wednesdays · 6:00 PM</span>
-                                    <span class="schedule-tab-desc reveal-tight">Open gym for basketball and volleyball, plus a crochet circle to learn the craft and grow your skills — about three hours.</span>
-                                </button>
-                                <button class="schedule-tab" data-index="3" type="button" role="tab" aria-selected="false" data-reveal-sync>
-                                    <span class="schedule-tab-eyebrow reveal-eyebrow">Bible Study</span>
-                                    <span class="schedule-tab-title reveal-rise">Thursdays · 6:00 PM</span>
-                                    <span class="schedule-tab-desc reveal-tight">A 45-minute evening Bible study at the church with free coffee.</span>
-                                </button>
-                                <button class="schedule-tab" data-index="4" type="button" role="tab" aria-selected="false" data-reveal-sync>
-                                    <span class="schedule-tab-eyebrow reveal-eyebrow">Youth Service</span>
-                                    <span class="schedule-tab-title reveal-rise">Fridays · 7:00 PM</span>
-                                    <span class="schedule-tab-desc reveal-tight">Worship, teaching, and fellowship for our next generation — about an hour.</span>
-                                </button>
+                            <div class="schedule-banner-slide schedule-banner-placeholder" data-index="1" role="img" aria-label="Tuesday Bible Reading">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                             </div>
+                            <div class="schedule-banner-slide schedule-banner-placeholder" data-index="2" role="img" aria-label="Wednesday Activity Day">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            </div>
+                            <div class="schedule-banner-slide schedule-banner-placeholder" data-index="3" role="img" aria-label="Thursday Bible Study">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            </div>
+                            <div class="schedule-banner-slide schedule-banner-placeholder" data-index="4" role="img" aria-label="Friday Youth Service">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            </div>
+                        </div>
+                        <div class="schedule-list" role="tablist" aria-label="Weekly gatherings" data-reveal-group data-reveal-delay="80">
+                            <button class="schedule-tab active" data-index="0" type="button" role="tab" aria-selected="true" data-reveal-sync>
+                                <span class="schedule-tab-eyebrow reveal-eyebrow">Sunday Gatherings</span>
+                                <span class="schedule-tab-title reveal-rise">Sundays · 9:00 AM</span>
+                                <span class="schedule-tab-desc reveal-tight">Morning service, about an hour, with free community breakfast after. Free transportation from select shelters included. <a href="/visit#sunday-school" class="schedule-tab-link">Sunday School info →</a></span>
+                            </button>
+                            <button class="schedule-tab" data-index="1" type="button" role="tab" aria-selected="false" data-reveal-sync>
+                                <span class="schedule-tab-eyebrow reveal-eyebrow">Bible Reading</span>
+                                <span class="schedule-tab-title reveal-rise">Tuesdays · 8:30 AM</span>
+                                <span class="schedule-tab-desc reveal-tight">Tuesday Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffiena State Street</a>.</span>
+                            </button>
+                            <button class="schedule-tab" data-index="2" type="button" role="tab" aria-selected="false" data-reveal-sync>
+                                <span class="schedule-tab-eyebrow reveal-eyebrow">Activity Day</span>
+                                <span class="schedule-tab-title reveal-rise">Wednesdays · 6:00 PM</span>
+                                <span class="schedule-tab-desc reveal-tight">Open gym for basketball and volleyball, plus a crochet circle to learn the craft and grow your skills — about three hours.</span>
+                            </button>
+                            <button class="schedule-tab" data-index="3" type="button" role="tab" aria-selected="false" data-reveal-sync>
+                                <span class="schedule-tab-eyebrow reveal-eyebrow">Bible Study</span>
+                                <span class="schedule-tab-title reveal-rise">Thursdays · 6:00 PM</span>
+                                <span class="schedule-tab-desc reveal-tight">A 45-minute evening Bible study at the church with free coffee.</span>
+                            </button>
+                            <button class="schedule-tab" data-index="4" type="button" role="tab" aria-selected="false" data-reveal-sync>
+                                <span class="schedule-tab-eyebrow reveal-eyebrow">Youth Service</span>
+                                <span class="schedule-tab-title reveal-rise">Fridays · 7:00 PM</span>
+                                <span class="schedule-tab-desc reveal-tight">Worship, teaching, and fellowship for our next generation — about an hour.</span>
+                            </button>
                         </div>
                     </div>
                 </section>

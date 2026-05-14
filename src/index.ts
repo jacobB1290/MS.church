@@ -1,4 +1,4 @@
-// Version: 1.49.0 - Subpage hashload defers smooth-scroll until window.load + fonts.ready + 2rAF + rIC so it fires on a quiet main thread (matches home anchor-click context); harness adds A/B comparison + during-scroll jerk metrics
+// Version: 1.49.1 - Fix: snap-correct fires relative to smooth-scroll firing (not script execution) so a slow-loading page can't have snap-correct's instant scrollTo cut off the smooth-scroll mid-animation (was producing "page sits then jumps" instead of visible smooth motion); also reorder home outreach teaser cards to match /outreach subpage section order (events → cooking → breakfast)
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

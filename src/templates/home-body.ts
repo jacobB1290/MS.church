@@ -140,11 +140,11 @@ export const homeBody = (): string => `
                     <h2 class="section-heading reveal-rise">A few ways we live out our mission in Boise.</h2>
                     <div class="section-card">
                         <div class="schedule-grid" data-reveal-sync>
-                            <a class="schedule-item teaser-link-card reveal-from-left" href="/outreach#community-breakfast">
+                            <a class="schedule-item teaser-link-card reveal-from-left" href="/outreach#events">
                                 <div class="schedule-item-text">
-                                    <span>Ministry</span>
-                                    <h3>Community Breakfast</h3>
-                                    <p>Free breakfast every Sunday after the service. Transportation from select shelters included.</p>
+                                    <span>Events</span>
+                                    <h3>Community Events</h3>
+                                    <p>Year-round open-door gatherings — Friendsgiving, holidays, and city-wide outreach.</p>
                                     <span class="teaser-more">Learn more <span class="teaser-more-arrow" aria-hidden="true">&rarr;</span></span>
                                 </div>
                                 <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">
@@ -162,11 +162,11 @@ export const homeBody = (): string => `
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                                 </div>
                             </a>
-                            <a class="schedule-item teaser-link-card reveal-from-right" href="/outreach#events">
+                            <a class="schedule-item teaser-link-card reveal-from-right" href="/outreach#community-breakfast">
                                 <div class="schedule-item-text">
-                                    <span>Events</span>
-                                    <h3>Community Events</h3>
-                                    <p>Year-round open-door gatherings — Friendsgiving, holidays, and city-wide outreach.</p>
+                                    <span>Ministry</span>
+                                    <h3>Community Breakfast</h3>
+                                    <p>Free breakfast every Sunday after the service. Transportation from select shelters included.</p>
                                     <span class="teaser-more">Learn more <span class="teaser-more-arrow" aria-hidden="true">&rarr;</span></span>
                                 </div>
                                 <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">

@@ -103,10 +103,35 @@ export function subpageHeader(): string {
                     var hash = window.__targetHash;
                     if (hash) {
                         var fired = false;
+                        var snapCorrect = function() {
+                            var t = document.querySelector(hash);
+                            if (t) {
+                                var expected = window.innerWidth <= 960 ? 75 : 90;
+                                var actual = t.getBoundingClientRect().top;
+                                if (Math.abs(actual - expected) > 20) {
+                                    window.scrollTo(0, Math.max(0, actual + window.pageYOffset - expected));
+                                }
+                            }
+                            try {
+                                history.replaceState(null, '', location.pathname + location.search + hash);
+                            } catch (e) {}
+                        };
                         var fireScroll = function() {
                             if (fired) return;
                             fired = true;
                             window.__smoothScrollToHash(hash);
+                            // Snap-correct fires ~1500ms AFTER the smooth-
+                            // scroll fires, not 2000ms after script execution
+                            // (that timing raced with slow page loads — the
+                            // snap-correct's instant scrollTo could fire
+                            // during the smooth-scroll and kill its animation,
+                            // producing "page loads, sits, then JUMPS to
+                            // target" instead of a visible smooth motion).
+                            // Browser-native scrollTo({behavior:'smooth'})
+                            // on long distances takes ~700-900ms; 1500ms
+                            // leaves headroom for late layout shifts (e.g.
+                            // /outreach calendar carousel mount).
+                            setTimeout(snapCorrect, 1500);
                         };
                         var afterLoad = function() {
                             // Fonts: race fonts.ready against a 150ms timeout
@@ -142,19 +167,6 @@ export function subpageHeader(): string {
                             // want to scroll within 1.2s.
                             setTimeout(fireScroll, 1200);
                         }
-                        setTimeout(function() {
-                            var t = document.querySelector(hash);
-                            if (t) {
-                                var expected = window.innerWidth <= 960 ? 75 : 90;
-                                var actual = t.getBoundingClientRect().top;
-                                if (Math.abs(actual - expected) > 20) {
-                                    window.scrollTo(0, Math.max(0, actual + window.pageYOffset - expected));
-                                }
-                            }
-                            try {
-                                history.replaceState(null, '', location.pathname + location.search + hash);
-                            } catch (e) {}
-                        }, 2000);
                     }
 
                     // Brand: hide on scroll-down, show on scroll-up.

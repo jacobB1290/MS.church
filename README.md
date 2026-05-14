@@ -1,7 +1,15 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.49.0
+## 🔢 CURRENT VERSION: v1.49.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.49.1 - Fix: snap-correct races smooth-scroll on slow loads (page sits, then jumps)
+
+User feedback on v1.49.0: pressing the home Cooking Ministry teaser went into /outreach but the smooth-scroll never appeared — the page sat at top, then jumped to the target. The smooth-scroll was firing, but on slower loads where `window.load` fired at ~1500-1800ms, the v1.49.0 snap-correct (scheduled at script-execution + 2000ms) was firing **during** the smooth-scroll's animation. Snap-correct uses `window.scrollTo(0, …)` — an *instant* scroll — which immediately overwrites the smooth animation with a hard jump. The user saw nothing-then-jump.
+
+**Fix:** snap-correct is now scheduled relative to the moment `fireScroll()` actually runs (smooth-scroll fires + 1500ms), not relative to script execution. The smooth-scroll has ~700-900ms to complete; 1500ms leaves headroom for late layout (e.g. /outreach calendar carousel mount) without ever overlapping the active animation.
+
+**Also in this release:** reorder the home page's outreach teaser cards (`#outreach` section) to match the order they appear on /outreach: **events → cooking ministry → community breakfast**. Previously the teasers were in inverse order. Reveal classes (`reveal-from-left`, `reveal-rise`, `reveal-from-right`) updated so the leftmost card still slides in from the left, middle still rises, rightmost from the right.
 
 ### v1.49.0 - Subpage hashload waits for full settle before scrolling + harness gains A/B detection
 

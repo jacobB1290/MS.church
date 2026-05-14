@@ -1701,6 +1701,176 @@ export const homeStyles = (): string => `
             }
 
             /* ============================================================
+               /outreach PAGE — Meals & Hospitality combined section.
+
+               One shared banner image at top; two ministry blocks
+               (Cooking Ministry + Community Breakfast) sit parallel in
+               a 2-column grid below the image on desktop. This replaces
+               the old pair of separate cards — both ministries share
+               one feeding-people visual, but each has its own anchor ID
+               on the inner <article> so home-page teaser links scroll
+               directly to the ministry the user clicked.
+
+               Desktop ≥961px: banner is 21:9 cinematic; ministries 2-col
+                               under it. Each block has eyebrow + title +
+                               body + CTA link.
+               Mobile ≤960px:  banner shifts to 4:3 (taller, substantial
+                               but not overwhelming); ministries stack in
+                               a single column. Scroll-margin-top on each
+                               .ministry-block so hash-jumps land cleanly
+                               under the subpage nav.
+               ============================================================ */
+            /* Scroll-buffer note: the combined meals section is shorter
+               than the old pair of separate cooking + breakfast sections
+               it replaces. On mobile especially the breakfast article
+               ends up close to the end of the document, which means a
+               hash-jump to #community-breakfast can't put the article
+               at the standard 75px subpage offset because the page
+               isn't tall enough to scroll that far. Padding-bottom on
+               the section adds the deterministic buffer needed so both
+               anchors (cooking + breakfast) can land at their canonical
+               offset (90 desktop / 75 mobile). Clamp scales the buffer
+               between viewport sizes — bigger on phones where breakfast
+               is naturally deeper in the page. */
+            #meals-hospitality {
+                padding-bottom: clamp(140px, 30vh, 320px);
+            }
+            .ministries-pair {
+                display: flex;
+                flex-direction: column;
+                gap: clamp(32px, 4vw, 56px);
+            }
+            .ministries-image {
+                width: 100%;
+                aspect-ratio: 21 / 9;
+                border-radius: clamp(20px, 2vw, 32px);
+                overflow: hidden;
+                position: relative;
+                background: linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+            }
+            .ministries-image-placeholder {
+                background:
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+                border: 1px dashed rgba(26, 26, 46, 0.14);
+                display: grid;
+                place-items: center;
+                color: rgba(26, 26, 46, 0.30);
+            }
+            .ministries-image-placeholder > svg {
+                width: 12%;
+                max-width: 96px;
+                min-width: 48px;
+                height: auto;
+            }
+            .ministries-image > img {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .ministries-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: clamp(40px, 5vw, 80px);
+            }
+            .ministry-block {
+                display: flex;
+                flex-direction: column;
+                gap: clamp(10px, 1.2vw, 14px);
+                /* Hash-jumps from home teaser cards land here. The
+                   subpage offset is 90px on desktop, 75px on mobile;
+                   match those so the eyebrow has breathing room above. */
+                scroll-margin-top: 90px;
+            }
+            .ministry-eyebrow {
+                font-family: var(--font-display);
+                font-size: 11px;
+                font-weight: var(--weight-bold);
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--gold-dark);
+            }
+            .ministry-title {
+                font-family: var(--font-display);
+                font-size: clamp(20px, 1.8vw, 24px);
+                font-weight: var(--weight-bold);
+                color: #1a1a2e;
+                line-height: var(--leading-snug);
+                margin: 0;
+            }
+            .ministry-text {
+                margin: 0;
+                color: rgba(26, 26, 46, 0.72);
+                font-size: clamp(16px, 1.35vw, 17px);
+                line-height: 1.7;
+            }
+            .ministry-link {
+                color: var(--gold);
+                font-weight: var(--weight-semibold);
+                text-decoration: none;
+                align-self: flex-start;
+                font-size: 15px;
+                margin-top: 4px;
+            }
+            .ministry-link:hover {
+                text-decoration: underline;
+                text-underline-offset: 4px;
+            }
+            @media (max-width: 960px) {
+                /* Mobile gets its own treatment, not just a stacked
+                   desktop. Three mobile-specific moves:
+                     1. Banner narrows to 16:9 — landscape proportions
+                        suit phone aspect better than the desktop 21:9
+                        (which would be a thin strip on mobile width).
+                     2. Each ministry block gets a small gold gradient
+                        "tab" line above the eyebrow as a visual
+                        section-start marker. Desktop doesn't need this
+                        because the 2-column grid separates them
+                        spatially; mobile stack needs an explicit
+                        "new ministry starts here" signal so the two
+                        blocks don't bleed into each other.
+                     3. More generous row-gap between blocks (36-48px)
+                        so the two ministries read as discrete sections,
+                        not paragraphs of a single passage. */
+                .ministries-image {
+                    aspect-ratio: 16 / 9;
+                    border-radius: clamp(14px, 3vw, 20px);
+                }
+                .ministries-grid {
+                    grid-template-columns: 1fr;
+                    gap: clamp(36px, 7vw, 48px);
+                }
+                .ministry-block {
+                    scroll-margin-top: 75px;
+                    position: relative;
+                    padding-top: clamp(18px, 4vw, 24px);
+                }
+                .ministry-block::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: clamp(56px, 14vw, 88px);
+                    height: 2px;
+                    background: linear-gradient(90deg, var(--gold) 0%, var(--gold-dark) 100%);
+                    border-radius: 1px;
+                }
+                .ministry-eyebrow {
+                    font-size: 10px;
+                    letter-spacing: 0.16em;
+                }
+                .ministry-title {
+                    font-size: clamp(19px, 5vw, 22px);
+                }
+                .ministry-text {
+                    font-size: 16px;
+                    line-height: 1.65;
+                }
+            }
+
+            /* ============================================================
                /visit PAGE — Map card + What-to-Expect service-flow timeline
                ============================================================ */
             .section-card.visit-map-card {

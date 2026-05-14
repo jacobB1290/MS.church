@@ -2,7 +2,12 @@ import { subpageHeader } from './shared/subpage-header.js'
 import { footer } from './shared/footer.js'
 
 // /outreach — Ministries hub + events.
-// Section order: intro → events → cooking ministry → community breakfast → past-events modal.
+// Section order: intro → events → meals & hospitality (combined section
+// containing Cooking Ministry + Community Breakfast as two parallel
+// ministry blocks under one shared banner image) → past-events modal.
+// The #cooking-ministry and #community-breakfast IDs live on the
+// inner <article> blocks so home-page teaser links continue to scroll
+// to the specific ministry.
 // Sunday School lives on /visit now (it's a visitor-onboarding concern,
 // not a community-service ministry).
 
@@ -43,30 +48,24 @@ export const outreachBody = (): string => `
                     </div>
                 </section>
 
-                <section id="cooking-ministry">
-                    <span class="section-eyebrow">Cooking Ministry</span>
-                    <h2 class="section-heading">Monthly · Boise homeless shelters</h2>
-                    <div class="section-card">
-                        <div class="schedule-item long-content">
-                            <div class="schedule-item-text">
-                                <p>Once a month, a team from Morning Star cooks and serves a full hot meal at local homeless shelters in Boise. It's hands-on, it's humble, and it's one of the most concrete ways we live "mending the broken." No experience required — only willing hands.</p>
-                                <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: 600;">Join the next cook →</a></p>
-                            </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="community-breakfast">
-                    <span class="section-eyebrow">Community Breakfast</span>
-                    <h2 class="section-heading">Every Sunday · After service</h2>
-                    <div class="section-card">
-                        <div class="schedule-item long-content">
-                            <div class="schedule-item-text">
-                                <p>Every Sunday morning after worship, breakfast is on us — for guests, members, neighbors, and anyone passing through. We also offer free transportation from select Boise shelters so the table is open to people who need it most.</p>
-                                <p style="margin-top: 14px;"><a href="/visit#what-to-expect" style="color: var(--gold); font-weight: 600;">More about Sunday morning →</a></p>
-                            </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
+                <section id="meals-hospitality">
+                    <span class="section-eyebrow">Meals &amp; Hospitality</span>
+                    <h2 class="section-heading">Two tables, one mission.</h2>
+                    <div class="ministries-pair">
+                        <div class="ministries-image ministries-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
+                        <div class="ministries-grid">
+                            <article class="ministry-block" id="cooking-ministry">
+                                <span class="ministry-eyebrow">Cooking Ministry</span>
+                                <h3 class="ministry-title">Monthly &middot; Boise homeless shelters</h3>
+                                <p class="ministry-text">Once a month, a team from Morning Star cooks and serves a full hot meal at local homeless shelters in Boise. It's hands-on, it's humble, and it's one of the most concrete ways we live "mending the broken." No experience required &mdash; only willing hands.</p>
+                                <a href="/#contact" class="ministry-link">Join the next cook &rarr;</a>
+                            </article>
+                            <article class="ministry-block" id="community-breakfast">
+                                <span class="ministry-eyebrow">Community Breakfast</span>
+                                <h3 class="ministry-title">Every Sunday &middot; After service</h3>
+                                <p class="ministry-text">Every Sunday morning after worship, breakfast is on us &mdash; for guests, members, neighbors, and anyone passing through. We also offer free transportation from select Boise shelters so the table is open to people who need it most.</p>
+                                <a href="/visit#what-to-expect" class="ministry-link">More about Sunday morning &rarr;</a>
+                            </article>
                         </div>
                     </div>
                 </section>

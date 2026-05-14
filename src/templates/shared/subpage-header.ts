@@ -71,32 +71,76 @@ export function subpageHeader(): string {
                     // window.__targetHash and cleared the URL so the browser
                     // didn't do its native scroll-to-fragment.
                     //
-                    // Trigger the smooth-scroll via requestIdleCallback so
-                    // it fires as soon as the main thread has finished its
-                    // initial work — DOMContentLoaded handlers, carousel
-                    // init, image decode, etc. On fast devices this is
-                    // ~50ms after DOMContentLoaded; on CPU-throttled cheap
-                    // phones it can be ~300ms+. Either way, the scroll
-                    // starts on a quiet main thread instead of fighting
-                    // initial JS work, which under load was causing
-                    // 100ms+ long-animation-frames during the scroll.
+                    // The previous version fired the smooth-scroll on
+                    // requestIdleCallback with a 350ms timeout. Worked, but
+                    // users perceived the scroll as ~20fps on subpages while
+                    // the identical primitive on home felt smooth. The
+                    // difference was main-thread context: home anchor click
+                    // fires on a fully-settled page (window.load done, fonts
+                    // ready, images decoded, layout committed); subpage
+                    // hashload was firing while the page was still parsing
+                    // analytics scripts, decoding hero images, and laying
+                    // out the calendar carousel. Even though main-thread JS
+                    // didn't block long enough to trigger LoAFs, every
+                    // re-layout or image-decode commit caused the
+                    // compositor to wait, producing visible stutter while
+                    // the smooth-scroll's vsync-bound paint pipeline was
+                    // trying to commit each frame.
                     //
-                    // 350ms timeout cap so a perpetually-busy main thread
-                    // can't delay the scroll forever — falls back to a
-                    // forced fire after that.
+                    // Fix (v1.49.0): defer the smooth-scroll until ALL of:
+                    //   1. window.load — every subresource finished
+                    //   2. document.fonts.ready — no FOUT reflows mid-scroll
+                    //   3. 2× rAF — layout / paint fully committed
+                    //   4. requestIdleCallback — main thread genuinely quiet
+                    // …then fire. Adds ~100-400ms latency before the scroll
+                    // starts, but the scroll itself runs on a quiet thread
+                    // (matching the home-anchor-click context) so the
+                    // motion is smooth all the way through.
                     //
-                    // The 1500ms snap-correct catches async layout shifts
-                    // (e.g., /outreach calendar render) that happen after
-                    // the smooth-scroll lands.
+                    // The 2000ms snap-correct still catches any late
+                    // layout shifts (e.g. /outreach calendar render) that
+                    // land after the smooth-scroll completes.
                     var hash = window.__targetHash;
                     if (hash) {
+                        var fired = false;
                         var fireScroll = function() {
+                            if (fired) return;
+                            fired = true;
                             window.__smoothScrollToHash(hash);
                         };
-                        if (window.requestIdleCallback) {
-                            requestIdleCallback(fireScroll, { timeout: 350 });
+                        var afterLoad = function() {
+                            // Fonts: race fonts.ready against a 150ms timeout
+                            // so a slow Google Fonts response can't delay the
+                            // scroll indefinitely. The font is decorative —
+                            // if it lands mid-scroll the visual reflow is
+                            // minimal because we use --font-body fallback and
+                            // metrics are similar.
+                            var fontsReady = (document.fonts && document.fonts.ready)
+                                ? Promise.race([
+                                    document.fonts.ready,
+                                    new Promise(function(r) { setTimeout(r, 150); })
+                                  ])
+                                : Promise.resolve();
+                            fontsReady.then(function() {
+                                requestAnimationFrame(function() {
+                                    requestAnimationFrame(function() {
+                                        if (window.requestIdleCallback) {
+                                            requestIdleCallback(fireScroll, { timeout: 200 });
+                                        } else {
+                                            setTimeout(fireScroll, 40);
+                                        }
+                                    });
+                                });
+                            });
+                        };
+                        if (document.readyState === 'complete') {
+                            afterLoad();
                         } else {
-                            setTimeout(fireScroll, 220);
+                            window.addEventListener('load', afterLoad, { once: true });
+                            // Hard cap: if load never fires (network hung
+                            // on some non-critical resource) we still
+                            // want to scroll within 1.2s.
+                            setTimeout(fireScroll, 1200);
                         }
                         setTimeout(function() {
                             var t = document.querySelector(hash);
@@ -110,7 +154,7 @@ export function subpageHeader(): string {
                             try {
                                 history.replaceState(null, '', location.pathname + location.search + hash);
                             } catch (e) {}
-                        }, 1400);
+                        }, 2000);
                     }
 
                     // Brand: hide on scroll-down, show on scroll-up.

@@ -93,7 +93,12 @@ const PERF = PERF_60
 //   1500 — post-scroll (should match expected landing)
 //   2000 — stable check
 //   2600 — stable check
-const DRIFT_SAMPLES_MS = [100, 500, 1500, 2000, 2600]
+// Subpage hashload now waits for window.load + fonts.ready (<=150ms) +
+// 2rAF + rIC before firing the smooth-scroll. On the harness that pushes
+// the scroll start to ~600-1500ms; the scroll itself takes ~600-900ms.
+// The last DRIFT_STABLE_SAMPLES samples must therefore all sit AFTER
+// the smooth-scroll has fully completed (worst case ≈ 2400ms).
+const DRIFT_SAMPLES_MS = [200, 1000, 2800, 3500, 4200]
 const DRIFT_STABLE_SAMPLES = 3 // last N samples must be within DRIFT_STABLE_TOLERANCE
 
 // Visual quality knobs
@@ -196,6 +201,26 @@ const PERF_SCENARIOS = [
   // perf collapses at 6× we need to find the bottleneck.
   { name: '60-perf-cpu6x-hashload-visit-sunday-mobile',   viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school',    cpuThrottle: 6 },
   { name: '61-perf-cpu6x-hashload-outreach-cook-mobile',  viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry', cpuThrottle: 6 },
+
+  // 70s — A/B BASELINE PAIRS. The home page anchor-click scroll feels
+  // smooth; the subpage hashload scroll feels jagged — even though both
+  // use the IDENTICAL primitive (window.scrollTo({behavior:'smooth'})).
+  // The variable is main-thread context: home click fires on a fully-
+  // settled page, hashload fires during initial page work.
+  //
+  // These pairs run the same scroll distance on home (post-settle nav
+  // click) and on subpage (URL hashload). The during-scroll metrics
+  // (loafDuringScroll, rafGapsOver20ms, scrollStallMs) expose the gap.
+  // Pair groups are tagged with `ab` so the report renders them
+  // side-by-side. INFORMATIONAL — they always pass; the gap data is
+  // what we iterate against.
+  { name: '70-ab-home-click-contact-mobile',           viewport: MOBILE,  path: '/',         action: 'homeclick', anchor: '#contact', ab: 'mobile-long' },
+  { name: '71-ab-hashload-visit-sunday-mobile',        viewport: MOBILE,  path: '/visit',    action: 'hashload',  hash: '#sunday-school',  ab: 'mobile-long' },
+  { name: '72-ab-hashload-outreach-cooking-mobile',    viewport: MOBILE,  path: '/outreach', action: 'hashload',  hash: '#cooking-ministry', ab: 'mobile-long' },
+  { name: '73-ab-hashload-about-mission-mobile',       viewport: MOBILE,  path: '/about',    action: 'hashload',  hash: '#mission',          ab: 'mobile-long' },
+  { name: '74-ab-home-click-contact-desktop',          viewport: DESKTOP, path: '/',         action: 'homeclick', anchor: '#contact', ab: 'desktop-long' },
+  { name: '75-ab-hashload-visit-sunday-desktop',       viewport: DESKTOP, path: '/visit',    action: 'hashload',  hash: '#sunday-school',  ab: 'desktop-long' },
+  { name: '76-ab-hashload-outreach-cooking-desktop',   viewport: DESKTOP, path: '/outreach', action: 'hashload',  hash: '#cooking-ministry', ab: 'desktop-long' },
 ]
 
 const FLOW_SCENARIOS = [
@@ -681,6 +706,52 @@ function computePerfStats(perf) {
   // see the page jump between two visible frames. Smaller = smoother.
   let maxJumpPer60Hz = 0
   let maxJumpPer120Hz = 0
+  // ---- During-scroll metrics (v1.49) ----
+  // The previous metrics measured the FULL capture window (1.4-2s of mostly-
+  // static page after the scroll lands). On a fast machine that dilutes the
+  // signal: 5 dropped frames out of 200 total looks like "97% smooth" even
+  // though the dropped frames all clustered in the 200ms scroll itself.
+  //
+  // These metrics narrow to the SCROLL ACTIVE WINDOW — first to last frame
+  // where scrollY moved — and expose what blocks the compositor right when
+  // it matters:
+  //   scrollActiveMs          duration of the scroll itself
+  //   loafDuringScrollCount   long-animation-frames overlapping that window
+  //   loafDuringScrollMs      total LoAF duration overlapping that window
+  //                           (main-thread work fighting compositor commits)
+  //   rafGapsOver20ms         count of rAF gaps >20ms within the window
+  //                           (each gap = at least one dropped 60Hz frame)
+  //   rafGapMaxMs             worst rAF gap within the window
+  //   scrollStallMs           total time the scroll position held still for
+  //                           > 20ms during the active window (visible
+  //                           stutters: the page froze mid-animation)
+  //   scrollStallCount        number of distinct stall events ≥ 20ms
+  let scrollActiveStart = 0
+  let scrollActiveEnd = 0
+  let scrollActiveMs = 0
+  // Time from capture start (≈ page commit on hashload, click on homeclick)
+  // to the moment scrollY first moved. On hashload this is the "scroll
+  // firing latency" — how long the user stares at a static top-of-page
+  // before motion begins. Too long = perceived broken. Too short = scroll
+  // fires while main thread is busy → competes with compositor.
+  let preScrollDelayMs = 0
+  let loafDuringScrollCount = 0
+  let loafDuringScrollMs = 0
+  let rafGapsOver20ms = 0
+  let rafGapMaxMs = 0
+  let framesOver16InScroll = 0      // missed-60fps frames inside scroll window
+  let framesOver12InScroll = 0      // missed-83fps frames (subtle micro-stutters)
+  let scrollStallMs = 0
+  let scrollStallCount = 0
+  // Per-display-frame jerk: how much does the visible scroll JUMP magnitude
+  // change between adjacent 60Hz frames? A smooth easing curve changes
+  // gradually (small jerk); random jitter has high jerk even at the same
+  // average velocity. This catches what avg-jump-size and CV miss: home
+  // jumps 280px/frame smoothly, a subpage jumps 50/200/50/180px erratically
+  // around the same average — same MAX, very different feel.
+  let displayJumpJerkMax = 0        // max |jump[i] - jump[i-1]| across 60Hz samples
+  let displayJumpJerkMean = 0       // mean of those deltas
+  let displayJumpJerkCv = 0         // stdev/mean of the deltas (scale-free jitter)
   if (perf.scrollYs && perf.scrollYs.length > 2 && perf.frames && perf.frames.length === perf.scrollYs.length) {
     const deltas = []
     for (let i = 1; i < perf.scrollYs.length; i++) {
@@ -734,6 +805,80 @@ function computePerfStats(perf) {
       if (windowMs === 16.67) maxJumpPer60Hz = mj
       else maxJumpPer120Hz = mj
     }
+    // ---- Scroll-active-window analysis ----
+    // Find first and last frame where scrollY moved. The "active window" is
+    // when the smooth-scroll is actually animating. Metrics outside that
+    // window (static page before/after) are irrelevant to perceived
+    // smoothness of the anchor jump itself.
+    let firstChange = -1, lastChange = -1
+    for (let i = 1; i < perf.scrollYs.length; i++) {
+      if (Math.abs(perf.scrollYs[i] - perf.scrollYs[i - 1]) > 0.5) {
+        if (firstChange < 0) firstChange = i - 1
+        lastChange = i
+      }
+    }
+    if (firstChange >= 0 && lastChange > firstChange) {
+      scrollActiveStart = perf.frames[firstChange]
+      scrollActiveEnd = perf.frames[lastChange]
+      scrollActiveMs = scrollActiveEnd - scrollActiveStart
+      preScrollDelayMs = scrollActiveStart - perf.frames[0]
+      // LoAF entries that overlap [scrollActiveStart, scrollActiveEnd].
+      // Each LoAF that lands here is main-thread work fighting the
+      // compositor while the scroll is animating — the most likely
+      // source of visible jank.
+      for (const e of perf.loaf || []) {
+        const start = e.startTime, end = e.startTime + e.duration
+        if (end >= scrollActiveStart && start <= scrollActiveEnd) {
+          const overlap = Math.min(end, scrollActiveEnd) - Math.max(start, scrollActiveStart)
+          if (overlap > 0) {
+            loafDuringScrollCount++
+            loafDuringScrollMs += overlap
+          }
+        }
+      }
+      // rAF gaps + stalls + missed-frame counts within the active window.
+      for (let i = firstChange + 1; i <= lastChange; i++) {
+        const gap = perf.frames[i] - perf.frames[i - 1]
+        if (gap > 16.7) framesOver16InScroll++
+        if (gap > 12) framesOver12InScroll++
+        if (gap > 20) {
+          rafGapsOver20ms++
+          if (gap > rafGapMaxMs) rafGapMaxMs = gap
+        }
+        // Scroll stall: scrollY held still for > 20ms during active window.
+        // This is the "page froze mid-animation" perception: rAF kept
+        // ticking but the displayed scrollY didn't advance.
+        if (gap > 20 && Math.abs(perf.scrollYs[i] - perf.scrollYs[i - 1]) < 0.5) {
+          scrollStallCount++
+          scrollStallMs += gap
+        }
+      }
+      // ---- Per-display-frame jerk analysis ----
+      // Sample scrollY at 16.67ms intervals (60Hz vsync) across the active
+      // window — same path interpolateY() uses for maxJumpPer60Hz, but here
+      // we look at the SEQUENCE of jumps, not just the max.
+      //
+      // displayJumps[k] = |interp(t0 + (k+1)*16.67) - interp(t0 + k*16.67)|
+      // Then we measure how much consecutive jumps differ from each other:
+      // a smooth easing curve has gradually-changing jumps; random jitter
+      // has highly-variable adjacent jumps even at the same mean velocity.
+      const displayJumps = []
+      for (let t = scrollActiveStart; t + 16.67 < scrollActiveEnd; t += 16.67) {
+        displayJumps.push(Math.abs(interpolateY(t + 16.67) - interpolateY(t)))
+      }
+      if (displayJumps.length >= 3) {
+        const adjacentDiffs = []
+        for (let k = 1; k < displayJumps.length; k++) {
+          adjacentDiffs.push(Math.abs(displayJumps[k] - displayJumps[k - 1]))
+        }
+        const meanDiff = adjacentDiffs.reduce((a, b) => a + b, 0) / adjacentDiffs.length
+        const varDiff = adjacentDiffs.reduce((a, b) => a + (b - meanDiff) ** 2, 0) / adjacentDiffs.length
+        const stdDiff = Math.sqrt(varDiff)
+        displayJumpJerkMax = Math.max(...adjacentDiffs)
+        displayJumpJerkMean = meanDiff
+        displayJumpJerkCv = meanDiff > 0 ? stdDiff / meanDiff : 0
+      }
+    }
   }
 
   return {
@@ -762,6 +907,21 @@ function computePerfStats(perf) {
     scrollTotalPx,
     maxJumpPer60Hz,
     maxJumpPer120Hz,
+    scrollActiveStart,
+    scrollActiveEnd,
+    scrollActiveMs,
+    preScrollDelayMs,
+    loafDuringScrollCount,
+    loafDuringScrollMs,
+    rafGapsOver20ms,
+    rafGapMaxMs,
+    framesOver16InScroll,
+    framesOver12InScroll,
+    scrollStallMs,
+    scrollStallCount,
+    displayJumpJerkMax,
+    displayJumpJerkMean,
+    displayJumpJerkCv,
   }
 }
 
@@ -840,13 +1000,16 @@ async function runPerfScenarios(browser, report) {
       if (isHashload) {
         await installPerfObservers(page)
         await page.evaluate(() => window.__perfStart())
-        // 220ms init + ~850ms browser-native scroll + 1500ms snap-check
-        // + buffer. Under CPU throttling, DOMContentLoaded fires later
-        // (page parses slower), so the 220ms setTimeout effectively
-        // shifts. Scale wait time so throttled scenarios still capture
-        // the full scroll trajectory.
-        const baseWait = 1900
-        const throttleBoost = (s.cpuThrottle || 1) > 1 ? (s.cpuThrottle - 1) * 300 : 0
+        // v1.49 timing budget:
+        //   ~500-1500ms wait for window.load + fonts.ready + 2rAF + rIC
+        //     (subpage-header.ts defers until truly idle so the smooth-
+        //      scroll fires on a quiet thread — matches home-click feel)
+        //   ~850ms browser-native scroll
+        //   2000ms snap-correct safety net
+        // Under CPU throttling, every phase stretches. Budget 3500ms
+        // baseline + 800ms per cpuThrottle multiplier.
+        const baseWait = 3500
+        const throttleBoost = (s.cpuThrottle || 1) > 1 ? (s.cpuThrottle - 1) * 800 : 0
         await page.waitForTimeout(baseWait + throttleBoost)
       } else {
         await waitForSettled(page)
@@ -897,6 +1060,23 @@ async function runPerfScenarios(browser, report) {
         await installPerfObservers(page)
         await page.evaluate(() => window.__perfStart())
         await page.waitForTimeout(1200)
+      } else if (s.action === 'homeclick') {
+        // A/B baseline path: home anchor click on a fully-settled page.
+        // Triggers home's own click handler (src/templates/home-scripts.ts)
+        // which calls window.scrollTo({top, behavior:'smooth'}). Same
+        // primitive subpages use — but on a quiet main thread.
+        //
+        // observers are already installed and measuring (this branch only
+        // runs after the waitForSettled + installPerfObservers + perfStart
+        // path that handles all non-hashload scenarios). Just fire the
+        // click and wait for the smooth-scroll to complete.
+        await page.evaluate((sel) => {
+          const a = document.querySelector(`a[href="${sel}"]`)
+          if (a) a.click()
+        }, s.anchor)
+        // Browser-native smooth scroll on a long distance (~3000px) takes
+        // ~700-900ms; pad to 1500ms to capture the deceleration tail.
+        await page.waitForTimeout(1500)
       }
 
       const perf = await page.evaluate(() => {
@@ -915,7 +1095,10 @@ async function runPerfScenarios(browser, report) {
       // threshold (a 4× slower CPU is expected to produce 4× slower
       // frames). Their data is still recorded and shown in the report
       // for manual review, but they always pass the suite.
-      const isInformational = !!s.cpuThrottle && s.cpuThrottle > 1
+      // A/B pair scenarios are informational: their job is to expose the
+      // smoothness gap between home click and subpage hashload, not to
+      // gate the suite. We iterate against the gap until it closes.
+      const isInformational = (!!s.cpuThrottle && s.cpuThrottle > 1) || !!s.ab
       const passes60 = isInformational ? true : issues60.length === 0
       const passes120 = issues120.length === 0
 
@@ -930,8 +1113,15 @@ async function runPerfScenarios(browser, report) {
       const scrollSmoothStr = stats.scrollDeltaCount > 4
         ? `  jump60=${stats.maxJumpPer60Hz.toFixed(0)}px jump120=${stats.maxJumpPer120Hz.toFixed(0)}px CV=${stats.scrollDeltaCV.toFixed(2)} dPx=${Math.round(stats.scrollTotalPx)}`
         : ''
+      // During-scroll details — surface only when active window is meaningful.
+      // These reveal what makes the home anchor click feel smooth and the
+      // subpage hashload feel jerky even when the overall capture metrics
+      // look similar.
+      const duringScrollStr = stats.scrollActiveMs > 50
+        ? `  [pre=${stats.preScrollDelayMs.toFixed(0)}ms scroll=${stats.scrollActiveMs.toFixed(0)}ms · over16In=${stats.framesOver16InScroll} · loafIn=${stats.loafDuringScrollCount}/${stats.loafDuringScrollMs.toFixed(0)}ms · jerk max=${stats.displayJumpJerkMax.toFixed(0)} mean=${stats.displayJumpJerkMean.toFixed(0)}]`
+        : ''
       const throttleTag = s.cpuThrottle && s.cpuThrottle > 1 ? `[cpu${s.cpuThrottle}x] ` : ''
-      const summary = `${throttleTag}fps=${stats.avgFps.toFixed(1)} p95=${stats.p95FrameMs.toFixed(1)}ms max=${stats.maxFrameMs.toFixed(1)}ms  over16=${stats.framesOver16} over33=${stats.framesOver33}  loaf=${stats.loafCount}/${stats.loafMaxMs}ms  longtasks=${stats.longTaskCount}/${stats.longTaskMaxMs}ms${scrollSmoothStr}${inputLatency != null ? ` clk=${inputLatency}ms` : ''} ${tier120Tag}`
+      const summary = `${throttleTag}fps=${stats.avgFps.toFixed(1)} p95=${stats.p95FrameMs.toFixed(1)}ms max=${stats.maxFrameMs.toFixed(1)}ms  over16=${stats.framesOver16} over33=${stats.framesOver33}  loaf=${stats.loafCount}/${stats.loafMaxMs}ms  longtasks=${stats.longTaskCount}/${stats.longTaskMaxMs}ms${scrollSmoothStr}${duringScrollStr}${inputLatency != null ? ` clk=${inputLatency}ms` : ''} ${tier120Tag}`
       const elapsed = Date.now() - t0
       let line
       if (passes60) {
@@ -947,7 +1137,8 @@ async function runPerfScenarios(browser, report) {
         name: s.name, kind: 'perf', ok: passes60,
         passes60, passes120, issues120,
         viewport: `${s.viewport.width}x${s.viewport.height}`,
-        action: s.action + (s.hash ? ' ' + s.hash : '') + (s.selector ? ' ' + s.selector : ''),
+        action: s.action + (s.hash ? ' ' + s.hash : '') + (s.selector ? ' ' + s.selector : '') + (s.anchor ? ' ' + s.anchor : ''),
+        ab: s.ab || null,
         stats, inputLatency, issues: issues60, elapsedMs: elapsed,
       })
     })()
@@ -1238,6 +1429,17 @@ function writeHtmlReport(report) {
           <div class="perf-cell"><div class="perf-label">long anim frames</div><div class="perf-val ${loafOver60 <= PERF_60.loafMaxCount && s.loafMaxMs <= PERF_60.loafMaxDurationMs ? 'good' : 'bad'}">${s.loafCount} <small>(max ${s.loafMaxMs}ms · blk ${s.blockingMaxMs}ms)</small></div></div>
           <div class="perf-cell"><div class="perf-label">input → load</div><div class="perf-val ${sc.inputLatency == null ? '' : (sc.inputLatency <= PERF_60.inputLatencyMaxMs ? 'good' : 'bad')}">${sc.inputLatency == null ? '—' : sc.inputLatency + 'ms'}</div></div>
           <div class="perf-cell"><div class="perf-label">frames captured</div><div class="perf-val">${s.frameCount}</div></div>
+          ${s.scrollActiveMs > 50 ? `
+          <div class="perf-cell"><div class="perf-label">pre-scroll delay</div><div class="perf-val">${s.preScrollDelayMs.toFixed(0)}ms <small>capture→firstMove</small></div></div>
+          <div class="perf-cell"><div class="perf-label">scroll active</div><div class="perf-val">${s.scrollActiveMs.toFixed(0)}ms <small>${Math.round(s.scrollTotalPx)}px</small></div></div>
+          <div class="perf-cell"><div class="perf-label">frames &gt;16ms in scroll</div><div class="perf-val ${s.framesOver16InScroll <= 3 ? 'good' : 'bad'}">${s.framesOver16InScroll} <small>missed 60fps</small></div></div>
+          <div class="perf-cell"><div class="perf-label">frames &gt;12ms in scroll</div><div class="perf-val ${s.framesOver12InScroll <= 5 ? 'good' : 'bad'}">${s.framesOver12InScroll} <small>micro-stutters</small></div></div>
+          <div class="perf-cell"><div class="perf-label">loaf during scroll</div><div class="perf-val ${s.loafDuringScrollCount === 0 ? 'good' : 'bad'}">${s.loafDuringScrollCount} <small>${s.loafDuringScrollMs.toFixed(0)}ms inside</small></div></div>
+          <div class="perf-cell"><div class="perf-label">jerk max <small>(consecutive 60Hz)</small></div><div class="perf-val ${s.displayJumpJerkMax <= 60 ? 'good' : 'bad'}">${s.displayJumpJerkMax.toFixed(0)}px</div></div>
+          <div class="perf-cell"><div class="perf-label">jerk mean / cv</div><div class="perf-val">${s.displayJumpJerkMean.toFixed(0)}px <small>cv ${s.displayJumpJerkCv.toFixed(2)}</small></div></div>
+          <div class="perf-cell"><div class="perf-label">scroll stalls</div><div class="perf-val ${s.scrollStallCount === 0 ? 'good' : 'bad'}">${s.scrollStallCount} <small>${s.scrollStallMs.toFixed(0)}ms total</small></div></div>
+          <div class="perf-cell"><div class="perf-label">jump60 / jump120</div><div class="perf-val">${s.maxJumpPer60Hz.toFixed(0)} / ${s.maxJumpPer120Hz.toFixed(0)}px</div></div>
+          ` : ''}
         </div>
         ${sc.issues120 && sc.issues120.length && sc.passes60 ? `<div class="issues" style="background:#2a2010;border-color:#6a4828;color:#fcd"><b>120fps tier (aspirational):</b> ${sc.issues120.map(esc).join(' / ')}</div>` : ''}`
     } else if (sc.kind === 'flow') {
@@ -1267,9 +1469,94 @@ function writeHtmlReport(report) {
 
   const pass = report.scenarios.filter((s) => s.ok).length
   const fail = report.scenarios.length - pass
+
+  // A/B comparison: group scenarios by their `ab` key and render the
+  // gap as a side-by-side table. The first scenario in each group is
+  // the BASELINE (home anchor click); subsequent rows are subpage
+  // hashloads. Cells flag where the subpage is materially worse than
+  // the baseline so the gap is immediately visible.
+  const abGroups = {}
+  for (const sc of report.scenarios) {
+    if (sc.ab && sc.stats) {
+      if (!abGroups[sc.ab]) abGroups[sc.ab] = []
+      abGroups[sc.ab].push(sc)
+    }
+  }
+  const abHtml = Object.keys(abGroups).length === 0 ? '' : `
+    <section class="scenario" style="border-left:4px solid #e8a868">
+      <h2>A/B smoothness gap — home anchor-click vs subpage hashload</h2>
+      <div style="font-size:12px;color:#8a8a98;margin-bottom:12px;line-height:1.5">
+        Same primitive (window.scrollTo behavior:smooth) on both. Difference is main-thread context: home click fires on a settled page; subpage hashload fires during page init. A clear gap in <b>loaf during scroll</b>, <b>rAF gaps &gt;20ms</b>, or <b>scroll stalls</b> is what the user perceives as ~20fps subpage scroll.
+      </div>
+      ${Object.entries(abGroups).map(([groupKey, group]) => {
+        const baseline = group.find((g) => g.action && g.action.startsWith('homeclick')) || group[0]
+        const others = group.filter((g) => g !== baseline)
+        const cell = (sc, label, val, baselineVal, fmt, lowerIsBetter = true) => {
+          const v = fmt(val)
+          if (sc === baseline) return `<td>${v}</td>`
+          const diff = lowerIsBetter ? (val > baselineVal * 1.5 && val > 5) : (val < baselineVal * 0.5)
+          const color = diff ? '#ef4444' : '#4ade80'
+          return `<td style="color:${color}">${v}</td>`
+        }
+        const fmt0 = (v) => Math.round(v).toString()
+        const fmt1 = (v) => v.toFixed(1)
+        const fmtInt = (v) => String(v)
+        return `
+          <div style="overflow-x:auto;margin-bottom:18px">
+            <div style="font-size:12px;color:#c8c8d0;margin-bottom:6px"><b>group: ${esc(groupKey)}</b></div>
+            <table style="width:100%;border-collapse:collapse;font-family:ui-monospace,monospace;font-size:11px">
+              <thead>
+                <tr style="color:#8a8a98;text-align:left;border-bottom:1px solid #2a2b32">
+                  <th style="padding:6px 8px">scenario</th>
+                  <th style="padding:6px 8px" title="time from capture start (~commit / click) to first visible scroll movement">pre-delay</th>
+                  <th style="padding:6px 8px">px</th>
+                  <th style="padding:6px 8px">ms</th>
+                  <th style="padding:6px 8px" title="missed 60fps frames during scroll">&gt;16ms</th>
+                  <th style="padding:6px 8px" title="micro-stutters during scroll">&gt;12ms</th>
+                  <th style="padding:6px 8px">LoAFs</th>
+                  <th style="padding:6px 8px" title="jerk: max change in per-60Hz-jump between consecutive frames. Lower = smoother feel.">jerk max</th>
+                  <th style="padding:6px 8px">jerk mean</th>
+                  <th style="padding:6px 8px">jerk CV</th>
+                  <th style="padding:6px 8px">jump60</th>
+                  <th style="padding:6px 8px">jump120</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${[baseline, ...others].map((sc, i) => {
+                  const st = sc.stats
+                  const role = i === 0 ? 'BASE' : 'subpage'
+                  const labelStyle = i === 0
+                    ? 'background:#103820;color:#4ade80'
+                    : 'background:#2a1010;color:#fbb'
+                  return `
+                    <tr style="border-bottom:1px solid #1f2027">
+                      <td style="padding:6px 8px;color:#e8e8ee">
+                        <span style="font-size:9px;padding:1px 6px;border-radius:100px;${labelStyle};margin-right:6px;letter-spacing:.5px">${role}</span>
+                        ${esc(sc.name)}
+                      </td>
+                      ${cell(sc, 'pre',  st.preScrollDelayMs,     baseline.stats.preScrollDelayMs,     fmt0)}
+                      ${cell(sc, 'px',   st.scrollTotalPx,        baseline.stats.scrollTotalPx,        fmt0, false)}
+                      ${cell(sc, 'ms',   st.scrollActiveMs,       baseline.stats.scrollActiveMs,       fmt0)}
+                      ${cell(sc, '16',   st.framesOver16InScroll, baseline.stats.framesOver16InScroll, fmtInt)}
+                      ${cell(sc, '12',   st.framesOver12InScroll, baseline.stats.framesOver12InScroll, fmtInt)}
+                      ${cell(sc, 'lN',   st.loafDuringScrollCount,baseline.stats.loafDuringScrollCount,fmtInt)}
+                      ${cell(sc, 'jrkMx',st.displayJumpJerkMax,   baseline.stats.displayJumpJerkMax,   fmt0)}
+                      ${cell(sc, 'jrkMe',st.displayJumpJerkMean,  baseline.stats.displayJumpJerkMean,  fmt0)}
+                      ${cell(sc, 'jrkCv',st.displayJumpJerkCv,    baseline.stats.displayJumpJerkCv,    (v) => v.toFixed(2))}
+                      ${cell(sc, 'j60',  st.maxJumpPer60Hz,       baseline.stats.maxJumpPer60Hz,       fmt0)}
+                      ${cell(sc, 'j120', st.maxJumpPer120Hz,      baseline.stats.maxJumpPer120Hz,      fmt0)}
+                    </tr>`
+                }).join('')}
+              </tbody>
+            </table>
+          </div>`
+      }).join('\n')}
+    </section>`
+
   const html = `<!doctype html><html><head><meta charset="utf-8"><title>MS.church harness report</title><style>${css}</style></head><body>
     <h1>MS.church harness</h1>
     <div class="meta">base ${esc(BASE)} · ${pass} pass · ${fail} fail · ${report.scenarios.length} total · generated ${new Date().toLocaleString()}</div>
+    ${abHtml}
     ${sections}
   </body></html>`
   writeFileSync(resolve(OUT_DIR, 'report.html'), html)

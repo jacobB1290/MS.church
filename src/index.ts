@@ -1,4 +1,4 @@
-// Version: 1.48.2 - Subpage anchor scroll uses browser-native scrollTo (matches home); idle-callback trigger; 6 CPU-throttled stress scenarios
+// Version: 1.49.0 - Subpage hashload defers smooth-scroll until window.load + fonts.ready + 2rAF + rIC so it fires on a quiet main thread (matches home anchor-click context); harness adds A/B comparison + during-scroll jerk metrics
 // Vercel entry point (used via api/index.ts).
 // Only difference from src/index.tsx (Cloudflare): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.tsx,

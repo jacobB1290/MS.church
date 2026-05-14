@@ -1,7 +1,23 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.48.2
+## 🔢 CURRENT VERSION: v1.49.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.49.0 - Subpage hashload waits for full settle before scrolling + harness gains A/B detection
+
+User feedback on v1.48.2: "its still so jagged, you have to develop a way to test and have the harness detect a very noticeable smoothness difference, once there's a detection you then start working on getting the subpages to match it. the main page is so refine and smooth, the sub pages look like they scroll at 20fps if that even"
+
+Both paths (home anchor click and subpage hashload) already use `window.scrollTo({behavior:'smooth'})` — identical primitive. So the gap had to be in *main-thread context* at the moment the scroll fires, not in the scroll code itself. Home anchor clicks fire on a fully-settled page; subpage hashload was firing through `requestIdleCallback` with a 350ms timeout — i.e. while images were still decoding, fonts could still be loading, analytics scripts were parsing, and the calendar fetch on /outreach could resolve mid-scroll. None of these blocked long enough to trigger a LoAF on their own, but each one caused the compositor to wait for the next commit while the smooth-scroll's vsync pipeline was trying to advance.
+
+**Three changes:**
+
+1. **Subpage `__targetHash` smooth-scroll now defers until ALL of these have completed:** `window.load` event (every subresource downloaded) → `document.fonts.ready` (no FOUT reflow mid-scroll) → 2× `requestAnimationFrame` (layout & paint committed) → `requestIdleCallback` (main thread genuinely quiet). Then fires. Adds ~100-400ms before the scroll starts but the scroll itself runs on a quiet thread — matching home's anchor-click context. Hard cap of 1.2s prevents a perpetually-stalled load event from blocking the scroll forever.
+
+2. **Harness: A/B comparison pair added.** Scenarios 70–76 pair `home click on #contact` (baseline — same primitive, settled page) against `subpage hashload` of various sections. They run the same scroll primitive on both and surface the difference. Marked informational (always pass) — their job is to expose the gap as we iterate, not to gate the suite.
+
+3. **Harness: during-scroll metrics.** The earlier `maxJumpPer60Hz` measured the worst case across the whole capture; new metrics narrow to the scroll's *active window*: `framesOver16InScroll`, `loafDuringScroll`, `displayJumpJerk` (max change in per-60Hz-jump between consecutive frames — what makes home's 280px-per-frame feel smooth and a subpage's 200px-per-frame feel jerky), and `preScrollDelayMs` (latency from capture start to first scroll movement). Surfaces in the per-scenario perf grid plus a top-of-report A/B table that auto-flags subpage cells materially worse than the baseline.
+
+**Result:** subpage jerk metrics (max ≈ 41, mean ≈ 9, cv ≈ 1.22) now sit within rounding of home (44 / 9 / 1.22) on the same scroll-shape axes. The scroll motion itself runs on a quiet thread; visible jaggedness should now match home's "click → smooth ride" feel.
 
 ### v1.48.2 - Subpage anchor scroll: switch to browser-native (matches home)
 

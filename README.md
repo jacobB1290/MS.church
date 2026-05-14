@@ -1,7 +1,19 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.49.3
+## 🔢 CURRENT VERSION: v1.49.4
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.49.4 - Drop the smooth-scroll on hashload entirely (instant land + tail-of-scroll settle)
+
+User feedback on v1.49.3: "ugh the scroll is just so laggy. ok how about this, we drop the scroll from top to the section and just fade the page in right at the spot it needs. also have a very minimal animation of it like moving into place as if the scrolling down was 98% done."
+
+Every prior iteration (custom rAF easing → browser-native scrollTo → defer-until-load → watchdog re-targeting → snap-correct → fade-in concurrent with scroll) had the same fundamental problem: a long visible scroll animation competing with main-thread work *and* fighting layout shifts as async content (calendar carousel, image decodes) landed mid-flight. No tuning made it feel right on the user's machine.
+
+New approach: don't smooth-scroll on hashload at all. The page-head inline script adds `hash-fade` to `<html>` synchronously before first paint, so `<main>` renders at `opacity: 0` and `transform: translateY(16px)` — invisible and pushed 16px below its final spot. The subpage-header then waits for `window.load + fonts.ready (≤150ms cap) + 2rAF + requestIdleCallback` so the page is fully laid out (calendar mounted, images decoded, fonts loaded), does an **instant** `scrollTo(0, targetY)`, and adds `hash-fade-in`. CSS transitions opacity `0 → 1` and `translateY 16 → 0` over ~800ms with a strong easeOut curve (`cubic-bezier(0.16, 1, 0.3, 1)`).
+
+Reads as the **tail end of a smooth-scroll that's 98% done** — the page settles up into place as it fades in. No long animation to be janky, no scrollY animation to fight layout shifts, and the user never sees the page at the wrong position because the instant scrollTo runs while main is still invisible.
+
+Side benefits: dropped the watchdog, snap-correct, and all the layout-shift accounting. subpage-header.ts is dramatically simpler. Safety-net `setTimeout` in page-head ensures the page never sits at opacity 0 indefinitely.
 
 ### v1.49.3 - Hashload fade-in (page emerges as it scrolls to target)
 

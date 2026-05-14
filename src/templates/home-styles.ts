@@ -393,40 +393,53 @@ export const homeStyles = (): string => `
             }
 
             /* ============================================================
-               HASHLOAD FADE-IN (v1.49.3)
+               HASHLOAD FADE-IN + SETTLE (v1.49.4)
 
-               When a subpage is opened with a #fragment URL (e.g.
-               /outreach#cooking-ministry), the page-head inline script
-               adds .hash-fade to html synchronously, before first
-               paint. The content area then fades from 0 to 1 over
-               1100ms concurrent with the smooth-scroll that runs after
-               window.load + fonts.ready + 2rAF + rIC.
+               When a subpage opens with a #fragment URL, we skip the
+               smooth-scroll entirely. The page-head inline script adds
+               .hash-fade to html synchronously, before first paint, so
+               main renders at opacity 0 + translateY(16px) — invisible
+               and pushed 16px below its final spot.
 
-               Effect: instead of seeing a static page at top while we
-               wait to scroll, the user sees a single coherent motion —
-               the page emerging into view as it slides to the target
-               section. Hides both the firing latency and any late
-               layout shift (e.g. /outreach calendar carousel mount)
-               behind the fade.
+               The subpage-header script then waits for window.load +
+               fonts.ready + 2rAF + rIC, does an INSTANT scrollTo to
+               the exact target position, and adds .hash-fade-in. CSS
+               transitions opacity 0 → 1 and transform translateY(16px)
+               → 0 over ~800ms with a strong easeOut curve — reads
+               as the tail end of a smooth-scroll that's 98% done.
 
-               Only <main> fades — subpage brand + back button stay
-               anchored so the page chrome is steady throughout the
-               motion. Footer is outside main so it remains visible at
-               the bottom of the page (user won't see it until they
-               scroll back up anyway).
+               Why this is better than smooth-scrolling from top:
+                 • No long scroll animation that competes with main-
+                   thread work or fights layout shifts (calendar
+                   carousel mount on /outreach moves the target Y
+                   while a smooth-scroll is in flight).
+                 • The user sees motion only in the final landing,
+                   so there's no "scrolled to wrong spot, then jumps"
+                   visible.
+                 • Predictable: instant scroll always lands accurate.
+
+               Only <main> animates — subpage brand + back button stay
+               anchored so chrome doesn't move during the entrance.
                ============================================================ */
             html.hash-fade main {
-                animation: hashFadeIn 1100ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+                opacity: 0;
+                transform: translateY(16px);
             }
 
-            @keyframes hashFadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
+            html.hash-fade.hash-fade-in main {
+                opacity: 1;
+                transform: translateY(0);
+                transition:
+                    opacity 750ms cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
             }
 
             @media (prefers-reduced-motion: reduce) {
-                html.hash-fade main {
-                    animation: none;
+                html.hash-fade main,
+                html.hash-fade.hash-fade-in main {
+                    opacity: 1;
+                    transform: none;
+                    transition: none;
                 }
             }
 

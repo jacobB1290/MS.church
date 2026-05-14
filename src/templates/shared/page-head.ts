@@ -46,14 +46,17 @@ export function pageHead({
                 });
                 if(location.hash && location.hash !== '#'){
                     window.__targetHash = location.hash;
-                    // Fade-in on hashload (v1.49.3): subpage's <main> paints
-                    // at opacity 0 and CSS animates it to 1 concurrent with
-                    // the smooth-scroll. Hides the wait-for-settle delay
-                    // and any layout shift behind a single coherent motion.
-                    // The brand + back are kept steady so chrome stays
-                    // anchored. Triggered by setting class synchronously
-                    // before first paint so there's no opacity-1 flash.
+                    // v1.49.4: paint main invisible + 16px below final
+                    // before first paint. subpage-header will do an
+                    // instant scrollTo + add .hash-fade-in to trigger
+                    // the CSS transition (opacity 0→1, translateY 16→0
+                    // over ~800ms with easeOut). Safety-net timeout
+                    // guarantees the page becomes visible within 2.5s
+                    // even if the subpage-header script fails to run.
                     document.documentElement.classList.add('hash-fade');
+                    setTimeout(function() {
+                        document.documentElement.classList.add('hash-fade-in');
+                    }, 2500);
                     try {
                         history.replaceState(null, '', location.pathname + location.search);
                     } catch(e){}

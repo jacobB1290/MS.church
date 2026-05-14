@@ -87,86 +87,58 @@ export function subpageHeader(): string {
                     // the smooth-scroll's vsync-bound paint pipeline was
                     // trying to commit each frame.
                     //
-                    // Fix (v1.49.0): defer the smooth-scroll until ALL of:
-                    //   1. window.load — every subresource finished
-                    //   2. document.fonts.ready — no FOUT reflows mid-scroll
-                    //   3. 2× rAF — layout / paint fully committed
-                    //   4. requestIdleCallback — main thread genuinely quiet
-                    // …then fire. Adds ~100-400ms latency before the scroll
-                    // starts, but the scroll itself runs on a quiet thread
-                    // (matching the home-anchor-click context) so the
-                    // motion is smooth all the way through.
+                    // v1.49.4: replaced the smooth-scroll-from-top approach
+                    // entirely. Every prior iteration (custom rAF easing →
+                    // browser-native scrollTo → defer-until-load → watchdog
+                    // re-targeting → snap-correct) had the same fundamental
+                    // problem: a long visible scroll animation competing
+                    // with main-thread work AND fighting layout shifts as
+                    // async content (calendar carousel, image decodes) lands
+                    // mid-flight. The motion was perceived as jagged or
+                    // landing-then-jumping no matter how we tuned it.
                     //
-                    // v1.49.2: a layout-shift watchdog runs alongside the
-                    // smooth-scroll and re-fires it toward an updated
-                    // target Y if the section moves during the animation
-                    // (e.g. /outreach calendar carousel mounts after we
-                    // started scrolling). See the inline notes below the
-                    // fireScroll definition for details.
+                    // New approach (paired with .hash-fade CSS in
+                    // home-styles.ts):
+                    //   1. page-head sets .hash-fade on <html> before first
+                    //      paint → main renders at opacity 0, translateY(16px).
+                    //   2. We wait for window.load + fonts.ready + 2rAF +
+                    //      rIC so the page is fully laid out (calendar has
+                    //      mounted, images decoded, fonts loaded).
+                    //   3. We do an INSTANT scrollTo(0, targetY) — accurate
+                    //      because layout has settled and predictable
+                    //      because there's no animation to be janky.
+                    //   4. We add .hash-fade-in → CSS transitions opacity
+                    //      0→1 and transform translateY(16)→0 over ~800ms
+                    //      with a strong easeOut curve. Reads as the tail
+                    //      end of a smooth-scroll that's 98% done.
+                    //
+                    // The 16px settle gives the perception of motion
+                    // without the cost of a visible long scroll. The user
+                    // never sees the page at the wrong position because
+                    // the scrollTo runs while main is still invisible.
                     var hash = window.__targetHash;
                     if (hash) {
                         var fired = false;
-                        // ---- Layout-shift-aware smooth-scroll (v1.49.2) ----
-                        // The hashload target's absolute Y can MOVE while
-                        // we're animating toward it. On /outreach the
-                        // calendar carousel fetches and mounts async — it
-                        // settles after window.load (so even our defer-
-                        // until-load timing doesn't catch it) and pushes
-                        // the cooking-ministry / community-breakfast
-                        // sections downward by several hundred pixels.
-                        // The previous flow was: compute targetY once →
-                        // scroll there → snap-correct with an instant
-                        // scrollTo at the end. The user saw "smooth scroll
-                        // to wrong place, then jump to right place."
-                        //
-                        // New flow: re-measure the target's absolute Y
-                        // every 100ms while the smooth-scroll is in
-                        // flight. If it has moved > 10px (a late layout
-                        // shift), fire another scrollTo({behavior:'smooth'})
-                        // toward the new target. The browser cancels the
-                        // prior smooth-scroll and animates to the new
-                        // position, so motion curves continuously into
-                        // the correct landing instead of landing wrong
-                        // and snapping. After 2500ms the watchdog stops
-                        // and does one final SMOOTH correction (still
-                        // motion, never a jump) if drift remains.
                         var fireScroll = function() {
                             if (fired) return;
                             fired = true;
                             var t = document.querySelector(hash);
-                            if (!t) return;
-                            var offset = window.innerWidth <= 960 ? 75 : 90;
-                            var getTargetY = function() {
-                                return Math.max(0, t.getBoundingClientRect().top + window.pageYOffset - offset);
-                            };
-                            var lastTargetY = getTargetY();
-                            window.__smoothScrollTo(lastTargetY);
-                            var startTs = Date.now();
-                            var watchdog = setInterval(function() {
-                                var nowTargetY = getTargetY();
-                                if (Math.abs(nowTargetY - lastTargetY) > 10) {
-                                    lastTargetY = nowTargetY;
-                                    window.__smoothScrollTo(nowTargetY);
-                                }
-                                if (Date.now() - startTs > 2500) {
-                                    clearInterval(watchdog);
-                                    var finalTop = t.getBoundingClientRect().top;
-                                    if (Math.abs(finalTop - offset) > 15) {
-                                        window.__smoothScrollTo(finalTop + window.pageYOffset - offset);
-                                    }
-                                    try {
-                                        history.replaceState(null, '', location.pathname + location.search + hash);
-                                    } catch (e) {}
-                                }
-                            }, 100);
+                            if (t) {
+                                var offset = window.innerWidth <= 960 ? 75 : 90;
+                                var targetY = Math.max(0, t.getBoundingClientRect().top + window.pageYOffset - offset);
+                                window.scrollTo(0, targetY);
+                            }
+                            // Trigger the fade-in even if target is missing
+                            // so we never leave the page sitting invisible.
+                            document.documentElement.classList.add('hash-fade-in');
+                            try {
+                                history.replaceState(null, '', location.pathname + location.search + hash);
+                            } catch (e) {}
                         };
                         var afterLoad = function() {
-                            // Fonts: race fonts.ready against a 150ms timeout
-                            // so a slow Google Fonts response can't delay the
-                            // scroll indefinitely. The font is decorative —
-                            // if it lands mid-scroll the visual reflow is
-                            // minimal because we use --font-body fallback and
-                            // metrics are similar.
+                            // Race fonts.ready against a 150ms cap so a slow
+                            // Google Fonts response can't delay the landing
+                            // indefinitely.
                             var fontsReady = (document.fonts && document.fonts.ready)
                                 ? Promise.race([
                                     document.fonts.ready,
@@ -189,9 +161,8 @@ export function subpageHeader(): string {
                             afterLoad();
                         } else {
                             window.addEventListener('load', afterLoad, { once: true });
-                            // Hard cap: if load never fires (network hung
-                            // on some non-critical resource) we still
-                            // want to scroll within 1.2s.
+                            // Hard cap so a stalled subresource can't keep
+                            // the page invisible past 1.2s.
                             setTimeout(fireScroll, 1200);
                         }
                     }

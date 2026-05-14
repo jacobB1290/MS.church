@@ -1,4 +1,4 @@
-// Version: 1.49.3 - Hashload fade-in: subpage <main> paints at opacity 0 and animates to 1 over 1100ms concurrent with the smooth-scroll. Hides the wait-for-settle delay + any late layout shift behind a single coherent motion. Brand + back stay anchored so chrome doesn't move. Respects prefers-reduced-motion.
+// Version: 1.49.4 - Drop smooth-scroll on hashload entirely. Now: paint main invisible + translateY(16px) before first paint, wait for window.load + fonts.ready + rIC for layout to settle, do an INSTANT scrollTo(target), then transition opacity 0→1 and translateY 16→0 over ~800ms with easeOut. Reads as the tail end of a smooth-scroll that's 98% done — no long visible animation to be janky, no fighting layout shifts.
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

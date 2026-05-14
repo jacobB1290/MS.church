@@ -1625,35 +1625,52 @@ export const homeStyles = (): string => `
                 }
             }
 
-            /* What-to-Expect: numbered service-flow timeline */
+            /* What-to-Expect: numbered service-flow timeline.
+
+               Compacted in v1.49.11 — five combined levers:
+                 1. Desktop ≥800px lays out as 2 columns via
+                    grid-auto-flow: column, so 7 steps flow:
+                      col 1: 1, 2, 3, 4
+                      col 2: 5, 6, 7
+                    reads top-to-bottom within each column.
+                 2. Numbered circle 44 → 38px, font 18 → 16px,
+                    softer shadow — lighter visual weight.
+                 3. Row gap reduced from clamp(24,3vw,32) to
+                    clamp(20,2.4vw,26).
+                 4. Body line-height --leading-loose (1.8) →
+                    --leading-normal (1.6); h3 slightly smaller.
+                 5. Connector hidden at item 4 in 2-col mode so
+                    the line doesn't dangle into empty space
+                    below the last item in column 1. Mobile keeps
+                    the full chain. */
             .service-flow {
                 list-style: none;
                 counter-reset: flow;
-                display: flex;
-                flex-direction: column;
-                gap: clamp(24px, 3vw, 32px);
+                display: grid;
+                grid-template-columns: 1fr;
+                row-gap: clamp(20px, 2.4vw, 26px);
                 padding: 0;
                 margin: 0;
             }
             .service-flow li {
                 display: grid;
-                grid-template-columns: 52px 1fr;
-                gap: clamp(16px, 2vw, 24px);
+                grid-template-columns: 46px 1fr;
+                gap: clamp(14px, 1.8vw, 20px);
                 align-items: start;
                 position: relative;
             }
             .service-flow-step {
-                width: 44px;
-                height: 44px;
+                width: 38px;
+                height: 38px;
                 border-radius: 50%;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 color: #fff;
                 display: grid;
                 place-items: center;
                 font-family: var(--font-display);
-                font-size: 18px;
+                font-size: 16px;
                 font-weight: var(--weight-bold);
-                box-shadow: 0 6px 16px color-mix(in srgb, var(--gold) 30%, transparent);
+                box-shadow: 0 4px 12px color-mix(in srgb, var(--gold) 28%, transparent);
                 counter-increment: flow;
                 position: relative;
                 z-index: 1;
@@ -1661,31 +1678,53 @@ export const homeStyles = (): string => `
             .service-flow-step::before {
                 content: counter(flow);
             }
-            /* Connecting line between numbered steps */
+            /* Connecting line between numbered steps. Height covers:
+               bottom of this circle + row gap + half of next circle
+               (so the line visually terminates at the center of the
+               next circle, hidden behind it via z-index). */
             .service-flow li:not(:last-child) .service-flow-step::after {
                 content: '';
                 position: absolute;
                 left: 50%;
                 top: 100%;
                 width: 2px;
-                height: calc(100% + clamp(24px, 3vw, 32px) - 22px);
+                height: calc(100% + clamp(20px, 2.4vw, 26px) - 19px);
                 background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 35%, transparent), color-mix(in srgb, var(--gold) 0%, transparent));
                 transform: translateX(-50%);
                 margin-top: 4px;
             }
             .service-flow-text h3 {
                 font-family: var(--font-display);
-                font-size: clamp(18px, 1.8vw, 22px);
+                font-size: clamp(17px, 1.7vw, 20px);
                 font-weight: var(--weight-bold);
                 color: #1a1a2e;
                 line-height: var(--leading-snug);
-                margin-bottom: 6px;
+                margin-bottom: 4px;
+                text-wrap: balance;
             }
             .service-flow-text p {
                 color: rgba(26, 26, 46, 0.7);
-                line-height: var(--leading-loose);
+                line-height: var(--leading-normal);
                 font-size: var(--text-body);
                 margin: 0;
+            }
+            /* Desktop ≥800px: 2-column layout with vertical flow. With
+               7 items and grid-template-rows: repeat(4, auto), items
+               1-4 occupy column 1 and items 5-7 occupy column 2 (row 4
+               of column 2 is empty). The hardcoded :nth-child(4) line
+               override depends on this 7-item count — update if the
+               SERVICE_FLOW array length changes. */
+            @media (min-width: 800px) {
+                .service-flow {
+                    grid-template-columns: 1fr 1fr;
+                    grid-template-rows: repeat(4, auto);
+                    grid-auto-flow: column;
+                    column-gap: clamp(32px, 3.5vw, 48px);
+                    row-gap: clamp(22px, 2.4vw, 28px);
+                }
+                .service-flow li:nth-child(4) .service-flow-step::after {
+                    display: none;
+                }
             }
 
             /* Visit final CTA card — centered text inside a section-card */

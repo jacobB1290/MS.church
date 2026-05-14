@@ -1,7 +1,15 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.49.1
+## 🔢 CURRENT VERSION: v1.49.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.49.2 - Fix: layout-shift-aware smooth-scroll (smooth scroll lands wrong, then snaps)
+
+User feedback on v1.49.1: "still scrolls to the wrong point then snaps to the correct one." The smooth-scroll motion was now visible (v1.49.1 fix worked), but it was landing in the wrong place — and the snap-correct at the end was jumping to the right place. Different bug, same look-and-feel: a jump at the end.
+
+Root cause: the hashload target's absolute Y can MOVE during the smooth-scroll animation. On /outreach the Google Calendar carousel fetches events async — it resolves and mounts *after* `window.load` (so even our defer-until-load timing doesn't catch it) and pushes the cooking-ministry / community-breakfast sections downward by several hundred pixels. We computed `targetY = element.top + scrollY - offset` once at the moment we fired the scroll, animated to that position, and landed in stale space. The snap-correct then did an instant `scrollTo(0, …)` to the corrected position — the user saw "smooth ride to wrong spot, then jump."
+
+**Fix:** replace the at-the-end snap-correct with a **layout-shift watchdog** that runs alongside the smooth-scroll. Every 100ms during the animation, re-measure the target's absolute Y. If it has moved more than 10px, call `window.scrollTo({behavior:'smooth'})` again toward the new target — the browser cancels the in-flight smooth-scroll and animates toward the new position. Motion curves continuously into the correct landing instead of landing wrong and snapping. The watchdog runs for 2500ms (well past any expected scroll duration), then does one final smooth correction if drift remains. No jumps — every correction is motion.
 
 ### v1.49.1 - Fix: snap-correct races smooth-scroll on slow loads (page sits, then jumps)
 

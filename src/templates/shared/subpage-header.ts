@@ -97,41 +97,68 @@ export function subpageHeader(): string {
                     // (matching the home-anchor-click context) so the
                     // motion is smooth all the way through.
                     //
-                    // The 2000ms snap-correct still catches any late
-                    // layout shifts (e.g. /outreach calendar render) that
-                    // land after the smooth-scroll completes.
+                    // v1.49.2: a layout-shift watchdog runs alongside the
+                    // smooth-scroll and re-fires it toward an updated
+                    // target Y if the section moves during the animation
+                    // (e.g. /outreach calendar carousel mounts after we
+                    // started scrolling). See the inline notes below the
+                    // fireScroll definition for details.
                     var hash = window.__targetHash;
                     if (hash) {
                         var fired = false;
-                        var snapCorrect = function() {
-                            var t = document.querySelector(hash);
-                            if (t) {
-                                var expected = window.innerWidth <= 960 ? 75 : 90;
-                                var actual = t.getBoundingClientRect().top;
-                                if (Math.abs(actual - expected) > 20) {
-                                    window.scrollTo(0, Math.max(0, actual + window.pageYOffset - expected));
-                                }
-                            }
-                            try {
-                                history.replaceState(null, '', location.pathname + location.search + hash);
-                            } catch (e) {}
-                        };
+                        // ---- Layout-shift-aware smooth-scroll (v1.49.2) ----
+                        // The hashload target's absolute Y can MOVE while
+                        // we're animating toward it. On /outreach the
+                        // calendar carousel fetches and mounts async — it
+                        // settles after window.load (so even our defer-
+                        // until-load timing doesn't catch it) and pushes
+                        // the cooking-ministry / community-breakfast
+                        // sections downward by several hundred pixels.
+                        // The previous flow was: compute targetY once →
+                        // scroll there → snap-correct with an instant
+                        // scrollTo at the end. The user saw "smooth scroll
+                        // to wrong place, then jump to right place."
+                        //
+                        // New flow: re-measure the target's absolute Y
+                        // every 100ms while the smooth-scroll is in
+                        // flight. If it has moved > 10px (a late layout
+                        // shift), fire another scrollTo({behavior:'smooth'})
+                        // toward the new target. The browser cancels the
+                        // prior smooth-scroll and animates to the new
+                        // position, so motion curves continuously into
+                        // the correct landing instead of landing wrong
+                        // and snapping. After 2500ms the watchdog stops
+                        // and does one final SMOOTH correction (still
+                        // motion, never a jump) if drift remains.
                         var fireScroll = function() {
                             if (fired) return;
                             fired = true;
-                            window.__smoothScrollToHash(hash);
-                            // Snap-correct fires ~1500ms AFTER the smooth-
-                            // scroll fires, not 2000ms after script execution
-                            // (that timing raced with slow page loads — the
-                            // snap-correct's instant scrollTo could fire
-                            // during the smooth-scroll and kill its animation,
-                            // producing "page loads, sits, then JUMPS to
-                            // target" instead of a visible smooth motion).
-                            // Browser-native scrollTo({behavior:'smooth'})
-                            // on long distances takes ~700-900ms; 1500ms
-                            // leaves headroom for late layout shifts (e.g.
-                            // /outreach calendar carousel mount).
-                            setTimeout(snapCorrect, 1500);
+                            var t = document.querySelector(hash);
+                            if (!t) return;
+                            var offset = window.innerWidth <= 960 ? 75 : 90;
+                            var getTargetY = function() {
+                                return Math.max(0, t.getBoundingClientRect().top + window.pageYOffset - offset);
+                            };
+                            var lastTargetY = getTargetY();
+                            window.__smoothScrollTo(lastTargetY);
+                            var startTs = Date.now();
+                            var watchdog = setInterval(function() {
+                                var nowTargetY = getTargetY();
+                                if (Math.abs(nowTargetY - lastTargetY) > 10) {
+                                    lastTargetY = nowTargetY;
+                                    window.__smoothScrollTo(nowTargetY);
+                                }
+                                if (Date.now() - startTs > 2500) {
+                                    clearInterval(watchdog);
+                                    var finalTop = t.getBoundingClientRect().top;
+                                    if (Math.abs(finalTop - offset) > 15) {
+                                        window.__smoothScrollTo(finalTop + window.pageYOffset - offset);
+                                    }
+                                    try {
+                                        history.replaceState(null, '', location.pathname + location.search + hash);
+                                    } catch (e) {}
+                                }
+                            }, 100);
                         };
                         var afterLoad = function() {
                             // Fonts: race fonts.ready against a 150ms timeout

@@ -1,7 +1,21 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.47.0
+## 🔢 CURRENT VERSION: v1.47.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.47.1 - Section eyebrows match nav text exactly
+
+Aligned each section's eyebrow chip with its corresponding nav label so a user clicking through the nav sees the same word at the destination:
+
+| Section | Before | After |
+|---|---|---|
+| Schedule | Weekly Schedule | **Schedule** |
+| About | About Us | **About** |
+| Outreach | How We Serve | **Outreach** |
+| Watch | Watch | Watch (no change) |
+| Contact | Get In Touch | **Contact** |
+
+Markup-only change in `src/templates/home-body.ts`.
 
 ### v1.47.0 - About teaser redesign: editorial split (no card)
 

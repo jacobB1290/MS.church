@@ -40,7 +40,7 @@ export const homeBody = (): string => `
                 </div>
 
                 <section class="schedule" id="schedule">
-                    <span class="section-eyebrow reveal-eyebrow">Weekly Schedule</span>
+                    <span class="section-eyebrow reveal-eyebrow">Schedule</span>
                     <h2 class="section-heading reveal-rise">Sunday Worship, Bible Study & Fellowship in Boise</h2>
                     <address class="reveal-rise">
                         <div class="address-dropdown-wrapper">
@@ -123,7 +123,7 @@ export const homeBody = (): string => `
                      About section reads with quieter visual weight — a deliberate
                      contrast against the card-heavy Schedule + Outreach sections. -->
                 <section id="about">
-                    <span class="section-eyebrow reveal-eyebrow">About Us</span>
+                    <span class="section-eyebrow reveal-eyebrow">About</span>
                     <h2 class="section-heading reveal-rise">A welcoming church in the heart of Boise.</h2>
                     <div class="about-content" data-reveal-sync>
                         <div class="about-image reveal-from-above" aria-hidden="true">
@@ -138,7 +138,7 @@ export const homeBody = (): string => `
 
                 <!-- Outreach teaser — How We Serve cards, routes to /outreach for full hub + events -->
                 <section id="outreach">
-                    <span class="section-eyebrow reveal-eyebrow">How We Serve</span>
+                    <span class="section-eyebrow reveal-eyebrow">Outreach</span>
                     <h2 class="section-heading reveal-rise">A few ways we live out our mission in Boise.</h2>
                     <div class="section-card">
                         <div class="schedule-grid" data-reveal-sync>
@@ -248,7 +248,7 @@ export const homeBody = (): string => `
 
                 <section class="contact" id="contact">
                     <div class="contact-header">
-                        <span class="section-eyebrow reveal-eyebrow">Get In Touch</span>
+                        <span class="section-eyebrow reveal-eyebrow">Contact</span>
                         <h2 class="section-heading reveal-rise">Contact Us</h2>
                         <p class="section-lead reveal-rise-slow">
                             We'd love to hear from you! Whether you have questions, prayer requests, or just want to connect, fill out the form below and someone from our team will get back to you.

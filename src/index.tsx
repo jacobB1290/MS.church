@@ -1,4 +1,4 @@
-// Version: 1.47.0 - About teaser redesign: editorial split layout, no section-card frame
+// Version: 1.47.1 - Section eyebrows match nav text exactly (Schedule / About / Outreach / Watch / Contact)
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

@@ -1,7 +1,29 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.46.0
+## 🔢 CURRENT VERSION: v1.46.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.46.1 - Reveals: motion vocabulary, intent-named per element type
+
+v1.46.0 introduced reveals with two generic flavors (`.reveal` + `.reveal-scale`) — everything faded and moved the same way. That read as generic. v1.46.1 replaces it with a real motion vocabulary, each variant rooted in what the element IS, not just where it sits.
+
+**Five intent classes** (replaces .reveal / .reveal-scale; old classes still work as backwards-compat aliases):
+
+| Class | For | Motion |
+|---|---|---|
+| `.reveal-eyebrow` | Small category labels — the "what is this section" lead-in | Short throw (12px) + opacity, **540ms** |
+| `.reveal-rise` | Headings, body prose, CTAs | Longer throw (20px) + opacity, **760ms** |
+| `.reveal-settle` | Cards being placed onto a surface | Slide (28px) + **micro-rotation (-0.6deg → 0)** anchored at bottom-left, **820ms** — reads as set-down, not slid-up |
+| `.reveal-photo` | Images coming into view | Scale (0.94 → 1) + **filter: blur(6px → 0)** + opacity, **1100ms** — photograph-developing feel |
+| `.reveal-power` | Focal media (video frame, schedule banner) | Scale (0.92 → 1) with a touch of overshoot easing, **900ms** — like a screen powering on |
+
+**Eased stagger curve.** Per-element delays inside `[data-reveal-group]` containers are now distributed via `i^0.85` instead of linear `i`. Earlier items stay distinct, later items compress — the group "settles" into place rather than running like a metronome.
+
+**Ken-burns on the schedule banner.** Once the banner has revealed (desktop only), the active slide drifts slowly (`scale(1) → scale(1.025) translate(-0.5%, -0.5%)`, 14s alternate). Adds quiet life to the focal image without competing with the cards.
+
+**Reduced-motion.** All variants strip transitions and the banner drift stops under `prefers-reduced-motion: reduce`.
+
+**Verified via Playwright** at 1440×900 and 390×844: all 27 reveal targets fire correctly on both viewports, 0 legacy `.reveal/.reveal-scale` usages remain on home.
 
 ### v1.46.0 - Scroll-driven reveals across home; per-section motion rooted in section meaning
 

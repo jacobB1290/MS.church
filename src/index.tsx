@@ -1,4 +1,4 @@
-// Version: 1.46.0 - Scroll-driven reveals across home; per-section motion rooted in section meaning
+// Version: 1.46.1 - Reveals: five intent classes (eyebrow/rise/settle/photo/power), eased stagger, ken-burns banner
 // Cloudflare Pages entry point.
 // Only difference from src/index.ts (Vercel): the serveStatic import.
 // SYNC RULE: Any change here must also be applied to src/index.ts,

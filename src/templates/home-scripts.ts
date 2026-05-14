@@ -149,18 +149,31 @@ export const homeScripts = (): string => `
                     // (no class set) keeps everything visible.
                     html.classList.add('js-reveals');
 
+                    // All reveal class variants — the v1.46 motion vocabulary
+                    // plus the v1.46.0 generic .reveal/.reveal-scale kept
+                    // for backwards compat.
+                    const REVEAL_SEL = '.reveal, .reveal-scale, .reveal-eyebrow, .reveal-rise, .reveal-settle, .reveal-photo, .reveal-power';
+
                     // Assign per-element stagger delays for siblings inside
-                    // any [data-reveal-group] container.
+                    // any [data-reveal-group] container. The stagger uses
+                    // a slight ease-out curve on the delay itself — earlier
+                    // items get more separation, later items compress toward
+                    // each other so the group "settles" rather than running
+                    // in a strict metronome.
                     document.querySelectorAll('[data-reveal-group]').forEach((group) => {
-                        const baseDelay = parseInt(group.getAttribute('data-reveal-delay') || '70', 10);
-                        const maxDelay = parseInt(group.getAttribute('data-reveal-max') || '480', 10);
-                        const items = group.querySelectorAll(':scope > .reveal, :scope > .reveal-scale');
+                        const baseDelay = parseInt(group.getAttribute('data-reveal-delay') || '90', 10);
+                        const maxDelay = parseInt(group.getAttribute('data-reveal-max') || '520', 10);
+                        const items = Array.from(group.children).filter((c) => c.matches(REVEAL_SEL));
+                        const n = items.length;
                         items.forEach((item, i) => {
-                            item.style.setProperty('--reveal-delay', Math.min(i * baseDelay, maxDelay) + 'ms');
+                            // Soft ease-out distribution: i^0.85 instead of linear i.
+                            // Keeps the first 2 items distinct, compresses the tail.
+                            const t = n > 1 ? Math.pow(i / (n - 1), 0.85) * (n - 1) : 0;
+                            item.style.setProperty('--reveal-delay', Math.min(t * baseDelay, maxDelay) + 'ms');
                         });
                     });
 
-                    const targets = document.querySelectorAll('.reveal, .reveal-scale');
+                    const targets = document.querySelectorAll(REVEAL_SEL);
                     if (!targets.length) return;
 
                     // Reduced-motion: mark everything revealed immediately,

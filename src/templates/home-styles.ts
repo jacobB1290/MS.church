@@ -393,57 +393,152 @@ export const homeStyles = (): string => `
             }
 
             /* ============================================================
-               SCROLL-DRIVEN REVEALS
+               SCROLL-DRIVEN REVEALS — motion vocabulary
 
-               Granular fade/rise animations for individual elements as
-               they enter the viewport — independent of the page-load
-               section entrance above. Each section's motion is rooted in
-               the section's meaning:
+               Five distinct intent classes, each rooted in what the
+               element is — not just where it sits. Per the design firm
+               playbook: motion communicates meaning, so heading motion,
+               card motion, image motion, and video motion are each
+               their own thing.
 
-                 • schedule: rhythm — heading + cards float up sequentially
-                 • about:    settle — image scales in like a placed photo
-                 • outreach: offering — cards rise w/ subtle scale stagger
-                 • watch:    power-on — video frame scales in
-                 • contact:  open door — heading rises, form fades in
-                 • footer:   peaceful exit — plain fade
+                 .reveal-eyebrow  → category labels — short, light lead-in
+                 .reveal-rise     → headings, prose, CTAs — settled slide
+                 .reveal-settle   → cards being placed — translate + micro-
+                                    rotate from the bottom-left corner so
+                                    it reads as "set down on the table"
+                 .reveal-photo    → images coming into focus — scale + blur
+                                    fade, longer duration, like a darkroom
+                                    print developing
+                 .reveal-power    → focal media (video frame) — scale with
+                                    a soft spring, like a screen powering on
 
-               Progressive enhancement: only activates when <html> has the
-               .js-reveals class (set by JS on DOMContentLoaded). Without
-               JS, content is fully visible — there is no hidden state.
-               Respects prefers-reduced-motion: animations are removed
-               entirely under reduced-motion preference.
+               Progressive enhancement: hidden state lives behind the
+               .js-reveals class on <html>, added by JS at runtime. No JS
+               means content is fully visible — there is no hidden state.
 
-               Stagger: per-element delays set via the --reveal-delay CSS
-               custom property; default 0ms. JS assigns increasing delays
-               to siblings inside [data-reveal-group] containers (default
-               60ms per item, capped via data-reveal-max).
+               Reduced motion: every variant is reduced to "show, no
+               transition" via the @media query at the end of this block.
+
+               Stagger: per-element delays via the --reveal-delay CSS
+               custom property, assigned by JS based on each element's
+               index within its [data-reveal-group] parent.
                ============================================================ */
-            .js-reveals .reveal,
-            .js-reveals .reveal-scale {
+            .js-reveals .reveal-eyebrow,
+            .js-reveals .reveal-rise,
+            .js-reveals .reveal-settle,
+            .js-reveals .reveal-photo,
+            .js-reveals .reveal-power {
                 opacity: 0;
-                will-change: opacity, transform;
-                transition: opacity 720ms cubic-bezier(0.16, 1, 0.3, 1),
-                            transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+                will-change: opacity, transform, filter;
                 transition-delay: var(--reveal-delay, 0ms);
             }
-            .js-reveals .reveal {
-                transform: translateY(22px);
+            /* Light lead-in for category labels — short throw, faster. */
+            .js-reveals .reveal-eyebrow {
+                transform: translateY(12px);
+                transition: opacity 540ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 540ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            .js-reveals .reveal-scale {
-                transform: scale(0.96);
+            /* Prose: longer throw, more time to land — gives the reader
+               a sense of weight as it arrives. */
+            .js-reveals .reveal-rise {
+                transform: translateY(20px);
+                transition: opacity 760ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Cards being placed onto a surface — the micro-rotation
+               (anchored bottom-left) is what makes it feel "set down"
+               instead of "slid up". 0.6deg is barely perceptible
+               individually, but reads clearly across a staggered group. */
+            .js-reveals .reveal-settle {
+                transform: translateY(28px) rotate(-0.6deg);
+                transform-origin: bottom left;
+                transition: opacity 820ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 820ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Photograph developing — scale + blur fade combined.
+               The blur is the differentiator from a generic scale-in. */
+            .js-reveals .reveal-photo {
+                transform: scale(0.94);
+                filter: blur(6px);
+                transition: opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+                            filter 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Screen powering on — scale with a touch of overshoot
+               easing so the final ~10% feels like the picture "snapping"
+               into shape, not gliding to a stop. */
+            .js-reveals .reveal-power {
+                transform: scale(0.92);
+                transition: opacity 900ms cubic-bezier(0.34, 1.18, 0.64, 1),
+                            transform 900ms cubic-bezier(0.34, 1.18, 0.64, 1);
+            }
+
+            /* Resolved state — applies to every variant uniformly. */
+            .js-reveals .reveal-eyebrow.is-revealed,
+            .js-reveals .reveal-rise.is-revealed,
+            .js-reveals .reveal-settle.is-revealed,
+            .js-reveals .reveal-photo.is-revealed,
+            .js-reveals .reveal-power.is-revealed {
+                opacity: 1;
+                transform: none;
+                filter: none;
+            }
+
+            /* Subtle ken-burns drift on the schedule banner once revealed —
+               adds slow life to the focal image while it's on screen.
+               Only on desktop where the banner is visible. */
+            @media (min-width: 961px) {
+                .schedule-banner.is-revealed .schedule-banner-slide.active {
+                    animation: scheduleBannerDrift 14s ease-in-out infinite alternate;
+                }
+            }
+            @keyframes scheduleBannerDrift {
+                from { transform: scale(1) translate(0, 0); }
+                to   { transform: scale(1.025) translate(-0.5%, -0.5%); }
+            }
+
+            /* Backwards-compat shim — the older .reveal / .reveal-scale
+               classes used by earlier home-body markup map to the new
+               vocabulary so nothing breaks if a class wasn't renamed. */
+            .js-reveals .reveal { /* maps to reveal-rise */
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 760ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
+                transition-delay: var(--reveal-delay, 0ms);
+            }
+            .js-reveals .reveal-scale { /* maps to reveal-photo */
+                opacity: 0;
+                transform: scale(0.94);
+                filter: blur(6px);
+                transition: opacity 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+                            transform 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+                            filter 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+                transition-delay: var(--reveal-delay, 0ms);
             }
             .js-reveals .reveal.is-revealed,
             .js-reveals .reveal-scale.is-revealed {
                 opacity: 1;
                 transform: none;
+                filter: none;
             }
-            /* Reduced-motion: skip all reveals, render immediately. */
+
+            /* Reduced-motion: skip every variant. Show content immediately. */
             @media (prefers-reduced-motion: reduce) {
                 .js-reveals .reveal,
-                .js-reveals .reveal-scale {
+                .js-reveals .reveal-scale,
+                .js-reveals .reveal-eyebrow,
+                .js-reveals .reveal-rise,
+                .js-reveals .reveal-settle,
+                .js-reveals .reveal-photo,
+                .js-reveals .reveal-power {
                     opacity: 1;
                     transform: none;
+                    filter: none;
                     transition: none;
+                }
+                .schedule-banner.is-revealed .schedule-banner-slide.active {
+                    animation: none;
                 }
             }
 

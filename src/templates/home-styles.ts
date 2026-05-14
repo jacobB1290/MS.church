@@ -421,14 +421,43 @@ export const homeStyles = (): string => `
                Only <main> animates — subpage brand + back button stay
                anchored so chrome doesn't move during the entrance.
                ============================================================ */
-            html.hash-fade main {
+            /* v1.49.6: motion direction flipped. translateY(-40px) → 0
+               means everything starts 40px ABOVE its final position and
+               slides DOWN into place — reads as "the page auto-scrolled
+               DOWN to reveal this section, signifying there's more
+               content above."
+
+               v1.49.7: the animation now applies to ALL page content
+               (subpage brand, back button, top fog, main, footer) so
+               the WHOLE viewport slides in together. Previously only
+               main animated, which left the chrome anchored and felt
+               jarring (frozen page, one element moves). */
+            html.hash-fade main,
+            html.hash-fade footer,
+            html.hash-fade .subpage-back,
+            html.hash-fade .subpage-top-fog {
                 opacity: 0;
-                transform: translateY(40px);
+                transform: translateY(-40px);
+            }
+            /* Brand keeps its base translateX(-50%) so it stays centered. */
+            html.hash-fade .subpage-brand {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-40px);
             }
 
-            html.hash-fade.hash-fade-in main {
+            html.hash-fade.hash-fade-in main,
+            html.hash-fade.hash-fade-in footer,
+            html.hash-fade.hash-fade-in .subpage-back,
+            html.hash-fade.hash-fade-in .subpage-top-fog {
                 opacity: 1;
                 transform: translateY(0);
+                transition:
+                    opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            html.hash-fade.hash-fade-in .subpage-brand {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
                 transition:
                     opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
                     transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -436,9 +465,16 @@ export const homeStyles = (): string => `
 
             @media (prefers-reduced-motion: reduce) {
                 html.hash-fade main,
-                html.hash-fade.hash-fade-in main {
+                html.hash-fade footer,
+                html.hash-fade .subpage-back,
+                html.hash-fade .subpage-top-fog {
                     opacity: 1;
                     transform: none;
+                    transition: none;
+                }
+                html.hash-fade .subpage-brand {
+                    opacity: 1;
+                    transform: translateX(-50%);
                     transition: none;
                 }
             }

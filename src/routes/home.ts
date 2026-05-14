@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.5 - Hashload landing accuracy: invisible-stability watchdog. After scrollTo, re-measure every 100ms; if position shifts (e.g. calendar carousel mounts late), instant-correct. Fade-in waits for 300ms of layout stability before firing. Settle bumped 16→40px (~5%). Harness adds network-throttled scenarios. -->
+<!-- v1.49.7 - Hashload settle: direction flipped to slide DOWN from above + whole subpage (brand, back, fog, main, footer) animates together so the entrance reads as a coherent auto-scroll-down rather than one element moving in a frozen page. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

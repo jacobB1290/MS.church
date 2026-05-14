@@ -1,7 +1,19 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.49.5
+## 🔢 CURRENT VERSION: v1.49.7
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.49.7 - Hashload entrance: flip direction + animate whole subpage together
+
+User feedback on v1.49.5: "the animation is backwards, it's going from bottom up rather than top to bottom giving the illusion that the page auto scrolled to that portion to signify there is more in the page" — then a follow-up: "make sure the rest of the page contents also move in with the animation so it's not a jarring page is frozen except one element moves."
+
+**Two changes:**
+
+1. **Direction flipped: translateY -40px → 0** (was +40 → 0). Content now starts 40px ABOVE its final position and slides DOWN into place. Reads as the tail end of a downward auto-scroll: the page has been arriving from above, signifying there's content up there if the user wants to scroll back. Previous direction had content rising up from below, which felt like a section emerging from a quiet page rather than landing from a scroll.
+
+2. **Whole-subpage entrance.** The settle animation now applies to ALL subpage content: `main`, `footer`, `.subpage-back`, `.subpage-top-fog`, AND `.subpage-brand` (with its existing `translateX(-50%)` composed in). The chrome and content slide in together as one coherent unit, instead of main moving while everything else stays anchored.
+
+The v1.49.5 invisible-stability watchdog + transform-aware `scrollTo` work the same for either direction — only main's transform matters for landing-Y math because the target element is inside main.
 
 ### v1.49.5 - Invisible-stability watchdog + bigger settle + network-throttled harness checks
 

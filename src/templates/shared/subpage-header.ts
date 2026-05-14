@@ -145,16 +145,17 @@ export function subpageHeader(): string {
                             var mainEl = document.querySelector('main');
                             // CRITICAL: getBoundingClientRect().top includes
                             // ALL applied transforms. While main is in the
-                            // pre-fade state it carries translateY(40px),
-                            // so the rect.top is 40px LARGER than the
-                            // layout position. If we scrollTo that value,
-                            // the target appears at the offset during the
-                            // invisible phase — but when fade-in completes
-                            // and translateY unwinds to 0, the target
-                            // moves UP by 40px to land 40px above offset
-                            // (visibly off). We must subtract the active
-                            // transform Y so scrollTo targets the
-                            // POST-fade position.
+                            // pre-fade state it carries a translateY (the
+                            // settle offset — currently -40px so it slides
+                            // DOWN into place). If we scrollTo to the raw
+                            // rect.top, the target lands at the offset
+                            // visually for the invisible phase — but when
+                            // fade-in completes and translateY unwinds to
+                            // 0, the target SHIFTS by the transform amount
+                            // and ends up off-target. We must subtract the
+                            // active transform Y so scrollTo targets the
+                            // POST-fade layout position. Math holds for
+                            // either direction (+ or -).
                             var getTransformY = function() {
                                 if (!mainEl) return 0;
                                 var cs = window.getComputedStyle(mainEl).transform;

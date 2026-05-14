@@ -840,7 +840,14 @@ async function runFlowScenarios(browser, report) {
             const status = await page.evaluate(() => {
               // Covers both the v1.46.0 generic classes and the v1.46.1
               // intent vocabulary (eyebrow/rise/settle/photo/power).
-              const SEL = '.reveal, .reveal-scale, .reveal-eyebrow, .reveal-rise, .reveal-settle, .reveal-photo, .reveal-power'
+              // Mirror the in-page REVEAL_SEL in home-scripts.ts. When adding
+              // a new reveal variant, update both lists.
+              const SEL = [
+                '.reveal', '.reveal-scale',
+                '.reveal-eyebrow', '.reveal-rise', '.reveal-rise-slow', '.reveal-tight',
+                '.reveal-from-left', '.reveal-from-right', '.reveal-from-above',
+                '.reveal-settle', '.reveal-photo', '.reveal-power', '.reveal-pop',
+              ].join(', ')
               const FIRED_SEL = SEL.split(',').map(s => s.trim() + '.is-revealed').join(', ')
               const all = document.querySelectorAll(SEL)
               const fired = document.querySelectorAll(FIRED_SEL)

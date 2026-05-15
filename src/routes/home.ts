@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.20 - Revert the /visit handshake to single-illustration entry animation (v1.49.18 design). Tried two-separate-hand approach via both clip-path halves and custom hand-drawn SVGs; the clip approach was rejected (user wanted actual separate SVGs), and my custom hand drawings landed below the craft bar (looked like loaves/socks). Honest acknowledgment that drawing anatomically-recognizable separate hand illustrations from scratch in raw SVG is beyond reliable capability without illustration tooling. Reverted to the simple 1.4s scale-up entry + 4.5s damped natural-shake loop that works. -->
+<!-- v1.49.21 - Refine the /visit handshake animation away from "cheap bounce." Real handshakes are 2-3 firm pumps then complete stillness, NOT continuous oscillation. New: 10s cycle where the first 10% plays 3 firm decreasing-amplitude pumps (-7 → +4 → -5 → +2 → -3 → 0 px) and the remaining 90% is total stillness. Ease-out timing gives each pump weight without bouncy decay. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

@@ -113,13 +113,21 @@ export const homeHead = (): string => {
                         history.replaceState(null, '', location.pathname + location.search);
                     } catch(e){}
                 }
-                // Watchdog — if the reveal observer never fires (JS
-                // error, very slow device), force everything visible
-                // after 4s so the page is recoverable.
-                setTimeout(function(){
+                // Watchdog — if the reveal observer NEVER fires (JS
+                // error, very slow device), force every reveal element
+                // visible after 12s so the page is recoverable. The
+                // reveal observer setup cancels this timer once it
+                // initializes, so under normal conditions it never
+                // runs — reveals only fire when scrolled into view.
+                // Bug fix (v1.49.30): previously fired unconditionally
+                // at 4s, which marked every reveal below-the-fold as
+                // already-revealed before the user could scroll there
+                // — the elements past About finished their transitions
+                // off-screen and looked static when finally seen.
+                window.__revealWatchdogTimer = setTimeout(function(){
                     var sel='.reveal,.reveal-scale,.reveal-eyebrow,.reveal-rise,.reveal-rise-slow,.reveal-tight,.reveal-from-left,.reveal-from-right,.reveal-from-above,.reveal-photo,.reveal-power,.reveal-pop,.reveal-fill';
                     document.querySelectorAll(sel).forEach(function(el){ el.classList.add('is-revealed'); });
-                }, 4000);
+                }, 12000);
 
                 // Pre-paint nav-shell.scrolled-mobile state — when the
                 // browser restores scroll position (bfcache, back/forward,

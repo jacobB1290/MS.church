@@ -295,6 +295,17 @@ export const homeScripts = (): string => `
                     const targets = document.querySelectorAll(REVEAL_SEL);
                     if (!targets.length) return;
 
+                    // The reveal observer is taking over from the
+                    // head-script watchdog. Cancel the watchdog so it
+                    // doesn't later force every below-the-fold reveal
+                    // to .is-revealed before the user has scrolled to
+                    // it (which would defeat the point of scroll-
+                    // triggered reveals).
+                    if (window.__revealWatchdogTimer) {
+                        clearTimeout(window.__revealWatchdogTimer);
+                        window.__revealWatchdogTimer = null;
+                    }
+
                     // Reduced-motion: mark everything revealed immediately,
                     // skip the observer entirely.
                     if (reducedMotion) {

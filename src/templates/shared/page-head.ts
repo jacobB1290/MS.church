@@ -88,12 +88,14 @@ export function pageHead({
                         history.replaceState(null, '', location.pathname + location.search);
                     } catch(e){}
                 }
-                // Watchdog — guarantee reveals become visible even if JS
-                // fails to fire the IntersectionObserver.
-                setTimeout(function(){
+                // Watchdog — recovery only, see home-head.ts for the
+                // rationale. The reveal observer cancels this timer
+                // once initialized so under normal conditions it
+                // never fires.
+                window.__revealWatchdogTimer = setTimeout(function(){
                     var sel='.reveal,.reveal-scale,.reveal-eyebrow,.reveal-rise,.reveal-rise-slow,.reveal-tight,.reveal-from-left,.reveal-from-right,.reveal-from-above,.reveal-photo,.reveal-power,.reveal-pop,.reveal-fill';
                     document.querySelectorAll(sel).forEach(function(el){ el.classList.add('is-revealed'); });
-                }, 4000);
+                }, 12000);
             })();
         </script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">

@@ -12,6 +12,26 @@
 
 export const homeScripts = (): string => `
         <script>
+            // Sync nav-shell.scrolled-mobile with the actual scroll
+            // position BEFORE DOMContentLoaded so the boolean state on
+            // .nav-shell matches the visual state from first paint.
+            // Without this, browsers that restore scroll position
+            // (Safari iOS bfcache, session-history) paint the nav-shell
+            // in its tall pill state, then handleMobileNav (registered
+            // in DOMContentLoaded) detects the scroll and adds
+            // .scrolled-mobile via the 0.6s transition — the user sees
+            // the brand visibly slide away after first paint.
+            // This early IIFE runs immediately after the body parses
+            // .nav-shell, so it captures the scroll position whether
+            // the head script's syncNavScrolled() got a chance or not.
+            (function(){
+                if (window.innerWidth > 960) return;
+                var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+                if (sy <= 19) return;
+                var nav = document.querySelector('.nav-shell');
+                if (nav) nav.classList.add('scrolled-mobile');
+            })();
+
             document.addEventListener('DOMContentLoaded', () => {
                 const body = document.body;
                 const outreachSection = document.querySelector('.outreach');
@@ -238,9 +258,13 @@ export const homeScripts = (): string => `
                     const targets = document.querySelectorAll(REVEAL_SEL);
                     if (!targets.length) return;
 
-                    // Reduced-motion: mark everything revealed immediately,
-                    // skip the observer entirely.
-                    if (reducedMotion) {
+                    // Reduced-motion OR no-entrance (back/forward, refresh,
+                    // same-origin nav, bfcache, hash-load): mark everything
+                    // revealed immediately, skip the observer entirely.
+                    // The CSS bypass already makes them visible — adding
+                    // .is-revealed is belt-and-suspenders and keeps the
+                    // data model consistent for any downstream queries.
+                    if (reducedMotion || html.classList.contains('no-entrance')) {
                         targets.forEach((el) => el.classList.add('is-revealed'));
                         return;
                     }
@@ -879,6 +903,20 @@ export const homeScripts = (): string => `
                     if (!navShell) return;
                     const currentScrollY = window.scrollY;
                     const scrollThreshold = getScrollThreshold();
+                    // Clear the head-script's nav-prerender-scrolled flag
+                    // once we've taken over. The flag's only job is to
+                    // suppress the .nav-shell transition for the very
+                    // first paint after a scroll-restored page load —
+                    // after that we want the normal transition curve.
+                    if (document.documentElement.classList.contains('nav-prerender-scrolled')) {
+                        // Defer one frame so the initial paint already
+                        // landed under "transition: none". The class
+                        // removal then re-enables transitions for
+                        // subsequent scroll-driven class toggles.
+                        requestAnimationFrame(() => {
+                            document.documentElement.classList.remove('nav-prerender-scrolled');
+                        });
+                    }
 
                     if (window.innerWidth <= 960) {
                         if (isNavigatingHome) {

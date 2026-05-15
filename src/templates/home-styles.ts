@@ -26,9 +26,16 @@ export const homeStyles = (): string => `
                 --bg-event4: #e6e8f5; /* Soft blue-gray */
                 --bg-event5: #f0e6f5; /* Soft lavender */
 
-                /* ── Typography System ── */
-                --font-display: 'Playfair Display', Georgia, serif;
-                --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                /* ── Typography System ──
+                   "Playfair Display Fallback" + "Inter Fallback" are
+                   metric-matched @font-face fallbacks declared in
+                   home-head.ts / page-head.ts. With font-display: optional
+                   on the Google Fonts stylesheet the browser uses the
+                   fallback whenever the web font isn't ready within
+                   ~100ms — so the page never repaints with new font
+                   metrics after first paint. */
+                --font-display: 'Playfair Display', 'Playfair Display Fallback', Georgia, serif;
+                --font-body: 'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
                 /* Type scale — fluid from mobile to desktop */
                 --text-hero:    clamp(52px, 8vw, 88px);   /* Hero headline — unique, largest */
@@ -173,10 +180,30 @@ export const homeStyles = (): string => `
                 transform: translateX(-50%);
                 z-index: 1000;
                 border: 1px solid rgba(255, 255, 255, 0.4);
-                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                /* v1.49.24: was "transition: all 0.6s" — using "all"
+                   triggers transitions on every property including those
+                   mutated by the .scrolled-mobile state. On scroll-restore
+                   the nav would paint unscrolled then animate to scrolled,
+                   which read as the "logo movement animation flicker".
+                   Restrict to background + box-shadow + opacity so the
+                   padding/border-radius/top changes are instant when JS
+                   adds .scrolled-mobile during scroll. Same effective
+                   smoothness while the user is actively scrolling (the
+                   class toggle happens once at threshold). */
+                transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                            box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                            opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 width: min(1280px, 94%);
             }
-            
+
+            /* Pre-paint nav-shell in its scrolled state when the head
+               script detected non-zero scroll position. This avoids the
+               "tall pill on first paint, shrink on JS run" flicker on
+               bfcache restore or session scroll restoration. */
+            html.nav-prerender-scrolled .nav-shell {
+                transition: none;
+            }
+
             .nav-shell.scrolled-mobile {
                 padding: 10px 20px;
                 top: 16px;
@@ -330,12 +357,28 @@ export const homeStyles = (): string => `
                MOTION SYSTEM
                One layer of motion at a time. Smooth, refined, intentional.
 
-               Strategy:
-                 • Cross-document navigation → handled by @view-transition
-                   crossfade. Customized to 0.45s ease (default 0.25s blinks).
-                 • Brand wordmark → tagged with view-transition-name so it
-                   morphs as one element between home and subpages rather
-                   than crossfading in two places.
+               Strategy (v1.49.24):
+                 • Cross-document navigation → DIP-THROUGH-BLANK fade.
+                   The previous @view-transition crossfade put both
+                   documents on screen at ~50% opacity simultaneously
+                   for ~450ms, which read as "two pages flashing
+                   between each other" on iOS Safari + Chromium (both
+                   support cross-doc @view-transition as of WebKit 18
+                   / Chrome 126). We replace the simultaneous crossfade
+                   with a SEQUENCED fade — old dissolves out first,
+                   then a brief moment of page background, then new
+                   fades in. Total ~360ms; at any instant only one
+                   page is meaningfully visible. Reads as a soft fade
+                   without the double-image overlap.
+                 • Brand wordmark → no view-transition-name. The morph
+                   between home's .nav-shell-housed .brand (top:16px +
+                   padding 20px 40px) and the subpage's free .subpage-
+                   brand (top:24px, padding 8px 24px) produced a
+                   visible vertical jump + size change DURING the
+                   transition (the brand appeared to fly between
+                   positions). Without view-transition-name, the brand
+                   simply fades with the rest of the page swap. No
+                   morph movement.
                  • First fresh visit → subtle 8px section rise, staggered.
                  • Any subsequent visit (back/forward, refresh, cross-page,
                    bfcache, hash-load) → no section entrance animation. The
@@ -346,18 +389,80 @@ export const homeStyles = (): string => `
                 navigation: auto;
             }
 
-            ::view-transition-old(root),
+            /* SEQUENCED FADE — old fades out first, then new fades in,
+               with a ~40ms overlap-of-near-zero where the page background
+               briefly shows. The eye reads this as a clean dissolve, not
+               a two-page overlap. Curves are tuned so the perceptible
+               overlap window stays below the ~50ms human flicker
+               threshold:
+                 • old fades to 0 with a tight ease-in (drops fast early,
+                   plateaus near end at the bottom)
+                 • new fades from 0 with a delayed start (animation-delay
+                   140ms; backwards fill keeps it invisible during the
+                   delay)
+               Both layers carry no transform/scale — pure opacity. Any
+               transform on a view-transition pseudo creates a stacking
+               context that can pin the brand/nav at the wrong place
+               mid-transition. */
+            ::view-transition-old(root) {
+                animation: vt-old-fade-out 180ms cubic-bezier(0.4, 0, 0.68, 0) forwards;
+                mix-blend-mode: normal;
+            }
             ::view-transition-new(root) {
-                animation-duration: 0.45s;
-                animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                animation: vt-new-fade-in 200ms cubic-bezier(0.32, 0, 0.4, 1) 140ms backwards;
+                mix-blend-mode: normal;
+            }
+            @keyframes vt-old-fade-out {
+                from { opacity: 1; }
+                to   { opacity: 0; }
+            }
+            @keyframes vt-new-fade-in {
+                from { opacity: 0; }
+                to   { opacity: 1; }
             }
 
-            /* Brand morph across pages — the wordmark stays as one element
-               that morphs from home's nav-shell position to the subpage
-               centered-top position rather than crossfading in both places. */
+            /* Brand wordmark morph (v1.49.24). Both pages have the same
+               wordmark text ("Morning Star / Christian Church"), just at
+               different fixed positions (subpage: top:24px centered;
+               home: inside the nav-shell pill at top:16px). Without a
+               view-transition-name, the brand would fade out at the old
+               position and fade in at the new — perceived as the logo
+               "appearing again" at a different spot.
+               With view-transition-name, the brand becomes its own
+               group that the browser smoothly INTERPOLATES between
+               positions over the transition duration. It glides from
+               subpage centered-top to home in-nav-pill, fading from
+               its old appearance to its new one as it moves. This is
+               the visual continuity that ties the page fade together
+               into a single smooth motion. */
             .brand,
             .subpage-brand {
                 view-transition-name: site-brand;
+            }
+            /* Match the brand morph to the root fade so both finish on
+               the same beat — no "logo arrives late" feel. The morph
+               uses a smooth ease-out curve so the deceleration into the
+               final position reads as a confident settle, not a hard
+               stop. */
+            ::view-transition-group(site-brand) {
+                animation-duration: 360ms;
+                animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            ::view-transition-old(site-brand) {
+                animation: vt-old-fade-out 220ms cubic-bezier(0.4, 0, 0.68, 0) forwards;
+            }
+            ::view-transition-new(site-brand) {
+                animation: vt-new-fade-in 280ms cubic-bezier(0.22, 1, 0.36, 1) 80ms backwards;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                ::view-transition-old(root),
+                ::view-transition-new(root),
+                ::view-transition-old(site-brand),
+                ::view-transition-new(site-brand),
+                ::view-transition-group(site-brand) {
+                    animation: none;
+                }
             }
 
             section {
@@ -524,6 +629,30 @@ export const homeStyles = (): string => `
                 will-change: opacity, transform;
                 transition-delay: var(--reveal-delay, 0ms);
             }
+            /* no-entrance bypass (v1.49.24): on non-fresh visits the
+               sections skip their gentleRise. Extend the same skip to
+               every reveal variant so the page is immediately visible
+               without the "fade completes, then reveals animate in"
+               jump the user reported. The bypass is !important to
+               win against the variant-specific transition rules
+               below (each variant declares opacity 0 + transform). */
+            html.no-entrance .js-reveals .reveal-eyebrow,
+            html.no-entrance .js-reveals .reveal-rise,
+            html.no-entrance .js-reveals .reveal-rise-slow,
+            html.no-entrance .js-reveals .reveal-tight,
+            html.no-entrance .js-reveals .reveal-from-left,
+            html.no-entrance .js-reveals .reveal-from-right,
+            html.no-entrance .js-reveals .reveal-from-above,
+            html.no-entrance .js-reveals .reveal-photo,
+            html.no-entrance .js-reveals .reveal-power,
+            html.no-entrance .js-reveals .reveal-pop,
+            html.no-entrance .js-reveals .reveal-fill {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+                animation: none !important;
+                will-change: auto !important;
+            }
             /* .reveal-fill manages its own opacity in the rule above
                (it needs different transition properties than the rest of
                the variants, plus a ::before for the wipe). */
@@ -659,7 +788,14 @@ export const homeStyles = (): string => `
             /* Resolved state — applies to every variant uniformly.
                .reveal-fill handles its own resolved state via the
                clip-path rule above; including it here would set opacity
-               but it never went to 0 anyway. */
+               but it never went to 0 anyway.
+
+               will-change: auto on .is-revealed releases the compositor
+               layer that the hidden state pinned. Leaving will-change
+               applied indefinitely creates a permanent GPU layer per
+               reveal element, which on iOS Safari causes scroll stutter
+               and the occasional "page jumps to a new frame" repaint
+               when layers get evicted under memory pressure. */
             .js-reveals .reveal-eyebrow.is-revealed,
             .js-reveals .reveal-rise.is-revealed,
             .js-reveals .reveal-rise-slow.is-revealed,
@@ -672,6 +808,7 @@ export const homeStyles = (): string => `
             .js-reveals .reveal-pop.is-revealed {
                 opacity: 1;
                 transform: none;
+                will-change: auto;
             }
 
             /* (Removed: ken-burns infinite drift animation on the active
@@ -5266,13 +5403,30 @@ export const homeStyles = (): string => `
                     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
 
-                .nav-shell.scrolled-mobile {
+                .nav-shell.scrolled-mobile,
+                html.nav-prerender-scrolled .nav-shell {
                     border-radius: 100px;
                     padding: clamp(6px, 1.8vw, 8px) clamp(15px, 4.5vw, 20px);
                     gap: 0;
                     margin-bottom: 30px;
                     top: clamp(6px, 1.8vw, 8px);
                     background: rgba(255, 255, 255, 0.72);
+                }
+                /* Pre-paint hide of .brand + .nav-cta when scroll position
+                   already exceeds the threshold at first paint — matches
+                   the JS-driven .scrolled-mobile behavior so the nav looks
+                   right immediately rather than after a 600ms transition. */
+                html.nav-prerender-scrolled .nav-shell .brand,
+                html.nav-prerender-scrolled .nav-shell .nav-cta {
+                    display: none;
+                }
+                html.nav-prerender-scrolled .nav-shell .nav-form-btn {
+                    display: inline-flex;
+                    opacity: 1;
+                    transform: scale(1);
+                    position: relative;
+                    margin-left: 8px;
+                    right: auto;
                 }
 
                 .nav-shell.scrolled-mobile .nav-cta {

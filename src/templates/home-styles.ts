@@ -650,36 +650,6 @@ export const homeStyles = (): string => `
                 will-change: opacity, transform;
                 transition-delay: var(--reveal-delay, 0ms);
             }
-            /* no-entrance bypass (v1.49.24): on non-fresh visits the
-               sections skip their gentleRise. Extend the same skip to
-               every reveal variant so the page is immediately visible
-               without the "fade completes, then reveals animate in"
-               jump the user reported. The bypass is !important to win
-               against the variant-specific transition rules below (each
-               variant declares opacity 0 + transform).
-               Selector: html.no-entrance.js-reveals (both classes on
-               html, joined without a space). The original variant rules
-               below use ".js-reveals .reveal-X" (descendant) which
-               matches because .js-reveals is on html and .reveal-X is a
-               descendant — so we need the same descendant relationship
-               here for the bypass to override them. */
-            html.no-entrance.js-reveals .reveal-eyebrow,
-            html.no-entrance.js-reveals .reveal-rise,
-            html.no-entrance.js-reveals .reveal-rise-slow,
-            html.no-entrance.js-reveals .reveal-tight,
-            html.no-entrance.js-reveals .reveal-from-left,
-            html.no-entrance.js-reveals .reveal-from-right,
-            html.no-entrance.js-reveals .reveal-from-above,
-            html.no-entrance.js-reveals .reveal-photo,
-            html.no-entrance.js-reveals .reveal-power,
-            html.no-entrance.js-reveals .reveal-pop,
-            html.no-entrance.js-reveals .reveal-fill {
-                opacity: 1 !important;
-                transform: none !important;
-                transition: none !important;
-                animation: none !important;
-                will-change: auto !important;
-            }
             /* .reveal-fill manages its own opacity in the rule above
                (it needs different transition properties than the rest of
                the variants, plus a ::before for the wipe). */

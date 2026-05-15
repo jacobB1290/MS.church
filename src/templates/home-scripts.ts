@@ -295,13 +295,9 @@ export const homeScripts = (): string => `
                     const targets = document.querySelectorAll(REVEAL_SEL);
                     if (!targets.length) return;
 
-                    // Reduced-motion OR no-entrance (back/forward, refresh,
-                    // same-origin nav, bfcache, hash-load): mark everything
-                    // revealed immediately, skip the observer entirely.
-                    // The CSS bypass already makes them visible — adding
-                    // .is-revealed is belt-and-suspenders and keeps the
-                    // data model consistent for any downstream queries.
-                    if (reducedMotion || html.classList.contains('no-entrance')) {
+                    // Reduced-motion: mark everything revealed immediately,
+                    // skip the observer entirely.
+                    if (reducedMotion) {
                         targets.forEach((el) => el.classList.add('is-revealed'));
                         return;
                     }

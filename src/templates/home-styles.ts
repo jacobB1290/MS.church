@@ -1384,44 +1384,35 @@ export const homeStyles = (): string => `
                The --rot custom property is the only thing that
                differs at rest, so the hover rule can reset it without
                re-stating position. */
-            /* Tile layout — varied sizes + mixed aspect ratios so
-               each tile feels like a different printed photo, not five
-               identical placeholders. Overall reads as a descending
-               cascade (rough alignment with the matching card on the
-               right), but with deliberate overlap and irregular
-               placement so it feels curated rather than gridded.
-               Rotations are kept small (-3 to +3 deg) so the cluster
-               feels neat. Z-index ascending so each tile slightly
-               overlaps the previous in the cascade. */
+            /* Tile layout — uniform tile size (38% × 4:5 portrait)
+               with deliberate alternating cascade. Same placeholder
+               on every tile, so visual interest comes from the
+               composition (rotation, overlap, descending order
+               matching the card list on the right) rather than from
+               per-tile differences. Z-index ascends down the cascade
+               so each tile sits slightly above the previous. */
             .schedule-banner-slide[data-index="0"] {
-                /* Sunday — top-left, medium portrait. */
-                top:  2%;  left:  4%;  width: 36%; aspect-ratio: 4 / 5;
+                top:  2%;  left:  8%; width: 38%; aspect-ratio: 4 / 5;
                 --rot: -3deg;
                 z-index: 1;
             }
             .schedule-banner-slide[data-index="1"] {
-                /* Tuesday — upper-right, slightly larger landscape. */
-                top: 12%;  left: 48%; width: 42%; aspect-ratio: 5 / 4;
+                top: 16%;  left: 50%; width: 38%; aspect-ratio: 4 / 5;
                 --rot:  3deg;
                 z-index: 2;
             }
             .schedule-banner-slide[data-index="2"] {
-                /* Wednesday — center, square, the visual anchor of
-                   the composition (slightly larger than its siblings). */
-                top: 38%;  left: 20%; width: 40%; aspect-ratio: 1 / 1;
+                top: 36%;  left: 16%; width: 38%; aspect-ratio: 4 / 5;
                 --rot: -2deg;
                 z-index: 3;
             }
             .schedule-banner-slide[data-index="3"] {
-                /* Thursday — middle-right, smaller portrait so the
-                   cluster has some negative space. */
-                top: 50%;  left: 60%; width: 32%; aspect-ratio: 4 / 5;
+                top: 54%;  left: 52%; width: 38%; aspect-ratio: 4 / 5;
                 --rot:  3deg;
                 z-index: 4;
             }
             .schedule-banner-slide[data-index="4"] {
-                /* Friday — bottom-left, larger portrait, the bookend. */
-                top: 72%;  left:  8%; width: 40%; aspect-ratio: 4 / 5;
+                top: 72%;  left: 14%; width: 38%; aspect-ratio: 4 / 5;
                 --rot: -3deg;
                 z-index: 5;
             }
@@ -1456,15 +1447,15 @@ export const homeStyles = (): string => `
                 display: block;
                 border-radius: 8px;
             }
-            /* Placeholder — render the colored "photo content" as an
-               inset overlay so the slide's white background still
-               shows through the 5px padding (the polaroid matte
-               around the photo). Each tile gets its own distinct hue
-               via a CSS custom property; the gradient direction is
-               shared across tiles so the cluster feels harmonious. */
+            /* Placeholder — the standard site placeholder style
+               (cream gradient + dashed border + centered image icon),
+               same as .schedule-item-image-placeholder elsewhere on
+               the page. Rendered inside a ::after so the slide's white
+               polaroid matte (the 5px padding around the photo area)
+               still shows through. All five tiles use the SAME
+               placeholder, so the wall reads as a clean uniform set
+               waiting for real photos. */
             .schedule-banner-placeholder {
-                color: rgba(26, 26, 46, 0.28);
-                border: none;
                 box-sizing: border-box;
             }
             .schedule-banner-placeholder::after {
@@ -1472,52 +1463,24 @@ export const homeStyles = (): string => `
                 position: absolute;
                 inset: 5px;
                 border-radius: 2px;
-                background: linear-gradient(160deg,
-                    var(--photo-light, #efc7a5) 0%,
-                    var(--photo-mid, #d99e72) 60%,
-                    var(--photo-dark, #c0865a) 100%);
-                box-shadow:
-                    inset 0 8px 24px rgba(255, 255, 255, 0.18),
-                    inset 0 -10px 28px rgba(26, 26, 46, 0.08);
+                background:
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+                border: 1px dashed rgba(26, 26, 46, 0.12);
                 pointer-events: none;
             }
-            /* Drop the generic image-icon SVG — the colored gradient
-               carries the identity now. */
+            /* Center the image icon over the placeholder background. */
             .schedule-banner-placeholder svg {
-                display: none;
-            }
-            /* Per-tile palette — all in the warm/earth family so the
-               cluster reads as one curated set, but with enough hue
-               separation that each tile feels distinct. */
-            .schedule-banner-slide[data-index="0"] {
-                /* Sunday — warm peach / dawn. */
-                --photo-light: #efc7a5;
-                --photo-mid:   #d99e72;
-                --photo-dark:  #c0865a;
-            }
-            .schedule-banner-slide[data-index="1"] {
-                /* Tuesday — muted sage / quiet study. */
-                --photo-light: #cfd3c0;
-                --photo-mid:   #a7ad95;
-                --photo-dark:  #898e74;
-            }
-            .schedule-banner-slide[data-index="2"] {
-                /* Wednesday — warm amber / activity. */
-                --photo-light: #f1d49a;
-                --photo-mid:   #d4a574;
-                --photo-dark:  #a87a4c;
-            }
-            .schedule-banner-slide[data-index="3"] {
-                /* Thursday — deep cream / scripture parchment. */
-                --photo-light: #ebdcc1;
-                --photo-mid:   #c9b691;
-                --photo-dark:  #9c8761;
-            }
-            .schedule-banner-slide[data-index="4"] {
-                /* Friday — muted rose / youth warmth. */
-                --photo-light: #e4bdb1;
-                --photo-mid:   #c08879;
-                --photo-dark:  #8e5e51;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 28%;
+                max-width: 56px;
+                min-width: 32px;
+                height: auto;
+                transform: translate(-50%, -50%);
+                color: rgba(26, 26, 46, 0.30);
+                z-index: 1;
             }
 
             /* Card list: vertical stack of tab buttons on desktop. */

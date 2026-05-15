@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.21 - Refine the /visit handshake animation away from "cheap bounce." Real handshakes are 2-3 firm pumps then complete stillness, NOT continuous oscillation. New: 10s cycle where the first 10% plays 3 firm decreasing-amplitude pumps (-7 → +4 → -5 → +2 → -3 → 0 px) and the remaining 90% is total stillness. Ease-out timing gives each pump weight without bouncy decay. -->
+<!-- v1.49.22 - Combine draw-on entry + firm-pumps gesture. The /visit handshake draws itself onto the page (2.8s stroke-dashoffset), pauses 600ms fully drawn, then enters the firm-pumps gesture loop (3 pumps + 9s stillness). Each phase has its own beat — editorial draw-in, quiet moment, deliberate gesture, peaceful rest. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

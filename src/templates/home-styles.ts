@@ -2147,29 +2147,33 @@ export const homeStyles = (): string => `
                /visit PAGE — Map card + What-to-Expect service-flow timeline
                ============================================================ */
 
-            /* /visit intro — line-art handshake (v1.49.21).
-               REFINED animation that replaces the v1.49.20 "bouncy"
-               9-keyframe decay oscillation. The cheap-bounce feel
-               came from: (1) continuous oscillation with no
-               stillness, (2) every pump being similar. Real
-               handshakes are 2-3 firm pumps then STOP — the
-               stillness is half the motion. New animation:
+            /* /visit intro — line-art handshake (v1.49.22).
+               REFINED draw-on + gesture animation.
 
-                 1. Entry (1.4s): unchanged — scale 0.88 -> 1 with
-                    soft Y drop + opacity fade-in.
-                 2. Gesture (10s cycle, infinite, starts at 1.4s):
-                    THREE firm pumps over the first 10% of the
-                    cycle (~1s total), then NINETY percent of
-                    complete stillness (~9s). Pump amplitudes
-                    decrease (7px, 5px, 3px) so the gesture eases
-                    out naturally. Ease-out timing function makes
-                    each downstroke feel weighty (sharp start, soft
-                    landing) without being mechanical.
+                 Phase 1 (0 - 2.8s): The path draws itself onto the
+                 page via stroke-dashoffset. Duration chosen for
+                 actual visibility of the drawing motion (not just
+                 a flash). Even ease-in-out so progression reads
+                 throughout the 2.8s, not all at the start or end.
+                 Paired with a soft opacity fade (1.2s) — only
+                 opacity moves on entry, no competing scale, so the
+                 focus is purely on the line forming.
 
-               The long stillness is the refinement. Most of the
-               time the illustration just IS. The brief handshake
-               gesture punctuates the page like a real greeting
-               punctuates a conversation — then comfortable rest. */
+                 Phase 2 (2.8 - 3.4s): A 600ms still pause. The
+                 illustration is fully drawn but quiet. This breath
+                 is what makes the next gesture feel deliberate
+                 rather than mechanical — there's an interval of
+                 "the handshake is formed" before "the handshake
+                 happens."
+
+                 Phase 3 (3.4s onwards): handshake-gesture loop —
+                 three firm pumps over ~1s with decreasing amplitudes
+                 (7 -> 5 -> 3 px), then ~9s of complete stillness.
+                 Repeats infinitely.
+
+               The refinement is in the pacing: long draw-in, quiet
+               settle, deliberate gesture, peaceful rest. No motion
+               competes; each phase has its own beat. */
             .handshake {
                 width: 100%;
                 max-width: 360px;
@@ -2189,36 +2193,45 @@ export const homeStyles = (): string => `
                 stroke-linecap: round;
                 stroke-linejoin: round;
                 vector-effect: non-scaling-stroke;
+                /* Draw-on: pathLength=100 normalizes the path so
+                   dasharray=100 covers the whole path; offset 100
+                   hides it; animating to 0 reveals it progressively. */
+                stroke-dasharray: 100;
+                stroke-dashoffset: 100;
+                animation: handshake-draw 2.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
             }
             .handshake-art {
                 transform-origin: 50% 75%;
                 opacity: 0;
                 filter: drop-shadow(0 1.5px 1.5px rgba(200, 152, 96, 0.18));
                 animation:
-                    handshake-entry 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards,
-                    handshake-gesture 10s cubic-bezier(0.32, 0.5, 0.45, 0.92) 1.4s infinite;
+                    handshake-fade 1.2s ease-out forwards,
+                    handshake-gesture 10s cubic-bezier(0.32, 0.5, 0.45, 0.92) 3.4s infinite;
                 will-change: transform, opacity;
             }
-            @keyframes handshake-entry {
-                0%   { transform: scale(0.88) translateY(18px); opacity: 0; }
-                60%  { opacity: 1; }
-                100% { transform: scale(1) translateY(0); opacity: 1; }
+            @keyframes handshake-draw {
+                0%   { stroke-dashoffset: 100; }
+                100% { stroke-dashoffset: 0; }
+            }
+            @keyframes handshake-fade {
+                /* Pure opacity fade — no competing scale/transform
+                   so the focus stays on the stroke drawing onto the
+                   page. */
+                0%   { opacity: 0; }
+                100% { opacity: 1; }
             }
             @keyframes handshake-gesture {
                 /* Three firm pumps over the first 10% of the cycle
                    (~1s), then complete stillness for the remaining
-                   90% (~9s). Reads as one deliberate handshake
-                   followed by a long, comfortable pause.
-                   Amplitudes decrease across pumps: 7 -> 5 -> 3 px,
-                   so each pump softens naturally and the gesture
-                   "ends" rather than just stops. */
-                0%, 10%, 100% { transform: scale(1) translateY(0); }
-                2%   { transform: scale(1) translateY(-7px); }   /* pump 1 down (firm) */
-                3.5% { transform: scale(1) translateY(4px); }    /* pump 1 up (rebound) */
-                5%   { transform: scale(1) translateY(-5px); }   /* pump 2 down */
-                6.5% { transform: scale(1) translateY(2px); }    /* pump 2 up */
-                8%   { transform: scale(1) translateY(-3px); }   /* pump 3 down (softest) */
-                /* 10-100%: complete stillness */
+                   90% (~9s). Amplitudes decrease (7 -> 5 -> 3 px)
+                   so each pump softens and the gesture "ends" rather
+                   than abruptly stops. */
+                0%, 10%, 100% { transform: translateY(0); }
+                2%   { transform: translateY(-7px); }   /* pump 1 down (firm) */
+                3.5% { transform: translateY(4px); }    /* pump 1 up (rebound) */
+                5%   { transform: translateY(-5px); }   /* pump 2 down */
+                6.5% { transform: translateY(2px); }    /* pump 2 up */
+                8%   { transform: translateY(-3px); }   /* pump 3 down (softest) */
             }
 
             @keyframes handshake-shake {
@@ -2250,6 +2263,10 @@ export const homeStyles = (): string => `
                     animation: none;
                     opacity: 1;
                     transform: scale(1) translateY(0);
+                }
+                .handshake-stroke {
+                    animation: none;
+                    stroke-dashoffset: 0;
                 }
             }
 

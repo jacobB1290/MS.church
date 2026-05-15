@@ -1720,6 +1720,137 @@ export const homeStyles = (): string => `
                                .ministry-block so hash-jumps land cleanly
                                under the subpage nav.
                ============================================================ */
+            /* ============================================================
+               /outreach intro — animated Boise map (v1.49.14).
+
+               Sits below the lead paragraph in #outreach-intro. A
+               stylized blob outline + Boise River curve signals "city,"
+               three pins mark outreach locations, and a glowing line
+               travels between them in a loop as a visual metaphor for
+               the church's reach extending across the city.
+
+               The comet is two layered paths on the same loop: a
+               thicker low-opacity halo lags 0.18s behind a thin bright
+               core, yielding a head-bright / tail-fading streak rather
+               than a uniform moving rectangle. Pin pulses fire at
+               even thirds (0s / 2.66s / 5.33s of an 8s cycle) so
+               viewers perceive a rhythmic "energy reaching each pin"
+               beat, even though the comet's actual leg lengths vary
+               with the path's curves.
+
+               Restraint targets:
+                 outline: 0.18 opacity
+                 river:   0.30 opacity (slightly bolder — defines Boise)
+                 pins idle: 0.40 opacity
+                 pins lit:  1.0  opacity + ~1.4× scale + halo bloom
+                 comet core: full gold + drop-shadow glow
+                 comet halo: 0.35 opacity, 2× stroke-width
+
+               Reduced-motion: all animations stop, pins stay lit,
+               comet hidden. Static, accessible. */
+            .boise-map {
+                width: 100%;
+                max-width: 640px;
+                margin: clamp(28px, 4vw, 44px) auto 0;
+                color: #1a1a2e;
+            }
+            .boise-map svg {
+                display: block;
+                width: 100%;
+                height: auto;
+                overflow: visible;
+            }
+            .boise-outline {
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 1.2;
+                stroke-opacity: 0.18;
+                stroke-dasharray: 2 4;
+                stroke-linecap: round;
+            }
+            .boise-river {
+                fill: none;
+                stroke: var(--gold);
+                stroke-width: 1.4;
+                stroke-opacity: 0.30;
+                stroke-linecap: round;
+            }
+            .boise-pin {
+                fill: var(--gold);
+                opacity: 0.4;
+                transform-box: fill-box;
+                transform-origin: center;
+                animation: boise-pin-pulse 8s ease-in-out infinite;
+            }
+            .boise-pin-halo {
+                opacity: 0;
+                transform-box: fill-box;
+                transform-origin: center;
+                animation: boise-pin-halo-pulse 8s ease-in-out infinite;
+            }
+            .boise-pin-a, .boise-pin-halo-a { animation-delay: 0s; }
+            .boise-pin-b, .boise-pin-halo-b { animation-delay: 2.66s; }
+            .boise-pin-c, .boise-pin-halo-c { animation-delay: 5.33s; }
+            @keyframes boise-pin-pulse {
+                0%, 100% { opacity: 0.4; transform: scale(1); }
+                4%       { opacity: 1;   transform: scale(1.4); }
+                30%      { opacity: 0.95; transform: scale(1.05); }
+                70%      { opacity: 0.55; transform: scale(1); }
+            }
+            @keyframes boise-pin-halo-pulse {
+                0%, 100% { opacity: 0; transform: scale(0.6); }
+                4%       { opacity: 0.85; transform: scale(1); }
+                30%      { opacity: 0.45; transform: scale(1.15); }
+                70%      { opacity: 0;    transform: scale(0.9); }
+            }
+
+            .boise-comet-core,
+            .boise-comet-halo {
+                fill: none;
+                stroke: var(--gold);
+                stroke-linecap: round;
+                animation: boise-comet-travel 8s linear infinite;
+            }
+            .boise-comet-core {
+                stroke-width: 2;
+                stroke-dasharray: 12 108;
+                filter: drop-shadow(0 0 3px rgba(212, 165, 116, 0.7))
+                        drop-shadow(0 0 6px rgba(212, 165, 116, 0.35));
+            }
+            .boise-comet-halo {
+                stroke-width: 4.5;
+                stroke-dasharray: 18 102;
+                opacity: 0.35;
+                animation-delay: -0.18s;
+                filter: blur(1.5px);
+            }
+            @keyframes boise-comet-travel {
+                from { stroke-dashoffset: 0; }
+                to   { stroke-dashoffset: -120; }
+            }
+
+            @media (max-width: 960px) {
+                .boise-map {
+                    max-width: 100%;
+                    margin-top: clamp(20px, 5vw, 32px);
+                }
+                .boise-comet-core { stroke-width: 1.8; }
+                .boise-comet-halo { stroke-width: 4; }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .boise-pin,
+                .boise-pin-halo,
+                .boise-comet-core,
+                .boise-comet-halo {
+                    animation: none;
+                }
+                .boise-pin { opacity: 1; transform: scale(1.1); }
+                .boise-pin-halo { opacity: 0.6; transform: scale(1); }
+                .boise-comet-core,
+                .boise-comet-halo { display: none; }
+            }
+
             /* Scroll-buffer note: the combined meals section is shorter
                than the old pair of separate cooking + breakfast sections
                it replaces. On mobile especially the breakfast article

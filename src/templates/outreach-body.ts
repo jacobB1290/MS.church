@@ -23,6 +23,35 @@ export const outreachBody = (): string => `
                     <span class="section-eyebrow">Outreach</span>
                     <h1 class="section-heading">How We Serve Boise</h1>
                     <p class="section-lead">Faith without works is dead. Here's how Morning Star puts love into action — through monthly community service and seasonal events open to anyone in the city.</p>
+                    <div class="boise-map" role="img" aria-label="Stylized map of Boise with three outreach locations linked by a moving light trail.">
+                        <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                            <defs>
+                                <radialGradient id="boisePinHalo" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="var(--gold)" stop-opacity="0.55"/>
+                                    <stop offset="55%" stop-color="var(--gold)" stop-opacity="0.18"/>
+                                    <stop offset="100%" stop-color="var(--gold)" stop-opacity="0"/>
+                                </radialGradient>
+                            </defs>
+                            <g class="boise-map-frame">
+                                <path class="boise-outline" d="M 60 78 C 88 50, 150 42, 212 50 C 268 56, 322 64, 358 86 C 372 102, 366 134, 338 154 C 298 172, 234 178, 170 170 C 112 163, 60 148, 48 120 C 44 102, 48 88, 60 78 Z"/>
+                                <path class="boise-river" d="M 76 78 Q 158 96, 240 102 Q 298 110, 348 142"/>
+                            </g>
+                            <g class="boise-map-pins">
+                                <circle class="boise-pin-halo boise-pin-halo-a" cx="100" cy="82" r="14" fill="url(#boisePinHalo)"/>
+                                <circle class="boise-pin-halo boise-pin-halo-b" cx="206" cy="132" r="14" fill="url(#boisePinHalo)"/>
+                                <circle class="boise-pin-halo boise-pin-halo-c" cx="312" cy="86" r="14" fill="url(#boisePinHalo)"/>
+                                <circle class="boise-pin boise-pin-a" cx="100" cy="82" r="3.4"/>
+                                <circle class="boise-pin boise-pin-b" cx="206" cy="132" r="3.4"/>
+                                <circle class="boise-pin boise-pin-c" cx="312" cy="86" r="3.4"/>
+                            </g>
+                            <!-- Comet: two layered paths along the same loop.
+                                 Halo path lags 0.18s behind the core via animation-delay
+                                 so a thicker low-opacity trail follows the bright thin core,
+                                 yielding a head-bright / tail-fading streak. -->
+                            <path class="boise-comet-halo" d="M 100 82 Q 132 112, 206 132 Q 282 148, 312 86 Q 204 46, 100 82" pathLength="120"/>
+                            <path class="boise-comet-core" d="M 100 82 Q 132 112, 206 132 Q 282 148, 312 86 Q 204 46, 100 82" pathLength="120"/>
+                        </svg>
+                    </div>
                 </section>
 
                 <section class="outreach" id="events">

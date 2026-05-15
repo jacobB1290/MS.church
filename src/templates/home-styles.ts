@@ -1356,25 +1356,44 @@ export const homeStyles = (): string => `
                 pointer-events: auto;
                 will-change: transform;
             }
-            /* Toss-in animation — tiles fall onto the page one by one
-               from above, slightly over-rotated and scaled, then
-               settle into their at-rest rotation. Keyframes use calc()
-               on the tile's --rot custom property so each tile lands
-               at its proper at-rest rotation. The 60% keyframe gives
-               a tiny overshoot (1.06x scale + 5deg past final
-               rotation + 6px below) so the photo "lands and settles"
-               like a real tossed object. */
+            /* Toss-in animation — tiles fly UP from below the viewport
+               and land into their at-rest positions, one by one.
+               Designed to feel like a real physical toss: starts with
+               an upward velocity (fast rise), decelerates as it
+               approaches the target, slight overshoot past the final
+               position, then a small counter-settle back through
+               center. Rotation during travel is gentle — a real
+               tossed photo doesn't spin wildly, it just travels and
+               wobbles into place. Keyframes use calc() on the tile's
+               --rot custom property so each tile lands at its proper
+               at-rest rotation. */
             @keyframes tossIn {
                 0% {
                     opacity: 0;
-                    transform: rotate(calc(var(--rot, 0deg) - 24deg)) scale(0.52) translateY(-90px);
+                    /* Start: well below the final position (large
+                       enough to be off-screen on most viewports),
+                       scaled slightly smaller, rotated a few degrees
+                       off the at-rest rotation. */
+                    transform: rotate(calc(var(--rot, 0deg) + 8deg)) scale(0.7) translateY(340px);
                 }
-                55% {
+                30% {
+                    /* Rising — opacity fully on, tile is most of the
+                       way up but still below target. */
                     opacity: 1;
-                    transform: rotate(calc(var(--rot, 0deg) + 5deg)) scale(1.06) translateY(6px);
                 }
-                75% {
-                    transform: rotate(calc(var(--rot, 0deg) - 1.5deg)) scale(0.99) translateY(-2px);
+                62% {
+                    /* Overshoot above the resting position — tile
+                       arrives with momentum and goes slightly past
+                       final, scale slightly larger, rotation pulled
+                       back through final by a couple degrees. */
+                    opacity: 1;
+                    transform: rotate(calc(var(--rot, 0deg) - 3deg)) scale(1.035) translateY(-10px);
+                }
+                82% {
+                    /* Settle back through center with a tiny
+                       counter-overshoot — feels like the toss is
+                       absorbing the landing energy. */
+                    transform: rotate(calc(var(--rot, 0deg) + 1deg)) scale(0.996) translateY(2px);
                 }
                 100% {
                     opacity: 1;
@@ -1383,15 +1402,18 @@ export const homeStyles = (): string => `
             }
             /* Toss-in fires once when the banner enters the viewport
                (observer adds .is-revealed). Each tile has its own
-               --toss-delay so the cascade lands one by one. */
+               --toss-delay so the cascade lands one by one.
+               Easing is a smooth ease-out so the upward motion feels
+               like it's decelerating under gravity — the keyframes
+               handle the small overshoot/settle on top. */
             .schedule-banner.is-revealed .schedule-banner-slide {
-                animation: tossIn 780ms cubic-bezier(0.22, 1, 0.36, 1) var(--toss-delay, 0ms) forwards;
+                animation: tossIn 820ms cubic-bezier(0.16, 0.84, 0.32, 1) var(--toss-delay, 0ms) forwards;
             }
-            .schedule-banner-slide[data-index="0"] { --toss-delay:   80ms; }
-            .schedule-banner-slide[data-index="1"] { --toss-delay:  220ms; }
-            .schedule-banner-slide[data-index="2"] { --toss-delay:  360ms; }
-            .schedule-banner-slide[data-index="3"] { --toss-delay:  500ms; }
-            .schedule-banner-slide[data-index="4"] { --toss-delay:  640ms; }
+            .schedule-banner-slide[data-index="0"] { --toss-delay:  100ms; }
+            .schedule-banner-slide[data-index="1"] { --toss-delay:  240ms; }
+            .schedule-banner-slide[data-index="2"] { --toss-delay:  380ms; }
+            .schedule-banner-slide[data-index="3"] { --toss-delay:  520ms; }
+            .schedule-banner-slide[data-index="4"] { --toss-delay:  660ms; }
             /* Reduced-motion: just fade tiles in, no toss. */
             @media (prefers-reduced-motion: reduce) {
                 .schedule-banner.is-revealed .schedule-banner-slide {

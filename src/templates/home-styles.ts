@@ -2180,19 +2180,27 @@ export const homeStyles = (): string => `
             }
             .handshake-stroke {
                 fill: none;
-                stroke: #1a1a2e;
-                stroke-width: 2;
+                /* Softer than full ink (#1a1a2e). The slight transparency
+                   matches the site's body-text color
+                   (rgba(26, 26, 46, 0.72)), so the illustration reads as
+                   the same ink language used elsewhere rather than a
+                   stark outlined logo. */
+                stroke: rgba(26, 26, 46, 0.78);
+                stroke-width: 2.4;
                 stroke-linecap: round;
                 stroke-linejoin: round;
-                /* Vector-effect keeps the stroke-width visually
-                   constant under the SVG's scale(2.81) transform.
-                   Without this the stroke would render at 2 * 2.81
-                   = 5.6px which is too heavy for the icon. */
+                /* Vector-effect keeps the stroke-width visually constant
+                   under the SVG's inner scale(2.81) transform. */
                 vector-effect: non-scaling-stroke;
             }
             .handshake-art {
                 transform-origin: 50% 75%;
                 opacity: 0;
+                /* Soft 1px drop shadow that fades to transparent — adds
+                   a hint of dimensionality (matches the site's pin
+                   shadows and section-card shadows). Subtle enough to
+                   read as warmth, not as a layered icon effect. */
+                filter: drop-shadow(0 1.5px 1px rgba(26, 26, 46, 0.06));
                 animation:
                     handshake-entry 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards,
                     handshake-shake 4.5s cubic-bezier(0.4, 0, 0.6, 1) 1.4s infinite;

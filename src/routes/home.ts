@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.14 - /outreach intro gets an animated Boise map: blob outline + river curve + three gold pins lit in sequence by a two-layer comet line (bright core + lagging blurred halo) traveling through them in an 8s loop. Pure SVG + CSS keyframes; reduced-motion shows the static lit state. -->
+<!-- v1.49.15 - Full redesign of the /outreach Boise-map graphic: top-down city map with foothills contour + two-tier street grid + Boise River + dashed greenbelt + three teardrop map-pins (gradient + shadow + indicator) + six-layer comet trail with sweeping over-the-foothills return + BOISE map-signature label. Replaces the v1.49.14 blob-with-dots version. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

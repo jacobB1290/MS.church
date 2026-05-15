@@ -1721,36 +1721,56 @@ export const homeStyles = (): string => `
                                under the subpage nav.
                ============================================================ */
             /* ============================================================
-               /outreach intro — animated Boise map (v1.49.14).
+               /outreach intro — animated Boise map (v1.49.15).
 
                Sits below the lead paragraph in #outreach-intro. A
-               stylized blob outline + Boise River curve signals "city,"
-               three pins mark outreach locations, and a glowing line
-               travels between them in a loop as a visual metaphor for
-               the church's reach extending across the city.
+               stylized top-down city-map illustration: street grid,
+               Boise River, foothills hint, three teardrop map-pins,
+               and a layered comet that travels between the pins.
 
-               The comet is two layered paths on the same loop: a
-               thicker low-opacity halo lags 0.18s behind a thin bright
-               core, yielding a head-bright / tail-fading streak rather
-               than a uniform moving rectangle. Pin pulses fire at
-               even thirds (0s / 2.66s / 5.33s of an 8s cycle) so
-               viewers perceive a rhythmic "energy reaching each pin"
-               beat, even though the comet's actual leg lengths vary
-               with the path's curves.
+               Replaces the v1.49.14 oval-blob-with-dots design, which
+               read as amateurish. New design carries the editorial
+               weight a city-map illustration needs:
 
-               Restraint targets:
-                 outline: 0.18 opacity
-                 river:   0.30 opacity (slightly bolder — defines Boise)
-                 pins idle: 0.40 opacity
-                 pins lit:  1.0  opacity + ~1.4× scale + halo bloom
-                 comet core: full gold + drop-shadow glow
-                 comet halo: 0.35 opacity, 2× stroke-width
+               - Foothills: dashed contour line near the top (north).
+                 Implies orientation; subtle.
+               - Streets: two-tier grid — side streets at 0.10 opacity
+                 0.5 stroke, arterials at 0.20 opacity 0.9 stroke.
+                 Reads as "downtown grid" without overrendering.
+               - River: gold gradient stroke at 0.35 opacity, 2.6px
+                 stroke-width — the geographic disambiguator that
+                 makes the map specifically "Boise." Paired with a
+                 thin dashed "greenbelt" companion line.
+               - Pins: teardrop body with radial gradient (light gold
+                 highlight upper-left, deep brown lower-right), thin
+                 dark outline, white inner indicator dot, soft ground
+                 shadow ellipse. Inline <g> per pin so each can have
+                 its own animation delay.
+               - Comet: SIX layered paths on the same loop. Each
+                 successive layer is thicker, blurrier, dimmer, and
+                 lags further behind the head. Together they form a
+                 bright thin head with a widening fading tail — a
+                 real comet streak, not a uniform moving segment.
+               - Return arc (C -> A): sweeps high above the foothills
+                 (apex y=25). Comet opacity FADES OUT during the
+                 return so visible "outreach delivery" only happens
+                 on the A -> B and B -> C legs. Subtle ramp-in at the
+                 start of each cycle avoids a hard cut.
+               - BOISE label: small-caps low-opacity gold text at
+                 bottom-right — map signature, editorial touch.
 
-               Reduced-motion: all animations stop, pins stay lit,
-               comet hidden. Static, accessible. */
+               Cycle: 9 seconds. Slow enough to feel deliberate (city
+               heartbeat), not so slow it stalls. Pin pulses fire at
+               proportional positions along the comet's path
+               (A at 0%, B at 17%, C at 45%) so each pin "lights up"
+               as the comet arrives.
+
+               Reduced-motion: animations off, pins stay lit + scaled
+               1.05x, halos at 0.5 opacity, comet hidden. Static
+               accessible state preserves the map's spatial message. */
             .boise-map {
                 width: 100%;
-                max-width: 640px;
+                max-width: 680px;
                 margin: clamp(28px, 4vw, 44px) auto 0;
                 color: #1a1a2e;
             }
@@ -1760,73 +1780,185 @@ export const homeStyles = (): string => `
                 height: auto;
                 overflow: visible;
             }
-            .boise-outline {
+
+            /* Foothills: dashed contour line, implies north.
+               Two layered variants for slight terrain depth. */
+            .boise-foothills {
                 fill: none;
                 stroke: currentColor;
-                stroke-width: 1.2;
-                stroke-opacity: 0.18;
-                stroke-dasharray: 2 4;
+                stroke-width: 0.9;
+                stroke-opacity: 0.22;
+                stroke-dasharray: 3 4;
                 stroke-linecap: round;
             }
+            .boise-foothills-back {
+                stroke-width: 0.7;
+                stroke-opacity: 0.12;
+                stroke-dasharray: 2 5;
+            }
+
+            /* Street grid — two tiers + diagonals for hand-drawn-city feel */
+            .boise-streets line {
+                stroke: currentColor;
+                stroke-width: 0.5;
+                stroke-opacity: 0.11;
+                stroke-linecap: round;
+            }
+            .boise-streets-major line {
+                stroke: currentColor;
+                stroke-width: 0.9;
+                stroke-opacity: 0.22;
+                stroke-linecap: round;
+            }
+            .boise-streets-diagonals line {
+                stroke: currentColor;
+                stroke-width: 0.6;
+                stroke-opacity: 0.13;
+                stroke-linecap: round;
+            }
+
+            /* Downtown block accent — small filled rectangles hint at
+               the downtown core's density (near pin B). */
+            .boise-downtown-accent rect {
+                fill: currentColor;
+                fill-opacity: 0.08;
+                stroke: currentColor;
+                stroke-opacity: 0.18;
+                stroke-width: 0.4;
+            }
+            /* Park accent — a single small soft-edged circle. */
+            .boise-park-accent {
+                fill: var(--gold);
+                fill-opacity: 0.16;
+                stroke: var(--gold-dark);
+                stroke-opacity: 0.32;
+                stroke-width: 0.5;
+            }
+
+            /* River — Boise's geographic signature, runs strong NW-SE */
             .boise-river {
                 fill: none;
-                stroke: var(--gold);
-                stroke-width: 1.4;
-                stroke-opacity: 0.30;
+                stroke: url(#boiseRiverGrad);
+                stroke-width: 3;
                 stroke-linecap: round;
             }
+            .boise-greenbelt {
+                fill: none;
+                stroke: var(--gold-dark);
+                stroke-width: 0.6;
+                stroke-opacity: 0.32;
+                stroke-dasharray: 1.5 3;
+                stroke-linecap: round;
+            }
+
+            /* Pin teardrop: animates around its tip (50% 100% of bounding box) */
             .boise-pin {
-                fill: var(--gold);
-                opacity: 0.4;
                 transform-box: fill-box;
-                transform-origin: center;
-                animation: boise-pin-pulse 8s ease-in-out infinite;
+                transform-origin: 50% 100%;
+                animation: boise-pin-pulse 9s ease-in-out infinite;
             }
             .boise-pin-halo {
-                opacity: 0;
                 transform-box: fill-box;
                 transform-origin: center;
-                animation: boise-pin-halo-pulse 8s ease-in-out infinite;
+                opacity: 0;
+                animation: boise-pin-halo-pulse 9s ease-in-out infinite;
             }
-            .boise-pin-a, .boise-pin-halo-a { animation-delay: 0s; }
-            .boise-pin-b, .boise-pin-halo-b { animation-delay: 2.66s; }
-            .boise-pin-c, .boise-pin-halo-c { animation-delay: 5.33s; }
+            .boise-pin-a,  .boise-pin-halo-a { animation-delay: 0s; }
+            .boise-pin-b,  .boise-pin-halo-b { animation-delay: 1.53s; }   /* comet at B around 17% of 9s */
+            .boise-pin-c,  .boise-pin-halo-c { animation-delay: 4.05s; }   /* comet at C around 45% of 9s */
+
             @keyframes boise-pin-pulse {
-                0%, 100% { opacity: 0.4; transform: scale(1); }
-                4%       { opacity: 1;   transform: scale(1.4); }
-                30%      { opacity: 0.95; transform: scale(1.05); }
-                70%      { opacity: 0.55; transform: scale(1); }
+                0%, 100% { transform: scale(1); }
+                2%       { transform: scale(1.3); }
+                15%      { transform: scale(1.05); }
+                50%      { transform: scale(1); }
             }
             @keyframes boise-pin-halo-pulse {
                 0%, 100% { opacity: 0; transform: scale(0.6); }
-                4%       { opacity: 0.85; transform: scale(1); }
-                30%      { opacity: 0.45; transform: scale(1.15); }
-                70%      { opacity: 0;    transform: scale(0.9); }
+                2%       { opacity: 0.85; transform: scale(1); }
+                15%      { opacity: 0.45; transform: scale(1.15); }
+                50%      { opacity: 0;    transform: scale(0.9); }
             }
 
-            .boise-comet-core,
-            .boise-comet-halo {
+            /* Comet trail: 6 layered paths along the same loop, each
+               with a slightly later animation-delay so the layers form
+               a head-bright / tail-fading procession. */
+            .boise-comet {
                 fill: none;
                 stroke: var(--gold);
                 stroke-linecap: round;
-                animation: boise-comet-travel 8s linear infinite;
+                animation: boise-comet-travel 9s linear infinite;
             }
-            .boise-comet-core {
-                stroke-width: 2;
-                stroke-dasharray: 12 108;
-                filter: drop-shadow(0 0 3px rgba(212, 165, 116, 0.7))
-                        drop-shadow(0 0 6px rgba(212, 165, 116, 0.35));
+            .boise-comet-l1 {  /* head */
+                stroke-width: 1.8;
+                stroke-dasharray: 6 114;
+                animation-delay: 0s;
+                filter: drop-shadow(0 0 2px rgba(212, 165, 116, 0.95))
+                        drop-shadow(0 0 4px rgba(212, 165, 116, 0.55));
             }
-            .boise-comet-halo {
-                stroke-width: 4.5;
-                stroke-dasharray: 18 102;
-                opacity: 0.35;
-                animation-delay: -0.18s;
-                filter: blur(1.5px);
+            .boise-comet-l2 {
+                stroke-width: 2.6;
+                stroke-dasharray: 7 113;
+                opacity: 0.7;
+                animation-delay: 0.06s;
+                filter: blur(0.6px);
+            }
+            .boise-comet-l3 {
+                stroke-width: 3.6;
+                stroke-dasharray: 9 111;
+                opacity: 0.45;
+                animation-delay: 0.14s;
+                filter: blur(1.2px);
+            }
+            .boise-comet-l4 {
+                stroke-width: 5.2;
+                stroke-dasharray: 11 109;
+                opacity: 0.26;
+                animation-delay: 0.24s;
+                filter: blur(2px);
+            }
+            .boise-comet-l5 {
+                stroke-width: 7.5;
+                stroke-dasharray: 13 107;
+                opacity: 0.14;
+                animation-delay: 0.36s;
+                filter: blur(3px);
+            }
+            .boise-comet-l6 {
+                stroke-width: 11;
+                stroke-dasharray: 15 105;
+                opacity: 0.07;
+                animation-delay: 0.50s;
+                filter: blur(4.5px);
             }
             @keyframes boise-comet-travel {
-                from { stroke-dashoffset: 0; }
-                to   { stroke-dashoffset: -120; }
+                /* opacity ramp-in at start, fade-out during the C->A
+                   return arc (45% -> 55%), invisible during the rest
+                   of the return so the comet "disappears" before
+                   re-emerging at A on the next cycle. */
+                0%   { stroke-dashoffset: 0;    opacity: 0; }
+                3%   {                          opacity: var(--cometVis, 1); }
+                45%  {                          opacity: var(--cometVis, 1); }
+                55%  {                          opacity: 0; }
+                100% { stroke-dashoffset: -120; opacity: 0; }
+            }
+            /* Each tail layer inherits its base opacity via --cometVis
+               so the keyframe transition between full and zero respects
+               the layer's individual opacity instead of forcing 1. */
+            .boise-comet-l2 { --cometVis: 0.7; }
+            .boise-comet-l3 { --cometVis: 0.45; }
+            .boise-comet-l4 { --cometVis: 0.26; }
+            .boise-comet-l5 { --cometVis: 0.14; }
+            .boise-comet-l6 { --cometVis: 0.07; }
+
+            /* BOISE label — map signature */
+            .boise-map-label {
+                font-family: var(--font-display, 'Playfair Display'), serif;
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: 0.32em;
+                fill: var(--gold-dark);
+                opacity: 0.45;
             }
 
             @media (max-width: 960px) {
@@ -1834,21 +1966,31 @@ export const homeStyles = (): string => `
                     max-width: 100%;
                     margin-top: clamp(20px, 5vw, 32px);
                 }
-                .boise-comet-core { stroke-width: 1.8; }
-                .boise-comet-halo { stroke-width: 4; }
+                .boise-comet-l1 { stroke-width: 1.6; }
+                .boise-comet-l2 { stroke-width: 2.4; }
+                .boise-comet-l3 { stroke-width: 3.2; }
+                .boise-comet-l4 { stroke-width: 4.6; }
+                .boise-comet-l5 { stroke-width: 6.5; }
+                .boise-comet-l6 { stroke-width: 9.5; }
             }
 
             @media (prefers-reduced-motion: reduce) {
                 .boise-pin,
                 .boise-pin-halo,
-                .boise-comet-core,
-                .boise-comet-halo {
+                .boise-comet {
                     animation: none;
                 }
-                .boise-pin { opacity: 1; transform: scale(1.1); }
-                .boise-pin-halo { opacity: 0.6; transform: scale(1); }
-                .boise-comet-core,
-                .boise-comet-halo { display: none; }
+                .boise-pin     { transform: scale(1.05); }
+                .boise-pin-halo { opacity: 0.5; transform: scale(1); }
+                .boise-comet   { display: none; }
+                /* Show only the head layer as a static dashed trail so
+                   the spatial relationship is still visible. */
+                .boise-comet-l1 {
+                    display: block;
+                    opacity: 0.4;
+                    stroke-dasharray: 3 5;
+                    filter: none;
+                }
             }
 
             /* Scroll-buffer note: the combined meals section is shorter

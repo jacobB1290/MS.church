@@ -837,6 +837,27 @@ export const homeScripts = (): string => `
                             try {
                                 history.replaceState(null, '', location.pathname + location.search + _homeStashedHash);
                             } catch (e) {}
+                            // Clear the hash on first user scroll. The hash
+                            // is restored above so the URL is bookmarkable
+                            // and the browser back-button works, but a
+                            // leftover hash means RELOAD always re-jumps
+                            // to the anchor. Clearing on first user scroll
+                            // keeps the hash only while the user is "at"
+                            // the anchor — the moment they scroll
+                            // elsewhere it goes away and reload preserves
+                            // their actual scroll position. The timeout
+                            // delay ignores residual settling scroll from
+                            // the smooth-scroll-to-anchor animation.
+                            const clearHashOnScroll = () => {
+                                if (location.hash === _homeStashedHash) {
+                                    try {
+                                        history.replaceState(null, '', location.pathname + location.search);
+                                    } catch (e) {}
+                                }
+                            };
+                            setTimeout(() => {
+                                window.addEventListener('scroll', clearHashOnScroll, { once: true, passive: true });
+                            }, 1500);
                         }, 800);
                     }, { once: true });
                 }

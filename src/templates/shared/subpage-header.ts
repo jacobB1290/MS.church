@@ -132,6 +132,29 @@ export function subpageHeader(): string {
                             try {
                                 history.replaceState(null, '', location.pathname + location.search + hash);
                             } catch (e) {}
+                            // Clear the hash from the URL on first user
+                            // scroll after the fade-in completes. Reason:
+                            // restoring the hash lets the user copy a
+                            // bookmarkable URL and the browser back-button
+                            // works correctly, but a leftover hash also means
+                            // RELOAD always re-jumps to the anchor. By
+                            // clearing on first user scroll, we keep the
+                            // hash only as long as the user is "at" the
+                            // anchor; the moment they scroll elsewhere it
+                            // goes away and reload preserves their scroll
+                            // position via the browser's default behavior.
+                            // The setTimeout delay ignores residual settling
+                            // scroll from our own animations.
+                            var clearHashOnScroll = function() {
+                                if (location.hash === hash) {
+                                    try {
+                                        history.replaceState(null, '', location.pathname + location.search);
+                                    } catch (e) {}
+                                }
+                            };
+                            setTimeout(function() {
+                                window.addEventListener('scroll', clearHashOnScroll, { once: true, passive: true });
+                            }, 1500);
                         };
                         var fireScroll = function() {
                             if (fired) return;

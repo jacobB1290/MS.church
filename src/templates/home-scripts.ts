@@ -81,6 +81,7 @@ export const homeScripts = (): string => `
                 // ========================================
                 (() => {
                     const banner = document.getElementById('schedule-banner');
+                    const list = document.querySelector('.schedule-list');
                     const tabs = document.querySelectorAll('.schedule-tab');
                     const slides = banner ? banner.querySelectorAll('.schedule-banner-slide') : [];
                     if (!banner || !tabs.length || tabs.length !== slides.length) return;
@@ -89,14 +90,14 @@ export const homeScripts = (): string => `
                     // so no auto-cycle timer runs and tap targets stay plain card buttons.
                     const isMobile = window.matchMedia('(max-width: 960px)').matches;
                     if (isMobile) return;
-                        const AUTO_MS = 6000;
-                        const RESUME_MS = 12000;
+                        const AUTO_MS = 5200;
+                        const RESUME_MS = 9000;
                         let activeIndex = 0;
                         let autoTimer = null;
                         let paused = false;
                         let resumeTimer = null;
 
-                        function setActive(i) {
+                        function setActive(i, opts) {
                             activeIndex = ((i % tabs.length) + tabs.length) % tabs.length;
                             tabs.forEach((t, idx) => {
                                 const on = idx === activeIndex;
@@ -104,6 +105,21 @@ export const homeScripts = (): string => `
                                 t.setAttribute('aria-selected', on ? 'true' : 'false');
                             });
                             slides.forEach((s, idx) => s.classList.toggle('active', idx === activeIndex));
+                            // 'has-active' on the parents lets the inactive
+                            // tiles/cards dim slightly so the focal pair
+                            // reads as the foreground.
+                            if (banner) banner.classList.add('has-active');
+                            if (list) list.classList.add('has-active');
+                        }
+
+                        function clearActive() {
+                            tabs.forEach((t) => {
+                                t.classList.remove('active');
+                                t.setAttribute('aria-selected', 'false');
+                            });
+                            slides.forEach((s) => s.classList.remove('active'));
+                            if (banner) banner.classList.remove('has-active');
+                            if (list) list.classList.remove('has-active');
                         }
 
                         function startAuto() {
@@ -116,7 +132,10 @@ export const homeScripts = (): string => `
                         function pauseFor(ms) {
                             paused = true;
                             if (resumeTimer) clearTimeout(resumeTimer);
-                            resumeTimer = setTimeout(() => { paused = false; }, ms);
+                            resumeTimer = setTimeout(() => {
+                                paused = false;
+                                resumeTimer = null;
+                            }, ms);
                         }
 
                         tabs.forEach((tab, i) => {
@@ -128,13 +147,31 @@ export const homeScripts = (): string => `
                                 setActive(i);
                                 pauseFor(RESUME_MS);
                             });
+                            // Hover the card → activate the matching tile +
+                            // pause auto so the user can read.
+                            tab.addEventListener('mouseenter', () => {
+                                setActive(i);
+                                paused = true;
+                            });
+                        });
+
+                        // Hover any tile → activate it (and its matching
+                        // card). Same paused/resume behavior as card hover.
+                        slides.forEach((slide, i) => {
+                            slide.addEventListener('mouseenter', () => {
+                                setActive(i);
+                                paused = true;
+                            });
                         });
 
                         const scheduleSection = document.getElementById('schedule');
                         if (scheduleSection) {
                             scheduleSection.addEventListener('mouseenter', () => { paused = true; });
                             scheduleSection.addEventListener('mouseleave', () => {
-                                if (!resumeTimer) paused = false;
+                                // Re-arm the auto-cycle after a short delay so
+                                // it doesn't snap to a new tile the instant
+                                // the cursor exits.
+                                pauseFor(1200);
                             });
                         }
 

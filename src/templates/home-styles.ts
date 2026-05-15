@@ -1320,66 +1320,219 @@ export const homeStyles = (): string => `
                 gap: clamp(20px, 2.5vw, 32px);
                 align-items: stretch;
             }
-            /* Banner: occupies the left column. Slides stack absolutely and
-               crossfade via opacity. Stays at the same height as the card
-               list via align-items: stretch on the grid. */
+            /* Banner (desktop): no longer a single crossfading slide.
+               Five small "photo" tiles in a curated, slightly irregular
+               composition. Each tile has its own rotation + position so
+               the arrangement reads as "pinned" rather than gridded.
+               Hover (or sync-active from the matching card) lifts the
+               tile, un-rotates it, scales it up, and casts a gold-tinted
+               drop shadow; the matching card gets an intensified gold
+               underglow. */
             .schedule-banner {
                 position: relative;
-                overflow: hidden;
                 border-radius: 24px;
-                background: linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                min-height: 360px;
+                overflow: visible;
+                min-height: 520px;
+                /* Subtle ambient warm wash behind the tiles so the
+                   collage sits on something instead of floating on
+                   pure white. Plus extra top/side padding so a hover-
+                   scaled tile (1.42x) doesn't get clipped by the
+                   section-card edges. */
+                background:
+                    radial-gradient(ellipse 75% 65% at 50% 50%,
+                        rgba(212, 165, 116, 0.09) 0%,
+                        rgba(212, 165, 116, 0.03) 55%,
+                        transparent 100%);
+                padding: 24px 12px 32px;
+                isolation: isolate;
             }
             .schedule-banner-slide {
+                /* Each tile is a positioned "photo" — proper polaroid
+                   frame: white border, weight-down bottom (extra
+                   padding-bottom emulates the polaroid caption strip),
+                   soft layered shadow, slight tint of warmth. Default
+                   state shows the tile in its at-rest position; hover
+                   or .active brings it forward (rotated to 0, scaled
+                   up, lifted). */
                 position: absolute;
-                inset: 0;
-                opacity: 0;
-                transition: opacity 700ms cubic-bezier(0.4, 0, 0.2, 1);
-                display: grid;
-                place-items: center;
-                pointer-events: none;
-            }
-            .schedule-banner-slide.active {
+                border-radius: 4px;
+                overflow: hidden;
+                background: #fdfaf3;
+                /* Polaroid: equal side/top padding, fatter bottom strip. */
+                padding: 8px 8px 22px 8px;
+                box-shadow:
+                    0 12px 28px rgba(26, 26, 46, 0.14),
+                    0 4px 10px rgba(26, 26, 46, 0.08),
+                    inset 0 0 0 1px rgba(26, 26, 46, 0.04);
+                cursor: pointer;
+                transition:
+                    transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+                    box-shadow 480ms cubic-bezier(0.22, 1, 0.36, 1),
+                    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+                    filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
                 opacity: 1;
                 pointer-events: auto;
+                will-change: transform;
             }
-            @media (prefers-reduced-motion: reduce) {
-                .schedule-banner-slide {
-                    transition: none;
-                }
+            /* Soft "tape strip" pinning each tile to the board — a
+               translucent washi-tape rectangle at the top of every
+               tile. Subtle, low-opacity so it doesn't compete with the
+               photo. Each tile rotates its tape slightly so the strips
+               don't look mass-produced. */
+            .schedule-banner-slide::before {
+                content: '';
+                position: absolute;
+                top: -4px;
+                left: 50%;
+                width: 30%;
+                height: 12px;
+                background: linear-gradient(180deg,
+                    rgba(212, 165, 116, 0.22) 0%,
+                    rgba(212, 165, 116, 0.10) 100%);
+                border-radius: 1px;
+                box-shadow: 0 1px 2px rgba(26, 26, 46, 0.06);
+                transform: translateX(-50%) rotate(var(--tape-rot, -2deg));
+                pointer-events: none;
+                z-index: 2;
+                transition: opacity 200ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Tile layout: five hand-tuned positions in DESCENDING
+               vertical order so each tile sits roughly opposite its
+               matching schedule card on the right. The card list is
+               5 cards stacked from top to bottom, ~20% of the column
+               height each; the tiles cascade down the left at the
+               same vertical rhythm but alternate their horizontal
+               position to keep the composition feeling natural rather
+               than gridded.
+               Each tile's transform composes its at-rest rotation
+               with a tiny translateZ(0) to keep the layer on the GPU.
+               The --rot custom property is the only thing that
+               differs at rest, so the hover rule can reset it without
+               re-stating position. */
+            /* Uniform tile size (4:5 polaroid) with a deliberate
+               alternating descending cascade. Tiles overlap slightly
+               vertically (~6%) and significantly horizontally so the
+               row reads as a stack rather than a grid. Rotations
+               alternate -3 / +3 / -2 / +3 / -3 for a measured, neat
+               feel — not scattered. */
+            .schedule-banner-slide[data-index="0"] {
+                top:  0%;  left:  8%;  width: 38%; aspect-ratio: 4 / 5;
+                --rot: -3deg;
+                --tape-rot: -3deg;
+                z-index: 5;
+            }
+            .schedule-banner-slide[data-index="1"] {
+                top: 16%;  left: 50%; width: 38%; aspect-ratio: 4 / 5;
+                --rot:  4deg;
+                --tape-rot: 3deg;
+                z-index: 4;
+            }
+            .schedule-banner-slide[data-index="2"] {
+                top: 36%;  left: 14%; width: 38%; aspect-ratio: 4 / 5;
+                --rot: -2deg;
+                --tape-rot: -1deg;
+                z-index: 3;
+            }
+            .schedule-banner-slide[data-index="3"] {
+                top: 54%;  left: 52%; width: 38%; aspect-ratio: 4 / 5;
+                --rot:  3deg;
+                --tape-rot: 2deg;
+                z-index: 2;
+            }
+            .schedule-banner-slide[data-index="4"] {
+                top: 72%;  left: 16%; width: 38%; aspect-ratio: 4 / 5;
+                --rot: -4deg;
+                --tape-rot: -2deg;
+                z-index: 1;
+            }
+            .schedule-banner-slide {
+                transform: rotate(var(--rot, 0deg)) translateZ(0);
+            }
+            /* Active / hover state — the focal tile. Rises out of
+               the composition with a noticeable jump: un-rotates,
+               scales up significantly (1.42x), lifts up, sheds the
+               tape strip, casts a deep gold-tinted shadow. */
+            .schedule-banner-slide:hover,
+            .schedule-banner-slide.active {
+                transform: rotate(0deg) translateY(-14px) scale(1.42);
+                z-index: 30;
+                box-shadow:
+                    0 36px 70px rgba(212, 165, 116, 0.38),
+                    0 16px 32px rgba(26, 26, 46, 0.20);
+                background: #ffffff;
+            }
+            /* Hide the tape strip on the focal tile — when a photo is
+               "picked up", the tape stays on the wall. */
+            .schedule-banner-slide:hover::before,
+            .schedule-banner-slide.active::before {
+                opacity: 0;
+                transition: opacity 200ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Non-active tiles recede a step further so the focal tile
+               clearly dominates: deeper dim + subtle blur for depth. */
+            .schedule-banner:hover .schedule-banner-slide:not(:hover):not(.active),
+            .schedule-banner.has-active .schedule-banner-slide:not(.active) {
+                opacity: 0.42;
+                filter: saturate(0.7) blur(0.3px);
             }
             .schedule-banner-slide img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 display: block;
+                border-radius: 8px;
             }
-            /* Placeholder variant — same visual language as
-               .schedule-item-image-placeholder (gold-tinted gradient +
-               dashed border + centered icon) but with higher contrast
-               so it reads as "image goes here" against the surrounding
-               white section-card. The card the original placeholder lives
-               on is itself frosted-translucent, which gives the dashed
-               border its contrast — the banner sits directly on white,
-               so the border needs to be a touch heavier to register. */
+            /* Placeholder variant — soft cream-on-cream so each tile
+               has its own subtle character even before real images
+               replace it. Per-tile hue rotation tints the placeholder
+               so the five tiles read as five distinct images. */
             .schedule-banner-placeholder {
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.16) 0%, rgba(26, 26, 46, 0.08) 100%),
-                    linear-gradient(180deg, #e6e9f0 0%, #d6dae3 100%);
-                color: rgba(26, 26, 46, 0.40);
-                border: 2px dashed rgba(26, 26, 46, 0.22);
-                border-radius: inherit;
+                    linear-gradient(135deg,
+                        rgba(212, 165, 116, 0.18) 0%,
+                        rgba(232, 220, 200, 0.55) 50%,
+                        rgba(212, 165, 116, 0.10) 100%),
+                    linear-gradient(180deg, #f5ede2 0%, #ece2d2 100%);
+                color: rgba(26, 26, 46, 0.32);
+                border: none;
                 box-sizing: border-box;
+                display: grid;
+                place-items: center;
+                border-radius: 8px;
             }
-            /* Icon scales with the banner: bigger than the small
-               .schedule-item-image-placeholder cap (56px) because the
-               banner is a much larger surface — same visual language,
-               proportional. */
+            /* Per-tile color tints — same family, slight shifts so each
+               tile looks like a different photo. */
+            .schedule-banner-slide[data-index="0"] .schedule-banner-placeholder {
+                background:
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.20) 0%, rgba(245, 230, 210, 0.6) 100%),
+                    linear-gradient(180deg, #f7ece0 0%, #ecdcc5 100%);
+            }
+            .schedule-banner-slide[data-index="1"] .schedule-banner-placeholder {
+                background:
+                    linear-gradient(135deg, rgba(180, 165, 145, 0.20) 0%, rgba(230, 224, 212, 0.6) 100%),
+                    linear-gradient(180deg, #ede5d8 0%, #d8cfbe 100%);
+            }
+            .schedule-banner-slide[data-index="2"] .schedule-banner-placeholder {
+                background:
+                    linear-gradient(135deg, rgba(212, 180, 130, 0.22) 0%, rgba(240, 224, 200, 0.55) 100%),
+                    linear-gradient(180deg, #f3e8d5 0%, #e2d3b8 100%);
+            }
+            .schedule-banner-slide[data-index="3"] .schedule-banner-placeholder {
+                background:
+                    linear-gradient(135deg, rgba(160, 145, 130, 0.20) 0%, rgba(220, 212, 200, 0.55) 100%),
+                    linear-gradient(180deg, #e7ddcd 0%, #d2c7b3 100%);
+            }
+            .schedule-banner-slide[data-index="4"] .schedule-banner-placeholder {
+                background:
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.18) 0%, rgba(235, 215, 190, 0.55) 100%),
+                    linear-gradient(180deg, #f0e3cf 0%, #ddccb0 100%);
+            }
             .schedule-banner-placeholder svg {
-                width: 22%;
-                max-width: 140px;
-                min-width: 72px;
+                width: 30%;
+                max-width: 56px;
+                min-width: 36px;
                 height: auto;
+                opacity: 0.5;
             }
 
             /* Card list: vertical stack of tab buttons on desktop. */
@@ -1415,12 +1568,37 @@ export const homeStyles = (): string => `
                 outline: 2px solid var(--gold);
                 outline-offset: 3px;
             }
-            /* Active state: solid white surface + warm gold glow shadow.
-               No side accent — the heavier card weight is the indicator. */
+            /* Active state: solid white surface + warm gold underglow.
+               The underglow intensifies when the matching banner tile
+               is hovered (or the card itself is the active one) so the
+               connection between photo and schedule entry reads clearly.
+               No side accent — the heavier card weight + warm bloom is
+               the indicator. */
             .schedule-tab.active {
                 background: #ffffff;
-                box-shadow: 0 14px 32px rgba(212, 165, 116, 0.22),
-                            0 4px 12px rgba(26, 26, 46, 0.06);
+                box-shadow:
+                    0 24px 56px rgba(212, 165, 116, 0.38),
+                    0 10px 22px rgba(212, 165, 116, 0.18),
+                    0 4px 12px rgba(26, 26, 46, 0.06);
+                transform: translateY(-1px);
+            }
+            .schedule-tab {
+                transition:
+                    background 280ms cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Inactive cards dim slightly when one tile/card is active
+               so the focal pair (tile + card) reads as a pair. */
+            .schedule-list.has-active .schedule-tab:not(.active) {
+                opacity: 0.62;
+            }
+            .schedule-list .schedule-tab {
+                transition:
+                    background 280ms cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+                    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
             }
             /* Typography mirrors the site's existing .schedule-item span /
                h3 / p rules — same gray uppercase eyebrow, same Playfair

@@ -316,6 +316,129 @@ const FLOW_SCENARIOS = [
 ]
 
 // ============================================================
+// Navigation + entrance flicker scenarios. These are tuned for
+// the bugs the user reports seeing on iPhone Safari (Safari iOS
+// does not implement cross-document @view-transition, so the
+// Chrome crossfade isn't the issue):
+//
+//   1) Reveal-class FOUC — the .reveal-* elements paint visible,
+//      then JS adds .js-reveals on DOMContentLoaded which hides
+//      them at opacity 0, then IntersectionObserver animates
+//      them back in. That's a visible flash on every page load.
+//   2) Logo movement on scroll-restore — Safari aggressively
+//      restores scroll position from session. The nav-shell
+//      paints in its unscrolled state (brand visible), then JS
+//      detects scroll > 19px and triggers .scrolled-mobile
+//      via a 600ms transition. Brand visibly slides/fades away.
+//   3) .subpage-brand.hidden flicker — if user scrolled before
+//      navigating back, the brand may be in its translateY(-150%)
+//      state mid-transition.
+//   4) Section entrance race — sections start at opacity 0 +
+//      translateY(8px) with a gentleRise animation; if html
+//      isn't synchronously tagged with no-entrance on
+//      back/forward, sections briefly flash invisible.
+//
+// We sample DOM + pixel buffer at ~12 timestamps from action
+// trigger to ~700ms post-action. Each sample collects: brand
+// box + opacity, main opacity, in-flight CSS animation count,
+// reveal-state counts (hidden vs revealed), small thumb
+// screenshot for pixel-variance "blank frame" detection.
+// ============================================================
+const FLICKER_SCENARIOS = [
+  // 90s — fresh-page load (no prior visit). Captures the
+  // reveal-FOUC + section-entrance flash that hits every cold
+  // open. Mobile-first per the user's iPhone Safari context.
+  { name: '90-flicker-load-home-mobile',     viewport: MOBILE,  load: '/',         scrollY: 0 },
+  { name: '91-flicker-load-outreach-mobile', viewport: MOBILE,  load: '/outreach', scrollY: 0 },
+  { name: '92-flicker-load-visit-mobile',    viewport: MOBILE,  load: '/visit',    scrollY: 0 },
+  { name: '93-flicker-load-about-mobile',    viewport: MOBILE,  load: '/about',    scrollY: 0 },
+  // Cold-load with restored scroll position. Simulates Safari iOS
+  // bfcache / session-restore: a returning user lands at a deep
+  // scroll position. If .nav-shell paints unscrolled and JS adds
+  // .scrolled-mobile via a 600ms transition, the brand visibly
+  // slides away — that's the "logo movement animation flicker".
+  { name: '94-flicker-load-home-scrollRestore-mobile', viewport: MOBILE, load: '/', scrollY: 800 },
+  { name: '95-flicker-load-visit-scrollRestore-mobile', viewport: MOBILE, load: '/visit', scrollY: 1200 },
+  // Cross-document navigation paths the user explicitly named —
+  // "this flicker that happens when exiting subpages". These
+  // sample DOM + pixels every ~30ms from click → land + 700ms.
+  { name: '96-flicker-nav-home-to-outreach-mobile', viewport: MOBILE, from: '/',         action: { type: 'click', selector: 'a[href="/outreach"]' }, expectURL: '/outreach' },
+  { name: '97-flicker-nav-outreach-back-mobile',    viewport: MOBILE, from: '/outreach', action: { type: 'click', selector: '.subpage-back' },       expectURL: '/' },
+  { name: '98-flicker-nav-about-back-mobile',       viewport: MOBILE, from: '/about',    action: { type: 'click', selector: '.subpage-back' },       expectURL: '/' },
+  { name: '99-flicker-nav-visit-back-mobile',       viewport: MOBILE, from: '/visit',    action: { type: 'click', selector: '.subpage-back' },       expectURL: '/' },
+  // Worst-case logo flicker — user scrolled on subpage so
+  // .subpage-brand is in its translateY(-150%) hidden state when
+  // they tap back. Anything that morphs the brand cross-doc has
+  // to deal with the brand starting off-screen.
+  { name: '100-flicker-nav-outreach-scrolled-back-mobile', viewport: MOBILE, from: '/outreach', preScroll: 800,  action: { type: 'click', selector: '.subpage-back' }, expectURL: '/' },
+  { name: '101-flicker-nav-visit-scrolled-back-mobile',    viewport: MOBILE, from: '/visit',    preScroll: 1500, action: { type: 'click', selector: '.subpage-back' }, expectURL: '/' },
+  // Desktop sanity checks — same paths, different viewport.
+  // Lower count because mobile is the user's environment.
+  { name: '110-flicker-nav-home-to-outreach-desktop', viewport: DESKTOP, from: '/',         action: { type: 'click', selector: 'a[href="/outreach"]' }, expectURL: '/outreach' },
+  { name: '111-flicker-nav-outreach-back-desktop',    viewport: DESKTOP, from: '/outreach', action: { type: 'click', selector: '.subpage-back' },       expectURL: '/' },
+  // 115s — HASH-FADE ENTRANCE: subpage brand + back button should
+  // NOT slide in with the rest of the page on a hash-load. Per the
+  // user: chrome stays anchored while page content settles.
+  // We sample the brand top + back top across the hash-fade entrance
+  // window; if either moves by > 10px between samples, the chrome
+  // was animated when it should have been static.
+  {
+    name: '115-hash-fade-brand-static-mobile',
+    viewport: MOBILE,
+    load: '/outreach',
+    hash: '#cooking-ministry',
+    expectBrandStatic: true,
+  },
+  {
+    name: '116-hash-fade-brand-static-desktop',
+    viewport: DESKTOP,
+    load: '/visit',
+    hash: '#sunday-school',
+    expectBrandStatic: true,
+  },
+  // 120s — SCROLL-RESTORE-JUMP scenarios. User is on home scrolled
+  // down to (e.g.) the Outreach teaser cards, clicks one of the
+  // teaser CTAs, then taps BACK on the subpage. Without a fix, the
+  // view-transition snapshot of home is captured at scrollY=0
+  // before scroll restoration kicks in, so the user sees the hero
+  // briefly during the fade, then the page "jumps" to their previous
+  // scroll position when the live DOM takes over. Detection: between
+  // pre + nav samples we expect the brand position (or main top
+  // value) to stay consistent with the scrollY that was active
+  // before navigation — never resetting to 0 mid-flight.
+  {
+    name: '120-flicker-back-scrollrestore-jump-mobile',
+    viewport: MOBILE,
+    chain: [
+      { type: 'goto', url: '/' },
+      { type: 'scroll', y: 1800 },
+      { type: 'click', selector: 'a[href="/outreach"]' },
+      { type: 'wait', ms: 600 },
+    ],
+    // Then trigger back. expectScrollY tells the test what scroll
+    // position the destination (home) should be at when the fade
+    // completes — any sample during nav at a substantially smaller
+    // scrollY is a jump.
+    backAction: true,
+    expectScrollY: 1800,
+    expectScrollTolerance: 200,
+  },
+  {
+    name: '121-flicker-back-scrollrestore-jump-desktop',
+    viewport: DESKTOP,
+    chain: [
+      { type: 'goto', url: '/' },
+      { type: 'scroll', y: 2200 },
+      { type: 'click', selector: 'a[href="/outreach"]' },
+      { type: 'wait', ms: 600 },
+    ],
+    backAction: true,
+    expectScrollY: 2200,
+    expectScrollTolerance: 250,
+  },
+]
+
+// ============================================================
 // Helpers
 // ============================================================
 
@@ -1478,6 +1601,656 @@ async function runFlowScenarios(launcher, report) {
 }
 
 // ============================================================
+// Flicker scenarios — sample DOM + pixels every ~30ms across
+// a single navigation event (or fresh page load) and flag any
+// transient state the user would perceive as "the page popped /
+// blanked / jumped." Tuned for the iPhone Safari complaints
+// (reveal-FOUC, logo movement, subpage-exit flash).
+// ============================================================
+
+// Tiny PNG decoder — enough to read pixel stats out of a Buffer
+// returned by page.screenshot. We only need IHDR + the first
+// IDAT to compute luminance variance + per-row deltas (a "blank
+// frame" has near-zero variance because every pixel is the
+// page background color).
+function decodePngStats(buf) {
+  try {
+    // PNG sig: 89 50 4E 47 0D 0A 1A 0A
+    if (buf.length < 24 || buf[0] !== 0x89 || buf[1] !== 0x50) return null
+    // IHDR comes immediately after the sig at byte 8.
+    // Layout: 4-byte length, 4-byte type, 13-byte data, 4-byte CRC.
+    const ihdrType = buf.toString('ascii', 12, 16)
+    if (ihdrType !== 'IHDR') return null
+    const width = buf.readUInt32BE(16)
+    const height = buf.readUInt32BE(20)
+    const bitDepth = buf[24]
+    const colorType = buf[25]
+    // Walk chunks until we find IDAT(s), concat their data.
+    let offset = 33 // IHDR ends here (8 sig + 4 len + 4 type + 13 data + 4 crc)
+    const idatChunks = []
+    while (offset + 8 < buf.length) {
+      const len = buf.readUInt32BE(offset)
+      const type = buf.toString('ascii', offset + 4, offset + 8)
+      const dataStart = offset + 8
+      if (type === 'IDAT') idatChunks.push(buf.subarray(dataStart, dataStart + len))
+      offset = dataStart + len + 4 // skip data + CRC
+      if (type === 'IEND') break
+    }
+    if (!idatChunks.length) return null
+    // Inflate all IDAT data — node zlib handles concatenation fine.
+    const zlib = require('node:zlib')
+    const inflated = zlib.inflateSync(Buffer.concat(idatChunks))
+    // PNG scanlines: 1 filter byte + width * bytesPerPixel data.
+    const samplesPerPixel = colorType === 6 ? 4 : colorType === 2 ? 3 : colorType === 4 ? 2 : 1
+    const bytesPerPixel = (bitDepth / 8) * samplesPerPixel
+    const rowBytes = 1 + width * bytesPerPixel
+    if (inflated.length < rowBytes * height) {
+      // Skip filtering — too costly + the filter byte already
+      // gives us decent variance signal. Sample raw bytes by
+      // skipping the filter byte each row.
+    }
+    // Sample center column of every Nth row, take luminance (avg R+G+B),
+    // compute mean + variance. Skip filter bytes; defilter not required
+    // for variance sniffing (filter "None" = 0 is common for our
+    // screenshots; for "Sub/Up/Avg/Paeth" the predicted pixel still
+    // tracks the surrounding pixel intensity so variance signal is
+    // preserved). Good enough for "blank vs not blank" classification.
+    const samples = []
+    const sampleRows = Math.min(height, 32)
+    const sampleCols = Math.min(width, 24)
+    const rowStep = Math.max(1, Math.floor(height / sampleRows))
+    const colStep = Math.max(1, Math.floor(width / sampleCols))
+    for (let y = 0; y < height; y += rowStep) {
+      const rowStart = y * rowBytes + 1 // skip filter byte
+      if (rowStart + width * bytesPerPixel > inflated.length) break
+      for (let x = 0; x < width; x += colStep) {
+        const px = rowStart + x * bytesPerPixel
+        if (samplesPerPixel >= 3) {
+          // RGB(A): luminance approx (R + G + B) / 3, ignore A.
+          samples.push((inflated[px] + inflated[px + 1] + inflated[px + 2]) / 3)
+        } else if (samplesPerPixel === 2) {
+          // grayscale + alpha
+          samples.push(inflated[px])
+        } else {
+          // grayscale
+          samples.push(inflated[px])
+        }
+      }
+    }
+    if (!samples.length) return null
+    const mean = samples.reduce((a, b) => a + b, 0) / samples.length
+    const variance = samples.reduce((a, b) => a + (b - mean) ** 2, 0) / samples.length
+    const stddev = Math.sqrt(variance)
+    // Background of /faf8f5 ≈ luminance 248.7. A blank frame at the
+    // page background will have mean ≈ 248 and stddev ≈ 0 (uniform).
+    // `samples` is the per-pixel luminance grid — used downstream
+    // for inter-frame similarity ("did the rendered image change?")
+    // and similarity-to-baseline checks ("did this frame look like
+    // page A, page B, or a midway blend of both?").
+    return { width, height, mean, stddev, sampleCount: samples.length, signature: samples }
+  } catch (e) {
+    return null
+  }
+}
+
+// Diff two stats objects — returns a rough "structural similarity"
+// (higher = more similar). Used to flag big inter-frame jumps.
+function pngStatsDiff(a, b) {
+  if (!a || !b) return null
+  return { meanDiff: Math.abs(a.mean - b.mean), stddevDiff: Math.abs(a.stddev - b.stddev) }
+}
+
+// Compare two per-pixel luminance signatures. Returns the mean
+// absolute difference normalized to 0-1 (0 = identical, 1 = max
+// possible difference). Both signatures must have the same length
+// (same source viewport + grid). The harness fixes the screenshot
+// clip + sample grid so this always holds.
+function signatureDistance(a, b) {
+  if (!a || !b || a.length !== b.length || !a.length) return null
+  let sum = 0
+  for (let i = 0; i < a.length; i++) sum += Math.abs(a[i] - b[i])
+  return sum / (a.length * 255)
+}
+
+async function installFlickerProbe(page) {
+  // Sampling function injected into the page. Each call returns a
+  // small JSON snapshot of "what the user can see right now":
+  //   - brand box + opacity + is-hidden flag
+  //   - main opacity + transform
+  //   - html classList (no-entrance / hash-fade / hash-fade-in / js-reveals)
+  //   - count of reveal elements still hidden (opacity < 0.5)
+  //   - count of section elements with computed opacity < 0.95
+  //   - in-flight animation count
+  //   - page URL
+  await page.addInitScript(() => {
+    window.__flickerProbe = () => {
+      const out = {
+        t: performance.now(),
+        url: location.pathname + location.hash,
+        scrollY: Math.round(window.scrollY),
+        htmlClasses: document.documentElement.className,
+        // Count only NON-LOOPING running animations. Infinite-loop
+        // decorative animations (handshake-gesture, boise-comet,
+        // stay-tuned-card swirl, .live-status pulse) are intentional
+        // and should not flag as a "leak".
+        inflightAnimations: document.getAnimations().filter((a) => {
+          if (a.playState !== 'running') return false
+          try {
+            const t = a.effect && a.effect.getComputedTiming && a.effect.getComputedTiming()
+            if (t && t.iterations === Infinity) return false
+          } catch (e) {}
+          return true
+        }).length,
+      }
+      // Brand — either home (.brand) or subpage (.subpage-brand).
+      // We look up both; whichever exists is "the brand" for this page.
+      const homeBrand = document.querySelector('.nav-shell .brand')
+      const subBrand = document.querySelector('.subpage-brand')
+      const brand = homeBrand || subBrand
+      if (brand) {
+        const r = brand.getBoundingClientRect()
+        const cs = getComputedStyle(brand)
+        out.brand = {
+          which: homeBrand ? 'home' : 'subpage',
+          top: Math.round(r.top),
+          left: Math.round(r.left),
+          width: Math.round(r.width),
+          height: Math.round(r.height),
+          opacity: parseFloat(cs.opacity),
+          display: cs.display,
+          visibility: cs.visibility,
+          transform: cs.transform,
+          // Subpage-brand has a .hidden class that translates it
+          // off-screen up. Track this so we can flag "logo flew
+          // in from above" cases.
+          isHiddenClass: brand.classList.contains('hidden'),
+        }
+      } else {
+        out.brand = null
+      }
+      // Main + first section opacity — if either is < 0.95 the page
+      // is mid-fade-in.
+      const main = document.querySelector('main')
+      if (main) {
+        const cs = getComputedStyle(main)
+        out.main = {
+          opacity: parseFloat(cs.opacity),
+          transform: cs.transform,
+        }
+      }
+      // Count reveal elements still hidden (a real flicker shows
+      // many reveal elements pop from visible → hidden after JS
+      // runs, then animate back in).
+      const revealSel = '.reveal, .reveal-scale, .reveal-eyebrow, .reveal-rise, .reveal-rise-slow, .reveal-tight, .reveal-from-left, .reveal-from-right, .reveal-from-above, .reveal-photo, .reveal-power, .reveal-pop, .reveal-fill'
+      const revealEls = Array.from(document.querySelectorAll(revealSel))
+      let revealHidden = 0
+      let revealVisibleInViewport = 0
+      let revealInViewport = 0
+      const vh = window.innerHeight
+      for (const el of revealEls) {
+        const r = el.getBoundingClientRect()
+        const inView = r.bottom > 0 && r.top < vh
+        if (!inView) continue
+        revealInViewport++
+        const op = parseFloat(getComputedStyle(el).opacity)
+        if (op < 0.5) revealHidden++
+        else revealVisibleInViewport++
+      }
+      out.reveals = { total: revealEls.length, inView: revealInViewport, hiddenInView: revealHidden, visibleInView: revealVisibleInViewport }
+      // Section opacity — sections start at opacity 0 on fresh load
+      // unless no-entrance is set. If we catch any section at < 0.95
+      // opacity it's mid-entrance animation.
+      const sections = Array.from(document.querySelectorAll('section'))
+      let sectionAt0 = 0
+      let sectionMidFade = 0
+      for (const s of sections) {
+        const r = s.getBoundingClientRect()
+        if (r.bottom < 0 || r.top > vh) continue
+        const op = parseFloat(getComputedStyle(s).opacity)
+        if (op < 0.1) sectionAt0++
+        else if (op < 0.95) sectionMidFade++
+      }
+      out.sectionsInViewMidFade = sectionMidFade
+      out.sectionsInViewInvisible = sectionAt0
+      // nav-shell mobile scroll-state — if .scrolled-mobile lands
+      // late (after first paint) the brand visibly slides away.
+      const navShell = document.querySelector('.nav-shell')
+      if (navShell) {
+        out.navShell = {
+          scrolledMobile: navShell.classList.contains('scrolled-mobile'),
+          inlineDisplay: getComputedStyle(navShell).display,
+        }
+      }
+      return out
+    }
+  })
+}
+
+async function runFlickerScenarios(launcher, report) {
+  const lines = []
+  let pass = 0, fail = 0
+
+  // Sample cadence — frequent over the first 250ms (where the
+  // FOUC + entrance race lives) then sparser to capture the
+  // settle phase.
+  const FRESH_SAMPLE_TIMES_MS = [0, 16, 32, 50, 80, 120, 180, 260, 360, 500, 700, 1000, 1400, 1900]
+  const NAV_SAMPLE_TIMES_MS   = [0, 16, 32, 50, 80, 120, 180, 260, 360, 500, 700, 1000]
+
+  const runOne = async (browser, s) => {
+    const sceneDir = resolve(OUT_DIR, s.name)
+    if (existsSync(sceneDir)) rmSync(sceneDir, { recursive: true, force: true })
+    mkdirSync(sceneDir, { recursive: true })
+
+    const context = await browser.newContext({ viewport: s.viewport })
+    await installFlickerProbe(context)
+    await installCLSObserver(context)
+    const page = await context.newPage()
+    const errors = attachPageMonitors(page)
+    let pageDead = false
+    page.on('crash', () => { pageDead = true; errors.push('page crashed') })
+    page.on('close', () => { pageDead = true })
+
+    const t0 = Date.now()
+    const issues = []
+    const samples = []
+    const pngStats = []
+    console.log(`▶ ${s.name}`)
+
+    const collectAt = async (label, t) => {
+      let probe = null
+      try { probe = await page.evaluate(() => window.__flickerProbe ? window.__flickerProbe() : null) } catch (e) {}
+      const screenshotPath = resolve(sceneDir, `${label}-${String(t).padStart(4, '0')}ms.png`)
+      let buf = null
+      try {
+        buf = await withTimeout(page.screenshot({
+          // Just the top ~33% of viewport where the brand + first
+          // section live. Smaller = faster, and that's the area
+          // where the user sees the flicker.
+          clip: { x: 0, y: 0, width: s.viewport.width, height: Math.min(s.viewport.height, 320) },
+          type: 'png',
+        }), 3000, `screenshot ${label}`)
+      } catch (e) {}
+      if (buf) {
+        try { writeFileSync(screenshotPath, buf) } catch (e) {}
+        const stats = decodePngStats(buf)
+        pngStats.push({ label, t, stats })
+      }
+      if (probe) samples.push({ label, t, ...probe })
+    }
+
+    const body = (async () => {
+      if (s.load) {
+        // FRESH PAGE LOAD. Start sampling immediately after we
+        // commit the navigation so we catch the first paint frame.
+        const url = BASE + s.load + (s.hash || '')
+        // If scrollY is specified, push session-storage scroll
+        // restoration as a no-op — Playwright would otherwise
+        // start at 0,0. We simulate "restored scroll" by adding
+        // an init script that sets scroll right after the first
+        // section renders, mimicking Safari's behavior.
+        if (s.scrollY) {
+          await page.addInitScript((y) => {
+            // history.scrollRestoration is 'auto' by default,
+            // but Playwright's fresh context starts at 0. We
+            // imitate Safari iOS bfcache restore by scrolling
+            // synchronously to `y` AS SOON AS the body parses.
+            // This is the worst case — JS races CSS for who
+            // gets to dictate the layout first.
+            window.__simulateScrollRestore = y
+            document.addEventListener('readystatechange', () => {
+              if (document.readyState === 'interactive') {
+                window.scrollTo(0, y)
+              }
+            })
+          }, s.scrollY)
+        }
+        const gotoPromise = page.goto(url, { waitUntil: 'commit' })
+        // Start sampling timer from when goto resolves (commit).
+        await withTimeout(gotoPromise, 10_000, `goto ${url}`)
+        const sampleStart = Date.now()
+        let prev = 0
+        for (const t of FRESH_SAMPLE_TIMES_MS) {
+          const wait = t - prev
+          if (wait > 0) await page.waitForTimeout(wait)
+          prev = t
+          await collectAt('load', t)
+        }
+      } else if (s.chain && s.backAction) {
+        // SCROLL-RESTORE BACK NAVIGATION. Set up scroll position on
+        // the source page, navigate forward to a subpage, then test
+        // the back navigation for the "hero shown then jump to saved
+        // scroll" flicker class.
+        for (const step of s.chain) {
+          if (step.type === 'goto') {
+            await withTimeout(page.goto(BASE + step.url, { waitUntil: 'load' }), 10_000, `goto ${step.url}`)
+            await waitForSettled(page)
+          } else if (step.type === 'scroll') {
+            await page.evaluate((y) => window.scrollTo(0, y), step.y)
+            await page.waitForTimeout(200)
+          } else if (step.type === 'click') {
+            await page.click(step.selector)
+            await waitForSettled(page)
+          } else if (step.type === 'wait') {
+            await page.waitForTimeout(step.ms)
+          }
+        }
+        // Baseline sample on the subpage (pre-back).
+        await collectAt('pre', 0)
+        // Trigger goBack and sample.
+        const fireP = page.goBack().catch(() => {})
+        let prev = 0
+        for (const t of NAV_SAMPLE_TIMES_MS) {
+          const wait = t - prev
+          if (wait > 0) await page.waitForTimeout(wait)
+          prev = t
+          await collectAt('back', t)
+        }
+        try { await withTimeout(fireP, 5000, 'goBack settle').catch(() => {}) } catch {}
+        await page.waitForTimeout(200)
+        await collectAt('settled', 0)
+        // SCROLL-RESTORE JUMP DETECTION. The "hero shown then jump"
+        // flicker shows up as: during the back navigation, an early
+        // sample reads scrollY ≈ 0 (the new page snapshot was captured
+        // before scroll restoration kicked in), then a later sample
+        // reads scrollY at the restored position. We don't enforce
+        // the absolute final scroll value — Chromium headless can
+        // restore to a position different from what we set in the
+        // chain (events / images / fonts loading after first scrollTo
+        // can shift the page height). What matters is consistency:
+        // every sample on the back-nav destination should be close to
+        // the settled scrollY, not at scrollY ≈ 0 while the settled
+        // value is several hundred pixels down.
+        const settled = samples[samples.length - 1]
+        const settledY = settled ? settled.scrollY : 0
+        if (settledY > 400) {
+          // Only run the check when the destination scroll is
+          // meaningfully far from 0; otherwise an "early sample at 0"
+          // is the actual destination state, not a flicker.
+          let jumpFrames = 0
+          const jumpTags = []
+          for (const sample of samples) {
+            if (sample.label !== 'back') continue
+            // Only consider samples after the URL has committed to
+            // the destination (back-nav target). On the source side
+            // the URL is /outreach (etc.); after commit the URL is /.
+            if (sample.url !== '/' && !sample.url.startsWith('/?') && !sample.url.startsWith('/#')) continue
+            if (sample.scrollY < settledY - 400) {
+              jumpFrames++
+              if (jumpTags.length < 3) jumpTags.push(`${sample.t}ms:${sample.scrollY}`)
+            }
+          }
+          if (jumpFrames > 0) {
+            issues.push(`scroll-restore-jump: ${jumpFrames} sample(s) at scrollY << settled (${jumpTags.join(', ')}; settled=${settledY})`)
+          }
+        }
+      } else if (s.from) {
+        // CROSS-DOCUMENT NAVIGATION. Open `from`, optionally
+        // pre-scroll, optionally wait for a settled state, then
+        // trigger `action` and start sampling.
+        await withTimeout(page.goto(BASE + s.from, { waitUntil: 'load' }), 10_000, `goto ${s.from}`)
+        await waitForSettled(page)
+        if (s.preScroll) {
+          await page.evaluate((y) => window.scrollTo(0, y), s.preScroll)
+          await page.waitForTimeout(200)
+        }
+        // Baseline sample (pre-click). This is the "OLD page"
+        // baseline used for see-through detection during the
+        // navigation that follows.
+        await collectAt('pre', 0)
+        // Fire the action. Don't await its load — we want to sample
+        // during the navigation.
+        const action = s.action
+        const fireP = action.type === 'click'
+          ? page.click(action.selector).catch(() => {})
+          : page.evaluate(action.script || '').catch(() => {})
+        let prev = 0
+        for (const t of NAV_SAMPLE_TIMES_MS) {
+          const wait = t - prev
+          if (wait > 0) await page.waitForTimeout(wait)
+          prev = t
+          await collectAt('nav', t)
+        }
+        // Make sure the action settled.
+        try { await withTimeout(fireP, 5000, 'action settle').catch(() => {}) } catch {}
+        // Final landing-state sample after 200ms more. This is the
+        // "NEW page" baseline used for see-through detection.
+        await page.waitForTimeout(200)
+        await collectAt('settled', 0)
+        // SEE-THROUGH FRAME DETECTION. We have two baselines:
+        //   pngStats[0] = pre  (the OLD page fully visible)
+        //   pngStats[N] = settled (the NEW page fully visible)
+        // For each nav-N sample, compute distance to both. A
+        // clean transition has frames very close to OLD then
+        // very close to NEW. A see-through (crossfade) has frames
+        // where distance-to-OLD AND distance-to-NEW are both
+        // > 0.05 — the rendered image is a blend of both pages.
+        if (pngStats.length >= 3) {
+          const preIdx = 0
+          const settledIdx = pngStats.length - 1
+          const oldSig = pngStats[preIdx].stats && pngStats[preIdx].stats.signature
+          const newSig = pngStats[settledIdx].stats && pngStats[settledIdx].stats.signature
+          if (oldSig && newSig) {
+            // Determine whether two pages look meaningfully different
+            // to begin with. If not, we can't run the check.
+            const oldVsNew = signatureDistance(oldSig, newSig)
+            if (oldVsNew && oldVsNew > 0.04) {
+              let seeThroughFrames = 0
+              const seeThroughTags = []
+              for (let i = 1; i < pngStats.length - 1; i++) {
+                const sig = pngStats[i].stats && pngStats[i].stats.signature
+                if (!sig) continue
+                const dOld = signatureDistance(sig, oldSig)
+                const dNew = signatureDistance(sig, newSig)
+                if (dOld == null || dNew == null) continue
+                // A see-through frame is far enough from BOTH
+                // baselines that it represents a blend (rather
+                // than a clean swap). Threshold tuned via observed
+                // data: a clean nav stays within 0.025 of the
+                // closer baseline; a 50/50 crossfade between
+                // distinct pages lands ~0.04-0.10 from both.
+                if (dOld > 0.030 && dNew > 0.030 && Math.min(dOld, dNew) / oldVsNew > 0.25) {
+                  seeThroughFrames++
+                  seeThroughTags.push(`${pngStats[i].label}@${pngStats[i].t}ms dOld=${dOld.toFixed(3)} dNew=${dNew.toFixed(3)}`)
+                }
+              }
+              if (seeThroughFrames > 0) {
+                issues.push(`see-through-flicker: ${seeThroughFrames} frame(s) showing both pages overlapping (${seeThroughTags.slice(0, 3).join('; ')}; OldVsNew=${oldVsNew.toFixed(3)})`)
+              }
+            }
+          }
+        }
+      }
+
+      // Analyze samples for flicker signals.
+      // 1. Reveal-FOUC: any sample where reveals.inView is high but
+      //    reveals.hiddenInView is also high. (Many reveal elements
+      //    visible but at opacity 0 → flash incoming.) Fail if the
+      //    state lasts > 1 sample.
+      let revealsHiddenSamples = 0
+      let maxRevealsHiddenInView = 0
+      for (const sample of samples) {
+        if (sample.reveals && sample.reveals.inView > 2 && sample.reveals.hiddenInView >= sample.reveals.inView * 0.5) {
+          revealsHiddenSamples++
+          maxRevealsHiddenInView = Math.max(maxRevealsHiddenInView, sample.reveals.hiddenInView)
+        }
+      }
+      // Fresh load — even one sample with reveals hidden in viewport
+      // counts as a FOUC flash (the elements were visible at parse
+      // and JS hid them before observer fired).
+      // Threshold tuned to mobile MOBILE viewport: typical /visit page
+      // has 6-8 reveal items in viewport on mobile.
+      if (revealsHiddenSamples > 0) {
+        issues.push(`reveal-FOUC: ${revealsHiddenSamples} sample(s) with reveals hidden in view (max ${maxRevealsHiddenInView})`)
+      }
+      // 2. Section-entrance race: any sample with sections at opacity
+      //    < 0.1 IN VIEW, when no-entrance should have been set
+      //    (back/forward or same-origin nav). On fresh load this is
+      //    expected; on return-to-home we should never see it.
+      if (s.from || s.preScroll != null) {
+        let sectionsInvSamples = 0
+        for (const sample of samples) {
+          if (sample.sectionsInViewInvisible > 0 && (sample.htmlClasses || '').includes('no-entrance')) {
+            sectionsInvSamples++
+          }
+        }
+        if (sectionsInvSamples > 1) issues.push(`section-flash: ${sectionsInvSamples} samples with invisible sections under no-entrance`)
+      }
+      // 3a. (hash-fade scenarios only) Brand + back static check:
+      //     the subpage chrome should not move during the hash-fade
+      //     entrance — chrome stays anchored while only the page
+      //     content slides in. Any brand top movement > 10px across
+      //     samples (after the first paint) is a regression.
+      if (s.expectBrandStatic && samples.length >= 2) {
+        let brandMoveMax = 0
+        let backMoveMax = 0
+        const brandPositions = []
+        for (let i = 1; i < samples.length; i++) {
+          const a = samples[i - 1].brand, b = samples[i].brand
+          if (a && b && a.which === 'subpage' && b.which === 'subpage') {
+            const d = Math.abs(a.top - b.top)
+            if (d > brandMoveMax) brandMoveMax = d
+          }
+          brandPositions.push(b && b.top)
+        }
+        // Also sniff for an additional .subpage-back top movement via
+        // a one-off page.evaluate. We can use the existing samples'
+        // navShell / brand data instead — but back isn't in the
+        // probe today, so we accept brandMoveMax as a proxy: if the
+        // brand was animated, the back almost certainly was too
+        // (they share the hash-fade rule).
+        if (brandMoveMax > 10) {
+          issues.push(`brand-not-static: subpage-brand top moved up to ${brandMoveMax.toFixed(0)}px during hash-fade entrance (expected static)`)
+        }
+      }
+      // 3. Brand position jumps. If consecutive samples have the
+      //    brand offset by > 60px we have a logo "fly-in" flicker.
+      //    Skip samples where brand is null (between pages).
+      let brandJumpMax = 0
+      let brandHiddenSamples = 0
+      let prevBrand = null
+      for (const sample of samples) {
+        if (sample.brand) {
+          if (sample.brand.isHiddenClass) brandHiddenSamples++
+          if (prevBrand && prevBrand.which === sample.brand.which) {
+            const dy = Math.abs(prevBrand.top - sample.brand.top)
+            if (dy > brandJumpMax) brandJumpMax = dy
+          }
+          prevBrand = sample.brand
+        }
+      }
+      if (brandJumpMax > 60) issues.push(`brand-jump: brand top moved ${brandJumpMax}px between consecutive samples`)
+      if (brandHiddenSamples > 1 && (s.from || s.load)) {
+        // .subpage-brand.hidden during the navigation window is the
+        // "logo went off-screen" symptom. It's expected if user
+        // scrolled, but the flicker comes from when the brand
+        // becomes UN-hidden during the navigation — we want to
+        // detect "brand was hidden then visible mid-nav".
+        let hiddenToVisibleTransitions = 0
+        for (let i = 1; i < samples.length; i++) {
+          const a = samples[i - 1].brand, b = samples[i].brand
+          if (a && b && a.which === b.which && a.isHiddenClass && !b.isHiddenClass) {
+            hiddenToVisibleTransitions++
+          }
+        }
+        if (hiddenToVisibleTransitions > 0) {
+          issues.push(`logo-flyin: brand toggled hidden→visible ${hiddenToVisibleTransitions} time(s) during nav`)
+        }
+      }
+      // 4. .nav-shell.scrolled-mobile applied late — when the user
+      //    has restored scroll position. The brand was visible on
+      //    first paint, then suddenly hidden by scrolled-mobile.
+      //    Track samples where scrolledMobile state flips between
+      //    settled (not-mid-load) samples. A boolean flip that happens
+      //    within the first ~100ms of page load is OK — it's the
+      //    head-script's scroll listener catching scroll-restoration
+      //    fired after parse-end, and the v1.49.24 CSS only transitions
+      //    background + box-shadow + opacity so the visible state is
+      //    consistent throughout. Only flag flips that happen LATE
+      //    (after 200ms) since those would imply a visible animation.
+      let navShellFlips = 0
+      let prevScrolled = null
+      let prevSampleT = -1
+      for (const sample of samples) {
+        if (sample.navShell) {
+          if (prevScrolled !== null && prevScrolled !== sample.navShell.scrolledMobile) {
+            // Only count this as a flip if it happened past the early
+            // settle window. Early flips are the head scroll listener
+            // catching restored scroll — fine because CSS doesn't
+            // transition the geometry properties.
+            if (sample.t > 200 && prevSampleT > 200) navShellFlips++
+          }
+          prevScrolled = sample.navShell.scrolledMobile
+          prevSampleT = sample.t
+        }
+      }
+      if (navShellFlips > 0 && (s.scrollY || s.preScroll)) {
+        issues.push(`nav-shell-flip: scrolled-mobile class flipped ${navShellFlips} time(s) after first paint`)
+      }
+      // 5. Blank-frame detection. A PNG with stddev < 4 across the
+      //    sampled grid means the captured area is uniform — the
+      //    page area is showing only background color. On a real
+      //    page with chrome (nav + first section) we expect
+      //    stddev > 20.
+      let blankFrames = 0
+      let blankFrameSamples = []
+      for (let i = 0; i < pngStats.length; i++) {
+        const p = pngStats[i]
+        if (p.stats && p.stats.stddev < 4 && p.stats.mean > 220) {
+          // High mean + low stddev = uniform light color (page bg).
+          blankFrames++
+          blankFrameSamples.push(`${p.label}@${p.t}ms`)
+        }
+      }
+      if (blankFrames > 0) {
+        issues.push(`blank-frames: ${blankFrames} (${blankFrameSamples.slice(0, 3).join(', ')})`)
+      }
+      // 6. Inflight-animation count anomalies. A page that just
+      //    landed should have all entrance animations completed by
+      //    1500ms. Any sample past 1500ms with > 4 inflight is
+      //    a long-running animation budget leak.
+      const lateSamples = samples.filter((s) => s.t > 1500)
+      const lateAnimMax = lateSamples.length ? Math.max(...lateSamples.map((s) => s.inflightAnimations)) : 0
+      if (lateAnimMax > 6) {
+        issues.push(`inflight-anim-leak: ${lateAnimMax} animations running at t > 1.5s (excl. expected loops)`)
+      }
+
+      const elapsed = Date.now() - t0
+      let line
+      if (issues.length === 0) {
+        pass++
+        line = `✓ ${s.name}  samples=${samples.length}  png=${pngStats.length}  (${elapsed}ms)`
+      } else {
+        fail++
+        line = `✗ ${s.name}  ${issues.join(' / ')}  (${elapsed}ms)`
+      }
+      lines.push(line)
+      console.log(`  ${issues.length === 0 ? '✓' : '✗'} ${s.name} ${elapsed}ms`)
+      report.scenarios.push({
+        name: s.name, kind: 'flicker', ok: issues.length === 0,
+        viewport: `${s.viewport.width}x${s.viewport.height}`,
+        samples, pngStats, issues, elapsedMs: elapsed,
+        // Build relative paths to the captured PNGs for the report.
+        frames: pngStats.map((p) => `${s.name}/${p.label}-${String(p.t).padStart(4, '0')}ms.png`),
+      })
+    })()
+
+    try { await withTimeout(body, 30_000, `flicker ${s.name}`) } catch (err) {
+      fail++
+      const elapsed = Date.now() - t0
+      const msg = err.timedOut ? `BUDGET EXCEEDED (30s)` : err.message
+      lines.push(`✗ ${s.name}  ${msg}  (${elapsed}ms)`)
+      console.log(`  ✗ ${s.name} ${msg} ${elapsed}ms`)
+      report.scenarios.push({ name: s.name, kind: 'flicker', ok: false, issues: [msg], elapsedMs: elapsed })
+    }
+
+    try { await withTimeout(context.close(), 3_000, 'context.close').catch(() => {}) } catch {}
+  }
+
+  await runScenariosWithPool(launcher, FLICKER_SCENARIOS, 3, runOne)
+  return { lines, pass, fail }
+}
+
+// ============================================================
 // HTML report
 // ============================================================
 
@@ -1569,6 +2342,50 @@ function writeHtmlReport(report) {
           </div>
         </details>`).join('')
       body = videoBlock + framesBlocks
+    } else if (sc.kind === 'flicker') {
+      // Flicker scenarios: render a thumbnail strip of every frame
+      // (each captured at a known timestamp) so a human can scan
+      // for the bug class the harness flagged.
+      const framesBlock = (sc.frames || []).map((f, i) => {
+        const stats = (sc.pngStats || [])[i]
+        const px = stats && stats.stats ? `μ${stats.stats.mean.toFixed(0)} σ${stats.stats.stddev.toFixed(1)}` : ''
+        const labelTime = f.split('/').pop().replace('.png', '')
+        return `<div><img src="${esc(f)}"><div class="frame-label">${esc(labelTime)} ${esc(px)}</div></div>`
+      }).join('')
+      // Sample-state strip: brand opacity + section state at each sample.
+      const sampleTable = (sc.samples || []).map((sample) => {
+        const brand = sample.brand
+        const navS = sample.navShell
+        return `<tr>
+          <td>${sample.label}@${sample.t}ms</td>
+          <td>${esc(sample.url || '')}</td>
+          <td>${brand ? `${brand.which} t=${brand.top}px op=${brand.opacity.toFixed(2)}${brand.isHiddenClass ? ' .hidden' : ''}` : '—'}</td>
+          <td>${sample.main ? `op=${sample.main.opacity.toFixed(2)}` : '—'}</td>
+          <td>r=${sample.reveals ? `${sample.reveals.visibleInView}/${sample.reveals.inView} (hid ${sample.reveals.hiddenInView})` : '—'}</td>
+          <td>s=${sample.sectionsInViewInvisible}inv/${sample.sectionsInViewMidFade}mid</td>
+          <td>${navS ? `sm=${navS.scrolledMobile}` : '—'}</td>
+          <td>anim=${sample.inflightAnimations}</td>
+          <td style="font-family:monospace;font-size:10px;color:#8a8a98">${esc((sample.htmlClasses || '').slice(0, 40))}</td>
+        </tr>`
+      }).join('')
+      body = `
+        <div class="frames">${framesBlock}</div>
+        <details><summary>per-sample DOM state (${(sc.samples || []).length} samples)</summary>
+          <table style="width:100%;border-collapse:collapse;font-family:ui-monospace,monospace;font-size:11px;margin-top:8px">
+            <thead><tr style="color:#8a8a98;text-align:left;border-bottom:1px solid #2a2b32">
+              <th style="padding:6px 8px">sample</th>
+              <th style="padding:6px 8px">url</th>
+              <th style="padding:6px 8px">brand</th>
+              <th style="padding:6px 8px">main</th>
+              <th style="padding:6px 8px">reveals</th>
+              <th style="padding:6px 8px">sections</th>
+              <th style="padding:6px 8px">nav</th>
+              <th style="padding:6px 8px">anim</th>
+              <th style="padding:6px 8px">html.classes</th>
+            </tr></thead>
+            <tbody>${sampleTable}</tbody>
+          </table>
+        </details>`
     }
     const subline = []
     if (sc.url) subline.push(`<b>url</b> ${esc(sc.url)}`)
@@ -1730,24 +2547,38 @@ async function run() {
   const mainLauncher = () => chromium.launch({ headless: true })
   const report = { scenarios: [] }
 
-  console.log(`  pools: anchor=${ANCHOR_PARALLELISM} perf=${PERF_PARALLELISM} flow=${FLOW_PARALLELISM}`)
+  console.log(`  pools: anchor=${ANCHOR_PARALLELISM} perf=${PERF_PARALLELISM} flow=${FLOW_PARALLELISM} flicker=3`)
   console.log('')
-  const a = await runAnchorScenarios(mainLauncher, report)
-  console.log('')
-  const p = await runPerfScenarios(perfLauncher, report)
-  console.log('')
-  const f = await runFlowScenarios(mainLauncher, report)
+
+  // Allow running just the flicker suite for fast iteration:
+  //   HARNESS_ONLY=flicker node scripts/harness/run.mjs
+  const only = process.env.HARNESS_ONLY || ''
+  const runAnchor  = !only || /\banchor\b/.test(only)
+  const runPerf    = !only || /\bperf\b/.test(only)
+  const runFlow    = !only || /\bflow\b/.test(only)
+  const runFlicker = !only || /\bflicker\b/.test(only)
+
+  const empty = { lines: [], pass: 0, fail: 0 }
+  let a = empty, p = empty, f = empty, fl = empty
+  if (runAnchor)  { a  = await runAnchorScenarios(mainLauncher, report);  console.log('') }
+  if (runPerf)    { p  = await runPerfScenarios(perfLauncher, report);    console.log('') }
+  if (runFlow)    { f  = await runFlowScenarios(mainLauncher, report);    console.log('') }
+  if (runFlicker) { fl = await runFlickerScenarios(mainLauncher, report) }
 
   writeHtmlReport(report)
 
-  const total = ANCHOR_SCENARIOS.length + PERF_SCENARIOS.length + FLOW_SCENARIOS.length
-  const passTotal = a.pass + p.pass + f.pass
-  const failTotal = a.fail + p.fail + f.fail
+  const total =
+    (runAnchor  ? ANCHOR_SCENARIOS.length  : 0) +
+    (runPerf    ? PERF_SCENARIOS.length    : 0) +
+    (runFlow    ? FLOW_SCENARIOS.length    : 0) +
+    (runFlicker ? FLICKER_SCENARIOS.length : 0)
+  const passTotal = a.pass + p.pass + f.pass + fl.pass
+  const failTotal = a.fail + p.fail + f.fail + fl.fail
   const summary = `\n${passTotal} pass · ${failTotal} fail · ${total} total\nreport: ${relative(process.cwd(), resolve(OUT_DIR, 'report.html'))}`
   console.log(summary)
   writeFileSync(
     resolve(OUT_DIR, 'results.txt'),
-    [...a.lines, '', ...p.lines, '', ...f.lines, summary].join('\n') + '\n',
+    [...a.lines, '', ...p.lines, '', ...f.lines, '', ...fl.lines, summary].join('\n') + '\n',
   )
   if (failTotal > 0) process.exit(1)
 }

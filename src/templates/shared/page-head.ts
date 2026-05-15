@@ -33,16 +33,43 @@ export function pageHead({
         <script>
             /* See home-head.ts for the rationale. Same script. */
             (function(){
+                var html = document.documentElement;
                 var skip=false;
+                var isBackForward=false;
                 if(location.hash) skip=true;
                 try{
                     var n=performance.getEntriesByType('navigation')[0];
-                    if(n&&(n.type==='back_forward'||n.type==='reload')) skip=true;
+                    if(n&&n.type==='back_forward'){ skip=true; isBackForward=true; }
+                    if(n&&n.type==='reload') skip=true;
                 }catch(e){}
                 if(document.referrer&&document.referrer.indexOf(location.origin)===0) skip=true;
-                if(skip) document.documentElement.classList.add('no-entrance');
+                if(skip) html.classList.add('no-entrance');
+                if (isBackForward) html.classList.add('nav-back-forward');
+                // Manual scroll restoration so the view-transition snapshot
+                // is taken at the correct scroll position. See home-head.ts
+                // for the full rationale.
+                try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+                function scrollKey(){ return 'mscb:sc:' + location.pathname + location.search; }
+                addEventListener('pagehide', function(){
+                    try { sessionStorage.setItem(scrollKey(), String(window.pageYOffset||0)); } catch (e) {}
+                });
+                function restoreScroll(){
+                    try {
+                        var v = sessionStorage.getItem(scrollKey());
+                        if (v && Number(v) > 0) window.scrollTo(0, Number(v));
+                    } catch (e) {}
+                }
+                addEventListener('pagereveal', function(){
+                    if (isBackForward) restoreScroll();
+                });
+                addEventListener('pageshow', function(e){
+                    if (isBackForward || e.persisted) restoreScroll();
+                });
+                // Tag js-reveals synchronously so reveal hiding CSS lands
+                // before first paint (no FOUC).
+                html.classList.add('js-reveals');
                 addEventListener('pageshow',function(e){
-                    if(e.persisted) document.documentElement.classList.add('no-entrance');
+                    if(e.persisted) html.classList.add('no-entrance');
                 });
                 if(location.hash && location.hash !== '#'){
                     window.__targetHash = location.hash;
@@ -53,14 +80,22 @@ export function pageHead({
                     // over ~800ms with easeOut). Safety-net timeout
                     // guarantees the page becomes visible within 2.5s
                     // even if the subpage-header script fails to run.
-                    document.documentElement.classList.add('hash-fade');
+                    html.classList.add('hash-fade');
                     setTimeout(function() {
-                        document.documentElement.classList.add('hash-fade-in');
+                        html.classList.add('hash-fade-in');
                     }, 2500);
                     try {
                         history.replaceState(null, '', location.pathname + location.search);
                     } catch(e){}
                 }
+                // Watchdog — recovery only, see home-head.ts for the
+                // rationale. The reveal observer cancels this timer
+                // once initialized so under normal conditions it
+                // never fires.
+                window.__revealWatchdogTimer = setTimeout(function(){
+                    var sel='.reveal,.reveal-scale,.reveal-eyebrow,.reveal-rise,.reveal-rise-slow,.reveal-tight,.reveal-from-left,.reveal-from-right,.reveal-from-above,.reveal-photo,.reveal-power,.reveal-pop,.reveal-fill';
+                    document.querySelectorAll(sel).forEach(function(el){ el.classList.add('is-revealed'); });
+                }, 12000);
             })();
         </script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
@@ -113,7 +148,27 @@ export function pageHead({
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <!-- See home-head.ts for the rationale (font-display: optional +
+             metric-matched fallbacks to prevent the post-fade swap jump). -->
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=optional" rel="stylesheet">
+        <style>
+            @font-face {
+                font-family: 'Playfair Display Fallback';
+                src: local('Georgia'), local('Times New Roman');
+                size-adjust: 106%;
+                ascent-override: 99%;
+                descent-override: 25%;
+                line-gap-override: 0%;
+            }
+            @font-face {
+                font-family: 'Inter Fallback';
+                src: local('-apple-system'), local('BlinkMacSystemFont'), local('Segoe UI'), local('Arial');
+                size-adjust: 107%;
+                ascent-override: 90%;
+                descent-override: 22%;
+                line-gap-override: 0%;
+            }
+        </style>
 
         ${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ''}
 

@@ -34,25 +34,78 @@ export const homeHead = (): string => {
     <head>
         <meta charset="UTF-8">
         <script>
-            /* Synchronously, before any layout:
-               1) Skip section entrance animation on non-fresh visits.
-               2) Stash + strip the URL hash so the browser doesn't do its
-                  native scroll-to-fragment (which would scroll to the section's
-                  CURRENT position before async events fill in, leaving the
-                  visitor 600+ pixels above the target once events settle, and
-                  spiking CLS to 0.4+). We re-scroll smoothly and put the hash
-                  back into the URL once layout is stable. */
+            /* Synchronously, before any layout (v1.49.24):
+               1) Skip section entrance animation on non-fresh visits
+                  (back/forward, refresh, same-origin nav, bfcache,
+                  hash-load) by tagging <html class="no-entrance">.
+               2) Tag <html class="js-reveals"> synchronously so the
+                  CSS that hides .reveal-* elements lands BEFORE first
+                  paint. Without this, the elements paint at opacity 1,
+                  then the DOMContentLoaded handler adds .js-reveals
+                  and they snap to opacity 0, then the IntersectionObserver
+                  animates them back in — that's the "page jumps to a
+                  new frame after the fade" the user reported.
+               3) Stash + strip the URL hash so the browser doesn't do
+                  its native scroll-to-fragment. We re-scroll smoothly
+                  and put the hash back once layout is stable.
+               4) Safety net: if JS fails to fire the reveal observer
+                  within 4s, force .reveal-* elements visible so the
+                  page is never permanently invisible.
+            */
             (function(){
+                var html = document.documentElement;
                 var skip=false;
+                var isBackForward=false;
                 if(location.hash) skip=true;
                 try{
                     var n=performance.getEntriesByType('navigation')[0];
-                    if(n&&(n.type==='back_forward'||n.type==='reload')) skip=true;
+                    if(n&&n.type==='back_forward'){ skip=true; isBackForward=true; }
+                    if(n&&n.type==='reload') skip=true;
                 }catch(e){}
                 if(document.referrer&&document.referrer.indexOf(location.origin)===0) skip=true;
-                if(skip) document.documentElement.classList.add('no-entrance');
+                if(skip) html.classList.add('no-entrance');
+                // Manual scroll restoration so the view-transition snapshot
+                // is taken at the correct scroll position. With default
+                // 'auto' restoration on cross-doc @view-transition, the
+                // browser captures the new-page snapshot at scrollY=0
+                // BEFORE its restoration kicks in, then the fade plays
+                // against that scrolled-to-top snapshot, and the live DOM
+                // finally shows at the saved scroll position — user sees
+                // "hero first, then jump" (the v1.49.25 complaint).
+                // 'manual' + pagereveal-driven scrollTo gives us the timing
+                // we need: scroll is set BEFORE snapshot, so the fade plays
+                // at the correct position and no jump occurs.
+                try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+                function scrollKey(){ return 'mscb:sc:' + location.pathname + location.search; }
+                addEventListener('pagehide', function(){
+                    try { sessionStorage.setItem(scrollKey(), String(window.pageYOffset||0)); } catch (e) {}
+                });
+                function restoreScroll(){
+                    try {
+                        var v = sessionStorage.getItem(scrollKey());
+                        if (v && Number(v) > 0) window.scrollTo(0, Number(v));
+                    } catch (e) {}
+                }
+                // pagereveal fires BEFORE the cross-doc view-transition
+                // snapshot is captured (Chrome 124+, iOS Safari 18+) —
+                // this is the only event hook that lets us seed the right
+                // scroll position into the snapshot.
+                addEventListener('pagereveal', function(){
+                    if (isBackForward) restoreScroll();
+                });
+                // Fallback for browsers without pagereveal: restore on
+                // pageshow (fires after the transition; jump may be
+                // visible but at least the page lands at the right spot).
+                addEventListener('pageshow', function(e){
+                    if (isBackForward || e.persisted) restoreScroll();
+                });
+                // Always tag js-reveals synchronously so the hidden-state
+                // CSS rule applies on first paint. The observer adds
+                // .is-revealed; the .no-entrance CSS bypass treats every
+                // reveal as already-revealed for non-fresh visits.
+                html.classList.add('js-reveals');
                 addEventListener('pageshow',function(e){
-                    if(e.persisted) document.documentElement.classList.add('no-entrance');
+                    if(e.persisted) html.classList.add('no-entrance');
                 });
                 if(location.hash && location.hash !== '#'){
                     window.__targetHash = location.hash;
@@ -60,6 +113,57 @@ export const homeHead = (): string => {
                         history.replaceState(null, '', location.pathname + location.search);
                     } catch(e){}
                 }
+                // Watchdog — if the reveal observer NEVER fires (JS
+                // error, very slow device), force every reveal element
+                // visible after 12s so the page is recoverable. The
+                // reveal observer setup cancels this timer once it
+                // initializes, so under normal conditions it never
+                // runs — reveals only fire when scrolled into view.
+                // Bug fix (v1.49.30): previously fired unconditionally
+                // at 4s, which marked every reveal below-the-fold as
+                // already-revealed before the user could scroll there
+                // — the elements past About finished their transitions
+                // off-screen and looked static when finally seen.
+                window.__revealWatchdogTimer = setTimeout(function(){
+                    var sel='.reveal,.reveal-scale,.reveal-eyebrow,.reveal-rise,.reveal-rise-slow,.reveal-tight,.reveal-from-left,.reveal-from-right,.reveal-from-above,.reveal-photo,.reveal-power,.reveal-pop,.reveal-fill';
+                    document.querySelectorAll(sel).forEach(function(el){ el.classList.add('is-revealed'); });
+                }, 12000);
+
+                // Pre-paint nav-shell.scrolled-mobile state — when the
+                // browser restores scroll position (bfcache, back/forward,
+                // or session-history), the nav-shell would otherwise
+                // paint in its unscrolled "tall pill" state and then
+                // JS would add .scrolled-mobile via a 600ms transition,
+                // visibly shrinking the pill + sliding the brand away.
+                // We pre-tag the html with the right state so the
+                // .nav-shell CSS lands correct on first paint, AND
+                // register an early scroll listener so any later scroll
+                // restoration (which can fire after parse-end) syncs the
+                // nav-shell class as soon as it happens — before
+                // handleMobileNav's DOMContentLoaded handler runs.
+                function syncNavScrolled(){
+                    if (window.innerWidth > 960) {
+                        html.classList.remove('nav-prerender-scrolled');
+                        var navOff = document.querySelector('.nav-shell');
+                        if (navOff) navOff.classList.remove('scrolled-mobile');
+                        return;
+                    }
+                    var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+                    if (sy > 19) {
+                        html.classList.add('nav-prerender-scrolled');
+                        var nav = document.querySelector('.nav-shell');
+                        if (nav) nav.classList.add('scrolled-mobile');
+                    }
+                }
+                syncNavScrolled();
+                addEventListener('pageshow', syncNavScrolled);
+                // Catch scroll-restoration that fires after this head
+                // script but before DOMContentLoaded. Once handleMobileNav
+                // takes over on DOMContentLoaded, we remove this listener.
+                addEventListener('scroll', syncNavScrolled, { passive: true });
+                addEventListener('DOMContentLoaded', function(){
+                    removeEventListener('scroll', syncNavScrolled);
+                }, { once: true });
             })();
         </script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
@@ -503,7 +607,40 @@ export const homeHead = (): string => {
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <!-- v1.49.24: swap → optional. The default Google Fonts "swap"
+             behavior renders the page with a fallback (Georgia / system-ui)
+             on first paint, then re-renders when the web font arrives —
+             that's the "logo expands then jumps" the user reported, since
+             Playfair Display has wider glyphs than the Georgia fallback.
+             With "optional" the browser uses the web font only if it's
+             cached / ready within ~100ms; otherwise the fallback is used
+             permanently for this page load. No swap = no jump.
+             The size-adjust fallbacks below match Georgia/system metrics
+             to Playfair/Inter so even when the fallback IS used the layout
+             matches the cached-font layout. -->
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=optional" rel="stylesheet">
+        <style>
+            /* Metric-matched fallbacks. Layout boxes are computed against
+               these adjusted Georgia/system metrics; when Playfair / Inter
+               loads (cached or optional), the swap is invisible because
+               glyph dimensions already match. */
+            @font-face {
+                font-family: 'Playfair Display Fallback';
+                src: local('Georgia'), local('Times New Roman');
+                size-adjust: 106%;
+                ascent-override: 99%;
+                descent-override: 25%;
+                line-gap-override: 0%;
+            }
+            @font-face {
+                font-family: 'Inter Fallback';
+                src: local('-apple-system'), local('BlinkMacSystemFont'), local('Segoe UI'), local('Arial');
+                size-adjust: 107%;
+                ascent-override: 90%;
+                descent-override: 22%;
+                line-gap-override: 0%;
+            }
+        </style>
 
         <!-- Vercel Analytics & Speed Insights (disabled with ?notrack=true parameter) -->
         <script>

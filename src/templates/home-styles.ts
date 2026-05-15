@@ -26,9 +26,16 @@ export const homeStyles = (): string => `
                 --bg-event4: #e6e8f5; /* Soft blue-gray */
                 --bg-event5: #f0e6f5; /* Soft lavender */
 
-                /* ── Typography System ── */
-                --font-display: 'Playfair Display', Georgia, serif;
-                --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                /* ── Typography System ──
+                   "Playfair Display Fallback" + "Inter Fallback" are
+                   metric-matched @font-face fallbacks declared in
+                   home-head.ts / page-head.ts. With font-display: optional
+                   on the Google Fonts stylesheet the browser uses the
+                   fallback whenever the web font isn't ready within
+                   ~100ms — so the page never repaints with new font
+                   metrics after first paint. */
+                --font-display: 'Playfair Display', 'Playfair Display Fallback', Georgia, serif;
+                --font-body: 'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
                 /* Type scale — fluid from mobile to desktop */
                 --text-hero:    clamp(52px, 8vw, 88px);   /* Hero headline — unique, largest */
@@ -173,10 +180,30 @@ export const homeStyles = (): string => `
                 transform: translateX(-50%);
                 z-index: 1000;
                 border: 1px solid rgba(255, 255, 255, 0.4);
-                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                /* v1.49.24: was "transition: all 0.6s" — using "all"
+                   triggers transitions on every property including those
+                   mutated by the .scrolled-mobile state. On scroll-restore
+                   the nav would paint unscrolled then animate to scrolled,
+                   which read as the "logo movement animation flicker".
+                   Restrict to background + box-shadow + opacity so the
+                   padding/border-radius/top changes are instant when JS
+                   adds .scrolled-mobile during scroll. Same effective
+                   smoothness while the user is actively scrolling (the
+                   class toggle happens once at threshold). */
+                transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                            box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                            opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 width: min(1280px, 94%);
             }
-            
+
+            /* Pre-paint nav-shell in its scrolled state when the head
+               script detected non-zero scroll position. This avoids the
+               "tall pill on first paint, shrink on JS run" flicker on
+               bfcache restore or session scroll restoration. */
+            html.nav-prerender-scrolled .nav-shell {
+                transition: none;
+            }
+
             .nav-shell.scrolled-mobile {
                 padding: 10px 20px;
                 top: 16px;
@@ -330,12 +357,39 @@ export const homeStyles = (): string => `
                MOTION SYSTEM
                One layer of motion at a time. Smooth, refined, intentional.
 
-               Strategy:
-                 • Cross-document navigation → handled by @view-transition
-                   crossfade. Customized to 0.45s ease (default 0.25s blinks).
-                 • Brand wordmark → tagged with view-transition-name so it
-                   morphs as one element between home and subpages rather
-                   than crossfading in two places.
+               Strategy (v1.49.27):
+                 • Cross-document navigation → SEQUENCED FADE (forward) +
+                   QUICK CROSSFADE (back). Forward fades old out over
+                   180ms ease-in, then new in over 200ms ease-out with a
+                   140ms backwards-fill delay (overlap window ~40ms,
+                   below the human flicker threshold). Back uses a
+                   compressed 110/150ms simultaneous crossfade. Explicit
+                   cream bg on ::view-transition prevents iOS Safari from
+                   rendering the brief low-opacity gap as dark.
+                 • Brand wordmark MORPHS across pages. Tagged
+                   view-transition-name: site-brand on both .brand
+                   (home, in nav-shell) and .subpage-brand (subpages,
+                   centered-top). The browser interpolates between the
+                   two positions over the transition — the logo glides
+                   from home's nav-pill spot into the subpage's
+                   centered-top spot, fading from its old appearance to
+                   its new one as it moves. Back nav compresses the
+                   morph to match the shorter back-fade.
+                 • Back button is part of the root fade — fades in on
+                   forward nav (since it doesn't exist on home), fades
+                   out on back nav (since home has no equivalent).
+                 • Scroll restoration → manual (history.scrollRestoration
+                   = 'manual'). Saved on pagehide, restored in pagereveal
+                   BEFORE the view-transition snapshot is captured. The
+                   fade plays at the correct scroll position from frame
+                   one (no "hero shown then jump").
+                 • Hash-fade entrance slide → only main + footer
+                   translateY from -40px. Brand, back, and top-fog are
+                   excluded from THIS specific slide so they don't move
+                   when the page auto-scrolls into a hash target.
+                   subpage-header's scroll-hide is gated behind a 1200ms
+                   entrance lock so the brand doesn't transition to
+                   .hidden as a side effect of the hash-load auto-scroll.
                  • First fresh visit → subtle 8px section rise, staggered.
                  • Any subsequent visit (back/forward, refresh, cross-page,
                    bfcache, hash-load) → no section entrance animation. The
@@ -346,18 +400,105 @@ export const homeStyles = (): string => `
                 navigation: auto;
             }
 
-            ::view-transition-old(root),
-            ::view-transition-new(root) {
-                animation-duration: 0.45s;
-                animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            /* Explicit background on the view-transition root pseudo so
+               any moment of low-opacity overlap shows the page cream,
+               not whatever default the browser falls back to (Safari iOS
+               can render this as dark which read to the user as "dimming
+               screen flicker"). */
+            ::view-transition {
+                background: #faf8f5;
             }
 
-            /* Brand morph across pages — the wordmark stays as one element
-               that morphs from home's nav-shell position to the subpage
-               centered-top position rather than crossfading in both places. */
+            /* FORWARD-NAV FADE (default — link clicks).
+               Sequenced: old fades to 0 with tight ease-in, new fades
+               from 0 with a 140ms backwards-fill delay. Perceived
+               overlap window ~40ms — below the human flicker threshold.
+               Reads as a clean dissolve. */
+            ::view-transition-old(root) {
+                animation: vt-old-fade-out 180ms cubic-bezier(0.4, 0, 0.68, 0) forwards;
+                mix-blend-mode: normal;
+            }
+            ::view-transition-new(root) {
+                animation: vt-new-fade-in 200ms cubic-bezier(0.32, 0, 0.4, 1) 140ms backwards;
+                mix-blend-mode: normal;
+            }
+            @keyframes vt-old-fade-out {
+                from { opacity: 1; }
+                to   { opacity: 0; }
+            }
+            @keyframes vt-new-fade-in {
+                from { opacity: 0; }
+                to   { opacity: 1; }
+            }
+
+            /* BACK-NAV FADE (v1.49.26 — short + unintrusive).
+               Tagged via <html class="nav-back-forward"> in the head
+               script. A quick simultaneous crossfade (~150ms total) is
+               enough motion to feel intentional without belabouring the
+               return — the user said "just a short quick unintrusive
+               exit fade." Scroll position is restored synchronously in
+               the head's pagereveal handler BEFORE the snapshot is
+               captured, so the fade plays at the correct scroll
+               position from frame one (no "hero shown then jump"). */
+            html.nav-back-forward::view-transition-old(root) {
+                animation: vt-old-fade-out 110ms cubic-bezier(0.4, 0, 0.7, 0.2) forwards;
+            }
+            html.nav-back-forward::view-transition-new(root) {
+                animation: vt-new-fade-in 150ms cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
+            }
+
+            /* Brand wordmark morph (v1.49.27). Both pages have the same
+               wordmark text ("Morning Star / Christian Church"), just at
+               different fixed positions:
+                  home    → inside .nav-shell at top:16px + padding
+                  subpage → standalone at top:24px centered
+               With view-transition-name: site-brand on both, the
+               browser interpolates the brand between positions/sizes
+               over the transition duration. It glides from home's
+               in-nav-pill spot to subpage's centered-top spot (and
+               reverse), fading from its old appearance to its new one
+               as it moves. This is the "logo in the nav moves into the
+               position of the logo in the sub pages" the user asked
+               to keep. The back button is part of the root fade — it
+               only exists on subpages, so on forward nav it fades in
+               with the page and on back nav fades out with it. */
             .brand,
             .subpage-brand {
                 view-transition-name: site-brand;
+            }
+            /* Match the brand morph duration to the root fade so they
+               finish on the same beat. Smooth ease-out so the brand
+               decelerates into its final position. */
+            ::view-transition-group(site-brand) {
+                animation-duration: 360ms;
+                animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            ::view-transition-old(site-brand) {
+                animation: vt-old-fade-out 220ms cubic-bezier(0.4, 0, 0.68, 0) forwards;
+            }
+            ::view-transition-new(site-brand) {
+                animation: vt-new-fade-in 280ms cubic-bezier(0.22, 1, 0.36, 1) 80ms backwards;
+            }
+            /* Back-nav compresses the brand morph to match the shorter
+               back-fade. */
+            html.nav-back-forward::view-transition-group(site-brand) {
+                animation-duration: 160ms;
+            }
+            html.nav-back-forward::view-transition-old(site-brand) {
+                animation: vt-old-fade-out 110ms cubic-bezier(0.4, 0, 0.7, 0.2) forwards;
+            }
+            html.nav-back-forward::view-transition-new(site-brand) {
+                animation: vt-new-fade-in 150ms cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                ::view-transition-old(root),
+                ::view-transition-new(root),
+                ::view-transition-old(site-brand),
+                ::view-transition-new(site-brand),
+                ::view-transition-group(site-brand) {
+                    animation: none;
+                }
             }
 
             section {
@@ -427,54 +568,39 @@ export const homeStyles = (): string => `
                DOWN to reveal this section, signifying there's more
                content above."
 
-               v1.49.7: the animation now applies to ALL page content
-               (subpage brand, back button, top fog, main, footer) so
-               the WHOLE viewport slides in together. Previously only
-               main animated, which left the chrome anchored and felt
-               jarring (frozen page, one element moves). */
+               v1.49.26: per the user, exclude the subpage brand and
+               back button from the entrance slide. The chrome elements
+               stay anchored at their fixed positions while ONLY the
+               page content (main + footer) slides in. The .subpage-top-fog
+               is also held still — it's the background haze for the
+               brand/back, so animating it independently would leave the
+               brand floating over a moving fog. (Brand and back keep
+               their own opacity at 1 throughout — they paint visible
+               from the start.) */
             html.hash-fade main,
-            html.hash-fade footer,
-            html.hash-fade .subpage-back,
-            html.hash-fade .subpage-top-fog {
+            html.hash-fade footer {
                 opacity: 0;
                 transform: translateY(-40px);
             }
-            /* Brand keeps its base translateX(-50%) so it stays centered. */
-            html.hash-fade .subpage-brand {
-                opacity: 0;
-                transform: translateX(-50%) translateY(-40px);
-            }
 
             html.hash-fade.hash-fade-in main,
-            html.hash-fade.hash-fade-in footer,
-            html.hash-fade.hash-fade-in .subpage-back,
-            html.hash-fade.hash-fade-in .subpage-top-fog {
+            html.hash-fade.hash-fade-in footer {
                 opacity: 1;
                 transform: translateY(0);
                 transition:
                     opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
                     transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
             }
-            html.hash-fade.hash-fade-in .subpage-brand {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-                transition:
-                    opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
-                    transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
-            }
+            /* (.subpage-brand, .subpage-back, .subpage-top-fog are
+                intentionally NOT included in the hash-fade slide —
+                see comment above. They stay solid throughout the
+                entrance.) */
 
             @media (prefers-reduced-motion: reduce) {
                 html.hash-fade main,
-                html.hash-fade footer,
-                html.hash-fade .subpage-back,
-                html.hash-fade .subpage-top-fog {
+                html.hash-fade footer {
                     opacity: 1;
                     transform: none;
-                    transition: none;
-                }
-                html.hash-fade .subpage-brand {
-                    opacity: 1;
-                    transform: translateX(-50%);
                     transition: none;
                 }
             }
@@ -659,7 +785,14 @@ export const homeStyles = (): string => `
             /* Resolved state — applies to every variant uniformly.
                .reveal-fill handles its own resolved state via the
                clip-path rule above; including it here would set opacity
-               but it never went to 0 anyway. */
+               but it never went to 0 anyway.
+
+               will-change: auto on .is-revealed releases the compositor
+               layer that the hidden state pinned. Leaving will-change
+               applied indefinitely creates a permanent GPU layer per
+               reveal element, which on iOS Safari causes scroll stutter
+               and the occasional "page jumps to a new frame" repaint
+               when layers get evicted under memory pressure. */
             .js-reveals .reveal-eyebrow.is-revealed,
             .js-reveals .reveal-rise.is-revealed,
             .js-reveals .reveal-rise-slow.is-revealed,
@@ -672,6 +805,7 @@ export const homeStyles = (): string => `
             .js-reveals .reveal-pop.is-revealed {
                 opacity: 1;
                 transform: none;
+                will-change: auto;
             }
 
             /* (Removed: ken-burns infinite drift animation on the active
@@ -1156,66 +1290,255 @@ export const homeStyles = (): string => `
                 gap: clamp(20px, 2.5vw, 32px);
                 align-items: stretch;
             }
-            /* Banner: occupies the left column. Slides stack absolutely and
-               crossfade via opacity. Stays at the same height as the card
-               list via align-items: stretch on the grid. */
+            /* Banner (desktop): no longer a single crossfading slide.
+               Five small "photo" tiles in a curated, slightly irregular
+               composition. Each tile has its own rotation + position so
+               the arrangement reads as "pinned" rather than gridded.
+               Hover (or sync-active from the matching card) lifts the
+               tile, un-rotates it, scales it up, and casts a gold-tinted
+               drop shadow; the matching card gets an intensified gold
+               underglow. */
             .schedule-banner {
                 position: relative;
-                overflow: hidden;
                 border-radius: 24px;
-                background: linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                min-height: 360px;
+                overflow: visible;
+                min-height: 520px;
+                /* Subtle ambient warm wash behind the tiles so the
+                   collage sits on something instead of floating on
+                   pure white. Plus extra top/side padding so a hover-
+                   scaled tile (1.42x) doesn't get clipped by the
+                   section-card edges. */
+                background:
+                    radial-gradient(ellipse 75% 65% at 50% 50%,
+                        rgba(212, 165, 116, 0.09) 0%,
+                        rgba(212, 165, 116, 0.03) 55%,
+                        transparent 100%);
+                padding: 24px 12px 32px;
+                isolation: isolate;
+            }
+            /* Override the global .reveal-power container fade on the
+               schedule banner — the tiles inside do their own toss-in
+               entrance and we don't want a parent scale/opacity ride
+               on top of that. The banner is always visible; only the
+               tiles inside animate. */
+            .js-reveals .schedule-banner.reveal-power {
+                opacity: 1;
+                transform: none;
+                will-change: auto;
             }
             .schedule-banner-slide {
+                /* Each tile is a positioned "photo" — clean print
+                   frame: tight white border (paper edge), soft layered
+                   shadow, slight tint of warmth. */
                 position: absolute;
-                inset: 0;
+                border-radius: 3px;
+                overflow: hidden;
+                background: #fefcf6;
+                padding: 5px;
+                box-shadow:
+                    0 14px 30px rgba(26, 26, 46, 0.10),
+                    0 5px 12px rgba(26, 26, 46, 0.06),
+                    0 1px 3px rgba(26, 26, 46, 0.04);
+                cursor: pointer;
+                transition:
+                    transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+                    box-shadow 480ms cubic-bezier(0.22, 1, 0.36, 1),
+                    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+                    filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
+                /* Toss-in entrance: tiles start at opacity 0, scaled
+                   small, rotated wildly, and translated up. When the
+                   banner's reveal-power observer fires .is-revealed,
+                   each tile animates IN one by one with the tossIn
+                   keyframes (see below). Without JS the banner is
+                   shown via the .js-reveals fallback so the tiles end
+                   up at opacity 1 anyway. */
                 opacity: 0;
-                transition: opacity 700ms cubic-bezier(0.4, 0, 0.2, 1);
-                display: grid;
-                place-items: center;
-                pointer-events: none;
-            }
-            .schedule-banner-slide.active {
-                opacity: 1;
                 pointer-events: auto;
+                will-change: transform;
             }
-            @media (prefers-reduced-motion: reduce) {
-                .schedule-banner-slide {
-                    transition: none;
+            /* Toss-in animation — tiles fly UP from below the viewport
+               and land into their at-rest positions, one by one.
+               Designed to feel like a real physical toss: starts with
+               an upward velocity (fast rise), decelerates as it
+               approaches the target, slight overshoot past the final
+               position, then a small counter-settle back through
+               center. Rotation during travel is gentle — a real
+               tossed photo doesn't spin wildly, it just travels and
+               wobbles into place. Keyframes use calc() on the tile's
+               --rot custom property so each tile lands at its proper
+               at-rest rotation. */
+            @keyframes tossIn {
+                0% {
+                    opacity: 0;
+                    /* Start: well below the final position (large
+                       enough to be off-screen on most viewports),
+                       scaled slightly smaller, rotated a few degrees
+                       off the at-rest rotation. */
+                    transform: rotate(calc(var(--rot, 0deg) + 8deg)) scale(0.7) translateY(340px);
                 }
+                30% {
+                    /* Rising — opacity fully on, tile is most of the
+                       way up but still below target. */
+                    opacity: 1;
+                }
+                62% {
+                    /* Overshoot above the resting position — tile
+                       arrives with momentum and goes slightly past
+                       final, scale slightly larger, rotation pulled
+                       back through final by a couple degrees. */
+                    opacity: 1;
+                    transform: rotate(calc(var(--rot, 0deg) - 3deg)) scale(1.035) translateY(-10px);
+                }
+                82% {
+                    /* Settle back through center with a tiny
+                       counter-overshoot — feels like the toss is
+                       absorbing the landing energy. */
+                    transform: rotate(calc(var(--rot, 0deg) + 1deg)) scale(0.996) translateY(2px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: rotate(var(--rot, 0deg)) scale(1) translateY(0);
+                }
+            }
+            /* Toss-in fires once when the banner enters the viewport
+               (observer adds .is-revealed). Each tile has its own
+               --toss-delay so the cascade lands one by one.
+               Easing is a smooth ease-out so the upward motion feels
+               like it's decelerating under gravity — the keyframes
+               handle the small overshoot/settle on top. */
+            .schedule-banner.is-revealed .schedule-banner-slide {
+                animation: tossIn 820ms cubic-bezier(0.16, 0.84, 0.32, 1) var(--toss-delay, 0ms) forwards;
+            }
+            .schedule-banner-slide[data-index="0"] { --toss-delay:  100ms; }
+            .schedule-banner-slide[data-index="1"] { --toss-delay:  240ms; }
+            .schedule-banner-slide[data-index="2"] { --toss-delay:  380ms; }
+            .schedule-banner-slide[data-index="3"] { --toss-delay:  520ms; }
+            .schedule-banner-slide[data-index="4"] { --toss-delay:  660ms; }
+            /* Reduced-motion: just fade tiles in, no toss. */
+            @media (prefers-reduced-motion: reduce) {
+                .schedule-banner.is-revealed .schedule-banner-slide {
+                    animation: none;
+                    opacity: 1;
+                }
+            }
+            /* No-JS fallback: if .js-reveals never got added (script
+               failure), .is-revealed will also never fire — show the
+               tiles statically at their at-rest position so the page
+               is still readable. */
+            html:not(.js-reveals) .schedule-banner-slide {
+                opacity: 1;
+                animation: none;
+            }
+            /* Tile layout: five hand-tuned positions in DESCENDING
+               vertical order so each tile sits roughly opposite its
+               matching schedule card on the right. The card list is
+               5 cards stacked from top to bottom, ~20% of the column
+               height each; the tiles cascade down the left at the
+               same vertical rhythm but alternate their horizontal
+               position to keep the composition feeling natural rather
+               than gridded.
+               Each tile's transform composes its at-rest rotation
+               with a tiny translateZ(0) to keep the layer on the GPU.
+               The --rot custom property is the only thing that
+               differs at rest, so the hover rule can reset it without
+               re-stating position. */
+            /* Tile layout — uniform tile size (38% × 4:5 portrait)
+               with deliberate alternating cascade. Same placeholder
+               on every tile, so visual interest comes from the
+               composition (rotation, overlap, descending order
+               matching the card list on the right) rather than from
+               per-tile differences. Z-index ascends down the cascade
+               so each tile sits slightly above the previous. */
+            .schedule-banner-slide[data-index="0"] {
+                top:  2%;  left:  8%; width: 38%; aspect-ratio: 4 / 5;
+                --rot: -3deg;
+                z-index: 1;
+            }
+            .schedule-banner-slide[data-index="1"] {
+                top: 16%;  left: 50%; width: 38%; aspect-ratio: 4 / 5;
+                --rot:  3deg;
+                z-index: 2;
+            }
+            .schedule-banner-slide[data-index="2"] {
+                top: 36%;  left: 16%; width: 38%; aspect-ratio: 4 / 5;
+                --rot: -2deg;
+                z-index: 3;
+            }
+            .schedule-banner-slide[data-index="3"] {
+                top: 54%;  left: 52%; width: 38%; aspect-ratio: 4 / 5;
+                --rot:  3deg;
+                z-index: 4;
+            }
+            .schedule-banner-slide[data-index="4"] {
+                top: 72%;  left: 14%; width: 38%; aspect-ratio: 4 / 5;
+                --rot: -3deg;
+                z-index: 5;
+            }
+            .schedule-banner-slide {
+                transform: rotate(var(--rot, 0deg)) translateZ(0);
+            }
+            /* Active / hover state — the focal photo. Rises out of
+               the composition with a noticeable scale (1.4x), lifts
+               up, un-rotates, casts a deep gold-tinted shadow. */
+            .schedule-banner-slide:hover,
+            .schedule-banner-slide.active {
+                transform: rotate(0deg) translateY(-12px) scale(1.4);
+                z-index: 30;
+                box-shadow:
+                    0 36px 64px rgba(212, 165, 116, 0.32),
+                    0 16px 28px rgba(26, 26, 46, 0.18),
+                    0 2px 6px rgba(26, 26, 46, 0.10);
+                background: #ffffff;
+            }
+            /* Non-active tiles recede a step so the focal photo
+               dominates — gentle dim, no blur (blur read as low-quality
+               on the placeholder tiles). */
+            .schedule-banner:hover .schedule-banner-slide:not(:hover):not(.active),
+            .schedule-banner.has-active .schedule-banner-slide:not(.active) {
+                opacity: 0.5;
+                filter: saturate(0.85);
             }
             .schedule-banner-slide img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 display: block;
+                border-radius: 8px;
             }
-            /* Placeholder variant — same visual language as
-               .schedule-item-image-placeholder (gold-tinted gradient +
-               dashed border + centered icon) but with higher contrast
-               so it reads as "image goes here" against the surrounding
-               white section-card. The card the original placeholder lives
-               on is itself frosted-translucent, which gives the dashed
-               border its contrast — the banner sits directly on white,
-               so the border needs to be a touch heavier to register. */
+            /* Placeholder — the standard site placeholder style
+               (cream gradient + dashed border + centered image icon),
+               same as .schedule-item-image-placeholder elsewhere on
+               the page. Rendered inside a ::after so the slide's white
+               polaroid matte (the 5px padding around the photo area)
+               still shows through. All five tiles use the SAME
+               placeholder, so the wall reads as a clean uniform set
+               waiting for real photos. */
             .schedule-banner-placeholder {
-                background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.16) 0%, rgba(26, 26, 46, 0.08) 100%),
-                    linear-gradient(180deg, #e6e9f0 0%, #d6dae3 100%);
-                color: rgba(26, 26, 46, 0.40);
-                border: 2px dashed rgba(26, 26, 46, 0.22);
-                border-radius: inherit;
                 box-sizing: border-box;
             }
-            /* Icon scales with the banner: bigger than the small
-               .schedule-item-image-placeholder cap (56px) because the
-               banner is a much larger surface — same visual language,
-               proportional. */
+            .schedule-banner-placeholder::after {
+                content: '';
+                position: absolute;
+                inset: 5px;
+                border-radius: 2px;
+                background:
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+                border: 1px dashed rgba(26, 26, 46, 0.12);
+                pointer-events: none;
+            }
+            /* Center the image icon over the placeholder background. */
             .schedule-banner-placeholder svg {
-                width: 22%;
-                max-width: 140px;
-                min-width: 72px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 28%;
+                max-width: 56px;
+                min-width: 32px;
                 height: auto;
+                transform: translate(-50%, -50%);
+                color: rgba(26, 26, 46, 0.30);
+                z-index: 1;
             }
 
             /* Card list: vertical stack of tab buttons on desktop. */
@@ -1251,12 +1574,37 @@ export const homeStyles = (): string => `
                 outline: 2px solid var(--gold);
                 outline-offset: 3px;
             }
-            /* Active state: solid white surface + warm gold glow shadow.
-               No side accent — the heavier card weight is the indicator. */
+            /* Active state: solid white surface + warm gold underglow.
+               The underglow intensifies when the matching banner tile
+               is hovered (or the card itself is the active one) so the
+               connection between photo and schedule entry reads clearly.
+               No side accent — the heavier card weight + warm bloom is
+               the indicator. */
             .schedule-tab.active {
                 background: #ffffff;
-                box-shadow: 0 14px 32px rgba(212, 165, 116, 0.22),
-                            0 4px 12px rgba(26, 26, 46, 0.06);
+                box-shadow:
+                    0 24px 56px rgba(212, 165, 116, 0.38),
+                    0 10px 22px rgba(212, 165, 116, 0.18),
+                    0 4px 12px rgba(26, 26, 46, 0.06);
+                transform: translateY(-1px);
+            }
+            .schedule-tab {
+                transition:
+                    background 280ms cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            /* Inactive cards dim slightly when one tile/card is active
+               so the focal pair (tile + card) reads as a pair. */
+            .schedule-list.has-active .schedule-tab:not(.active) {
+                opacity: 0.62;
+            }
+            .schedule-list .schedule-tab {
+                transition:
+                    background 280ms cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+                    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
             }
             /* Typography mirrors the site's existing .schedule-item span /
                h3 / p rules — same gray uppercase eyebrow, same Playfair
@@ -1653,20 +2001,87 @@ export const homeStyles = (): string => `
                Scoped to #outreach so the schedule-item pattern keeps its
                standard inner padding everywhere else on the site.
                ============================================================ */
-            #outreach .schedule-item.teaser-link-card {
-                padding: 0;
-                gap: 0;
-                overflow: hidden;
+            /* Mobile outreach teaser tweaks: keep the original side-by-
+               side card design but make the image edge-to-edge in its
+               half (no card padding around it, no border-radius on the
+               image — the card's overflow:hidden + border-radius clips
+               the image corners to match the card corner). Text keeps
+               its own padding so it breathes from the card edges. */
+            @media (max-width: 960px) {
+                #outreach .schedule-item.teaser-link-card {
+                    padding: 0;
+                    gap: 0;
+                    overflow: hidden;
+                    align-items: stretch;
+                }
+                #outreach .schedule-item.teaser-link-card .schedule-item-image {
+                    border-radius: 0;
+                    width: 100%;
+                    height: 100%;
+                    aspect-ratio: auto;
+                }
+                #outreach .schedule-item.teaser-link-card .schedule-item-text {
+                    padding: clamp(14px, 4vw, 22px);
+                }
             }
-            #outreach .schedule-item.teaser-link-card .schedule-item-text {
-                padding: clamp(20px, 2.2vw, 28px);
-                display: grid;
-                gap: 12px;
-            }
-            #outreach .schedule-item.teaser-link-card .schedule-item-image {
-                border-radius: 0;
-                height: 100%;
-                width: 100%;
+
+            /* Outreach teaser cards (desktop only — mobile keeps the
+               original side-by-side layout in a section-card). Three
+               cards in one row, each with image-on-top (4:3 landscape,
+               edge-to-edge) and text below. Outer .section-card wrapper
+               is dropped so the cards sit directly on the page
+               background. All three image cells share the same width
+               (forced grid columns) and the same aspect-ratio, so the
+               row is visually uniform. */
+            @media (min-width: 961px) {
+                #outreach .section-card {
+                    background: transparent;
+                    box-shadow: none;
+                    border: none;
+                    backdrop-filter: none;
+                    padding: 0;
+                    border-radius: 0;
+                }
+                #outreach .schedule-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: clamp(20px, 2.4vw, 32px);
+                }
+                #outreach .schedule-item.teaser-link-card {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: auto auto;
+                    padding: 0;
+                    gap: 0;
+                    overflow: hidden;
+                    align-items: stretch;
+                }
+                /* Image area: full card width, 4:3 landscape, always on
+                   top (regardless of nth-child(even) — the global rule
+                   flips order: -1 on even children, which would put
+                   text above the image). */
+                #outreach .schedule-item.teaser-link-card .schedule-item-image,
+                #outreach .schedule-item.teaser-link-card:nth-child(even) .schedule-item-image {
+                    order: -1;
+                    width: 100%;
+                    aspect-ratio: 4 / 3;
+                    border-radius: 0;
+                    height: auto;
+                }
+                #outreach .schedule-item.teaser-link-card .schedule-item-image img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                }
+                #outreach .schedule-item.teaser-link-card .schedule-item-image-placeholder {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                #outreach .schedule-item.teaser-link-card .schedule-item-text {
+                    padding: clamp(18px, 2vw, 26px);
+                    display: grid;
+                    gap: 12px;
+                }
             }
             @media (max-width: 960px) {
                 #outreach .schedule-item.teaser-link-card .schedule-item-text {
@@ -5266,13 +5681,30 @@ export const homeStyles = (): string => `
                     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
 
-                .nav-shell.scrolled-mobile {
+                .nav-shell.scrolled-mobile,
+                html.nav-prerender-scrolled .nav-shell {
                     border-radius: 100px;
                     padding: clamp(6px, 1.8vw, 8px) clamp(15px, 4.5vw, 20px);
                     gap: 0;
                     margin-bottom: 30px;
                     top: clamp(6px, 1.8vw, 8px);
                     background: rgba(255, 255, 255, 0.72);
+                }
+                /* Pre-paint hide of .brand + .nav-cta when scroll position
+                   already exceeds the threshold at first paint — matches
+                   the JS-driven .scrolled-mobile behavior so the nav looks
+                   right immediately rather than after a 600ms transition. */
+                html.nav-prerender-scrolled .nav-shell .brand,
+                html.nav-prerender-scrolled .nav-shell .nav-cta {
+                    display: none;
+                }
+                html.nav-prerender-scrolled .nav-shell .nav-form-btn {
+                    display: inline-flex;
+                    opacity: 1;
+                    transform: scale(1);
+                    position: relative;
+                    margin-left: 8px;
+                    right: auto;
                 }
 
                 .nav-shell.scrolled-mobile .nav-cta {

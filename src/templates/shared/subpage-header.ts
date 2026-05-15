@@ -257,13 +257,31 @@ export function subpageHeader(): string {
                     }
 
                     // Brand: hide on scroll-down, show on scroll-up.
+                    // v1.49.26: gate the scroll-hide behind a brief
+                    // entrance window so the brand doesn't transition
+                    // to .hidden as a side effect of the hash-load
+                    // scrollTo. Per the user, the logo should be
+                    // excluded from the entrance animation — it stays
+                    // anchored at top center while page content
+                    // settles, and the scroll-hide only engages on
+                    // genuine USER scroll after the entrance is done.
                     var brand = document.getElementById('subpage-brand-link');
                     if (!brand) return;
                     var lastY = window.scrollY;
                     var ticking = false;
                     var threshold = 40;
+                    var entranceLockUntil = performance.now() + 1200;
 
                     function update() {
+                        if (performance.now() < entranceLockUntil) {
+                            // During the entrance window, just track
+                            // lastY without toggling the .hidden class.
+                            // The next genuine scroll after this window
+                            // ends will set the right state immediately.
+                            lastY = window.scrollY;
+                            ticking = false;
+                            return;
+                        }
                         var y = window.scrollY;
                         if (y < threshold) {
                             brand.classList.remove('hidden');

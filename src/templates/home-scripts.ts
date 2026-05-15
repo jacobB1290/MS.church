@@ -12,6 +12,26 @@
 
 export const homeScripts = (): string => `
         <script>
+            // Sync nav-shell.scrolled-mobile with the actual scroll
+            // position BEFORE DOMContentLoaded so the boolean state on
+            // .nav-shell matches the visual state from first paint.
+            // Without this, browsers that restore scroll position
+            // (Safari iOS bfcache, session-history) paint the nav-shell
+            // in its tall pill state, then handleMobileNav (registered
+            // in DOMContentLoaded) detects the scroll and adds
+            // .scrolled-mobile via the 0.6s transition — the user sees
+            // the brand visibly slide away after first paint.
+            // This early IIFE runs immediately after the body parses
+            // .nav-shell, so it captures the scroll position whether
+            // the head script's syncNavScrolled() got a chance or not.
+            (function(){
+                if (window.innerWidth > 960) return;
+                var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+                if (sy <= 19) return;
+                var nav = document.querySelector('.nav-shell');
+                if (nav) nav.classList.add('scrolled-mobile');
+            })();
+
             document.addEventListener('DOMContentLoaded', () => {
                 const body = document.body;
                 const outreachSection = document.querySelector('.outreach');
@@ -61,6 +81,7 @@ export const homeScripts = (): string => `
                 // ========================================
                 (() => {
                     const banner = document.getElementById('schedule-banner');
+                    const list = document.querySelector('.schedule-list');
                     const tabs = document.querySelectorAll('.schedule-tab');
                     const slides = banner ? banner.querySelectorAll('.schedule-banner-slide') : [];
                     if (!banner || !tabs.length || tabs.length !== slides.length) return;
@@ -69,14 +90,14 @@ export const homeScripts = (): string => `
                     // so no auto-cycle timer runs and tap targets stay plain card buttons.
                     const isMobile = window.matchMedia('(max-width: 960px)').matches;
                     if (isMobile) return;
-                        const AUTO_MS = 6000;
-                        const RESUME_MS = 12000;
+                        const AUTO_MS = 5200;
+                        const RESUME_MS = 9000;
                         let activeIndex = 0;
                         let autoTimer = null;
                         let paused = false;
                         let resumeTimer = null;
 
-                        function setActive(i) {
+                        function setActive(i, opts) {
                             activeIndex = ((i % tabs.length) + tabs.length) % tabs.length;
                             tabs.forEach((t, idx) => {
                                 const on = idx === activeIndex;
@@ -84,6 +105,21 @@ export const homeScripts = (): string => `
                                 t.setAttribute('aria-selected', on ? 'true' : 'false');
                             });
                             slides.forEach((s, idx) => s.classList.toggle('active', idx === activeIndex));
+                            // 'has-active' on the parents lets the inactive
+                            // tiles/cards dim slightly so the focal pair
+                            // reads as the foreground.
+                            if (banner) banner.classList.add('has-active');
+                            if (list) list.classList.add('has-active');
+                        }
+
+                        function clearActive() {
+                            tabs.forEach((t) => {
+                                t.classList.remove('active');
+                                t.setAttribute('aria-selected', 'false');
+                            });
+                            slides.forEach((s) => s.classList.remove('active'));
+                            if (banner) banner.classList.remove('has-active');
+                            if (list) list.classList.remove('has-active');
                         }
 
                         function startAuto() {
@@ -96,7 +132,10 @@ export const homeScripts = (): string => `
                         function pauseFor(ms) {
                             paused = true;
                             if (resumeTimer) clearTimeout(resumeTimer);
-                            resumeTimer = setTimeout(() => { paused = false; }, ms);
+                            resumeTimer = setTimeout(() => {
+                                paused = false;
+                                resumeTimer = null;
+                            }, ms);
                         }
 
                         tabs.forEach((tab, i) => {
@@ -108,13 +147,31 @@ export const homeScripts = (): string => `
                                 setActive(i);
                                 pauseFor(RESUME_MS);
                             });
+                            // Hover the card → activate the matching tile +
+                            // pause auto so the user can read.
+                            tab.addEventListener('mouseenter', () => {
+                                setActive(i);
+                                paused = true;
+                            });
+                        });
+
+                        // Hover any tile → activate it (and its matching
+                        // card). Same paused/resume behavior as card hover.
+                        slides.forEach((slide, i) => {
+                            slide.addEventListener('mouseenter', () => {
+                                setActive(i);
+                                paused = true;
+                            });
                         });
 
                         const scheduleSection = document.getElementById('schedule');
                         if (scheduleSection) {
                             scheduleSection.addEventListener('mouseenter', () => { paused = true; });
                             scheduleSection.addEventListener('mouseleave', () => {
-                                if (!resumeTimer) paused = false;
+                                // Re-arm the auto-cycle after a short delay so
+                                // it doesn't snap to a new tile the instant
+                                // the cursor exits.
+                                pauseFor(1200);
                             });
                         }
 
@@ -237,6 +294,17 @@ export const homeScripts = (): string => `
 
                     const targets = document.querySelectorAll(REVEAL_SEL);
                     if (!targets.length) return;
+
+                    // The reveal observer is taking over from the
+                    // head-script watchdog. Cancel the watchdog so it
+                    // doesn't later force every below-the-fold reveal
+                    // to .is-revealed before the user has scrolled to
+                    // it (which would defeat the point of scroll-
+                    // triggered reveals).
+                    if (window.__revealWatchdogTimer) {
+                        clearTimeout(window.__revealWatchdogTimer);
+                        window.__revealWatchdogTimer = null;
+                    }
 
                     // Reduced-motion: mark everything revealed immediately,
                     // skip the observer entirely.
@@ -879,6 +947,20 @@ export const homeScripts = (): string => `
                     if (!navShell) return;
                     const currentScrollY = window.scrollY;
                     const scrollThreshold = getScrollThreshold();
+                    // Clear the head-script's nav-prerender-scrolled flag
+                    // once we've taken over. The flag's only job is to
+                    // suppress the .nav-shell transition for the very
+                    // first paint after a scroll-restored page load —
+                    // after that we want the normal transition curve.
+                    if (document.documentElement.classList.contains('nav-prerender-scrolled')) {
+                        // Defer one frame so the initial paint already
+                        // landed under "transition: none". The class
+                        // removal then re-enables transitions for
+                        // subsequent scroll-driven class toggles.
+                        requestAnimationFrame(() => {
+                            document.documentElement.classList.remove('nav-prerender-scrolled');
+                        });
+                    }
 
                     if (window.innerWidth <= 960) {
                         if (isNavigatingHome) {

@@ -1347,23 +1347,20 @@ export const homeStyles = (): string => `
                 isolation: isolate;
             }
             .schedule-banner-slide {
-                /* Each tile is a positioned "photo" — proper polaroid
-                   frame: white border, weight-down bottom (extra
-                   padding-bottom emulates the polaroid caption strip),
-                   soft layered shadow, slight tint of warmth. Default
-                   state shows the tile in its at-rest position; hover
-                   or .active brings it forward (rotated to 0, scaled
-                   up, lifted). */
+                /* Each tile is a positioned "photo" — clean print
+                   frame: tight white border (paper edge), soft layered
+                   shadow, slight tint of warmth. The polaroid bottom-
+                   strip + washi-tape were too kitsch; cleaner photo
+                   prints read more upmarket. */
                 position: absolute;
-                border-radius: 4px;
+                border-radius: 3px;
                 overflow: hidden;
-                background: #fdfaf3;
-                /* Polaroid: equal side/top padding, fatter bottom strip. */
-                padding: 8px 8px 22px 8px;
+                background: #fefcf6;
+                padding: 5px;
                 box-shadow:
-                    0 12px 28px rgba(26, 26, 46, 0.14),
-                    0 4px 10px rgba(26, 26, 46, 0.08),
-                    inset 0 0 0 1px rgba(26, 26, 46, 0.04);
+                    0 14px 30px rgba(26, 26, 46, 0.10),
+                    0 5px 12px rgba(26, 26, 46, 0.06),
+                    0 1px 3px rgba(26, 26, 46, 0.04);
                 cursor: pointer;
                 transition:
                     transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -1373,28 +1370,6 @@ export const homeStyles = (): string => `
                 opacity: 1;
                 pointer-events: auto;
                 will-change: transform;
-            }
-            /* Soft "tape strip" pinning each tile to the board — a
-               translucent washi-tape rectangle at the top of every
-               tile. Subtle, low-opacity so it doesn't compete with the
-               photo. Each tile rotates its tape slightly so the strips
-               don't look mass-produced. */
-            .schedule-banner-slide::before {
-                content: '';
-                position: absolute;
-                top: -4px;
-                left: 50%;
-                width: 30%;
-                height: 12px;
-                background: linear-gradient(180deg,
-                    rgba(212, 165, 116, 0.22) 0%,
-                    rgba(212, 165, 116, 0.10) 100%);
-                border-radius: 1px;
-                box-shadow: 0 1px 2px rgba(26, 26, 46, 0.06);
-                transform: translateX(-50%) rotate(var(--tape-rot, -2deg));
-                pointer-events: none;
-                z-index: 2;
-                transition: opacity 200ms cubic-bezier(0.22, 1, 0.36, 1);
             }
             /* Tile layout: five hand-tuned positions in DESCENDING
                vertical order so each tile sits roughly opposite its
@@ -1409,71 +1384,70 @@ export const homeStyles = (): string => `
                The --rot custom property is the only thing that
                differs at rest, so the hover rule can reset it without
                re-stating position. */
-            /* Uniform tile size (4:5 polaroid) with a deliberate
-               alternating descending cascade. Tiles overlap slightly
-               vertically (~6%) and significantly horizontally so the
-               row reads as a stack rather than a grid. Rotations
-               alternate -3 / +3 / -2 / +3 / -3 for a measured, neat
-               feel — not scattered. */
+            /* Tile layout — varied sizes + mixed aspect ratios so
+               each tile feels like a different printed photo, not five
+               identical placeholders. Overall reads as a descending
+               cascade (rough alignment with the matching card on the
+               right), but with deliberate overlap and irregular
+               placement so it feels curated rather than gridded.
+               Rotations are kept small (-3 to +3 deg) so the cluster
+               feels neat. Z-index ascending so each tile slightly
+               overlaps the previous in the cascade. */
             .schedule-banner-slide[data-index="0"] {
-                top:  0%;  left:  8%;  width: 38%; aspect-ratio: 4 / 5;
+                /* Sunday — top-left, medium portrait. */
+                top:  2%;  left:  4%;  width: 36%; aspect-ratio: 4 / 5;
                 --rot: -3deg;
-                --tape-rot: -3deg;
-                z-index: 5;
+                z-index: 1;
             }
             .schedule-banner-slide[data-index="1"] {
-                top: 16%;  left: 50%; width: 38%; aspect-ratio: 4 / 5;
-                --rot:  4deg;
-                --tape-rot: 3deg;
-                z-index: 4;
+                /* Tuesday — upper-right, slightly larger landscape. */
+                top: 12%;  left: 48%; width: 42%; aspect-ratio: 5 / 4;
+                --rot:  3deg;
+                z-index: 2;
             }
             .schedule-banner-slide[data-index="2"] {
-                top: 36%;  left: 14%; width: 38%; aspect-ratio: 4 / 5;
+                /* Wednesday — center, square, the visual anchor of
+                   the composition (slightly larger than its siblings). */
+                top: 38%;  left: 20%; width: 40%; aspect-ratio: 1 / 1;
                 --rot: -2deg;
-                --tape-rot: -1deg;
                 z-index: 3;
             }
             .schedule-banner-slide[data-index="3"] {
-                top: 54%;  left: 52%; width: 38%; aspect-ratio: 4 / 5;
+                /* Thursday — middle-right, smaller portrait so the
+                   cluster has some negative space. */
+                top: 50%;  left: 60%; width: 32%; aspect-ratio: 4 / 5;
                 --rot:  3deg;
-                --tape-rot: 2deg;
-                z-index: 2;
+                z-index: 4;
             }
             .schedule-banner-slide[data-index="4"] {
-                top: 72%;  left: 16%; width: 38%; aspect-ratio: 4 / 5;
-                --rot: -4deg;
-                --tape-rot: -2deg;
-                z-index: 1;
+                /* Friday — bottom-left, larger portrait, the bookend. */
+                top: 72%;  left:  8%; width: 40%; aspect-ratio: 4 / 5;
+                --rot: -3deg;
+                z-index: 5;
             }
             .schedule-banner-slide {
                 transform: rotate(var(--rot, 0deg)) translateZ(0);
             }
-            /* Active / hover state — the focal tile. Rises out of
-               the composition with a noticeable jump: un-rotates,
-               scales up significantly (1.42x), lifts up, sheds the
-               tape strip, casts a deep gold-tinted shadow. */
+            /* Active / hover state — the focal photo. Rises out of
+               the composition with a noticeable scale (1.4x), lifts
+               up, un-rotates, casts a deep gold-tinted shadow. */
             .schedule-banner-slide:hover,
             .schedule-banner-slide.active {
-                transform: rotate(0deg) translateY(-14px) scale(1.42);
+                transform: rotate(0deg) translateY(-12px) scale(1.4);
                 z-index: 30;
                 box-shadow:
-                    0 36px 70px rgba(212, 165, 116, 0.38),
-                    0 16px 32px rgba(26, 26, 46, 0.20);
+                    0 36px 64px rgba(212, 165, 116, 0.32),
+                    0 16px 28px rgba(26, 26, 46, 0.18),
+                    0 2px 6px rgba(26, 26, 46, 0.10);
                 background: #ffffff;
             }
-            /* Hide the tape strip on the focal tile — when a photo is
-               "picked up", the tape stays on the wall. */
-            .schedule-banner-slide:hover::before,
-            .schedule-banner-slide.active::before {
-                opacity: 0;
-                transition: opacity 200ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            /* Non-active tiles recede a step further so the focal tile
-               clearly dominates: deeper dim + subtle blur for depth. */
+            /* Non-active tiles recede a step so the focal photo
+               dominates — gentle dim, no blur (blur read as low-quality
+               on the placeholder tiles). */
             .schedule-banner:hover .schedule-banner-slide:not(:hover):not(.active),
             .schedule-banner.has-active .schedule-banner-slide:not(.active) {
-                opacity: 0.42;
-                filter: saturate(0.7) blur(0.3px);
+                opacity: 0.5;
+                filter: saturate(0.85);
             }
             .schedule-banner-slide img {
                 width: 100%;
@@ -1482,57 +1456,68 @@ export const homeStyles = (): string => `
                 display: block;
                 border-radius: 8px;
             }
-            /* Placeholder variant — soft cream-on-cream so each tile
-               has its own subtle character even before real images
-               replace it. Per-tile hue rotation tints the placeholder
-               so the five tiles read as five distinct images. */
+            /* Placeholder — render the colored "photo content" as an
+               inset overlay so the slide's white background still
+               shows through the 5px padding (the polaroid matte
+               around the photo). Each tile gets its own distinct hue
+               via a CSS custom property; the gradient direction is
+               shared across tiles so the cluster feels harmonious. */
             .schedule-banner-placeholder {
-                background:
-                    linear-gradient(135deg,
-                        rgba(212, 165, 116, 0.18) 0%,
-                        rgba(232, 220, 200, 0.55) 50%,
-                        rgba(212, 165, 116, 0.10) 100%),
-                    linear-gradient(180deg, #f5ede2 0%, #ece2d2 100%);
-                color: rgba(26, 26, 46, 0.32);
+                color: rgba(26, 26, 46, 0.28);
                 border: none;
                 box-sizing: border-box;
-                display: grid;
-                place-items: center;
-                border-radius: 8px;
             }
-            /* Per-tile color tints — same family, slight shifts so each
-               tile looks like a different photo. */
-            .schedule-banner-slide[data-index="0"] .schedule-banner-placeholder {
-                background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.20) 0%, rgba(245, 230, 210, 0.6) 100%),
-                    linear-gradient(180deg, #f7ece0 0%, #ecdcc5 100%);
+            .schedule-banner-placeholder::after {
+                content: '';
+                position: absolute;
+                inset: 5px;
+                border-radius: 2px;
+                background: linear-gradient(160deg,
+                    var(--photo-light, #efc7a5) 0%,
+                    var(--photo-mid, #d99e72) 60%,
+                    var(--photo-dark, #c0865a) 100%);
+                box-shadow:
+                    inset 0 8px 24px rgba(255, 255, 255, 0.18),
+                    inset 0 -10px 28px rgba(26, 26, 46, 0.08);
+                pointer-events: none;
             }
-            .schedule-banner-slide[data-index="1"] .schedule-banner-placeholder {
-                background:
-                    linear-gradient(135deg, rgba(180, 165, 145, 0.20) 0%, rgba(230, 224, 212, 0.6) 100%),
-                    linear-gradient(180deg, #ede5d8 0%, #d8cfbe 100%);
-            }
-            .schedule-banner-slide[data-index="2"] .schedule-banner-placeholder {
-                background:
-                    linear-gradient(135deg, rgba(212, 180, 130, 0.22) 0%, rgba(240, 224, 200, 0.55) 100%),
-                    linear-gradient(180deg, #f3e8d5 0%, #e2d3b8 100%);
-            }
-            .schedule-banner-slide[data-index="3"] .schedule-banner-placeholder {
-                background:
-                    linear-gradient(135deg, rgba(160, 145, 130, 0.20) 0%, rgba(220, 212, 200, 0.55) 100%),
-                    linear-gradient(180deg, #e7ddcd 0%, #d2c7b3 100%);
-            }
-            .schedule-banner-slide[data-index="4"] .schedule-banner-placeholder {
-                background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.18) 0%, rgba(235, 215, 190, 0.55) 100%),
-                    linear-gradient(180deg, #f0e3cf 0%, #ddccb0 100%);
-            }
+            /* Drop the generic image-icon SVG — the colored gradient
+               carries the identity now. */
             .schedule-banner-placeholder svg {
-                width: 30%;
-                max-width: 56px;
-                min-width: 36px;
-                height: auto;
-                opacity: 0.5;
+                display: none;
+            }
+            /* Per-tile palette — all in the warm/earth family so the
+               cluster reads as one curated set, but with enough hue
+               separation that each tile feels distinct. */
+            .schedule-banner-slide[data-index="0"] {
+                /* Sunday — warm peach / dawn. */
+                --photo-light: #efc7a5;
+                --photo-mid:   #d99e72;
+                --photo-dark:  #c0865a;
+            }
+            .schedule-banner-slide[data-index="1"] {
+                /* Tuesday — muted sage / quiet study. */
+                --photo-light: #cfd3c0;
+                --photo-mid:   #a7ad95;
+                --photo-dark:  #898e74;
+            }
+            .schedule-banner-slide[data-index="2"] {
+                /* Wednesday — warm amber / activity. */
+                --photo-light: #f1d49a;
+                --photo-mid:   #d4a574;
+                --photo-dark:  #a87a4c;
+            }
+            .schedule-banner-slide[data-index="3"] {
+                /* Thursday — deep cream / scripture parchment. */
+                --photo-light: #ebdcc1;
+                --photo-mid:   #c9b691;
+                --photo-dark:  #9c8761;
+            }
+            .schedule-banner-slide[data-index="4"] {
+                /* Friday — muted rose / youth warmth. */
+                --photo-light: #e4bdb1;
+                --photo-mid:   #c08879;
+                --photo-dark:  #8e5e51;
             }
 
             /* Card list: vertical stack of tab buttons on desktop. */

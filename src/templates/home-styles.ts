@@ -1316,12 +1316,20 @@ export const homeStyles = (): string => `
                 padding: 24px 12px 32px;
                 isolation: isolate;
             }
+            /* Override the global .reveal-power container fade on the
+               schedule banner — the tiles inside do their own toss-in
+               entrance and we don't want a parent scale/opacity ride
+               on top of that. The banner is always visible; only the
+               tiles inside animate. */
+            .js-reveals .schedule-banner.reveal-power {
+                opacity: 1;
+                transform: none;
+                will-change: auto;
+            }
             .schedule-banner-slide {
                 /* Each tile is a positioned "photo" — clean print
                    frame: tight white border (paper edge), soft layered
-                   shadow, slight tint of warmth. The polaroid bottom-
-                   strip + washi-tape were too kitsch; cleaner photo
-                   prints read more upmarket. */
+                   shadow, slight tint of warmth. */
                 position: absolute;
                 border-radius: 3px;
                 overflow: hidden;
@@ -1337,9 +1345,67 @@ export const homeStyles = (): string => `
                     box-shadow 480ms cubic-bezier(0.22, 1, 0.36, 1),
                     opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
                     filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
-                opacity: 1;
+                /* Toss-in entrance: tiles start at opacity 0, scaled
+                   small, rotated wildly, and translated up. When the
+                   banner's reveal-power observer fires .is-revealed,
+                   each tile animates IN one by one with the tossIn
+                   keyframes (see below). Without JS the banner is
+                   shown via the .js-reveals fallback so the tiles end
+                   up at opacity 1 anyway. */
+                opacity: 0;
                 pointer-events: auto;
                 will-change: transform;
+            }
+            /* Toss-in animation — tiles fall onto the page one by one
+               from above, slightly over-rotated and scaled, then
+               settle into their at-rest rotation. Keyframes use calc()
+               on the tile's --rot custom property so each tile lands
+               at its proper at-rest rotation. The 60% keyframe gives
+               a tiny overshoot (1.06x scale + 5deg past final
+               rotation + 6px below) so the photo "lands and settles"
+               like a real tossed object. */
+            @keyframes tossIn {
+                0% {
+                    opacity: 0;
+                    transform: rotate(calc(var(--rot, 0deg) - 24deg)) scale(0.52) translateY(-90px);
+                }
+                55% {
+                    opacity: 1;
+                    transform: rotate(calc(var(--rot, 0deg) + 5deg)) scale(1.06) translateY(6px);
+                }
+                75% {
+                    transform: rotate(calc(var(--rot, 0deg) - 1.5deg)) scale(0.99) translateY(-2px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: rotate(var(--rot, 0deg)) scale(1) translateY(0);
+                }
+            }
+            /* Toss-in fires once when the banner enters the viewport
+               (observer adds .is-revealed). Each tile has its own
+               --toss-delay so the cascade lands one by one. */
+            .schedule-banner.is-revealed .schedule-banner-slide {
+                animation: tossIn 780ms cubic-bezier(0.22, 1, 0.36, 1) var(--toss-delay, 0ms) forwards;
+            }
+            .schedule-banner-slide[data-index="0"] { --toss-delay:   80ms; }
+            .schedule-banner-slide[data-index="1"] { --toss-delay:  220ms; }
+            .schedule-banner-slide[data-index="2"] { --toss-delay:  360ms; }
+            .schedule-banner-slide[data-index="3"] { --toss-delay:  500ms; }
+            .schedule-banner-slide[data-index="4"] { --toss-delay:  640ms; }
+            /* Reduced-motion: just fade tiles in, no toss. */
+            @media (prefers-reduced-motion: reduce) {
+                .schedule-banner.is-revealed .schedule-banner-slide {
+                    animation: none;
+                    opacity: 1;
+                }
+            }
+            /* No-JS fallback: if .js-reveals never got added (script
+               failure), .is-revealed will also never fire — show the
+               tiles statically at their at-rest position so the page
+               is still readable. */
+            html:not(.js-reveals) .schedule-banner-slide {
+                opacity: 1;
+                animation: none;
             }
             /* Tile layout: five hand-tuned positions in DESCENDING
                vertical order so each tile sits roughly opposite its

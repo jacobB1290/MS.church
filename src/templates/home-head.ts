@@ -64,27 +64,40 @@ export const homeHead = (): string => {
                 }catch(e){}
                 if(document.referrer&&document.referrer.indexOf(location.origin)===0) skip=true;
                 if(skip) html.classList.add('no-entrance');
-                // Tag back-forward navigations so the view-transition CSS
-                // can disable itself for these specifically. Cross-doc
-                // @view-transition would otherwise capture the new-page
-                // snapshot at scrollY=0 (before browser scroll restoration
-                // kicks in), then run the fade against that snapshot —
-                // the user sees the hero briefly, then the page jumps to
-                // their previous scroll position when the live DOM takes
-                // over. Skipping the transition for back/forward lets the
-                // browser do its native paint-hold + scroll-restore in
-                // one beat, with no perceived jump.
-                if (isBackForward) html.classList.add('nav-back-forward');
-                // Belt-and-suspenders: also call skipTransition() via the
-                // new pagereveal event (Chrome 124+, iOS Safari 18+) if
-                // available. This is the spec'd way to bail out of a
-                // cross-document view-transition mid-flight.
-                addEventListener('pagereveal', function(e){
+                // Manual scroll restoration so the view-transition snapshot
+                // is taken at the correct scroll position. With default
+                // 'auto' restoration on cross-doc @view-transition, the
+                // browser captures the new-page snapshot at scrollY=0
+                // BEFORE its restoration kicks in, then the fade plays
+                // against that scrolled-to-top snapshot, and the live DOM
+                // finally shows at the saved scroll position — user sees
+                // "hero first, then jump" (the v1.49.25 complaint).
+                // 'manual' + pagereveal-driven scrollTo gives us the timing
+                // we need: scroll is set BEFORE snapshot, so the fade plays
+                // at the correct position and no jump occurs.
+                try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+                function scrollKey(){ return 'mscb:sc:' + location.pathname + location.search; }
+                addEventListener('pagehide', function(){
+                    try { sessionStorage.setItem(scrollKey(), String(window.pageYOffset||0)); } catch (e) {}
+                });
+                function restoreScroll(){
                     try {
-                        if (e.viewTransition && html.classList.contains('nav-back-forward')) {
-                            e.viewTransition.skipTransition();
-                        }
-                    } catch (err) {}
+                        var v = sessionStorage.getItem(scrollKey());
+                        if (v && Number(v) > 0) window.scrollTo(0, Number(v));
+                    } catch (e) {}
+                }
+                // pagereveal fires BEFORE the cross-doc view-transition
+                // snapshot is captured (Chrome 124+, iOS Safari 18+) —
+                // this is the only event hook that lets us seed the right
+                // scroll position into the snapshot.
+                addEventListener('pagereveal', function(){
+                    if (isBackForward) restoreScroll();
+                });
+                // Fallback for browsers without pagereveal: restore on
+                // pageshow (fires after the transition; jump may be
+                // visible but at least the page lands at the right spot).
+                addEventListener('pageshow', function(e){
+                    if (isBackForward || e.persisted) restoreScroll();
                 });
                 // Always tag js-reveals synchronously so the hidden-state
                 // CSS rule applies on first paint. The observer adds

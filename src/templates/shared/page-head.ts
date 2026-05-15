@@ -44,16 +44,26 @@ export function pageHead({
                 }catch(e){}
                 if(document.referrer&&document.referrer.indexOf(location.origin)===0) skip=true;
                 if(skip) html.classList.add('no-entrance');
-                // Skip the view-transition fade on back/forward so the new
-                // page renders at its restored scroll position from the
-                // first paint (see home-head.ts for the rationale).
                 if (isBackForward) html.classList.add('nav-back-forward');
-                addEventListener('pagereveal', function(e){
+                // Manual scroll restoration so the view-transition snapshot
+                // is taken at the correct scroll position. See home-head.ts
+                // for the full rationale.
+                try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+                function scrollKey(){ return 'mscb:sc:' + location.pathname + location.search; }
+                addEventListener('pagehide', function(){
+                    try { sessionStorage.setItem(scrollKey(), String(window.pageYOffset||0)); } catch (e) {}
+                });
+                function restoreScroll(){
                     try {
-                        if (e.viewTransition && html.classList.contains('nav-back-forward')) {
-                            e.viewTransition.skipTransition();
-                        }
-                    } catch (err) {}
+                        var v = sessionStorage.getItem(scrollKey());
+                        if (v && Number(v) > 0) window.scrollTo(0, Number(v));
+                    } catch (e) {}
+                }
+                addEventListener('pagereveal', function(){
+                    if (isBackForward) restoreScroll();
+                });
+                addEventListener('pageshow', function(e){
+                    if (isBackForward || e.persisted) restoreScroll();
                 });
                 // Tag js-reveals synchronously so reveal hiding CSS lands
                 // before first paint (no FOUC).

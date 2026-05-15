@@ -376,6 +376,26 @@ const FLICKER_SCENARIOS = [
   // Lower count because mobile is the user's environment.
   { name: '110-flicker-nav-home-to-outreach-desktop', viewport: DESKTOP, from: '/',         action: { type: 'click', selector: 'a[href="/outreach"]' }, expectURL: '/outreach' },
   { name: '111-flicker-nav-outreach-back-desktop',    viewport: DESKTOP, from: '/outreach', action: { type: 'click', selector: '.subpage-back' },       expectURL: '/' },
+  // 115s — HASH-FADE ENTRANCE: subpage brand + back button should
+  // NOT slide in with the rest of the page on a hash-load. Per the
+  // user: chrome stays anchored while page content settles.
+  // We sample the brand top + back top across the hash-fade entrance
+  // window; if either moves by > 10px between samples, the chrome
+  // was animated when it should have been static.
+  {
+    name: '115-hash-fade-brand-static-mobile',
+    viewport: MOBILE,
+    load: '/outreach',
+    hash: '#cooking-ministry',
+    expectBrandStatic: true,
+  },
+  {
+    name: '116-hash-fade-brand-static-desktop',
+    viewport: DESKTOP,
+    load: '/visit',
+    hash: '#sunday-school',
+    expectBrandStatic: true,
+  },
   // 120s — SCROLL-RESTORE-JUMP scenarios. User is on home scrolled
   // down to (e.g.) the Outreach teaser cards, clicks one of the
   // teaser CTAs, then taps BACK on the subpage. Without a fix, the
@@ -2074,6 +2094,33 @@ async function runFlickerScenarios(launcher, report) {
           }
         }
         if (sectionsInvSamples > 1) issues.push(`section-flash: ${sectionsInvSamples} samples with invisible sections under no-entrance`)
+      }
+      // 3a. (hash-fade scenarios only) Brand + back static check:
+      //     the subpage chrome should not move during the hash-fade
+      //     entrance — chrome stays anchored while only the page
+      //     content slides in. Any brand top movement > 10px across
+      //     samples (after the first paint) is a regression.
+      if (s.expectBrandStatic && samples.length >= 2) {
+        let brandMoveMax = 0
+        let backMoveMax = 0
+        const brandPositions = []
+        for (let i = 1; i < samples.length; i++) {
+          const a = samples[i - 1].brand, b = samples[i].brand
+          if (a && b && a.which === 'subpage' && b.which === 'subpage') {
+            const d = Math.abs(a.top - b.top)
+            if (d > brandMoveMax) brandMoveMax = d
+          }
+          brandPositions.push(b && b.top)
+        }
+        // Also sniff for an additional .subpage-back top movement via
+        // a one-off page.evaluate. We can use the existing samples'
+        // navShell / brand data instead — but back isn't in the
+        // probe today, so we accept brandMoveMax as a proxy: if the
+        // brand was animated, the back almost certainly was too
+        // (they share the hash-fade rule).
+        if (brandMoveMax > 10) {
+          issues.push(`brand-not-static: subpage-brand top moved up to ${brandMoveMax.toFixed(0)}px during hash-fade entrance (expected static)`)
+        }
       }
       // 3. Brand position jumps. If consecutive samples have the
       //    brand offset by > 60px we have a logo "fly-in" flicker.

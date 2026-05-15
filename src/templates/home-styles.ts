@@ -357,28 +357,32 @@ export const homeStyles = (): string => `
                MOTION SYSTEM
                One layer of motion at a time. Smooth, refined, intentional.
 
-               Strategy (v1.49.24):
-                 • Cross-document navigation → DIP-THROUGH-BLANK fade.
-                   The previous @view-transition crossfade put both
-                   documents on screen at ~50% opacity simultaneously
-                   for ~450ms, which read as "two pages flashing
-                   between each other" on iOS Safari + Chromium (both
-                   support cross-doc @view-transition as of WebKit 18
-                   / Chrome 126). We replace the simultaneous crossfade
-                   with a SEQUENCED fade — old dissolves out first,
-                   then a brief moment of page background, then new
-                   fades in. Total ~360ms; at any instant only one
-                   page is meaningfully visible. Reads as a soft fade
-                   without the double-image overlap.
-                 • Brand wordmark → no view-transition-name. The morph
-                   between home's .nav-shell-housed .brand (top:16px +
-                   padding 20px 40px) and the subpage's free .subpage-
-                   brand (top:24px, padding 8px 24px) produced a
-                   visible vertical jump + size change DURING the
-                   transition (the brand appeared to fly between
-                   positions). Without view-transition-name, the brand
-                   simply fades with the rest of the page swap. No
-                   morph movement.
+               Strategy (v1.49.26):
+                 • Cross-document navigation → SEQUENCED FADE (forward) +
+                   QUICK CROSSFADE (back). Forward fades old out over
+                   180ms ease-in, then new in over 200ms ease-out with a
+                   140ms backwards-fill delay (overlap window ~40ms,
+                   below the human flicker threshold). Back uses a
+                   compressed 110/150ms simultaneous crossfade for a
+                   "short quick unintrusive exit." Explicit cream bg on
+                   ::view-transition prevents Safari iOS from rendering
+                   the brief low-opacity overlap as dark.
+                 • Scroll restoration → manual (history.scrollRestoration
+                   = 'manual'). Saved on pagehide, restored in
+                   pagereveal BEFORE the view-transition snapshot is
+                   captured. The fade plays at the correct scroll
+                   position from frame one (no "hero shown then jump").
+                 • Subpage chrome (brand + back) → view-transition-name
+                   so they get their own pseudo, animation: none +
+                   opacity: 1 so they stay solid throughout the fade.
+                   No morph, no slide; the chrome is anchored while
+                   page content does the motion.
+                 • Hash-fade entrance → only main + footer slide in
+                   from translateY(-40px). Brand, back, and top-fog
+                   are excluded (they paint visible from the start).
+                   subpage-header's scroll-hide is also gated behind a
+                   1200ms entrance lock so the brand doesn't transition
+                   to .hidden as a side effect of the auto-scroll.
                  • First fresh visit → subtle 8px section rise, staggered.
                  • Any subsequent visit (back/forward, refresh, cross-page,
                    bfcache, hash-load) → no section entrance animation. The
@@ -389,21 +393,20 @@ export const homeStyles = (): string => `
                 navigation: auto;
             }
 
-            /* SEQUENCED FADE — old fades out first, then new fades in,
-               with a ~40ms overlap-of-near-zero where the page background
-               briefly shows. The eye reads this as a clean dissolve, not
-               a two-page overlap. Curves are tuned so the perceptible
-               overlap window stays below the ~50ms human flicker
-               threshold:
-                 • old fades to 0 with a tight ease-in (drops fast early,
-                   plateaus near end at the bottom)
-                 • new fades from 0 with a delayed start (animation-delay
-                   140ms; backwards fill keeps it invisible during the
-                   delay)
-               Both layers carry no transform/scale — pure opacity. Any
-               transform on a view-transition pseudo creates a stacking
-               context that can pin the brand/nav at the wrong place
-               mid-transition. */
+            /* Explicit background on the view-transition root pseudo so
+               any moment of low-opacity overlap shows the page cream,
+               not whatever default the browser falls back to (Safari iOS
+               can render this as dark which read to the user as "dimming
+               screen flicker"). */
+            ::view-transition {
+                background: #faf8f5;
+            }
+
+            /* FORWARD-NAV FADE (default — link clicks).
+               Sequenced: old fades to 0 with tight ease-in, new fades
+               from 0 with a 140ms backwards-fill delay. Perceived
+               overlap window ~40ms — below the human flicker threshold.
+               Reads as a clean dissolve. */
             ::view-transition-old(root) {
                 animation: vt-old-fade-out 180ms cubic-bezier(0.4, 0, 0.68, 0) forwards;
                 mix-blend-mode: normal;
@@ -421,66 +424,66 @@ export const homeStyles = (): string => `
                 to   { opacity: 1; }
             }
 
-            /* Brand wordmark morph (v1.49.24). Both pages have the same
-               wordmark text ("Morning Star / Christian Church"), just at
-               different fixed positions (subpage: top:24px centered;
-               home: inside the nav-shell pill at top:16px). Without a
-               view-transition-name, the brand would fade out at the old
-               position and fade in at the new — perceived as the logo
-               "appearing again" at a different spot.
-               With view-transition-name, the brand becomes its own
-               group that the browser smoothly INTERPOLATES between
-               positions over the transition duration. It glides from
-               subpage centered-top to home in-nav-pill, fading from
-               its old appearance to its new one as it moves. This is
-               the visual continuity that ties the page fade together
-               into a single smooth motion. */
-            .brand,
-            .subpage-brand {
-                view-transition-name: site-brand;
+            /* BACK-NAV FADE (v1.49.26 — short + unintrusive).
+               Tagged via <html class="nav-back-forward"> in the head
+               script. A quick simultaneous crossfade (~150ms total) is
+               enough motion to feel intentional without belabouring the
+               return — the user said "just a short quick unintrusive
+               exit fade." Scroll position is restored synchronously in
+               the head's pagereveal handler BEFORE the snapshot is
+               captured, so the fade plays at the correct scroll
+               position from frame one (no "hero shown then jump"). */
+            html.nav-back-forward::view-transition-old(root) {
+                animation: vt-old-fade-out 110ms cubic-bezier(0.4, 0, 0.7, 0.2) forwards;
             }
-            /* Match the brand morph to the root fade so both finish on
-               the same beat — no "logo arrives late" feel. The morph
-               uses a smooth ease-out curve so the deceleration into the
-               final position reads as a confident settle, not a hard
-               stop. */
-            ::view-transition-group(site-brand) {
-                animation-duration: 360ms;
-                animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            ::view-transition-old(site-brand) {
-                animation: vt-old-fade-out 220ms cubic-bezier(0.4, 0, 0.68, 0) forwards;
-            }
-            ::view-transition-new(site-brand) {
-                animation: vt-new-fade-in 280ms cubic-bezier(0.22, 1, 0.36, 1) 80ms backwards;
+            html.nav-back-forward::view-transition-new(root) {
+                animation: vt-new-fade-in 150ms cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
             }
 
-            /* Disable the view-transition fade on browser back/forward
-               navigation. The head script tags <html class="nav-back-forward">
-               synchronously when navigation.type === 'back_forward'. For
-               these navigations, the new-page snapshot would otherwise be
-               captured at scrollY=0 (before scroll restoration kicks in)
-               and the fade would play against that snapshot — the user
-               sees the hero briefly, then the page jumps to their
-               previous scroll position when the live DOM takes over.
-               Killing the animations here lets the browser do its native
-               paint-hold + scroll-restore in one frame; the page appears
-               at the restored scroll position immediately, no jump.
-               Forward navigation (clicking a link) keeps the fade. */
-            html.nav-back-forward::view-transition-old(root),
-            html.nav-back-forward::view-transition-new(root),
-            html.nav-back-forward::view-transition-old(site-brand),
-            html.nav-back-forward::view-transition-new(site-brand),
-            html.nav-back-forward::view-transition-group(site-brand) {
+            /* Exclude subpage chrome (brand wordmark + back pill) from
+               the page fade (v1.49.26). Per the user: "exclude the
+               logo and back button" from the entrance animation when
+               opening a subpage. We tag each as its own view-transition
+               group with its own unique name, then keep both pseudos
+               at full opacity for the entire transition — the chrome
+               renders static at its position while only the underlying
+               page content fades. On a forward nav (home → subpage),
+               the subpage-brand and subpage-back appear at full opacity
+               from frame one of the transition and stay put; on a back
+               nav (subpage → home), they remain visible at their
+               positions until the live DOM swap completes.
+               The home brand keeps no view-transition-name — it's part
+               of the root fade like everything else on home (so it
+               doesn't appear "stuck" at the home position while we
+               navigate away). */
+            .subpage-brand { view-transition-name: subpage-chrome-brand; }
+            .subpage-back  { view-transition-name: subpage-chrome-back; }
+            /* opacity:1 on both pseudos = element stays solid through
+               the entire transition (no fade in, no fade out). */
+            ::view-transition-old(subpage-chrome-brand),
+            ::view-transition-new(subpage-chrome-brand),
+            ::view-transition-old(subpage-chrome-back),
+            ::view-transition-new(subpage-chrome-back) {
                 animation: none;
+                opacity: 1;
+            }
+            /* The view-transition group for these chrome elements
+               shouldn't morph either — they exist at the exact same
+               fixed position on every subpage, so position interpolation
+               would be a no-op. Setting animation-duration to 0
+               eliminates any browser-default group transform. */
+            ::view-transition-group(subpage-chrome-brand),
+            ::view-transition-group(subpage-chrome-back) {
+                animation-duration: 0s;
             }
 
             @media (prefers-reduced-motion: reduce) {
                 ::view-transition-old(root),
                 ::view-transition-new(root),
-                ::view-transition-old(site-brand),
-                ::view-transition-new(site-brand),
-                ::view-transition-group(site-brand) {
+                ::view-transition-old(subpage-chrome-brand),
+                ::view-transition-new(subpage-chrome-brand),
+                ::view-transition-old(subpage-chrome-back),
+                ::view-transition-new(subpage-chrome-back) {
                     animation: none;
                 }
             }
@@ -552,54 +555,39 @@ export const homeStyles = (): string => `
                DOWN to reveal this section, signifying there's more
                content above."
 
-               v1.49.7: the animation now applies to ALL page content
-               (subpage brand, back button, top fog, main, footer) so
-               the WHOLE viewport slides in together. Previously only
-               main animated, which left the chrome anchored and felt
-               jarring (frozen page, one element moves). */
+               v1.49.26: per the user, exclude the subpage brand and
+               back button from the entrance slide. The chrome elements
+               stay anchored at their fixed positions while ONLY the
+               page content (main + footer) slides in. The .subpage-top-fog
+               is also held still — it's the background haze for the
+               brand/back, so animating it independently would leave the
+               brand floating over a moving fog. (Brand and back keep
+               their own opacity at 1 throughout — they paint visible
+               from the start.) */
             html.hash-fade main,
-            html.hash-fade footer,
-            html.hash-fade .subpage-back,
-            html.hash-fade .subpage-top-fog {
+            html.hash-fade footer {
                 opacity: 0;
                 transform: translateY(-40px);
             }
-            /* Brand keeps its base translateX(-50%) so it stays centered. */
-            html.hash-fade .subpage-brand {
-                opacity: 0;
-                transform: translateX(-50%) translateY(-40px);
-            }
 
             html.hash-fade.hash-fade-in main,
-            html.hash-fade.hash-fade-in footer,
-            html.hash-fade.hash-fade-in .subpage-back,
-            html.hash-fade.hash-fade-in .subpage-top-fog {
+            html.hash-fade.hash-fade-in footer {
                 opacity: 1;
                 transform: translateY(0);
                 transition:
                     opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
                     transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
             }
-            html.hash-fade.hash-fade-in .subpage-brand {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-                transition:
-                    opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
-                    transform 950ms cubic-bezier(0.16, 1, 0.3, 1);
-            }
+            /* (.subpage-brand, .subpage-back, .subpage-top-fog are
+                intentionally NOT included in the hash-fade slide —
+                see comment above. They stay solid throughout the
+                entrance.) */
 
             @media (prefers-reduced-motion: reduce) {
                 html.hash-fade main,
-                html.hash-fade footer,
-                html.hash-fade .subpage-back,
-                html.hash-fade .subpage-top-fog {
+                html.hash-fade footer {
                     opacity: 1;
                     transform: none;
-                    transition: none;
-                }
-                html.hash-fade .subpage-brand {
-                    opacity: 1;
-                    transform: translateX(-50%);
                     transition: none;
                 }
             }

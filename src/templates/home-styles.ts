@@ -2147,82 +2147,104 @@ export const homeStyles = (): string => `
                /visit PAGE — Map card + What-to-Expect service-flow timeline
                ============================================================ */
 
-            /* /visit intro — line-art handshake (v1.49.16).
-               The SVG path is a single complex outline traced from a
-               user-provided reference. Rather than filling the path
-               (which makes it a solid silhouette), we stroke it so
-               the path's traced contour reads as a line drawing —
-               same editorial language as the Boise map's stroke
-               elements.
+            /* /visit intro — animated handshake (v1.49.19).
+               Two clipped copies of the same SVG sit absolutely
+               positioned over each other. The left copy is clipped
+               to show only its left half (inset(0 50% 0 0)) and the
+               right copy is clipped to its right half. Each half
+               slides in from off-screen via translateX, meeting at
+               the center to form the complete illustration. After
+               the approach, the .handshake-art group inside each
+               half plays the shared shake animation — both copies
+               run identical timings so the halves shake in lockstep
+               and appear as one seamless illustration.
 
-               Two stacked animations on the .handshake-art group:
-                 1. handshake-entry: plays ONCE on first render. The
-                    illustration scales up from 0.88 with a soft Y
-                    drop and opacity fade-in. animation-fill-mode
-                    forwards holds the settled state after.
-                 2. handshake-shake: plays INFINITE, starts AFTER the
-                    entry via animation-delay. Damped vertical
-                    oscillation (8px -> 7 -> 6 -> 5 -> 4 -> 2 -> 0)
-                    over the active portion, then a calm hold before
-                    the next loop. Both keyframes carry scale(1) so
-                    the settled scale from entry isn't clobbered. */
+               This avoids hand-drawing two separate complete hand
+               outlines (each half is technically a slice of the
+               final image), but the motion reads as "two hands
+               walking toward each other and meeting." */
             .handshake {
+                position: relative;
                 width: 100%;
                 max-width: 360px;
+                aspect-ratio: 254 / 180;
                 margin: clamp(28px, 4vw, 44px) auto 0;
                 color: #1a1a2e;
+                /* Gold-tinted shadow applied to the container so it
+                   stays consistent across both halves. */
+                filter: drop-shadow(0 1.5px 1.5px rgba(200, 152, 96, 0.18));
             }
-            .handshake svg {
+            .handshake-half {
+                position: absolute;
+                inset: 0;
+                will-change: transform, opacity;
+            }
+            .handshake-half svg {
                 display: block;
                 width: 100%;
-                height: auto;
+                height: 100%;
                 overflow: visible;
+            }
+            .handshake-half-left {
+                /* Show only the left half of the SVG */
+                clip-path: inset(0 50% 0 0);
+                opacity: 0;
+                animation: handshake-approach-left 2s cubic-bezier(0.22, 0.6, 0.36, 1) forwards;
+            }
+            .handshake-half-right {
+                /* Show only the right half */
+                clip-path: inset(0 0 0 50%);
+                opacity: 0;
+                animation: handshake-approach-right 2s cubic-bezier(0.22, 0.6, 0.36, 1) forwards;
             }
             .handshake-stroke {
                 fill: none;
-                /* Site gold — same warm tone used for section eyebrows,
-                   the BOISE map label, pin gradients, and section-heading
-                   accents. Pairs the handshake into the site's gold ink
-                   language rather than competing as a separate dark logo. */
                 stroke: var(--gold-dark);
                 stroke-width: 2.4;
                 stroke-linecap: round;
                 stroke-linejoin: round;
-                /* Vector-effect keeps the stroke-width visually constant
-                   under the SVG's inner scale(2.81) transform. */
                 vector-effect: non-scaling-stroke;
             }
+            /* Shake animation lives on .handshake-art (inside BOTH
+               halves) so the two clipped halves stay in sync —
+               identical animation timing applied to identical
+               elements. */
             .handshake-art {
                 transform-origin: 50% 75%;
-                opacity: 0;
-                /* Gold-tinted shadow matching the stroke warmth.
-                   Subtle, just enough to add dimensionality. */
-                filter: drop-shadow(0 1.5px 1.5px rgba(200, 152, 96, 0.18));
-                animation:
-                    handshake-entry 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards,
-                    handshake-shake 4.5s cubic-bezier(0.4, 0, 0.6, 1) 1.4s infinite;
-                will-change: transform, opacity;
+                animation: handshake-shake 4.5s cubic-bezier(0.4, 0, 0.6, 1) 2s infinite;
+                will-change: transform;
             }
-            @keyframes handshake-entry {
-                0%   { transform: scale(0.88) translateY(18px); opacity: 0; }
-                60%  { opacity: 1; }
-                100% { transform: scale(1) translateY(0); opacity: 1; }
+
+            /* Approach: each half starts off-screen on its side and
+               slides to translateX(0). The opacity fades in a beat
+               after motion starts so the halves emerge from the
+               edges rather than instantly appearing. */
+            @keyframes handshake-approach-left {
+                0%   { transform: translateX(-90%); opacity: 0; }
+                18%  { opacity: 1; }
+                100% { transform: translateX(0); opacity: 1; }
             }
+            @keyframes handshake-approach-right {
+                0%   { transform: translateX(90%); opacity: 0; }
+                18%  { opacity: 1; }
+                100% { transform: translateX(0); opacity: 1; }
+            }
+
             @keyframes handshake-shake {
-                /* Damped natural oscillation. Each peak is smaller
-                   than the last, simulating a real handshake easing
-                   to a stop. Then a calm hold (60-100%) before the
-                   next loop so the motion doesn't feel hyperactive. */
-                0%   { transform: scale(1) translateY(0); }
-                6%   { transform: scale(1) translateY(-8px); }
-                12%  { transform: scale(1) translateY(7px); }
-                18%  { transform: scale(1) translateY(-6px); }
-                24%  { transform: scale(1) translateY(5px); }
-                30%  { transform: scale(1) translateY(-4px); }
-                36%  { transform: scale(1) translateY(3px); }
-                42%  { transform: scale(1) translateY(-2px); }
-                48%  { transform: scale(1) translateY(1px); }
-                55%, 100% { transform: scale(1) translateY(0); }
+                /* Damped natural oscillation. Each peak smaller than
+                   the last, simulating a real handshake easing to a
+                   stop. Calm hold (55-100%) before the next loop so
+                   the motion doesn't feel hyperactive. */
+                0%   { transform: translateY(0); }
+                6%   { transform: translateY(-8px); }
+                12%  { transform: translateY(7px); }
+                18%  { transform: translateY(-6px); }
+                24%  { transform: translateY(5px); }
+                30%  { transform: translateY(-4px); }
+                36%  { transform: translateY(3px); }
+                42%  { transform: translateY(-2px); }
+                48%  { transform: translateY(1px); }
+                55%, 100% { transform: translateY(0); }
             }
 
             @media (max-width: 960px) {
@@ -2233,10 +2255,15 @@ export const homeStyles = (): string => `
             }
 
             @media (prefers-reduced-motion: reduce) {
+                .handshake-half-left,
+                .handshake-half-right,
                 .handshake-art {
                     animation: none;
+                }
+                .handshake-half-left,
+                .handshake-half-right {
                     opacity: 1;
-                    transform: scale(1) translateY(0);
+                    transform: translateX(0);
                 }
             }
 

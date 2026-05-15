@@ -2146,6 +2146,95 @@ export const homeStyles = (): string => `
             /* ============================================================
                /visit PAGE — Map card + What-to-Expect service-flow timeline
                ============================================================ */
+
+            /* /visit intro — line-art handshake (v1.49.16).
+               The SVG path is a single complex outline traced from a
+               user-provided reference. Rather than filling the path
+               (which makes it a solid silhouette), we stroke it so
+               the path's traced contour reads as a line drawing —
+               same editorial language as the Boise map's stroke
+               elements.
+
+               Two stacked animations on the .handshake-art group:
+                 1. handshake-entry: plays ONCE on first render. The
+                    illustration scales up from 0.88 with a soft Y
+                    drop and opacity fade-in. animation-fill-mode
+                    forwards holds the settled state after.
+                 2. handshake-shake: plays INFINITE, starts AFTER the
+                    entry via animation-delay. Damped vertical
+                    oscillation (8px -> 7 -> 6 -> 5 -> 4 -> 2 -> 0)
+                    over the active portion, then a calm hold before
+                    the next loop. Both keyframes carry scale(1) so
+                    the settled scale from entry isn't clobbered. */
+            .handshake {
+                width: 100%;
+                max-width: 360px;
+                margin: clamp(28px, 4vw, 44px) auto 0;
+                color: #1a1a2e;
+            }
+            .handshake svg {
+                display: block;
+                width: 100%;
+                height: auto;
+                overflow: visible;
+            }
+            .handshake-stroke {
+                fill: none;
+                stroke: #1a1a2e;
+                stroke-width: 2;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                /* Vector-effect keeps the stroke-width visually
+                   constant under the SVG's scale(2.81) transform.
+                   Without this the stroke would render at 2 * 2.81
+                   = 5.6px which is too heavy for the icon. */
+                vector-effect: non-scaling-stroke;
+            }
+            .handshake-art {
+                transform-origin: 50% 75%;
+                opacity: 0;
+                animation:
+                    handshake-entry 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+                    handshake-shake 4.5s cubic-bezier(0.4, 0, 0.6, 1) 1.4s infinite;
+                will-change: transform, opacity;
+            }
+            @keyframes handshake-entry {
+                0%   { transform: scale(0.88) translateY(18px); opacity: 0; }
+                60%  { opacity: 1; }
+                100% { transform: scale(1) translateY(0); opacity: 1; }
+            }
+            @keyframes handshake-shake {
+                /* Damped natural oscillation. Each peak is smaller
+                   than the last, simulating a real handshake easing
+                   to a stop. Then a calm hold (60-100%) before the
+                   next loop so the motion doesn't feel hyperactive. */
+                0%   { transform: scale(1) translateY(0); }
+                6%   { transform: scale(1) translateY(-8px); }
+                12%  { transform: scale(1) translateY(7px); }
+                18%  { transform: scale(1) translateY(-6px); }
+                24%  { transform: scale(1) translateY(5px); }
+                30%  { transform: scale(1) translateY(-4px); }
+                36%  { transform: scale(1) translateY(3px); }
+                42%  { transform: scale(1) translateY(-2px); }
+                48%  { transform: scale(1) translateY(1px); }
+                55%, 100% { transform: scale(1) translateY(0); }
+            }
+
+            @media (max-width: 960px) {
+                .handshake {
+                    max-width: 240px;
+                    margin-top: clamp(20px, 5vw, 32px);
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .handshake-art {
+                    animation: none;
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+            }
+
             .section-card.visit-map-card {
                 padding: 0;
                 overflow: hidden;

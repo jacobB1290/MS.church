@@ -1817,20 +1817,87 @@ export const homeStyles = (): string => `
                Scoped to #outreach so the schedule-item pattern keeps its
                standard inner padding everywhere else on the site.
                ============================================================ */
-            #outreach .schedule-item.teaser-link-card {
-                padding: 0;
-                gap: 0;
-                overflow: hidden;
+            /* Mobile outreach teaser tweaks: keep the original side-by-
+               side card design but make the image edge-to-edge in its
+               half (no card padding around it, no border-radius on the
+               image — the card's overflow:hidden + border-radius clips
+               the image corners to match the card corner). Text keeps
+               its own padding so it breathes from the card edges. */
+            @media (max-width: 960px) {
+                #outreach .schedule-item.teaser-link-card {
+                    padding: 0;
+                    gap: 0;
+                    overflow: hidden;
+                    align-items: stretch;
+                }
+                #outreach .schedule-item.teaser-link-card .schedule-item-image {
+                    border-radius: 0;
+                    width: 100%;
+                    height: 100%;
+                    aspect-ratio: auto;
+                }
+                #outreach .schedule-item.teaser-link-card .schedule-item-text {
+                    padding: clamp(14px, 4vw, 22px);
+                }
             }
-            #outreach .schedule-item.teaser-link-card .schedule-item-text {
-                padding: clamp(20px, 2.2vw, 28px);
-                display: grid;
-                gap: 12px;
-            }
-            #outreach .schedule-item.teaser-link-card .schedule-item-image {
-                border-radius: 0;
-                height: 100%;
-                width: 100%;
+
+            /* Outreach teaser cards (desktop only — mobile keeps the
+               original side-by-side layout in a section-card). Three
+               cards in one row, each with image-on-top (4:3 landscape,
+               edge-to-edge) and text below. Outer .section-card wrapper
+               is dropped so the cards sit directly on the page
+               background. All three image cells share the same width
+               (forced grid columns) and the same aspect-ratio, so the
+               row is visually uniform. */
+            @media (min-width: 961px) {
+                #outreach .section-card {
+                    background: transparent;
+                    box-shadow: none;
+                    border: none;
+                    backdrop-filter: none;
+                    padding: 0;
+                    border-radius: 0;
+                }
+                #outreach .schedule-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: clamp(20px, 2.4vw, 32px);
+                }
+                #outreach .schedule-item.teaser-link-card {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: auto auto;
+                    padding: 0;
+                    gap: 0;
+                    overflow: hidden;
+                    align-items: stretch;
+                }
+                /* Image area: full card width, 4:3 landscape, always on
+                   top (regardless of nth-child(even) — the global rule
+                   flips order: -1 on even children, which would put
+                   text above the image). */
+                #outreach .schedule-item.teaser-link-card .schedule-item-image,
+                #outreach .schedule-item.teaser-link-card:nth-child(even) .schedule-item-image {
+                    order: -1;
+                    width: 100%;
+                    aspect-ratio: 4 / 3;
+                    border-radius: 0;
+                    height: auto;
+                }
+                #outreach .schedule-item.teaser-link-card .schedule-item-image img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                }
+                #outreach .schedule-item.teaser-link-card .schedule-item-image-placeholder {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                #outreach .schedule-item.teaser-link-card .schedule-item-text {
+                    padding: clamp(18px, 2vw, 26px);
+                    display: grid;
+                    gap: 12px;
+                }
             }
             @media (max-width: 960px) {
                 #outreach .schedule-item.teaser-link-card .schedule-item-text {

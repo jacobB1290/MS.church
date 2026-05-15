@@ -455,6 +455,26 @@ export const homeStyles = (): string => `
                 animation: vt-new-fade-in 280ms cubic-bezier(0.22, 1, 0.36, 1) 80ms backwards;
             }
 
+            /* Disable the view-transition fade on browser back/forward
+               navigation. The head script tags <html class="nav-back-forward">
+               synchronously when navigation.type === 'back_forward'. For
+               these navigations, the new-page snapshot would otherwise be
+               captured at scrollY=0 (before scroll restoration kicks in)
+               and the fade would play against that snapshot — the user
+               sees the hero briefly, then the page jumps to their
+               previous scroll position when the live DOM takes over.
+               Killing the animations here lets the browser do its native
+               paint-hold + scroll-restore in one frame; the page appears
+               at the restored scroll position immediately, no jump.
+               Forward navigation (clicking a link) keeps the fade. */
+            html.nav-back-forward::view-transition-old(root),
+            html.nav-back-forward::view-transition-new(root),
+            html.nav-back-forward::view-transition-old(site-brand),
+            html.nav-back-forward::view-transition-new(site-brand),
+            html.nav-back-forward::view-transition-group(site-brand) {
+                animation: none;
+            }
+
             @media (prefers-reduced-motion: reduce) {
                 ::view-transition-old(root),
                 ::view-transition-new(root),
@@ -633,20 +653,26 @@ export const homeStyles = (): string => `
                sections skip their gentleRise. Extend the same skip to
                every reveal variant so the page is immediately visible
                without the "fade completes, then reveals animate in"
-               jump the user reported. The bypass is !important to
-               win against the variant-specific transition rules
-               below (each variant declares opacity 0 + transform). */
-            html.no-entrance .js-reveals .reveal-eyebrow,
-            html.no-entrance .js-reveals .reveal-rise,
-            html.no-entrance .js-reveals .reveal-rise-slow,
-            html.no-entrance .js-reveals .reveal-tight,
-            html.no-entrance .js-reveals .reveal-from-left,
-            html.no-entrance .js-reveals .reveal-from-right,
-            html.no-entrance .js-reveals .reveal-from-above,
-            html.no-entrance .js-reveals .reveal-photo,
-            html.no-entrance .js-reveals .reveal-power,
-            html.no-entrance .js-reveals .reveal-pop,
-            html.no-entrance .js-reveals .reveal-fill {
+               jump the user reported. The bypass is !important to win
+               against the variant-specific transition rules below (each
+               variant declares opacity 0 + transform).
+               Selector: html.no-entrance.js-reveals (both classes on
+               html, joined without a space). The original variant rules
+               below use ".js-reveals .reveal-X" (descendant) which
+               matches because .js-reveals is on html and .reveal-X is a
+               descendant — so we need the same descendant relationship
+               here for the bypass to override them. */
+            html.no-entrance.js-reveals .reveal-eyebrow,
+            html.no-entrance.js-reveals .reveal-rise,
+            html.no-entrance.js-reveals .reveal-rise-slow,
+            html.no-entrance.js-reveals .reveal-tight,
+            html.no-entrance.js-reveals .reveal-from-left,
+            html.no-entrance.js-reveals .reveal-from-right,
+            html.no-entrance.js-reveals .reveal-from-above,
+            html.no-entrance.js-reveals .reveal-photo,
+            html.no-entrance.js-reveals .reveal-power,
+            html.no-entrance.js-reveals .reveal-pop,
+            html.no-entrance.js-reveals .reveal-fill {
                 opacity: 1 !important;
                 transform: none !important;
                 transition: none !important;

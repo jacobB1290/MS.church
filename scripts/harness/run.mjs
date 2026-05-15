@@ -376,6 +376,46 @@ const FLICKER_SCENARIOS = [
   // Lower count because mobile is the user's environment.
   { name: '110-flicker-nav-home-to-outreach-desktop', viewport: DESKTOP, from: '/',         action: { type: 'click', selector: 'a[href="/outreach"]' }, expectURL: '/outreach' },
   { name: '111-flicker-nav-outreach-back-desktop',    viewport: DESKTOP, from: '/outreach', action: { type: 'click', selector: '.subpage-back' },       expectURL: '/' },
+  // 120s — SCROLL-RESTORE-JUMP scenarios. User is on home scrolled
+  // down to (e.g.) the Outreach teaser cards, clicks one of the
+  // teaser CTAs, then taps BACK on the subpage. Without a fix, the
+  // view-transition snapshot of home is captured at scrollY=0
+  // before scroll restoration kicks in, so the user sees the hero
+  // briefly during the fade, then the page "jumps" to their previous
+  // scroll position when the live DOM takes over. Detection: between
+  // pre + nav samples we expect the brand position (or main top
+  // value) to stay consistent with the scrollY that was active
+  // before navigation — never resetting to 0 mid-flight.
+  {
+    name: '120-flicker-back-scrollrestore-jump-mobile',
+    viewport: MOBILE,
+    chain: [
+      { type: 'goto', url: '/' },
+      { type: 'scroll', y: 1800 },
+      { type: 'click', selector: 'a[href="/outreach"]' },
+      { type: 'wait', ms: 600 },
+    ],
+    // Then trigger back. expectScrollY tells the test what scroll
+    // position the destination (home) should be at when the fade
+    // completes — any sample during nav at a substantially smaller
+    // scrollY is a jump.
+    backAction: true,
+    expectScrollY: 1800,
+    expectScrollTolerance: 200,
+  },
+  {
+    name: '121-flicker-back-scrollrestore-jump-desktop',
+    viewport: DESKTOP,
+    chain: [
+      { type: 'goto', url: '/' },
+      { type: 'scroll', y: 2200 },
+      { type: 'click', selector: 'a[href="/outreach"]' },
+      { type: 'wait', ms: 600 },
+    ],
+    backAction: true,
+    expectScrollY: 2200,
+    expectScrollTolerance: 250,
+  },
 ]
 
 // ============================================================
@@ -1855,6 +1895,74 @@ async function runFlickerScenarios(launcher, report) {
           prev = t
           await collectAt('load', t)
         }
+      } else if (s.chain && s.backAction) {
+        // SCROLL-RESTORE BACK NAVIGATION. Set up scroll position on
+        // the source page, navigate forward to a subpage, then test
+        // the back navigation for the "hero shown then jump to saved
+        // scroll" flicker class.
+        for (const step of s.chain) {
+          if (step.type === 'goto') {
+            await withTimeout(page.goto(BASE + step.url, { waitUntil: 'load' }), 10_000, `goto ${step.url}`)
+            await waitForSettled(page)
+          } else if (step.type === 'scroll') {
+            await page.evaluate((y) => window.scrollTo(0, y), step.y)
+            await page.waitForTimeout(200)
+          } else if (step.type === 'click') {
+            await page.click(step.selector)
+            await waitForSettled(page)
+          } else if (step.type === 'wait') {
+            await page.waitForTimeout(step.ms)
+          }
+        }
+        // Baseline sample on the subpage (pre-back).
+        await collectAt('pre', 0)
+        // Trigger goBack and sample.
+        const fireP = page.goBack().catch(() => {})
+        let prev = 0
+        for (const t of NAV_SAMPLE_TIMES_MS) {
+          const wait = t - prev
+          if (wait > 0) await page.waitForTimeout(wait)
+          prev = t
+          await collectAt('back', t)
+        }
+        try { await withTimeout(fireP, 5000, 'goBack settle').catch(() => {}) } catch {}
+        await page.waitForTimeout(200)
+        await collectAt('settled', 0)
+        // SCROLL-RESTORE JUMP DETECTION. The "hero shown then jump"
+        // flicker shows up as: during the back navigation, an early
+        // sample reads scrollY ≈ 0 (the new page snapshot was captured
+        // before scroll restoration kicked in), then a later sample
+        // reads scrollY at the restored position. We don't enforce
+        // the absolute final scroll value — Chromium headless can
+        // restore to a position different from what we set in the
+        // chain (events / images / fonts loading after first scrollTo
+        // can shift the page height). What matters is consistency:
+        // every sample on the back-nav destination should be close to
+        // the settled scrollY, not at scrollY ≈ 0 while the settled
+        // value is several hundred pixels down.
+        const settled = samples[samples.length - 1]
+        const settledY = settled ? settled.scrollY : 0
+        if (settledY > 400) {
+          // Only run the check when the destination scroll is
+          // meaningfully far from 0; otherwise an "early sample at 0"
+          // is the actual destination state, not a flicker.
+          let jumpFrames = 0
+          const jumpTags = []
+          for (const sample of samples) {
+            if (sample.label !== 'back') continue
+            // Only consider samples after the URL has committed to
+            // the destination (back-nav target). On the source side
+            // the URL is /outreach (etc.); after commit the URL is /.
+            if (sample.url !== '/' && !sample.url.startsWith('/?') && !sample.url.startsWith('/#')) continue
+            if (sample.scrollY < settledY - 400) {
+              jumpFrames++
+              if (jumpTags.length < 3) jumpTags.push(`${sample.t}ms:${sample.scrollY}`)
+            }
+          }
+          if (jumpFrames > 0) {
+            issues.push(`scroll-restore-jump: ${jumpFrames} sample(s) at scrollY << settled (${jumpTags.join(', ')}; settled=${settledY})`)
+          }
+        }
       } else if (s.from) {
         // CROSS-DOCUMENT NAVIGATION. Open `from`, optionally
         // pre-scroll, optionally wait for a settled state, then
@@ -2004,15 +2112,28 @@ async function runFlickerScenarios(launcher, report) {
       // 4. .nav-shell.scrolled-mobile applied late — when the user
       //    has restored scroll position. The brand was visible on
       //    first paint, then suddenly hidden by scrolled-mobile.
-      //    Track samples where scrolledMobile state flips.
+      //    Track samples where scrolledMobile state flips between
+      //    settled (not-mid-load) samples. A boolean flip that happens
+      //    within the first ~100ms of page load is OK — it's the
+      //    head-script's scroll listener catching scroll-restoration
+      //    fired after parse-end, and the v1.49.24 CSS only transitions
+      //    background + box-shadow + opacity so the visible state is
+      //    consistent throughout. Only flag flips that happen LATE
+      //    (after 200ms) since those would imply a visible animation.
       let navShellFlips = 0
       let prevScrolled = null
+      let prevSampleT = -1
       for (const sample of samples) {
         if (sample.navShell) {
           if (prevScrolled !== null && prevScrolled !== sample.navShell.scrolledMobile) {
-            navShellFlips++
+            // Only count this as a flip if it happened past the early
+            // settle window. Early flips are the head scroll listener
+            // catching restored scroll — fine because CSS doesn't
+            // transition the geometry properties.
+            if (sample.t > 200 && prevSampleT > 200) navShellFlips++
           }
           prevScrolled = sample.navShell.scrolledMobile
+          prevSampleT = sample.t
         }
       }
       if (navShellFlips > 0 && (s.scrollY || s.preScroll)) {

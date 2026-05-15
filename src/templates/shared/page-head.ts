@@ -35,13 +35,26 @@ export function pageHead({
             (function(){
                 var html = document.documentElement;
                 var skip=false;
+                var isBackForward=false;
                 if(location.hash) skip=true;
                 try{
                     var n=performance.getEntriesByType('navigation')[0];
-                    if(n&&(n.type==='back_forward'||n.type==='reload')) skip=true;
+                    if(n&&n.type==='back_forward'){ skip=true; isBackForward=true; }
+                    if(n&&n.type==='reload') skip=true;
                 }catch(e){}
                 if(document.referrer&&document.referrer.indexOf(location.origin)===0) skip=true;
                 if(skip) html.classList.add('no-entrance');
+                // Skip the view-transition fade on back/forward so the new
+                // page renders at its restored scroll position from the
+                // first paint (see home-head.ts for the rationale).
+                if (isBackForward) html.classList.add('nav-back-forward');
+                addEventListener('pagereveal', function(e){
+                    try {
+                        if (e.viewTransition && html.classList.contains('nav-back-forward')) {
+                            e.viewTransition.skipTransition();
+                        }
+                    } catch (err) {}
+                });
                 // Tag js-reveals synchronously so reveal hiding CSS lands
                 // before first paint (no FOUC).
                 html.classList.add('js-reveals');

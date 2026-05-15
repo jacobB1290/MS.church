@@ -55,13 +55,37 @@ export const homeHead = (): string => {
             (function(){
                 var html = document.documentElement;
                 var skip=false;
+                var isBackForward=false;
                 if(location.hash) skip=true;
                 try{
                     var n=performance.getEntriesByType('navigation')[0];
-                    if(n&&(n.type==='back_forward'||n.type==='reload')) skip=true;
+                    if(n&&n.type==='back_forward'){ skip=true; isBackForward=true; }
+                    if(n&&n.type==='reload') skip=true;
                 }catch(e){}
                 if(document.referrer&&document.referrer.indexOf(location.origin)===0) skip=true;
                 if(skip) html.classList.add('no-entrance');
+                // Tag back-forward navigations so the view-transition CSS
+                // can disable itself for these specifically. Cross-doc
+                // @view-transition would otherwise capture the new-page
+                // snapshot at scrollY=0 (before browser scroll restoration
+                // kicks in), then run the fade against that snapshot —
+                // the user sees the hero briefly, then the page jumps to
+                // their previous scroll position when the live DOM takes
+                // over. Skipping the transition for back/forward lets the
+                // browser do its native paint-hold + scroll-restore in
+                // one beat, with no perceived jump.
+                if (isBackForward) html.classList.add('nav-back-forward');
+                // Belt-and-suspenders: also call skipTransition() via the
+                // new pagereveal event (Chrome 124+, iOS Safari 18+) if
+                // available. This is the spec'd way to bail out of a
+                // cross-document view-transition mid-flight.
+                addEventListener('pagereveal', function(e){
+                    try {
+                        if (e.viewTransition && html.classList.contains('nav-back-forward')) {
+                            e.viewTransition.skipTransition();
+                        }
+                    } catch (err) {}
+                });
                 // Always tag js-reveals synchronously so the hidden-state
                 // CSS rule applies on first paint. The observer adds
                 // .is-revealed; the .no-entrance CSS bypass treats every

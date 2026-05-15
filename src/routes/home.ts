@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.19 - /visit handshake gets a "two people walking toward each other" approach animation. Two clipped halves of the SVG slide in from off-screen, meet at center to form the complete illustration, then shake naturally — both halves stay in perfect sync via identical animations. -->
+<!-- v1.49.20 - Revert the /visit handshake to single-illustration entry animation (v1.49.18 design). Tried two-separate-hand approach via both clip-path halves and custom hand-drawn SVGs; the clip approach was rejected (user wanted actual separate SVGs), and my custom hand drawings landed below the craft bar (looked like loaves/socks). Honest acknowledgment that drawing anatomically-recognizable separate hand illustrations from scratch in raw SVG is beyond reliable capability without illustration tooling. Reverted to the simple 1.4s scale-up entry + 4.5s damped natural-shake loop that works. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

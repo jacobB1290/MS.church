@@ -2147,55 +2147,25 @@ export const homeStyles = (): string => `
                /visit PAGE — Map card + What-to-Expect service-flow timeline
                ============================================================ */
 
-            /* /visit intro — animated handshake (v1.49.19).
-               Two clipped copies of the same SVG sit absolutely
-               positioned over each other. The left copy is clipped
-               to show only its left half (inset(0 50% 0 0)) and the
-               right copy is clipped to its right half. Each half
-               slides in from off-screen via translateX, meeting at
-               the center to form the complete illustration. After
-               the approach, the .handshake-art group inside each
-               half plays the shared shake animation — both copies
-               run identical timings so the halves shake in lockstep
-               and appear as one seamless illustration.
-
-               This avoids hand-drawing two separate complete hand
-               outlines (each half is technically a slice of the
-               final image), but the motion reads as "two hands
-               walking toward each other and meeting." */
+            /* /visit intro — line-art handshake (v1.49.20).
+               Single locked-grip illustration. Entry animation scales
+               the illustration up from 0.88 with a soft Y drop and
+               opacity fade-in over 1.4s. After entry, a damped natural-
+               shake loop runs infinitely. (Attempted a two-separate-hand
+               approach animation in v1.49.19-20 but couldn't deliver
+               hand drawings at the required craft bar — reverted to
+               this simpler entry which actually works.) */
             .handshake {
-                position: relative;
                 width: 100%;
                 max-width: 360px;
-                aspect-ratio: 254 / 180;
                 margin: clamp(28px, 4vw, 44px) auto 0;
                 color: #1a1a2e;
-                /* Gold-tinted shadow applied to the container so it
-                   stays consistent across both halves. */
-                filter: drop-shadow(0 1.5px 1.5px rgba(200, 152, 96, 0.18));
             }
-            .handshake-half {
-                position: absolute;
-                inset: 0;
-                will-change: transform, opacity;
-            }
-            .handshake-half svg {
+            .handshake svg {
                 display: block;
                 width: 100%;
-                height: 100%;
+                height: auto;
                 overflow: visible;
-            }
-            .handshake-half-left {
-                /* Show only the left half of the SVG */
-                clip-path: inset(0 50% 0 0);
-                opacity: 0;
-                animation: handshake-approach-left 2s cubic-bezier(0.22, 0.6, 0.36, 1) forwards;
-            }
-            .handshake-half-right {
-                /* Show only the right half */
-                clip-path: inset(0 0 0 50%);
-                opacity: 0;
-                animation: handshake-approach-right 2s cubic-bezier(0.22, 0.6, 0.36, 1) forwards;
             }
             .handshake-stroke {
                 fill: none;
@@ -2205,29 +2175,34 @@ export const homeStyles = (): string => `
                 stroke-linejoin: round;
                 vector-effect: non-scaling-stroke;
             }
-            /* Shake animation lives on .handshake-art (inside BOTH
-               halves) so the two clipped halves stay in sync —
-               identical animation timing applied to identical
-               elements. */
             .handshake-art {
                 transform-origin: 50% 75%;
-                animation: handshake-shake 4.5s cubic-bezier(0.4, 0, 0.6, 1) 2s infinite;
-                will-change: transform;
+                opacity: 0;
+                filter: drop-shadow(0 1.5px 1.5px rgba(200, 152, 96, 0.18));
+                animation:
+                    handshake-entry 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+                    handshake-shake 4.5s cubic-bezier(0.4, 0, 0.6, 1) 1.4s infinite;
+                will-change: transform, opacity;
             }
-
-            /* Approach: each half starts off-screen on its side and
-               slides to translateX(0). The opacity fades in a beat
-               after motion starts so the halves emerge from the
-               edges rather than instantly appearing. */
-            @keyframes handshake-approach-left {
-                0%   { transform: translateX(-90%); opacity: 0; }
-                18%  { opacity: 1; }
-                100% { transform: translateX(0); opacity: 1; }
+            @keyframes handshake-entry {
+                0%   { transform: scale(0.88) translateY(18px); opacity: 0; }
+                60%  { opacity: 1; }
+                100% { transform: scale(1) translateY(0); opacity: 1; }
             }
-            @keyframes handshake-approach-right {
-                0%   { transform: translateX(90%); opacity: 0; }
-                18%  { opacity: 1; }
-                100% { transform: translateX(0); opacity: 1; }
+            @keyframes handshake-shake {
+                /* Damped natural oscillation. Each peak smaller than
+                   the last, simulating a real handshake easing to a
+                   stop. Calm hold (55-100%) before the next loop. */
+                0%   { transform: scale(1) translateY(0); }
+                6%   { transform: scale(1) translateY(-8px); }
+                12%  { transform: scale(1) translateY(7px); }
+                18%  { transform: scale(1) translateY(-6px); }
+                24%  { transform: scale(1) translateY(5px); }
+                30%  { transform: scale(1) translateY(-4px); }
+                36%  { transform: scale(1) translateY(3px); }
+                42%  { transform: scale(1) translateY(-2px); }
+                48%  { transform: scale(1) translateY(1px); }
+                55%, 100% { transform: scale(1) translateY(0); }
             }
 
             @keyframes handshake-shake {
@@ -2255,15 +2230,10 @@ export const homeStyles = (): string => `
             }
 
             @media (prefers-reduced-motion: reduce) {
-                .handshake-half-left,
-                .handshake-half-right,
                 .handshake-art {
                     animation: none;
-                }
-                .handshake-half-left,
-                .handshake-half-right {
                     opacity: 1;
-                    transform: translateX(0);
+                    transform: scale(1) translateY(0);
                 }
             }
 

@@ -157,7 +157,7 @@ export const homeBody = (): string => `
                                     </picture>
                                 </div>
                             </a>
-                            <a class="schedule-item teaser-link-card reveal-rise" href="/outreach#cooking-ministry">
+                            <a class="schedule-item teaser-link-card reveal-rise" href="/outreach#meals-hospitality">
                                 <div class="schedule-item-text">
                                     <span>Ministry</span>
                                     <h3>Cooking Ministry</h3>
@@ -172,7 +172,7 @@ export const homeBody = (): string => `
                                     </picture>
                                 </div>
                             </a>
-                            <a class="schedule-item teaser-link-card reveal-from-right" href="/outreach#community-breakfast">
+                            <a class="schedule-item teaser-link-card reveal-from-right" href="/outreach#meals-hospitality">
                                 <div class="schedule-item-text">
                                     <span>Ministry</span>
                                     <h3>Community Breakfast</h3>

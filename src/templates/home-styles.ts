@@ -2423,21 +2423,13 @@ export const homeStyles = (): string => `
                 }
             }
 
-            /* Scroll-buffer note: the combined meals section is shorter
-               than the old pair of separate cooking + breakfast sections
-               it replaces. On mobile especially the breakfast article
-               ends up close to the end of the document, which means a
-               hash-jump to #community-breakfast can't put the article
-               at the standard 75px subpage offset because the page
-               isn't tall enough to scroll that far. Padding-bottom on
-               the section adds the deterministic buffer needed so both
-               anchors (cooking + breakfast) can land at their canonical
-               offset (90 desktop / 75 mobile). Clamp scales the buffer
-               between viewport sizes — bigger on phones where breakfast
-               is naturally deeper in the page. */
-            #meals-hospitality {
-                padding-bottom: clamp(140px, 30vh, 320px);
-            }
+            /* v1.49.34: the home teaser cards now both link to
+               #meals-hospitality (the section top) rather than the
+               inner #cooking-ministry / #community-breakfast articles,
+               so the deterministic deep-link scroll buffer that used
+               to live here is no longer needed. The inner IDs are kept
+               in place for any external deep links, but they accept
+               the natural document height — no padding-bottom. */
             .ministries-pair {
                 display: flex;
                 flex-direction: column;

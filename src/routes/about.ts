@@ -44,9 +44,12 @@ const ABOUT_JSON_LD = JSON.stringify({
 
 export function registerAboutRoute(app: Hono) {
   app.get('/about', (c) => {
-    c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+    // Long CDN cache: /about content is essentially static (mission, beliefs
+    // summary, leadership). Stale-while-revalidate keeps it instant under
+    // edge while we replace on next deploy.
+    c.header('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.35 - About page: combine Our Mission + Our Story into one section using the editorial split layout (.about-content), no section-card frame -->
+<!-- v1.49.36 - About page: longer CDN cache (s-maxage=600/swr=86400) and benefits from shared Speculation Rules prerender -->
 <html lang="en">
 ${pageHead({
   title: 'About Morning Star Christian Church | Boise, Idaho',

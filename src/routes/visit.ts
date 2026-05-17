@@ -48,7 +48,8 @@ const VISIT_JSON_LD = JSON.stringify({
 
 export function registerVisitRoute(app: Hono) {
   app.get('/visit', (c) => {
-    c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+    // /visit is essentially static (map embed, service flow, Sunday school).
+    c.header('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400')
     return c.html(`<!DOCTYPE html>
 <!-- v1.44.0 - Plan Your Visit page -->
 <html lang="en">

@@ -29,7 +29,8 @@ const BELIEFS_JSON_LD = JSON.stringify({
 
 export function registerBeliefsRoute(app: Hono) {
   app.get('/beliefs', (c) => {
-    c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+    // Statement of Beliefs effectively never changes; cache aggressively.
+    c.header('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400')
     return c.html(`<!DOCTYPE html>
 <!-- v1.49.32 - Statement of Beliefs page (11 convictions, adopted from parent church) -->
 <html lang="en">

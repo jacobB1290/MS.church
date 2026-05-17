@@ -1,4 +1,5 @@
 import { homeStyles } from './home-styles.js'
+import { prefetchSnippet } from './shared/prefetch.js'
 
 function getNextSundayISO(): { start: string; end: string } {
     const now = new Date()
@@ -232,6 +233,13 @@ export const homeHead = (): string => {
 
         <!-- Preload LCP hero image -->
         <link rel="preload" as="image" href="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" fetchpriority="high">
+
+        <!-- Eager prefetch of the primary hero CTA target. Speculation
+             Rules (below) covers hover/touch intent for /about, /outreach,
+             /beliefs, etc. — but /visit is the home page's "Plan a Visit"
+             button, the single highest-confidence next page, so we
+             pay the bandwidth up front to guarantee an instant tap. -->
+        <link rel="prefetch" href="/visit" as="document">
 
         <!-- Schema.org Structured Data for Rich Results -->
         <script type="application/ld+json">
@@ -604,6 +612,7 @@ export const homeHead = (): string => {
             ]
         }
         </script>
+${prefetchSnippet()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

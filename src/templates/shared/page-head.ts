@@ -7,6 +7,7 @@
 // stays SEO-consistent.
 
 import { homeStyles } from '../home-styles.js'
+import { prefetchSnippet } from './prefetch.js'
 
 const DEFAULT_OG_IMAGE = 'https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025'
 
@@ -171,6 +172,7 @@ export function pageHead({
         </style>
 
         ${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ''}
+${prefetchSnippet()}
 
         <!-- Vercel Analytics & Speed Insights (disabled with ?notrack=true parameter) -->
         <script>

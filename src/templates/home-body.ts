@@ -166,7 +166,7 @@ export const homeBody = (): string => `
                                     <picture>
                                         <source srcset="/static/cooking-ministry.avif" type="image/avif">
                                         <source srcset="/static/cooking-ministry.webp" type="image/webp">
-                                        <img src="/static/cooking-ministry.jpg" alt="Morning Star volunteer preparing fresh vegetables for the homeless-shelter cooking ministry" width="1000" height="1333" loading="lazy" decoding="async" style="object-position: 30% 62%;">
+                                        <img src="/static/cooking-ministry.jpg" alt="Morning Star volunteer preparing fresh vegetables for the homeless-shelter cooking ministry" width="1000" height="1333" loading="lazy" decoding="async" style="object-position: 30% 88%;">
                                     </picture>
                                 </div>
                             </a>

@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.32 - Adds /beliefs (full Statement of Beliefs, 11 doctrinal points with Scripture refs adopted from parent church) and "Read Our Full Statement of Beliefs" CTA on /about. See src/index.tsx for the full change log. -->
+<!-- v1.49.33 - /about Core Convictions cards (Scripture, Jesus, Community) reworded to be explicitly grounded in the parent church's 11-point statement. See src/index.tsx for the full change log. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

@@ -55,14 +55,14 @@ export const aboutBody = (): string => `
                                 <div class="schedule-item-text">
                                     <span>Scripture</span>
                                     <h3>Bible-Believing, Bible-Teaching</h3>
-                                    <p>The Bible is the inspired, authoritative Word of God — and we teach the whole of it. No watered-down version, no skipped pages. The whole counsel of God, in grace and truth.</p>
+                                    <p>The Bible is the inspired, the only infallible, authoritative Word of God — and we teach the whole of it. No watered-down version, no skipped pages. The whole counsel of God, in grace and truth.</p>
                                 </div>
                             </article>
                             <article class="schedule-item belief-item">
                                 <div class="schedule-item-text">
                                     <span>Jesus</span>
                                     <h3>Lord and Savior</h3>
-                                    <p>Jesus Christ — God's Son, crucified, risen, and coming again — is the only Lord and Savior. Salvation is found in him alone, and a real, daily relationship with him is the heart of our faith.</p>
+                                    <p>Jesus Christ — God's Son, virgin-born, crucified for us, bodily risen, ascended, and coming again in power and glory — is the only Lord and Savior. Salvation is found in him alone, and a real, daily relationship with him is the heart of our faith.</p>
                                 </div>
                             </article>
                             <article class="schedule-item belief-item">
@@ -76,7 +76,7 @@ export const aboutBody = (): string => `
                                 <div class="schedule-item-text">
                                     <span>Community</span>
                                     <h3>The Church Family</h3>
-                                    <p>We gather, we eat, we pray, we serve, we carry each other — and we welcome anyone who wants in.</p>
+                                    <p>All true believers are one body in Christ — and that's what we live out together. We gather, we eat, we pray, we serve, we carry each other, and we welcome anyone who wants in.</p>
                                 </div>
                             </article>
                         </div>

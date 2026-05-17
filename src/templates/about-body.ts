@@ -17,7 +17,7 @@ export const aboutBody = (): string => `
                 <section id="about-intro">
                     <span class="section-eyebrow">About Us</span>
                     <h1 class="section-heading">Mending the Broken in Boise, Idaho</h1>
-                    <p class="section-lead">Morning Star Christian Church is a welcoming nondenominational community in the heart of Boise — where every story, every age, and every burden is met with grace, scripture, and a seat at the table.</p>
+                    <p class="section-lead">Morning Star Christian Church is a welcoming, Bible-believing community in the heart of Boise — where every story, every age, and every burden is met with grace, scripture, and a seat at the table.</p>
                 </section>
 
                 <section id="mission">
@@ -54,15 +54,15 @@ export const aboutBody = (): string => `
                             <article class="schedule-item belief-item">
                                 <div class="schedule-item-text">
                                     <span>Scripture</span>
-                                    <h3>The Word of God</h3>
-                                    <p>The Bible is the inspired, authoritative Word of God and the final rule of faith and practice.</p>
+                                    <h3>Bible-Believing, Bible-Teaching</h3>
+                                    <p>The Bible is the inspired, authoritative Word of God — and we teach the whole of it. No watered-down version, no skipped pages. The whole counsel of God, in grace and truth.</p>
                                 </div>
                             </article>
                             <article class="schedule-item belief-item">
                                 <div class="schedule-item-text">
                                     <span>Jesus</span>
-                                    <h3>The Son of God</h3>
-                                    <p>Jesus lived, died, rose again, and is coming back — and salvation is found in him alone.</p>
+                                    <h3>Lord and Savior</h3>
+                                    <p>Jesus Christ — God's Son, crucified, risen, and coming again — is the only Lord and Savior. Salvation is found in him alone, and a real, daily relationship with him is the heart of our faith.</p>
                                 </div>
                             </article>
                             <article class="schedule-item belief-item">

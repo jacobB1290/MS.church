@@ -20,7 +20,7 @@ const ABOUT_JSON_LD = JSON.stringify({
         '@id': 'https://ms.church/#church',
         name: 'Morning Star Christian Church',
         description:
-          'A welcoming nondenominational church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study, youth service, and outreach. All are welcome — mending the broken through faith, community, and service.',
+          'A welcoming, Bible-believing church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study, youth service, and outreach. We confess Jesus Christ as Lord and Savior and teach the whole counsel of Scripture — mending the broken through faith, community, and service.',
         url: 'https://ms.church',
         address: {
           '@type': 'PostalAddress',
@@ -46,12 +46,12 @@ export function registerAboutRoute(app: Hono) {
   app.get('/about', (c) => {
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.42.1 - About page (refined design system) -->
+<!-- v1.49.31 - About page: beliefs cards updated (Bible-Believing/Bible-Teaching + Lord and Savior), intro reframed as Bible-believing community -->
 <html lang="en">
 ${pageHead({
   title: 'About Morning Star Christian Church | Boise, Idaho',
   description:
-    "Learn about Morning Star Christian Church in Boise, Idaho — our mission, our story, what we believe, and how to plan your first Sunday visit. A welcoming nondenominational church mending the broken through faith and community.",
+    "Learn about Morning Star Christian Church in Boise, Idaho — our mission, our story, what we believe, and how to plan your first Sunday visit. A welcoming, Bible-believing church mending the broken through faith and community.",
   canonical: 'https://ms.church/about',
   ogImageAlt: 'About Morning Star Christian Church in Boise, Idaho',
   jsonLd: ABOUT_JSON_LD,

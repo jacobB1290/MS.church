@@ -132,7 +132,7 @@ export const homeBody = (): string => `
                             </picture>
                         </div>
                         <div class="about-text">
-                            <p class="about-paragraph reveal-rise-slow">Morning Star is a small, nondenominational community where every story, every age, and every burden is met with grace and a seat at the table. We exist to point people to Jesus and to mend the broken — through faith, family, and serving the city we love.</p>
+                            <p class="about-paragraph reveal-rise-slow">Morning Star is a small, Bible-believing community where every story, every age, and every burden is met with grace and a seat at the table. We confess Jesus Christ as Lord and Savior, teach the whole counsel of Scripture, and exist to mend the broken — through faith, family, and serving the city we love.</p>
                             <a class="event-link-btn about-cta reveal-fill" href="/about">Learn More About Us</a>
                         </div>
                     </div>

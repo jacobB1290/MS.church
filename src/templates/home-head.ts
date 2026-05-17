@@ -173,8 +173,8 @@ export const homeHead = (): string => {
         <!-- Primary Meta Tags -->
         <title>Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM</title>
         <meta name="title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
-        <meta name="description" content="Morning Star Christian Church is a welcoming nondenominational church in Boise, Idaho. Sundays at 9 AM with free community breakfast, Bible study Tuesdays & Thursdays, youth service Fridays. Sunday School, monthly homeless-shelter cooking, and community outreach — mending the broken through faith and community.">
-        <meta name="keywords" content="Morning Star Christian Church, church in Boise Idaho, Christian church Boise, nondenominational church Boise, churches near me Boise, Sunday worship service Boise, Bible study Boise, community church Boise Idaho, Boise churches, church near me, best church in Boise, new church Boise, family church Boise, Sunday service Boise Idaho">
+        <meta name="description" content="Morning Star Christian Church is a welcoming, Bible-believing church in Boise, Idaho. Sundays at 9 AM with free community breakfast, Bible study Tuesdays & Thursdays, youth service Fridays. We confess Jesus Christ as Lord and Savior and teach the whole counsel of Scripture — mending the broken through faith and community.">
+        <meta name="keywords" content="Morning Star Christian Church, church in Boise Idaho, Christian church Boise, Bible-believing church Boise, nondenominational church Boise, churches near me Boise, Sunday worship service Boise, Bible study Boise, community church Boise Idaho, Boise churches, church near me, best church in Boise, new church Boise, family church Boise, Sunday service Boise Idaho">
         <meta name="author" content="Morning Star Christian Church">
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
         <meta name="googlebot" content="index, follow">
@@ -190,7 +190,7 @@ export const homeHead = (): string => {
         <meta property="og:type" content="website">
         <meta property="og:url" content="https://ms.church/">
         <meta property="og:title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
-        <meta property="og:description" content="A welcoming nondenominational church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study groups, and community outreach. All are welcome!">
+        <meta property="og:description" content="A welcoming, Bible-believing church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study groups, and community outreach. Rooted in Scripture, centered on Jesus — all are welcome!">
         <meta property="og:image" content="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025">
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
@@ -202,7 +202,7 @@ export const homeHead = (): string => {
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:url" content="https://ms.church/">
         <meta name="twitter:title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
-        <meta name="twitter:description" content="A welcoming nondenominational church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study groups, and community outreach.">
+        <meta name="twitter:description" content="A welcoming, Bible-believing church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study groups, and community outreach. Rooted in Scripture, centered on Jesus.">
         <meta name="twitter:image" content="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025">
         <meta name="twitter:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
 
@@ -243,7 +243,7 @@ export const homeHead = (): string => {
                     "@id": "https://ms.church/#church",
                     "name": "Morning Star Christian Church",
                     "alternateName": ["Morning Star Church", "MS Church Boise"],
-                    "description": "Morning Star Christian Church is a welcoming nondenominational Christian church in Boise, Idaho. Join us Sundays at 9 AM for worship, free community breakfast, Tuesday Bible reading, Thursday Bible study, and Friday youth service. We are dedicated to mending the broken through faith, community, and service.",
+                    "description": "Morning Star Christian Church is a welcoming, Bible-believing Christian church in Boise, Idaho. We confess Jesus Christ as Lord and Savior and teach the whole counsel of Scripture — grace and truth, with no watered-down version. Join us Sundays at 9 AM for worship, free community breakfast, Tuesday Bible reading, Thursday Bible study, and Friday youth service. We are dedicated to mending the broken through faith, community, and service.",
                     "url": "https://ms.church",
                     "email": "morningstarchurchboise@gmail.com",
                     "contactPoint": {
@@ -385,7 +385,7 @@ export const homeHead = (): string => {
                     "@id": "https://ms.church/#website",
                     "url": "https://ms.church",
                     "name": "Morning Star Christian Church",
-                    "description": "Official website of Morning Star Christian Church — a nondenominational Christian church in Boise, Idaho",
+                    "description": "Official website of Morning Star Christian Church — a Bible-believing Christian church in Boise, Idaho",
                     "publisher": {
                         "@id": "https://ms.church/#church"
                     },
@@ -407,7 +407,7 @@ export const homeHead = (): string => {
                     "about": {
                         "@id": "https://ms.church/#church"
                     },
-                    "description": "Morning Star Christian Church is a welcoming nondenominational church in Boise, Idaho. Sunday worship at 9 AM, Tuesday Bible reading, Thursday Bible study, Friday youth service, community outreach, and free breakfast. All are welcome.",
+                    "description": "Morning Star Christian Church is a welcoming, Bible-believing church in Boise, Idaho. Sunday worship at 9 AM, Tuesday Bible reading, Thursday Bible study, Friday youth service, community outreach, and free breakfast. Rooted in Scripture, centered on Jesus — all are welcome.",
                     "inLanguage": "en-US",
                     "potentialAction": [
                         {
@@ -569,10 +569,10 @@ export const homeHead = (): string => {
                         },
                         {
                             "@type": "Question",
-                            "name": "Is Morning Star Christian Church a nondenominational church?",
+                            "name": "What does Morning Star Christian Church believe?",
                             "acceptedAnswer": {
                                 "@type": "Answer",
-                                "text": "Yes, Morning Star Christian Church is a welcoming nondenominational Christian church in Boise, Idaho. All are welcome regardless of background."
+                                "text": "Morning Star is a welcoming, Bible-believing Christian church in Boise, Idaho. We confess Jesus Christ as Lord and Savior, teach the whole counsel of Scripture (grace and truth, with no watered-down version), and believe salvation is by grace through faith alone. All are welcome — every seat at our table is a free one."
                             }
                         },
                         {

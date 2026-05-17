@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.30 - Drop real images into the Cooking Ministry teaser and the About teaser on the home page. Modern browsers get AVIF/WebP via <picture>; old browsers fall back to JPEG. Cooking object-position 30% 62% keeps volunteer + food in frame at every viewport. About placeholder styling scoped via :not(:has(picture, img)). See src/index.tsx for the full change log. -->
+<!-- v1.49.31 - Align beliefs + identity copy with the parent church (morningstar-church.com). /about beliefs section: "Bible-Believing, Bible-Teaching" + "Lord and Savior" cards; "nondenominational" replaced with "Bible-believing" in descriptive copy; FAQ rewritten as "What does Morning Star believe?" See src/index.tsx for the full change log. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

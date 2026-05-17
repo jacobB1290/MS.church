@@ -1252,6 +1252,11 @@ export const homeStyles = (): string => `
                 overflow: hidden;
             }
 
+            .schedule-item-image picture {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
             .schedule-item-image img {
                 width: 100%;
                 height: 100%;
@@ -1862,9 +1867,12 @@ export const homeStyles = (): string => `
                 overflow: hidden;
                 box-shadow: 0 20px 60px rgba(26, 26, 46, 0.10),
                             0 6px 16px rgba(26, 26, 46, 0.04);
-                /* Placeholder styling (same gradient + dashed border as
-                   .schedule-item-image-placeholder so it reads as "image
-                   goes here" the way other placeholders on the page do). */
+            }
+            /* Placeholder styling — gradient + dashed border + centered
+               SVG. Only applied when no <picture>/<img> child is present
+               so the gradient and dashed border don't show through a
+               real image. */
+            .about-image:not(:has(picture, img)) {
                 background:
                     linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
@@ -1879,12 +1887,19 @@ export const homeStyles = (): string => `
                 min-width: 56px;
                 height: auto;
             }
+            .about-image picture {
+                position: absolute;
+                inset: 0;
+                display: block;
+            }
+            .about-image picture img,
             .about-image > img {
                 position: absolute;
                 inset: 0;
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                display: block;
             }
             .about-text {
                 display: flex;

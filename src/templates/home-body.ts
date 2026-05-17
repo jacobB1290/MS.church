@@ -108,6 +108,33 @@ export const homeBody = (): string => `
                     </div>
                 </section>
 
+                <section class="beliefs" id="beliefs" style="animation-delay: 0.25s">
+                    <span class="section-eyebrow">What We Believe</span>
+                    <h2 class="section-heading">Rooted in Scripture. Centered on Jesus.</h2>
+                    <p class="section-lead">
+                        Morning Star is a Bible-believing church. We don't water down the Word of God — we teach the whole counsel of Scripture, with grace and truth, for everyone who walks through our doors.
+                    </p>
+                    <div class="section-card">
+                        <div class="schedule-grid">
+                            <article class="schedule-item">
+                                <span>Our Foundation</span>
+                                <h3>Jesus is Lord and Savior</h3>
+                                <p>We confess Jesus Christ — crucified, risen, and reigning — as the only Lord and Savior. Everything we are and everything we do is built on Him.</p>
+                            </article>
+                            <article class="schedule-item">
+                                <span>The Whole Word</span>
+                                <h3>Bible-Believing & Bible-Teaching</h3>
+                                <p>Scripture is the living Word of God. We teach the full counsel — heaven and hell, grace and truth, mercy and repentance — without watering anything down.</p>
+                            </article>
+                            <article class="schedule-item">
+                                <span>Our Purpose</span>
+                                <h3>A Real Relationship with God</h3>
+                                <p>Faith isn't a ritual; it's a daily, living relationship with God through Jesus. We exist to help people find healing, purpose, and belonging in Him.</p>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+
                 <section class="outreach" id="outreach" style="animation-delay: 0.3s">
                     <span class="section-eyebrow">Outreach</span>
                     <h2 class="section-heading">Community Outreach & Events in Boise, Idaho</h2>

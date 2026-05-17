@@ -1,7 +1,31 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.24.0
+## 🔢 CURRENT VERSION: v1.39.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.39.0 - What We Believe Section
+**Added a beliefs section between Schedule and Outreach to align theology copy with the parent church (morningstar-church.com), while preserving the English gathering's outreach-focused mission and schedule.**
+
+**Changes Made:**
+
+1. **New "What We Believe" Section** (`src/templates/home-body.ts`)
+   - Three-card grid using the existing `section-card` / `schedule-grid` pattern (no new CSS)
+   - Cards: "Jesus is Lord and Savior", "Bible-Believing & Bible-Teaching", "A Real Relationship with God"
+   - Section lead: "Morning Star is a Bible-believing church. We don't water down the Word of God..."
+
+2. **SEO / Meta Description Updates** (`src/templates/home-head.ts`)
+   - Meta, OG, and Twitter descriptions now include "Bible-believing" and "Rooted in Scripture, centered on Jesus"
+   - Schema.org Church description updated to reflect the same
+
+3. **New Schema.org FAQ Entry**
+   - Added "What does Morning Star Christian Church believe?" Q&A for richer search results
+
+**Not changed (intentionally):**
+- Schedule (Sun 9 AM, Tue Caffiena, Thu 6 PM) — this is the English gathering's own schedule
+- "Mending the Broken" tagline — outreach-focused mission stays
+- No mention of Russian-language services or other gatherings sharing the building
+
+---
 
 ### v1.24.0 - Hero Find Us Button with Frosted Glass Effect
 **Replaced hero CTA buttons with a single "Find Us" button overlaid on the hero image**

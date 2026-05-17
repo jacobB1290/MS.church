@@ -46,7 +46,7 @@ export function registerAboutRoute(app: Hono) {
   app.get('/about', (c) => {
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.33 - About page: Scripture, Jesus, Community cards reworded to be explicitly grounded in the parent church's 11-point statement -->
+<!-- v1.49.35 - About page: combine Our Mission + Our Story into one section using the editorial split layout (.about-content), no section-card frame -->
 <html lang="en">
 ${pageHead({
   title: 'About Morning Star Christian Church | Boise, Idaho',

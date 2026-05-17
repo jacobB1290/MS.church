@@ -21,27 +21,13 @@ export const aboutBody = (): string => `
                 </section>
 
                 <section id="mission">
-                    <span class="section-eyebrow">Our Mission</span>
-                    <h2 class="section-heading">Faith, family, and a city we love.</h2>
-                    <div class="section-card">
-                        <div class="schedule-item long-content">
-                            <div class="schedule-item-text">
-                                <p>We exist to point people to Jesus, to build a family that bears one another's burdens, and to serve Boise with the same compassion we've been shown. "Mending the Broken" is not a slogan — it's the lens we view every Sunday morning, every Tuesday coffee, every Thursday study, every Friday youth night, and every meal we cook for our city's most vulnerable.</p>
-                            </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="story">
                     <span class="section-eyebrow">Our Story</span>
-                    <h2 class="section-heading">A small church with a big heart.</h2>
-                    <div class="section-card">
-                        <div class="schedule-item long-content">
-                            <div class="schedule-item-text">
-                                <p>Morning Star was planted in Boise to be a place where people who never thought church was for them could find belonging. We're young, we're small, and we believe that the gospel is the most powerful force in any city — including ours. Whether you've grown up in church or you're walking through the door for the first time, you'll find friendly faces, honest teaching, and free breakfast every Sunday.</p>
-                            </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
+                    <h2 class="section-heading">Who we are and why we're here.</h2>
+                    <div class="about-content">
+                        <div class="about-image" aria-hidden="true">${PLACEHOLDER_SVG}</div>
+                        <div class="about-text">
+                            <p class="about-paragraph">Morning Star was planted in Boise to be a place where people who never thought church was for them could find belonging. We're young, we're small, and we believe the gospel is the most powerful force in any city — including ours. So we point people to Jesus, build a family that bears one another's burdens, and serve Boise with the same compassion we've been shown.</p>
+                            <p class="about-paragraph">"Mending the Broken" isn't a slogan — it's the lens we view every Sunday morning, every Tuesday coffee, every Thursday study, every Friday youth night, and every meal we cook for our city's most vulnerable. Whether you've grown up in church or you're walking through the door for the first time, you'll find friendly faces, honest teaching, and free breakfast every Sunday.</p>
                         </div>
                     </div>
                 </section>

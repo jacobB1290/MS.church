@@ -12,6 +12,7 @@ export function registerMiscRoutes(app: Hono) {
   # Main pages
   Allow: /
   Allow: /about
+  Allow: /beliefs
   Allow: /outreach
   Allow: /visit
   Allow: /privacy
@@ -63,6 +64,14 @@ export function registerMiscRoutes(app: Hono) {
           <lastmod>${today}</lastmod>
           <changefreq>monthly</changefreq>
           <priority>0.9</priority>
+      </url>
+
+      <!-- Statement of Beliefs page -->
+      <url>
+          <loc>https://ms.church/beliefs</loc>
+          <lastmod>${today}</lastmod>
+          <changefreq>yearly</changefreq>
+          <priority>0.85</priority>
       </url>
 
       <!-- Outreach & Ministries page -->

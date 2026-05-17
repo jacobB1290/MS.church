@@ -7,6 +7,7 @@ import { registerCalendarRoute } from './routes/calendar.js'
 import { registerYouTubeRoute } from './routes/youtube.js'
 import { registerHomeRoute } from './routes/home.js'
 import { registerAboutRoute } from './routes/about.js'
+import { registerBeliefsRoute } from './routes/beliefs.js'
 import { registerOutreachRoute } from './routes/outreach.js'
 import { registerVisitRoute } from './routes/visit.js'
 import { registerPrivacyRoute } from './routes/privacy.js'
@@ -31,6 +32,7 @@ registerCalendarRoute(app)
 registerYouTubeRoute(app)
 registerHomeRoute(app)
 registerAboutRoute(app)
+registerBeliefsRoute(app)
 registerOutreachRoute(app)
 registerVisitRoute(app)
 registerPrivacyRoute(app)

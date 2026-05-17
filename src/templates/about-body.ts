@@ -80,6 +80,9 @@ export const aboutBody = (): string => `
                                 </div>
                             </article>
                         </div>
+                        <div class="teaser-cta-row">
+                            <a class="event-link-btn teaser-cta" href="/beliefs">Read Our Full Statement of Beliefs</a>
+                        </div>
                     </div>
                 </section>
 

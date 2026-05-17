@@ -46,7 +46,7 @@ export function registerAboutRoute(app: Hono) {
   app.get('/about', (c) => {
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.49.31 - About page: beliefs cards updated (Bible-Believing/Bible-Teaching + Lord and Savior), intro reframed as Bible-believing community -->
+<!-- v1.49.32 - About page: adds "Read Our Full Statement of Beliefs" CTA linking to /beliefs -->
 <html lang="en">
 ${pageHead({
   title: 'About Morning Star Christian Church | Boise, Idaho',

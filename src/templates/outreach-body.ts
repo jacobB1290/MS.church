@@ -182,7 +182,9 @@ export const outreachBody = (): string => `
                     <span class="section-eyebrow">Meals &amp; Hospitality</span>
                     <h2 class="section-heading">Two tables, one mission.</h2>
                     <div class="ministries-pair">
-                        <div class="ministries-image ministries-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
+                        <div class="ministries-image">
+                            <img src="/static/meals-hospitality.jpg" alt="Morning Star volunteer team gathered together in the kitchen after preparing meals for Boise homeless shelters" width="1800" height="1350" loading="lazy" decoding="async" style="object-position: 50% 10%;">
+                        </div>
                         <div class="ministries-grid">
                             <article class="ministry-block" id="cooking-ministry">
                                 <span class="ministry-eyebrow">Cooking Ministry</span>

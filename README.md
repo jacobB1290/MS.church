@@ -1,7 +1,21 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.50.4
+## 🔢 CURRENT VERSION: v1.51.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.51.0 — IA reorganization (taxonomy, /ministries hub, Sunday School folded into the Service Flow)
+
+Consolidated information-architecture pass executing Phases 1 + 2 + 3 of the IA reorganization plan. Three connected changes.
+
+**Taxonomy cleanup (pick one word per concept).** "Mission / Outreach / Ministry" had been used interchangeably for one concept. Now: *Mending the Broken* is the umbrella thesis (unchanged); *Ministries* is the word for internal programs; *Outreach* is the word for outward-facing work, with *Serve* and *Hospitality* as the action-flavored card tags. The home Outreach heading changed from "A few ways we live out our mission in Boise." to "A few ways we serve Boise.". The Outreach teaser card tags went from `Ministry / Ministry` to `Serve / Hospitality`. The Schedule tab eyebrows went from day-named labels (`Sunday Gatherings / Bible Reading / Activity Day / Bible Study / Youth Service`) to church-standard category labels (`Worship / Discipleship / Fellowship / Discipleship / Youth`); the program names move into the tab descriptions so nothing is lost.
+
+**New /ministries hub.** `src/routes/ministries.ts` + `src/templates/ministries-body.ts`, registered in `src/app.ts`. One page with five category sections — Worship, Discipleship, Fellowship, Youth, Kids — each anchored (`#worship`, `#discipleship`, `#fellowship`, `#youth`, `#kids`) so Schedule tabs can deep-link in. Each entry is a card with name, day/time eyebrow, description, a key-facts `<dl>` (When / Where / Bring / Drop-in / Focus / For), and a "Ask about &lt;ministry&gt; →" or "Plan Your Visit →" CTA. The Fellowship section carries a small italic cross-reference note pointing at `/outreach#meals-hospitality` for Community Breakfast so the hospitality story stays canonical on /outreach. Page-scoped CSS lives in an inline `<style>` block at the top of `ministries-body.ts`, following the `beliefs-body.ts` precedent.
+
+**Schedule tab links + Explore button.** Each of the five Schedule tabs on the home page now ends with an inline "Learn more →" link into the matching `/ministries#<category>` anchor. Below the schedule grid sits a new centered "Explore Our Ministries" button that mirrors the existing "Explore Our Outreach" button exactly (same `.event-link-btn.teaser-cta` inside a `.teaser-cta-row`).
+
+**Sunday School folded into the /visit Service Flow.** Was a standalone section near the bottom of `/visit` with a vertical-video frame, a `<dl>` facts list, and an "Ask about Sunday School →" link — duplicative with `/ministries#kids`. Now it lives as **Step 3** of the 8-step service flow (right after Two Worship Songs, since that's the moment kids leave the main service for their own classroom), with a "Learn more →" link to `/ministries#kids` for the full description. The final "Stay for Breakfast" step likewise picked up a "See Community Breakfast →" link to `/outreach#meals-hospitality`. The standalone section is gone; so is its inline-video unmute script and the unused `VIDEO_PLACEHOLDER_SVG` constant.
+
+**Nav unchanged.** Still 4 items + Contact CTA. `/ministries` is reachable from every Schedule tab, the Explore button, the cross-link in /visit's Service Flow, and the Fellowship note on /ministries itself.
 
 ### v1.50.4 — /visit handshake SVG: real fix (dasharray, not stroke weight)
 

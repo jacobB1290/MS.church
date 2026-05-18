@@ -10,6 +10,7 @@ import { registerAboutRoute } from './routes/about.js'
 import { registerBeliefsRoute } from './routes/beliefs.js'
 import { registerOutreachRoute } from './routes/outreach.js'
 import { registerVisitRoute } from './routes/visit.js'
+import { registerMinistriesRoute } from './routes/ministries.js'
 import { registerPrivacyRoute } from './routes/privacy.js'
 import { registerMiscRoutes } from './routes/misc.js'
 import { GOLD } from './design-tokens.js'
@@ -35,6 +36,7 @@ registerAboutRoute(app)
 registerBeliefsRoute(app)
 registerOutreachRoute(app)
 registerVisitRoute(app)
+registerMinistriesRoute(app)
 registerPrivacyRoute(app)
 registerMiscRoutes(app)
 

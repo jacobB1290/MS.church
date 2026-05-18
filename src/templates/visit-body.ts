@@ -5,24 +5,32 @@ import { footer } from './shared/footer.js'
 // Sections (in order):
 //   1. Intro
 //   2. Location: Google Maps embed + Get Directions
-//   3. What to Expect: 7-step service flow timeline (incl. breakfast)
-//   4. Sunday School (moved here from /outreach)
-//   5. Contact CTA
+//   3. What to Expect: 8-step service flow timeline. Sunday School slots
+//      in right after the two worship songs (kids leave for their own
+//      classroom at that point) and the step links to /ministries#kids
+//      for the full ministry description. The final Breakfast step
+//      similarly links to /outreach#meals-hospitality for Community
+//      Breakfast detail — canonical depth lives there, not here.
+//   4. Contact CTA
 //
 // Inherits subpage-header + subpage-spacer + scroll-margin-top from the
 // shared design system. JSON-LD references the existing church entity.
 
-const VIDEO_PLACEHOLDER_SVG =`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>`
-
-// 7-step Sunday flow. Edit copy here, not in CSS.
+// Sunday flow. Edit copy here, not in CSS. Sunday School slots in
+// right after the two worship songs — that's when kids leave the main
+// service for their own classroom — and the step links to
+// /ministries#kids for the full description. The final Breakfast step
+// likewise links into /outreach#meals-hospitality for Community
+// Breakfast detail.
 const SERVICE_FLOW = [
   { title: 'Welcome', body: 'A brief intro from the front: who we are, what is happening this morning, and a moment to settle in. No pressure — just glad you came.' },
   { title: 'Two Worship Songs', body: 'Live worship led by our team. Sing along if you want, listen if you want. Lyrics are on the screen.' },
+  { title: 'Sunday School (Kids)', body: 'Kids head to their own classroom for a Bible lesson at their level while families worship together. Safe, warm, joyful — drop-off welcome any Sunday. <a class="schedule-tab-link" href="/ministries#kids">Learn more &rarr;</a>' },
   { title: 'Greet One Another', body: 'A few minutes to turn around, say hi to the people next to you, and meet someone new before we sit back down.' },
   { title: 'Teaching', body: 'A sermon from one of our pastors or a discussion-style lesson — we rotate. Either way it stays grounded in scripture and runs about 25–30 minutes.' },
   { title: 'Closing Song', body: 'One more worship song to send us out.' },
   { title: 'Dismissal', body: 'Pastor closes us in prayer — a final blessing before we head into fellowship.' },
-  { title: 'Stay for Breakfast', body: "Right after the closing prayer we head into fellowship time with free breakfast for everyone — guests, members, neighbors, anyone passing through. It's how we end every Sunday: full plates, full hearts, no rush. Free transportation from select shelters available for anyone who needs a ride." },
+  { title: 'Stay for Breakfast', body: "Right after the closing prayer we head into fellowship time with free breakfast for everyone — guests, members, neighbors, anyone passing through. It's how we end every Sunday: full plates, full hearts, no rush. Free transportation from select shelters available for anyone who needs a ride. <a class=\"schedule-tab-link\" href=\"/outreach#meals-hospitality\">See Community Breakfast &rarr;</a>" },
 ]
 
 const flowItems = SERVICE_FLOW.map(
@@ -86,33 +94,6 @@ export const visitBody = (): string => `
                     </div>
                 </section>
 
-                <section id="sunday-school">
-                    <span class="section-eyebrow">Sunday School</span>
-                    <h2 class="section-heading">Sundays &middot; During the 9 AM service</h2>
-                    <div class="sunday-school-content">
-                        <div class="vertical-video-frame sunday-school-video" id="sunday-school-video">
-                            <div class="vertical-video-placeholder" aria-hidden="true">${VIDEO_PLACEHOLDER_SVG}</div>
-                            <button class="video-unmute-btn visible" id="sunday-school-unmute" type="button" aria-label="Unmute video">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                                    <line x1="23" y1="9" x2="17" y2="15"></line>
-                                    <line x1="17" y1="9" x2="23" y2="15"></line>
-                                </svg>
-                                Tap to unmute
-                            </button>
-                        </div>
-                        <div class="sunday-school-text">
-                            <p>Children's Sunday School runs in a separate room during the main service, so families can worship together and kids can dive into scripture at their level. Safe, warm, and joyful — drop-off is welcome any Sunday.</p>
-                            <dl class="sunday-school-facts">
-                                <div><dt>When</dt><dd>During the 9 AM service</dd></div>
-                                <div><dt>Focus</dt><dd>Gospel-centered, Bible storyline</dd></div>
-                                <div><dt>Drop-in</dt><dd>Welcome any Sunday &mdash; no signup</dd></div>
-                            </dl>
-                            <a href="/#contact" class="sunday-school-link">Ask about Sunday School &rarr;</a>
-                        </div>
-                    </div>
-                </section>
-
                 <section id="visit-cta">
                     <span class="section-eyebrow">Questions?</span>
                     <h2 class="section-heading">We'd love to hear from you before Sunday.</h2>
@@ -125,37 +106,4 @@ export const visitBody = (): string => `
 
             ${footer()}
         </div>
-        <script>
-            (function() {
-                // Sunday School vertical-video controls (mirrored from outreach-body).
-                var frame = document.getElementById('sunday-school-video');
-                var unmuteBtn = document.getElementById('sunday-school-unmute');
-                if (!frame) return;
-                var videoEl = frame.querySelector('video');
-                if (unmuteBtn) {
-                    unmuteBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        if (videoEl) {
-                            videoEl.muted = false;
-                            try { videoEl.play(); } catch (err) {}
-                        }
-                        unmuteBtn.classList.add('hiding');
-                        unmuteBtn.classList.remove('visible');
-                        setTimeout(function() {
-                            if (unmuteBtn.parentNode) unmuteBtn.parentNode.removeChild(unmuteBtn);
-                        }, 320);
-                    });
-                }
-                frame.addEventListener('click', function() {
-                    if (!videoEl) return;
-                    var req = videoEl.requestFullscreen
-                        || videoEl.webkitRequestFullscreen
-                        || videoEl.webkitEnterFullscreen
-                        || videoEl.msRequestFullscreen;
-                    if (req) {
-                        try { req.call(videoEl); } catch (err) {}
-                    }
-                });
-            })();
-        </script>
     </body>`

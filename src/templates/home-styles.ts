@@ -2626,11 +2626,19 @@ export const homeStyles = (): string => `
                 stroke-linecap: round;
                 stroke-linejoin: round;
                 vector-effect: non-scaling-stroke;
-                /* Draw-on: pathLength=100 normalizes the path so
-                   dasharray=100 covers the whole path; offset 100
-                   hides it; animating to 0 reveals it progressively. */
-                stroke-dasharray: 100;
-                stroke-dashoffset: 100;
+                /* Draw-on. The path's total length is ~893 user units across
+                   5 subpaths (outer outline + left-cuff inner + finger detail
+                   + right-cuff inner). With vector-effect: non-scaling-stroke
+                   the browser ignores pathLength normalization and treats
+                   dasharray/dashoffset as ACTUAL stroke-coordinate pixels,
+                   so dasharray=100 would have created a dash-gap-dash-gap
+                   pattern of 100px each across the 893px path — exactly the
+                   bug where inner subpaths appeared "missing". Use a single
+                   dash longer than the full path (1200 > 893) so no gap ever
+                   appears; offset 1200 hides the path before the animation,
+                   offset 0 fully reveals it. */
+                stroke-dasharray: 1200;
+                stroke-dashoffset: 1200;
                 animation: handshake-draw 2.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
             }
             .handshake-art {
@@ -2643,7 +2651,7 @@ export const homeStyles = (): string => `
                 will-change: transform, opacity;
             }
             @keyframes handshake-draw {
-                0%   { stroke-dashoffset: 100; }
+                0%   { stroke-dashoffset: 1200; }
                 100% { stroke-dashoffset: 0; }
             }
             @keyframes handshake-fade {

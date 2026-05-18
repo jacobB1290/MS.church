@@ -1,7 +1,15 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.50.3
+## 🔢 CURRENT VERSION: v1.50.4
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.50.4 — /visit handshake SVG: real fix (dasharray, not stroke weight)
+
+v1.50.3 bumped the desktop stroke width to 3.6px, but the user reported the illustration was still rendering incomplete on desktop. The actual root cause was different:
+
+The path is styled with `vector-effect: non-scaling-stroke`, which causes Chromium and WebKit to **ignore** the path's `pathLength="100"` attribute when computing `stroke-dasharray`. So `stroke-dasharray: 100` was being interpreted as 100 *actual* CSS pixels rather than 100 *normalized* path units — and the actual path is 893px long across 5 subpaths. The dash-100 / gap-100 / dash-100 / gap-100 pattern left roughly half the path invisible: whole subpaths (the inner-cuff triangles and the hand-detail curves) often landed entirely inside gap regions, which is the "missing" look.
+
+Fix: replace the pathLength-normalized dasharray with an absolute one larger than the full path. `stroke-dasharray: 1200` and the animation now runs `stroke-dashoffset: 1200 → 0`. 1200 > 893, so the dash never produces a gap inside the path; offset 1200 hides everything before the animation, offset 0 reveals the entire path. Mobile happened to render fine before because at 240px the path math worked out forgivingly, but the new dasharray now makes mobile robust to any future viewBox changes too. v1.50.3's desktop `stroke-width: 3.6px` override is preserved.
 
 ### v1.50.3 — Fix /visit handshake illustration on desktop (stroke weight)
 

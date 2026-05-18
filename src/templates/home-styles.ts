@@ -2691,6 +2691,18 @@ export const homeStyles = (): string => `
                 }
             }
 
+            /* Desktop renders the SVG ~1.5× larger than mobile (360px vs 240px max-width).
+               Because the stroke uses vector-effect: non-scaling-stroke it stays a fixed
+               2.4 CSS pixels regardless of SVG size, which on the larger desktop render
+               makes the finger / wrist detail look proportionally thinner — fine lines
+               appear to vanish ("part of it is missing"). Thicken the stroke on desktop
+               so the relative line weight matches the mobile rendering. */
+            @media (min-width: 961px) {
+                .handshake-stroke {
+                    stroke-width: 3.6;
+                }
+            }
+
             @media (prefers-reduced-motion: reduce) {
                 .handshake-art {
                     animation: none;

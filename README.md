@@ -1,7 +1,13 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.50.2
+## 🔢 CURRENT VERSION: v1.50.3
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.50.3 — Fix /visit handshake illustration on desktop (stroke weight)
+
+The line-art handshake at the top of `/visit` looked correct on mobile but had finger and wrist detail that appeared faint or "missing" on desktop. Root cause: the path uses `vector-effect: non-scaling-stroke`, so the stroke renders at a fixed 2.4 CSS pixels regardless of SVG size. On mobile the SVG is capped at 240px wide and a 2.4px stroke is well-weighted relative to the image; on desktop the SVG is 360px wide (~1.5× larger) and that same 2.4px stroke is proportionally thinner, fading the finer detail until it reads as broken.
+
+Fix: a single `@media (min-width: 961px)` rule bumps `.handshake-stroke` to 3.6px so the relative line weight on desktop matches mobile. Mobile rendering is untouched.
 
 ### v1.50.2 — /outreach map extended on desktop (same artwork, wider canvas)
 

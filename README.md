@@ -1,7 +1,21 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.51.0
+## 🔢 CURRENT VERSION: v1.51.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.51.1 — /ministries redesign: editorial language match, distinct desktop/mobile, first-timer essentials
+
+The first /ministries pass (v1.51.0) shipped as boxed white cards in a grid. This pass replaces that with an editorial design that matches the rest of the site (especially `/outreach`), with intentionally different desktop and mobile treatments — not the same layout scaled.
+
+**Desktop (≥961px) — magazine spread.** Each category is a `5fr / 7fr` image+content split. The image alternates left/right per section (Worship left, Discipleship right, Fellowship left, Youth right) for editorial rhythm. The image is `position: sticky` to `top: 112px`, so as the reader scrolls through multi-paragraph entries the image stays anchored beside them rather than scrolling out of frame. Inline `.ministry-address-trigger` pills inside the entry title open the same Apple / Google / Copy dropdown used on the home hero.
+
+**Mobile (≤960px) — vertical reading stack.** Same data, different layout. Image becomes a short 16:9 banner above the content (a second portrait inside a portrait phone is just double the height for no information gain). Each `.ministry-block` gains a small gold gradient tab marker above its eyebrow (matches the `/outreach` mobile idiom) — explicit "new ministry begins here" without needing a box. The tip `<dl>` stacks label-above-value with a gold hairline left border per tip so each fact reads as a discrete beat. Address pills get tap-sized padding.
+
+**Design language match.** Dropped the boxed `.ministry-entry / .ministry-grid` cards from v1.51.0. The page now reuses `/outreach`'s `.ministry-block / .ministry-eyebrow / .ministry-title / .ministry-text / .ministry-link` tokens directly. Kids section continues to use the global `.sunday-school-content + .vertical-video-frame` pattern — the same one Sunday School had on `/visit` before it was folded into the Service Flow — so the original vertical-video design lives on at its canonical home.
+
+**First-timer essentials.** Each entry carries 4–5 facts that reduce newcomer anxiety: What to wear, Where to park, Greeting, If you arrive late, Bringing kids, What to bring, Ages, Drop-off, etc. These are written concretely (e.g. "Slip in through the back. The back rows are the easiest entry. Nobody turns around.") rather than corporate.
+
+**Clickable addresses.** Church address ("3080 Wildwood St" or "the church") opens the Apple/Google/Copy dropdown identical to the home hero. Caffiena State Street is a direct external map link. The dropdown-wiring JS is inlined at the bottom of `ministries-body.ts` (~40 lines), scoped to this page only.
 
 ### v1.51.0 — IA reorganization (taxonomy, /ministries hub, Sunday School folded into the Service Flow)
 

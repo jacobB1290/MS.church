@@ -1,7 +1,27 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.53.0
+## 🔢 CURRENT VERSION: v1.54.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.54.0 — Full design system standardization (tokens + sweep)
+
+The component layer (`.section-eyebrow`, `.section-heading`, `.section-card`, `.event-link-btn`, `.ministry-block`, etc.) was already unified, but the underlying tokens had drifted: hex colors, alpha primary-text `rgba()`, raw font-sizes, raw `clamp()` spacing values, and raw `border-radius` / `box-shadow` / `transition` declarations were scattered through the templates without snapping to the existing token vocabulary. This pass closes the gap.
+
+**12 new tokens added** to `home-styles.ts` `:root`:
+
+- **Text color scale (6):** `--text-primary`, `-soft` (0.85), `-muted` (0.72), `-faint` (0.55), `-fade` (0.30), `-hairline` (0.10). Replaces ~76 ad-hoc `rgba(26, 26, 46, X)` calls.
+- **Spacing T-shirt scale (7):** `--space-xs/sm/md/lg/xl/2xl/3xl`, each a fluid `clamp()` tuned to the most-used spacing clusters (midpoints ~10/14/20/28/36/52/72).
+- **Border-radius scale (7):** `--radius-sm/md/lg/xl/2xl` + `--radius-pill` + `--radius-circle`.
+- **Box-shadow elevation (6):** `--shadow-xs/sm/md/lg/xl/overlay`.
+- **Motion (5):** `--motion-fast/medium/slow` + `--ease-standard/out-soft`.
+
+**413 substitutions** total across 5 template files (spacing 110, typography 86, radius/shadow/motion 217). Three sweeper agents ran in parallel on the same files; the Edit tool's atomic Read-modify-Write plus disjoint substring patterns (color hex/rgba vs spacing-clamps vs typography vs radius/shadow/transition) meant they did not collide on substrings. ~30% of one agent's Edit calls hit "file modified since read" because of concurrent writes; each was retried and every intended substitution eventually landed.
+
+**Untouched on purpose:** SVG presentation attributes (`fill=`, `stroke=`, `font-size=`); illustration-specific colors in the Boise outreach map and the handshake; bespoke animation timings (handshake-draw, video-player FLIP, countdown); accent-colored shadows (gold/red/navy gradient inputs); the `:root` token definitions themselves; `outreach-body.ts` (already fully tokenized); `routes/privacy.ts` (self-contained CSS). Residual hardcoded patterns: 12 `rgba(26,26,46,...)` (all SVG fill / token defs), 9 outlier font-sizes between token bands, 31 transitions with bespoke durations — all legitimate exemptions.
+
+**CLAUDE.md** "Design System" section was rewritten to document the full token catalog with usage rules ("tokens are NOT suggestions — use them whenever they apply"), exemption cases, and the rule for adding new tokens.
+
+**Build / sync:** clean. `dist/_worker.js` 727.72 kB (was 725.35 — +2.4 kB from `var(...)` references being slightly longer than the raw values they replaced; functionally identical output). 8-page visual regression check (home, ministries, visit, outreach, about, beliefs at desktop + mobile) showed **0 page errors** and **0 unresolved `var()` in computed styles** — every token substitution resolves cleanly.
 
 ### v1.53.0 — Schema.org JSON-LD audit + sync
 

@@ -64,6 +64,58 @@ export const homeStyles = (): string => `
                 --tracking-normal:  0em;    /* Body text */
                 --tracking-wide:    0.12em; /* Buttons, nav labels */
                 --tracking-wider:   0.25em; /* Eyebrows, brand subtitles */
+
+                /* ── Text color scale — primary navy with alpha steps ──
+                   Replaces the ~76 hardcoded rgba(26, 26, 46, X) calls
+                   that had drifted across the codebase. Each step has a
+                   semantic name + the alpha it carries, so other places
+                   can snap to the nearest match instead of inventing a
+                   new alpha every time. */
+                --text-primary:          #1a1a2e;              /* solid — headings, key labels */
+                --text-primary-soft:     rgba(26, 26, 46, 0.85); /* close-to-solid body */
+                --text-primary-muted:    rgba(26, 26, 46, 0.72); /* descriptions, prose */
+                --text-primary-faint:    rgba(26, 26, 46, 0.55); /* tertiary / metadata */
+                --text-primary-fade:     rgba(26, 26, 46, 0.30); /* placeholders, hints */
+                --text-primary-hairline: rgba(26, 26, 46, 0.10); /* dividers, faint borders */
+
+                /* ── Spacing scale — T-shirt sizing ──
+                   Each token is a fluid clamp() tuned to the existing
+                   most-used values. Replaces the 183 distinct one-off
+                   clamp() expressions that had been scattered through
+                   the codebase for padding / margin / gap. */
+                --space-xs:  clamp(8px, 1.2vw, 12px);  /* hair gaps, label↔value */
+                --space-sm:  clamp(12px, 1.7vw, 16px); /* tight gaps inside blocks */
+                --space-md:  clamp(16px, 2.2vw, 24px); /* default card padding, default gap */
+                --space-lg:  clamp(24px, 3.5vw, 32px); /* between subsections */
+                --space-xl:  clamp(28px, 4vw, 44px);   /* between sections inside a card */
+                --space-2xl: clamp(40px, 5vw, 64px);   /* section padding, major rhythm */
+                --space-3xl: clamp(56px, 7vw, 88px);   /* page-level breathing room */
+
+                /* ── Border radius scale ──
+                   Snap surfaces to a 5-step scale. Was bespoke: 12, 14, 16, 18, 20,
+                   24, 28, 32, 48px and various clamp() variants scattered throughout. */
+                --radius-sm:    8px;
+                --radius-md:    16px;
+                --radius-lg:    clamp(18px, 2vw, 24px);
+                --radius-xl:    clamp(20px, 2.5vw, 32px);
+                --radius-2xl:   clamp(28px, 3.5vw, 48px);
+                --radius-pill:  100px;
+                --radius-circle: 50%;
+
+                /* ── Box shadow elevation scale ── */
+                --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+                --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+                --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
+                --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+                --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.10), 0 8px 24px rgba(0, 0, 0, 0.06);
+                --shadow-overlay: 0 40px 100px rgba(0, 0, 0, 0.55), 0 16px 48px rgba(139, 0, 0, 0.18);
+
+                /* ── Motion: durations + easings ── */
+                --motion-fast:    0.2s;
+                --motion-medium:  0.3s;
+                --motion-slow:    0.6s;
+                --ease-standard:  cubic-bezier(0.4, 0, 0.2, 1);
+                --ease-out-soft:  cubic-bezier(0.32, 0.72, 0, 1);
             }
 
             * {
@@ -125,12 +177,12 @@ export const homeStyles = (): string => `
                 /* Solid background color for seamless Safari iOS overscroll */
                 background-color: var(--bg-color);
                 background: var(--bg-default);
-                color: #1a1a2e;
+                color: var(--text-primary);
                 min-height: 100vh;
                 min-height: -webkit-fill-available;
                 line-height: var(--leading-normal);
                 overflow-x: hidden;
-                transition: background 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: background 1.8s var(--ease-standard);
                 /* Safari iOS safe area insets for landscape mode and home indicator */
                 padding-bottom: env(safe-area-inset-bottom, 0px);
             }
@@ -165,13 +217,12 @@ export const homeStyles = (): string => `
                 padding: 20px 40px;
                 background: rgb(255, 255, 255);
                 background: rgba(255, 255, 255, 0.72);
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 40px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08),
-                            0 8px 20px rgba(0, 0, 0, 0.04);
+                box-shadow: var(--shadow-lg);
                 -webkit-backdrop-filter: blur(20px);
                 backdrop-filter: blur(20px);
                 position: fixed;
@@ -190,9 +241,9 @@ export const homeStyles = (): string => `
                    adds .scrolled-mobile during scroll. Same effective
                    smoothness while the user is actively scrolling (the
                    class toggle happens once at threshold). */
-                transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-                            box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-                            opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: background var(--motion-slow) var(--ease-standard),
+                            box-shadow var(--motion-slow) var(--ease-standard),
+                            opacity 0.4s var(--ease-standard);
                 width: min(1280px, 94%);
             }
 
@@ -228,8 +279,7 @@ export const homeStyles = (): string => `
 
             .nav-shell:hover {
                 background: rgba(255, 255, 255, 0.78);
-                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1),
-                            0 10px 24px rgba(0, 0, 0, 0.05);
+                box-shadow: var(--shadow-xl);
             }
 
             .brand {
@@ -238,7 +288,7 @@ export const homeStyles = (): string => `
                 line-height: 1;
                 text-decoration: none;
                 color: inherit;
-                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 0.4s var(--ease-standard);
             }
 
             .brand:hover {
@@ -247,16 +297,16 @@ export const homeStyles = (): string => `
 
             /* Active page indicator for multi-page nav (Phase 2 uses this) */
             .nav-shell nav a[aria-current="page"] {
-                color: var(--gold, #d4a574);
+                color: var(--gold);
             }
 
             .brand-title {
                 font-family: var(--font-display);
-                font-size: 24px;
+                font-size: var(--text-heading);
                 font-weight: var(--weight-bold);
-                letter-spacing: 0.1em;
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
-                color: #1a1a2e;
+                color: var(--text-primary);
                 white-space: nowrap;
             }
 
@@ -281,9 +331,9 @@ export const homeStyles = (): string => `
             }
 
             nav a {
-                color: #1a1a2e;
+                color: var(--text-primary);
                 opacity: 1;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.4s var(--ease-standard);
                 position: relative;
                 padding-bottom: 4px;
                 white-space: nowrap;
@@ -303,7 +353,7 @@ export const homeStyles = (): string => `
                 width: 100%;
                 height: 2px;
                 background: currentColor;
-                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 0.4s var(--ease-standard);
             }
 
             nav a.active::after {
@@ -322,18 +372,18 @@ export const homeStyles = (): string => `
 
             .nav-cta {
                 padding: 12px 20px;
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 background: rgba(255, 255, 255, 0.9);
-                color: #1a1a2e;
+                color: var(--text-primary);
                 font-size: var(--text-small);
                 font-weight: var(--weight-bold);
                 text-transform: uppercase;
                 letter-spacing: var(--tracking-wide);
                 white-space: nowrap;
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+                box-shadow: var(--shadow-md);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.5);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.4s var(--ease-standard);
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
@@ -342,7 +392,7 @@ export const homeStyles = (): string => `
 
             .nav-cta:hover {
                 transform: translateY(-3px);
-                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+                box-shadow: var(--shadow-lg);
                 background: var(--white);
             }
 
@@ -884,7 +934,7 @@ export const homeStyles = (): string => `
                 width: 100%;
                 height: 100%;
                 min-height: 450px;
-                border-radius: 32px;
+                border-radius: var(--radius-xl);
                 overflow: hidden;
             }
             
@@ -900,16 +950,16 @@ export const homeStyles = (): string => `
                 align-items: center;
                 padding: 12px 28px;
                 background: rgba(255, 255, 255, 0.7);
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 text-transform: uppercase;
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wider);
                 color: #595970;
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+                box-shadow: var(--shadow-md);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.5);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.4s var(--ease-standard);
                 animation: float 3s ease-in-out infinite;
             }
 
@@ -923,17 +973,17 @@ export const homeStyles = (): string => `
                 font-size: var(--text-hero);
                 line-height: var(--leading-tight);
                 letter-spacing: var(--tracking-tight);
-                color: #1a1a2e;
+                color: var(--text-primary);
                 font-weight: var(--weight-bold);
                 margin-top: 0.5vh;
-                text-shadow: 0 8px 24px rgba(26, 26, 46, 0.15),
-                             0 4px 8px rgba(26, 26, 46, 0.1);
+                text-shadow: 0 8px 24px var(--text-primary-hairline),
+                             0 4px 8px var(--text-primary-hairline);
             }
 
             .hero p {
                 max-width: 640px;
                 font-size: var(--text-lead);
-                color: rgba(26, 26, 46, 0.7);
+                color: var(--text-primary-muted);
                 line-height: var(--leading-loose);
             }
 
@@ -948,14 +998,14 @@ export const homeStyles = (): string => `
                 align-items: center;
                 justify-content: center;
                 padding: 18px 40px;
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 text-transform: uppercase;
                 font-size: var(--text-label);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
                 border: none;
                 cursor: pointer;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.4s var(--ease-standard);
             }
 
             .btn-primary {
@@ -971,28 +1021,28 @@ export const homeStyles = (): string => `
 
             .btn-secondary {
                 background: rgba(255, 255, 255, 0.9);
-                color: #1a1a2e;
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+                color: var(--text-primary);
+                box-shadow: var(--shadow-md);
                 border: 1px solid rgba(255, 255, 255, 0.5);
             }
 
             .btn-secondary:hover {
                 transform: translateY(-4px);
-                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+                box-shadow: var(--shadow-lg);
                 background: var(--white);
             }
 
             /* Hero CTA Buttons - Contact (white) and Watch (gold) */
             .btn-contact {
                 background: rgba(255, 255, 255, 0.95) !important;
-                color: #1a1a2e !important;
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1) !important;
+                color: var(--text-primary) !important;
+                box-shadow: var(--shadow-md) !important;
                 border: 1px solid rgba(255, 255, 255, 0.6) !important;
             }
             
             .btn-contact:hover {
                 background: var(--white) !important;
-                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15) !important;
+                box-shadow: var(--shadow-lg) !important;
             }
             
             .btn-watch-gold {
@@ -1010,7 +1060,7 @@ export const homeStyles = (): string => `
             .section-eyebrow {
                 display: inline-flex;
                 padding: 12px 28px;
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 background: rgba(255, 255, 255, 0.8);
                 text-transform: uppercase;
                 font-size: var(--text-eyebrow);
@@ -1018,7 +1068,7 @@ export const homeStyles = (): string => `
                 letter-spacing: var(--tracking-wider);
                 color: #6b6b80;
                 margin-bottom: 32px;
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+                box-shadow: var(--shadow-md);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.5);
             }
@@ -1026,7 +1076,7 @@ export const homeStyles = (): string => `
             .section-heading {
                 font-family: var(--font-display);
                 font-size: var(--text-title);
-                color: #1a1a2e;
+                color: var(--text-primary);
                 margin-bottom: 24px;
                 max-width: 800px;
                 font-weight: var(--weight-bold);
@@ -1036,7 +1086,7 @@ export const homeStyles = (): string => `
 
             .section-lead {
                 max-width: 720px;
-                color: rgba(26, 26, 46, 0.7);
+                color: var(--text-primary-muted);
                 font-size: var(--text-lead);
                 margin-bottom: 16px;
                 line-height: var(--leading-loose);
@@ -1064,7 +1114,7 @@ export const homeStyles = (): string => `
                 text-decoration: underline;
                 text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent);
                 text-underline-offset: 4px;
-                transition: text-decoration-color 0.3s ease;
+                transition: text-decoration-color var(--motion-medium) ease;
                 background: none;
                 border: none;
                 font: inherit;
@@ -1083,16 +1133,15 @@ export const homeStyles = (): string => `
                 left: 50%;
                 transform: translateX(-50%);
                 background: var(--surface);
-                border-radius: 16px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15),
-                            0 2px 8px rgba(0, 0, 0, 0.1);
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-md);
                 padding: 8px;
                 min-width: 200px;
                 z-index: 1000;
                 opacity: 0;
                 visibility: hidden;
                 transform: translateX(-50%) translateY(-8px);
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all var(--motion-fast) var(--ease-standard);
             }
             
             .address-dropdown.active {
@@ -1106,11 +1155,11 @@ export const homeStyles = (): string => `
                 align-items: center;
                 gap: 12px;
                 padding: 12px 16px;
-                border-radius: 8px;
+                border-radius: var(--radius-sm);
                 cursor: pointer;
-                transition: background 0.2s ease;
+                transition: background var(--motion-fast) ease;
                 text-decoration: none;
-                color: #1a1a2e;
+                color: var(--text-primary);
                 font-size: var(--text-small);
                 font-weight: var(--weight-medium);
                 letter-spacing: var(--tracking-normal);
@@ -1122,7 +1171,7 @@ export const homeStyles = (): string => `
             }
             
             .address-dropdown-icon {
-                font-size: 18px;
+                font-size: var(--text-lead);
                 flex-shrink: 0;
             }
             
@@ -1146,23 +1195,21 @@ export const homeStyles = (): string => `
                 backdrop-filter: blur(20px);
                 -webkit-backdrop-filter: blur(20px);
                 border: 1px solid rgba(255, 255, 255, 0.4);
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 font-size: var(--text-label);
                 font-weight: var(--weight-medium);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
-                color: #1a1a2e;
+                color: var(--text-primary);
                 cursor: pointer;
                 text-decoration: none; /* anchor form (links to /visit) */
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
-                            0 4px 12px rgba(0, 0, 0, 0.05);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: var(--shadow-md);
+                transition: all 0.4s var(--ease-standard);
             }
 
             .find-us-btn:hover {
                 background: rgba(255, 255, 255, 0.85);
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 
-                            0 6px 16px rgba(0, 0, 0, 0.06);
+                box-shadow: var(--shadow-lg);
             }
             
             /* Find Us Dropdown - positioned above button */
@@ -1195,18 +1242,16 @@ export const homeStyles = (): string => `
             /* Schedule Section */
             .section-card {
                 background: rgba(255, 255, 255, 0.85);
-                border-radius: 48px;
+                border-radius: var(--radius-2xl);
                 padding: 56px 64px;
-                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
-                            0 12px 32px rgba(0, 0, 0, 0.04);
+                box-shadow: var(--shadow-xl);
                 border: 1px solid rgba(255, 255, 255, 0.6);
                 backdrop-filter: blur(20px);
-                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all var(--motion-slow) var(--ease-standard);
             }
 
             .section-card:hover {
-                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
-                            0 16px 40px rgba(0, 0, 0, 0.05);
+                box-shadow: var(--shadow-xl);
                 transform: translateY(-4px);
             }
 
@@ -1218,15 +1263,15 @@ export const homeStyles = (): string => `
 
             .schedule-item {
                 background: rgba(255, 255, 255, 0.9);
-                border-radius: 32px;
-                padding: clamp(14px, 2vw, 22px);
-                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+                border-radius: var(--radius-xl);
+                padding: var(--space-md);
+                box-shadow: var(--shadow-lg);
                 border: 1px solid rgba(255, 255, 255, 0.6);
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: clamp(16px, 2vw, 28px);
+                gap: var(--space-md);
                 align-items: center;
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.4s var(--ease-standard);
             }
 
             /* Hover lift removed from base .schedule-item — these cards are
@@ -1242,13 +1287,13 @@ export const homeStyles = (): string => `
             .schedule-item-text {
                 display: grid;
                 gap: 14px;
-                padding: clamp(6px, 1vw, 14px);
+                padding: var(--space-xs);
                 min-width: 0;
             }
 
             .schedule-item-image {
                 aspect-ratio: 1 / 1;
-                border-radius: 20px;
+                border-radius: var(--radius-lg);
                 overflow: hidden;
             }
 
@@ -1266,12 +1311,12 @@ export const homeStyles = (): string => `
 
             .schedule-item-image-placeholder {
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, var(--text-primary-hairline) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
                 display: grid;
                 place-items: center;
-                color: rgba(26, 26, 46, 0.30);
-                border: 1px dashed rgba(26, 26, 46, 0.12);
+                color: var(--text-primary-fade);
+                border: 1px dashed var(--text-primary-hairline);
             }
 
             .schedule-item-image-placeholder svg {
@@ -1292,7 +1337,7 @@ export const homeStyles = (): string => `
             .schedule-layout {
                 display: grid;
                 grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-                gap: clamp(20px, 2.5vw, 32px);
+                gap: var(--space-lg);
                 align-items: stretch;
             }
             /* Banner (desktop): no longer a single crossfading slide.
@@ -1305,7 +1350,7 @@ export const homeStyles = (): string => `
                underglow. */
             .schedule-banner {
                 position: relative;
-                border-radius: 24px;
+                border-radius: var(--radius-lg);
                 overflow: visible;
                 min-height: 520px;
                 /* Subtle ambient warm wash behind the tiles so the
@@ -1341,9 +1386,9 @@ export const homeStyles = (): string => `
                 background: #fefcf6;
                 padding: 5px;
                 box-shadow:
-                    0 14px 30px rgba(26, 26, 46, 0.10),
-                    0 5px 12px rgba(26, 26, 46, 0.06),
-                    0 1px 3px rgba(26, 26, 46, 0.04);
+                    0 14px 30px var(--text-primary-hairline),
+                    0 5px 12px var(--text-primary-hairline),
+                    0 1px 3px var(--text-primary-hairline);
                 cursor: pointer;
                 transition:
                     transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -1491,8 +1536,8 @@ export const homeStyles = (): string => `
                 z-index: 30;
                 box-shadow:
                     0 36px 64px rgba(212, 165, 116, 0.32),
-                    0 16px 28px rgba(26, 26, 46, 0.18),
-                    0 2px 6px rgba(26, 26, 46, 0.10);
+                    0 16px 28px var(--text-primary-hairline),
+                    0 2px 6px var(--text-primary-hairline);
                 background: #ffffff;
             }
             /* Non-active tiles recede a step so the focal photo
@@ -1508,7 +1553,7 @@ export const homeStyles = (): string => `
                 height: 100%;
                 object-fit: cover;
                 display: block;
-                border-radius: 8px;
+                border-radius: var(--radius-sm);
             }
             /* Placeholder — the standard site placeholder style
                (cream gradient + dashed border + centered image icon),
@@ -1527,9 +1572,9 @@ export const homeStyles = (): string => `
                 inset: 5px;
                 border-radius: 2px;
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, var(--text-primary-hairline) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                border: 1px dashed rgba(26, 26, 46, 0.12);
+                border: 1px dashed var(--text-primary-hairline);
                 pointer-events: none;
             }
             /* Center the image icon over the placeholder background. */
@@ -1542,7 +1587,7 @@ export const homeStyles = (): string => `
                 min-width: 32px;
                 height: auto;
                 transform: translate(-50%, -50%);
-                color: rgba(26, 26, 46, 0.30);
+                color: var(--text-primary-fade);
                 z-index: 1;
             }
 
@@ -1550,30 +1595,30 @@ export const homeStyles = (): string => `
             .schedule-list {
                 display: flex;
                 flex-direction: column;
-                gap: clamp(10px, 1.2vw, 14px);
+                gap: var(--space-xs);
             }
             .schedule-tab {
                 /* Reset button defaults */
                 appearance: none;
                 background: rgba(255, 255, 255, 0.78);
                 border: 1px solid rgba(255, 255, 255, 0.6);
-                border-radius: 20px;
-                padding: clamp(18px, 2vw, 24px) clamp(20px, 2.2vw, 26px);
+                border-radius: var(--radius-lg);
+                padding: var(--space-md) var(--space-md);
                 text-align: left;
                 cursor: pointer;
                 display: grid;
                 gap: 10px;
                 font-family: inherit;
                 color: inherit;
-                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-                transition: background 280ms cubic-bezier(0.4, 0, 0.2, 1),
-                            box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: var(--shadow-md);
+                transition: background 280ms var(--ease-standard),
+                            box-shadow 280ms var(--ease-standard);
                 flex: 1 1 0;
                 min-width: 0;
             }
             .schedule-tab:hover {
                 background: rgba(255, 255, 255, 0.95);
-                box-shadow: 0 10px 26px rgba(0, 0, 0, 0.07);
+                box-shadow: var(--shadow-md);
             }
             .schedule-tab:focus-visible {
                 outline: 2px solid var(--gold);
@@ -1590,7 +1635,7 @@ export const homeStyles = (): string => `
                 box-shadow:
                     0 24px 56px rgba(212, 165, 116, 0.38),
                     0 10px 22px rgba(212, 165, 116, 0.18),
-                    0 4px 12px rgba(26, 26, 46, 0.06);
+                    0 4px 12px var(--text-primary-hairline);
                 transform: translateY(-1px);
             }
             .schedule-tab {
@@ -1621,19 +1666,19 @@ export const homeStyles = (): string => `
             .schedule-tab-eyebrow {
                 text-transform: uppercase;
                 letter-spacing: var(--tracking-wide);
-                font-size: clamp(13px, 1.4vw, 16px); /* larger than --text-eyebrow (10px) */
+                font-size: var(--text-small); /* larger than --text-eyebrow (10px) */
                 font-weight: var(--weight-bold);
                 color: #6b6b80;
             }
             .schedule-tab-title {
                 font-size: var(--text-heading);
                 font-weight: var(--weight-bold);
-                color: #1a1a2e;
+                color: var(--text-primary);
                 font-family: var(--font-display);
                 line-height: var(--leading-snug);
             }
             .schedule-tab-desc {
-                color: rgba(26, 26, 46, 0.65);
+                color: var(--text-primary-muted);
                 line-height: var(--leading-loose);
                 font-size: var(--text-body);
             }
@@ -1641,7 +1686,7 @@ export const homeStyles = (): string => `
                 color: var(--gold);
                 text-decoration: underline;
                 text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent);
-                font-weight: 600;
+                font-weight: var(--weight-semibold);
             }
 
             /* ============================================================
@@ -1679,11 +1724,10 @@ export const homeStyles = (): string => `
             .vertical-video-frame {
                 position: relative;
                 aspect-ratio: 9 / 16;
-                border-radius: 24px;
+                border-radius: var(--radius-lg);
                 overflow: hidden;
                 background: linear-gradient(180deg, #1a1a2e 0%, #2a2a4e 100%);
-                box-shadow: 0 20px 48px rgba(0, 0, 0, 0.16),
-                            0 6px 16px rgba(0, 0, 0, 0.05);
+                box-shadow: var(--shadow-lg);
                 cursor: pointer;
             }
             .vertical-video-frame video,
@@ -1702,10 +1746,10 @@ export const homeStyles = (): string => `
                 display: grid;
                 place-items: center;
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, var(--text-primary-hairline) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                color: rgba(26, 26, 46, 0.30);
-                border: 1px dashed rgba(26, 26, 46, 0.12);
+                color: var(--text-primary-fade);
+                border: 1px dashed var(--text-primary-hairline);
                 border-radius: inherit;
             }
             .vertical-video-placeholder svg {
@@ -1719,8 +1763,8 @@ export const homeStyles = (): string => `
             .sunday-school-content {
                 display: grid;
                 grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
-                column-gap: clamp(40px, 5vw, 64px);
-                row-gap: clamp(24px, 4vw, 32px);
+                column-gap: var(--space-2xl);
+                row-gap: var(--space-lg);
                 align-items: center;
                 max-width: 880px;
                 margin: 0 auto;
@@ -1737,13 +1781,13 @@ export const homeStyles = (): string => `
             .sunday-school-text {
                 display: flex;
                 flex-direction: column;
-                gap: clamp(16px, 1.8vw, 22px);
+                gap: var(--space-md);
             }
             .sunday-school-text > p {
                 margin: 0;
-                color: rgba(26, 26, 46, 0.72);
-                font-size: clamp(16px, 1.35vw, 17px);
-                line-height: 1.7;
+                color: var(--text-primary-muted);
+                font-size: var(--text-lead);
+                line-height: var(--leading-loose);
                 max-width: 52ch;
             }
             .sunday-school-facts {
@@ -1751,9 +1795,9 @@ export const homeStyles = (): string => `
                 display: grid;
                 grid-template-columns: 1fr;
                 gap: 10px;
-                border-top: 1px solid rgba(26, 26, 46, 0.10);
-                border-bottom: 1px solid rgba(26, 26, 46, 0.10);
-                padding: clamp(14px, 2vw, 18px) 0;
+                border-top: 1px solid var(--text-primary-hairline);
+                border-bottom: 1px solid var(--text-primary-hairline);
+                padding: var(--space-sm) 0;
             }
             .sunday-school-facts > div {
                 display: grid;
@@ -1763,25 +1807,25 @@ export const homeStyles = (): string => `
             }
             .sunday-school-facts dt {
                 font-family: var(--font-display);
-                font-size: 11px;
+                font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
-                letter-spacing: 0.14em;
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 color: var(--gold-dark);
                 margin: 0;
             }
             .sunday-school-facts dd {
                 margin: 0;
-                color: rgba(26, 26, 46, 0.78);
-                font-size: 15px;
-                line-height: 1.5;
+                color: var(--text-primary-muted);
+                font-size: var(--text-small);
+                line-height: var(--leading-normal);
             }
             .sunday-school-link {
                 color: var(--gold);
                 font-weight: var(--weight-semibold);
                 text-decoration: none;
                 align-self: flex-start;
-                font-size: 15px;
+                font-size: var(--text-small);
             }
             .sunday-school-link:hover {
                 text-decoration: underline;
@@ -1796,7 +1840,7 @@ export const homeStyles = (): string => `
                 .sunday-school-content {
                     grid-template-columns: 1fr;
                     column-gap: 0;
-                    row-gap: clamp(20px, 4vw, 28px);
+                    row-gap: var(--space-lg);
                     align-items: stretch;
                     justify-items: center;
                     max-width: none;
@@ -1805,7 +1849,7 @@ export const homeStyles = (): string => `
                     width: 100%;
                     max-width: 240px;
                     max-height: 426px;
-                    border-radius: 20px;
+                    border-radius: var(--radius-lg);
                 }
                 .sunday-school-text {
                     width: 100%;
@@ -1856,17 +1900,17 @@ export const homeStyles = (): string => `
             .about-content {
                 display: grid;
                 grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
-                gap: clamp(40px, 5vw, 80px);
+                gap: var(--space-2xl);
                 align-items: center;
             }
             .about-image {
                 position: relative;
                 aspect-ratio: 5 / 4;
                 width: 100%;
-                border-radius: clamp(20px, 2vw, 28px);
+                border-radius: var(--radius-xl);
                 overflow: hidden;
-                box-shadow: 0 20px 60px rgba(26, 26, 46, 0.10),
-                            0 6px 16px rgba(26, 26, 46, 0.04);
+                box-shadow: 0 20px 60px var(--text-primary-hairline),
+                            0 6px 16px var(--text-primary-hairline);
             }
             /* Placeholder styling — gradient + dashed border + centered
                SVG. Only applied when no <picture>/<img> child is present
@@ -1874,12 +1918,12 @@ export const homeStyles = (): string => `
                real image. */
             .about-image:not(:has(picture, img)) {
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, var(--text-primary-hairline) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                border: 1px dashed rgba(26, 26, 46, 0.14);
+                border: 1px dashed var(--text-primary-hairline);
                 display: grid;
                 place-items: center;
-                color: rgba(26, 26, 46, 0.32);
+                color: var(--text-primary-fade);
             }
             .about-image > svg {
                 width: 18%;
@@ -1904,14 +1948,14 @@ export const homeStyles = (): string => `
             .about-text {
                 display: flex;
                 flex-direction: column;
-                gap: clamp(24px, 3vw, 36px);
+                gap: var(--space-lg);
             }
             .about-paragraph {
                 margin: 0;
-                font-family: var(--font-body), 'Inter', sans-serif;
-                font-size: clamp(17px, 1.5vw, 19px);
-                line-height: 1.7;
-                color: rgba(26, 26, 46, 0.72);
+                font-family: var(--font-body);
+                font-size: var(--text-lead);
+                line-height: var(--leading-loose);
+                color: var(--text-primary-muted);
                 max-width: 50ch;
             }
             .about-cta.event-link-btn {
@@ -1924,19 +1968,19 @@ export const homeStyles = (): string => `
             @media (max-width: 960px) {
                 .about-content {
                     grid-template-columns: 1fr;
-                    gap: clamp(24px, 4.5vw, 32px);
+                    gap: var(--space-lg);
                     align-items: stretch;
                 }
                 .about-image {
                     aspect-ratio: 16 / 10;
-                    border-radius: clamp(16px, 3vw, 22px);
+                    border-radius: var(--radius-lg);
                 }
                 .about-text {
-                    gap: clamp(18px, 4vw, 24px);
+                    gap: var(--space-md);
                 }
                 .about-paragraph {
-                    font-size: clamp(15px, 4vw, 16px);
-                    line-height: 1.65;
+                    font-size: var(--text-body);
+                    line-height: var(--leading-normal);
                     max-width: none;
                 }
                 .about-cta.event-link-btn {
@@ -1951,7 +1995,7 @@ export const homeStyles = (): string => `
                 flex-wrap: wrap;
                 justify-content: center;
                 gap: 12px;
-                margin-top: clamp(16px, 2.5vw, 28px);
+                margin-top: var(--space-lg);
             }
             .subpage-cta-row .event-link-btn {
                 width: auto;
@@ -1960,12 +2004,12 @@ export const homeStyles = (): string => `
             /* Secondary variant of the gold pill — white surface, dark text. */
             .event-link-btn.event-link-btn-secondary {
                 background: rgba(255, 255, 255, 0.95);
-                color: #1a1a2e;
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+                color: var(--text-primary);
+                box-shadow: var(--shadow-md);
             }
             .event-link-btn.event-link-btn-secondary:hover {
                 background: var(--white);
-                box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+                box-shadow: var(--shadow-md);
             }
 
             /* Schedule items used as teaser links (How We Serve cards) on home.
@@ -1990,7 +2034,7 @@ export const homeStyles = (): string => `
                 display: inline-flex;
                 align-items: center;
                 gap: 6px;
-                margin-top: clamp(8px, 1.2vw, 14px);
+                margin-top: var(--space-xs);
                 color: var(--gold);
                 font-size: var(--text-label);
                 font-weight: var(--weight-bold);
@@ -1999,7 +2043,7 @@ export const homeStyles = (): string => `
             }
             .teaser-more-arrow {
                 display: inline-block;
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform var(--motion-medium) var(--ease-standard);
             }
             .teaser-link-card:hover .teaser-more-arrow {
                 transform: translateX(4px);
@@ -2036,7 +2080,7 @@ export const homeStyles = (): string => `
                     aspect-ratio: auto;
                 }
                 #outreach .schedule-item.teaser-link-card .schedule-item-text {
-                    padding: clamp(14px, 4vw, 22px);
+                    padding: var(--space-md);
                 }
             }
 
@@ -2059,7 +2103,7 @@ export const homeStyles = (): string => `
                 }
                 #outreach .schedule-grid {
                     grid-template-columns: repeat(3, 1fr);
-                    gap: clamp(20px, 2.4vw, 32px);
+                    gap: var(--space-lg);
                 }
                 #outreach .schedule-item.teaser-link-card {
                     grid-template-columns: 1fr;
@@ -2093,14 +2137,14 @@ export const homeStyles = (): string => `
                     justify-content: center;
                 }
                 #outreach .schedule-item.teaser-link-card .schedule-item-text {
-                    padding: clamp(18px, 2vw, 26px);
+                    padding: var(--space-md);
                     display: grid;
                     gap: 12px;
                 }
             }
             @media (max-width: 960px) {
                 #outreach .schedule-item.teaser-link-card .schedule-item-text {
-                    padding: clamp(16px, 4vw, 22px);
+                    padding: var(--space-md);
                     gap: 10px;
                 }
             }
@@ -2118,7 +2162,7 @@ export const homeStyles = (): string => `
             @media (max-width: 960px) {
                 .schedule-item.long-content {
                     grid-template-columns: 1fr;
-                    gap: clamp(14px, 3vw, 20px);
+                    gap: var(--space-md);
                 }
                 .schedule-item.long-content .schedule-item-image {
                     order: -1;
@@ -2201,8 +2245,8 @@ export const homeStyles = (): string => `
             .boise-map {
                 width: 100%;
                 max-width: 100%;
-                margin: clamp(28px, 4vw, 44px) auto 0;
-                color: #1a1a2e;
+                margin: var(--space-xl) auto 0;
+                color: var(--text-primary);
             }
             .boise-map svg {
                 display: block;
@@ -2394,9 +2438,9 @@ export const homeStyles = (): string => `
 
             /* BOISE label — map signature */
             .boise-map-label {
-                font-family: var(--font-display, 'Playfair Display'), serif;
-                font-size: 11px;
-                font-weight: 600;
+                font-family: var(--font-display);
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-semibold);
                 letter-spacing: 0.32em;
                 fill: var(--gold-dark);
                 opacity: 0.45;
@@ -2405,7 +2449,7 @@ export const homeStyles = (): string => `
             @media (max-width: 960px) {
                 .boise-map {
                     max-width: 100%;
-                    margin-top: clamp(20px, 5vw, 32px);
+                    margin-top: var(--space-lg);
                 }
                 .boise-comet-l1 { stroke-width: 1.6; }
                 .boise-comet-l2 { stroke-width: 2.4; }
@@ -2444,24 +2488,24 @@ export const homeStyles = (): string => `
             .ministries-pair {
                 display: flex;
                 flex-direction: column;
-                gap: clamp(32px, 4vw, 56px);
+                gap: var(--space-2xl);
             }
             .ministries-image {
                 width: 100%;
                 aspect-ratio: 21 / 9;
-                border-radius: clamp(20px, 2vw, 32px);
+                border-radius: var(--radius-xl);
                 overflow: hidden;
                 position: relative;
                 background: linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
             }
             .ministries-image-placeholder {
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, var(--text-primary-hairline) 100%),
                     linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                border: 1px dashed rgba(26, 26, 46, 0.14);
+                border: 1px dashed var(--text-primary-hairline);
                 display: grid;
                 place-items: center;
-                color: rgba(26, 26, 46, 0.30);
+                color: var(--text-primary-fade);
             }
             .ministries-image-placeholder > svg {
                 width: 12%;
@@ -2479,12 +2523,12 @@ export const homeStyles = (): string => `
             .ministries-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: clamp(40px, 5vw, 80px);
+                gap: var(--space-2xl);
             }
             .ministry-block {
                 display: flex;
                 flex-direction: column;
-                gap: clamp(10px, 1.2vw, 14px);
+                gap: var(--space-xs);
                 /* Hash-jumps from home teaser cards land here. The
                    subpage offset is 90px on desktop, 75px on mobile;
                    match those so the eyebrow has breathing room above. */
@@ -2492,32 +2536,32 @@ export const homeStyles = (): string => `
             }
             .ministry-eyebrow {
                 font-family: var(--font-display);
-                font-size: 11px;
+                font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
-                letter-spacing: 0.14em;
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 color: var(--gold-dark);
             }
             .ministry-title {
                 font-family: var(--font-display);
-                font-size: clamp(20px, 1.8vw, 24px);
+                font-size: var(--text-heading);
                 font-weight: var(--weight-bold);
-                color: #1a1a2e;
+                color: var(--text-primary);
                 line-height: var(--leading-snug);
                 margin: 0;
             }
             .ministry-text {
                 margin: 0;
-                color: rgba(26, 26, 46, 0.72);
-                font-size: clamp(16px, 1.35vw, 17px);
-                line-height: 1.7;
+                color: var(--text-primary-muted);
+                font-size: var(--text-lead);
+                line-height: var(--leading-loose);
             }
             .ministry-link {
                 color: var(--gold);
                 font-weight: var(--weight-semibold);
                 text-decoration: none;
                 align-self: flex-start;
-                font-size: 15px;
+                font-size: var(--text-small);
                 margin-top: 4px;
             }
             .ministry-link:hover {
@@ -2542,16 +2586,16 @@ export const homeStyles = (): string => `
                         not paragraphs of a single passage. */
                 .ministries-image {
                     aspect-ratio: 16 / 9;
-                    border-radius: clamp(14px, 3vw, 20px);
+                    border-radius: var(--radius-lg);
                 }
                 .ministries-grid {
                     grid-template-columns: 1fr;
-                    gap: clamp(36px, 7vw, 48px);
+                    gap: var(--space-xl);
                 }
                 .ministry-block {
                     scroll-margin-top: 75px;
                     position: relative;
-                    padding-top: clamp(18px, 4vw, 24px);
+                    padding-top: var(--space-md);
                 }
                 .ministry-block::before {
                     content: '';
@@ -2564,15 +2608,15 @@ export const homeStyles = (): string => `
                     border-radius: 1px;
                 }
                 .ministry-eyebrow {
-                    font-size: 10px;
-                    letter-spacing: 0.16em;
+                    font-size: var(--text-eyebrow);
+                    letter-spacing: var(--tracking-wide);
                 }
                 .ministry-title {
-                    font-size: clamp(19px, 5vw, 22px);
+                    font-size: var(--text-heading);
                 }
                 .ministry-text {
-                    font-size: 16px;
-                    line-height: 1.65;
+                    font-size: var(--text-body);
+                    line-height: var(--leading-normal);
                 }
             }
 
@@ -2610,8 +2654,8 @@ export const homeStyles = (): string => `
             .handshake {
                 width: 100%;
                 max-width: 360px;
-                margin: clamp(28px, 4vw, 44px) auto 0;
-                color: #1a1a2e;
+                margin: var(--space-xl) auto 0;
+                color: var(--text-primary);
             }
             .handshake svg {
                 display: block;
@@ -2694,7 +2738,7 @@ export const homeStyles = (): string => `
             @media (max-width: 960px) {
                 .handshake {
                     max-width: 240px;
-                    margin-top: clamp(20px, 5vw, 32px);
+                    margin-top: var(--space-lg);
                 }
             }
 
@@ -2729,7 +2773,7 @@ export const homeStyles = (): string => `
             .visit-map-frame {
                 width: 100%;
                 aspect-ratio: 16 / 10;
-                background: linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, rgba(26, 26, 46, 0.06) 100%),
+                background: linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, var(--text-primary-hairline) 100%),
                             linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
             }
             .visit-map {
@@ -2743,7 +2787,7 @@ export const homeStyles = (): string => `
                 flex-wrap: wrap;
                 gap: 12px;
                 justify-content: center;
-                padding: clamp(20px, 3vw, 32px);
+                padding: var(--space-lg);
             }
             .visit-actions .event-link-btn {
                 width: auto;
@@ -2785,20 +2829,20 @@ export const homeStyles = (): string => `
             .service-flow li {
                 display: grid;
                 grid-template-columns: 46px 1fr;
-                gap: clamp(14px, 1.8vw, 20px);
+                gap: var(--space-md);
                 align-items: start;
                 position: relative;
             }
             .service-flow-step {
                 width: 38px;
                 height: 38px;
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 color: #fff;
                 display: grid;
                 place-items: center;
                 font-family: var(--font-display);
-                font-size: 16px;
+                font-size: var(--text-body);
                 font-weight: var(--weight-bold);
                 box-shadow: 0 4px 12px color-mix(in srgb, var(--gold) 28%, transparent);
                 counter-increment: flow;
@@ -2825,15 +2869,15 @@ export const homeStyles = (): string => `
             }
             .service-flow-text h3 {
                 font-family: var(--font-display);
-                font-size: clamp(17px, 1.7vw, 20px);
+                font-size: var(--text-lead);
                 font-weight: var(--weight-bold);
-                color: #1a1a2e;
+                color: var(--text-primary);
                 line-height: var(--leading-snug);
                 margin-bottom: 4px;
                 text-wrap: balance;
             }
             .service-flow-text p {
-                color: rgba(26, 26, 46, 0.7);
+                color: var(--text-primary-muted);
                 line-height: var(--leading-normal);
                 font-size: var(--text-body);
                 margin: 0;
@@ -2849,7 +2893,7 @@ export const homeStyles = (): string => `
                     grid-template-columns: 1fr 1fr;
                     grid-template-rows: repeat(4, auto);
                     grid-auto-flow: column;
-                    column-gap: clamp(32px, 3.5vw, 48px);
+                    column-gap: var(--space-xl);
                     row-gap: clamp(22px, 2.4vw, 28px);
                 }
                 .service-flow li:nth-child(4) .service-flow-step::after {
@@ -2930,16 +2974,16 @@ export const homeStyles = (): string => `
                 padding: 8px 24px;
                 text-decoration: none;
                 color: inherit;
-                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                            opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 0.4s var(--ease-standard),
+                            opacity 0.4s var(--ease-standard);
             }
             .subpage-brand .brand-title {
                 font-family: var(--font-display);
-                font-size: 22px;
+                font-size: var(--text-heading);
                 font-weight: var(--weight-bold);
-                letter-spacing: 0.1em;
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
-                color: #1a1a2e;
+                color: var(--text-primary);
                 white-space: nowrap;
             }
             .subpage-brand .brand-subtitle {
@@ -2966,9 +3010,9 @@ export const homeStyles = (): string => `
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 color: #ffffff;
                 border: none;
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 padding: 12px 22px;
-                font-family: var(--font-body), 'Inter', sans-serif;
+                font-family: var(--font-body);
                 font-size: var(--text-label);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
@@ -2976,7 +3020,7 @@ export const homeStyles = (): string => `
                 text-decoration: none;
                 white-space: nowrap;
                 box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all var(--motion-medium) var(--ease-standard);
             }
             .subpage-back:hover {
                 background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
@@ -2984,7 +3028,7 @@ export const homeStyles = (): string => `
                 transform: translateY(-2px);
             }
             .subpage-back-arrow {
-                font-size: 16px;
+                font-size: var(--text-body);
                 line-height: 1;
             }
 
@@ -3015,7 +3059,7 @@ export const homeStyles = (): string => `
                     padding: 6px 20px;
                 }
                 .subpage-brand .brand-title {
-                    font-size: 17px;
+                    font-size: var(--text-lead);
                 }
                 .subpage-brand .brand-subtitle {
                     font-size: 9px;
@@ -3023,7 +3067,7 @@ export const homeStyles = (): string => `
                 .subpage-back {
                     top: 16px;
                     padding: 10px 18px;
-                    font-size: 11px;
+                    font-size: var(--text-eyebrow);
                 }
                 .subpage-spacer {
                     height: 100px;
@@ -3044,13 +3088,13 @@ export const homeStyles = (): string => `
             .schedule-item h3 {
                 font-size: var(--text-heading);
                 font-weight: var(--weight-bold);
-                color: #1a1a2e;
+                color: var(--text-primary);
                 font-family: var(--font-display);
                 line-height: var(--leading-snug);
             }
 
             .schedule-item p {
-                color: rgba(26, 26, 46, 0.65);
+                color: var(--text-primary-muted);
                 line-height: var(--leading-loose);
                 font-size: var(--text-body);
             }
@@ -3167,7 +3211,7 @@ export const homeStyles = (): string => `
                Arrows hidden; dots remain for navigation indicator. */
             @media (max-width: 960px) {
                 .carousel-card {
-                    padding: 0 clamp(4px, 2vw, 16px);
+                    padding: 0 var(--space-xs);
                 }
                 .carousel-arrow {
                     /* !important overrides JS inline style.display = 'flex' set by render() */
@@ -3217,19 +3261,19 @@ export const homeStyles = (): string => `
                 z-index: 20;   /* above fog ::before/::after at z-index 5 */
                 width: 32px;
                 height: 32px;
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 background: rgba(255, 255, 255, 0.82);
                 backdrop-filter: blur(8px);
                 -webkit-backdrop-filter: blur(8px);
                 border: 1px solid rgba(255, 255, 255, 0.5);
-                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+                box-shadow: var(--shadow-sm);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
-                transition: all 0.3s ease;
-                font-size: 16px;
-                color: #1a1a2e;
+                transition: all var(--motion-medium) ease;
+                font-size: var(--text-body);
+                color: var(--text-primary);
             }
 
             /* Arrows pushed to section edge — negative offset places them well outside
@@ -3245,7 +3289,7 @@ export const homeStyles = (): string => `
 
             .carousel-arrow:hover {
                 background: var(--white);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+                box-shadow: var(--shadow-sm);
                 transform: translateY(-50%) scale(1.08);
             }
 
@@ -3264,7 +3308,7 @@ export const homeStyles = (): string => `
             .carousel-dots .carousel-dot {
                 width: 9px;
                 height: 9px;
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 background: color-mix(in srgb, var(--gold) 25%, transparent);
                 border: 1.5px solid color-mix(in srgb, var(--gold) 40%, transparent);
                 cursor: pointer;
@@ -3298,10 +3342,10 @@ export const homeStyles = (): string => `
                 position: relative;
                 width: 100%;
                 aspect-ratio: 3/4;
-                border-radius: 32px;
+                border-radius: var(--radius-xl);
                 overflow: hidden;
                 background: transparent;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+                box-shadow: var(--shadow-md);
                 transition: box-shadow 0.4s ease, transform 0.4s ease;
             }
             
@@ -3331,7 +3375,7 @@ export const homeStyles = (): string => `
 
             /* Slightly tighter radius on image so the outer-card corners show through */
             .event-outer-card .event-flyer-wrapper {
-                border-radius: 18px;
+                border-radius: var(--radius-lg);
             }
 
             .flyer-image {
@@ -3349,9 +3393,9 @@ export const homeStyles = (): string => `
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 16px;
+                font-size: var(--text-body);
                 color: #6b6b80;
-                font-weight: 600;
+                font-weight: var(--weight-semibold);
                 text-transform: uppercase;
                 letter-spacing: 2px;
             }
@@ -3368,16 +3412,16 @@ export const homeStyles = (): string => `
                 background: rgba(255, 255, 255, 0.92);
                 backdrop-filter: blur(14px);
                 -webkit-backdrop-filter: blur(14px);
-                border-radius: 26px;
+                border-radius: var(--radius-lg);
                 border: 1px solid rgba(255, 255, 255, 0.7);
                 padding: 12px;
-                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.03);
+                box-shadow: var(--shadow-md);
                 box-sizing: border-box;
                 transition: box-shadow 0.35s ease;
             }
 
             .event-outer-card:hover {
-                box-shadow: 0 8px 36px rgba(0, 0, 0, 0.11), 0 2px 8px rgba(0, 0, 0, 0.05);
+                box-shadow: var(--shadow-md);
             }
 
             /* Header row inside outer card — date left, time right (or MEMORIES left) */
@@ -3393,7 +3437,7 @@ export const homeStyles = (): string => `
 
             /* Date text — plain gold, left side of header */
             .event-date {
-                font-size: 16px;
+                font-size: var(--text-body);
                 font-weight: var(--weight-bold);
                 letter-spacing: 1.5px;
                 color: var(--gold);
@@ -3404,7 +3448,7 @@ export const homeStyles = (): string => `
 
             /* Time text — plain gold, right side of header (hidden when all-day) */
             .event-time-pill {
-                font-size: 16px;
+                font-size: var(--text-body);
                 font-weight: var(--weight-bold);
                 letter-spacing: 1.5px;
                 color: var(--gold);
@@ -3425,9 +3469,9 @@ export const homeStyles = (): string => `
                 position: relative;
                 z-index: 2;
                 border: none;
-                font-family: var(--font-body), 'Inter', sans-serif;
+                font-family: var(--font-body);
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 font-size: var(--text-small);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
@@ -3437,7 +3481,7 @@ export const homeStyles = (): string => `
                 cursor: pointer;
                 white-space: nowrap;
                 box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all var(--motion-medium) var(--ease-standard);
                 box-sizing: border-box;
             }
 
@@ -3455,7 +3499,7 @@ export const homeStyles = (): string => `
 
             /* MEMORIES text inside .event-card-header — matches date/time plain gold style */
             .event-card-header .past-card-badge {
-                font-size: 16px;
+                font-size: var(--text-body);
                 font-weight: var(--weight-bold);
                 letter-spacing: 1.5px;
                 color: var(--gold);
@@ -3512,11 +3556,11 @@ export const homeStyles = (): string => `
                 padding: 12px 24px;
                 font-size: var(--text-label);
                 font-weight: var(--weight-bold);
-                border-radius: 16px;
+                border-radius: var(--radius-md);
                 background: rgba(255, 255, 255, 0.85);
-                color: #1a1a2e;
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease;
+                color: var(--text-primary);
+                box-shadow: var(--shadow-sm);
+                transition: all var(--motion-medium) ease;
                 cursor: pointer;
                 display: block;
                 text-align: center;
@@ -3526,7 +3570,7 @@ export const homeStyles = (): string => `
 
             .event-cta .btn:hover {
                 background: var(--white);
-                box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+                box-shadow: var(--shadow-md);
                 transform: translateY(-1px);
             }
 
@@ -3542,7 +3586,7 @@ export const homeStyles = (): string => `
                 width: 100%;
                 flex: 1;
                 aspect-ratio: 3/4;
-                border-radius: 18px;
+                border-radius: var(--radius-lg);
                 box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07),
                             inset 0 0 0 1px rgba(0, 0, 0, 0.055);
                 background: rgba(250, 248, 245, 0.6);
@@ -3552,34 +3596,34 @@ export const homeStyles = (): string => `
             }
             @media (max-width: 960px) {
                 .event-outer-card {
-                    border-radius: 32px;  /* match .section-card at this breakpoint */
+                    border-radius: var(--radius-xl);  /* match .section-card at this breakpoint */
                 }
             }
             .carousel-past-card .past-card-badge {
                 position: absolute; top: 12px; left: 12px;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 color: #ffffff; font-size: var(--text-eyebrow); font-weight: var(--weight-bold);
-                padding: 5px 10px; border-radius: 100px;
+                padding: 5px 10px; border-radius: var(--radius-pill);
                 letter-spacing: var(--tracking-wide);
                 box-shadow: 0 4px 16px color-mix(in srgb, var(--gold) 35%, transparent);
             }
-            .carousel-past-card .past-card-icon { font-size: 40px; margin-bottom: 10px; }
+            .carousel-past-card .past-card-icon { font-size: var(--text-title); margin-bottom: 10px; }
             .carousel-past-card .past-card-title {
                 font-family: inherit;
-                font-size: 20px; font-weight: var(--weight-semibold); margin: 0 0 8px 0; color: #1a1a2e;
+                font-size: var(--text-heading); font-weight: var(--weight-semibold); margin: 0 0 8px 0; color: var(--text-primary);
             }
             .carousel-past-card .past-card-text {
-                font-size: 16px; color: #595970;
+                font-size: var(--text-body); color: #595970;
                 line-height: var(--leading-normal); margin-bottom: 14px;
             }
             .carousel-past-card .past-card-btn {
                 display: flex; align-items: center; justify-content: center;
                 width: 100%; padding: 12px 24px; box-sizing: border-box;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-                border: none; color: #ffffff; border-radius: 100px;
+                border: none; color: #ffffff; border-radius: var(--radius-pill);
                 font-size: var(--text-small); font-weight: var(--weight-bold);
                 letter-spacing: 0.3px; text-transform: none;
-                cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                cursor: pointer; transition: all var(--motion-medium) var(--ease-standard);
                 box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
                 position: relative; z-index: 2;
             }
@@ -3616,14 +3660,13 @@ export const homeStyles = (): string => `
                 justify-content: center;
                 text-align: center;
                 padding: 56px 40px;
-                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
-                            0 12px 32px rgba(0, 0, 0, 0.04);
+                box-shadow: var(--shadow-xl);
                 border: 1px solid rgba(255, 255, 255, 0.5);
                 min-height: auto;
-                border-radius: 24px;
+                border-radius: var(--radius-lg);
                 position: relative;
                 overflow: hidden;
-                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all var(--motion-slow) var(--ease-standard);
                 /* Bound the card so width-100% + aspect-ratio 3/4 can't grow
                    into a 1500px-tall block on desktop (which was causing
                    CLS=0.4 on /outreach and looked absurd visually). 420px
@@ -3658,7 +3701,7 @@ export const homeStyles = (): string => `
 
             .swirl-blob {
                 position: absolute;
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 will-change: transform;
             }
 
@@ -3832,7 +3875,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-heading);
                 font-weight: var(--weight-bold);
                 margin: 0;
-                color: #1a1a2e;
+                color: var(--text-primary);
                 letter-spacing: var(--tracking-tight);
                 line-height: var(--leading-snug);
                 text-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 1px 4px rgba(255, 255, 255, 0.8);
@@ -3861,26 +3904,26 @@ export const homeStyles = (): string => `
                 margin-top: 16px;
                 padding: 10px 20px;
                 background: rgba(255, 255, 255, 0.7);
-                border: 1.5px solid rgba(26, 26, 46, 0.2);
-                border-radius: 100px;
+                border: 1.5px solid var(--text-primary-fade);
+                border-radius: var(--radius-pill);
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-semibold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 color: #4a4a5e;
                 cursor: pointer;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all var(--motion-medium) var(--ease-standard);
                 flex-shrink: 0;
                 backdrop-filter: blur(8px);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                box-shadow: var(--shadow-sm);
             }
 
             .btn-view-past-events:hover {
                 background: rgba(255, 255, 255, 0.85);
-                border-color: rgba(26, 26, 46, 0.3);
+                border-color: var(--text-primary-fade);
                 color: #3a3a50;
                 transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                box-shadow: var(--shadow-sm);
             }
             
             /* Hide button if no past events */
@@ -3904,7 +3947,7 @@ export const homeStyles = (): string => `
                 align-items: center;
                 justify-content: center;
                 opacity: 0;
-                transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: opacity 0.35s var(--ease-standard);
                 padding: 20px;
             }
             
@@ -3933,9 +3976,9 @@ export const homeStyles = (): string => `
             }
             
             .past-events-modal-title {
-                font-family: 'Playfair Display', serif;
-                font-size: clamp(22px, 5vw, 28px);
-                font-weight: 600;
+                font-family: var(--font-display);
+                font-size: var(--text-heading);
+                font-weight: var(--weight-semibold);
                 color: #ffffff;
                 margin: 0;
             }
@@ -3946,16 +3989,16 @@ export const homeStyles = (): string => `
                 background: rgba(255, 255, 255, 0.1);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.15);
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
-                font-size: 22px;
+                font-size: var(--text-heading);
                 color: rgba(255, 255, 255, 0.8);
-                transition: all 0.3s ease;
+                transition: all var(--motion-medium) ease;
             }
-            
+
             .past-events-modal-close:hover {
                 background: rgba(255, 255, 255, 0.2);
                 color: white;
@@ -3977,8 +4020,8 @@ export const homeStyles = (): string => `
                 max-width: 380px;
                 aspect-ratio: 3/4;
                 overflow: hidden;
-                border-radius: 24px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-xl);
             }
             
             .past-event-slide {
@@ -3989,7 +4032,7 @@ export const homeStyles = (): string => `
                 height: 100%;
                 opacity: 0;
                 transform: translateX(100%);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.4s var(--ease-standard);
             }
             
             .past-event-slide.active {
@@ -4016,7 +4059,7 @@ export const homeStyles = (): string => `
                 right: 0;
                 padding: 20px;
                 background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
-                border-radius: 0 0 24px 24px;
+                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
             }
 
             .past-event-slide-date {
@@ -4024,7 +4067,7 @@ export const homeStyles = (): string => `
                 padding: 5px 12px;
                 background: rgba(255, 255, 255, 0.15);
                 backdrop-filter: blur(8px);
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
@@ -4052,14 +4095,14 @@ export const homeStyles = (): string => `
                 background: rgba(255, 255, 255, 0.1);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.15);
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
-                font-size: 22px;
+                font-size: var(--text-heading);
                 color: rgba(255, 255, 255, 0.8);
-                transition: all 0.3s ease;
+                transition: all var(--motion-medium) ease;
                 z-index: 10;
             }
             
@@ -4083,10 +4126,10 @@ export const homeStyles = (): string => `
             .past-events-dot {
                 width: 8px;
                 height: 8px;
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 background: rgba(255, 255, 255, 0.25);
                 cursor: pointer;
-                transition: all 0.3s ease;
+                transition: all var(--motion-medium) ease;
             }
             
             .past-events-dot.active {
@@ -4111,7 +4154,7 @@ export const homeStyles = (): string => `
                 .past-events-nav {
                     width: clamp(36px, 5vw, 44px);
                     height: clamp(36px, 5vw, 44px);
-                    font-size: clamp(18px, 2.5vw, 22px);
+                    font-size: var(--text-heading);
                     background: rgba(0, 0, 0, 0.6);
                 }
             }
@@ -4124,14 +4167,14 @@ export const homeStyles = (): string => `
             }
             
             .past-events-empty-icon {
-                font-size: 48px;
+                font-size: var(--text-title);
                 margin-bottom: 16px;
                 opacity: 0.6;
             }
             
             .past-events-empty-text {
-                font-size: 16px;
-                line-height: 1.6;
+                font-size: var(--text-body);
+                line-height: var(--leading-normal);
             }
 
             /* ========================================
@@ -4151,7 +4194,7 @@ export const homeStyles = (): string => `
                 display: flex;
                 height: 100%;
                 width: 100%;
-                transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 0.5s var(--ease-standard);
             }
 
             .carousel-slide {
@@ -4182,11 +4225,11 @@ export const homeStyles = (): string => `
             .carousel-controls .carousel-dot {
                 width: 10px;
                 height: 10px;
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 background: rgba(255, 255, 255, 0.4);
                 border: 2px solid rgba(255, 255, 255, 0.6);
                 cursor: pointer;
-                transition: all 0.3s ease;
+                transition: all var(--motion-medium) ease;
             }
 
             .carousel-controls .carousel-dot.active {
@@ -4208,7 +4251,7 @@ export const homeStyles = (): string => `
                 align-items: center;
                 justify-content: center;
                 opacity: 0;
-                transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: opacity var(--motion-medium) var(--ease-standard);
                 cursor: zoom-out;
             }
             
@@ -4224,17 +4267,17 @@ export const homeStyles = (): string => `
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform var(--motion-medium) var(--ease-standard);
             }
             
             .lightbox-image {
                 max-width: 100%;
                 max-height: 95vh;
                 object-fit: contain;
-                border-radius: 12px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-xl);
                 cursor: zoom-in;
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform var(--motion-medium) var(--ease-standard);
             }
             
             .lightbox-image.zoomed {
@@ -4250,16 +4293,16 @@ export const homeStyles = (): string => `
                 height: 48px;
                 background: rgba(255, 255, 255, 0.9);
                 border: none;
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 28px;
-                font-weight: 300;
-                color: #1a1a2e;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                font-weight: var(--weight-regular);
+                color: var(--text-primary);
+                box-shadow: var(--shadow-md);
+                transition: all var(--motion-medium) var(--ease-standard);
                 z-index: 10000;
                 line-height: 1;
             }
@@ -4267,7 +4310,7 @@ export const homeStyles = (): string => `
             .lightbox-close:hover {
                 background: #fff;
                 transform: scale(1.1) rotate(90deg);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+                box-shadow: var(--shadow-md);
             }
             
             .lightbox-instructions {
@@ -4277,17 +4320,17 @@ export const homeStyles = (): string => `
                 transform: translateX(-50%);
                 background: rgba(255, 255, 255, 0.9);
                 padding: 12px 28px;
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 font-size: var(--text-label);
                 font-weight: var(--weight-semibold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
-                color: #1a1a2e;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+                color: var(--text-primary);
+                box-shadow: var(--shadow-md);
                 backdrop-filter: blur(10px);
                 z-index: 10000;
                 opacity: 0.8;
-                transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: opacity var(--motion-medium) var(--ease-standard);
             }
             
             .lightbox-instructions:hover {
@@ -4316,11 +4359,10 @@ export const homeStyles = (): string => `
 
             .watch-card {
                 background: rgba(255, 255, 255, 0.85);
-                border-radius: 48px;
+                border-radius: var(--radius-2xl);
                 padding: 48px;
-                color: var(--text-primary, #1a1a2e);
-                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
-                            0 12px 32px rgba(0, 0, 0, 0.04);
+                color: var(--text-primary);
+                box-shadow: var(--shadow-xl);
                 position: relative;
                 overflow: hidden;
                 border: 1px solid rgba(255, 255, 255, 0.6);
@@ -4337,7 +4379,7 @@ export const homeStyles = (): string => `
 
             .preview-screen {
                 background: rgba(248, 249, 253, 0.6);
-                border-radius: 24px;
+                border-radius: var(--radius-lg);
                 border: 1px solid rgba(0, 0, 0, 0.06);
                 padding: 48px;
                 display: flex;
@@ -4355,7 +4397,7 @@ export const homeStyles = (): string => `
                 align-items: center;
                 gap: 12px;
                 background: rgba(139, 0, 0, 0.1);
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 padding: 8px 20px;
                 color: #8B0000;
                 font-size: var(--text-eyebrow);
@@ -4367,7 +4409,7 @@ export const homeStyles = (): string => `
             .live-dot {
                 width: 10px;
                 height: 10px;
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 background: #cc0000;
                 box-shadow: 0 0 16px rgba(204, 0, 0, 0.6);
                 animation: pulse 2s ease-in-out infinite;
@@ -4379,7 +4421,7 @@ export const homeStyles = (): string => `
             }
 
             .preview-screen p {
-                color: rgba(26, 26, 46, 0.8);
+                color: var(--text-primary-soft);
                 line-height: var(--leading-loose);
                 font-size: var(--text-lead);
             }
@@ -4398,8 +4440,8 @@ export const homeStyles = (): string => `
                 color: #ffffff;
                 padding: 16px 38px;
                 box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                font-weight: 700;
+                transition: all 0.4s var(--ease-standard);
+                font-weight: var(--weight-bold);
             }
 
             .btn-outline:hover {
@@ -4419,17 +4461,17 @@ export const homeStyles = (): string => `
             .stream-thumbnail {
                 aspect-ratio: 16/9;
                 background: rgba(0, 0, 0, 0.04);
-                border-radius: 16px;
+                border-radius: var(--radius-md);
                 border: 1px solid rgba(0, 0, 0, 0.08);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: rgba(26, 26, 46, 0.5);
-                font-size: 14px;
-                font-weight: 600;
+                color: var(--text-primary-faint);
+                font-size: var(--text-small);
+                font-weight: var(--weight-semibold);
                 text-transform: uppercase;
                 letter-spacing: 1px;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all var(--motion-medium) var(--ease-standard);
                 cursor: pointer;
             }
 
@@ -4444,7 +4486,7 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-semibold);
                 text-transform: uppercase;
                 letter-spacing: var(--tracking-wide);
-                color: rgba(26, 26, 46, 0.6);
+                color: var(--text-primary-faint);
                 margin-bottom: 16px;
             }
             
@@ -4457,7 +4499,7 @@ export const homeStyles = (): string => `
             }
             
             .live-verse {
-                color: rgba(26, 26, 46, 0.8);
+                color: var(--text-primary-soft);
                 line-height: var(--leading-loose);
                 font-size: var(--text-lead);
                 text-align: center;
@@ -4468,11 +4510,11 @@ export const homeStyles = (): string => `
             .live-verse small {
                 display: block;
                 color: #8B0000;
-                font-size: 14px;
+                font-size: var(--text-small);
                 margin-top: 8px;
                 letter-spacing: 1px;
                 font-style: normal;
-                font-weight: 600;
+                font-weight: var(--weight-semibold);
             }
             
             /* Countdown Timer */
@@ -4486,9 +4528,9 @@ export const homeStyles = (): string => `
             }
             
             .countdown-label {
-                color: rgba(26, 26, 46, 0.6);
-                font-size: 10px;
-                font-weight: 600;
+                color: var(--text-primary-faint);
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-semibold);
                 text-transform: uppercase;
                 letter-spacing: 1.5px;
             }
@@ -4509,10 +4551,10 @@ export const homeStyles = (): string => `
             }
             
             .countdown-number {
-                font-size: 24px;
-                font-weight: 700;
+                font-size: var(--text-heading);
+                font-weight: var(--weight-bold);
                 color: #8B0000;
-                font-family: 'Playfair Display', serif;
+                font-family: var(--font-display);
                 line-height: 1;
             }
 
@@ -4521,7 +4563,7 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-semibold);
                 text-transform: uppercase;
                 letter-spacing: var(--tracking-normal);
-                color: rgba(26, 26, 46, 0.7);
+                color: var(--text-primary-muted);
             }
             
             /* Playlist Button */
@@ -4537,7 +4579,7 @@ export const homeStyles = (): string => `
                 padding-bottom: 56.25%; /* 16:9 aspect ratio */
                 height: 0;
                 overflow: hidden;
-                border-radius: 16px;
+                border-radius: var(--radius-md);
                 box-shadow: 0 8px 32px rgba(139, 0, 0, 0.25),
                             0 16px 48px rgba(139, 0, 0, 0.15);
             }
@@ -4550,7 +4592,7 @@ export const homeStyles = (): string => `
                 width: 100%;
                 height: 100%;
                 border: none;
-                border-radius: 16px;
+                border-radius: var(--radius-md);
             }
 
             /* Custom YouTube Thumbnail Overlay */
@@ -4564,7 +4606,7 @@ export const homeStyles = (): string => `
                 z-index: 2;
                 transition: opacity 250ms ease;
                 background: #0a0a0a;
-                border-radius: 16px;
+                border-radius: var(--radius-md);
             }
 
             .video-thumbnail.hidden {
@@ -4576,7 +4618,7 @@ export const homeStyles = (): string => `
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                border-radius: 16px;
+                border-radius: var(--radius-md);
                 display: block;
             }
 
@@ -4660,11 +4702,11 @@ export const homeStyles = (): string => `
                 background: rgba(0, 0, 0, 0.7);
                 color: #fff;
                 padding: 16px 32px;
-                border-radius: 12px;
-                font-family: var(--font-body), 'Inter', sans-serif;
-                font-size: 16px;
+                border-radius: var(--radius-md);
+                font-family: var(--font-body);
+                font-size: var(--text-body);
                 text-decoration: none;
-                transition: background 200ms ease;
+                transition: background var(--motion-fast) ease;
             }
 
             .video-fallback-link:hover {
@@ -4683,16 +4725,16 @@ export const homeStyles = (): string => `
                 background: rgba(0, 0, 0, 0.75);
                 color: #fff;
                 border: 1px solid rgba(255, 255, 255, 0.25);
-                border-radius: 8px;
+                border-radius: var(--radius-sm);
                 padding: 10px 18px;
-                font-family: var(--font-body), 'Inter', sans-serif;
-                font-size: 14px;
-                font-weight: 500;
+                font-family: var(--font-body);
+                font-size: var(--text-small);
+                font-weight: var(--weight-medium);
                 letter-spacing: 0.3px;
                 cursor: pointer;
                 backdrop-filter: blur(8px);
                 -webkit-backdrop-filter: blur(8px);
-                transition: opacity 300ms ease, transform 300ms ease, background 200ms ease;
+                transition: opacity var(--motion-medium) ease, transform var(--motion-medium) ease, background var(--motion-fast) ease;
                 opacity: 0;
                 transform: translateY(8px);
                 pointer-events: none;
@@ -4726,7 +4768,7 @@ export const homeStyles = (): string => `
                 padding-bottom: 56.25%; /* 16:9 aspect ratio */
                 height: 0;
                 overflow: hidden;
-                border-radius: 16px;
+                border-radius: var(--radius-md);
                 box-shadow: 0 8px 32px rgba(139, 0, 0, 0.2),
                             0 16px 48px rgba(139, 0, 0, 0.1);
                 background: rgba(248, 249, 253, 0.6);
@@ -4739,7 +4781,7 @@ export const homeStyles = (): string => `
                 width: 100%;
                 height: 100%;
                 border: none;
-                border-radius: 16px;
+                border-radius: var(--radius-md);
             }
 
             /* Video Grid (mobile baseline: single-card stack — only the latest is visible) */
@@ -4774,31 +4816,31 @@ export const homeStyles = (): string => `
                 align-self: flex-start;
                 align-items: center;
                 gap: 6px;
-                font-size: 10px;
-                font-weight: 700;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
                 letter-spacing: 1.6px;
                 text-transform: uppercase;
                 color: #8B0000;
                 background: rgba(139, 0, 0, 0.08);
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 padding: 5px 12px;
                 margin-bottom: 2px;
             }
 
             .video-card-date {
-                font-size: 12px;
-                font-weight: 600;
+                font-size: var(--text-label);
+                font-weight: var(--weight-semibold);
                 letter-spacing: 1.2px;
                 text-transform: uppercase;
-                color: rgba(26, 26, 46, 0.55);
+                color: var(--text-primary-faint);
             }
 
             .video-card-title {
-                font-family: 'Playfair Display', serif;
-                font-size: 20px;
-                line-height: 1.3;
-                font-weight: 600;
-                color: var(--text-primary, #1a1a2e);
+                font-family: var(--font-display);
+                font-size: var(--text-heading);
+                line-height: var(--leading-snug);
+                font-weight: var(--weight-semibold);
+                color: var(--text-primary);
                 margin: 0;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
@@ -4811,13 +4853,13 @@ export const homeStyles = (): string => `
                 position: relative;
                 width: 100%;
                 aspect-ratio: 16 / 9;
-                border-radius: 16px;
+                border-radius: var(--radius-md);
                 overflow: hidden;
                 background: #0a0a0a;
                 box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12),
                             0 12px 40px rgba(139, 0, 0, 0.08);
-                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                            box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 0.4s var(--ease-standard),
+                            box-shadow 0.4s var(--ease-standard);
             }
 
             .video-card-thumb-img {
@@ -4825,7 +4867,7 @@ export const homeStyles = (): string => `
                 height: 100%;
                 object-fit: cover;
                 display: block;
-                transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform var(--motion-slow) var(--ease-standard);
             }
 
             .video-card-play {
@@ -4834,8 +4876,8 @@ export const homeStyles = (): string => `
                 left: 50%;
                 transform: translate(-50%, -50%);
                 opacity: 0.92;
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                            opacity 0.3s ease;
+                transition: transform var(--motion-medium) var(--ease-standard),
+                            opacity var(--motion-medium) ease;
                 pointer-events: none;
                 filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
             }
@@ -4860,7 +4902,7 @@ export const homeStyles = (): string => `
             }
 
             .video-card-title {
-                transition: color 0.3s ease;
+                transition: color var(--motion-medium) ease;
             }
 
             /* Source card fades while its video is centered in the player overlay */
@@ -4910,7 +4952,7 @@ export const homeStyles = (): string => `
                 position: relative;
                 width: 100%;
                 height: 100%;
-                border-radius: 20px;
+                border-radius: var(--radius-lg);
                 overflow: hidden;
                 background-color: #050505;
                 background-size: cover;
@@ -4918,7 +4960,7 @@ export const homeStyles = (): string => `
                 box-shadow: 0 50px 120px rgba(0, 0, 0, 0.55),
                             0 20px 60px rgba(139, 0, 0, 0.18);
                 transform-origin: center center;
-                transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+                transition: transform var(--motion-slow) var(--ease-out-soft);
                 will-change: transform;
             }
             .video-player-slot {
@@ -4937,7 +4979,7 @@ export const homeStyles = (): string => `
                 right: 0;
                 width: 42px;
                 height: 42px;
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 background: rgba(255, 255, 255, 0.1);
                 border: 1px solid rgba(255, 255, 255, 0.22);
                 color: #fff;
@@ -4999,9 +5041,9 @@ export const homeStyles = (): string => `
                 height: auto;
                 aspect-ratio: 1/1;
                 object-fit: cover;
-                border-radius: 16px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-md);
+                transition: all var(--motion-medium) var(--ease-standard);
             }
             
             .gift-image {
@@ -5010,7 +5052,7 @@ export const homeStyles = (): string => `
             
             .gift-image:hover {
                 transform: translateY(-4px) scale(1.05);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+                box-shadow: var(--shadow-md);
             }
             
             /* Gift Gallery Lightbox */
@@ -5044,8 +5086,8 @@ export const homeStyles = (): string => `
                 max-width: 100%;
                 max-height: 90vh;
                 object-fit: contain;
-                border-radius: 8px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                border-radius: var(--radius-sm);
+                box-shadow: var(--shadow-xl);
             }
             
             .gift-lightbox-close {
@@ -5057,17 +5099,17 @@ export const homeStyles = (): string => `
                 background: rgba(255, 255, 255, 0.1);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
-                font-size: 24px;
+                font-size: var(--text-heading);
                 color: white;
-                transition: all 0.3s ease;
+                transition: all var(--motion-medium) ease;
                 z-index: 10001;
             }
-            
+
             .gift-lightbox-close:hover {
                 background: rgba(255, 255, 255, 0.2);
                 transform: scale(1.1);
@@ -5082,14 +5124,14 @@ export const homeStyles = (): string => `
                 background: rgba(255, 255, 255, 0.1);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 50%;
+                border-radius: var(--radius-circle);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
                 font-size: 28px;
                 color: white;
-                transition: all 0.3s ease;
+                transition: all var(--motion-medium) ease;
                 z-index: 10001;
             }
             
@@ -5116,16 +5158,16 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-semibold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
-                border-radius: 100px;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: var(--radius-pill);
+                transition: all var(--motion-medium) var(--ease-standard);
                 text-align: center;
             }
             
             .btn-see-flyer:hover {
                 transform: translateY(-2px);
                 background: var(--white) !important;
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
-                border-color: rgba(26, 26, 46, 0.15) !important;
+                box-shadow: var(--shadow-md) !important;
+                border-color: var(--text-primary-hairline) !important;
             }
             
             .contact-container {
@@ -5134,22 +5176,20 @@ export const homeStyles = (): string => `
             
             .contact-card {
                 background: rgba(255, 255, 255, 0.85);
-                border-radius: 48px;
+                border-radius: var(--radius-2xl);
                 padding: 64px;
-                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08), 
-                            0 12px 32px rgba(0, 0, 0, 0.04);
+                box-shadow: var(--shadow-xl);
                 border: 1px solid rgba(255, 255, 255, 0.6);
                 backdrop-filter: blur(20px);
                 display: grid;
                 grid-template-columns: 1.5fr 1fr;
                 gap: 64px;
                 align-items: start;
-                transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all var(--motion-slow) var(--ease-standard);
             }
             
             .contact-card:hover {
-                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1), 
-                            0 16px 40px rgba(0, 0, 0, 0.05);
+                box-shadow: var(--shadow-xl);
                 transform: translateY(-4px);
             }
             
@@ -5180,20 +5220,20 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
-                color: rgba(26, 26, 46, 0.7);
+                color: var(--text-primary-muted);
             }
             
             .form-group input,
             .form-group select,
             .form-group textarea {
                 padding: 16px 20px;
-                border: 2px solid rgba(26, 26, 46, 0.1);
-                border-radius: 16px;
-                font-size: 16px;
+                border: 2px solid var(--text-primary-hairline);
+                border-radius: var(--radius-md);
+                font-size: var(--text-body);
                 font-family: inherit;
                 background: rgba(255, 255, 255, 0.9);
-                color: #1a1a2e;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                color: var(--text-primary);
+                transition: all var(--motion-medium) var(--ease-standard);
             }
             
             .form-group input::placeholder,
@@ -5214,7 +5254,7 @@ export const homeStyles = (): string => `
             .form-group textarea {
                 resize: vertical;
                 min-height: 140px;
-                line-height: 1.6;
+                line-height: var(--leading-normal);
             }
             
             .form-group select {
@@ -5230,7 +5270,7 @@ export const homeStyles = (): string => `
                 width: 100%;
                 margin-top: 8px;
                 cursor: pointer;
-                font-size: 13px;
+                font-size: var(--text-label);
                 padding: 20px 40px;
             }
             
@@ -5240,12 +5280,12 @@ export const homeStyles = (): string => `
             
             /* Clothes Drive Form Styles */
             .form-message {
-                font-size: 18px;
-                line-height: 1.7;
-                color: rgba(26, 26, 46, 0.8);
+                font-size: var(--text-lead);
+                line-height: var(--leading-loose);
+                color: var(--text-primary-soft);
                 max-width: 700px;
                 margin: 0 auto 24px auto;
-                font-weight: 400;
+                font-weight: var(--weight-regular);
             }
             
             .btn-more-info {
@@ -5254,8 +5294,8 @@ export const homeStyles = (): string => `
                 justify-content: center;
                 margin-top: 8px;
                 padding: 14px 32px;
-                font-size: 13px;
-                font-weight: 600;
+                font-size: var(--text-label);
+                font-weight: var(--weight-semibold);
                 text-decoration: none;
                 cursor: pointer;
             }
@@ -5263,16 +5303,16 @@ export const homeStyles = (): string => `
             .form-section {
                 padding: 32px;
                 background: rgba(250, 248, 245, 0.5);
-                border-radius: 24px;
+                border-radius: var(--radius-lg);
                 margin-bottom: 24px;
             }
             
             .form-section-title {
-                font-family: 'Playfair Display', serif;
-                font-size: 24px;
-                color: #1a1a2e;
+                font-family: var(--font-display);
+                font-size: var(--text-heading);
+                color: var(--text-primary);
                 margin-bottom: 24px;
-                font-weight: 700;
+                font-weight: var(--weight-bold);
             }
             
             .form-row-3 {
@@ -5282,10 +5322,10 @@ export const homeStyles = (): string => `
             .child-form {
                 padding: 24px;
                 background: var(--surface);
-                border-radius: 16px;
+                border-radius: var(--radius-md);
                 margin-bottom: 20px;
                 border: 2px solid color-mix(in srgb, var(--gold) 20%, transparent);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all var(--motion-medium) var(--ease-standard);
             }
             
             .child-form:hover {
@@ -5303,23 +5343,23 @@ export const homeStyles = (): string => `
             }
             
             .child-number {
-                font-family: 'Playfair Display', serif;
-                font-size: 20px;
+                font-family: var(--font-display);
+                font-size: var(--text-heading);
                 color: var(--gold);
-                font-weight: 700;
+                font-weight: var(--weight-bold);
                 margin: 0;
             }
             
             .btn-remove-child {
                 padding: 8px 16px;
-                font-size: 12px;
+                font-size: var(--text-label);
                 background: rgba(220, 38, 38, 0.1);
                 color: #dc2626;
                 border: 1px solid rgba(220, 38, 38, 0.3);
-                border-radius: 8px;
+                border-radius: var(--radius-sm);
                 cursor: pointer;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                font-weight: 600;
+                transition: all var(--motion-medium) var(--ease-standard);
+                font-weight: var(--weight-semibold);
             }
             
             .btn-remove-child:hover {
@@ -5330,8 +5370,8 @@ export const homeStyles = (): string => `
             .btn-add-child {
                 width: 100%;
                 padding: 16px;
-                font-size: 14px;
-                font-weight: 600;
+                font-size: var(--text-small);
+                font-weight: var(--weight-semibold);
                 margin-top: 8px;
                 cursor: pointer;
             }
@@ -5340,10 +5380,9 @@ export const homeStyles = (): string => `
             .jotform-container {
                 width: 100%;
                 background: var(--surface);
-                border-radius: 24px;
+                border-radius: var(--radius-lg);
                 border: 1px solid rgba(255, 255, 255, 0.6);
-                box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08),
-                            0 12px 32px rgba(0, 0, 0, 0.04);
+                box-shadow: var(--shadow-xl);
                 overflow: visible;
                 position: relative;
                 padding: 32px;
@@ -5359,15 +5398,15 @@ export const homeStyles = (): string => `
             
             /* Prevent zoom on form inputs - Mobile Safari Fix */
             input, select, textarea, button {
-                font-size: 16px !important;
+                font-size: var(--text-body) !important;
             }
-            
+
             /* Ensure JotForm inputs don't trigger zoom */
             .jotform-container input,
             .jotform-container select,
             .jotform-container textarea,
             .jotform-container button {
-                font-size: 16px !important;
+                font-size: var(--text-body) !important;
             }
             
             /* Form Success State */
@@ -5383,7 +5422,7 @@ export const homeStyles = (): string => `
             }
             
             .success-icon {
-                font-size: 96px;
+                font-size: var(--text-hero);
                 animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             }
             
@@ -5394,19 +5433,19 @@ export const homeStyles = (): string => `
             }
             
             .success-heading {
-                font-family: 'Playfair Display', serif;
-                font-size: clamp(32px, 5vw, 48px);
-                color: #1a1a2e;
-                font-weight: 700;
+                font-family: var(--font-display);
+                font-size: var(--text-title);
+                color: var(--text-primary);
+                font-weight: var(--weight-bold);
                 margin: 0;
             }
             
             .success-message {
-                font-size: 20px;
-                color: rgba(26, 26, 46, 0.7);
+                font-size: var(--text-heading);
+                color: var(--text-primary-muted);
                 max-width: 500px;
                 margin: 0;
-                line-height: 1.6;
+                line-height: var(--leading-normal);
             }
             
             .success-details {
@@ -5417,7 +5456,7 @@ export const homeStyles = (): string => `
                 max-width: 500px;
                 background: rgba(255, 255, 255, 0.6);
                 padding: 24px;
-                border-radius: 24px;
+                border-radius: var(--radius-lg);
                 border: 1px solid rgba(255, 255, 255, 0.8);
             }
 
@@ -5427,7 +5466,7 @@ export const homeStyles = (): string => `
                 justify-content: space-between;
                 gap: 16px;
                 padding: 12px 0;
-                border-bottom: 1px solid rgba(26, 26, 46, 0.1);
+                border-bottom: 1px solid var(--text-primary-hairline);
             }
             
             .detail-item:last-child {
@@ -5435,18 +5474,18 @@ export const homeStyles = (): string => `
             }
             
             .detail-label {
-                font-size: 16px;
-                font-weight: 600;
+                font-size: var(--text-body);
+                font-weight: var(--weight-semibold);
                 color: #595970;
                 display: flex;
                 align-items: center;
                 gap: 8px;
             }
-            
+
             .detail-value {
-                font-size: 16px;
-                font-weight: 600;
-                color: #1a1a2e;
+                font-size: var(--text-body);
+                font-weight: var(--weight-semibold);
+                color: var(--text-primary);
                 text-align: right;
             }
             
@@ -5467,27 +5506,27 @@ export const homeStyles = (): string => `
                 justify-content: center;
                 gap: 10px;
                 padding: 16px 24px;
-                border-radius: 100px;
+                border-radius: var(--radius-pill);
                 background: rgba(255, 255, 255, 0.9);
-                color: #1a1a2e;
-                font-size: 14px;
-                font-weight: 700;
+                color: var(--text-primary);
+                font-size: var(--text-small);
+                font-weight: var(--weight-bold);
                 text-transform: uppercase;
                 letter-spacing: 1px;
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+                box-shadow: var(--shadow-md);
                 border: 1px solid rgba(255, 255, 255, 0.5);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.4s var(--ease-standard);
                 text-decoration: none;
             }
             
             .btn-calendar:hover {
                 transform: translateY(-4px);
-                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+                box-shadow: var(--shadow-lg);
                 background: var(--white);
             }
             
             .calendar-icon {
-                font-size: 20px;
+                font-size: var(--text-heading);
             }
             
             /* Confetti Animation */
@@ -5524,15 +5563,15 @@ export const homeStyles = (): string => `
                 align-items: flex-start;
                 padding: 24px;
                 background: rgba(255, 255, 255, 0.6);
-                border-radius: 24px;
+                border-radius: var(--radius-lg);
                 border: 1px solid rgba(255, 255, 255, 0.8);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all var(--motion-medium) var(--ease-standard);
             }
             
             .contact-info-item:hover {
                 background: rgba(255, 255, 255, 0.9);
                 transform: translateX(4px);
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+                box-shadow: var(--shadow-md);
             }
             
             .contact-icon {
@@ -5544,14 +5583,14 @@ export const homeStyles = (): string => `
             .contact-text h4 {
                 font-size: var(--text-body);
                 font-weight: var(--weight-bold);
-                color: #1a1a2e;
+                color: var(--text-primary);
                 margin-bottom: 6px;
                 letter-spacing: var(--tracking-normal);
             }
 
             .contact-text p {
                 font-size: var(--text-small);
-                color: rgba(26, 26, 46, 0.7);
+                color: var(--text-primary-muted);
                 line-height: var(--leading-normal);
             }
 
@@ -5753,12 +5792,12 @@ export const homeStyles = (): string => `
                     text-align: center;
                     z-index: 3;
                     color: white !important;
-                    font-family: var(--font-display), 'Playfair Display', serif;
-                    font-size: clamp(68px, 17vw, 96px);
-                    font-weight: 700;
+                    font-family: var(--font-display);
+                    font-size: var(--text-hero);
+                    font-weight: var(--weight-bold);
                     text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 8px 60px rgba(0, 0, 0, 0.6), 0 0 140px rgba(0, 0, 0, 0.45);
                     padding: 0 5%;
-                    line-height: 1.05;
+                    line-height: var(--leading-tight);
                     letter-spacing: -2px;
                     margin: 0;
                     box-sizing: border-box;
@@ -5783,9 +5822,9 @@ export const homeStyles = (): string => `
                 .hero .hero-title {
                     position: static !important;
                     color: #ffffff !important;
-                    font-family: var(--font-body), 'Inter', sans-serif !important;
-                    font-size: 19px !important;
-                    font-weight: 600 !important;
+                    font-family: var(--font-body) !important;
+                    font-size: var(--text-lead) !important;
+                    font-weight: var(--weight-semibold) !important;
                     letter-spacing: 2px !important;
                     text-transform: uppercase !important;
                     white-space: normal !important;
@@ -5804,8 +5843,8 @@ export const homeStyles = (): string => `
 
                 .hero-service-time {
                     color: #ffffff !important;
-                    font-size: 19px !important;
-                    font-weight: 600;
+                    font-size: var(--text-lead) !important;
+                    font-weight: var(--weight-semibold);
                     letter-spacing: 2px;
                     text-transform: uppercase;
                     text-shadow:
@@ -5853,9 +5892,9 @@ export const homeStyles = (): string => `
                     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), 0 0 24px color-mix(in srgb, var(--gold) 35%, transparent);
                     border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
                     letter-spacing: 2.5px;
-                    font-weight: 600;
+                    font-weight: var(--weight-semibold);
                     padding: 8px 40px;
-                    font-size: 12px;
+                    font-size: var(--text-label);
                 }
 
                 .find-us-btn:hover {
@@ -5927,10 +5966,10 @@ export const homeStyles = (): string => `
                 .nav-shell {
                     flex-wrap: wrap;
                     justify-content: center;
-                    border-radius: clamp(32px, 8vw, 40px);
+                    border-radius: var(--radius-2xl);
                     gap: 16px;
                     margin: 20px auto 50px;
-                    padding: clamp(12px, 3.5vw, 16px) clamp(15px, 4.5vw, 20px);
+                    padding: var(--space-sm) var(--space-md);
                     top: calc(env(safe-area-inset-top, 0px) + clamp(8px, 1.2vw, 12px));
                     width: clamp(94%, 96vw, 100%);
                     /* Low opacity white + heavy blur = warm frosted glass that
@@ -5939,15 +5978,14 @@ export const homeStyles = (): string => `
                     -webkit-backdrop-filter: blur(40px) saturate(1.8);
                     backdrop-filter: blur(40px) saturate(1.8);
                     border: 1px solid rgba(255, 255, 255, 0.4);
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
-                                0 2px 8px rgba(0, 0, 0, 0.06);
+                    box-shadow: var(--shadow-md);
                     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
                 }
 
                 .nav-shell.scrolled-mobile,
                 html.nav-prerender-scrolled .nav-shell {
-                    border-radius: 100px;
-                    padding: clamp(6px, 1.8vw, 8px) clamp(15px, 4.5vw, 20px);
+                    border-radius: var(--radius-pill);
+                    padding: clamp(6px, 1.8vw, 8px) var(--space-md);
                     gap: 0;
                     margin-bottom: 30px;
                     top: clamp(6px, 1.8vw, 8px);
@@ -5977,14 +6015,14 @@ export const homeStyles = (): string => `
                 .nav-form-btn {
                     display: none;
                     padding: 6px 14px;
-                    border-radius: 100px;
+                    border-radius: var(--radius-pill);
                     background: rgba(255, 255, 255, 0.9);
-                    color: #1a1a2e;
-                    font-size: 10px;
-                    font-weight: 700;
+                    color: var(--text-primary);
+                    font-size: var(--text-eyebrow);
+                    font-weight: var(--weight-bold);
                     text-transform: uppercase;
                     letter-spacing: 1.2px;
-                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                    box-shadow: var(--shadow-md);
                     -webkit-backdrop-filter: blur(10px);
                     backdrop-filter: blur(10px);
                     border: 1px solid rgba(255, 255, 255, 0.5);
@@ -6023,12 +6061,12 @@ export const homeStyles = (): string => `
                     width: 100%;
                     justify-content: center;
                     flex-wrap: nowrap;
-                    gap: clamp(6px, 2.5vw, 18px);
+                    gap: var(--space-xs);
                     order: 1;
                 }
 
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: clamp(6px, 2.5vw, 16px);
+                    gap: var(--space-xs);
                 }
 
                 nav {
@@ -6052,8 +6090,8 @@ export const homeStyles = (): string => `
 
                 .nav-cta {
                     width: 100%;
-                    padding: clamp(6px, 2vw, 10px) clamp(12px, 3.5vw, 24px);
-                    font-size: clamp(10px, 2.5vw, 12px);
+                    padding: clamp(6px, 2vw, 10px) var(--space-md);
+                    font-size: var(--text-label);
                     text-align: center;
                     order: 2;
                     white-space: nowrap;
@@ -6068,39 +6106,39 @@ export const homeStyles = (): string => `
                 }
 
                 .brand-title {
-                    font-size: clamp(16px, 4.5vw, 19px);
+                    font-size: var(--text-lead);
                     letter-spacing: clamp(1.5px, 0.5vw, 2px);
-                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    transition: all var(--motion-slow) var(--ease-standard);
                     white-space: nowrap;
                 }
 
                 .brand-subtitle {
-                    font-size: clamp(9px, 2.5vw, 11px);
+                    font-size: var(--text-eyebrow);
                     letter-spacing: clamp(2.5px, 0.7vw, 3px);
-                    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                    transition: all var(--motion-slow) var(--ease-standard);
                     white-space: nowrap;
                 }
 
                 nav a {
-                    font-size: clamp(10px, 2.5vw, 13px);
+                    font-size: var(--text-label);
                     letter-spacing: clamp(0.8px, 0.3vw, 2px);
                     white-space: nowrap;
                 }
 
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: clamp(10px, 2.5vw, 12px);
+                    font-size: var(--text-label);
                     letter-spacing: clamp(0.8px, 0.3vw, 1.5px);
                     white-space: nowrap;
                 }
 
                 .schedule-grid {
                     grid-template-columns: 1fr;
-                    gap: clamp(16px, 2.5vw, 24px);
+                    gap: var(--space-md);
                 }
 
                 .schedule-item {
-                    padding: clamp(12px, 3vw, 18px);
-                    gap: clamp(12px, 3.5vw, 20px);
+                    padding: var(--space-sm);
+                    gap: var(--space-sm);
                 }
 
                 .schedule-item-text {
@@ -6130,26 +6168,26 @@ export const homeStyles = (): string => `
                 }
                 .schedule-list {
                     padding: 0;
-                    gap: clamp(8px, 1.8vw, 12px);
+                    gap: var(--space-xs);
                 }
                 .schedule-tab.active {
                     background: rgba(255, 255, 255, 0.78);
-                    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+                    box-shadow: var(--shadow-md);
                 }
                 .schedule-tab {
-                    border-radius: 16px;
-                    padding: clamp(13px, 3.2vw, 18px) clamp(16px, 3.8vw, 20px);
+                    border-radius: var(--radius-md);
+                    padding: var(--space-sm) var(--space-md);
                     gap: 6px;
                 }
                 .schedule-tab-eyebrow {
-                    font-size: clamp(12px, 3.2vw, 14px);
+                    font-size: var(--text-small);
                 }
                 .schedule-tab-title {
-                    font-size: clamp(21px, 5.4vw, 27px);
+                    font-size: var(--text-heading);
                 }
                 .schedule-tab-desc {
-                    font-size: clamp(14px, 3.6vw, 15px);
-                    line-height: 1.55;
+                    font-size: var(--text-small);
+                    line-height: var(--leading-normal);
                 }
             }
 
@@ -6164,7 +6202,7 @@ export const homeStyles = (): string => `
             @media (max-width: 960px) {
                 .subpage-back {
                     padding: 10px 16px;
-                    font-size: 11px;
+                    font-size: var(--text-eyebrow);
                 }
                 .subpage-back-label {
                     /* keep visible — short label fits */
@@ -6180,7 +6218,7 @@ export const homeStyles = (): string => `
                 }
 
                 main {
-                    gap: clamp(64px, 10vw, 100px);
+                    gap: var(--space-3xl);
                     margin-bottom: clamp(20px, 6vw, 64px);
                 }
 
@@ -6210,79 +6248,79 @@ export const homeStyles = (): string => `
                 .btn {
                     width: 100% !important;
                     padding: 16px 32px;
-                    font-size: clamp(11px, 1.4vw, 14px);
+                    font-size: var(--text-label);
                     letter-spacing: var(--tracking-wide);
                 }
 
                 .section-card {
-                    padding: clamp(18px, 4vw, 36px) clamp(16px, 3vw, 28px);
-                    border-radius: clamp(24px, 3.5vw, 32px);
+                    padding: var(--space-lg) var(--space-md);
+                    border-radius: var(--radius-xl);
                 }
 
                 .schedule-item {
-                    border-radius: clamp(16px, 2.5vw, 24px);
+                    border-radius: var(--radius-lg);
                 }
 
                 .section-eyebrow {
-                    font-size: clamp(9px, 1.2vw, 10px);
+                    font-size: var(--text-eyebrow);
                     padding: 10px 20px;
                     letter-spacing: clamp(2px, 0.3vw, 2.5px);
-                    margin-bottom: clamp(16px, 2.2vw, 20px);
+                    margin-bottom: var(--space-md);
                 }
 
                 .section-heading {
-                    font-size: clamp(28px, 6vw, 48px);
-                    margin-bottom: clamp(16px, 2.2vw, 20px);
-                    line-height: 1.2;
+                    font-size: var(--text-title);
+                    margin-bottom: var(--space-md);
+                    line-height: var(--leading-snug);
                 }
 
                 .section-lead {
-                    font-size: clamp(16px, 2vw, 18px);
-                    line-height: 1.7;
+                    font-size: var(--text-lead);
+                    line-height: var(--leading-loose);
                 }
 
                 address {
-                    font-size: clamp(11px, 1.5vw, 13px);
+                    font-size: var(--text-label);
                     letter-spacing: 2px;
-                    margin-bottom: clamp(20px, 3.5vw, 32px);
+                    margin-bottom: var(--space-lg);
                 }
 
                 .schedule-item h3 {
-                    font-size: clamp(22px, 3vw, 26px);
+                    font-size: var(--text-heading);
                 }
 
                 .schedule-item p {
-                    font-size: clamp(14px, 1.7vw, 15px);
+                    font-size: var(--text-small);
                 }
 
                 /* Mobile/Tablet Event Cards - Centered layout */
 
 
                 .watch {
-                    gap: clamp(16px, 2.2vw, 20px);
+                    gap: var(--space-md);
                 }
 
                 .watch-card {
-                    padding: clamp(28px, 3.5vw, 32px) clamp(20px, 2.8vw, 24px);
-                    border-radius: clamp(24px, 3.5vw, 32px);
+                    padding: var(--space-lg) var(--space-md);
+                    border-radius: var(--radius-xl);
                 }
 
                 .contact {
-                    gap: clamp(28px, 3.5vw, 32px);
+                    gap: var(--space-lg);
                 }
 
                 .preview-screen {
-                    padding: clamp(28px, 3.5vw, 32px) clamp(20px, 2.8vw, 24px);
+                    padding: var(--space-lg) var(--space-md);
                     min-height: clamp(240px, 30vw, 280px);
                 }
 
                 .preview-screen p {
-                    font-size: 16px;
-                    line-height: 1.7;
+                    font-size: var(--text-body);
+                    line-height: var(--leading-loose);
                 }
 
                 .preview-screen small {
-                    font-size: clamp(13px, 1.7vw, 16px);
+                    font-size: var(--text-body);
                 }
 
                 .past-streams {
@@ -6292,10 +6330,10 @@ export const homeStyles = (): string => `
 
                 /* Contact Section */
                 .contact-card {
-                    padding: clamp(32px, 5vw, 48px) clamp(24px, 4vw, 36px);
-                    border-radius: clamp(24px, 3.5vw, 32px);
+                    padding: var(--space-xl) var(--space-lg);
+                    border-radius: var(--radius-xl);
                     grid-template-columns: 1fr;
-                    gap: clamp(40px, 5vw, 48px);
+                    gap: var(--space-2xl);
                 }
 
                 .form-row {
@@ -6311,7 +6349,7 @@ export const homeStyles = (): string => `
                 }
 
                 .form-section-title {
-                    font-size: 20px;
+                    font-size: var(--text-heading);
                 }
 
                 .child-form {
@@ -6319,20 +6357,20 @@ export const homeStyles = (): string => `
                 }
 
                 .form-success {
-                    padding: clamp(40px, 5vw, 48px) clamp(24px, 3vw, 28px);
+                    padding: var(--space-2xl) var(--space-lg);
                     min-height: clamp(450px, 55vw, 500px);
                 }
 
                 .success-icon {
-                    font-size: clamp(64px, 8vw, 72px);
+                    font-size: var(--text-hero);
                 }
 
                 .success-heading {
-                    font-size: clamp(26px, 5.5vw, 36px);
+                    font-size: var(--text-title);
                 }
 
                 .success-message {
-                    font-size: clamp(16px, 2vw, 18px);
+                    font-size: var(--text-lead);
                 }
 
                 .calendar-buttons {
@@ -6343,12 +6381,12 @@ export const homeStyles = (): string => `
                 .btn-calendar {
                     width: 100%;
                     min-width: auto;
-                    font-size: clamp(12px, 1.5vw, 14px);
-                    padding: clamp(14px, 1.8vw, 16px) clamp(20px, 2.5vw, 24px);
+                    font-size: var(--text-small);
+                    padding: var(--space-sm) var(--space-md);
                 }
 
                 .calendar-icon {
-                    font-size: clamp(18px, 2.2vw, 22px);
+                    font-size: var(--text-heading);
                 }
 
                 /* Outreach section — inherit .page width */
@@ -6361,13 +6399,13 @@ export const homeStyles = (): string => `
                     display: inline-flex !important;
                     width: fit-content !important;
                     max-width: fit-content !important;
-                    margin-left: clamp(4px, 1vw, 16px);
+                    margin-left: var(--space-xs);
                     margin-bottom: 10px;
                 }
 
                 .outreach .section-heading {
                     text-align: left;
-                    padding-left: clamp(4px, 1vw, 16px);
+                    padding-left: var(--space-xs);
                     margin-bottom: 24px;
                 }
 
@@ -6378,34 +6416,34 @@ export const homeStyles = (): string => `
                 }
 
                 .outreach-title-sticky h2 {
-                    font-size: clamp(26px, 5vw, 34px);
+                    font-size: var(--text-title);
                 }
 
                 .event-outer-card {
-                    border-radius: clamp(24px, 3.5vw, 32px);
-                    padding: clamp(14px, 1.8vw, 20px);
+                    border-radius: var(--radius-xl);
+                    padding: var(--space-sm);
                 }
 
                 .event-date {
-                    font-size: clamp(14px, 1.7vw, 17px);
+                    font-size: var(--text-small);
                 }
 
                 .event-time-pill {
-                    font-size: clamp(14px, 1.7vw, 17px);
+                    font-size: var(--text-small);
                 }
 
                 .event-card-header .past-card-badge {
-                    font-size: clamp(14px, 1.7vw, 17px);
+                    font-size: var(--text-small);
                 }
 
                 .event-title {
-                    font-size: clamp(26px, 5.5vw, 31px);
+                    font-size: var(--text-title);
                     margin-bottom: 6px;
-                    line-height: 1.2;
+                    line-height: var(--leading-snug);
                 }
 
                 .event-time {
-                    font-size: 14px;
+                    font-size: var(--text-small);
                     margin-bottom: 0;
                 }
 
@@ -6421,13 +6459,13 @@ export const homeStyles = (): string => `
                 }
 
                 .event-description {
-                    padding: clamp(0px, 2vw, 32px) clamp(20px, 3vw, 32px) clamp(20px, 3vw, 32px);
+                    padding: var(--space-sm) var(--space-lg) var(--space-lg);
                     gap: 14px;
                 }
 
                 .event-description p {
-                    font-size: clamp(16px, 2vw, 17px);
-                    line-height: 1.65;
+                    font-size: var(--text-body);
+                    line-height: var(--leading-normal);
                 }
 
                 .event-description ul {
@@ -6435,8 +6473,8 @@ export const homeStyles = (): string => `
                 }
 
                 .event-description li {
-                    font-size: 16px;
-                    line-height: 1.6;
+                    font-size: var(--text-body);
+                    line-height: var(--leading-normal);
                 }
 
                 .event-description li::before {
@@ -6455,20 +6493,20 @@ export const homeStyles = (): string => `
 
                 .placeholder-flyer {
                     aspect-ratio: 3/4;
-                    border-radius: clamp(24px, 3.5vw, 32px);
+                    border-radius: var(--radius-xl);
                 }
 
                 .event-cta {
-                    padding: 0 clamp(14px, 3.5vw, 20px);
-                    margin-bottom: clamp(14px, 3.2vw, 16px);
+                    padding: 0 var(--space-sm);
+                    margin-bottom: var(--space-sm);
                     max-width: clamp(340px, 80vw, 400px);
                     margin-top: 4px;
                 }
 
                 .event-cta .btn {
-                    padding: clamp(12px, 3vw, 16px) clamp(24px, 5vw, 32px);
-                    font-size: clamp(11px, 2.8vw, 13px);
-                    border-radius: 16px;
+                    padding: var(--space-sm) var(--space-lg);
+                    font-size: var(--text-label);
+                    border-radius: var(--radius-md);
                 }
 
                 .event-indicators {
@@ -6477,13 +6515,13 @@ export const homeStyles = (): string => `
                 }
 
                 .schedule-item span {
-                    font-size: clamp(11px, 1.4vw, 13px);
+                    font-size: var(--text-label);
                     letter-spacing: clamp(1.5px, 0.2vw, 1.8px);
                 }
 
                 .live-status {
-                    font-size: clamp(8px, 1.5vw, 13px);
-                    padding: clamp(4px, 0.8vw, 7px) clamp(12px, 1.6vw, 18px);
+                    font-size: var(--text-label);
+                    padding: clamp(4px, 0.8vw, 7px) var(--space-sm);
                     letter-spacing: clamp(1px, 0.2vw, 2px);
                 }
 
@@ -6501,14 +6539,14 @@ export const homeStyles = (): string => `
                 }
 
                 .past-streams-label {
-                    font-size: clamp(10px, 1.7vw, 16px);
+                    font-size: var(--text-label);
                     letter-spacing: clamp(1px, 0.2vw, 2px);
-                    margin-bottom: clamp(7px, 1.3vw, 12px);
+                    margin-bottom: var(--space-xs);
                 }
 
                 .stream-thumbnail {
-                    font-size: clamp(11px, 1.7vw, 16px);
-                    border-radius: clamp(8px, 1.3vw, 12px);
+                    font-size: var(--text-label);
+                    border-radius: var(--radius-md);
                 }
 
                 /* Contact Section Mobile */
@@ -6533,29 +6571,29 @@ export const homeStyles = (): string => `
                 /* Gift Gallery Mobile */
                 .gift-gallery {
                     gap: clamp(1%, 1.5vw, 1.5%);
-                    margin: clamp(16px, 2.5vw, 24px) 0;
+                    margin: var(--space-md) 0;
                 }
 
                 .gift-image {
-                    border-radius: clamp(8px, 1.3vw, 12px);
+                    border-radius: var(--radius-md);
                 }
 
                 .btn-see-flyer {
-                    padding: clamp(6px, 0.8vw, 7px) clamp(16px, 2vw, 20px);
-                    font-size: clamp(9px, 1.2vw, 10px);
-                    margin: clamp(5px, 0.8vw, 6px) auto clamp(10px, 1.3vw, 12px);
+                    padding: clamp(6px, 0.8vw, 7px) var(--space-md);
+                    font-size: var(--text-eyebrow);
+                    margin: clamp(5px, 0.8vw, 6px) auto var(--space-xs);
                 }
 
                 .form-group label {
-                    font-size: 14px;
+                    font-size: var(--text-small);
                 }
 
                 .form-group input,
                 .form-group select,
                 .form-group textarea {
                     padding: 14px 18px;
-                    font-size: 15px;
-                    border-radius: 12px;
+                    font-size: var(--text-small);
+                    border-radius: var(--radius-md);
                 }
 
                 .form-group textarea {
@@ -6564,7 +6602,7 @@ export const homeStyles = (): string => `
 
                 .btn-submit {
                     padding: 16px 32px;
-                    font-size: 14px;
+                    font-size: var(--text-small);
                 }
 
                 .contact-info {
@@ -6573,7 +6611,7 @@ export const homeStyles = (): string => `
 
                 .contact-info-item {
                     padding: 20px;
-                    border-radius: 16px;
+                    border-radius: var(--radius-md);
                 }
 
                 .contact-icon {
@@ -6581,32 +6619,32 @@ export const homeStyles = (): string => `
                 }
 
                 .contact-text h4 {
-                    font-size: 15px;
+                    font-size: var(--text-small);
                 }
 
                 .contact-text p {
-                    font-size: 17px;
+                    font-size: var(--text-body);
                 }
 
                 .success-details {
-                    padding: clamp(12px, 2vw, 20px);
+                    padding: var(--space-sm);
                 }
 
                 .detail-label,
                 .detail-value {
-                    font-size: 14px;
+                    font-size: var(--text-small);
                 }
 
                 /* Form container - mobile sizing */
                 .jotform-container {
-                    border-radius: clamp(16px, 2.5vw, 24px);
+                    border-radius: var(--radius-lg);
                     padding: 8px 0;
                 }
 
                 /* Mobile Stay Tuned Card styling */
                 .stay-tuned-card {
-                    padding: clamp(24px, 4vw, 40px) clamp(16px, 3vw, 24px);
-                    border-radius: 32px;
+                    padding: var(--space-lg) var(--space-md);
+                    border-radius: var(--radius-xl);
                 }
 
                 .stay-tuned-content {
@@ -6620,13 +6658,13 @@ export const homeStyles = (): string => `
                 }
 
                 .stay-tuned-title {
-                    font-size: clamp(24px, 6vw, 32px);
+                    font-size: var(--text-heading);
                 }
 
                 .stay-tuned-text {
-                    font-size: clamp(13px, 3.2vw, 15px);
+                    font-size: var(--text-small);
                     max-width: 220px;
-                    line-height: 1.6;
+                    line-height: var(--leading-normal);
                 }
 
                 .stay-tuned-rule {
@@ -6654,13 +6692,13 @@ export const homeStyles = (): string => `
                     height: clamp(32px, 4vw, 40px);
                     top: 10px;
                     right: 10px;
-                    font-size: clamp(20px, 2.5vw, 24px);
+                    font-size: var(--text-heading);
                 }
 
                 .lightbox-instructions {
                     bottom: 14px;
                     padding: 7px 14px;
-                    font-size: clamp(8px, 1.1vw, 10px);
+                    font-size: var(--text-eyebrow);
                     letter-spacing: 0.5px;
                 }
             }
@@ -6780,15 +6818,15 @@ export const homeStyles = (): string => `
                     position: relative;
                     z-index: 4;
                     color: #ffffff;
-                    font-size: clamp(48px, 6.5vw, 120px);
-                    line-height: 1.1;
-                    letter-spacing: -0.02em;
+                    font-size: var(--text-hero);
+                    line-height: var(--leading-tight);
+                    letter-spacing: var(--tracking-tight);
                     text-align: center;
                     white-space: nowrap;
                     text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45), 0 0 80px rgba(0, 0, 0, 0.25);
                     max-width: none;
-                    padding: 0 clamp(24px, 4vw, 80px);
-                    margin: 0 0 clamp(12px, 1.5vw, 20px) 0;
+                    padding: 0 var(--space-2xl);
+                    margin: 0 0 var(--space-sm) 0;
                     width: 100%;
                     overflow: visible;
                 }
@@ -6800,10 +6838,10 @@ export const homeStyles = (): string => `
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    gap: clamp(20px, 2.5vw, 32px);
+                    gap: var(--space-lg);
                     max-width: 600px;
                     width: 100%;
-                    padding: 0 clamp(24px, 4vw, 80px);
+                    padding: 0 var(--space-2xl);
                     margin: 0;
                     /* Unset two-column grid */
                     grid-template-columns: unset;
@@ -6813,8 +6851,8 @@ export const homeStyles = (): string => `
                 /* Hero service-time and any hero <p> — white text */
                 .hero p {
                     color: rgba(255, 255, 255, 0.92);
-                    font-size: clamp(24px, 2.4vw, 32px);
-                    line-height: 1.6;
+                    font-size: var(--text-heading);
+                    line-height: var(--leading-normal);
                     text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
                     text-align: center;
                     max-width: 100%;
@@ -6870,17 +6908,17 @@ export const homeStyles = (): string => `
                     backdrop-filter: blur(16px);
                     color: #ffffff;
                     border: 1px solid rgba(255, 255, 255, 0.25);
-                    box-shadow: 0 6px 32px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
+                    box-shadow: var(--shadow-md);
                     letter-spacing: 2px;
-                    font-weight: 600;
+                    font-weight: var(--weight-semibold);
                     padding: 18px 100px;
-                    font-size: 15px;
+                    font-size: var(--text-small);
                     width: auto;
                 }
                 .find-us-btn:hover {
                     background: var(--gold);
                     filter: brightness(1.08);
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                    box-shadow: var(--shadow-lg);
                 }
 
                 /* Hero bridge — centered on the exact hero/page seam.
@@ -6967,7 +7005,7 @@ export const homeStyles = (): string => `
                 }
 
                 .watch-card {
-                    padding: clamp(32px, 4vw, 48px) clamp(40px, 4.5vw, 56px);
+                    padding: var(--space-xl) var(--space-2xl);
                     max-width: 100%;
                     margin: 0;
                 }
@@ -6991,7 +7029,7 @@ export const homeStyles = (): string => `
                 .video-grid {
                     display: grid;
                     grid-template-columns: repeat(3, 1fr);
-                    gap: clamp(20px, 2vw, 28px);
+                    gap: var(--space-md);
                     width: 100%;
                     margin: 12px 0 8px;
                     align-items: start;
@@ -7030,11 +7068,11 @@ export const homeStyles = (): string => `
                 }
 
                 .video-card-title {
-                    font-size: clamp(18px, 1.4vw, 22px);
+                    font-size: var(--text-heading);
                 }
 
                 .video-card-date {
-                    font-size: 12px;
+                    font-size: var(--text-label);
                 }
 
                 .youtube-embed {
@@ -7059,14 +7097,14 @@ export const homeStyles = (): string => `
                 }
 
                 .contact-card {
-                    padding: clamp(48px, 6vw, 72px) clamp(56px, 6.5vw, 80px);
+                    padding: var(--space-2xl) var(--space-3xl);
                     max-width: 100%;
                 }
                 
                 /* Desktop Schedule Section */
                 .schedule-grid {
                     grid-template-columns: repeat(2, 1fr);
-                    gap: clamp(20px, 2.5vw, 36px);
+                    gap: var(--space-lg);
                     width: 100%;
                     max-width: unset;
                     margin: 0;
@@ -7074,11 +7112,11 @@ export const homeStyles = (): string => `
                 
                 /* Desktop Section typography */
                 .section-heading {
-                    font-size: clamp(48px, 4vw, 64px);
+                    font-size: var(--text-title);
                 }
-                
+
                 .section-lead {
-                    font-size: 20px;
+                    font-size: var(--text-heading);
                     max-width: 720px;
                 }
 
@@ -7147,17 +7185,17 @@ export const homeStyles = (): string => `
                     box-shadow: none;
                     border: none;
                     backdrop-filter: none;
-                    border-radius: 18px;
+                    border-radius: var(--radius-lg);
                     position: relative;
                     cursor: pointer;
                 }
-                .past-events-outer .event-outer-card:hover { box-shadow: 0 10px 40px rgba(0,0,0,0.13), 0 3px 10px rgba(0,0,0,0.06); }
-                .stay-tuned-card { border-radius: 32px; }
+                .past-events-outer .event-outer-card:hover { box-shadow: var(--shadow-md); }
+                .stay-tuned-card { border-radius: var(--radius-xl); }
                 .past-events-card .past-card-badge { display: none; /* badge moved to event-card-header */ }
-                .past-events-card .past-card-icon { font-size: 36px; margin-bottom: 8px; }
-                .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: #1a1a2e; }
-                .past-events-card .past-card-text { font-size: var(--text-small); color: rgba(26,26,46,0.7); line-height: var(--leading-normal); margin-bottom: 14px; }
-                .past-events-card .past-card-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 24px; box-sizing: border-box; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); border: none; color: #ffffff; border-radius: 100px; font-size: var(--text-label); font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent); position: relative; z-index: 2; }
+                .past-events-card .past-card-icon { font-size: var(--text-title); margin-bottom: 8px; }
+                .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: var(--text-primary); }
+                .past-events-card .past-card-text { font-size: var(--text-small); color: var(--text-primary-muted); line-height: var(--leading-normal); margin-bottom: 14px; }
+                .past-events-card .past-card-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 24px; box-sizing: border-box; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); border: none; color: #ffffff; border-radius: var(--radius-pill); font-size: var(--text-label); font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; cursor: pointer; transition: all var(--motion-medium) var(--ease-standard); box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent); position: relative; z-index: 2; }
                 .past-events-card .past-card-btn:hover { background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%); box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent); transform: translateY(-2px); }
 
                 .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; margin-bottom: 0 !important; }
@@ -7171,8 +7209,8 @@ export const homeStyles = (): string => `
                 .carousel-arrow {
                     width: 42px;
                     height: 42px;
-                    font-size: 20px;
-                    border-radius: 50%;
+                    font-size: var(--text-heading);
+                    border-radius: var(--radius-circle);
                 }
                 .carousel-arrow.prev {
                     left: 24px;
@@ -7197,7 +7235,7 @@ export const homeStyles = (): string => `
                 .event-cta .btn {
                     padding: 14px 32px;
                     font-size: var(--text-small);
-                    border-radius: 16px;
+                    border-radius: var(--radius-md);
                     background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                     color: #ffffff;
                     box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
@@ -7210,18 +7248,18 @@ export const homeStyles = (): string => `
 
             /* Event cards - bigger cards & stronger glow */
                 .event-flyer-wrapper {
-                    border-radius: 32px;
+                    border-radius: var(--radius-xl);
                 }
                 .event-date {
-                    font-size: 17px;
+                    font-size: var(--text-body);
                 }
 
                 .event-time-pill {
-                    font-size: 17px;
+                    font-size: var(--text-body);
                 }
 
                 .event-card-header .past-card-badge {
-                    font-size: 17px;
+                    font-size: var(--text-body);
                 }
 
                 .event-card-header {
@@ -7234,11 +7272,11 @@ export const homeStyles = (): string => `
                 }
 
                 .carousel-past-card {
-                    border-radius: 32px;
+                    border-radius: var(--radius-xl);
                     padding: 32px 24px;
                 }
-                .carousel-past-card .past-card-icon { font-size: 48px; }
-                .carousel-past-card .past-card-text { font-size: 16px; }
+                .carousel-past-card .past-card-icon { font-size: var(--text-title); }
+                .carousel-past-card .past-card-text { font-size: var(--text-body); }
                 .carousel-past-card .past-card-btn { padding: 14px 32px; font-size: var(--text-small); }
 
                 .event-flyer-wrapper.glow-warm {
@@ -7295,7 +7333,7 @@ export const homeStyles = (): string => `
                 text-align: center;
                 text-decoration: none;
                 color: inherit;
-                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 0.4s var(--ease-standard);
             }
             .footer-brand:hover {
                 transform: translateY(-2px);
@@ -7303,11 +7341,11 @@ export const homeStyles = (): string => `
             
             .footer-brand-title {
                 font-family: var(--font-display);
-                font-size: 24px;
+                font-size: var(--text-heading);
                 font-weight: var(--weight-bold);
-                letter-spacing: 0.1em;
+                letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
-                color: #1a1a2e;
+                color: var(--text-primary);
             }
 
             .footer-brand-subtitle {
@@ -7331,10 +7369,10 @@ export const homeStyles = (): string => `
                 justify-content: center;
                 width: 44px;
                 height: 44px;
-                border-radius: 50%;
-                background: rgba(26, 26, 46, 0.08);
-                color: #1a1a2e;
-                transition: all 0.3s ease;
+                border-radius: var(--radius-circle);
+                background: var(--text-primary-hairline);
+                color: var(--text-primary);
+                transition: all var(--motion-medium) ease;
             }
             
             .footer-social a:hover {
@@ -7362,7 +7400,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-small);
                 color: #595970;
                 text-decoration: none;
-                transition: color 0.3s ease;
+                transition: color var(--motion-medium) ease;
             }
 
             .footer-link:hover {
@@ -7370,7 +7408,7 @@ export const homeStyles = (): string => `
             }
 
             .footer-link-separator {
-                color: rgba(26, 26, 46, 0.3);
+                color: var(--text-primary-fade);
                 font-size: var(--text-small);
             }
 
@@ -7382,22 +7420,22 @@ export const homeStyles = (): string => `
             
             @media (max-width: 960px) {
                 .site-footer {
-                    padding: clamp(48px, 6vw, 60px) 0 clamp(32px, 4vw, 40px);
+                    padding: var(--space-2xl) 0 var(--space-xl);
                     /* Safari iOS safe area - add extra padding for home indicator on mobile */
-                    padding-bottom: calc(clamp(32px, 4vw, 40px) + env(safe-area-inset-bottom, 0px));
+                    padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px));
                     margin-top: 0;
                 }
 
                 .footer-content {
-                    gap: clamp(24px, 3vw, 32px);
+                    gap: var(--space-lg);
                 }
 
                 .footer-brand-title {
-                    font-size: clamp(20px, 2.5vw, 24px);
+                    font-size: var(--text-heading);
                 }
 
                 .footer-social {
-                    gap: clamp(16px, 2vw, 24px);
+                    gap: var(--space-md);
                 }
 
                 .footer-social a {

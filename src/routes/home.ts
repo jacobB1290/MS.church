@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.53.0 - Schema.org JSON-LD audit + sync: Wednesday Activity Day added to opening hours / offer catalog / Events; Friday Youth Service added as Event with 15+ PeopleAudience; 4 new FAQ entries (dress, parking, greeting, kids, youth ages); /visit + /ministries + /privacy structured data refreshed; gensparksite.com image URLs → /static/. See src/index.tsx for the full change log. -->
+<!-- v1.54.0 - Full design system standardization: 12 new tokens (text color scale, T-shirt spacing, radius / shadow / motion scales) + 413 substitutions across 5 templates snapping drift to tokens. Components were already unified; this closes the gap on the underlying values. See src/index.tsx for the full change log. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

@@ -77,27 +77,27 @@ export const visitBody = (): string => `
                /ministries idiom for first-timer-tip blocks. */
 
         .visit-faq-pair {
-            margin-bottom: clamp(40px, 5vw, 64px);
+            margin-bottom: var(--space-2xl);
         }
         .visit-faq-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: clamp(40px, 5vw, 72px);
+            gap: var(--space-2xl);
         }
         @media (max-width: 960px) {
             .visit-faq-pair {
-                margin-bottom: clamp(32px, 7vw, 44px);
+                margin-bottom: var(--space-xl);
             }
             .visit-faq-grid {
                 grid-template-columns: 1fr;
-                gap: clamp(28px, 7vw, 40px);
+                gap: var(--space-xl);
             }
             /* Gold tab marker above each text-only block — same idiom as
                /outreach + /ministries mobile to signal "new beat begins
                here" without needing a card frame. */
             .visit-faq-grid > .ministry-block {
                 position: relative;
-                padding-top: clamp(16px, 4vw, 22px);
+                padding-top: var(--space-md);
             }
             .visit-faq-grid > .ministry-block::before {
                 content: '';

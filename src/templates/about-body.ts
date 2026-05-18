@@ -79,7 +79,7 @@ export const aboutBody = (): string => `
                         <div class="schedule-item long-content">
                             <div class="schedule-item-text">
                                 <p>Our church is shepherded by a small, accessible leadership team rooted in scripture and committed to walking with our congregation through every season. Reach out any time — we'd love to meet you, answer questions, or pray for you.</p>
-                                <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: 600;">Send us a message →</a></p>
+                                <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: var(--weight-semibold);">Send us a message →</a></p>
                             </div>
                             <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
                         </div>

@@ -328,17 +328,17 @@ export const ministriesBody = (): string => `
            Sunday-School design). */
 
         .ministry-section {
-            margin-bottom: clamp(56px, 7vw, 96px);
+            margin-bottom: var(--space-3xl);
             scroll-margin-top: 90px;
         }
         .ministry-section:last-child {
             margin-bottom: 0;
         }
         .ministry-section-note {
-            color: rgba(26, 26, 46, 0.62);
-            font-size: clamp(13px, 1.4vw, 14.5px);
-            line-height: 1.65;
-            margin: clamp(8px, 1.4vw, 14px) 0 0;
+            color: var(--text-primary-faint);
+            font-size: var(--text-small);
+            line-height: var(--leading-normal);
+            margin: var(--space-xs) 0 0;
             font-style: italic;
             max-width: 60ch;
         }
@@ -373,9 +373,9 @@ export const ministriesBody = (): string => `
         .ministry-section-content {
             display: grid;
             grid-template-columns: 5fr 7fr;
-            gap: clamp(36px, 5vw, 80px);
+            gap: var(--space-2xl);
             align-items: stretch;
-            margin-top: clamp(28px, 4vw, 44px);
+            margin-top: var(--space-xl);
         }
         .ministry-section--right .ministry-section-content {
             grid-template-columns: 7fr 5fr;
@@ -390,7 +390,7 @@ export const ministriesBody = (): string => `
             width: 100%;
             min-height: clamp(320px, 36vw, 460px);
             max-height: 620px;
-            border-radius: clamp(18px, 2vw, 28px);
+            border-radius: var(--radius-xl);
             overflow: hidden;
             display: grid;
             place-items: center;
@@ -407,7 +407,7 @@ export const ministriesBody = (): string => `
         .ministry-section-entries {
             display: flex;
             flex-direction: column;
-            gap: clamp(40px, 5vw, 64px);
+            gap: var(--space-2xl);
         }
 
         /* ---------- Multi-entry pairs (Discipleship) ----------
@@ -417,13 +417,13 @@ export const ministriesBody = (): string => `
         .ministry-section-pairs {
             display: flex;
             flex-direction: column;
-            gap: clamp(48px, 6vw, 88px);
-            margin-top: clamp(28px, 4vw, 44px);
+            gap: var(--space-3xl);
+            margin-top: var(--space-xl);
         }
         .ministry-entry-pair {
             display: grid;
             grid-template-columns: 5fr 7fr;
-            gap: clamp(36px, 5vw, 80px);
+            gap: var(--space-2xl);
             align-items: stretch;
         }
         .ministry-entry-pair--right {
@@ -439,7 +439,7 @@ export const ministriesBody = (): string => `
             width: 100%;
             min-height: clamp(320px, 36vw, 460px);
             max-height: 620px;
-            border-radius: clamp(18px, 2vw, 28px);
+            border-radius: var(--radius-xl);
             overflow: hidden;
             display: grid;
             place-items: center;
@@ -454,40 +454,40 @@ export const ministriesBody = (): string => `
         .ministry-entry-content {
             display: flex;
             flex-direction: column;
-            gap: clamp(10px, 1.2vw, 14px);
+            gap: var(--space-xs);
         }
 
         /* Individual entry block — matches /outreach's .ministry-block
            weight (clean text, no surrounding box), with an extra
            .ministry-tips dl below the description. */
         .ministry-tips {
-            margin: clamp(8px, 1.2vw, 12px) 0 0;
+            margin: var(--space-xs) 0 0;
             display: grid;
-            gap: clamp(10px, 1.4vw, 14px);
-            padding: clamp(16px, 2vw, 20px) 0;
-            border-top: 1px solid rgba(26, 26, 46, 0.10);
-            border-bottom: 1px solid rgba(26, 26, 46, 0.10);
+            gap: var(--space-xs);
+            padding: var(--space-md) 0;
+            border-top: 1px solid var(--text-primary-hairline);
+            border-bottom: 1px solid var(--text-primary-hairline);
         }
         .ministry-tips > div {
             display: grid;
             grid-template-columns: clamp(110px, 12vw, 150px) 1fr;
-            gap: clamp(12px, 1.6vw, 20px);
+            gap: var(--space-sm);
             align-items: baseline;
         }
         .ministry-tips dt {
             font-family: var(--font-display);
-            font-size: clamp(10px, 1.05vw, 11px);
+            font-size: var(--text-eyebrow);
             font-weight: var(--weight-bold);
-            letter-spacing: 0.14em;
+            letter-spacing: var(--tracking-wide);
             text-transform: uppercase;
             color: var(--gold-dark);
             margin: 0;
         }
         .ministry-tips dd {
             margin: 0;
-            color: rgba(26, 26, 46, 0.78);
-            font-size: clamp(14px, 1.45vw, 15.5px);
-            line-height: 1.6;
+            color: var(--text-primary-muted);
+            font-size: var(--text-small);
+            line-height: var(--leading-normal);
         }
 
         /* Inline address-pill trigger inside .ministry-title — opens the
@@ -544,7 +544,7 @@ export const ministriesBody = (): string => `
             grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
             max-width: 1040px;
             align-items: start;
-            column-gap: clamp(48px, 6vw, 72px);
+            column-gap: var(--space-2xl);
         }
         .ministry-section--kids .sunday-school-video.vertical-video-frame {
             max-height: 560px;
@@ -556,20 +556,20 @@ export const ministriesBody = (): string => `
             margin: 0 0 6px;
         }
         .ministry-section--kids .sunday-school-text > .ministry-tips {
-            border-top: 1px solid rgba(26, 26, 46, 0.10);
-            border-bottom: 1px solid rgba(26, 26, 46, 0.10);
+            border-top: 1px solid var(--text-primary-hairline);
+            border-bottom: 1px solid var(--text-primary-hairline);
         }
 
         /* ---------- Mobile layout (different design, not just scaled) ---------- */
         @media (max-width: 960px) {
             .ministry-section {
-                margin-bottom: clamp(48px, 12vw, 80px);
+                margin-bottom: var(--space-3xl);
                 scroll-margin-top: 75px;
             }
             .ministry-section-content {
                 grid-template-columns: 1fr;
-                gap: clamp(24px, 6vw, 32px);
-                margin-top: clamp(20px, 5vw, 28px);
+                gap: var(--space-lg);
+                margin-top: var(--space-md);
             }
             /* On mobile, always image-on-top regardless of desktop alternation.
                The desktop rules use a 2-class selector (.ministry-section--right
@@ -590,11 +590,11 @@ export const ministriesBody = (): string => `
                 aspect-ratio: 16 / 9;
                 position: static;
                 top: auto;
-                border-radius: clamp(14px, 3vw, 20px);
+                border-radius: var(--radius-lg);
                 align-self: auto;
             }
             .ministry-section-entries {
-                gap: clamp(32px, 8vw, 44px);
+                gap: var(--space-xl);
             }
 
             /* Multi-entry pairs collapse to single-column on mobile —
@@ -603,13 +603,13 @@ export const ministriesBody = (): string => `
                is already visually separated by its own image, so no
                gold tab marker is needed. */
             .ministry-section-pairs {
-                gap: clamp(48px, 10vw, 64px);
-                margin-top: clamp(20px, 5vw, 28px);
+                gap: var(--space-2xl);
+                margin-top: var(--space-md);
             }
             .ministry-entry-pair,
             .ministry-entry-pair--right {
                 grid-template-columns: 1fr;
-                gap: clamp(24px, 6vw, 32px);
+                gap: var(--space-lg);
             }
             .ministry-entry-pair--right .ministry-entry-image,
             .ministry-entry-pair--right .ministry-entry-content {
@@ -619,7 +619,7 @@ export const ministriesBody = (): string => `
                 min-height: 0;
                 max-height: none;
                 aspect-ratio: 16 / 9;
-                border-radius: clamp(14px, 3vw, 20px);
+                border-radius: var(--radius-lg);
                 align-self: auto;
             }
 
@@ -629,7 +629,7 @@ export const ministriesBody = (): string => `
                mobile ministry blocks. */
             .ministry-section-entries > .ministry-block {
                 position: relative;
-                padding-top: clamp(16px, 4vw, 22px);
+                padding-top: var(--space-md);
             }
             .ministry-section-entries > .ministry-block::before {
                 content: '';
@@ -651,22 +651,22 @@ export const ministriesBody = (): string => `
                each tip reads as a separate beat instead of merging into
                a paragraph. */
             .ministry-tips {
-                gap: clamp(14px, 3vw, 18px);
-                padding: clamp(14px, 3vw, 18px) 0;
+                gap: var(--space-sm);
+                padding: var(--space-sm) 0;
             }
             .ministry-tips > div {
                 grid-template-columns: 1fr;
                 gap: 2px;
-                padding-left: clamp(10px, 3vw, 14px);
+                padding-left: var(--space-xs);
                 border-left: 2px solid rgba(212, 165, 116, 0.35);
             }
             .ministry-tips dt {
-                font-size: 10px;
-                letter-spacing: 0.16em;
+                font-size: var(--text-eyebrow);
+                letter-spacing: var(--tracking-wide);
             }
             .ministry-tips dd {
-                font-size: clamp(14.5px, 4vw, 15.5px);
-                line-height: 1.55;
+                font-size: var(--text-small);
+                line-height: var(--leading-normal);
             }
 
             /* Address pills become bigger tap targets on mobile. */

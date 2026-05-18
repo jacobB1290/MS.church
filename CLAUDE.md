@@ -346,15 +346,52 @@ The main landing page (`/`) contains these sections in order:
 
 ## Design System
 
-All styles are inlined in the `<style>` block inside the template string. Key design tokens:
+All styles are inlined in the `<style>` block inside the template string. The full token system lives at the top of `src/templates/home-styles.ts` in the `:root { ... }` block.
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| Primary dark | `#1a1a2e` | Text, nav background |
-| Gold accent | `#d4a574` / `#c89860` | Buttons, highlights |
-| Background | `#f8f9fd` | Page background |
-| Font (headings) | `Playfair Display` | Serif, via Google Fonts |
-| Font (body) | `Inter` | Sans-serif, via Google Fonts |
+### Tokens are NOT suggestions — use them whenever they apply
+
+The site has a complete design-token system (colors, type, spacing, weight, leading, tracking, radius, shadow, motion). **When you add or edit CSS, use the existing tokens. Do not inline raw hex codes, pixel values, or `clamp()` expressions when a token covers the case.** The drift this prevents:
+
+- A new card adding `padding: 22px` instead of `var(--space-md)` — works fine in isolation, but the next person doing the same lands on `24px` or `20px`. After 10 such decisions, the page has 10 different "default" paddings and no visual rhythm.
+- A new label adding `font-size: 13px` instead of `var(--text-label)` — same issue. Sizes near tokens should snap to the token.
+- A new shadow with `0 10px 30px rgba(0, 0, 0, 0.07)` instead of `var(--shadow-md)` — even small differences read as inconsistent depth across cards.
+
+**Rule of thumb:** if the value you're about to type is within ~30% of an existing token's value, use the token. Only invent a new value if it's a deliberate, specific outlier (e.g. a single illustration-tuned shadow, a hero-specific aspect ratio). If you find yourself wanting the same outlier in two places, that's the signal to add a new token, not to copy-paste the value.
+
+### The token catalog
+
+The numbers below are the source of truth; if anything here differs from `:root` in `home-styles.ts`, the `:root` wins.
+
+| Category | Tokens | Use for |
+|---|---|---|
+| **Color — gold** | `--gold` (base), `--gold-dark` (70% black), `--gold-deeper` (55% black) | Accent links, eyebrows, primary CTA, gradient accents |
+| **Color — surface** | `--bg`, `--surface`, `--white` | 3-level warm-white tier (page base / cards / hovers) |
+| **Color — event tints** | `--bg-event1..5` | Calendar event card backgrounds (rotating) |
+| **Color — text** | `--text-primary`, `--text-primary-soft` (.85), `-muted` (.72), `-faint` (.55), `-fade` (.30), `-hairline` (.10) | Headings → faint metadata → dividers. Use the alpha that's closest; don't invent new alphas. |
+| **Font family** | `--font-display` (Playfair), `--font-body` (Inter) | Headings → display; everything else → body |
+| **Type scale** | `--text-hero`, `--text-title`, `--text-heading`, `--text-lead`, `--text-body`, `--text-small`, `--text-label`, `--text-eyebrow` | 8-step fluid scale. Snap raw px to the nearest. |
+| **Weights** | `--weight-regular` (400), `--weight-medium` (500), `--weight-semibold` (600), `--weight-bold` (700) | Use the named token, not the number |
+| **Leading** | `--leading-tight` (1.1), `--leading-snug` (1.3), `--leading-normal` (1.6), `--leading-loose` (1.8) | Display → snug, body → normal, prose lead → loose |
+| **Tracking** | `--tracking-tight` (-0.02em), `--tracking-normal` (0), `--tracking-wide` (0.12em), `--tracking-wider` (0.25em) | Eyebrows → wider, buttons → wide |
+| **Spacing — T-shirt** | `--space-xs` (≈10), `-sm` (≈14), `-md` (≈20), `-lg` (≈28), `-xl` (≈36), `-2xl` (≈52), `-3xl` (≈72) | Every `padding` / `margin` / `gap` / `row-gap` / `column-gap`. All are fluid clamps. |
+| **Border radius** | `--radius-sm` (8), `-md` (16), `-lg` (~22), `-xl` (~26), `-2xl` (~40), `-pill` (100), `-circle` (50%) | Pill chips → pill; cards → md/lg/xl; page wraps → 2xl |
+| **Shadow elevation** | `--shadow-xs`, `-sm`, `-md`, `-lg`, `-xl`, `-overlay` | Cards → sm/md; hero surfaces → lg/xl; lightboxes → overlay. Don't invent rgba black drops. |
+| **Motion** | `--motion-fast` (.2s), `--motion-medium` (.3s), `--motion-slow` (.6s); `--ease-standard` (Material), `--ease-out-soft` (long ease-out) | Hovers → fast; transitions → medium; reveals → slow |
+
+### Exemptions (the legitimate "don't use a token" cases)
+
+These are fine to keep as raw values:
+
+- **SVG attributes** (`fill="..."`, `stroke="..."`, `font-size="..."` on `<text>`) — SVG presentation attributes, not CSS. Tokens don't apply.
+- **Illustration-specific colors** in the Boise outreach map and the handshake (`#5a3812`, `#7a4f1c`, `#fce7c0`, `#fff8e8`) — fine-tuned art assets.
+- **Gradient inputs in `linear-gradient()` / `color-mix()`** where the visual contrast is tuned — don't shoehorn a token if it changes the gradient feel.
+- **Animation `@keyframes` durations and `transition-delay` values** — those are bespoke choreography, not standardizable.
+- **`bg-event1..5`** — already tokens; don't replace with anything.
+- **`privacy.ts`** has its own self-contained CSS that doesn't import home-styles tokens; raw values there are intentional.
+
+### Adding a new token
+
+When you genuinely need a value that doesn't fit any existing token, **add the token to `:root` in `home-styles.ts` first**, then use it. Don't inline the raw value once and "add the token later" — the token never gets added.
 
 Responsive breakpoints: **2-tier system** — mobile ≤960px, desktop ≥961px. All values within each tier use fluid `clamp()` expressions for smooth scaling with no layout jumps.
 

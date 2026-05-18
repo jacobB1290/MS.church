@@ -53,7 +53,8 @@ type Section = {
   heading: string
   /** Optional italic note rendered between heading and the image/content split. */
   note?: string
-  /** Which side the image sits on at desktop ≥ 961px. Alternates for editorial rhythm. */
+  /** Image side for the FIRST entry at desktop ≥ 961px. Subsequent entries
+      alternate (so a 2-entry section reads image-left / image-right). */
   imageSide: 'left' | 'right'
   entries: Entry[]
 }
@@ -72,9 +73,9 @@ const SECTIONS: Section[] = [
         description:
           "Our weekly worship service runs about an hour: a brief welcome, two opening songs, the teaching, a closing prayer — followed by a free community breakfast for everyone who stays. Songs are on the screen, lyrics included, sing along or just listen. The teaching stays grounded in scripture and runs about 25–30 minutes. New here? Pick any back row and walk in any week — there's no signup and no expectation that you'll know what to do.",
         tips: [
-          { label: 'What to wear', value: 'Whatever feels right. Jeans and a t-shirt fit in just as well as a Sunday suit. We are not picky.' },
-          { label: 'Where to park', value: 'On-site lot at the church, free, no permit needed. Pull in and we will wave you to a spot if the lot is full.' },
-          { label: 'Greeting', value: 'Greeters at the front door and a welcome table inside. They have programs, coffee, and answers — no pressure to sign anything.' },
+          { label: 'What to wear', value: "No strict dress code beyond being modest. Most folks land on the casual side — jeans and a shirt are completely fine — and you will see plenty of people dressed more formally too. Both fit in." },
+          { label: 'Where to park', value: 'Parking is right next to the building. You will see the lot as soon as you pull up — free, no permit needed.' },
+          { label: 'At the door', value: 'Greeters meet everyone at the door for Sunday service. Any questions or need a hand finding something? They will help — no pressure.' },
           { label: 'If you arrive late', value: 'Slip in through the back. The back rows are the easiest entry. Nobody turns around.' },
           { label: 'Bringing kids', value: 'Sunday School runs for kids after the opening songs — see Kids below, or just stay in the service with us; both are welcome.' },
         ],
@@ -99,7 +100,7 @@ const SECTIONS: Section[] = [
           { label: 'What to bring', value: 'A Bible if you have one — we have extras on the back table.' },
           { label: 'Coffee', value: 'Free and on the counter. Grab a cup whenever.' },
           { label: 'If you arrive late', value: 'Walk in and grab a chair. We do not pause the discussion for new arrivals; it just keeps going.' },
-          { label: 'First time', value: 'Tell whoever greets you it is your first time and they will sit with you.' },
+          { label: 'First time', value: 'Tell whoever greets you it is your first time and they will get you settled.' },
         ],
         ctaLabel: 'Ask about Bible Study',
         ctaHref: '/#contact',
@@ -157,10 +158,10 @@ const SECTIONS: Section[] = [
         eyebrow: 'Youth Service',
         titleHtml: `Fridays · 7:00 PM at ${churchAddressPill('the church')}`,
         description:
-          'A weekly service designed for middle school and high school students — worship, teaching, and time to actually talk to each other. About an hour. Leaders are present every week and parents are welcome to drop off, stay, or pick up early.',
+          'A weekly service for our older students — worship, teaching, and time to actually talk to each other. About an hour. Leaders are present every week and parents are welcome to drop off, stay, or pick up early.',
         tips: [
-          { label: 'Ages', value: 'Middle school through high school (roughly 6th–12th grade).' },
-          { label: 'What to wear', value: 'Whatever your kid would wear to hang out with friends. No dress code.' },
+          { label: 'Ages', value: '15 and up — high schoolers and older.' },
+          { label: 'What to wear', value: 'Whatever your student would wear to hang out with friends. No dress code.' },
           { label: 'Drop-off', value: 'Pull up, walk them to the door, one of us will be there. Pick up at 8:00 PM in the same spot.' },
           { label: 'For parents', value: 'Come early for coffee with our leaders if you want to meet who is teaching your student that night.' },
           { label: 'First night', value: "Worship songs, a short message, and hangout time after. Tell us it is your student's first time and we will pair them with someone who has been a few weeks." },
@@ -215,6 +216,21 @@ function renderEntry(e: Entry): string {
                         </article>`
 }
 
+function renderEntryPair(e: Entry, side: 'left' | 'right'): string {
+  return `<article class="ministry-entry-pair ministry-entry-pair--${side}" id="${e.id}">
+                        <div class="ministry-entry-image ministries-image-placeholder" aria-hidden="true">
+                            ${PLACEHOLDER_SVG}
+                        </div>
+                        <div class="ministry-entry-content">
+                            <span class="ministry-eyebrow">${e.eyebrow}</span>
+                            <h3 class="ministry-title">${e.titleHtml}</h3>
+                            <p class="ministry-text">${e.description}</p>
+                            ${renderTips(e.tips)}
+                            <a href="${e.ctaHref}" class="ministry-link">${e.ctaLabel} &rarr;</a>
+                        </div>
+                    </article>`
+}
+
 function renderSection(s: Section): string {
   // Kids gets the vertical-video pattern (matches the original Sunday-School
   // design that lived on /visit). All other categories use the image-paired
@@ -240,6 +256,28 @@ function renderSection(s: Section): string {
   }
 
   const noteHtml = s.note ? `<p class="ministry-section-note">${s.note}</p>` : ''
+
+  // Multi-entry sections (currently Discipleship) get one image per entry,
+  // with the image side alternating starting from the section's imageSide.
+  // Single-entry sections keep the original sticky-image layout below.
+  if (s.entries.length > 1) {
+    const pairsHtml = s.entries
+      .map((e, i) => {
+        const side: 'left' | 'right' =
+          i % 2 === 0 ? s.imageSide : s.imageSide === 'left' ? 'right' : 'left'
+        return renderEntryPair(e, side)
+      })
+      .join('\n                    ')
+    return `<section class="ministry-section ministry-section--multi" id="${s.id}">
+                    <span class="section-eyebrow">${s.eyebrow}</span>
+                    <h2 class="section-heading">${s.heading}</h2>
+                    ${noteHtml}
+                    <div class="ministry-section-pairs">
+                        ${pairsHtml}
+                    </div>
+                </section>`
+  }
+
   const entriesHtml = s.entries.map(renderEntry).join('\n                        ')
   return `<section class="ministry-section ministry-section--${s.imageSide}" id="${s.id}">
                     <span class="section-eyebrow">${s.eyebrow}</span>
@@ -348,6 +386,47 @@ export const ministriesBody = (): string => `
             display: flex;
             flex-direction: column;
             gap: clamp(40px, 5vw, 64px);
+        }
+
+        /* Multi-entry sections (Discipleship) — one image per entry,
+           alternating sides. Each pair is its own image+content row;
+           pairs stack vertically inside the section. No sticky image
+           here since each image only belongs to one entry now. */
+        .ministry-section-pairs {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(56px, 7vw, 88px);
+            margin-top: clamp(28px, 4vw, 44px);
+        }
+        .ministry-entry-pair {
+            display: grid;
+            grid-template-columns: 5fr 7fr;
+            gap: clamp(36px, 5vw, 80px);
+            align-items: start;
+        }
+        .ministry-entry-pair--right .ministry-entry-image {
+            order: 2;
+        }
+        .ministry-entry-pair--right .ministry-entry-content {
+            order: 1;
+        }
+        .ministry-entry-image {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            border-radius: clamp(18px, 2vw, 28px);
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+        }
+        .ministry-entry-image > svg {
+            width: 12%;
+            max-width: 96px;
+            min-width: 48px;
+            height: auto;
+        }
+        .ministry-entry-content {
+            display: flex;
+            flex-direction: column;
         }
 
         /* Individual entry block — matches /outreach's .ministry-block
@@ -460,6 +539,28 @@ export const ministriesBody = (): string => `
             }
             .ministry-section-entries {
                 gap: clamp(32px, 8vw, 44px);
+            }
+
+            /* Multi-entry pairs collapse to single-column on mobile —
+               image on top, content below — and the alternating order
+               is dropped so every pair reads top-to-bottom. Each pair
+               is already visually separated by its own image, so no
+               gold tab marker is needed. */
+            .ministry-section-pairs {
+                gap: clamp(48px, 10vw, 64px);
+                margin-top: clamp(20px, 5vw, 28px);
+            }
+            .ministry-entry-pair {
+                grid-template-columns: 1fr;
+                gap: clamp(24px, 6vw, 32px);
+            }
+            .ministry-entry-pair--right .ministry-entry-image,
+            .ministry-entry-pair--right .ministry-entry-content {
+                order: 0;
+            }
+            .ministry-entry-image {
+                aspect-ratio: 16 / 9;
+                border-radius: clamp(14px, 3vw, 20px);
             }
 
             /* Gold tab marker above each entry — explicit "new ministry"

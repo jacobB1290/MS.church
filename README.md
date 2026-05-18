@@ -1,7 +1,22 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.51.2
+## 🔢 CURRENT VERSION: v1.52.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.52.0 — Newcomer-anxiety refinements
+
+Three connected changes targeted at the first-time-visitor experience.
+
+**1. New "Before You Come" section on `/visit`.** Inserted between *What to Expect* (the 8-step Service Flow) and the Contact CTA. Three blocks answering the questions first-timers actually ask:
+- *What to Wear* — image+text pair (image placeholder pending a real photo of people in mixed dress styles). Copy: no strict dress code beyond modest; most land on the casual side (jeans and a shirt fine), some dress more formally; both fit in.
+- *Parking* — right next to the building, free, no permit, short walk from lot to door.
+- *At the Door* — greeters meet everyone at the door for the main Sunday service; will help with seats, kids' classroom, bathroom, anything; no pressure to introduce yourself or sign anything.
+
+Page-scoped CSS: `.visit-faq-pair` reuses the global `.ministries-pair` (image+text split desktop, banner-stack mobile) and `.visit-faq-grid` does 50/50 on desktop, single-column-with-gold-tab-markers on mobile to match `/outreach` and `/ministries`.
+
+**2. `/ministries` Discipleship section: one image per entry.** Previously the section had a single shared sticky image hovering next to two different ministries — awkward. Now each entry (Bible Study, Bible Reading) gets its own image+content pair via a new render branch that fires when a section has 2+ entries. Image sides alternate within the section (Bible Study image right, Bible Reading image left) for editorial rhythm. New CSS (`.ministry-section-pairs / .ministry-entry-pair / .ministry-entry-pair--left|right / .ministry-entry-image / .ministry-entry-content`) mirrors the single-entry layout's typography without the sticky positioning. Single-entry sections (Worship, Fellowship, Youth) keep their existing path.
+
+**3. Copy synced across `/ministries` so the same answer never reads two different ways.** Worship → Sunday Gatherings tips: *What to wear* describes the modest-but-no-dress-code spectrum; *Where to park* simplified to "right next to the building, see the lot as soon as you pull up"; new *At the door* tip describes greeters helping with anything (replaces the prior *Greeting* tip). Bible Study → *First time* tip no longer says "they will sit with you" (updated to "they will get you settled"). Youth Service → ages changed from "Middle school through high school" to **15 and up — high schoolers and older**; description tightened to "for our older students".
 
 ### v1.51.2 — /visit handshake draw-in animation slowed back down
 

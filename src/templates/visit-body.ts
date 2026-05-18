@@ -11,10 +11,19 @@ import { footer } from './shared/footer.js'
 //      for the full ministry description. The final Breakfast step
 //      similarly links to /outreach#meals-hospitality for Community
 //      Breakfast detail — canonical depth lives there, not here.
-//   4. Contact CTA
+//   4. Before You Come: small set of first-timer reassurances — what to
+//      wear (image + text via .ministries-pair), parking, and at-the-door
+//      welcome. Editorial style, no boxed cards. The "What to wear" image
+//      is currently a placeholder pending a real photo of folks in mixed
+//      dress styles.
+//   5. Contact CTA
 //
 // Inherits subpage-header + subpage-spacer + scroll-margin-top from the
 // shared design system. JSON-LD references the existing church entity.
+
+// Inline placeholder icon — same rectangle + circle + mountain glyph used
+// across /outreach and /ministries for image-pending slots.
+const PLACEHOLDER_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`
 
 // Sunday flow. Edit copy here, not in CSS. Sunday School slots in
 // right after the two worship songs — that's when kids leave the main
@@ -49,6 +58,59 @@ const APPLE_DIRECTIONS = 'https://maps.apple.com/?daddr=3080+Wildwood+St,Boise,I
 const MAP_EMBED = 'https://www.google.com/maps?q=3080+Wildwood+St,Boise,ID+83713&z=15&output=embed'
 
 export const visitBody = (): string => `
+    <style>
+        /* /visit — Before You Come section. Editorial layout matching
+           /outreach's .ministries-pair pattern, no boxed cards.
+
+           DESKTOP (≥961px):
+             • "What to wear" is an image+text pair (image left, content
+               right) using the global .ministries-pair grid.
+             • Below it, .visit-faq-grid puts Parking and At the door
+               side-by-side at a comfortable 50/50 split.
+
+           MOBILE (≤960px):
+             • Everything stacks. The pair's image becomes a 16:9 banner
+               above the text (the global .ministries-image rule already
+               switches to 16:9 on mobile).
+             • Parking and At the door stack one-over-the-other with a
+               small gold tab marker above each, matching the
+               /ministries idiom for first-timer-tip blocks. */
+
+        .visit-faq-pair {
+            margin-bottom: clamp(40px, 5vw, 64px);
+        }
+        .visit-faq-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(40px, 5vw, 72px);
+        }
+        @media (max-width: 960px) {
+            .visit-faq-pair {
+                margin-bottom: clamp(32px, 7vw, 44px);
+            }
+            .visit-faq-grid {
+                grid-template-columns: 1fr;
+                gap: clamp(28px, 7vw, 40px);
+            }
+            /* Gold tab marker above each text-only block — same idiom as
+               /outreach + /ministries mobile to signal "new beat begins
+               here" without needing a card frame. */
+            .visit-faq-grid > .ministry-block {
+                position: relative;
+                padding-top: clamp(16px, 4vw, 22px);
+            }
+            .visit-faq-grid > .ministry-block::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: clamp(48px, 12vw, 72px);
+                height: 2px;
+                background: linear-gradient(90deg, var(--gold) 0%, var(--gold-dark) 100%);
+                border-radius: 1px;
+            }
+        }
+    </style>
     <body>
         <div class="page">
             ${subpageHeader()}
@@ -91,6 +153,36 @@ export const visitBody = (): string => `
                         <ol class="service-flow">
                                 ${flowItems}
                         </ol>
+                    </div>
+                </section>
+
+                <section id="before-you-come">
+                    <span class="section-eyebrow">Before You Come</span>
+                    <h2 class="section-heading">A few things visitors usually ask.</h2>
+                    <p class="section-lead">The stuff worth knowing before Sunday — small details that take the guesswork out of a first visit.</p>
+
+                    <div class="ministries-pair visit-faq-pair">
+                        <div class="ministries-image ministries-image-placeholder" aria-hidden="true">
+                            ${PLACEHOLDER_SVG}
+                        </div>
+                        <article class="ministry-block" id="what-to-wear">
+                            <span class="ministry-eyebrow">What to Wear</span>
+                            <h3 class="ministry-title">No strict dress code &mdash; come as you are.</h3>
+                            <p class="ministry-text">People land all over the spectrum on Sunday mornings. Most are on the casual side &mdash; jeans and a shirt are completely fine &mdash; and you'll see plenty dressed more formally too. Both fit in. The only ask is that you keep it modest.</p>
+                        </article>
+                    </div>
+
+                    <div class="visit-faq-grid">
+                        <article class="ministry-block" id="parking">
+                            <span class="ministry-eyebrow">Parking</span>
+                            <h3 class="ministry-title">Right next to the building.</h3>
+                            <p class="ministry-text">As soon as you pull up to the church, you'll see the lot. Free, no permit needed, and only a short walk to the front door.</p>
+                        </article>
+                        <article class="ministry-block" id="at-the-door">
+                            <span class="ministry-eyebrow">At the Door</span>
+                            <h3 class="ministry-title">A greeter will meet you.</h3>
+                            <p class="ministry-text">Greeters welcome everyone at the door for the main Sunday service. If you have a question or need a hand finding something &mdash; a seat, the kids' classroom, the bathroom &mdash; they're there to help. No pressure to introduce yourself or sign anything.</p>
+                        </article>
                     </div>
                 </section>
 

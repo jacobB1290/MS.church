@@ -1,7 +1,31 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.52.0
+## 🔢 CURRENT VERSION: v1.52.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.52.1 — /ministries image/video sizing audit + fix
+
+A parallel audit (15 element-bound screenshots + measured `getBoundingClientRect()` across all 5 sections at d1440/d1920/m414 in 4 seconds) surfaced two structural bugs that were causing awkward image/content proportions across most sections.
+
+**Bug 1 — right-imaged sections put the image in the LARGER column.** The single-entry sections used `grid-template-columns: 5fr 7fr` with CSS `order: 2` to flip the image side. CSS Grid auto-flow places items by source order *after* `order:` is applied, so right-imaged sections (Youth, and Discipleship's first pair) ended up with the IMAGE filling the 7fr column and the CONTENT the 5fr column — image rendered ~40% wider than left-imaged sections (705px vs 503px). Fix: add `.ministry-section--right .ministry-section-content { grid-template-columns: 7fr 5fr }` (and the equivalent for `.ministry-entry-pair--right`) so the image always occupies the 5fr column regardless of side.
+
+**Bug 2 — fixed 4:5 aspect ratio created dead vertical space.** With `aspect-ratio: 4/5` + `align-items: start`, image height was locked to `column-width × 1.25` and ignored the content height. Short entries (Bible Reading 379h, Fellowship 489h) left the image trailing 150–390px below the content end. Fix: removed the aspect-ratio, switched the grid to `align-items: stretch`, added `min-height: clamp(320px, 36vw, 460px)` and `max-height: 620px` so images stretch to row (content) height with sensible bounds. When real photos arrive, `object-fit: cover` handles them.
+
+**Before → after dimensions (d1440):**
+
+| Section | Before | After |
+|---|---|---|
+| Worship (image-left) | 503×629 image / 705×660 content | 503×620 / 705×660 |
+| Bible Study (image-right) | **705×881** / 503×491 | 503×468 / 705×468 |
+| Bible Reading (image-left) | 503×629 / 705×379 | 503×460 / 705×460 |
+| Fellowship (image-left) | 503×629 / 705×489 | 503×489 / 705×489 |
+| Youth (image-right) | **705×881** / 503×656 | 503×553 / 705×553 |
+
+Image always in the 503px (smaller) column, image-height always matches content-height.
+
+**Kids vertical-video** bumped from 280×440 (max-height 440px) to 360×560 (max-height 560px) with `align-items: start` so it hugs the top of the row rather than floating mid-cell — the video had been feeling orphaned next to the longer tip list.
+
+Mobile is unchanged in layout but gained explicit `--right` overrides in the media query because the new desktop rules' two-class specificity required matching them on mobile to keep the single-column banner-then-content collapse.
 
 ### v1.52.0 — Newcomer-anxiety refinements
 

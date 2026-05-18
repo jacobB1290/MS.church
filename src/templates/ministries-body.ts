@@ -352,13 +352,33 @@ export const ministriesBody = (): string => `
             border-bottom-color: var(--gold-dark);
         }
 
-        /* ---------- Desktop layout ---------- */
+        /* ---------- Desktop layout ----------
+           Two design fixes vs. the v1.51.1 layout:
+
+           1. Grid columns flip based on .--left / .--right so the IMAGE
+              is ALWAYS in the 5fr (smaller) column and the CONTENT is
+              always in the 7fr (larger) column. Previously a single
+              5fr 7fr grid combined with order: to swap the image
+              side meant right-side images landed in the 7fr column and
+              rendered ~40% wider than left-side images.
+
+           2. Images STRETCH to row height (align-items: stretch +
+              min-height/max-height clamps, no fixed aspect-ratio).
+              The placeholder was previously fixed at aspect 4/5 with
+              align-items: start, so on entries with short content the
+              image kept going below the content end, leaving an awkward
+              gap. Stretching ties image height to content height — when
+              real photos arrive they'll still look right via
+              object-fit: cover. */
         .ministry-section-content {
             display: grid;
             grid-template-columns: 5fr 7fr;
             gap: clamp(36px, 5vw, 80px);
-            align-items: start;
+            align-items: stretch;
             margin-top: clamp(28px, 4vw, 44px);
+        }
+        .ministry-section--right .ministry-section-content {
+            grid-template-columns: 7fr 5fr;
         }
         .ministry-section--right .ministry-section-image {
             order: 2;
@@ -368,13 +388,15 @@ export const ministriesBody = (): string => `
         }
         .ministry-section-image {
             width: 100%;
-            aspect-ratio: 4 / 5;
+            min-height: clamp(320px, 36vw, 460px);
+            max-height: 620px;
             border-radius: clamp(18px, 2vw, 28px);
             overflow: hidden;
             display: grid;
             place-items: center;
             position: sticky;
             top: 112px;
+            align-self: stretch;
         }
         .ministry-section-image > svg {
             width: 12%;
@@ -388,21 +410,24 @@ export const ministriesBody = (): string => `
             gap: clamp(40px, 5vw, 64px);
         }
 
-        /* Multi-entry sections (Discipleship) — one image per entry,
-           alternating sides. Each pair is its own image+content row;
-           pairs stack vertically inside the section. No sticky image
-           here since each image only belongs to one entry now. */
+        /* ---------- Multi-entry pairs (Discipleship) ----------
+           Same per-pair logic: each pair flips grid columns based on
+           the alternating side so the image is always in the smaller
+           column, and the image stretches to match content height. */
         .ministry-section-pairs {
             display: flex;
             flex-direction: column;
-            gap: clamp(56px, 7vw, 88px);
+            gap: clamp(48px, 6vw, 88px);
             margin-top: clamp(28px, 4vw, 44px);
         }
         .ministry-entry-pair {
             display: grid;
             grid-template-columns: 5fr 7fr;
             gap: clamp(36px, 5vw, 80px);
-            align-items: start;
+            align-items: stretch;
+        }
+        .ministry-entry-pair--right {
+            grid-template-columns: 7fr 5fr;
         }
         .ministry-entry-pair--right .ministry-entry-image {
             order: 2;
@@ -412,11 +437,13 @@ export const ministriesBody = (): string => `
         }
         .ministry-entry-image {
             width: 100%;
-            aspect-ratio: 4 / 5;
+            min-height: clamp(320px, 36vw, 460px);
+            max-height: 620px;
             border-radius: clamp(18px, 2vw, 28px);
             overflow: hidden;
             display: grid;
             place-items: center;
+            align-self: stretch;
         }
         .ministry-entry-image > svg {
             width: 12%;
@@ -427,6 +454,7 @@ export const ministriesBody = (): string => `
         .ministry-entry-content {
             display: flex;
             flex-direction: column;
+            gap: clamp(10px, 1.2vw, 14px);
         }
 
         /* Individual entry block — matches /outreach's .ministry-block
@@ -503,7 +531,24 @@ export const ministriesBody = (): string => `
         /* Kids section extras — the global .sunday-school-content layout
            expects the section's <h2> to carry the entry name; we add an
            in-content eyebrow + title so this section can share the same
-           per-entry structure as the rest. */
+           per-entry structure as the rest.
+
+           The default layout (originally designed for /visit's Sunday
+           School block) sized the video at 280px / max-height 440px,
+           which felt orphaned on /ministries next to a longer tip list.
+           Bump video column to 360px / max-height 560px so it carries
+           visual weight comparable to the text column. Also widen the
+           overall content max-width and shift align-items so the video
+           hugs the top of the row rather than floating in the middle. */
+        .ministry-section--kids .sunday-school-content {
+            grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+            max-width: 1040px;
+            align-items: start;
+            column-gap: clamp(48px, 6vw, 72px);
+        }
+        .ministry-section--kids .sunday-school-video.vertical-video-frame {
+            max-height: 560px;
+        }
         .ministry-section--kids .sunday-school-text > .ministry-eyebrow {
             margin-bottom: -4px;
         }
@@ -526,16 +571,27 @@ export const ministriesBody = (): string => `
                 gap: clamp(24px, 6vw, 32px);
                 margin-top: clamp(20px, 5vw, 28px);
             }
-            /* On mobile, always image-on-top regardless of desktop alternation. */
+            /* On mobile, always image-on-top regardless of desktop alternation.
+               The desktop rules use a 2-class selector (.ministry-section--right
+               .ministry-section-content) so the mobile override has to match
+               specificity to win, hence the explicit --right rule. */
+            .ministry-section--right .ministry-section-content {
+                grid-template-columns: 1fr;
+            }
             .ministry-section--right .ministry-section-image,
             .ministry-section--right .ministry-section-entries {
                 order: 0;
             }
             .ministry-section-image {
-                aspect-ratio: 16 / 9; /* horizontal banner — not another portrait */
+                /* Drop the desktop stretch behavior; on mobile the image is
+                   a fixed 16:9 banner above the content. */
+                min-height: 0;
+                max-height: none;
+                aspect-ratio: 16 / 9;
                 position: static;
                 top: auto;
                 border-radius: clamp(14px, 3vw, 20px);
+                align-self: auto;
             }
             .ministry-section-entries {
                 gap: clamp(32px, 8vw, 44px);
@@ -550,7 +606,8 @@ export const ministriesBody = (): string => `
                 gap: clamp(48px, 10vw, 64px);
                 margin-top: clamp(20px, 5vw, 28px);
             }
-            .ministry-entry-pair {
+            .ministry-entry-pair,
+            .ministry-entry-pair--right {
                 grid-template-columns: 1fr;
                 gap: clamp(24px, 6vw, 32px);
             }
@@ -559,8 +616,11 @@ export const ministriesBody = (): string => `
                 order: 0;
             }
             .ministry-entry-image {
+                min-height: 0;
+                max-height: none;
                 aspect-ratio: 16 / 9;
                 border-radius: clamp(14px, 3vw, 20px);
+                align-self: auto;
             }
 
             /* Gold tab marker above each entry — explicit "new ministry"

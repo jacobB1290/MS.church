@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.52.0 - Newcomer-anxiety refinements: new /visit "Before You Come" section (what to wear / parking / at the door); /ministries Discipleship rebuilt with one image per entry; copy synced across /ministries to match (Worship tips, Bible Study, Youth Service 15+). See src/index.tsx for the full change log. -->
+<!-- v1.52.1 - /ministries image/video sizing audit + fix: right-imaged sections no longer have the image in the larger grid column; images stretch to match content height instead of locking to a 4:5 aspect; Kids video bumped from 280×440 to 360×560. See src/index.tsx for the full change log. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

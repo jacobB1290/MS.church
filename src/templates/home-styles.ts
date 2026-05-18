@@ -2583,23 +2583,23 @@ export const homeStyles = (): string => `
             /* /visit intro — line-art handshake (v1.49.22).
                REFINED draw-on + gesture animation.
 
-                 Phase 1 (0 - 2.8s): The path draws itself onto the
+                 Phase 1 (0 - 3.2s): The path draws itself onto the
                  page via stroke-dashoffset. Duration chosen for
                  actual visibility of the drawing motion (not just
                  a flash). Even ease-in-out so progression reads
-                 throughout the 2.8s, not all at the start or end.
+                 throughout the 3.2s, not all at the start or end.
                  Paired with a soft opacity fade (1.2s) — only
                  opacity moves on entry, no competing scale, so the
                  focus is purely on the line forming.
 
-                 Phase 2 (2.8 - 3.4s): A 600ms still pause. The
+                 Phase 2 (3.2 - 3.8s): A 600ms still pause. The
                  illustration is fully drawn but quiet. This breath
                  is what makes the next gesture feel deliberate
                  rather than mechanical — there's an interval of
                  "the handshake is formed" before "the handshake
                  happens."
 
-                 Phase 3 (3.4s onwards): handshake-gesture loop —
+                 Phase 3 (3.8s onwards): handshake-gesture loop —
                  three firm pumps over ~1s with decreasing amplitudes
                  (7 -> 5 -> 3 px), then ~9s of complete stillness.
                  Repeats infinitely.
@@ -2627,19 +2627,18 @@ export const homeStyles = (): string => `
                 stroke-linejoin: round;
                 vector-effect: non-scaling-stroke;
                 /* Draw-on. The path's total length is ~893 user units across
-                   5 subpaths (outer outline + left-cuff inner + finger detail
-                   + right-cuff inner). With vector-effect: non-scaling-stroke
-                   the browser ignores pathLength normalization and treats
-                   dasharray/dashoffset as ACTUAL stroke-coordinate pixels,
-                   so dasharray=100 would have created a dash-gap-dash-gap
-                   pattern of 100px each across the 893px path — exactly the
-                   bug where inner subpaths appeared "missing". Use a single
-                   dash longer than the full path (1200 > 893) so no gap ever
-                   appears; offset 1200 hides the path before the animation,
-                   offset 0 fully reveals it. */
-                stroke-dasharray: 1200;
-                stroke-dashoffset: 1200;
-                animation: handshake-draw 2.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+                   5 subpaths. With vector-effect: non-scaling-stroke the
+                   browser ignores the pathLength="100" attribute and treats
+                   dasharray/dashoffset as actual stroke-coordinate pixels.
+                   Use a value just barely larger than the path length so the
+                   drawing fills almost the entire animation duration — and
+                   so no gap ever appears inside the path (the v1.50.4 bug
+                   that "missing" subpaths showed up). 920 leaves ~27px of
+                   pre-draw buffer (~0.1s with easing), which keeps the path
+                   hidden at t=0 without wasting most of the duration. */
+                stroke-dasharray: 920;
+                stroke-dashoffset: 920;
+                animation: handshake-draw 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
             }
             .handshake-art {
                 transform-origin: 50% 75%;
@@ -2647,11 +2646,11 @@ export const homeStyles = (): string => `
                 filter: drop-shadow(0 1.5px 1.5px rgba(200, 152, 96, 0.18));
                 animation:
                     handshake-fade 1.2s ease-out forwards,
-                    handshake-gesture 10s cubic-bezier(0.32, 0.5, 0.45, 0.92) 3.4s infinite;
+                    handshake-gesture 10s cubic-bezier(0.32, 0.5, 0.45, 0.92) 3.8s infinite;
                 will-change: transform, opacity;
             }
             @keyframes handshake-draw {
-                0%   { stroke-dashoffset: 1200; }
+                0%   { stroke-dashoffset: 920; }
                 100% { stroke-dashoffset: 0; }
             }
             @keyframes handshake-fade {

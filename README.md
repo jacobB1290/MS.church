@@ -1,7 +1,13 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.51.1
+## 🔢 CURRENT VERSION: v1.51.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.51.2 — /visit handshake draw-in animation slowed back down
+
+v1.50.4 (the dasharray bug fix) introduced an unintended side effect on the handshake intro animation. `stroke-dasharray` had been set to `1200` to be safely larger than the 893-unit path length, but that meant 307 units (~26% of the keyframe range) were spent with the dash offset past the end of the path — invisible "blank" time before drawing started. With the ease-in-out curve spending most of its slow portion in that blank window, the *visible* drawing collapsed to roughly 1.8s of the 2.8s duration and read as too fast.
+
+Fix: tightened `stroke-dasharray` to `920` (just 27 units past the path length, ~0.1s of pre-draw buffer under easing) and extended the keyframe duration to 3.2s so the visible drawing fills almost the entire animation. `handshake-gesture`'s start delay was bumped from 3.4s to 3.8s to preserve the original 600ms still-pause between Phase 1 (draw) and Phase 3 (gesture loop).
 
 ### v1.51.1 — /ministries redesign: editorial language match, distinct desktop/mobile, first-timer essentials
 

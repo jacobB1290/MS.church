@@ -1,7 +1,17 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.54.0
+## 🔢 CURRENT VERSION: v1.54.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.54.1 — Two follow-on fixes from v1.54.0
+
+User caught two real bugs after the design-system pass shipped.
+
+**Hero text too small on mobile.** `--text-hero` was `clamp(52px, 8vw, 88px)` — at 414px viewports `8vw = 33px` (below floor), so the hero floored at 52px and the hero/section-title ratio collapsed to `52/36 = 1.4×` on mobile vs `88/52 = 1.7×` on desktop, making "Mending the Broken." feel un-dominant. Bumped to `clamp(64px, 11vw, 96px)` — bespoke steeper curve, intentionally outside the regular type-scale shape. Mobile floor of 64px is 1.78× the section-title floor, restoring the desktop ratio. Token comment updated.
+
+**Kids section on `/ministries` completely broken on mobile.** The v1.52.1 desktop override `.ministry-section--kids .sunday-school-content { grid-template-columns: minmax(0, 360px) minmax(0, 1fr) }` has 2-class specificity, beating the global single-class `.sunday-school-content { grid-template-columns: 1fr }` mobile rule from `home-styles.ts`. Result: phones rendered the section as a 360px video next to a sliver-thin text column, text wrapping 2 characters per line, unreadable. Added an explicit mobile override at matching 2-class specificity inside the `.ministry-section--kids` ruleset so it collapses to a single-column banner-then-text stack (video capped at 240px / 426px). Same fix pattern as previous specificity collisions in this file.
+
+Verified at 360 / 390 / 414px mobile widths and 1440px desktop — desktop layouts unchanged.
 
 ### v1.54.0 — Full design system standardization (tokens + sweep)
 

@@ -38,7 +38,7 @@ export const homeStyles = (): string => `
                 --font-body: 'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
                 /* Type scale — fluid from mobile to desktop */
-                --text-hero:    clamp(52px, 8vw, 88px);   /* Hero headline — unique, largest */
+                --text-hero:    clamp(64px, 11vw, 96px);  /* Hero headline — unique, largest. Bespoke curve (steeper vw + higher floor than the regular type scale) so the hero reads as dominant on mobile too — at 414px wide this floors at 64px, almost 2x the section-title floor of 36px, matching the desktop ratio. */
                 --text-title:   clamp(36px, 5vw, 52px);   /* Section h2 titles — all sections */
                 --text-heading: clamp(20px, 2.5vw, 26px); /* Card / item h3 sub-headings */
                 --text-lead:    clamp(17px, 1.5vw, 20px); /* Lead paragraphs */

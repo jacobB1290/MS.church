@@ -562,6 +562,25 @@ export const ministriesBody = (): string => `
 
         /* ---------- Mobile layout (different design, not just scaled) ---------- */
         @media (max-width: 960px) {
+            /* The .ministry-section--kids overrides above are 2-class
+               selectors which beat the global single-class
+               .sunday-school-content mobile rule from home-styles.ts.
+               Re-state the collapse here at matching specificity so
+               the Kids section actually stacks on mobile instead of
+               trying to render a 360px video column next to a tiny
+               text column. */
+            .ministry-section--kids .sunday-school-content {
+                grid-template-columns: 1fr;
+                max-width: none;
+                column-gap: 0;
+                row-gap: var(--space-lg);
+                align-items: stretch;
+                justify-items: center;
+            }
+            .ministry-section--kids .sunday-school-video.vertical-video-frame {
+                max-width: 240px;
+                max-height: 426px;
+            }
             .ministry-section {
                 margin-bottom: var(--space-3xl);
                 scroll-margin-top: 75px;

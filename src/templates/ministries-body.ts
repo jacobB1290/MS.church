@@ -85,6 +85,30 @@ const SECTIONS: Section[] = [
     ],
   },
   {
+    id: 'kids',
+    eyebrow: 'Kids',
+    heading: 'How we make room for the youngest among us.',
+    imageSide: 'left', // ignored — Kids uses the vertical-video pattern
+    entries: [
+      {
+        id: 'sunday-school',
+        eyebrow: 'Sunday School',
+        titleHtml: `Sundays · During the 9 AM service at ${churchAddressPill('the church')}`,
+        description:
+          "Children's Sunday School runs in a separate room during the main service, so families can worship together at the start and kids can dive into scripture at their level when it is time. Safe, warm, joyful — and drop-off is welcome any Sunday. Our team is the same set of trusted faces every week so kids know who they are with.",
+        tips: [
+          { label: 'Ages', value: 'Preschool through about 5th grade. Older kids usually stay in the service with their family.' },
+          { label: 'When they leave', value: "Kids head to the classroom after the two opening worship songs. We'll point you to the room before the service starts." },
+          { label: 'Drop-off', value: 'Walk your child to the classroom door — no signup form, no waiver, no ID required.' },
+          { label: 'What they do', value: 'Bible storyline lesson + activity at their level. Snacks happen.' },
+          { label: 'Pick-up', value: 'Pick up at the classroom right after the closing song. Stay for breakfast either way.' },
+        ],
+        ctaLabel: 'Ask about Sunday School',
+        ctaHref: '/#contact',
+      },
+    ],
+  },
+  {
     id: 'discipleship',
     eyebrow: 'Discipleship',
     heading: 'How we study scripture and grow together.',
@@ -167,30 +191,6 @@ const SECTIONS: Section[] = [
           { label: 'First night', value: "Worship songs, a short message, and hangout time after. Tell us it is your student's first time and we will pair them with someone who has been a few weeks." },
         ],
         ctaLabel: 'Ask about Youth Service',
-        ctaHref: '/#contact',
-      },
-    ],
-  },
-  {
-    id: 'kids',
-    eyebrow: 'Kids',
-    heading: 'How we make room for the youngest among us.',
-    imageSide: 'left', // ignored — Kids uses the vertical-video pattern
-    entries: [
-      {
-        id: 'sunday-school',
-        eyebrow: 'Sunday School',
-        titleHtml: `Sundays · During the 9 AM service at ${churchAddressPill('the church')}`,
-        description:
-          "Children's Sunday School runs in a separate room during the main service, so families can worship together at the start and kids can dive into scripture at their level when it is time. Safe, warm, joyful — and drop-off is welcome any Sunday. Our team is the same set of trusted faces every week so kids know who they are with.",
-        tips: [
-          { label: 'Ages', value: 'Preschool through about 5th grade. Older kids usually stay in the service with their family.' },
-          { label: 'When they leave', value: "Kids head to the classroom after the two opening worship songs. We'll point you to the room before the service starts." },
-          { label: 'Drop-off', value: 'Walk your child to the classroom door — no signup form, no waiver, no ID required.' },
-          { label: 'What they do', value: 'Bible storyline lesson + activity at their level. Snacks happen.' },
-          { label: 'Pick-up', value: 'Pick up at the classroom right after the closing song. Stay for breakfast either way.' },
-        ],
-        ctaLabel: 'Ask about Sunday School',
         ctaHref: '/#contact',
       },
     ],

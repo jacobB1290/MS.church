@@ -1,7 +1,13 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.54.1
+## 🔢 CURRENT VERSION: v1.54.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.54.2 — /ministries: Kids moved right after Worship
+
+Section order on `/ministries` was Worship → Discipleship → Fellowship → Youth → Kids. Reordered to **Worship → Kids → Discipleship → Fellowship → Youth** so parents reading the page from the top land on "what about my kids during the service?" immediately after they've read about the service itself, instead of having to scroll past three sections to find it.
+
+Anchors (`#worship`, `#kids`, `#discipleship`, `#fellowship`, `#youth`) are unchanged so all home-page Schedule deep-links still land correctly. JSON-LD `ItemList` `position` values in `routes/ministries.ts` re-numbered 1→6 to match the new on-page order so the structured data stays in sync with what visitors actually see. The "Bringing kids" tip in Sunday Gatherings still says "see Kids below" — accurate since Kids is now the very next section.
 
 ### v1.54.1 — Two follow-on fixes from v1.54.0
 

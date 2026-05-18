@@ -2200,7 +2200,7 @@ export const homeStyles = (): string => `
                accessible state preserves the map's spatial message. */
             .boise-map {
                 width: 100%;
-                max-width: 680px;
+                max-width: 100%;
                 margin: clamp(28px, 4vw, 44px) auto 0;
                 color: #1a1a2e;
             }
@@ -2209,6 +2209,17 @@ export const homeStyles = (): string => `
                 width: 100%;
                 height: auto;
                 overflow: visible;
+            }
+            /* Two SVG variants: the mobile one (1.76:1) is the original
+               artwork — kept exactly as it was. The desktop one (2.9:1)
+               is the same composition stretched onto a widescreen canvas
+               so the graphic fills the page width on desktop instead of
+               sitting small in the center. Only one is visible per
+               breakpoint. */
+            .boise-map-desktop { display: none; }
+            @media (min-width: 961px) {
+                .boise-map-mobile { display: none; }
+                .boise-map-desktop { display: block; }
             }
 
             /* Foothills: dashed contour line, implies north.

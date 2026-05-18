@@ -1,7 +1,15 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.50.1
+## 🔢 CURRENT VERSION: v1.50.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.50.2 — /outreach map extended on desktop (same artwork, wider canvas)
+
+The "How We Serve Boise" map at the top of `/outreach` previously rendered at `max-width: 680px` on desktop, leaving large empty margins on either side at typical desktop widths. Extended on desktop only.
+
+The desktop now renders a second SVG variant with a 2.9:1 widescreen viewBox (1100×380, vs the original 1.76:1 / 600×340). It's the **same artwork** — same three pins, same animated comet, same foothills / streets / river / greenbelt / "BOISE" signature — stretched onto the wider canvas: pins spread A→B→C across the horizontal axis, the comet's A→B→C → arc-back-over-the-foothills loop traces the new positions, and the river / grid / foothills extend to the new edges. No new map elements were added; the existing composition just occupies the wider space.
+
+Implemented as a second SVG inside `outreach-body.ts` gated by `.boise-map-desktop` (`display: block` at ≥961px). The original `.boise-map-mobile` SVG with the 600×340 viewBox is preserved **verbatim** and remains the only SVG visible on mobile (≤960px), so the small-screen rendering is byte-for-byte unchanged.
 
 ### v1.50.1 — All three watch videos play in-page via a centered FLIP-morph overlay (desktop)
 

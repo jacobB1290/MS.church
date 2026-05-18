@@ -23,7 +23,7 @@ export const outreachBody = (): string => `
                     <span class="section-eyebrow">Outreach</span>
                     <h1 class="section-heading">How We Serve Boise</h1>
                     <p class="section-lead">Faith without works is dead. Here's how Morning Star puts love into action — through monthly community service and seasonal events open to anyone in the city.</p>
-                    <div class="boise-map" role="img" aria-label="Stylized top-down map of Boise with three outreach locations linked by a moving light trail.">
+                    <div class="boise-map boise-map-mobile" role="img" aria-label="Stylized top-down map of Boise with three outreach locations linked by a moving light trail.">
                         <svg viewBox="0 0 600 340" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                             <defs>
                                 <radialGradient id="boisePinHead" cx="32%" cy="28%">
@@ -151,6 +151,131 @@ export const outreachBody = (): string => `
 
                             <!-- Map signature -->
                             <text class="boise-map-label" x="582" y="328" text-anchor="end">BOISE</text>
+                        </svg>
+                    </div>
+
+                    <!-- Wide-format version of the same map (desktop ≥ 961px only).
+                         No new elements — same pins, same comet, same river/foothills/grid
+                         — just stretched onto a 2.9:1 widescreen viewBox so it fills the
+                         page width with breathing room instead of sitting small in the
+                         center. Mobile (≤ 960px) keeps the original 1.76:1 SVG above. -->
+                    <div class="boise-map boise-map-desktop" role="img" aria-label="Stylized top-down map of Boise with three outreach locations linked by a moving light trail.">
+                        <svg viewBox="0 0 1100 380" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                            <defs>
+                                <radialGradient id="boisePinHeadD" cx="32%" cy="28%">
+                                    <stop offset="0%" stop-color="#fce7c0"/>
+                                    <stop offset="55%" stop-color="#d4a574"/>
+                                    <stop offset="100%" stop-color="#7a4f1c"/>
+                                </radialGradient>
+                                <radialGradient id="boisePinHaloD" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="var(--gold)" stop-opacity="0.55"/>
+                                    <stop offset="55%" stop-color="var(--gold)" stop-opacity="0.18"/>
+                                    <stop offset="100%" stop-color="var(--gold)" stop-opacity="0"/>
+                                </radialGradient>
+                                <linearGradient id="boiseRiverGradD" x1="0%" x2="100%" y1="0%" y2="100%">
+                                    <stop offset="0%" stop-color="var(--gold)" stop-opacity="0.42"/>
+                                    <stop offset="100%" stop-color="var(--gold-dark)" stop-opacity="0.32"/>
+                                </linearGradient>
+                            </defs>
+
+                            <!-- Foothills extended across the wider canvas -->
+                            <path class="boise-foothills" d="M 30 70 Q 180 50, 340 60 Q 500 56, 660 68 Q 820 74, 970 84 Q 1040 88, 1070 90"/>
+                            <path class="boise-foothills boise-foothills-back" d="M 60 56 Q 230 36, 420 44 Q 610 44, 790 56 Q 960 62, 1060 68"/>
+
+                            <!-- Street grid extended to span the wider canvas -->
+                            <g class="boise-streets" transform="rotate(-10 550 195)">
+                                <line x1="80"  y1="80" x2="80"  y2="320"/>
+                                <line x1="115" y1="80" x2="115" y2="320"/>
+                                <line x1="150" y1="80" x2="150" y2="320"/>
+                                <line x1="185" y1="80" x2="185" y2="320"/>
+                                <line x1="220" y1="80" x2="220" y2="320"/>
+                                <line x1="255" y1="80" x2="255" y2="320"/>
+                                <line x1="290" y1="80" x2="290" y2="320"/>
+                                <line x1="325" y1="80" x2="325" y2="320"/>
+                                <line x1="360" y1="80" x2="360" y2="320"/>
+                                <line x1="395" y1="80" x2="395" y2="320"/>
+                                <line x1="430" y1="80" x2="430" y2="320"/>
+                                <line x1="465" y1="80" x2="465" y2="320"/>
+                                <line x1="500" y1="80" x2="500" y2="320"/>
+                                <line x1="535" y1="80" x2="535" y2="320"/>
+                                <line x1="570" y1="80" x2="570" y2="320"/>
+                                <line x1="605" y1="80" x2="605" y2="320"/>
+                                <line x1="640" y1="80" x2="640" y2="320"/>
+                                <line x1="675" y1="80" x2="675" y2="320"/>
+                                <line x1="710" y1="80" x2="710" y2="320"/>
+                                <line x1="745" y1="80" x2="745" y2="320"/>
+                                <line x1="780" y1="80" x2="780" y2="320"/>
+                                <line x1="815" y1="80" x2="815" y2="320"/>
+                                <line x1="850" y1="80" x2="850" y2="320"/>
+                                <line x1="885" y1="80" x2="885" y2="320"/>
+                                <line x1="920" y1="80" x2="920" y2="320"/>
+                                <line x1="955" y1="80" x2="955" y2="320"/>
+                                <line x1="990" y1="80" x2="990" y2="320"/>
+                                <line x1="60" y1="100" x2="1040" y2="100"/>
+                                <line x1="60" y1="125" x2="1040" y2="125"/>
+                                <line x1="60" y1="148" x2="1040" y2="148"/>
+                                <line x1="60" y1="172" x2="1040" y2="172"/>
+                                <line x1="60" y1="195" x2="1040" y2="195"/>
+                                <line x1="60" y1="220" x2="1040" y2="220"/>
+                                <line x1="60" y1="245" x2="1040" y2="245"/>
+                                <line x1="60" y1="270" x2="1040" y2="270"/>
+                                <line x1="60" y1="295" x2="1040" y2="295"/>
+                            </g>
+                            <g class="boise-streets-major" transform="rotate(-10 550 195)">
+                                <line x1="290" y1="75" x2="290" y2="325"/>
+                                <line x1="535" y1="75" x2="535" y2="325"/>
+                                <line x1="780" y1="75" x2="780" y2="325"/>
+                                <line x1="55" y1="155" x2="1045" y2="155"/>
+                                <line x1="55" y1="232" x2="1045" y2="232"/>
+                            </g>
+                            <g class="boise-streets-diagonals">
+                                <line x1="160" y1="115" x2="450" y2="310"/>
+                                <line x1="970" y1="115" x2="640" y2="310"/>
+                                <line x1="200" y1="280" x2="900" y2="115"/>
+                            </g>
+
+                            <!-- River + greenbelt extended NW→SE across the full canvas -->
+                            <path class="boise-river" style="stroke: url(#boiseRiverGradD)" d="M 25 115 Q 200 175, 380 210 Q 540 240, 700 270 Q 870 300, 1080 318"/>
+                            <path class="boise-greenbelt" d="M 25 107 Q 200 167, 380 202 Q 540 232, 700 262 Q 870 292, 1080 310"/>
+
+                            <!-- Comet trail loops through the three repositioned pins -->
+                            <path class="boise-comet boise-comet-l6" d="M 280 165 Q 420 205, 560 245 Q 700 220, 820 175 Q 540 60, 280 165" pathLength="120"/>
+                            <path class="boise-comet boise-comet-l5" d="M 280 165 Q 420 205, 560 245 Q 700 220, 820 175 Q 540 60, 280 165" pathLength="120"/>
+                            <path class="boise-comet boise-comet-l4" d="M 280 165 Q 420 205, 560 245 Q 700 220, 820 175 Q 540 60, 280 165" pathLength="120"/>
+                            <path class="boise-comet boise-comet-l3" d="M 280 165 Q 420 205, 560 245 Q 700 220, 820 175 Q 540 60, 280 165" pathLength="120"/>
+                            <path class="boise-comet boise-comet-l2" d="M 280 165 Q 420 205, 560 245 Q 700 220, 820 175 Q 540 60, 280 165" pathLength="120"/>
+                            <path class="boise-comet boise-comet-l1" d="M 280 165 Q 420 205, 560 245 Q 700 220, 820 175 Q 540 60, 280 165" pathLength="120"/>
+
+                            <!-- Pin halos -->
+                            <circle class="boise-pin-halo boise-pin-halo-a" cx="280" cy="165" r="26" fill="url(#boisePinHaloD)"/>
+                            <circle class="boise-pin-halo boise-pin-halo-b" cx="560" cy="245" r="26" fill="url(#boisePinHaloD)"/>
+                            <circle class="boise-pin-halo boise-pin-halo-c" cx="820" cy="175" r="26" fill="url(#boisePinHaloD)"/>
+
+                            <!-- Pins -->
+                            <g transform="translate(280 165)">
+                                <g class="boise-pin boise-pin-a">
+                                    <ellipse cx="0" cy="3" rx="8" ry="2" fill="rgba(26, 26, 46, 0.22)"/>
+                                    <path d="M 0 0 C -3 -4, -9 -11, -9 -18 A 9 9 0 1 1 9 -18 C 9 -11, 3 -4, 0 0 Z" fill="url(#boisePinHeadD)" stroke="#5a3812" stroke-width="0.5" stroke-opacity="0.7"/>
+                                    <circle cx="0" cy="-18" r="3.2" fill="#fff8e8" opacity="0.92"/>
+                                </g>
+                            </g>
+                            <g transform="translate(560 245)">
+                                <g class="boise-pin boise-pin-b">
+                                    <ellipse cx="0" cy="3" rx="8" ry="2" fill="rgba(26, 26, 46, 0.22)"/>
+                                    <path d="M 0 0 C -3 -4, -9 -11, -9 -18 A 9 9 0 1 1 9 -18 C 9 -11, 3 -4, 0 0 Z" fill="url(#boisePinHeadD)" stroke="#5a3812" stroke-width="0.5" stroke-opacity="0.7"/>
+                                    <circle cx="0" cy="-18" r="3.2" fill="#fff8e8" opacity="0.92"/>
+                                </g>
+                            </g>
+                            <g transform="translate(820 175)">
+                                <g class="boise-pin boise-pin-c">
+                                    <ellipse cx="0" cy="3" rx="8" ry="2" fill="rgba(26, 26, 46, 0.22)"/>
+                                    <path d="M 0 0 C -3 -4, -9 -11, -9 -18 A 9 9 0 1 1 9 -18 C 9 -11, 3 -4, 0 0 Z" fill="url(#boisePinHeadD)" stroke="#5a3812" stroke-width="0.5" stroke-opacity="0.7"/>
+                                    <circle cx="0" cy="-18" r="3.2" fill="#fff8e8" opacity="0.92"/>
+                                </g>
+                            </g>
+
+                            <!-- Map signature -->
+                            <text class="boise-map-label" x="1075" y="368" text-anchor="end">BOISE</text>
                         </svg>
                     </div>
                 </section>

@@ -4833,6 +4833,111 @@ export const homeStyles = (): string => `
                 transition: color 0.3s ease;
             }
 
+            /* Source card fades while its video is centered in the player overlay */
+            .video-card.is-source {
+                transition: opacity 0.4s ease;
+            }
+            .video-card.is-source-hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            /* Centered video player overlay (desktop only; opens on click of any card) */
+            .video-player-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 9999;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 0.35s ease;
+                display: none;
+            }
+            .video-player-overlay.is-mounted {
+                display: block;
+            }
+            .video-player-overlay.is-active {
+                pointer-events: auto;
+                opacity: 1;
+            }
+            .video-player-backdrop {
+                position: absolute;
+                inset: 0;
+                background: rgba(12, 12, 22, 0.82);
+                backdrop-filter: blur(14px) saturate(120%);
+                -webkit-backdrop-filter: blur(14px) saturate(120%);
+                cursor: pointer;
+            }
+            .video-player-stage {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: min(1100px, 88vw);
+                max-height: 86vh;
+                transform: translate(-50%, -50%);
+                aspect-ratio: 16 / 9;
+            }
+            .video-player-frame {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                border-radius: 20px;
+                overflow: hidden;
+                background-color: #050505;
+                background-size: cover;
+                background-position: center;
+                box-shadow: 0 50px 120px rgba(0, 0, 0, 0.55),
+                            0 20px 60px rgba(139, 0, 0, 0.18);
+                transform-origin: center center;
+                transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+                will-change: transform;
+            }
+            .video-player-slot {
+                position: absolute;
+                inset: 0;
+            }
+            .video-player-slot iframe {
+                width: 100%;
+                height: 100%;
+                border: 0;
+                display: block;
+            }
+            .video-player-close {
+                position: absolute;
+                top: -54px;
+                right: 0;
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.22);
+                color: #fff;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transform: translateY(6px);
+                transition: opacity 0.3s ease 0.25s,
+                            transform 0.3s ease 0.25s,
+                            background 0.2s ease,
+                            border-color 0.2s ease;
+                padding: 0;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+            .video-player-overlay.is-active .video-player-close {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .video-player-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.4);
+            }
+            .video-player-close:focus-visible {
+                outline: 2px solid rgba(255, 255, 255, 0.6);
+                outline-offset: 3px;
+            }
+
             /* Contact Section */
             .contact {
                 display: flex;

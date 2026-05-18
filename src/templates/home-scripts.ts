@@ -1559,6 +1559,15 @@ export const homeScripts = (): string => `
                 var _preloadedIframe = null;
                 var _playbackConfirmed = false;
                 var _revealTimeout = null;
+                var _latestThumbnailUrl = null;
+                var _playerOverlay = document.getElementById('video-player-overlay');
+                var _playerBackdrop = document.getElementById('video-player-backdrop');
+                var _playerFrame = document.getElementById('video-player-frame');
+                var _playerSlot = document.getElementById('video-player-slot');
+                var _playerClose = document.getElementById('video-player-close');
+                var _activeSourceCard = null;
+                var _playerEscListener = null;
+                var _playerCloseFallback = null;
 
                 // Pre-embed iframe hidden behind thumbnail so it's fully loaded on tap.
                 // When muted=true, adds autoplay=1&mute=1 so browsers allow auto-start.
@@ -1693,29 +1702,39 @@ export const homeScripts = (): string => `
 
                 function setupVideo(videoId, thumbnailUrl) {
                     _ytVideoId = videoId;
-                    // If auto-play is pending, preload with autoplay+mute so browsers allow it
-                    preloadIframe(videoId, _shouldAutoPlay);
+                    _latestThumbnailUrl = thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg');
                     if (videoThumbnailImg) {
-                        videoThumbnailImg.src = thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg');
+                        videoThumbnailImg.src = _latestThumbnailUrl;
                         videoThumbnailImg.onerror = function() {
                             this.onerror = null;
                             this.src = 'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
+                            _latestThumbnailUrl = this.src;
                         };
                     }
+
+                    // Service-time auto-play (rare): preserves the existing
+                    // in-place iframe behavior so the live stream just appears
+                    // in the latest card during the 9am Sunday window.
+                    if (_shouldAutoPlay) {
+                        preloadIframe(videoId, true);
+                        _isMutedAutoPlay = true;
+                        activateVideo();
+                        return;
+                    }
+
+                    // Typical visit: clicks open the centered video player overlay.
+                    var card1 = document.getElementById('video-card-1');
                     if (videoPlayBtn) {
                         videoPlayBtn.addEventListener('click', function(e) {
                             e.stopPropagation();
-                            activateVideo();
+                            expandCardPlayer(card1, videoId, _latestThumbnailUrl);
                         });
                     }
                     if (videoThumbnail) {
-                        videoThumbnail.addEventListener('click', activateVideo);
-                    }
-                    if (_shouldAutoPlay) {
-                        // iframe was created with autoplay=1&mute=1, so playback
-                        // starts automatically — just reveal it
-                        _isMutedAutoPlay = true;
-                        activateVideo();
+                        videoThumbnail.addEventListener('click', function(e) {
+                            if (e.target.closest('.video-play-btn, .video-unmute-btn')) return;
+                            expandCardPlayer(card1, videoId, _latestThumbnailUrl);
+                        });
                     }
                 }
 
@@ -1742,8 +1761,9 @@ export const homeScripts = (): string => `
                     var dateEl = document.getElementById('video-card-' + index + '-date');
                     var titleEl = document.getElementById('video-card-' + index + '-title');
                     if (!card || !video) return;
+                    var thumbUrl = video.thumbnailUrl || ('https://img.youtube.com/vi/' + video.videoId + '/maxresdefault.jpg');
                     if (img) {
-                        img.src = video.thumbnailUrl || ('https://img.youtube.com/vi/' + video.videoId + '/maxresdefault.jpg');
+                        img.src = thumbUrl;
                         img.alt = video.title || 'Sunday service';
                         img.onerror = function() {
                             this.onerror = null;
@@ -1755,7 +1775,192 @@ export const homeScripts = (): string => `
                     if (card.tagName === 'A') {
                         card.href = 'https://www.youtube.com/watch?v=' + video.videoId;
                     }
+                    card.addEventListener('click', function(e) {
+                        // Desktop: open centered video player. Mobile (≤960px)
+                        // cards 2-3 are display:none so this never fires there,
+                        // but the link still works for right-click / new-tab.
+                        if (window.innerWidth > 960) {
+                            e.preventDefault();
+                            expandCardPlayer(card, video.videoId, thumbUrl);
+                        }
+                    });
                 }
+
+                // ===== Centered video player overlay (desktop click-to-expand) =====
+
+                function pauseSourceIframe(card) {
+                    var iframe = card && card.querySelector('iframe.youtube-embed');
+                    if (iframe && iframe.contentWindow) {
+                        try {
+                            iframe.contentWindow.postMessage(
+                                '{"event":"command","func":"pauseVideo","args":""}', '*'
+                            );
+                        } catch (e) {}
+                    }
+                }
+
+                function getCardThumbRect(card) {
+                    var thumb = card.querySelector('.video-embed-wrapper, .video-card-thumb');
+                    return thumb ? thumb.getBoundingClientRect() : null;
+                }
+
+                function expandCardPlayer(card, videoId, thumbnailUrl) {
+                    if (!_playerOverlay || !_playerFrame || !_playerSlot || !card || !videoId) return;
+                    if (_activeSourceCard) return;
+                    if (window.innerWidth <= 960) {
+                        // Defensive fallback: shouldn't happen because mobile
+                        // cards 2-3 are display:none and card 1 falls through
+                        // to the inline auto-play path.
+                        window.open('https://www.youtube.com/watch?v=' + videoId, '_blank', 'noopener');
+                        return;
+                    }
+
+                    pauseSourceIframe(card);
+
+                    // Make overlay measurable
+                    _playerOverlay.classList.add('is-mounted');
+
+                    // Reset frame to natural position so we can measure it
+                    _playerFrame.style.transition = 'none';
+                    _playerFrame.style.transform = '';
+                    _playerFrame.style.backgroundImage = '';
+                    // Force reflow to apply the reset
+                    void _playerFrame.offsetWidth;
+
+                    var sourceRect = getCardThumbRect(card);
+                    var targetRect = _playerFrame.getBoundingClientRect();
+                    if (!sourceRect || !targetRect || !targetRect.width) {
+                        // Fallback: just open YouTube
+                        _playerOverlay.classList.remove('is-mounted');
+                        window.open('https://www.youtube.com/watch?v=' + videoId, '_blank', 'noopener');
+                        return;
+                    }
+
+                    var sourceCx = sourceRect.left + sourceRect.width / 2;
+                    var sourceCy = sourceRect.top + sourceRect.height / 2;
+                    var targetCx = targetRect.left + targetRect.width / 2;
+                    var targetCy = targetRect.top + targetRect.height / 2;
+                    var dx = sourceCx - targetCx;
+                    var dy = sourceCy - targetCy;
+                    var scale = sourceRect.width / targetRect.width;
+
+                    // Position frame at the source card (with its thumbnail as bg)
+                    _playerFrame.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(' + scale + ')';
+                    _playerFrame.style.backgroundImage = 'url(' + (thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg')) + ')';
+
+                    // Fade out the source card so it doesn't double under the moving frame
+                    card.classList.add('is-source', 'is-source-hidden');
+
+                    // Lock scroll while overlay is open
+                    document.documentElement.style.overflow = 'hidden';
+                    document.body.style.overflow = 'hidden';
+
+                    // Force reflow before activating to ensure the start transform sticks
+                    void _playerFrame.offsetWidth;
+
+                    // Animate frame to natural (centered) position + fade in backdrop
+                    _playerOverlay.classList.add('is-active');
+                    _playerOverlay.setAttribute('aria-hidden', 'false');
+                    _playerFrame.style.transition = '';
+                    _playerFrame.style.transform = '';
+
+                    _activeSourceCard = card;
+
+                    // Inject iframe after the morph is mostly settled (350ms of the 600ms transition).
+                    // Gives the user a moment to register the move, then the video appears.
+                    _playerCloseFallback = setTimeout(function() {
+                        if (_activeSourceCard !== card) return;
+                        var iframe = document.createElement('iframe');
+                        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                        iframe.setAttribute('allowfullscreen', '');
+                        iframe.src = 'https://www.youtube.com/embed/' + videoId
+                            + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
+                        _playerSlot.innerHTML = '';
+                        _playerSlot.appendChild(iframe);
+                        _playerCloseFallback = null;
+                    }, 350);
+
+                    // Keyboard close (Escape)
+                    _playerEscListener = function(e) {
+                        if (e.key === 'Escape' || e.keyCode === 27) {
+                            closeExpandedCard();
+                        }
+                    };
+                    document.addEventListener('keydown', _playerEscListener);
+                }
+
+                function closeExpandedCard() {
+                    if (!_activeSourceCard) return;
+                    var card = _activeSourceCard;
+
+                    if (_playerCloseFallback) {
+                        clearTimeout(_playerCloseFallback);
+                        _playerCloseFallback = null;
+                    }
+                    if (_playerEscListener) {
+                        document.removeEventListener('keydown', _playerEscListener);
+                        _playerEscListener = null;
+                    }
+
+                    // Stop video audio immediately
+                    if (_playerSlot) _playerSlot.innerHTML = '';
+
+                    // Restore scroll
+                    document.documentElement.style.overflow = '';
+                    document.body.style.overflow = '';
+
+                    // Compute reverse transform from current (centered) to source rect
+                    var sourceRect = getCardThumbRect(card);
+                    var targetRect = _playerFrame ? _playerFrame.getBoundingClientRect() : null;
+                    if (sourceRect && targetRect && targetRect.width) {
+                        var dx = (sourceRect.left + sourceRect.width / 2) - (targetRect.left + targetRect.width / 2);
+                        var dy = (sourceRect.top + sourceRect.height / 2) - (targetRect.top + targetRect.height / 2);
+                        var scale = sourceRect.width / targetRect.width;
+                        _playerFrame.style.transition = '';
+                        _playerFrame.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(' + scale + ')';
+                    }
+
+                    // Fade out backdrop and restore source card
+                    _playerOverlay.classList.remove('is-active');
+                    card.classList.remove('is-source-hidden');
+
+                    var cleanup = function() {
+                        if (_playerOverlay) {
+                            _playerOverlay.classList.remove('is-mounted');
+                            _playerOverlay.setAttribute('aria-hidden', 'true');
+                        }
+                        if (_playerFrame) {
+                            _playerFrame.style.transition = 'none';
+                            _playerFrame.style.transform = '';
+                            _playerFrame.style.backgroundImage = '';
+                        }
+                        card.classList.remove('is-source');
+                        _activeSourceCard = null;
+                    };
+
+                    // Wait for transform transition to finish, then cleanup
+                    var onEnd = function(e) {
+                        if (e && e.target !== _playerFrame) return;
+                        if (e && e.propertyName && e.propertyName !== 'transform') return;
+                        if (_playerFrame) _playerFrame.removeEventListener('transitionend', onEnd);
+                        cleanup();
+                    };
+                    if (_playerFrame) {
+                        _playerFrame.addEventListener('transitionend', onEnd);
+                        // Safety: fire cleanup even if transitionend doesn't (e.g. transition was 'none')
+                        setTimeout(function() {
+                            if (_activeSourceCard === card) {
+                                if (_playerFrame) _playerFrame.removeEventListener('transitionend', onEnd);
+                                cleanup();
+                            }
+                        }, 750);
+                    } else {
+                        cleanup();
+                    }
+                }
+
+                if (_playerBackdrop) _playerBackdrop.addEventListener('click', closeExpandedCard);
+                if (_playerClose) _playerClose.addEventListener('click', closeExpandedCard);
 
                 function populateLatestMeta(video) {
                     var dateEl = document.getElementById('video-card-1-date');

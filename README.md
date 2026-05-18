@@ -1,7 +1,19 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.50.0
+## 🔢 CURRENT VERSION: v1.50.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.50.1 — All three watch videos play in-page via a centered FLIP-morph overlay (desktop)
+
+Builds on v1.50.0. Previously cards 2 and 3 just opened YouTube in a new tab; now all three thumbnails play in-page via a centered video player overlay with a morph animation. Click any thumbnail and the source card fades while a centered video frame translates + scales out of that card's bounding rect to a 1100px-wide / 88vw-capped target rect (`cubic-bezier(0.32, 0.72, 0, 1)`, 600ms). After ~350ms the YouTube iframe is injected with autoplay so the visual settle and the playback land together. Close via the floating X (positioned just above the frame), Esc, or backdrop click — the frame reverse-morphs back to the source rect, the source card fades back in, then the overlay unmounts.
+
+Body scroll is locked while the overlay is active. The backdrop uses `rgba(12,12,22,0.82)` with `backdrop-filter: blur(14px) saturate(120%)` so the page behind reads as a film-quality dim. Cards 2 and 3 remain real `<a href="...">` elements so right-click / new-tab still works; the click handler `preventDefault`'s only on desktop (>960px).
+
+The legacy 9am-MT service-time inline auto-play path is preserved untouched. During the service window the latest card still loads its iframe directly with the existing morph-to-spinner / postMessage reveal flow, so the live stream "just appears" inline — the new centered-overlay path is for typical click-to-watch interactions outside the service window.
+
+Mobile (≤960px) is unchanged. The overlay is desktop-only (the click handler short-circuits below 960px), and `.video-card-recent` siblings stay `display: none` on mobile, so the watch card renders identically to before on small screens.
+
+CLAUDE.md also gains a "Speed is a first-class harness goal" subsection codifying parallelize-by-default / cheapest-wait / no-padding-sleeps for every test — committed harness scenarios *and* ad-hoc screenshot scripts.
 
 ### v1.50.0 — Desktop watch section: three-card grid of the last three Sunday services
 

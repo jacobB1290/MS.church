@@ -226,6 +226,20 @@ The HTML report renderer at the bottom of `run.mjs` is template-string-based —
 - The harness boots its own Playwright Chromium — no global install required, but the first run downloads the browser.
 - Keep total runtime reasonable. Flow scenarios with video are the slowest (~30s each); prefer adding anchor or perf scenarios unless a video genuinely helps.
 
+### Speed is a first-class harness goal — always be iterating it down
+
+A slow test loop is a test loop that gets skipped. **Every time you write or run a test (harness scenario, ad-hoc screenshot pass, repro script, anything), treat its runtime as a defect to drive down.** Aim for fractions of the current time, not "good enough." Concretely:
+
+- **Parallelize by default.** Run independent viewports / scenarios in parallel via `Promise.all` over Playwright contexts. Serial loops are almost always the wrong shape — they often cost 5–10× more wall-clock time than the parallel equivalent.
+- **Pick the cheapest wait.** `domcontentloaded` is usually enough; `networkidle` blocks until every third-party request settles (analytics, fonts, YouTube CDN) and routinely costs an extra 10–30s per page. Don't reach for it unless a specific late-loading thing demands it. For images, `waitForFunction` on `img.complete && img.naturalWidth > 0` is far tighter than a fixed sleep.
+- **No padding sleeps.** Replace `waitForTimeout(N)` with a precise condition (selector, image-loaded, transitionend) whenever possible. Reserve `waitForTimeout` for animations whose duration is known and short (≤300ms).
+- **Right-size the surface.** Screenshot the section element, not the full page; pick 3–4 representative breakpoints, not 10. Add more only when a smaller set actually missed a regression.
+- **Reuse the browser.** One `chromium.launch()` per script, many contexts inside it. Launching the browser is the most expensive single step.
+- **Time and report.** Print the total elapsed time at the end of every script you write (`Date.now() - t0`). If it's higher than last time, find out why before moving on.
+- **Iterate on the harness itself.** If a scenario gets slower because of new content, fix the scenario (tighter waits, better selectors) instead of adding budget. The harness is code; treat it like code.
+
+This rule applies to every kind of test, not just the committed `run.mjs` suite — ad-hoc screenshot scripts, manual repros, perf checks, anything that takes wall-clock time during development. A fast test loop runs more often, catches regressions earlier, and produces better software.
+
 ---
 
 ## Versioning Convention

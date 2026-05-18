@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.50.0 - Desktop watch section: three-card grid of the last three Sunday services (latest plays in-place; previous two link out to YouTube). Mobile unchanged. See src/index.tsx for the full change log. -->
+<!-- v1.50.1 - All three watch cards play in-page via a centered video player overlay with a FLIP morph animation (desktop). Esc / X / backdrop close. Mobile unchanged. See src/index.tsx for the full change log. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

@@ -1719,13 +1719,61 @@ export const homeScripts = (): string => `
                     }
                 }
 
+                function formatVideoDate(iso) {
+                    if (!iso) return '';
+                    var d = new Date(iso);
+                    if (isNaN(d.getTime())) return '';
+                    // Services air Sunday morning in Boise; upload timestamp can
+                    // land late-Sunday-evening UTC = Monday UTC. Render in the
+                    // church's timezone so the chip reads "Sun, May 17", not Mon.
+                    var tz = 'America/Boise';
+                    var weekday = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: tz });
+                    var monthDay = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: tz });
+                    var year = parseInt(d.toLocaleDateString('en-US', { year: 'numeric', timeZone: tz }), 10);
+                    var thisYear = new Date().getFullYear();
+                    return year === thisYear
+                        ? weekday + ', ' + monthDay
+                        : weekday + ', ' + monthDay + ', ' + year;
+                }
+
+                function populateRecentCard(index, video) {
+                    var card = document.getElementById('video-card-' + index);
+                    var img = document.getElementById('video-card-' + index + '-img');
+                    var dateEl = document.getElementById('video-card-' + index + '-date');
+                    var titleEl = document.getElementById('video-card-' + index + '-title');
+                    if (!card || !video) return;
+                    if (img) {
+                        img.src = video.thumbnailUrl || ('https://img.youtube.com/vi/' + video.videoId + '/maxresdefault.jpg');
+                        img.alt = video.title || 'Sunday service';
+                        img.onerror = function() {
+                            this.onerror = null;
+                            this.src = 'https://img.youtube.com/vi/' + video.videoId + '/hqdefault.jpg';
+                        };
+                    }
+                    if (dateEl) dateEl.textContent = formatVideoDate(video.publishedAt);
+                    if (titleEl) titleEl.textContent = video.title || 'Sunday Service';
+                    if (card.tagName === 'A') {
+                        card.href = 'https://www.youtube.com/watch?v=' + video.videoId;
+                    }
+                }
+
+                function populateLatestMeta(video) {
+                    var dateEl = document.getElementById('video-card-1-date');
+                    var titleEl = document.getElementById('video-card-1-title');
+                    if (dateEl) dateEl.textContent = formatVideoDate(video.publishedAt);
+                    if (titleEl) titleEl.textContent = video.title || 'Sunday Service';
+                }
+
                 fetch('/api/youtube/latest-video')
                     .then(function(r) { return r.json(); })
                     .then(function(data) {
-                        if (data.success && data.videoId) {
-                            setupVideo(data.videoId, data.thumbnailUrl);
+                        var videos = (data && data.videos) || [];
+                        if (videos.length > 0) {
+                            setupVideo(videos[0].videoId, videos[0].thumbnailUrl);
+                            populateLatestMeta(videos[0]);
+                            if (videos[1]) populateRecentCard(2, videos[1]);
+                            if (videos[2]) populateRecentCard(3, videos[2]);
                         } else {
-                            // API returned error — use fallback video
                             setupVideo(FALLBACK_VIDEO_ID, null);
                         }
                     })

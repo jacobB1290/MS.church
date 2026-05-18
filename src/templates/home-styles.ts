@@ -4712,6 +4712,127 @@ export const homeStyles = (): string => `
                 border-radius: 16px;
             }
 
+            /* Video Grid (mobile baseline: single-card stack — only the latest is visible) */
+            .video-grid {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                gap: 24px;
+                align-items: stretch;
+            }
+
+            .video-card {
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+                text-decoration: none;
+                color: inherit;
+                width: 100%;
+            }
+
+            .video-card-recent {
+                display: none; /* Hidden on mobile — only the latest card shows */
+            }
+
+            /* Mobile preserves the original watch layout (single video, no meta) */
+            .video-card-meta {
+                display: none;
+            }
+
+            .video-card-tag {
+                display: inline-flex;
+                align-self: flex-start;
+                align-items: center;
+                gap: 6px;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 1.6px;
+                text-transform: uppercase;
+                color: #8B0000;
+                background: rgba(139, 0, 0, 0.08);
+                border-radius: 100px;
+                padding: 5px 12px;
+                margin-bottom: 2px;
+            }
+
+            .video-card-date {
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 1.2px;
+                text-transform: uppercase;
+                color: rgba(26, 26, 46, 0.55);
+            }
+
+            .video-card-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 20px;
+                line-height: 1.3;
+                font-weight: 600;
+                color: var(--text-primary, #1a1a2e);
+                margin: 0;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            /* Recent (smaller) card thumbnail — link-style, click opens YouTube */
+            .video-card-thumb {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                border-radius: 16px;
+                overflow: hidden;
+                background: #0a0a0a;
+                box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12),
+                            0 12px 40px rgba(139, 0, 0, 0.08);
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                            box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .video-card-thumb-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .video-card-play {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                opacity: 0.92;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                            opacity 0.3s ease;
+                pointer-events: none;
+                filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+            }
+
+            .video-card-recent:hover .video-card-thumb {
+                transform: translateY(-4px);
+                box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18),
+                            0 18px 48px rgba(139, 0, 0, 0.12);
+            }
+
+            .video-card-recent:hover .video-card-thumb-img {
+                transform: scale(1.04);
+            }
+
+            .video-card-recent:hover .video-card-play {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.08);
+            }
+
+            .video-card-recent:hover .video-card-title {
+                color: #8B0000;
+            }
+
+            .video-card-title {
+                transition: color 0.3s ease;
+            }
+
             /* Contact Section */
             .contact {
                 display: flex;
@@ -6727,27 +6848,71 @@ export const homeStyles = (): string => `
                 }
                 
                 .live-stream-container {
-                    max-width: 900px;
+                    max-width: 100%;
                     margin: 0 auto;
                 }
-                
+
+                /* Desktop: 3 cards in a row, full-width within the watch card */
+                .video-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: clamp(20px, 2vw, 28px);
+                    width: 100%;
+                    margin: 12px 0 8px;
+                    align-items: start;
+                }
+
+                .video-card {
+                    gap: 16px;
+                }
+
+                .video-card-recent {
+                    display: flex;
+                }
+
+                .video-card-meta {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
+                    padding: 0 4px;
+                }
+
+                /* In the grid the latest card sits in column 1, no centering */
                 .video-embed-wrapper {
-                    max-width: 900px;
-                    margin: 0 auto;
-                    padding-bottom: 50.625%;
+                    max-width: 100%;
+                    margin: 0;
+                    padding-bottom: 56.25%;
                 }
-                
+
+                /* Slightly stronger shadow on the latest card so it reads as the focal point */
+                .video-card-latest .video-embed-wrapper {
+                    box-shadow: 0 12px 36px rgba(139, 0, 0, 0.22),
+                                0 20px 56px rgba(139, 0, 0, 0.12);
+                }
+
+                .video-card-meta {
+                    padding: 0 2px;
+                }
+
+                .video-card-title {
+                    font-size: clamp(18px, 1.4vw, 22px);
+                }
+
+                .video-card-date {
+                    font-size: 12px;
+                }
+
                 .youtube-embed {
                     max-height: none;
                 }
-                
+
                 .playlist-btn {
                     max-width: 300px;
                     margin: 16px auto 0;
                 }
-                
+
                 .countdown-container {
-                    max-width: 500px;
+                    max-width: 600px;
                     margin: 8px auto;
                 }
                 

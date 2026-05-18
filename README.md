@@ -1,7 +1,17 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.49.7
+## 🔢 CURRENT VERSION: v1.50.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.50.0 — Desktop watch section: three-card grid of the last three Sunday services
+
+The watch section on desktop used to be one oversized hero video (capped at 900px wide, padded into a huge white card) plus a countdown and verse — it filled a screen-and-a-half for not much content. Redesigned on desktop only as a 1fr 1fr 1fr grid of the three most recent services. The latest service keeps its in-page play behavior (autoplay during the 9am MT service window, postMessage-driven thumbnail reveal) and is marked with a "Latest Service" pill; the previous two are lightweight thumbnail-and-meta link cards that open the video on YouTube in a new tab, so we never carry the weight of three live iframes on the page.
+
+Each card shows the service date (formatted in `America/Boise`, so a Sunday-morning livestream uploaded late-UTC-Sunday still reads "Sun, May 17" rather than the Monday UTC date) and the YouTube title clamped to two lines. The countdown and Romans 10:17 verse stay above the grid as a compact banner.
+
+Mobile (≤960px) is intentionally untouched — the new `.video-card-recent` siblings are `display: none` and `.video-card-meta` is hidden, so on small screens the watch card renders identically to before (single video, no pill, no date, no title chrome).
+
+Backend: `/api/youtube/latest-video` now parses three `<entry>` blocks out of the playlist RSS feed and returns `{ success, videos: [{ videoId, title, publishedAt, thumbnailUrl }] }` instead of a single video; the response shape is consumed only by `home-scripts.ts`, so updating both at once is safe. Cache TTL unchanged.
 
 ### v1.49.7 - Hashload entrance: flip direction + animate whole subpage together
 

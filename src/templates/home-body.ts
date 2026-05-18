@@ -222,28 +222,69 @@ export const homeBody = (): string => `
                                 </div>
                                 <p class="live-verse reveal-rise-slow">"Consequently, faith comes from hearing the message, and the message is heard through the word about Christ."<small>Romans 10:17</small></p>
 
-                                <div class="video-embed-wrapper reveal-power" id="video-embed-wrapper">
-                                    <div class="video-thumbnail" id="video-thumbnail">
-                                        <img class="video-thumbnail-img" id="video-thumbnail-img"
-                                             alt="Latest Sunday Service from Morning Star Christian Church Boise"
-                                             width="1280" height="720"
-                                             loading="lazy">
-                                        <button class="video-play-btn" id="video-play-btn" aria-label="Play video">
-                                            <svg class="play-icon" viewBox="0 0 68 48" width="68" height="48">
-                                                <path class="video-play-btn-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"></path>
-                                                <path class="play-triangle" d="M 45,24 27,14 27,34" fill="#fff"></path>
-                                                <circle class="play-spinner-ring" cx="34" cy="24" r="18" fill="none" stroke="#FF0000" stroke-width="2.5" stroke-dasharray="85 28" stroke-linecap="round"></circle>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <button class="video-unmute-btn" id="video-unmute-btn" aria-label="Unmute video">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                                            <line x1="23" y1="9" x2="17" y2="15"></line>
-                                            <line x1="17" y1="9" x2="23" y2="15"></line>
-                                        </svg>
-                                        Tap to unmute
-                                    </button>
+                                <div class="video-grid reveal-power" id="video-grid">
+                                    <article class="video-card video-card-latest" id="video-card-1">
+                                        <div class="video-embed-wrapper" id="video-embed-wrapper">
+                                            <div class="video-thumbnail" id="video-thumbnail">
+                                                <img class="video-thumbnail-img" id="video-thumbnail-img"
+                                                     alt="Latest Sunday Service from Morning Star Christian Church Boise"
+                                                     width="1280" height="720"
+                                                     loading="lazy">
+                                                <button class="video-play-btn" id="video-play-btn" aria-label="Play video">
+                                                    <svg class="play-icon" viewBox="0 0 68 48" width="68" height="48">
+                                                        <path class="video-play-btn-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"></path>
+                                                        <path class="play-triangle" d="M 45,24 27,14 27,34" fill="#fff"></path>
+                                                        <circle class="play-spinner-ring" cx="34" cy="24" r="18" fill="none" stroke="#FF0000" stroke-width="2.5" stroke-dasharray="85 28" stroke-linecap="round"></circle>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <button class="video-unmute-btn" id="video-unmute-btn" aria-label="Unmute video">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                                    <line x1="23" y1="9" x2="17" y2="15"></line>
+                                                    <line x1="17" y1="9" x2="23" y2="15"></line>
+                                                </svg>
+                                                Tap to unmute
+                                            </button>
+                                        </div>
+                                        <div class="video-card-meta">
+                                            <span class="video-card-tag">Latest Service</span>
+                                            <span class="video-card-date" id="video-card-1-date"></span>
+                                            <h3 class="video-card-title" id="video-card-1-title"></h3>
+                                        </div>
+                                    </article>
+
+                                    <a class="video-card video-card-recent" id="video-card-2" href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" aria-label="Previous Sunday service on YouTube">
+                                        <div class="video-card-thumb">
+                                            <img class="video-card-thumb-img" id="video-card-2-img" alt="" width="1280" height="720" loading="lazy">
+                                            <span class="video-card-play" aria-hidden="true">
+                                                <svg viewBox="0 0 68 48" width="48" height="34">
+                                                    <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"></path>
+                                                    <path d="M 45,24 27,14 27,34" fill="#fff"></path>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <div class="video-card-meta">
+                                            <span class="video-card-date" id="video-card-2-date"></span>
+                                            <h3 class="video-card-title" id="video-card-2-title"></h3>
+                                        </div>
+                                    </a>
+
+                                    <a class="video-card video-card-recent" id="video-card-3" href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" aria-label="Previous Sunday service on YouTube">
+                                        <div class="video-card-thumb">
+                                            <img class="video-card-thumb-img" id="video-card-3-img" alt="" width="1280" height="720" loading="lazy">
+                                            <span class="video-card-play" aria-hidden="true">
+                                                <svg viewBox="0 0 68 48" width="48" height="34">
+                                                    <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"></path>
+                                                    <path d="M 45,24 27,14 27,34" fill="#fff"></path>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <div class="video-card-meta">
+                                            <span class="video-card-date" id="video-card-3-date"></span>
+                                            <h3 class="video-card-title" id="video-card-3-title"></h3>
+                                        </div>
+                                    </a>
                                 </div>
 
                                 <a href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" class="btn btn-outline playlist-btn reveal-fill">

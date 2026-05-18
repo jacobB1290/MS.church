@@ -11,7 +11,7 @@ const VISIT_JSON_LD = JSON.stringify({
       url: 'https://ms.church/visit',
       name: 'Plan Your Visit · Morning Star Christian Church',
       description:
-        'Plan your first Sunday at Morning Star Christian Church in Boise — map and directions, what to expect during the 9 AM service, Sunday School info, and the free breakfast that follows.',
+        'Plan your first Sunday at Morning Star Christian Church in Boise — map and directions, the 8-step service flow (welcome, worship, teaching, dismissal, breakfast), and the practical first-timer details: what to wear, where to park, who greets you at the door.',
       isPartOf: { '@id': 'https://ms.church/#website' },
       about: { '@id': 'https://ms.church/#church' },
       inLanguage: 'en-US',
@@ -56,7 +56,7 @@ export function registerVisitRoute(app: Hono) {
 ${pageHead({
   title: 'Plan Your Visit · Morning Star Christian Church, Boise',
   description:
-    "Plan your first Sunday at Morning Star Christian Church in Boise — map and directions, what to expect during the 9 AM service, Sunday School info, and the free breakfast that follows.",
+    "Plan your first Sunday at Morning Star Christian Church in Boise — map and directions, the 8-step service flow (welcome, worship, teaching, dismissal, breakfast), and the practical first-timer details: what to wear, where to park, who greets you at the door.",
   canonical: 'https://ms.church/visit',
   ogImageAlt: 'Plan a visit to Morning Star Christian Church in Boise, Idaho',
   jsonLd: VISIT_JSON_LD,

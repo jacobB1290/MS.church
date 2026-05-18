@@ -192,7 +192,7 @@ export const homeHead = (): string => {
         <meta property="og:url" content="https://ms.church/">
         <meta property="og:title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
         <meta property="og:description" content="A welcoming, Bible-believing church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study groups, and community outreach. Rooted in Scripture, centered on Jesus — all are welcome!">
-        <meta property="og:image" content="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025">
+        <meta property="og:image" content="https://ms.church/static/church-building.jpg">
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
         <meta property="og:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
@@ -204,7 +204,7 @@ export const homeHead = (): string => {
         <meta name="twitter:url" content="https://ms.church/">
         <meta name="twitter:title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
         <meta name="twitter:description" content="A welcoming, Bible-believing church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study groups, and community outreach. Rooted in Scripture, centered on Jesus.">
-        <meta name="twitter:image" content="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025">
+        <meta name="twitter:image" content="https://ms.church/static/church-building.jpg">
         <meta name="twitter:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
 
         <!-- Safari iOS theme-color — olive green blends with hero image top -->
@@ -232,7 +232,7 @@ export const homeHead = (): string => {
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
 
         <!-- Preload LCP hero image -->
-        <link rel="preload" as="image" href="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" fetchpriority="high">
+        <link rel="preload" as="image" href="https://ms.church/static/church-building.jpg" fetchpriority="high">
 
         <!-- Eager prefetch of the primary hero CTA target. Speculation
              Rules (below) covers hover/touch intent for /about, /outreach,
@@ -251,7 +251,7 @@ export const homeHead = (): string => {
                     "@id": "https://ms.church/#church",
                     "name": "Morning Star Christian Church",
                     "alternateName": ["Morning Star Church", "MS Church Boise"],
-                    "description": "Morning Star Christian Church is a welcoming, Bible-believing Christian church in Boise, Idaho. We confess Jesus Christ as Lord and Savior and teach the whole counsel of Scripture — grace and truth, with no watered-down version. Join us Sundays at 9 AM for worship, free community breakfast, Tuesday Bible reading, Thursday Bible study, and Friday youth service. We are dedicated to mending the broken through faith, community, and service.",
+                    "description": "Morning Star Christian Church is a welcoming, Bible-believing Christian church in Boise, Idaho. We confess Jesus Christ as Lord and Savior and teach the whole counsel of Scripture — grace and truth, with no watered-down version. Join us Sundays at 9 AM for worship and a free community breakfast, Tuesday Bible reading at Caffiena State Street, Wednesday Activity Day (open gym + crochet circle), Thursday Bible study, and Friday Youth Service. We are dedicated to mending the broken through faith, community, and service.",
                     "url": "https://ms.church",
                     "email": "morningstarchurchboise@gmail.com",
                     "contactPoint": {
@@ -274,8 +274,8 @@ export const homeHead = (): string => {
                         "latitude": 43.6150,
                         "longitude": -116.2023
                     },
-                    "image": "https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025",
-                    "logo": "https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025",
+                    "image": "https://ms.church/static/church-building.jpg",
+                    "logo": "https://ms.church/static/church-building.jpg",
                     "sameAs": [
                         "https://www.instagram.com/morningstarboise/",
                         "https://www.instagram.com/mschurchboise",
@@ -296,6 +296,13 @@ export const homeHead = (): string => {
                             "opens": "08:30",
                             "closes": "10:00",
                             "description": "Tuesday Bible Reading at Caffiena State Street"
+                        },
+                        {
+                            "@type": "OpeningHoursSpecification",
+                            "dayOfWeek": "Wednesday",
+                            "opens": "18:00",
+                            "closes": "21:00",
+                            "description": "Wednesday Activity Day — open gym (basketball, volleyball) and a crochet circle"
                         },
                         {
                             "@type": "OpeningHoursSpecification",
@@ -336,8 +343,24 @@ export const homeHead = (): string => {
                                 "@type": "Offer",
                                 "itemOffered": {
                                     "@type": "Service",
+                                    "name": "Activity Day (Fellowship)",
+                                    "description": "Wednesday evening open gym (basketball and volleyball) and a crochet circle — about three hours of fellowship, all ages welcome"
+                                }
+                            },
+                            {
+                                "@type": "Offer",
+                                "itemOffered": {
+                                    "@type": "Service",
                                     "name": "Youth Service",
-                                    "description": "Friday evening youth service with worship, teaching, and fellowship for the next generation"
+                                    "description": "Friday evening service for high-school students (15 and up) — worship, teaching, and time to actually talk to each other"
+                                }
+                            },
+                            {
+                                "@type": "Offer",
+                                "itemOffered": {
+                                    "@type": "Service",
+                                    "name": "Sunday School (Kids)",
+                                    "description": "Children's classroom during the Sunday service — Bible-storyline lesson at their level, preschool through about 5th grade, drop-in welcome any Sunday"
                                 }
                             },
                             {
@@ -345,7 +368,7 @@ export const homeHead = (): string => {
                                 "itemOffered": {
                                     "@type": "Service",
                                     "name": "Community Outreach",
-                                    "description": "Community breakfast, shelter transportation, and serving Boise with love and purpose"
+                                    "description": "Monthly homeless-shelter cooking, free Sunday community breakfast with shelter transportation, and seasonal city-wide events"
                                 }
                             },
                             {
@@ -431,7 +454,7 @@ export const homeHead = (): string => {
                     "url": "https://ms.church",
                     "logo": {
                         "@type": "ImageObject",
-                        "url": "https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025",
+                        "url": "https://ms.church/static/church-building.jpg",
                         "width": 1200,
                         "height": 630
                     },
@@ -499,7 +522,7 @@ export const homeHead = (): string => {
                         "@id": "https://ms.church/#church"
                     },
                     "isAccessibleForFree": true,
-                    "image": "https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025"
+                    "image": "https://ms.church/static/church-building.jpg"
                 },
                 {
                     "@type": "Event",
@@ -533,6 +556,38 @@ export const homeHead = (): string => {
                 },
                 {
                     "@type": "Event",
+                    "@id": "https://ms.church/#wednesday-activity-day",
+                    "name": "Wednesday Activity Day at Morning Star Christian Church",
+                    "description": "Open gym for basketball and volleyball plus a crochet circle, all ages welcome — Wednesdays at 6 PM at Morning Star Christian Church in Boise. About three hours, no signup, no fee.",
+                    "eventSchedule": {
+                        "@type": "Schedule",
+                        "repeatFrequency": "P1W",
+                        "byDay": "https://schema.org/Wednesday",
+                        "startTime": "18:00:00",
+                        "endTime": "21:00:00",
+                        "scheduleTimezone": "America/Boise"
+                    },
+                    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                    "eventStatus": "https://schema.org/EventScheduled",
+                    "location": {
+                        "@type": "Place",
+                        "name": "Morning Star Christian Church",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "3080 Wildwood St",
+                            "addressLocality": "Boise",
+                            "addressRegion": "ID",
+                            "postalCode": "83713",
+                            "addressCountry": "US"
+                        }
+                    },
+                    "organizer": {
+                        "@id": "https://ms.church/#church"
+                    },
+                    "isAccessibleForFree": true
+                },
+                {
+                    "@type": "Event",
                     "@id": "https://ms.church/#thursday-bible-study",
                     "name": "Thursday Evening Bible Study at Morning Star Christian Church",
                     "description": "Join Morning Star Christian Church for Thursday evening Bible study at 6 PM in Boise, Idaho. Free coffee provided. All are welcome.",
@@ -546,6 +601,43 @@ export const homeHead = (): string => {
                     },
                     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
                     "eventStatus": "https://schema.org/EventScheduled",
+                    "location": {
+                        "@type": "Place",
+                        "name": "Morning Star Christian Church",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "streetAddress": "3080 Wildwood St",
+                            "addressLocality": "Boise",
+                            "addressRegion": "ID",
+                            "postalCode": "83713",
+                            "addressCountry": "US"
+                        }
+                    },
+                    "organizer": {
+                        "@id": "https://ms.church/#church"
+                    },
+                    "isAccessibleForFree": true
+                },
+                {
+                    "@type": "Event",
+                    "@id": "https://ms.church/#friday-youth-service",
+                    "name": "Friday Youth Service at Morning Star Christian Church",
+                    "description": "Weekly Friday-night service for high-school students 15 and up — worship, teaching, and time to actually talk to each other. About an hour. Leaders present every week; parents welcome to drop off, stay, or pick up early.",
+                    "eventSchedule": {
+                        "@type": "Schedule",
+                        "repeatFrequency": "P1W",
+                        "byDay": "https://schema.org/Friday",
+                        "startTime": "19:00:00",
+                        "endTime": "20:30:00",
+                        "scheduleTimezone": "America/Boise"
+                    },
+                    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                    "eventStatus": "https://schema.org/EventScheduled",
+                    "audience": {
+                        "@type": "PeopleAudience",
+                        "suggestedMinAge": 15,
+                        "audienceType": "High school students"
+                    },
                     "location": {
                         "@type": "Place",
                         "name": "Morning Star Christian Church",
@@ -605,6 +697,46 @@ export const homeHead = (): string => {
                             "acceptedAnswer": {
                                 "@type": "Answer",
                                 "text": "Yes, our Sunday worship service is live streamed on our YouTube channel at youtube.com/@morningstarboise. You can also watch past services in our full playlist."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "What should I wear to Sunday service?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "There is no strict dress code beyond keeping it modest. Most folks land on the casual side — jeans and a shirt are completely fine — and you'll see plenty of people dressed more formally. Both fit in. Come as you are."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Where do I park at Morning Star Christian Church?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Parking is right next to the building. As soon as you pull up to 3080 Wildwood St, you'll see the lot — free, no permit needed, only a short walk to the front door."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "What happens when I arrive? Who will greet me?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Greeters meet everyone at the door for the main Sunday service. If you have a question or need a hand finding something — a seat, the kids' classroom, the bathroom — they're there to help. No pressure to introduce yourself or sign anything."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "What about kids? Do you have a Sunday School?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes — Sunday School runs in a separate classroom during the 9 AM service, for kids from preschool through about 5th grade. Children head to the room after the two opening worship songs. Drop-off is welcome any Sunday — no signup, no waiver, no ID required. Older kids usually stay in the service with their family."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "What ages is Youth Service for?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Youth Service is for students 15 and up — high schoolers and older. It runs Fridays at 7:00 PM for about an hour. Leaders are present every week, and parents are welcome to drop off, stay, or pick up early."
                             }
                         }
                     ]

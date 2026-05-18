@@ -1,7 +1,29 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.52.1
+## 🔢 CURRENT VERSION: v1.53.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.53.0 — Schema.org JSON-LD audit + sync
+
+The structured-data graph had drifted from the site since the v1.51–1.52 IA work. Audit + fix in one pass.
+
+**Home (`home-head.ts`):**
+- Description now includes Wednesday Activity Day alongside the other four weekly gatherings (was 4-of-5).
+- `openingHoursSpecification` gained a Wednesday 18:00–21:00 block (Activity Day).
+- `hasOfferCatalog` gained two new Services: *Activity Day (Fellowship)* and *Sunday School (Kids)*. Youth Service description updated to specify 15+. Community Outreach description tightened.
+- Two new Event entries: `#wednesday-activity-day` and `#friday-youth-service` (with `PeopleAudience` `suggestedMinAge: 15`, `audienceType: "High school students"`). The graph now declares **all 5 weekly gatherings as Events** (was 3).
+- FAQPage gained 4 new Q&As mirroring the v1.52.0 newcomer-anxiety content: dress code, parking, who greets you at the door, what about kids, what ages is Youth Service for.
+- Replaced 3 `gensparksite.com` base64-upload image URLs with `/static/church-building.jpg` (self-hosted; won't break the rich-result thumbnail if the external host goes away).
+
+**`/visit` (`routes/visit.ts`):** Description previously said *"Sunday School info, and the free breakfast that follows"* — stale after v1.51.0 folded Sunday School into the 8-step Service Flow as step 3. Rewritten to describe the actual current page (service flow + first-timer practicals: what to wear, where to park, who greets you). Both the JSON-LD description and the page meta description updated.
+
+**`/ministries` (`routes/ministries.ts`):** Previously only declared a generic WebPage + BreadcrumbList — none of the 5 ministry categories were exposed as structured data. Promoted to `CollectionPage` with a `mainEntity` `ItemList` of 6 `Service` entries (Sunday Gatherings, Thursday Bible Study, Tuesday Bible Reading, Activity Day, Youth Service, Sunday School). Each has its own description, deep-link URL into the anchor, `provider` reference to the canonical Church entity, free `Offer`, and `PeopleAudience` where age-relevant.
+
+**`/privacy` (`routes/privacy.ts`):** Was the only page with no JSON-LD at all. Added a minimal `WebPage` + `BreadcrumbList` graph tied to the canonical `#website` and `#church` entities.
+
+**Cross-page consistency preserved.** Every page still references the same `@id` values (`https://ms.church/#church`, `https://ms.church/#website`); breadcrumb depths are correct.
+
+**Validation.** A headless Playwright pass fetches every page, parses every `script[type="application/ld+json"]` block, confirms it's valid JSON, and dumps the `@type` list per blob — full sweep in **832ms**. All 7 pages valid. Home graph contains 11 entities (Church+PlaceOfWorship, WebSite, WebPage, Organization, BreadcrumbList, 5 × Event for Sun/Tue/Wed/Thu/Fri, FAQPage).
 
 ### v1.52.1 — /ministries image/video sizing audit + fix
 

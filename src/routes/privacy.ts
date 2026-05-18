@@ -30,6 +30,32 @@ export function registerPrivacyRoute(app: Hono) {
           <meta name="twitter:title" content="Legal Information | Morning Star Christian Church">
           <meta name="twitter:description" content="Privacy Policy, Terms of Service, and Accessibility Statement for Morning Star Christian Church.">
           
+          <!-- Schema.org Structured Data — minimal page entry tied to the
+               canonical Church + WebSite entities from the home page graph. -->
+          <script type="application/ld+json">
+          {
+              "@context": "https://schema.org",
+              "@graph": [
+                  {
+                      "@type": "WebPage",
+                      "@id": "https://ms.church/privacy#page",
+                      "url": "https://ms.church/privacy",
+                      "name": "Privacy Policy, Terms & Accessibility · Morning Star Christian Church",
+                      "description": "Privacy Policy, Terms of Service, and Accessibility Statement for Morning Star Christian Church in Boise, Idaho.",
+                      "isPartOf": { "@id": "https://ms.church/#website" },
+                      "about": { "@id": "https://ms.church/#church" },
+                      "inLanguage": "en-US"
+                  },
+                  {
+                      "@type": "BreadcrumbList",
+                      "itemListElement": [
+                          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ms.church/" },
+                          { "@type": "ListItem", "position": 2, "name": "Privacy & Terms", "item": "https://ms.church/privacy" }
+                      ]
+                  }
+              ]
+          }
+          </script>
           <link rel="preconnect" href="https://fonts.googleapis.com">
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
           <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">

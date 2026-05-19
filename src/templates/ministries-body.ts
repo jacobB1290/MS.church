@@ -128,21 +128,6 @@ const SECTIONS: Section[] = [
     imageSide: 'right',
     entries: [
       {
-        id: 'bible-study',
-        eyebrow: 'Bible Study',
-        titleHtml: `Thursdays · 6:00 PM at ${churchAddressPill('the church')}`,
-        description:
-          "A 45-minute evening Bible study at the church with free coffee. Open discussion, gospel-grounded, paced so newcomers and longtime members can both engage. Whoever is leading that week opens a passage, asks questions, and we go from there. Honest questions are encouraged — there is no \"too basic\" or \"too hard.\"",
-        tips: [
-          { label: 'What to bring', value: 'A Bible if you have one — we have extras on the back table.' },
-          { label: 'Coffee', value: 'Free and on the counter. Grab a cup whenever.' },
-          { label: 'If you arrive late', value: 'Walk in and grab a chair. We do not pause the discussion for new arrivals; it just keeps going.' },
-          { label: 'First time', value: 'Tell whoever greets you it is your first time and they will get you settled.' },
-        ],
-        ctaLabel: 'Ask about Bible Study',
-        ctaHref: '/#contact',
-      },
-      {
         id: 'bible-reading',
         eyebrow: 'Bible Reading',
         titleHtml: `Tuesdays · 8:30 AM at ${caffienaLink}`,
@@ -155,6 +140,21 @@ const SECTIONS: Section[] = [
           { label: 'Finding the group', value: 'Look for 4–6 people at a table. Wave at any of us — we will pull up another chair.' },
         ],
         ctaLabel: 'Ask about Bible Reading',
+        ctaHref: '/#contact',
+      },
+      {
+        id: 'bible-study',
+        eyebrow: 'Bible Study',
+        titleHtml: `Thursdays · 6:00 PM at ${churchAddressPill('the church')}`,
+        description:
+          "A 45-minute evening Bible study at the church with free coffee. Open discussion, gospel-grounded, paced so newcomers and longtime members can both engage. Whoever is leading that week opens a passage, asks questions, and we go from there. Honest questions are encouraged — there is no \"too basic\" or \"too hard.\"",
+        tips: [
+          { label: 'What to bring', value: 'A Bible if you have one — we have extras on the back table.' },
+          { label: 'Coffee', value: 'Free and on the counter. Grab a cup whenever.' },
+          { label: 'If you arrive late', value: 'Walk in and grab a chair. We do not pause the discussion for new arrivals; it just keeps going.' },
+          { label: 'First time', value: 'Tell whoever greets you it is your first time and they will get you settled.' },
+        ],
+        ctaLabel: 'Ask about Bible Study',
         ctaHref: '/#contact',
       },
     ],

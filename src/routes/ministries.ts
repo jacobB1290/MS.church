@@ -51,20 +51,20 @@ const MINISTRIES_JSON_LD = JSON.stringify({
           {
             '@type': 'Service',
             position: 3,
-            name: 'Thursday Bible Study (Discipleship)',
+            name: 'Tuesday Bible Reading (Discipleship)',
             description:
-              '45-minute evening Bible study at the church with free coffee. Open discussion, gospel-grounded, paced so newcomers and longtime members can both engage. Thursdays at 6:00 PM.',
-            url: 'https://ms.church/ministries#bible-study',
+              'Morning Bible reading at Caffiena State Street coffee shop in Boise. Casual, no curriculum — read a passage, talk about it, drink coffee. Tuesdays at 8:30 AM.',
+            url: 'https://ms.church/ministries#bible-reading',
             provider: { '@id': 'https://ms.church/#church' },
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
           },
           {
             '@type': 'Service',
             position: 4,
-            name: 'Tuesday Bible Reading (Discipleship)',
+            name: 'Thursday Bible Study (Discipleship)',
             description:
-              'Morning Bible reading at Caffiena State Street coffee shop in Boise. Casual, no curriculum — read a passage, talk about it, drink coffee. Tuesdays at 8:30 AM.',
-            url: 'https://ms.church/ministries#bible-reading',
+              '45-minute evening Bible study at the church with free coffee. Open discussion, gospel-grounded, paced so newcomers and longtime members can both engage. Thursdays at 6:00 PM.',
+            url: 'https://ms.church/ministries#bible-study',
             provider: { '@id': 'https://ms.church/#church' },
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
           },

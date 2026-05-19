@@ -1,7 +1,15 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.55.1
+## 🔢 CURRENT VERSION: v1.55.2
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.55.2 — /ministries Discipleship: Tuesday before Thursday
+
+Swapped the order of the two entries in the Discipleship section so the chronological flow through the week reads top-to-bottom: **Tuesday Bible Reading** first, then **Thursday Bible Study**.
+
+Side effect of the alternating image-side rhythm within the section: Bible Reading now gets image-right (it's the first entry now, and the section's `imageSide` is `"right"`), Bible Study gets image-left.
+
+JSON-LD `ItemList` `position` values in `routes/ministries.ts` updated to match (position 3 = Bible Reading, position 4 = Bible Study). Anchors unchanged.
 
 ### v1.55.1 — Youth section gets its photo
 

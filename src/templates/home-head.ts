@@ -910,18 +910,24 @@ ${prefetchSnippet()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <!-- v1.49.24: swap → optional. The default Google Fonts "swap"
-             behavior renders the page with a fallback (Georgia / system-ui)
-             on first paint, then re-renders when the web font arrives —
-             that's the "logo expands then jumps" the user reported, since
-             Playfair Display has wider glyphs than the Georgia fallback.
-             With "optional" the browser uses the web font only if it's
-             cached / ready within ~100ms; otherwise the fallback is used
-             permanently for this page load. No swap = no jump.
-             The size-adjust fallbacks below match Georgia/system metrics
-             to Playfair/Inter so even when the fallback IS used the layout
-             matches the cached-font layout. -->
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=optional" rel="stylesheet">
+        <!-- v1.62.6: optional -> swap. The earlier display=optional (v1.49.24)
+             avoided font swap by sticking with the fallback for the entire
+             pageview if Google Fonts didn't arrive within ~100ms. The downside:
+             on cold-cache first visits over a slow link the fallback (Georgia)
+             stayed visible for the WHOLE session, requiring 2-3 reloads to
+             warm the cache. Switching to display=swap lets the real font
+             replace the fallback as soon as it arrives. The metric-matched
+             fallback @font-face rules below match Playfair / Inter dimensions
+             so the swap is visually a glyph-shape change only — no layout
+             shift, no "logo expands then jumps". Net effect: correct font
+             shows up reliably, no CLS.
+
+             Combined with the preload hints on the next line, the practical
+             swap delay on first visit is ~100-300ms; cached visits are
+             instant. The fallback Georgia is only ever shown during that
+             brief window. -->
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
             /* Metric-matched fallbacks. Layout boxes are computed against
                these adjusted Georgia/system metrics; when Playfair / Inter

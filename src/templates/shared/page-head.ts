@@ -153,9 +153,10 @@ export function pageHead({
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <!-- See home-head.ts for the rationale (font-display: optional +
-             metric-matched fallbacks to prevent the post-fade swap jump). -->
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=optional" rel="stylesheet">
+        <!-- See home-head.ts for full rationale (font-display: swap + metric-
+             matched fallbacks for no-CLS swap + reliable font load). -->
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <style>
             @font-face {
                 font-family: 'Playfair Display Fallback';

@@ -83,7 +83,7 @@ const SECTIONS: Section[] = [
     eyebrow: 'Worship',
     heading: 'How we gather together on Sundays.',
     imageSide: 'left',
-    imageSrc: '/static/worship.jpg',
+    imageSrc: '/static/worship.jpg?v=2',
     imageAlt: 'Five Morning Star vocalists leading worship from the church platform, microphones in hand.',
     // Faces sit in the upper-middle band; bias the crop upward so portrait
     // containers on desktop preserve heads/microphones rather than feet.
@@ -201,7 +201,7 @@ const SECTIONS: Section[] = [
     // serves both viewports: mobile crops it to a 16:9 banner with the
     // faces biased to the upper portion; desktop uses (close to) the
     // full image in the portrait container with a slight upward bias.
-    imageSrc: '/static/youth.jpg',
+    imageSrc: '/static/youth.jpg?v=2',
     imageAlt: 'Five Morning Star youth dressed up arm-in-arm in front of a tree and fence backdrop at an evening event.',
     // Mobile (16:9 banner from a 9:16 portrait source): tight
     // horizontal band crops aggressively top-and-bottom. Faces sit at

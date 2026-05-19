@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.56.0 - Youth image swapped to new portrait shot (5 girls); single source serves both viewports with different object-position crops. Image-container layout refactored to position: relative + absolute <img> so it cannot grow to intrinsic dimensions. See src/index.tsx for the full change log. -->
+<!-- v1.56.1 - Cache-bust /static/youth.jpg and /static/worship.jpg references on /ministries by appending ?v=2 so CDN/browser fetches the new portrait instead of serving the immutably-cached old 16:9 group photo. See src/index.tsx for the full change log. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

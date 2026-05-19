@@ -163,8 +163,6 @@ const SECTIONS: Section[] = [
     id: 'fellowship',
     eyebrow: 'Fellowship',
     heading: 'How we spend time together off-Sunday.',
-    note:
-      "We also share a free breakfast every Sunday after the service — that's part of <a href='/outreach#meals-hospitality'>Community Breakfast</a> on the Outreach page.",
     imageSide: 'left',
     entries: [
       {

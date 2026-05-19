@@ -1,7 +1,11 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.55.2
+## 🔢 CURRENT VERSION: v1.55.3
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.55.3 — Removed Fellowship cross-link note on /ministries
+
+Dropped the italic line *"We also share a free breakfast every Sunday after the service — that's part of [Community Breakfast](/outreach#meals-hospitality) on the Outreach page."* from the Fellowship section. The `Section` type still supports an optional `note` field for any future section that wants one — just no section currently uses it.
 
 ### v1.55.2 — /ministries Discipleship: Tuesday before Thursday
 

@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-This is the official website for **Morning Star Christian Church** in Boise, Idaho (ms.church). It is a monolithic single-page application built with Hono (a lightweight TypeScript web framework) and deployed to Cloudflare Pages as the primary target, with Vercel as a secondary deployment option.
+The official website for **Morning Star Christian Church** in Boise, Idaho ([ms.church](https://ms.church)). A server-rendered Hono app (TypeScript) deployed to Vercel.
 
-The site serves as a church landing page with sections for the hero/welcome, service schedule, upcoming events (via Google Calendar), and a contact form.
+Sections: hero/welcome, service schedule, ministries, outreach, About, beliefs, visit (map + service flow), watch (live + YouTube playlist), contact (Jotform), plus a Google Calendar–driven events feed.
 
 ---
 
@@ -13,13 +13,14 @@ The site serves as a church landing page with sections for the hero/welcome, ser
 | Layer | Technology |
 |-------|------------|
 | Framework | [Hono](https://hono.dev/) v4 |
-| Language | TypeScript (strict mode) |
-| Build tool | Vite + `@hono/vite-build` |
+| Language | TypeScript (strict) |
 | JSX runtime | Hono's built-in JSX (`hono/jsx`) |
-| Primary deployment | Cloudflare Pages |
-| Secondary deployment | Vercel |
-| Local dev server | Vite dev server with Cloudflare adapter |
-| Process manager | PM2 (`ecosystem.config.cjs`) |
+| Dev server | Vite + `@hono/vite-dev-server` |
+| Build | `tsc --noEmit` (type-check only; Vercel compiles `api/index.ts` natively) |
+| Deployment | Vercel (Node serverless function via `api/index.ts`) |
+| Tests | Playwright harness (`scripts/harness/run.mjs`) |
+
+To switch back to Cloudflare Pages, see the comment block at the top of `src/index.ts`.
 
 ---
 
@@ -28,57 +29,55 @@ The site serves as a church landing page with sections for the hero/welcome, ser
 ```
 MS.church/
 ├── src/
-│   ├── index.tsx        # PRIMARY source — Cloudflare Pages entry point (7800+ lines)
-│   ├── index.ts         # Vercel mirror — identical to index.tsx except one import
-│   └── renderer.tsx     # Minimal Hono JSX renderer (utility, not used by main routes)
+│   ├── index.ts        # Hono app entry — adds serveStatic, exports app
+│   ├── app.ts          # Route registration + 404 page + security headers
+│   ├── design-tokens.ts
+│   ├── config.ts       # Google Calendar configuration
+│   ├── routes/         # One file per URL (home, about, ministries, outreach, …)
+│   └── templates/      # Reusable head/body/scripts/styles + shared/ partials
 ├── api/
-│   └── index.ts         # Vercel serverless function adapter
-├── public/
-│   └── static/
-│       ├── style.css            # Minimal external CSS (nearly empty; styles are inlined)
-│       ├── church-building.jpg  # Hero section image
-│       ├── community-service-1.jpg
-│       ├── friendsgiving-flyer.png
-│       └── apple-touch-icon.png
+│   └── index.ts        # Vercel serverless adapter (3-line shim → src/index.ts)
+├── public/static/      # Self-hosted images — every photo has .jpg / .webp / .avif
+├── scripts/harness/    # Playwright visual + perf regression suite
 ├── package.json
 ├── tsconfig.json
-├── vite.config.ts       # Vite + Cloudflare Pages build configuration
-├── wrangler.jsonc       # Cloudflare Pages/Workers configuration
-├── vercel.json          # Vercel deployment configuration
-├── ecosystem.config.cjs # PM2 configuration for local preview
-├── README.md            # Changelog (version history)
-├── SCROLL_ALGORITHM_DOCUMENTATION.md
-├── COMPLETE_SYNC_VERIFICATION.md
-└── DEPLOYMENT_VERIFICATION_v1.9.1.md
+├── vite.config.ts      # Dev-only — `@hono/vite-dev-server` pointed at src/index.ts
+├── vercel.json         # Deployment config (headers, rewrites, image CDN)
+├── README.md           # Public overview (links to CHANGELOG.md)
+└── CHANGELOG.md        # Per-version notes — gitignored, local only
 ```
 
 ---
 
 ## Architecture: Module-per-Route Template Pattern
 
-The website uses Hono to render complete pages server-side as `c.html(...)` responses. All HTML, CSS, and JavaScript are inline template strings — no separate HTML files or external CSS bundles beyond the near-empty `public/static/style.css`.
-
-The code is organized into modules by responsibility:
+Hono renders complete pages server-side as `c.html(...)` responses. HTML, CSS, and client-side JS all live in inline template strings — no separate HTML files, no external CSS bundle. `public/static/style.css` is intentionally empty.
 
 ```
 src/
-├── index.tsx           # Cloudflare Pages entry (adds cloudflare serveStatic, imports app)
-├── index.ts            # Vercel entry (adds node serveStatic, imports app)
-├── app.ts              # Shared Hono app — registers all routes
-├── config.ts           # Google Calendar configuration
+├── index.ts            # Entry — adds serveStatic, exports the app
+├── app.ts              # Wires every route + 404 + security headers
 ├── routes/
-│   ├── calendar.ts     # GET /api/calendar/events (with 5-min server-side cache)
-│   ├── home.ts         # GET / (composes head + body + scripts templates)
+│   ├── home.ts         # GET / (composes head + body + scripts)
+│   ├── about.ts        # GET /about
+│   ├── ministries.ts   # GET /ministries
+│   ├── outreach.ts     # GET /outreach
+│   ├── visit.ts        # GET /visit
+│   ├── beliefs.ts      # GET /beliefs
 │   ├── privacy.ts      # GET /privacy
-│   └── misc.ts         # GET /robots.txt, /sitemap.xml, GET /form
+│   ├── calendar.ts     # GET /api/calendar/events (5-min in-memory cache)
+│   ├── youtube.ts      # GET /api/youtube/latest-video (RSS-feed cache + stale-while-revalidate)
+│   └── misc.ts         # /robots.txt, /sitemap.xml, /form
 └── templates/
-    ├── home-head.ts    # <head> section (meta tags, schema, analytics, styles)
-    ├── home-styles.ts  # ~4500 lines of CSS (imported by home-head.ts)
-    ├── home-body.ts    # HTML body sections (nav, hero, schedule, events, watch, contact, footer)
-    └── home-scripts.ts # Client-side JavaScript
+    ├── home-head.ts    # <head> — meta, schema.org, preload, analytics
+    ├── home-styles.ts  # ~7400-line CSS string shared by every page
+    ├── home-body.ts    # Home page body
+    ├── home-scripts.ts # Client-side JS (carousel, schedule tabs, reveal observer, …)
+    ├── ministries-body.ts / outreach-body.ts / visit-body.ts / about-body.ts / beliefs-body.ts
+    └── shared/         # subpage-header.ts, footer.ts, nav.ts, page-head.ts, prefetch.ts
 ```
 
-**Editing workflow:** For home page changes, edit the relevant template file. For a new page, create `src/routes/your-page.ts` and register it in `src/app.ts`. Run `npm run sync-check` before committing.
+**Editing workflow:** For home page changes, edit the relevant `home-*.ts` template. For a new page, create `src/routes/your-page.ts` + `src/templates/your-page-body.ts` and register the route in `src/app.ts`.
 
 ### Routes (defined in `src/routes/`)
 
@@ -95,21 +94,16 @@ src/
 
 ---
 
-## The Two-File Deployment Split
+## Platform Adapter
 
-`src/index.tsx` and `src/index.ts` are **nearly identical**. They differ in exactly one import:
+Only one entry file: `src/index.ts`. The `serveStatic` import is platform-specific, with the alternative Cloudflare version commented out at the top:
 
-**`src/index.tsx` (Cloudflare Pages):**
-```typescript
-import { serveStatic } from 'hono/cloudflare-workers'
-```
-
-**`src/index.ts` (Vercel):**
 ```typescript
 import { serveStatic } from '@hono/node-server/serve-static'
+// import { serveStatic } from 'hono/cloudflare-workers'
 ```
 
-**Critical rule: whenever you modify `src/index.tsx`, you MUST apply the same changes to `src/index.ts`**, keeping the Vercel import intact. Failure to sync these files will cause one platform to run outdated code. Run `npm run sync-check` to verify.
+The active import is Node/Vercel. To switch to Cloudflare Pages: swap the active import, reinstall `wrangler` + `@cloudflare/workers-types` + `@hono/vite-build`, restore `wrangler.jsonc`, and add the Cloudflare build plugin back to `vite.config.ts` (git history through v1.59.x has the prior config).
 
 ---
 
@@ -124,32 +118,16 @@ npm install
 ```bash
 npm run dev
 ```
-Starts a Vite dev server with the Cloudflare Workers adapter. Hot reload is available. Visit `http://localhost:5173` (or the port shown in the terminal).
+Starts the Vite dev server (`@hono/vite-dev-server` with no adapter — runs the Hono app in Node). Hot reload on TypeScript edits. Visit `http://localhost:5173`.
 
-### Build
+### Build (type-check)
 ```bash
 npm run build
 ```
-Outputs to `./dist/` via `@hono/vite-build` targeting Cloudflare Pages.
+Runs `tsc --noEmit`. There's no bundle step — Vercel compiles `api/index.ts` natively. Failing types fail the deploy.
 
-### Preview built output locally
-```bash
-npm run preview
-```
-Uses `wrangler pages dev` to preview the built `dist/` directory.
-
-### Deploy to Cloudflare Pages
-```bash
-npm run deploy
-```
-Runs build then `wrangler pages deploy`.
-
-### Deploy to Vercel
-Vercel uses the `vercel-build` script automatically:
-```bash
-npm run vercel-build   # equivalent to: vite build
-```
-`vercel.json` rewrites all requests to `/api` (the `api/index.ts` serverless function).
+### Deploy
+Pushing to the branch that Vercel watches triggers a deploy. `vercel.json` rewrites every request to `/api` (the `api/index.ts` serverless function), which wraps the Hono app via `@hono/node-server/vercel`. `public/static/*` is served from disk by the Hono app's `serveStatic` middleware.
 
 ---
 
@@ -244,21 +222,9 @@ This rule applies to every kind of test, not just the committed `run.mjs` suite 
 
 ## Versioning Convention
 
-The project uses a manual version number tracked in two places:
+Version numbers live in commit messages (`v1.X.Y — short description`) and per-version notes in the gitignored `CHANGELOG.md`. The on-screen `version-footer` div displays the current version.
 
-1. **Comment at top of `src/index.tsx`** (line ~5):
-   ```typescript
-   // Version: 1.29.17 - Short description of change
-   ```
-
-2. **HTML comment inside the `c.html()` template string** (the `<!-- v1.X.X -->` comment in the `<html>` opening comment on the landing page route):
-   ```html
-   <!-- v1.31.0 - Short description of change -->
-   ```
-
-3. **The `version-footer` div** (search for `version-footer` in the file) displays the version on-screen.
-
-**Always update all three when making changes.** The README.md also serves as a detailed changelog — add a new version entry there for significant changes.
+There is no in-source version comment anymore (was bloating `src/index.ts` with multi-thousand-character changelog blocks duplicated across files — removed in the streamlining pass that also collapsed the two-platform setup).
 
 ---
 
@@ -266,7 +232,7 @@ The project uses a manual version number tracked in two places:
 
 The `/api/calendar/events` endpoint fetches from Google Calendar and transforms events into a normalized format.
 
-### Configuration (in `src/index.tsx`, near the top)
+### Configuration (in `src/routes/calendar.ts`)
 ```typescript
 const GOOGLE_CALENDAR_CONFIG = {
   API_KEY: 'AIzaSy...',           // Google Cloud API key
@@ -430,45 +396,37 @@ Vercel Analytics and Speed Insights are loaded conditionally in the client via d
 
 ---
 
-## Deployment Targets
+## Deployment
 
-### Cloudflare Pages (primary)
-- Config: `wrangler.jsonc`
-- Entry: `src/index.tsx`
-- Build output: `dist/`
-- Compatibility flags: `nodejs_compat`
+**Vercel** — single deploy target.
+- Config: `vercel.json` (headers, rewrites, image-CDN remotePatterns).
+- Serverless function: `api/index.ts` (`@hono/node-server/vercel` adapter wrapping the app from `src/index.ts`).
+- Rewrite rule sends every request — including `/static/*` — to `/api`, where the Hono app's `serveStatic` middleware reads from `public/static/` on disk.
+- No build artifacts are needed; Vercel TypeScript-compiles `api/index.ts` natively. `npm run build` only type-checks.
 
-### Vercel (secondary)
-- Config: `vercel.json`
-- Serverless function: `api/index.ts` (uses `@hono/node-server/vercel` adapter)
-- All routes rewritten to `/api`
-- Entry: `src/index.ts` (mirrors `src/index.tsx`)
+To restore Cloudflare Pages as an alternative, see the comment block at the top of `src/index.ts`.
 
 ---
 
 ## Key Conventions for AI Assistants
 
-1. **For home page changes**, edit the relevant file in `src/templates/` or `src/routes/home.ts`. For new pages, create `src/routes/your-page.ts` and register it in `src/app.ts`.
+1. **For home page changes**, edit the relevant file in `src/templates/` or `src/routes/home.ts`. For new pages, create `src/routes/your-page.ts` + `src/templates/your-page-body.ts` and register the route in `src/app.ts`.
 
-2. **`src/index.tsx` and `src/index.ts` must stay in sync** (only their `serveStatic` import differs). Run `npm run sync-check` before committing any changes to these files.
+2. **Do not add external dependencies lightly.** The architecture is intentionally lightweight: no React, no component library, no state management. Consider whether an inline implementation is sufficient before adding a package.
 
-3. **Bump the version number** in the comment at line 1 of both `src/index.tsx` and `src/index.ts`, and in the HTML comment inside `src/routes/home.ts`.
+3. **All HTML, CSS, and JavaScript is inline** (in template strings). For the home page, CSS lives in `src/templates/home-styles.ts` and client JS in `src/templates/home-scripts.ts`. `public/static/style.css` is intentionally empty.
 
-4. **Do not add external dependencies lightly.** The current architecture is intentionally lightweight: no React, no component library, no state management. Consider whether an inline implementation is sufficient before adding a package.
+4. **SEO metadata is extensive.** `src/templates/home-head.ts` includes Schema.org JSON-LD, Open Graph, Twitter Card, geo tags, and canonical URL. Preserve and update these when changing page content. `/about`, `/outreach`, etc. have their own JSON-LD blocks in their `routes/*.ts`.
 
-5. **All HTML, CSS, and JavaScript is inline** (in template strings). For the home page, CSS lives in `src/templates/home-styles.ts` and client JS in `src/templates/home-scripts.ts`.
+5. **The harness IS the test suite.** `node scripts/harness/run.mjs` runs Playwright-driven anchor + perf + flow scenarios. **For any animation, scroll/anchor, layout-shift, transform/transition, reveal-observer, or non-trivial design change, run the harness, read `output/report.html`, and iterate until it passes BEFORE pushing.** Push only after a green run. If the bug class you're touching isn't covered, ADD a scenario, then fix. See the "MUST run it" subsection above. Validate visually with `npm run dev` too, but harness is the gate.
 
-6. **`public/static/style.css` is effectively empty** (contains only a placeholder `h1` rule). Do not rely on it for substantial styling — all styles live in the inlined `<style>` block.
+6. **Per-version notes** belong in commit messages and the gitignored `CHANGELOG.md`. Don't add changelog blocks to source files. The on-screen `version-footer` div is the public version marker.
 
-7. **SEO metadata is extensive.** The `<head>` section (`src/templates/home-head.ts`) includes Schema.org JSON-LD, Open Graph, Twitter Card, geo tags, and canonical URL. Preserve and update these when changing page content.
+7. **Church details** — 3080 Wildwood St, Boise, ID 83713. Email: `morningstarchurchboise@gmail.com`. Sunday service at 9:00 AM.
 
-8. **The harness IS the test suite.** `node scripts/harness/run.mjs` runs Playwright-driven anchor + perf + flow scenarios. **For any animation, scroll/anchor, layout-shift, transform/transition, reveal-observer, or non-trivial design change, run the harness, read `output/report.html`, and iterate until it passes BEFORE pushing.** Push only after a green run. If the bug class you're touching isn't covered, ADD a scenario, then fix. See the "MUST run it" subsection above. Validate visually with `npm run dev` too, but harness is the gate.
+8. **Calendar events** are fetched server-side in `src/routes/calendar.ts` with a 5-minute in-memory cache. The client calls `/api/calendar/events`; update image-URL handling there if the `lh3.googleusercontent.com` format changes.
 
-9. **The README.md is a changelog**, not typical documentation. Add a new version entry there for any significant changes.
-
-10. **Church details** — address is 3080 Wildwood St (also written as "3080 N Wildwood St"), Boise, ID 83713. Email: `morningstarchurchboise@gmail.com`. Sunday service at 9:00 AM (10:00 AM per Schema.org — verify with church before changing).
-
-11. **Calendar events** are fetched server-side in `src/routes/calendar.ts` with a 5-minute in-memory cache. The client calls `/api/calendar/events` — it does NOT call Google Calendar directly anymore. Update image URL handling in `calendar.ts` if the lh3.googleusercontent.com format changes.
+9. **Images are self-hosted** with three variants each (`.jpg` / `.webp` / `.avif`) in `public/static/`. Use `<picture>` with AVIF + WebP `<source>` elements for foreground images, or CSS `image-set()` for background images. Generation script in `scripts/_optimize.mjs` (ad-hoc, not committed); sharp is a dev dep. When swapping a static image, regenerate all three variants.
 
 ---
 

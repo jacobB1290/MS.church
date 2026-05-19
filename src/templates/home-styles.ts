@@ -5674,7 +5674,7 @@ export const homeStyles = (): string => `
                     background-image: image-set(
                         url('/static/hero-mobile.avif') type('image/avif'),
                         url('/static/hero-mobile.webp') type('image/webp'),
-                        url('/static/hero-mobile.jpg?v=3') type('image/jpeg')
+                        url('/static/hero-mobile.jpg') type('image/jpeg')
                     );
                     background-size: cover;
                     background-position: center 60%;
@@ -6734,9 +6734,9 @@ export const homeStyles = (): string => `
                     /* Hero background image — left-positioned to keep church facade visible.
                        image-set() lets the browser pick AVIF (smallest) → WebP → JPG. */
                     background-image: image-set(
-                        url('/static/church-building.avif?v=3') type('image/avif'),
-                        url('/static/church-building.webp?v=3') type('image/webp'),
-                        url('/static/church-building.jpg?v=3') type('image/jpeg')
+                        url('/static/church-building.avif') type('image/avif'),
+                        url('/static/church-building.webp') type('image/webp'),
+                        url('/static/church-building.jpg') type('image/jpeg')
                     );
                     background-size: cover;
                     background-position: left center;

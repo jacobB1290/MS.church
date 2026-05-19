@@ -9,7 +9,7 @@
 import { homeStyles } from '../home-styles.js'
 import { prefetchSnippet } from './prefetch.js'
 
-const DEFAULT_OG_IMAGE = 'https://ms.church/static/church-building.jpg?v=3'
+const DEFAULT_OG_IMAGE = 'https://ms.church/static/church-building.jpg'
 
 type PageHeadOptions = {
   title: string

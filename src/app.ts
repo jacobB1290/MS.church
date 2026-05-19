@@ -1,5 +1,5 @@
-// Core Hono application — shared by both Cloudflare and Vercel entries.
-// Platform-specific middleware (serveStatic) is added in index.tsx / index.ts.
+// Core Hono application — every route + middleware lives here.
+// Platform-specific serveStatic is added in src/index.ts (Node/Vercel).
 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'

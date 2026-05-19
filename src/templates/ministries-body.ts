@@ -83,7 +83,7 @@ const SECTIONS: Section[] = [
     eyebrow: 'Worship',
     heading: 'How we gather together on Sundays.',
     imageSide: 'left',
-    imageSrc: '/static/worship.jpg?v=3',
+    imageSrc: '/static/worship.jpg',
     imageAlt: 'Five Morning Star vocalists leading worship from the church platform, microphones in hand.',
     // Faces sit in the upper-middle band; bias the crop upward so portrait
     // containers on desktop preserve heads/microphones rather than feet.
@@ -201,7 +201,7 @@ const SECTIONS: Section[] = [
     // serves both viewports: mobile crops it to a 16:9 banner with the
     // faces biased to the upper portion; desktop uses (close to) the
     // full image in the portrait container with a slight upward bias.
-    imageSrc: '/static/youth.jpg?v=3',
+    imageSrc: '/static/youth.jpg',
     imageAlt: 'Five Morning Star youth dressed up arm-in-arm in front of a tree and fence backdrop at an evening event.',
     // Mobile (16:9 banner from a 9:16 portrait source): tight
     // horizontal band crops aggressively top-and-bottom. Faces sit at
@@ -329,8 +329,8 @@ function renderSection(s: Section): string {
     if (s.imagePositionDesktop) cssVars.push(`--img-pos-desktop: ${s.imagePositionDesktop}`)
     const styleAttr = cssVars.length ? ` style="${cssVars.join('; ')};"` : ''
     // Helper: derive AVIF / WebP sibling paths from a JPG src (preserving
-    // any cache-bust query string). e.g. "/static/youth.jpg?v=3" → AVIF
-    // "/static/youth.avif?v=3", WebP "/static/youth.webp?v=3".
+    // any cache-bust query string). e.g. "/static/youth.jpg" → AVIF
+    // "/static/youth.avif", WebP "/static/youth.webp".
     const variants = (src: string) => {
       const [path, query] = src.split('?')
       const q = query ? `?${query}` : ''

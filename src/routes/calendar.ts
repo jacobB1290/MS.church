@@ -4,9 +4,10 @@ import { GOOGLE_CALENDAR_CONFIG } from '../config.js'
 // In-memory cache for calendar API responses (shared across requests in the same worker instance)
 let _cache: { data: unknown; ts: number } | null = null
 
-// On Vercel, route event images through Vercel Image Optimization for
-// automatic WebP/AVIF conversion and CDN edge caching (configured in vercel.json).
-// Falls back to direct Google CDN URLs on Cloudflare and local dev.
+// In production on Vercel, route event images through Vercel Image
+// Optimization for automatic WebP/AVIF conversion + CDN edge caching
+// (configured in vercel.json). Local dev (and any non-Vercel runtime)
+// uses the direct Google CDN URL.
 const isVercel = typeof process !== 'undefined' && !!process.env?.VERCEL
 
 function toImageUrl(fileId: string): string {

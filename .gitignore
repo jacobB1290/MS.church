@@ -1,9 +1,11 @@
 # Dependencies
 node_modules/
 
-# Build
+# Build (Vite output is unused on Vercel; kept gitignored from previous Cloudflare setup)
 dist/
-.wrangler/
+
+# Private changelog — full per-version notes (public README links here but file isn't committed)
+CHANGELOG.md
 
 # Runtime data
 pids

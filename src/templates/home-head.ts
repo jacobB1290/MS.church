@@ -192,7 +192,7 @@ export const homeHead = (): string => {
         <meta property="og:url" content="https://ms.church/">
         <meta property="og:title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
         <meta property="og:description" content="A welcoming, Bible-believing church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study groups, and community outreach. Rooted in Scripture, centered on Jesus — all are welcome!">
-        <meta property="og:image" content="https://ms.church/static/church-building.jpg?v=3">
+        <meta property="og:image" content="https://ms.church/static/church-building.jpg">
         <meta property="og:image:width" content="1920">
         <meta property="og:image:height" content="1038">
         <meta property="og:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
@@ -204,7 +204,7 @@ export const homeHead = (): string => {
         <meta name="twitter:url" content="https://ms.church/">
         <meta name="twitter:title" content="Morning Star Christian Church in Boise, Idaho | Sunday Worship at 9 AM">
         <meta name="twitter:description" content="A welcoming, Bible-believing church in Boise, Idaho. Sunday worship at 9 AM with free community breakfast, Bible study groups, and community outreach. Rooted in Scripture, centered on Jesus.">
-        <meta name="twitter:image" content="https://ms.church/static/church-building.jpg?v=3">
+        <meta name="twitter:image" content="https://ms.church/static/church-building.jpg">
         <meta name="twitter:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
 
         <!-- Safari iOS theme-color — olive green blends with hero image top -->
@@ -235,9 +235,9 @@ export const homeHead = (): string => {
              others, while older browsers fall through to JPG (~308 KB).
              Avoids the double-load you'd get from a single JPG preload
              plus an AVIF CSS background. -->
-        <link rel="preload" as="image" href="https://ms.church/static/church-building.avif?v=3" type="image/avif" fetchpriority="high">
-        <link rel="preload" as="image" href="https://ms.church/static/church-building.webp?v=3" type="image/webp" fetchpriority="high">
-        <link rel="preload" as="image" href="https://ms.church/static/church-building.jpg?v=3" type="image/jpeg" fetchpriority="high">
+        <link rel="preload" as="image" href="https://ms.church/static/church-building.avif" type="image/avif" fetchpriority="high">
+        <link rel="preload" as="image" href="https://ms.church/static/church-building.webp" type="image/webp" fetchpriority="high">
+        <link rel="preload" as="image" href="https://ms.church/static/church-building.jpg" type="image/jpeg" fetchpriority="high">
 
         <!-- Eager prefetch of the primary hero CTA target. Speculation
              Rules (below) covers hover/touch intent for /about, /outreach,
@@ -279,8 +279,8 @@ export const homeHead = (): string => {
                         "latitude": 43.6150,
                         "longitude": -116.2023
                     },
-                    "image": "https://ms.church/static/church-building.jpg?v=3",
-                    "logo": "https://ms.church/static/church-building.jpg?v=3",
+                    "image": "https://ms.church/static/church-building.jpg",
+                    "logo": "https://ms.church/static/church-building.jpg",
                     "sameAs": [
                         "https://www.instagram.com/morningstarboise/",
                         "https://www.instagram.com/mschurchboise",
@@ -459,7 +459,7 @@ export const homeHead = (): string => {
                     "url": "https://ms.church",
                     "logo": {
                         "@type": "ImageObject",
-                        "url": "https://ms.church/static/church-building.jpg?v=3",
+                        "url": "https://ms.church/static/church-building.jpg",
                         "width": 1200,
                         "height": 630
                     },
@@ -527,7 +527,7 @@ export const homeHead = (): string => {
                         "@id": "https://ms.church/#church"
                     },
                     "isAccessibleForFree": true,
-                    "image": "https://ms.church/static/church-building.jpg?v=3"
+                    "image": "https://ms.church/static/church-building.jpg"
                 },
                 {
                     "@type": "Event",

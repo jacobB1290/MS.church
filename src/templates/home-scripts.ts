@@ -693,7 +693,7 @@ export const homeScripts = (): string => `
                     // [CTA:...] tag button (frosted-glass overlay on mobile, standalone button on desktop)
                     const hasRealLink = event.cta && event.cta.link && event.cta.link !== '#contact' && event.cta.link.startsWith('http');
                     const ctaHtml = hasRealLink
-                        ? \`<div class="event-cta"><a href="\${event.cta.link}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">\${event.cta.text}</a></div>\`
+                        ? \`<div class="event-cta"><a href="\${event.cta.link}" class="event-link-btn" target="_blank" rel="noopener noreferrer">\${event.cta.text}</a></div>\`
                         : '';
 
                     // Description-link: gold pill button BELOW the image card (not overlaid),

@@ -377,6 +377,20 @@ The numbers below are the source of truth; if anything here differs from `:root`
 | **Border radius** | `--radius-sm` (8), `-md` (16), `-lg` (~22), `-xl` (~26), `-2xl` (~40), `-pill` (100), `-circle` (50%) | Pill chips → pill; cards → md/lg/xl; page wraps → 2xl |
 | **Shadow elevation** | `--shadow-xs`, `-sm`, `-md`, `-lg`, `-xl`, `-overlay` | Cards → sm/md; hero surfaces → lg/xl; lightboxes → overlay. Don't invent rgba black drops. |
 | **Motion** | `--motion-fast` (.2s), `--motion-medium` (.3s), `--motion-slow` (.6s); `--ease-standard` (Material), `--ease-out-soft` (long ease-out) | Hovers → fast; transitions → medium; reveals → slow |
+| **CTA button** | `--btn-cta-bg` / `--btn-cta-bg-hover` / `--btn-cta-shadow` / `--btn-cta-shadow-hover` (gold); `--btn-cta-bg-red` / `--btn-cta-bg-red-hover` / `--btn-cta-shadow-red` / `--btn-cta-shadow-red-hover` (red) | Every brand call-to-action gold pill button (`.event-link-btn` and its modifiers) reads from these tokens. Red variant: `.event-link-btn.event-link-btn--red` for the YouTube playlist button only. Never inline a gold/red gradient on a pill button. |
+
+### The canonical CTA button
+
+The single source of truth for the gold pill call-to-action button (the "Explore Our Ministries" / "Plan a Visit" / "Get Directions" / "Contact Us" design) is the `.event-link-btn` rule in `home-styles.ts` (~line 3462). Every page-level brand CTA across the site uses it. Modifiers:
+
+- `.teaser-cta` — auto width, slightly wider padding (`14px 32px`). Use on standalone section CTAs ("Explore Our Ministries", "Explore Our Outreach", hero "Plan a Visit", "View Full Playlist", "Read Our Statement of Beliefs", "Contact Us" page-level CTAs).
+- `.about-cta` — same as teaser-cta with a distinct semantic name; used by the home About teaser.
+- `.event-link-btn--red` — recolors to the red brand variant (gradient + shadow). Used only by the YouTube playlist button in /watch. Same shape, padding, type, motion, hover-lift as the gold default.
+- `.event-link-btn-secondary` — recolors to white-on-card for an explicit secondary contrast (Apple Maps fallback on /visit, "Explore Outreach" / "Contact Us" on /about).
+
+**Excluded from this design (keep their own rules):** `.nav-cta` + `.nav-form-btn` (nav contact button — smaller, frosted glass, navigation context); `.subpage-back` (back button — different function); `.btn-view-past-events` (modal trigger — small secondary); form-context buttons (`.btn-submit`, `.btn-see-flyer`, `.btn-more-info`); `.btn-calendar`, `.btn-add-child`, `.btn-remove-child` (utility); `.event-cta .event-link-btn` (event-card secondary overlay — white on card, non-pill radius, intentionally contrasts with the gold `.event-link-btn` that may also live on the same card); tab buttons; address triggers; copy buttons.
+
+**Never inline a gold/red gradient pill.** If you find yourself writing `background: linear-gradient(135deg, var(--gold)...) 0%, var(--gold-dark) 100%)` plus `border-radius: var(--radius-pill)` plus `color: #ffffff` on a `<button>` or `<a>`, you're recreating `.event-link-btn` — use the class instead. Add a new modifier to the canonical rule if you need a variant, don't fork the design.
 
 ### Exemptions (the legitimate "don't use a token" cases)
 

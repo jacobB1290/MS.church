@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.56.1 - Cache-bust /static/youth.jpg and /static/worship.jpg references on /ministries by appending ?v=2 so CDN/browser fetches the new portrait instead of serving the immutably-cached old 16:9 group photo. See src/index.tsx for the full change log. -->
+<!-- v1.57.0 - Tokenized + unified the brand CTA button family. .event-link-btn (and its modifiers) is now the canonical gold pill across the entire site — hero, schedule, outreach, about, ministries, beliefs, visit, watch (red variant). Single source of truth via new --btn-cta-* tokens. Excluded: nav contact, back button, form buttons, calendar nav, secondary modal triggers, address utilities. See src/index.tsx for the full change log. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

@@ -116,6 +116,41 @@ export const homeStyles = (): string => `
                 --motion-slow:    0.6s;
                 --ease-standard:  cubic-bezier(0.4, 0, 0.2, 1);
                 --ease-out-soft:  cubic-bezier(0.32, 0.72, 0, 1);
+
+                /* ── Primary CTA button (the canonical gold pill) ──
+                   Reach for these whenever a brand call-to-action gold pill
+                   button appears (Plan a Visit hero CTA, Explore Our
+                   Ministries, Explore Our Outreach, Learn More About Us,
+                   Get Directions, Read Our Statement of Beliefs, Contact Us
+                   page-level CTAs). The single source of truth is the
+                   .event-link-btn rule below — modifiers (.teaser-cta,
+                   .about-cta, .event-link-btn--hero) only change size /
+                   alignment, never colors / shadow / motion.
+                   Buttons that intentionally do NOT use this design and
+                   keep their own rules: .nav-cta + .nav-form-btn (nav
+                   contact, smaller, navigation), .event-link-btn-secondary
+                   (explicit white secondary contrast), .btn-outline (red
+                   YouTube playlist link), .btn-view-past-events (modal
+                   trigger), .btn-submit / .btn-see-flyer / .btn-more-info
+                   (form-context buttons), .btn-calendar (calendar nav),
+                   .btn-add-child / .btn-remove-child (form utility),
+                   .event-cta .btn (card overlay, non-pill radius), tab
+                   buttons, address triggers, copy buttons. */
+                --btn-cta-bg:           linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                --btn-cta-bg-hover:     linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
+                --btn-cta-shadow:       0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
+                --btn-cta-shadow-hover: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
+
+                /* Red color variant of the same CTA. Used only by the
+                   YouTube playlist button in the /watch section so the
+                   "Browse the full playlist on YouTube" CTA reads as a
+                   YouTube-brand pivot. Same shape, padding, type, motion,
+                   hover-lift as the gold variant; only gradient + shadow
+                   tint differ. Apply via .event-link-btn.event-link-btn--red. */
+                --btn-cta-bg-red:           linear-gradient(135deg, #a31515 0%, #6d0000 100%);
+                --btn-cta-bg-red-hover:     linear-gradient(135deg, #6d0000 0%, #520000 100%);
+                --btn-cta-shadow-red:       0 6px 20px rgba(139, 0, 0, 0.35);
+                --btn-cta-shadow-red-hover: 0 10px 28px rgba(139, 0, 0, 0.45);
             }
 
             * {
@@ -141,7 +176,6 @@ export const homeStyles = (): string => `
                 .section-eyebrow,
                 .section-card,
                 .schedule-item,
-                .btn-secondary,
                 .nav-form-btn,
                 .gift-lightbox-close,
                 .gift-lightbox-arrow,
@@ -993,68 +1027,13 @@ export const homeStyles = (): string => `
                 flex-wrap: wrap;
             }
 
-            .btn {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: 18px 40px;
-                border-radius: var(--radius-pill);
-                text-transform: uppercase;
-                font-size: var(--text-label);
-                font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide);
-                border: none;
-                cursor: pointer;
-                transition: all 0.4s var(--ease-standard);
-            }
-
-            .btn-primary {
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-                color: #ffffff;
-                box-shadow: 0 16px 40px color-mix(in srgb, var(--gold) 35%, transparent);
-            }
-
-            .btn-primary:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 20px 50px color-mix(in srgb, var(--gold) 45%, transparent);
-            }
-
-            .btn-secondary {
-                background: rgba(255, 255, 255, 0.9);
-                color: var(--text-primary);
-                box-shadow: var(--shadow-md);
-                border: 1px solid rgba(255, 255, 255, 0.5);
-            }
-
-            .btn-secondary:hover {
-                transform: translateY(-4px);
-                box-shadow: var(--shadow-lg);
-                background: var(--white);
-            }
-
-            /* Hero CTA Buttons - Contact (white) and Watch (gold) */
-            .btn-contact {
-                background: rgba(255, 255, 255, 0.95) !important;
-                color: var(--text-primary) !important;
-                box-shadow: var(--shadow-md) !important;
-                border: 1px solid rgba(255, 255, 255, 0.6) !important;
-            }
-            
-            .btn-contact:hover {
-                background: var(--white) !important;
-                box-shadow: var(--shadow-lg) !important;
-            }
-            
-            .btn-watch-gold {
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%) !important;
-                color: #ffffff !important;
-                box-shadow: 0 16px 40px color-mix(in srgb, var(--gold) 35%, transparent) !important;
-                border: none !important;
-            }
-            
-            .btn-watch-gold:hover {
-                box-shadow: 0 20px 50px color-mix(in srgb, var(--gold) 45%, transparent) !important;
-            }
+            /* .btn / .btn-primary / .btn-secondary / .btn-contact /
+               .btn-watch-gold were removed in v1.57.0. They duplicated
+               .event-link-btn (canonical CTA) with raw-value drift. The
+               only HTML usage of .btn .btn-primary was migrated to
+               .event-link-btn; .btn-contact and .btn-watch-gold had no
+               HTML usages. .btn-secondary's role is filled by
+               .event-link-btn.event-link-btn-secondary. */
 
             /* Section Headers */
             .section-eyebrow {
@@ -1175,68 +1154,20 @@ export const homeStyles = (): string => `
                 flex-shrink: 0;
             }
             
-            /* Find Us Button - Long frosted glass pill at bottom of hero image */
+            /* Hero "Plan a Visit" CTA wrapper. Positions the canonical
+               .event-link-btn at the bottom of the hero image on desktop;
+               flex-centered so the auto-width pill sits in the middle
+               instead of stretching edge-to-edge. The visual styling lives
+               on .event-link-btn itself (v1.57.0 unified the hero CTA with
+               the rest of the site's gold pill family). */
             .find-us-wrapper {
                 position: absolute;
-                bottom: 16px;
+                bottom: 24px;
                 left: 16px;
                 right: 16px;
                 z-index: 100;
-            }
-            
-            .find-us-btn {
                 display: flex;
-                align-items: center;
                 justify-content: center;
-                width: 100%;
-                padding: 8px 40px;
-                background: rgb(255, 255, 255);
-                background: rgba(255, 255, 255, 0.75);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.4);
-                border-radius: var(--radius-pill);
-                font-size: var(--text-label);
-                font-weight: var(--weight-medium);
-                letter-spacing: var(--tracking-wide);
-                text-transform: uppercase;
-                color: var(--text-primary);
-                cursor: pointer;
-                text-decoration: none; /* anchor form (links to /visit) */
-                box-shadow: var(--shadow-md);
-                transition: all 0.4s var(--ease-standard);
-            }
-
-            .find-us-btn:hover {
-                background: rgba(255, 255, 255, 0.85);
-                box-shadow: var(--shadow-lg);
-            }
-            
-            /* Find Us Dropdown - positioned above button */
-            .find-us-wrapper .address-dropdown {
-                bottom: calc(100% + 12px);
-                top: auto;
-                left: 50%;
-                transform: translateX(-50%) translateY(8px);
-            }
-            
-            .find-us-wrapper .address-dropdown.active {
-                transform: translateX(-50%) translateY(0);
-            }
-            
-            /* Fallback for older devices without backdrop-filter */
-            @supports not (backdrop-filter: blur(1px)) {
-                .find-us-btn {
-                    background: var(--surface) !important;
-                    border: 1px solid rgba(0, 0, 0, 0.08) !important;
-                }
-                /* On mobile, Find Us button stays gold even without backdrop-filter */
-                @media (max-width: 960px) {
-                    .find-us-btn {
-                        background: var(--gold) !important;
-                        border: 1px solid rgba(255, 255, 255, 0.25) !important;
-                    }
-                }
             }
 
             /* Schedule Section */
@@ -3457,8 +3388,16 @@ export const homeStyles = (): string => `
                 line-height: 1;
             }
 
-            /* Description-link button — footer of the outer card, gold pill matching Find Us style.
-               No margin-top needed; .event-outer-card gap handles spacing. */
+            /* ───────────────────────────────────────────────────────────
+               .event-link-btn — THE CANONICAL CTA BUTTON
+               Single source of truth for the gold pill button shape used
+               across the site (hero "Plan a Visit", "Explore Our
+               Ministries", "Explore Our Outreach", "Learn More About Us",
+               "Read Our Statement of Beliefs", "Contact Us" page-level
+               CTAs, "Get Directions" on /visit, event-card CTAs, etc.).
+               Color/shadow come from --btn-cta-* tokens; only modifiers
+               below change size, alignment, or color variant.
+               --------------------------------------------------------- */
             .event-link-btn {
                 display: flex;
                 align-items: center;
@@ -3470,7 +3409,7 @@ export const homeStyles = (): string => `
                 z-index: 2;
                 border: none;
                 font-family: var(--font-body);
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                background: var(--btn-cta-bg);
                 border-radius: var(--radius-pill);
                 font-size: var(--text-small);
                 font-weight: var(--weight-bold);
@@ -3480,15 +3419,28 @@ export const homeStyles = (): string => `
                 text-decoration: none;
                 cursor: pointer;
                 white-space: nowrap;
-                box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
+                box-shadow: var(--btn-cta-shadow);
                 transition: all var(--motion-medium) var(--ease-standard);
                 box-sizing: border-box;
             }
 
             .event-link-btn:hover {
-                background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
-                box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
+                background: var(--btn-cta-bg-hover);
+                box-shadow: var(--btn-cta-shadow-hover);
                 transform: translateY(-2px);
+            }
+
+            /* Red color variant — used by the YouTube playlist CTA in the
+               /watch section. Same shape, padding, type, motion, hover-lift
+               as the gold default; only background gradient + shadow tint
+               change. */
+            .event-link-btn.event-link-btn--red {
+                background: var(--btn-cta-bg-red);
+                box-shadow: var(--btn-cta-shadow-red);
+            }
+            .event-link-btn.event-link-btn--red:hover {
+                background: var(--btn-cta-bg-red-hover);
+                box-shadow: var(--btn-cta-shadow-red-hover);
             }
 
             /* Browse Memories button — sentence case, no wide tracking */
@@ -3551,24 +3503,24 @@ export const homeStyles = (): string => `
                 display: none;
             }
 
-            .event-cta .btn {
-                width: 100%;
-                padding: 12px 24px;
-                font-size: var(--text-label);
-                font-weight: var(--weight-bold);
-                border-radius: var(--radius-md);
+            /* Event-card CTA overlay — kept intentionally distinct from
+               the canonical gold pill so a card showing both a primary
+               .event-link-btn (e.g. "Get Directions") and a secondary
+               .event-cta link (e.g. "Register Now" from calendar event
+               description) reads as two distinct calls instead of two
+               competing gold pills. White-on-card, square-ish radius,
+               subtle shadow. Selector targets the new canonical class
+               since .btn was removed in v1.57.0. */
+            .event-cta .event-link-btn {
                 background: rgba(255, 255, 255, 0.85);
                 color: var(--text-primary);
                 box-shadow: var(--shadow-sm);
-                transition: all var(--motion-medium) ease;
-                cursor: pointer;
-                display: block;
-                text-align: center;
-                text-decoration: none;
-                letter-spacing: var(--tracking-wide);
+                border-radius: var(--radius-md);
+                text-transform: none;
+                letter-spacing: var(--tracking-normal);
             }
 
-            .event-cta .btn:hover {
+            .event-cta .event-link-btn:hover {
                 background: var(--white);
                 box-shadow: var(--shadow-md);
                 transform: translateY(-1px);
@@ -4434,22 +4386,11 @@ export const homeStyles = (): string => `
                 letter-spacing: var(--tracking-normal);
             }
 
-            .btn-outline {
-                background: #8B0000;
-                border: 2px solid #8B0000;
-                color: #ffffff;
-                padding: 16px 38px;
-                box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
-                transition: all 0.4s var(--ease-standard);
-                font-weight: var(--weight-bold);
-            }
-
-            .btn-outline:hover {
-                background: #6d0000;
-                border-color: #6d0000;
-                transform: translateY(-4px);
-                box-shadow: 0 8px 24px rgba(139, 0, 0, 0.4);
-            }
+            /* .btn-outline was removed in v1.57.0. The /watch playlist
+               button is now .event-link-btn.event-link-btn--red — same
+               canonical shape / padding / type / motion as the gold pill,
+               just red. .playlist-btn (below) remains as a layout helper
+               for watch-section-specific spacing + auto width. */
 
             .past-streams {
                 display: grid;
@@ -5874,7 +5815,7 @@ export const homeStyles = (): string => `
                     display: none;
                 }
 
-                /* Find Us — gold pill, in normal document flow (not absolute) */
+                /* Find Us wrapper — in flow on mobile (not absolute), centered. */
                 .find-us-wrapper {
                     position: relative;
                     bottom: auto;
@@ -5882,29 +5823,6 @@ export const homeStyles = (): string => `
                     right: auto;
                     width: 100%;
                     pointer-events: auto;
-                }
-
-                .find-us-btn {
-                    background: var(--gold);
-                    -webkit-backdrop-filter: blur(12px);
-                    backdrop-filter: blur(12px);
-                    color: #ffffff;
-                    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), 0 0 24px color-mix(in srgb, var(--gold) 35%, transparent);
-                    border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
-                    letter-spacing: 2.5px;
-                    font-weight: var(--weight-semibold);
-                    padding: 8px 40px;
-                    font-size: var(--text-label);
-                }
-
-                .find-us-btn:hover {
-                    background: var(--gold);
-                }
-
-                /* Dropdown opens above button */
-                .find-us-wrapper .address-dropdown {
-                    bottom: calc(100% + 12px);
-                    top: auto;
                 }
                 
                 /* Outreach Section - Mobile */
@@ -6245,12 +6163,8 @@ export const homeStyles = (): string => `
                     align-items: stretch;
                 }
 
-                .btn {
-                    width: 100% !important;
-                    padding: 16px 32px;
-                    font-size: var(--text-label);
-                    letter-spacing: var(--tracking-wide);
-                }
+                /* .btn mobile rule removed in v1.57.0 — canonical
+                   .event-link-btn handles sizing across breakpoints. */
 
                 .section-card {
                     padding: var(--space-lg) var(--space-md);
@@ -6503,7 +6417,7 @@ export const homeStyles = (): string => `
                     margin-top: 4px;
                 }
 
-                .event-cta .btn {
+                .event-cta .event-link-btn {
                     padding: var(--space-sm) var(--space-lg);
                     font-size: var(--text-label);
                     border-radius: var(--radius-md);
@@ -6530,13 +6444,9 @@ export const homeStyles = (): string => `
                     height: clamp(6px, 1vw, 9px);
                 }
 
-                .btn-outline {
-                    padding: 16px 38px;
-                    font-size: var(--text-small);
-                    letter-spacing: 1.5px;
-                    width: 100%;
-                    max-width: 400px;
-                }
+                /* .btn-outline mobile override removed in v1.57.0 — the
+                   canonical .event-link-btn rule now provides the shape
+                   and sizing; .playlist-btn handles watch-section width. */
 
                 .past-streams-label {
                     font-size: var(--text-label);
@@ -6876,7 +6786,7 @@ export const homeStyles = (): string => `
                     display: none;
                 }
 
-                /* Find Us button — in flow below service time, centered */
+                /* Find Us wrapper — in flow below service time, centered. */
                 .find-us-wrapper {
                     position: relative !important;
                     bottom: auto;
@@ -6887,38 +6797,6 @@ export const homeStyles = (): string => `
                     display: flex;
                     justify-content: center;
                     pointer-events: auto;
-                }
-
-                .hero-body .cta-group {
-                    flex-direction: row;
-                    justify-content: center;
-                    align-items: center;
-                    width: 100%;
-                    margin-top: 0;
-                }
-
-                .hero-body .cta-group .btn {
-                    width: auto;
-                }
-                
-                /* Find Us btn — gold, matches mobile */
-                .find-us-btn {
-                    background: var(--gold);
-                    -webkit-backdrop-filter: blur(16px);
-                    backdrop-filter: blur(16px);
-                    color: #ffffff;
-                    border: 1px solid rgba(255, 255, 255, 0.25);
-                    box-shadow: var(--shadow-md);
-                    letter-spacing: 2px;
-                    font-weight: var(--weight-semibold);
-                    padding: 18px 100px;
-                    font-size: var(--text-small);
-                    width: auto;
-                }
-                .find-us-btn:hover {
-                    background: var(--gold);
-                    filter: brightness(1.08);
-                    box-shadow: var(--shadow-lg);
                 }
 
                 /* Hero bridge — centered on the exact hero/page seam.
@@ -7232,17 +7110,17 @@ export const homeStyles = (): string => `
                     border-top: none;
                     margin-top: 14px;
                 }
-                .event-cta .btn {
+                .event-cta .event-link-btn {
                     padding: 14px 32px;
                     font-size: var(--text-small);
                     border-radius: var(--radius-md);
-                    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                    background: var(--btn-cta-bg);
                     color: #ffffff;
-                    box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
+                    box-shadow: var(--btn-cta-shadow);
                 }
-                .event-cta .btn:hover {
-                    background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
-                    box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
+                .event-cta .event-link-btn:hover {
+                    background: var(--btn-cta-bg-hover);
+                    box-shadow: var(--btn-cta-shadow-hover);
                     transform: translateY(-2px);
                 }
 

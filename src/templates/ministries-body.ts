@@ -56,6 +56,14 @@ type Section = {
   /** Image side for the FIRST entry at desktop ≥ 961px. Subsequent entries
       alternate (so a 2-entry section reads image-left / image-right). */
   imageSide: 'left' | 'right'
+  /** Real photo for the section image. When unset, falls back to the
+      grey/dashed placeholder block. Path is relative to /static. */
+  imageSrc?: string
+  imageAlt?: string
+  /** CSS object-position for the image when cropped (defaults to center).
+      Used to bias the crop on portrait containers — e.g. 'center 30%'
+      shows more of the upper portion of a wide photo. */
+  imagePosition?: string
   entries: Entry[]
 }
 
@@ -65,6 +73,11 @@ const SECTIONS: Section[] = [
     eyebrow: 'Worship',
     heading: 'How we gather together on Sundays.',
     imageSide: 'left',
+    imageSrc: '/static/worship.jpg',
+    imageAlt: 'Five Morning Star vocalists leading worship from the church platform, microphones in hand.',
+    // Faces sit in the upper-middle band; bias the crop upward so portrait
+    // containers on desktop preserve heads/microphones rather than feet.
+    imagePosition: 'center 35%',
     entries: [
       {
         id: 'sunday-gatherings',
@@ -279,14 +292,19 @@ function renderSection(s: Section): string {
   }
 
   const entriesHtml = s.entries.map(renderEntry).join('\n                        ')
+  const imgBlock = s.imageSrc
+    ? `<div class="ministry-section-image">
+                            <img src="${s.imageSrc}" alt="${s.imageAlt ?? ''}" loading="lazy" decoding="async"${s.imagePosition ? ` style="object-position: ${s.imagePosition};"` : ''}>
+                        </div>`
+    : `<div class="ministry-section-image ministries-image-placeholder" aria-hidden="true">
+                            ${PLACEHOLDER_SVG}
+                        </div>`
   return `<section class="ministry-section ministry-section--${s.imageSide}" id="${s.id}">
                     <span class="section-eyebrow">${s.eyebrow}</span>
                     <h2 class="section-heading">${s.heading}</h2>
                     ${noteHtml}
                     <div class="ministry-section-content">
-                        <div class="ministry-section-image ministries-image-placeholder" aria-hidden="true">
-                            ${PLACEHOLDER_SVG}
-                        </div>
+                        ${imgBlock}
                         <div class="ministry-section-entries">
                             ${entriesHtml}
                         </div>
@@ -403,6 +421,19 @@ export const ministriesBody = (): string => `
             max-width: 96px;
             min-width: 48px;
             height: auto;
+        }
+        /* When a real <img> is present (not a placeholder SVG), it fills
+           the container with object-fit: cover so the photo crops to the
+           container's aspect ratio. object-position can be overridden
+           inline per-section to bias the crop (e.g. faces near the top
+           of a wide photo should stay visible when the container is
+           portrait). */
+        .ministry-section-image > img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
         }
         .ministry-section-entries {
             display: flex;

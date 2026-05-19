@@ -1,7 +1,22 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.54.2
+## 🔢 CURRENT VERSION: v1.55.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.55.0 — Worship section gets its first real photo
+
+Image pulled from PR #47 (closed) and saved as `public/static/worship.jpg` (1477×831 native, ~230 KB). PR closed with a comment pointing to this commit.
+
+**Renderer extended** to support real photos in any section. The `Section` type now carries optional `imageSrc / imageAlt / imagePosition` fields. When present, the renderer emits `<img loading="lazy" decoding="async">` with `object-fit: cover`; when absent, the existing gray placeholder block renders. The `.ministry-section-image` container styling stays identical for both paths — the photo simply fills the container and crops to whatever aspect the container ends up at.
+
+**Worship image specifically:** `imagePosition: "center 35%"` biases the crop upward so heads and microphones stay in frame on portrait desktop containers (faces sit in the upper third of the source photo).
+
+**Cropping verified at 10 viewport sizes** (360 / 390 / 414 / 768 / 960 / 1024 / 1280 / 1440 / 1920 / 2560):
+
+- **Mobile + tablet (≤960px):** image renders as a full 16:9 banner above the content. All 5 worship singers visible. No cropping.
+- **Desktop (≥961px):** image fills the 5fr column (475–507px wide) in a portrait container matched to content height (~620px). Center-cropped to the 3 lead singers (plaid suit + green-tie + cream dress) and their microphones — natural editorial worship-trio framing, no awkward edges.
+
+The placeholder fallback path is unchanged so the other four sections (Kids, Discipleship, Fellowship, Youth) still render the gray placeholder pending real photos.
 
 ### v1.54.2 — /ministries: Kids moved right after Worship
 

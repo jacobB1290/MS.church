@@ -17,6 +17,16 @@ import { GOLD } from './design-tokens.js'
 
 const app = new Hono()
 
+// Server-Timing header — exposes Hono render time to DevTools, Lighthouse,
+// and Vercel Speed Insights so we can see request-phase cost separately
+// from network/CDN. Must be the FIRST middleware so it wraps every route.
+app.use('*', async (c, next) => {
+  const start = performance.now()
+  await next()
+  const dur = (performance.now() - start).toFixed(1)
+  c.header('Server-Timing', `hono;dur=${dur};desc="render"`)
+})
+
 // Security headers for all responses
 app.use('*', async (c, next) => {
   await next()

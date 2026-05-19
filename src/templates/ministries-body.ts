@@ -59,11 +59,21 @@ type Section = {
   /** Real photo for the section image. When unset, falls back to the
       grey/dashed placeholder block. Path is relative to /static. */
   imageSrc?: string
+  /** Optional desktop-only override (≥961px). When set, the renderer
+      emits a <picture> with a media-source so desktop loads this image
+      instead of imageSrc. Useful when the desktop container is a tall
+      portrait crop and the mobile banner deserves a different framing /
+      aspect ratio entirely. */
+  imageSrcDesktop?: string
   imageAlt?: string
   /** CSS object-position for the image when cropped (defaults to center).
       Used to bias the crop on portrait containers — e.g. 'center 30%'
       shows more of the upper portion of a wide photo. */
   imagePosition?: string
+  /** Optional desktop-only object-position override. Pairs with
+      imageSrcDesktop when the desktop image's natural framing needs a
+      different focal bias than the mobile image. */
+  imagePositionDesktop?: string
   entries: Entry[]
 }
 
@@ -187,14 +197,23 @@ const SECTIONS: Section[] = [
     eyebrow: 'Youth',
     heading: 'How we walk with the next generation.',
     imageSide: 'right',
+    // Single source — the 1320×2347 portrait of 5 girls. Same file
+    // serves both viewports: mobile crops it to a 16:9 banner with the
+    // faces biased to the upper portion; desktop uses (close to) the
+    // full image in the portrait container with a slight upward bias.
     imageSrc: '/static/youth.jpg',
-    imageAlt: 'Morning Star youth group gathered in front of a 2026 balloon-arch backdrop at an evening event, dressed up and lined shoulder-to-shoulder.',
-    // Heads sit in the upper-middle band; centering vertically at 40%
-    // keeps faces in frame on the portrait desktop container. The line
-    // of people spans the full width of the source, so horizontal center
-    // (default) crops to roughly the middle 12-14 people grouped around
-    // the 2026 balloon arch focal point.
-    imagePosition: 'center 40%',
+    imageAlt: 'Five Morning Star youth dressed up arm-in-arm in front of a tree and fence backdrop at an evening event.',
+    // Mobile (16:9 banner from a 9:16 portrait source): tight
+    // horizontal band crops aggressively top-and-bottom. Faces sit at
+    // source y≈950-1200 (≈45% from top of source). Y=50% centers the
+    // crop so faces land in the upper third of the visible window with
+    // upper-body / hands-and-bags context below.
+    imagePosition: 'center 50%',
+    // Desktop (5fr column, ~507×521 on most desktop widths, near
+    // square): less aggressive crop. Y=28% keeps faces in the upper
+    // third of the visible window and lets the dress detail / handbags
+    // read through the middle and lower portion.
+    imagePositionDesktop: 'center 55%',
     entries: [
       {
         id: 'youth-service',
@@ -298,13 +317,35 @@ function renderSection(s: Section): string {
   }
 
   const entriesHtml = s.entries.map(renderEntry).join('\n                        ')
-  const imgBlock = s.imageSrc
-    ? `<div class="ministry-section-image">
-                            <img src="${s.imageSrc}" alt="${s.imageAlt ?? ''}" loading="lazy" decoding="async"${s.imagePosition ? ` style="object-position: ${s.imagePosition};"` : ''}>
-                        </div>`
-    : `<div class="ministry-section-image ministries-image-placeholder" aria-hidden="true">
+  let imgBlock: string
+  if (!s.imageSrc) {
+    imgBlock = `<div class="ministry-section-image ministries-image-placeholder" aria-hidden="true">
                             ${PLACEHOLDER_SVG}
                         </div>`
+  } else {
+    // Build inline CSS custom properties for object-position. The
+    // global rules read --img-pos at all sizes and --img-pos-desktop at
+    // ≥961px. Either or both can be set per-section.
+    const cssVars: string[] = []
+    if (s.imagePosition) cssVars.push(`--img-pos: ${s.imagePosition}`)
+    if (s.imagePositionDesktop) cssVars.push(`--img-pos-desktop: ${s.imagePositionDesktop}`)
+    const styleAttr = cssVars.length ? ` style="${cssVars.join('; ')};"` : ''
+    if (s.imageSrcDesktop) {
+      // Two-source pattern: desktop ≥961px loads the desktop-only file,
+      // mobile/tablet ≤960px loads the default. Useful when the desktop
+      // photo is a totally different composition from the mobile one.
+      imgBlock = `<div class="ministry-section-image"${styleAttr}>
+                            <picture>
+                                <source media="(min-width: 961px)" srcset="${s.imageSrcDesktop}">
+                                <img src="${s.imageSrc}" alt="${s.imageAlt ?? ''}" loading="lazy" decoding="async">
+                            </picture>
+                        </div>`
+    } else {
+      imgBlock = `<div class="ministry-section-image"${styleAttr}>
+                            <img src="${s.imageSrc}" alt="${s.imageAlt ?? ''}" loading="lazy" decoding="async">
+                        </div>`
+    }
+  }
   return `<section class="ministry-section ministry-section--${s.imageSide}" id="${s.id}">
                     <span class="section-eyebrow">${s.eyebrow}</span>
                     <h2 class="section-heading">${s.heading}</h2>
@@ -416,11 +457,24 @@ export const ministriesBody = (): string => `
             max-height: 620px;
             border-radius: var(--radius-xl);
             overflow: hidden;
+            /* position: relative establishes a positioning context for
+               the absolutely-positioned <img>/<picture> child below.
+               Previously this was position: sticky for a stay-visible-
+               while-scrolling effect on desktop, but sticky doesn't
+               establish a containing block for absolute descendants —
+               so the img was being positioned against the viewport.
+               With image-height now driven by content height via
+               align-self stretch (v1.52.1), sticky was redundant
+               anyway. */
+            position: relative;
+            align-self: stretch;
+        }
+        /* Placeholder variant centers the SVG via grid. Real images use
+           absolute-positioned fill (next ruleset) so they cannot grow
+           the container to their intrinsic size. */
+        .ministry-section-image.ministries-image-placeholder {
             display: grid;
             place-items: center;
-            position: sticky;
-            top: 112px;
-            align-self: stretch;
         }
         .ministry-section-image > svg {
             width: 12%;
@@ -428,18 +482,38 @@ export const ministriesBody = (): string => `
             min-width: 48px;
             height: auto;
         }
-        /* When a real <img> is present (not a placeholder SVG), it fills
-           the container with object-fit: cover so the photo crops to the
-           container's aspect ratio. object-position can be overridden
-           inline per-section to bias the crop (e.g. faces near the top
-           of a wide photo should stay visible when the container is
-           portrait). */
-        .ministry-section-image > img {
+        /* Real images fill the container absolutely so they cannot
+           influence its height. Use top/left + width/height (not inset)
+           — for replaced elements like <img>, setting all four
+           inset values plus width/height creates a constraint conflict
+           and the browser falls back to intrinsic dimensions. object-fit
+           cover crops to the container's aspect; object-position can be
+           biased per-section via --img-pos / --img-pos-desktop CSS
+           variables. */
+        .ministry-section-image > img,
+        .ministry-section-image > picture {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            object-position: center;
             display: block;
+        }
+        .ministry-section-image > img,
+        .ministry-section-image > picture > img {
+            object-fit: cover;
+            object-position: var(--img-pos, center);
+        }
+        /* Desktop-only object-position override. Sections set
+           --img-pos / --img-pos-desktop on the .ministry-section-image
+           container; --img-pos-desktop wins at ≥961px when defined,
+           otherwise --img-pos applies at both viewports. Works the same
+           whether the image is a plain <img> or wrapped in <picture>. */
+        @media (min-width: 961px) {
+            .ministry-section-image > img,
+            .ministry-section-image > picture > img {
+                object-position: var(--img-pos-desktop, var(--img-pos, center));
+            }
         }
         .ministry-section-entries {
             display: flex;
@@ -640,11 +714,14 @@ export const ministriesBody = (): string => `
             }
             .ministry-section-image {
                 /* Drop the desktop stretch behavior; on mobile the image is
-                   a fixed 16:9 banner above the content. */
+                   a fixed 16:9 banner above the content. Stay
+                   position: relative (not static) so the absolutely-
+                   positioned <img> child has a containing block here
+                   too — otherwise it would climb up to the viewport. */
                 min-height: 0;
                 max-height: none;
                 aspect-ratio: 16 / 9;
-                position: static;
+                position: relative;
                 top: auto;
                 border-radius: var(--radius-lg);
                 align-self: auto;

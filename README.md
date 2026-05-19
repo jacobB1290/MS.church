@@ -1,7 +1,23 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.55.3
+## 🔢 CURRENT VERSION: v1.56.0
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.56.0 — Youth section: portrait image swap + image-container refactor
+
+New portrait shot of 5 girls (1320×2347, ~830 KB) replaces the old 16:9 group photo. Single file at `public/static/youth.jpg` serves both viewports — different object-position crops handle the two aspects.
+
+**Two new Section type fields** (kept as infra for future use): `imageSrcDesktop` and `imagePositionDesktop`. With these, sections can provide an explicit desktop-only source via `<picture>` + media-source plus a desktop-only object-position. Youth uses single-source mode (just `imageSrc` + both crop biases).
+
+**Image-container refactor.** Previously the container used `display: grid; place-items: center` (for centering the SVG placeholder) and `position: sticky` (for stay-visible-while-scrolling). When a real `<img>` was placed inside, two bugs surfaced: (1) the grid layout let the image's intrinsic dimensions define the row height, overriding `aspect-ratio: 16/9` on mobile and causing the container to grow to 1320×2347's natural aspect; (2) `position: sticky` doesn't establish a positioning context for absolutely-positioned descendants, so even after switching the img to absolute, it climbed up to the viewport.
+
+Fix: real images now use `position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover` so they can't influence container size, and the container uses `position: relative` (sticky dropped — was redundant since v1.52.1 made image-height equal content-height via `align-self: stretch`). The SVG placeholder retains its `display: grid; place-items: center` via a separate `.ministries-image-placeholder` selector.
+
+**Object-position values:** `center 50%` on mobile (16:9 banner crop from 9:16 source, faces in upper third); `center 55%` on desktop (near-square crop, faces in upper third with dresses and handbags through the middle, lower legs at bottom edge).
+
+**Verified across 16 viewport sizes** (360 / 390 / 414 / 600 / 768 / 900 / 960 / 1024 / 1200 / 1280 / 1366 / 1440 / 1600 / 1920 / 2200 / 2560). Composition reads editorial at every size, no awkward crops.
+
+The original stray files on `main` (`IMG_9173.jpg`, `eb32022b-79e1-4ef2-a0c3-8b6e19c87bc3.jpg`, `1c6af5cd-…jpeg`, `1aa4cc17-…jpeg`) cleaned up via a follow-up commit on `main`.
 
 ### v1.55.3 — Removed Fellowship cross-link note on /ministries
 

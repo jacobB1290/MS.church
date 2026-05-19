@@ -908,26 +908,14 @@ export const homeHead = (): string => {
         </script>
 ${prefetchSnippet()}
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <!-- v1.62.6: optional -> swap. The earlier display=optional (v1.49.24)
-             avoided font swap by sticking with the fallback for the entire
-             pageview if Google Fonts didn't arrive within ~100ms. The downside:
-             on cold-cache first visits over a slow link the fallback (Georgia)
-             stayed visible for the WHOLE session, requiring 2-3 reloads to
-             warm the cache. Switching to display=swap lets the real font
-             replace the fallback as soon as it arrives. The metric-matched
-             fallback @font-face rules below match Playfair / Inter dimensions
-             so the swap is visually a glyph-shape change only — no layout
-             shift, no "logo expands then jumps". Net effect: correct font
-             shows up reliably, no CLS.
-
-             Combined with the preload hints on the next line, the practical
-             swap delay on first visit is ~100-300ms; cached visits are
-             instant. The fallback Georgia is only ever shown during that
-             brief window. -->
-        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Self-hosted Inter + Playfair Display (v1.62.7). The @font-face
+             rules live in home-styles.ts; here we preload the two weights
+             most critical for first-paint (400 body + 700 display headings)
+             so the font files are fetched in parallel with the HTML parse.
+             Eliminates the cross-origin Google Fonts roundtrip and the
+             font-flash during cross-document view transitions. -->
+        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/inter-400.woff2" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/playfair-display-700.woff2" crossorigin>
         <style>
             /* Metric-matched fallbacks. Layout boxes are computed against
                these adjusted Georgia/system metrics; when Playfair / Inter

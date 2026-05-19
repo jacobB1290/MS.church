@@ -1,25 +1,28 @@
 // Shared "speed up next-page nav" snippet.
 //
-// Strategy (v1.49.36):
+// Strategy (v1.62.7):
 //
-//  1. Speculation Rules API. Chrome/Edge prerender internal links on
-//     hover or touchstart (the "moderate" eagerness setting) — when
-//     the user actually navigates, the destination page is already
-//     fully rendered in a hidden background tab and the visible
-//     activation is essentially free. /api/* and target=_blank links
-//     are excluded so we don't waste bandwidth on resources the user
-//     isn't viewing or on outbound links.
+//  1. Speculation Rules API — \`prefetch\` (not \`prerender\`). Chrome
+//     fetches the HTML of internal links on hover / touchstart and
+//     keeps it in the prefetch cache so the actual navigation reads
+//     from cache instead of the network. Fast.
+//
+//     We intentionally use \`prefetch\` instead of \`prerender\` because
+//     prerendered pages activate INSTANTLY without firing a cross-
+//     document view transition — Chrome treats prerender activation
+//     like bfcache restoration, which has its own restore flow that
+//     bypasses the @view-transition rule. The user-visible symptom was
+//     "CTA buttons just cut to the next page with no fade". With
+//     \`prefetch\` the user still gets the speed boost (HTML is already
+//     in disk cache) AND the click triggers a normal navigation that
+//     DOES fire the view-transition fade.
 //
 //  2. Hover / touchstart prefetch fallback. Browsers without
 //     speculation-rules support (Safari and Firefox today) fall back
 //     to vanilla <link rel="prefetch"> injected on the first hover or
-//     touch over any internal anchor. The HTML lands in the disk
-//     cache, so the actual click navigates fetching nothing from
-//     the network and gets a fully cached response. Same internal
-//     skip rules — no api/, no external, no target=_blank, no
-//     same-page hash links.
+//     touch over any internal anchor. Same effect, same skip rules.
 //
-//  3. The check `HTMLScriptElement.supports('speculationrules')` is
+//  3. The check HTMLScriptElement.supports('speculationrules') is
 //     the spec-defined feature detection — we only attach the
 //     fallback listeners in browsers where Speculation Rules will
 //     NOT fire. No double work.
@@ -29,7 +32,7 @@
 // means a hovered link only triggers one prefetch per page load.
 
 const SPECULATION_RULES = JSON.stringify({
-  prerender: [
+  prefetch: [
     {
       where: {
         and: [
@@ -46,7 +49,9 @@ const SPECULATION_RULES = JSON.stringify({
 
 export function prefetchSnippet(): string {
   return `
-        <!-- Instant navigation: prerender internal links on hover/touch.
+        <!-- Fast navigation: prefetch internal links on hover/touch (the
+             prerender flow bypassed our view-transition fade, so we use
+             prefetch + view-transition together).
              See src/templates/shared/prefetch.ts for the full rationale. -->
         <script type="speculationrules">${SPECULATION_RULES}</script>
         <script>

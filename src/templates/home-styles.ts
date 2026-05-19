@@ -1,6 +1,79 @@
 import { GOLD } from '../design-tokens.js'
 
 export const homeStyles = (): string => `
+            /* Self-hosted Inter + Playfair Display (v1.62.7). Eliminates the
+               cross-origin Google Fonts roundtrip + the FOUT window where
+               a view-transition snapshot captured the fallback font and
+               flashed on subpage navigation. Each weight uses display=swap
+               with the metric-matched fallback below so any brief swap
+               window is shape-only, no CLS. Files live in public/static/fonts/
+               with a 1-year immutable cache via vercel.json. Regenerate with
+               scripts/_download-fonts.mjs if the typeface set changes. */
+            @font-face {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 300;
+                font-display: swap;
+                src: url('/static/fonts/inter-300.woff2') format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 400;
+                font-display: swap;
+                src: url('/static/fonts/inter-400.woff2') format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 500;
+                font-display: swap;
+                src: url('/static/fonts/inter-500.woff2') format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 600;
+                font-display: swap;
+                src: url('/static/fonts/inter-600.woff2') format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 700;
+                font-display: swap;
+                src: url('/static/fonts/inter-700.woff2') format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'Playfair Display';
+                font-style: normal;
+                font-weight: 400;
+                font-display: swap;
+                src: url('/static/fonts/playfair-display-400.woff2') format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'Playfair Display';
+                font-style: normal;
+                font-weight: 600;
+                font-display: swap;
+                src: url('/static/fonts/playfair-display-600.woff2') format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            @font-face {
+                font-family: 'Playfair Display';
+                font-style: normal;
+                font-weight: 700;
+                font-display: swap;
+                src: url('/static/fonts/playfair-display-700.woff2') format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+
             :root {
                 color-scheme: light;
 
@@ -2613,33 +2686,31 @@ export const homeStyles = (): string => `
                /visit PAGE — Map card + What-to-Expect service-flow timeline
                ============================================================ */
 
-            /* /visit intro — line-art handshake (v1.49.22).
-               REFINED draw-on + gesture animation.
+            /* /visit intro — line-art handshake (v1.62.7).
+               EDITORIAL pacing refinement. Slower, calmer, more
+               deliberate than v1.49.22 — and stutter-free on desktop.
 
-                 Phase 1 (0 - 3.2s): The path draws itself onto the
-                 page via stroke-dashoffset. Duration chosen for
-                 actual visibility of the drawing motion (not just
-                 a flash). Even ease-in-out so progression reads
-                 throughout the 3.2s, not all at the start or end.
-                 Paired with a soft opacity fade (1.2s) — only
-                 opacity moves on entry, no competing scale, so the
-                 focus is purely on the line forming.
+                 Phase 1 (0 - 5.5s): Path draws itself onto the page via
+                 stroke-dashoffset. Apple-style ease-out (0.22, 1, 0.36, 1)
+                 so the line starts decisive and settles smoothly into its
+                 final shape — reads as a calligrapher's stroke rather
+                 than a progress bar. Paired with a 2s opacity fade for a
+                 paper-emerging feel.
 
-                 Phase 2 (3.2 - 3.8s): A 600ms still pause. The
-                 illustration is fully drawn but quiet. This breath
-                 is what makes the next gesture feel deliberate
-                 rather than mechanical — there's an interval of
-                 "the handshake is formed" before "the handshake
-                 happens."
+                 Phase 2 (5.5 - 6.5s): 1s still pause. The illustration is
+                 fully drawn but quiet. This breath makes the next gesture
+                 feel deliberate rather than mechanical.
 
-                 Phase 3 (3.8s onwards): handshake-gesture loop —
-                 three firm pumps over ~1s with decreasing amplitudes
-                 (7 -> 5 -> 3 px), then ~9s of complete stillness.
-                 Repeats infinitely.
+                 Phase 3 (6.5s onwards): handshake-gesture loop — three
+                 firm pumps over ~1s with decreasing amplitudes (7->5->3px),
+                 then ~9s of complete stillness. Repeats infinitely.
 
-               The refinement is in the pacing: long draw-in, quiet
-               settle, deliberate gesture, peaceful rest. No motion
-               competes; each phase has its own beat. */
+               Stutter fix: the previous version applied filter: drop-shadow
+               to .handshake-art, which on desktop forces a full-layer
+               repaint every frame of the pump gesture animation (desktop
+               compositors don't accelerate filter repaints the way mobile
+               GPUs do). The drop-shadow has been removed; .handshake-stroke
+               keeps its non-scaling stroke and renders cleanly without it. */
             .handshake {
                 width: 100%;
                 max-width: 360px;
@@ -2659,27 +2730,21 @@ export const homeStyles = (): string => `
                 stroke-linecap: round;
                 stroke-linejoin: round;
                 vector-effect: non-scaling-stroke;
-                /* Draw-on. The path's total length is ~893 user units across
-                   5 subpaths. With vector-effect: non-scaling-stroke the
-                   browser ignores the pathLength="100" attribute and treats
-                   dasharray/dashoffset as actual stroke-coordinate pixels.
-                   Use a value just barely larger than the path length so the
-                   drawing fills almost the entire animation duration — and
-                   so no gap ever appears inside the path (the v1.50.4 bug
-                   that "missing" subpaths showed up). 920 leaves ~27px of
-                   pre-draw buffer (~0.1s with easing), which keeps the path
-                   hidden at t=0 without wasting most of the duration. */
+                /* Draw-on. Path total length ~893 user units; 920 leaves
+                   ~27px of pre-draw buffer so the path is invisible at t=0
+                   without wasting most of the animation duration. */
                 stroke-dasharray: 920;
                 stroke-dashoffset: 920;
-                animation: handshake-draw 3.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+                animation: handshake-draw 5.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
             }
             .handshake-art {
                 transform-origin: 50% 75%;
                 opacity: 0;
-                filter: drop-shadow(0 1.5px 1.5px rgba(200, 152, 96, 0.18));
+                /* No filter: drop-shadow — it was the source of desktop
+                   stutter during the pump animation. */
                 animation:
-                    handshake-fade 1.2s ease-out forwards,
-                    handshake-gesture 10s cubic-bezier(0.32, 0.5, 0.45, 0.92) 3.8s infinite;
+                    handshake-fade 2s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+                    handshake-gesture 10s cubic-bezier(0.32, 0.5, 0.45, 0.92) 6.5s infinite;
                 will-change: transform, opacity;
             }
             @keyframes handshake-draw {

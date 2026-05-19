@@ -151,12 +151,9 @@ export function pageHead({
         <link rel="manifest" href="/site.webmanifest">
         <link rel="alternate" type="application/rss+xml" title="Morning Star Christian Church — Events &amp; News" href="/feed.xml">
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <!-- See home-head.ts for full rationale (font-display: swap + metric-
-             matched fallbacks for no-CLS swap + reliable font load). -->
-        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Self-hosted fonts — see home-head.ts and home-styles.ts. -->
+        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/inter-400.woff2" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/playfair-display-700.woff2" crossorigin>
         <style>
             @font-face {
                 font-family: 'Playfair Display Fallback';

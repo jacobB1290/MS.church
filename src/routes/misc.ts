@@ -37,6 +37,40 @@ User-agent: Bingbot
 Allow: /
 Crawl-delay: 1
 
+# AI search crawlers — explicit allow. ms.church welcomes inclusion in
+# AI search engines (Perplexity, ChatGPT, Claude, Gemini overviews, etc.)
+# because our structured-data + FAQ content is well-suited to summarization.
+# Listing them by name also signals we are aware of them and intentionally
+# allow access — Life Church Boise and other Squarespace sites do the same.
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: meta-externalagent
+Allow: /
+User-agent: Bytespider
+Allow: /
+
 Sitemap: https://ms.church/sitemap.xml
 `)
   })
@@ -44,10 +78,16 @@ Sitemap: https://ms.church/sitemap.xml
   // sitemap.xml — uses image:image extension so every page exposes its hero
   // image to Google Image search with descriptive caption + title.
   app.get('/sitemap.xml', (c) => {
-    const today = new Date().toISOString().split('T')[0]
+    // Google ignores dynamically-changing lastmod values (their guidance:
+    // accurate-or-don't-bother). Bump this constant when meaningful content
+    // changes ship — not on every deploy. Per-entry overrides handle the
+    // home page (event calendar updates weekly) below.
+    const SITE_LASTMOD = '2026-05-19'
+    const HOME_LASTMOD = new Date().toISOString().split('T')[0]
     const base = 'https://ms.church'
     type Entry = {
       loc: string
+      lastmod: string
       changefreq: string
       priority: string
       image?: { loc: string; title: string; caption: string }
@@ -55,6 +95,9 @@ Sitemap: https://ms.church/sitemap.xml
     const entries: Entry[] = [
       {
         loc: `${base}/`,
+        // Home is the only page whose lastmod legitimately tracks "today" —
+        // the embedded event calendar updates the rendered output weekly.
+        lastmod: HOME_LASTMOD,
         changefreq: 'weekly',
         priority: '1.0',
         image: {
@@ -65,6 +108,7 @@ Sitemap: https://ms.church/sitemap.xml
       },
       {
         loc: `${base}/about`,
+        lastmod: SITE_LASTMOD,
         changefreq: 'monthly',
         priority: '0.9',
         image: {
@@ -75,11 +119,13 @@ Sitemap: https://ms.church/sitemap.xml
       },
       {
         loc: `${base}/beliefs`,
+        lastmod: SITE_LASTMOD,
         changefreq: 'yearly',
         priority: '0.85',
       },
       {
         loc: `${base}/ministries`,
+        lastmod: SITE_LASTMOD,
         changefreq: 'monthly',
         priority: '0.9',
         image: {
@@ -90,6 +136,9 @@ Sitemap: https://ms.church/sitemap.xml
       },
       {
         loc: `${base}/outreach`,
+        // Outreach pulls in the live calendar feed as well, so weekly lastmod
+        // is honest.
+        lastmod: HOME_LASTMOD,
         changefreq: 'weekly',
         priority: '0.9',
         image: {
@@ -100,6 +149,7 @@ Sitemap: https://ms.church/sitemap.xml
       },
       {
         loc: `${base}/visit`,
+        lastmod: SITE_LASTMOD,
         changefreq: 'monthly',
         priority: '0.95',
         image: {
@@ -110,11 +160,13 @@ Sitemap: https://ms.church/sitemap.xml
       },
       {
         loc: `${base}/form`,
+        lastmod: SITE_LASTMOD,
         changefreq: 'monthly',
         priority: '0.7',
       },
       {
         loc: `${base}/privacy`,
+        lastmod: SITE_LASTMOD,
         changefreq: 'yearly',
         priority: '0.3',
       },
@@ -125,7 +177,7 @@ Sitemap: https://ms.church/sitemap.xml
         const imgBlock = e.image
           ? `\n    <image:image>\n      <image:loc>${e.image.loc}</image:loc>\n      <image:title>${xmlEscape(e.image.title)}</image:title>\n      <image:caption>${xmlEscape(e.image.caption)}</image:caption>\n    </image:image>`
           : ''
-        return `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>${imgBlock}\n  </url>`
+        return `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.lastmod}</lastmod>\n    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>${imgBlock}\n  </url>`
       })
       .join('\n')
 

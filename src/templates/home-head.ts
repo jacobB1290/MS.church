@@ -224,6 +224,9 @@ export const homeHead = (): string => {
         <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
         <link rel="manifest" href="/site.webmanifest">
 
+        <!-- RSS feed of upcoming events — feed-discovery signal for Google Discover and AI crawlers -->
+        <link rel="alternate" type="application/rss+xml" title="Morning Star Christian Church — Events &amp; News" href="/feed.xml">
+
         <!-- Preconnect for Performance -->
         <link rel="preconnect" href="https://www.youtube-nocookie.com">
         <link rel="preconnect" href="https://engagehub.app">
@@ -262,11 +265,11 @@ export const homeHead = (): string => {
                     "description": "Morning Star Christian Church is a welcoming, Bible-believing Christian church in Boise, Idaho. We confess Jesus Christ as Lord and Savior and teach the whole counsel of Scripture — grace and truth, with no watered-down version. Join us Sundays at 9 AM for worship and a free community breakfast, Tuesday Bible reading at Caffiena State Street, Wednesday Activity Day (open gym + crochet circle), Thursday Bible study, and Friday Youth Service. We are dedicated to mending the broken through faith, community, and service.",
                     "keywords": "Boise church, Christian church Boise, nondenominational church Boise, Bible-believing church Boise, family church Boise, Sunday worship Boise, free community breakfast Boise, Bible study Boise, youth group Boise, church 83713, Wildwood Street church Boise, Morning Star Christian Church",
                     "url": "https://ms.church",
-                    "email": "morningstarchurchboise@gmail.com",
+                    "email": "support@ms.church",
                     "contactPoint": {
                         "@type": "ContactPoint",
                         "contactType": "customer service",
-                        "email": "morningstarchurchboise@gmail.com",
+                        "email": "support@ms.church",
                         "availableLanguage": "English",
                         "areaServed": "US"
                     },
@@ -508,7 +511,7 @@ export const homeHead = (): string => {
                     "contactPoint": {
                         "@type": "ContactPoint",
                         "contactType": "customer service",
-                        "email": "morningstarchurchboise@gmail.com",
+                        "email": "support@ms.church",
                         "availableLanguage": "English"
                     },
                     "sameAs": [

@@ -1,115 +1,202 @@
 import { type Hono } from 'hono'
 import { GOLD } from '../design-tokens.js'
+import { fetchCalendarEvents } from './calendar.js'
+
+// Escape special XML characters in body text (titles, descriptions, etc.).
+const xmlEscape = (s: string): string =>
+  s.replace(/&/g, '&amp;')
+   .replace(/</g, '&lt;')
+   .replace(/>/g, '&gt;')
+   .replace(/"/g, '&quot;')
+   .replace(/'/g, '&apos;')
 
 export function registerMiscRoutes(app: Hono) {
+  // robots.txt — tightened formatting + Googlebot fast lane + sitemap directive.
+  // Production-correct (no leading whitespace inside the txt body).
   app.get('/robots.txt', (c) => {
-    return c.text(`# robots.txt for Morning Star Christian Church
-  # https://ms.church
-  
-  User-agent: *
-  Allow: /
-  
-  # Main pages
-  Allow: /
-  Allow: /about
-  Allow: /beliefs
-  Allow: /outreach
-  Allow: /visit
-  Allow: /privacy
-  Allow: /form
-  
-  # Sitemap location
-  Sitemap: https://ms.church/sitemap.xml
-  
-  # Crawl-delay (be polite to our server)
-  Crawl-delay: 1
-  
-  # Block common bot paths that don't apply
-  Disallow: /api/
-  Disallow: /static/
-  Disallow: /*.json
-  
-  # Google-specific
-  User-agent: Googlebot
-  Allow: /
-  Crawl-delay: 0
-  
-  # Bing-specific  
-  User-agent: Bingbot
-  Allow: /
-  Crawl-delay: 1
-  `);
-  });
-  
-  // SEO: sitemap.xml
+    c.header('Content-Type', 'text/plain; charset=utf-8')
+    c.header('Cache-Control', 'public, max-age=86400')
+    return c.text(`# robots.txt for Morning Star Christian Church — https://ms.church
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /*.json
+Crawl-delay: 1
+
+# Googlebot — no crawl delay
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Googlebot-Image — explicit allow for image discovery
+User-agent: Googlebot-Image
+Allow: /static/
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+Sitemap: https://ms.church/sitemap.xml
+`)
+  })
+
+  // sitemap.xml — uses image:image extension so every page exposes its hero
+  // image to Google Image search with descriptive caption + title.
   app.get('/sitemap.xml', (c) => {
-    const today = new Date().toISOString().split('T')[0];
-    return c.text(`<?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-          http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+    const today = new Date().toISOString().split('T')[0]
+    const base = 'https://ms.church'
+    type Entry = {
+      loc: string
+      changefreq: string
+      priority: string
+      image?: { loc: string; title: string; caption: string }
+    }
+    const entries: Entry[] = [
+      {
+        loc: `${base}/`,
+        changefreq: 'weekly',
+        priority: '1.0',
+        image: {
+          loc: `${base}/static/church-building.jpg`,
+          title: 'Morning Star Christian Church in Boise, Idaho',
+          caption: 'Morning Star Christian Church building at 3080 Wildwood Street, Boise — a welcoming, Bible-believing nondenominational church serving West Boise.',
+        },
+      },
+      {
+        loc: `${base}/about`,
+        changefreq: 'monthly',
+        priority: '0.9',
+        image: {
+          loc: `${base}/static/about-congregation.jpg`,
+          title: 'About Morning Star Christian Church',
+          caption: 'Morning Star Christian Church congregation worshiping together on a Sunday morning in Boise, Idaho.',
+        },
+      },
+      {
+        loc: `${base}/beliefs`,
+        changefreq: 'yearly',
+        priority: '0.85',
+      },
+      {
+        loc: `${base}/ministries`,
+        changefreq: 'monthly',
+        priority: '0.9',
+        image: {
+          loc: `${base}/static/worship.jpg`,
+          title: 'Ministries at Morning Star Christian Church',
+          caption: 'Sunday worship at Morning Star Christian Church in Boise — one of six weekly ministries including Bible study, youth, and Sunday school.',
+        },
+      },
+      {
+        loc: `${base}/outreach`,
+        changefreq: 'weekly',
+        priority: '0.9',
+        image: {
+          loc: `${base}/static/cooking-ministry.jpg`,
+          title: 'Outreach at Morning Star Christian Church',
+          caption: 'Morning Star Christian Church cooking ministry volunteers preparing meals for the Boise homeless shelter and the free Sunday community breakfast.',
+        },
+      },
+      {
+        loc: `${base}/visit`,
+        changefreq: 'monthly',
+        priority: '0.95',
+        image: {
+          loc: `${base}/static/church-building.jpg`,
+          title: 'Plan Your Visit — Morning Star Christian Church',
+          caption: 'Morning Star Christian Church exterior at 3080 Wildwood Street in West Boise, Idaho — plan your first Sunday visit.',
+        },
+      },
+      {
+        loc: `${base}/form`,
+        changefreq: 'monthly',
+        priority: '0.7',
+      },
+      {
+        loc: `${base}/privacy`,
+        changefreq: 'yearly',
+        priority: '0.3',
+      },
+    ]
 
-      <!-- Homepage -->
-      <url>
-          <loc>https://ms.church/</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>weekly</changefreq>
-          <priority>1.0</priority>
-      </url>
+    const urls = entries
+      .map((e) => {
+        const imgBlock = e.image
+          ? `\n    <image:image>\n      <image:loc>${e.image.loc}</image:loc>\n      <image:title>${xmlEscape(e.image.title)}</image:title>\n      <image:caption>${xmlEscape(e.image.caption)}</image:caption>\n    </image:image>`
+          : ''
+        return `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>${imgBlock}\n  </url>`
+      })
+      .join('\n')
 
-      <!-- About page -->
-      <url>
-          <loc>https://ms.church/about</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>monthly</changefreq>
-          <priority>0.9</priority>
-      </url>
+    c.header('Content-Type', 'application/xml; charset=utf-8')
+    c.header('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
+    return c.body(
+      `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls}\n</urlset>\n`
+    )
+  })
 
-      <!-- Statement of Beliefs page -->
-      <url>
-          <loc>https://ms.church/beliefs</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>yearly</changefreq>
-          <priority>0.85</priority>
-      </url>
+  // /.well-known/security.txt — RFC 9116. Trivial trust signal; none of the
+  // 6 competitors expose one beyond Squarespace's centralized default.
+  app.get('/.well-known/security.txt', (c) => {
+    c.header('Content-Type', 'text/plain; charset=utf-8')
+    c.header('Cache-Control', 'public, max-age=86400')
+    const expiry = new Date()
+    expiry.setFullYear(expiry.getFullYear() + 1)
+    return c.text(`Contact: mailto:support@ms.church
+Expires: ${expiry.toISOString()}
+Preferred-Languages: en
+Canonical: https://ms.church/.well-known/security.txt
+`)
+  })
 
-      <!-- Outreach & Ministries page -->
-      <url>
-          <loc>https://ms.church/outreach</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>weekly</changefreq>
-          <priority>0.9</priority>
-      </url>
+  // /feed.xml — RSS 2.0 of upcoming and recent events from the church
+  // calendar. Cathedral is the only Boise-church competitor advertising an
+  // RSS feed; this puts ms.church ahead on Google Discover + AI crawler
+  // discovery (Perplexity, SearchGPT, ChatGPT prefer feed-formatted content).
+  app.get('/feed.xml', async (c) => {
+    c.header('Content-Type', 'application/rss+xml; charset=utf-8')
+    c.header('Cache-Control', 'public, s-maxage=900, stale-while-revalidate=86400')
 
-      <!-- Plan Your Visit page -->
-      <url>
-          <loc>https://ms.church/visit</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>monthly</changefreq>
-          <priority>0.95</priority>
-      </url>
+    const result = await fetchCalendarEvents().catch(() => null)
+    const now = new Date().toUTCString()
+    const events = result?.success ? result.events : []
 
-      <!-- Contact form page -->
-      <url>
-          <loc>https://ms.church/form</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>monthly</changefreq>
-          <priority>0.8</priority>
-      </url>
+    // Keep both upcoming and recent past events so the feed always has
+    // 10–20 items even outside event season.
+    const items = events
+      .slice(0, 20)
+      .map((ev) => {
+        const link = `https://ms.church/outreach#${ev.id}`
+        const eventDate = new Date(ev.date)
+        const pubDate = eventDate.toUTCString()
+        const desc = ev.description || `${ev.title} at Morning Star Christian Church, Boise.`
+        return `    <item>
+      <title>${xmlEscape(ev.title)}</title>
+      <link>${link}</link>
+      <guid isPermaLink="false">ms.church:event:${ev.id}</guid>
+      <pubDate>${pubDate}</pubDate>
+      <description>${xmlEscape(desc)}</description>${ev.image ? `\n      <enclosure url="${ev.image}" type="image/jpeg"/>` : ''}
+    </item>`
+      })
+      .join('\n')
 
-      <!-- Legal/Privacy page -->
-      <url>
-          <loc>https://ms.church/privacy</loc>
-          <lastmod>${today}</lastmod>
-          <changefreq>monthly</changefreq>
-          <priority>0.4</priority>
-      </url>
-
-  </urlset>`, 200, {
-      'Content-Type': 'application/xml; charset=utf-8'
-    });
-  });
+    return c.body(`<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Morning Star Christian Church — Events &amp; News</title>
+    <link>https://ms.church/</link>
+    <atom:link href="https://ms.church/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Upcoming events, community outreach, and Sunday service news from Morning Star Christian Church in Boise, Idaho.</description>
+    <language>en-us</language>
+    <copyright>Morning Star Christian Church</copyright>
+    <lastBuildDate>${now}</lastBuildDate>
+    <ttl>15</ttl>
+${items}
+  </channel>
+</rss>
+`)
+  })
   
   // Contact form page
   app.get('/form', (c) => {

@@ -516,6 +516,19 @@ export const ministriesBody = (): string => `
             height: 100%;
             display: block;
         }
+        /* When the image is wrapped in <picture>, the inner <img>
+           also needs to fill its <picture> parent — otherwise it
+           renders at its intrinsic dimensions (e.g. 1320×2347 for
+           youth.jpg) inside the absolutely-positioned 100×100%
+           <picture>, and only the top-left portion is visible
+           through the .ministry-section-image's overflow: hidden.
+           That was the bug introduced when the renderer switched
+           from <img> to <picture> for AVIF/WebP delivery in v1.59.0. */
+        .ministry-section-image > picture > img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
         .ministry-section-image > img,
         .ministry-section-image > picture > img {
             object-fit: cover;

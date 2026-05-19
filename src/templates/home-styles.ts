@@ -2487,11 +2487,26 @@ export const homeStyles = (): string => `
                 min-width: 48px;
                 height: auto;
             }
-            .ministries-image > img {
+            /* Real images fill the .ministries-image container. Selectors
+               cover both shapes — a plain <img> child, and the <picture>
+               wrapper with its inner <img>. Without the picture-aware
+               rules, the inner <img> renders at intrinsic dimensions and
+               only the top-left corner shows through overflow: hidden. */
+            .ministries-image > img,
+            .ministries-image > picture {
                 position: absolute;
                 inset: 0;
                 width: 100%;
                 height: 100%;
+                display: block;
+            }
+            .ministries-image > picture > img {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+            .ministries-image > img,
+            .ministries-image > picture > img {
                 object-fit: cover;
             }
             .ministries-grid {

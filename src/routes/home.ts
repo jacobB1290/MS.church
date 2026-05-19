@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.55.0 - First real photo wired into /ministries: Worship section image (from closed PR #47, /static/worship.jpg). Image renderer added to support real photos in any section. See src/index.tsx for the full change log. -->
+<!-- v1.55.1 - Youth section image added: /static/youth.jpg (pulled from stray commit on main). Verified at 7 viewports — no cropping fixes needed. See src/index.tsx for the full change log. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

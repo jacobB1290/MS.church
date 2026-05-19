@@ -1,7 +1,22 @@
 # Morning Star Christian Church Website
 
-## 🔢 CURRENT VERSION: v1.55.0
+## 🔢 CURRENT VERSION: v1.55.1
 **⚠️ IMPORTANT: Update this version number in src/index.tsx (search for "version-footer") every time you make changes!**
+
+### v1.55.1 — Youth section gets its photo
+
+Image pulled from a stray commit on `main` (commit `68b8e1d` *"Youth image"*, file `1c6af5cd-07af-4f52-b9c2-026c47b202ce.jpeg`) via `git show origin/main:…` and saved as `public/static/youth.jpg` (1414×795, ~315 KB) on website-V2. The file on main is the user's own commit; not cleaning that up since `main` is outside the V2 scope.
+
+**Photo:** wide group shot of ~22 young people lined up shoulder-to-shoulder in front of a silver "2026" balloon-arch backdrop. 16:9 native, faces in the upper-middle band.
+
+**Section data:** `imageSrc / imageAlt / imagePosition: "center 40%"` added to the Youth entry. The 40% vertical position keeps heads centered on portrait desktop containers; the horizontal default (center) lands the focal "2026" balloon arch in the middle of the desktop crop.
+
+**Verified at 7 viewport sizes** (360 / 414 / 768 / 960 / 1280 / 1440 / 1920):
+
+- **Mobile + tablet (≤960px):** full 16:9 banner, all 22 youth visible (the photo is 16:9 native; no cropping).
+- **Desktop (≥961px):** image fills the 5fr column on the right (~503w × 620h portrait) and crops to the middle ~12–14 youth grouped around the balloon-arch focal point with the "2026" centered. Edge youth trim naturally.
+
+No fixes needed.
 
 ### v1.55.0 — Worship section gets its first real photo
 

@@ -189,6 +189,14 @@ const SECTIONS: Section[] = [
     eyebrow: 'Youth',
     heading: 'How we walk with the next generation.',
     imageSide: 'right',
+    imageSrc: '/static/youth.jpg',
+    imageAlt: 'Morning Star youth group gathered in front of a 2026 balloon-arch backdrop at an evening event, dressed up and lined shoulder-to-shoulder.',
+    // Heads sit in the upper-middle band; centering vertically at 40%
+    // keeps faces in frame on the portrait desktop container. The line
+    // of people spans the full width of the source, so horizontal center
+    // (default) crops to roughly the middle 12-14 people grouped around
+    // the 2026 balloon arch focal point.
+    imagePosition: 'center 40%',
     entries: [
       {
         id: 'youth-service',

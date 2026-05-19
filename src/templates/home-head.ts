@@ -352,7 +352,7 @@ export const homeHead = (): string => {
                                 "itemOffered": {
                                     "@type": "Service",
                                     "name": "Youth Service",
-                                    "description": "Friday evening service for high-school students (15 and up) — worship, teaching, and time to actually talk to each other"
+                                    "description": "Friday evening service for high schoolers and older (15 and up) — worship, teaching, and time to actually talk to each other. About an hour, with fellowship after."
                                 }
                             },
                             {
@@ -622,7 +622,7 @@ export const homeHead = (): string => {
                     "@type": "Event",
                     "@id": "https://ms.church/#friday-youth-service",
                     "name": "Friday Youth Service at Morning Star Christian Church",
-                    "description": "Weekly Friday-night service for high-school students 15 and up — worship, teaching, and time to actually talk to each other. About an hour. Leaders present every week; parents welcome to drop off, stay, or pick up early.",
+                    "description": "Weekly Friday-night service for high schoolers and older (15 and up) — worship, teaching, and time to actually talk to each other. About an hour, with fellowship after.",
                     "eventSchedule": {
                         "@type": "Schedule",
                         "repeatFrequency": "P1W",
@@ -636,7 +636,7 @@ export const homeHead = (): string => {
                     "audience": {
                         "@type": "PeopleAudience",
                         "suggestedMinAge": 15,
-                        "audienceType": "High school students"
+                        "audienceType": "High school youth and young adults"
                     },
                     "location": {
                         "@type": "Place",
@@ -736,7 +736,7 @@ export const homeHead = (): string => {
                             "name": "What ages is Youth Service for?",
                             "acceptedAnswer": {
                                 "@type": "Answer",
-                                "text": "Youth Service is for students 15 and up — high schoolers and older. It runs Fridays at 7:00 PM for about an hour. Leaders are present every week, and parents are welcome to drop off, stay, or pick up early."
+                                "text": "Youth Service is for 15 and up — high schoolers through college age. It runs Fridays at 7:00 PM for about an hour, with fellowship after."
                             }
                         }
                     ]

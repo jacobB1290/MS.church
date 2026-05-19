@@ -84,13 +84,13 @@ const MINISTRIES_JSON_LD = JSON.stringify({
             position: 6,
             name: 'Youth Service (Youth)',
             description:
-              'Weekly Friday service for high-school students 15 and up — worship, teaching, and time to talk to each other. About an hour. Leaders are present every week and parents are welcome to drop off, stay, or pick up early. Fridays at 7:00 PM.',
+              'Weekly Friday service for high schoolers and older (15 and up) — worship, teaching, and time to actually talk to each other. About an hour, with fellowship after. Fridays at 7:00 PM.',
             url: 'https://ms.church/ministries#youth-service',
             provider: { '@id': 'https://ms.church/#church' },
             audience: {
               '@type': 'PeopleAudience',
               suggestedMinAge: 15,
-              audienceType: 'High school students',
+              audienceType: 'High school youth and young adults',
             },
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
           },

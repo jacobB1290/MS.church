@@ -4550,11 +4550,19 @@ export const homeStyles = (): string => `
                 color: var(--text-primary-muted);
             }
             
-            /* Playlist Button */
-            .playlist-btn {
+            /* Playlist Button — overrides .teaser-cta's align-self: start
+               so the red CTA sits centered under the 3 video cards on
+               every viewport. (Without this, .teaser-cta wins specificity
+               with align-self: start and the button hugs the left edge
+               of the flex-column .watch-main parent.) Selector uses the
+               two-class form .teaser-cta.playlist-btn to match the same
+               specificity as .event-link-btn.teaser-cta and win via later
+               source order. */
+            .teaser-cta.playlist-btn {
                 margin-top: 16px;
                 width: auto;
                 display: inline-flex;
+                align-self: center;
             }
             
             .video-embed-wrapper {

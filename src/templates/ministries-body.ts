@@ -220,13 +220,11 @@ const SECTIONS: Section[] = [
         eyebrow: 'Youth Service',
         titleHtml: `Fridays · 7:00 PM at ${churchAddressPill('the church')}`,
         description:
-          'A weekly service for our older students — worship, teaching, and time to actually talk to each other. About an hour. Leaders are present every week and parents are welcome to drop off, stay, or pick up early.',
+          'A weekly service for high schoolers and older — worship, teaching, and time to actually talk to each other. About an hour, with fellowship after.',
         tips: [
-          { label: 'Ages', value: '15 and up — high schoolers and older.' },
-          { label: 'What to wear', value: 'Whatever your student would wear to hang out with friends. No dress code.' },
-          { label: 'Drop-off', value: 'Pull up, walk them to the door, one of us will be there. Pick up at 8:00 PM in the same spot.' },
-          { label: 'For parents', value: 'Come early for coffee with our leaders if you want to meet who is teaching your student that night.' },
-          { label: 'First night', value: "Worship songs, a short message, and hangout time after. Tell us it is your student's first time and we will pair them with someone who has been a few weeks." },
+          { label: 'Ages', value: '15 and up — high school through college age.' },
+          { label: 'What to wear', value: 'Most folks come loosely dressed up — a nice top with jeans, a sundress, something between casual and Sunday best.' },
+          { label: 'First time', value: 'Walk in, grab a seat — someone will spot you and pull you in. Worship, a short message, fellowship after.' },
         ],
         ctaLabel: 'Ask about Youth Service',
         ctaHref: '/#contact',

@@ -112,7 +112,7 @@ export const homeBody = (): string => `
                             <button class="schedule-tab" data-index="4" type="button" role="tab" aria-selected="false" data-reveal-sync>
                                 <span class="schedule-tab-eyebrow reveal-eyebrow">Youth</span>
                                 <span class="schedule-tab-title reveal-rise">Fridays · 7:00 PM</span>
-                                <span class="schedule-tab-desc reveal-tight">Youth service — worship, teaching, and fellowship for our next generation. About an hour.</span>
+                                <span class="schedule-tab-desc reveal-tight">Worship, teaching, and fellowship for high schoolers and older. About an hour.</span>
                                 <a href="/ministries#youth" class="schedule-tab-cta">Learn more →</a>
                             </button>
                         </div>

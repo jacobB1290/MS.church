@@ -308,7 +308,11 @@ export const outreachBody = (): string => `
                     <h2 class="section-heading">Two tables, one mission.</h2>
                     <div class="ministries-pair">
                         <div class="ministries-image">
-                            <img src="/static/meals-hospitality.jpg" alt="Morning Star volunteer team gathered together in the kitchen after preparing meals for Boise homeless shelters" width="1800" height="1350" loading="lazy" decoding="async" style="object-position: 50% 10%;">
+                            <picture>
+                                <source srcset="/static/meals-hospitality.avif?v=3" type="image/avif">
+                                <source srcset="/static/meals-hospitality.webp?v=3" type="image/webp">
+                                <img src="/static/meals-hospitality.jpg?v=3" alt="Morning Star volunteer team gathered together in the kitchen after preparing meals for Boise homeless shelters" width="1800" height="1350" loading="lazy" decoding="async" style="object-position: 50% 10%;">
+                            </picture>
                         </div>
                         <div class="ministries-grid">
                             <article class="ministry-block" id="cooking-ministry">

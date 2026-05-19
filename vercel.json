@@ -4,8 +4,7 @@
   "images": {
     "sizes": [400, 600, 800, 1000],
     "remotePatterns": [
-      { "protocol": "https", "hostname": "lh3.googleusercontent.com" },
-      { "protocol": "https", "hostname": "page.gensparksite.com" }
+      { "protocol": "https", "hostname": "lh3.googleusercontent.com" }
     ],
     "minimumCacheTTL": 86400
   },

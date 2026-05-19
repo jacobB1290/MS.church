@@ -5656,7 +5656,11 @@ export const homeStyles = (): string => `
                     flex-direction: column;
                     justify-content: flex-end;
                     gap: 0;
-                    background-image: url('/static/IMG_7331.jpeg');
+                    background-image: image-set(
+                        url('/static/hero-mobile.avif') type('image/avif'),
+                        url('/static/hero-mobile.webp') type('image/webp'),
+                        url('/static/hero-mobile.jpg?v=3') type('image/jpeg')
+                    );
                     background-size: cover;
                     background-position: center 60%;
                     border-radius: 0;
@@ -6712,8 +6716,13 @@ export const homeStyles = (): string => `
                     align-items: center;
                     gap: 0;
                     padding: 0;
-                    /* Hero background image — left-positioned to keep church facade visible */
-                    background-image: url('/static/16by9%20church.png');
+                    /* Hero background image — left-positioned to keep church facade visible.
+                       image-set() lets the browser pick AVIF (smallest) → WebP → JPG. */
+                    background-image: image-set(
+                        url('/static/church-building.avif?v=3') type('image/avif'),
+                        url('/static/church-building.webp?v=3') type('image/webp'),
+                        url('/static/church-building.jpg?v=3') type('image/jpeg')
+                    );
                     background-size: cover;
                     background-position: left center;
                     position: relative;

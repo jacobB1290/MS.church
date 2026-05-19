@@ -83,7 +83,7 @@ const SECTIONS: Section[] = [
     eyebrow: 'Worship',
     heading: 'How we gather together on Sundays.',
     imageSide: 'left',
-    imageSrc: '/static/worship.jpg?v=2',
+    imageSrc: '/static/worship.jpg?v=3',
     imageAlt: 'Five Morning Star vocalists leading worship from the church platform, microphones in hand.',
     // Faces sit in the upper-middle band; bias the crop upward so portrait
     // containers on desktop preserve heads/microphones rather than feet.
@@ -201,7 +201,7 @@ const SECTIONS: Section[] = [
     // serves both viewports: mobile crops it to a 16:9 banner with the
     // faces biased to the upper portion; desktop uses (close to) the
     // full image in the portrait container with a slight upward bias.
-    imageSrc: '/static/youth.jpg?v=2',
+    imageSrc: '/static/youth.jpg?v=3',
     imageAlt: 'Five Morning Star youth dressed up arm-in-arm in front of a tree and fence backdrop at an evening event.',
     // Mobile (16:9 banner from a 9:16 portrait source): tight
     // horizontal band crops aggressively top-and-bottom. Faces sit at
@@ -328,19 +328,38 @@ function renderSection(s: Section): string {
     if (s.imagePosition) cssVars.push(`--img-pos: ${s.imagePosition}`)
     if (s.imagePositionDesktop) cssVars.push(`--img-pos-desktop: ${s.imagePositionDesktop}`)
     const styleAttr = cssVars.length ? ` style="${cssVars.join('; ')};"` : ''
+    // Helper: derive AVIF / WebP sibling paths from a JPG src (preserving
+    // any cache-bust query string). e.g. "/static/youth.jpg?v=3" → AVIF
+    // "/static/youth.avif?v=3", WebP "/static/youth.webp?v=3".
+    const variants = (src: string) => {
+      const [path, query] = src.split('?')
+      const q = query ? `?${query}` : ''
+      const base = path.replace(/\.jpe?g$/i, '')
+      return { avif: `${base}.avif${q}`, webp: `${base}.webp${q}`, jpg: src }
+    }
+    const v = variants(s.imageSrc)
     if (s.imageSrcDesktop) {
       // Two-source pattern: desktop ≥961px loads the desktop-only file,
-      // mobile/tablet ≤960px loads the default. Useful when the desktop
-      // photo is a totally different composition from the mobile one.
+      // mobile/tablet ≤960px loads the default. Each viewport's image
+      // is served as AVIF/WebP/JPG via picture-source priority order.
+      const vd = variants(s.imageSrcDesktop)
       imgBlock = `<div class="ministry-section-image"${styleAttr}>
                             <picture>
-                                <source media="(min-width: 961px)" srcset="${s.imageSrcDesktop}">
-                                <img src="${s.imageSrc}" alt="${s.imageAlt ?? ''}" loading="lazy" decoding="async">
+                                <source media="(min-width: 961px)" type="image/avif" srcset="${vd.avif}">
+                                <source media="(min-width: 961px)" type="image/webp" srcset="${vd.webp}">
+                                <source media="(min-width: 961px)" srcset="${vd.jpg}">
+                                <source type="image/avif" srcset="${v.avif}">
+                                <source type="image/webp" srcset="${v.webp}">
+                                <img src="${v.jpg}" alt="${s.imageAlt ?? ''}" loading="lazy" decoding="async">
                             </picture>
                         </div>`
     } else {
       imgBlock = `<div class="ministry-section-image"${styleAttr}>
-                            <img src="${s.imageSrc}" alt="${s.imageAlt ?? ''}" loading="lazy" decoding="async">
+                            <picture>
+                                <source type="image/avif" srcset="${v.avif}">
+                                <source type="image/webp" srcset="${v.webp}">
+                                <img src="${v.jpg}" alt="${s.imageAlt ?? ''}" loading="lazy" decoding="async">
+                            </picture>
                         </div>`
     }
   }

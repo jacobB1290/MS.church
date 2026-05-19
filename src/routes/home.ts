@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.58.2 - /ministries Youth "What to wear" tip rewritten to convey the level generally ("a small step up from everyday casual ... an evening out with friends. Nothing formal.") rather than naming specific clothing items. See src/index.tsx for the full change log. -->
+<!-- v1.59.0 - Fully self-hosted images (no third-party image deps). Every image served as AVIF/WebP/JPG via <picture> + CSS image-set(). Restored church-building hero from git (was inline ref to page.gensparksite.com), optimized + multi-format. Deleted 3 unused images. Total static weight on home dropped to 521 KB on AVIF-capable browsers. See src/index.tsx for the full change log. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

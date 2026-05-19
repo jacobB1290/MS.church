@@ -9,7 +9,7 @@
 import { homeStyles } from '../home-styles.js'
 import { prefetchSnippet } from './prefetch.js'
 
-const DEFAULT_OG_IMAGE = 'https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025'
+const DEFAULT_OG_IMAGE = 'https://ms.church/static/church-building.jpg?v=3'
 
 type PageHeadOptions = {
   title: string
@@ -122,8 +122,8 @@ export function pageHead({
         <meta property="og:title" content="${title}">
         <meta property="og:description" content="${description}">
         <meta property="og:image" content="${ogImage}">
-        <meta property="og:image:width" content="1200">
-        <meta property="og:image:height" content="630">
+        <meta property="og:image:width" content="1920">
+        <meta property="og:image:height" content="1038">
         <meta property="og:image:alt" content="${ogImageAlt}">
         <meta property="og:site_name" content="Morning Star Christian Church">
         <meta property="og:locale" content="en_US">

@@ -22,9 +22,13 @@ export const homeBody = (): string => `
                     <p class="hero-tagline">Mending the Broken.</p>
                     <div class="hero-body">
                         <p class="hero-service-time">Join us Sundays at 9 AM</p>
-                        <div class="hero-image">
-                            <img src="https://page.gensparksite.com/v1/base64_upload/2ed08492a85ab5d976704d29fdd46025" alt="Morning Star Christian Church building in Boise, Idaho" width="1200" height="630" loading="eager" fetchpriority="high" decoding="async">
-                            <!-- Plan a Visit button — links to the /visit page (map + 7-step service flow incl. breakfast + Sunday School). v1.57.0 unified to canonical .event-link-btn .teaser-cta gold pill (the "Explore Our Ministries" design). -->
+                        <div class="hero-image" role="img" aria-label="Morning Star Christian Church building in Boise, Idaho">
+                            <!-- The visible church photo is the CSS background-image
+                                 on .hero (desktop: church-building, mobile: hero-mobile).
+                                 image-set() picks AVIF / WebP / JPG by browser support
+                                 — no <img> here, so the format the user can't see
+                                 isn't downloaded. The aria-label preserves the alt
+                                 text for screen readers. -->
                             <div class="find-us-wrapper">
                                 <a class="event-link-btn teaser-cta find-us-link" href="/visit">Plan a Visit</a>
                             </div>
@@ -134,9 +138,9 @@ export const homeBody = (): string => `
                     <div class="about-content" data-reveal-sync>
                         <div class="about-image reveal-from-above">
                             <picture>
-                                <source srcset="/static/about-congregation.avif" type="image/avif">
-                                <source srcset="/static/about-congregation.webp" type="image/webp">
-                                <img src="/static/about-congregation.jpg" alt="Morning Star Christian Church congregation in Boise with hands raised in worship" width="1600" height="1200" loading="lazy" decoding="async">
+                                <source srcset="/static/about-congregation.avif?v=3" type="image/avif">
+                                <source srcset="/static/about-congregation.webp?v=3" type="image/webp">
+                                <img src="/static/about-congregation.jpg?v=3" alt="Morning Star Christian Church congregation in Boise with hands raised in worship" width="1600" height="1200" loading="lazy" decoding="async">
                             </picture>
                         </div>
                         <div class="about-text">
@@ -161,7 +165,9 @@ export const homeBody = (): string => `
                                 </div>
                                 <div class="schedule-item-image">
                                     <picture>
-                                        <img src="/static/community-events.jpg" alt="Three boys with arms around each other at a Morning Star community outreach event in a Boise park" width="1000" height="1333" loading="lazy" decoding="async" style="object-position: 50% 30%;">
+                                        <source srcset="/static/community-events.avif?v=3" type="image/avif">
+                                        <source srcset="/static/community-events.webp?v=3" type="image/webp">
+                                        <img src="/static/community-events.jpg?v=3" alt="Three boys with arms around each other at a Morning Star community outreach event in a Boise park" width="1000" height="1333" loading="lazy" decoding="async" style="object-position: 50% 30%;">
                                     </picture>
                                 </div>
                             </a>
@@ -174,9 +180,9 @@ export const homeBody = (): string => `
                                 </div>
                                 <div class="schedule-item-image">
                                     <picture>
-                                        <source srcset="/static/cooking-ministry.avif" type="image/avif">
-                                        <source srcset="/static/cooking-ministry.webp" type="image/webp">
-                                        <img src="/static/cooking-ministry.jpg" alt="Morning Star volunteer preparing fresh vegetables for the homeless-shelter cooking ministry" width="1000" height="1333" loading="lazy" decoding="async" style="object-position: 30% 88%;">
+                                        <source srcset="/static/cooking-ministry.avif?v=3" type="image/avif">
+                                        <source srcset="/static/cooking-ministry.webp?v=3" type="image/webp">
+                                        <img src="/static/cooking-ministry.jpg?v=3" alt="Morning Star volunteer preparing fresh vegetables for the homeless-shelter cooking ministry" width="1000" height="1333" loading="lazy" decoding="async" style="object-position: 30% 88%;">
                                     </picture>
                                 </div>
                             </a>

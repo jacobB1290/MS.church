@@ -311,7 +311,7 @@ export const outreachBody = (): string => `
                             <picture>
                                 <source srcset="/static/meals-hospitality.avif" type="image/avif">
                                 <source srcset="/static/meals-hospitality.webp" type="image/webp">
-                                <img src="/static/meals-hospitality.jpg" alt="Morning Star volunteer team gathered together in the kitchen after preparing meals for Boise homeless shelters" width="1800" height="1350" loading="lazy" decoding="async" style="object-position: 50% 10%;">
+                                <img src="/static/meals-hospitality.jpg" alt="Morning Star Christian Church cooking ministry volunteer team gathered in the kitchen after preparing meals for Boise homeless shelters and the free Sunday community breakfast" width="1800" height="1350" loading="lazy" decoding="async" style="object-position: 50% 10%;">
                             </picture>
                         </div>
                         <div class="ministries-grid">

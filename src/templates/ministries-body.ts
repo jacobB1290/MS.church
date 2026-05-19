@@ -84,7 +84,7 @@ const SECTIONS: Section[] = [
     heading: 'How we gather together on Sundays.',
     imageSide: 'left',
     imageSrc: '/static/worship.jpg',
-    imageAlt: 'Five Morning Star vocalists leading worship from the church platform, microphones in hand.',
+    imageAlt: 'Morning Star Christian Church worship team — five vocalists leading Sunday worship from the platform at our nondenominational service in Boise, Idaho, microphones in hand.',
     // Faces sit in the upper-middle band; bias the crop upward so portrait
     // containers on desktop preserve heads/microphones rather than feet.
     imagePosition: 'center 35%',
@@ -202,7 +202,7 @@ const SECTIONS: Section[] = [
     // faces biased to the upper portion; desktop uses (close to) the
     // full image in the portrait container with a slight upward bias.
     imageSrc: '/static/youth.jpg',
-    imageAlt: 'Five Morning Star youth dressed up arm-in-arm in front of a tree and fence backdrop at an evening event.',
+    imageAlt: 'Morning Star Christian Church youth group — five teens dressed up arm-in-arm at a Friday Youth Service event in Boise, Idaho, evening backdrop of trees and fencing.',
     // Mobile (16:9 banner from a 9:16 portrait source): tight
     // horizontal band crops aggressively top-and-bottom. Faces sit at
     // source y≈950-1200 (≈45% from top of source). Y=50% centers the

@@ -84,7 +84,31 @@ export const homeScripts = (): string => `
                     const list = document.querySelector('.schedule-list');
                     const tabs = document.querySelectorAll('.schedule-tab');
                     const slides = banner ? banner.querySelectorAll('.schedule-banner-slide') : [];
-                    if (!banner || !tabs.length || tabs.length !== slides.length) return;
+                    if (!tabs.length) return;
+
+                    // ── Whole-card click → navigate (desktop + mobile) ──
+                    // Every schedule card is fully clickable; the click
+                    // target is the corner .schedule-tab-cta's href
+                    // (matching /ministries anchor). Inline links inside
+                    // the description (e.g. "Sunday School" → /kids,
+                    // "Caffiena State Street" → maps) keep their own
+                    // destinations via the early-return guard. This is
+                    // intentionally attached before the desktop-only
+                    // carousel early-return so card navigation works on
+                    // every viewport.
+                    tabs.forEach((tab) => {
+                        tab.addEventListener('click', (e) => {
+                            if (e.target.closest && e.target.closest('a.schedule-tab-link')) return;
+                            const cta = tab.querySelector('a.schedule-tab-cta');
+                            const href = cta && cta.getAttribute('href');
+                            if (href) {
+                                window.location.href = href;
+                            }
+                        });
+                    });
+
+                    // ── Desktop-only banner carousel ──
+                    if (!banner || tabs.length !== slides.length) return;
                     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                     // Banner is hidden on mobile via CSS — skip the carousel logic entirely
                     // so no auto-cycle timer runs and tap targets stay plain card buttons.
@@ -139,10 +163,10 @@ export const homeScripts = (): string => `
                         }
 
                         tabs.forEach((tab, i) => {
-                            tab.addEventListener('click', () => {
-                                setActive(i);
-                                pauseFor(RESUME_MS);
-                            });
+                            // Card-click navigation is wired up earlier
+                            // (above the desktop-only early return) so it
+                            // runs on every viewport. Here we only handle
+                            // the desktop-specific tab/banner sync.
                             tab.addEventListener('focus', () => {
                                 setActive(i);
                                 pauseFor(RESUME_MS);

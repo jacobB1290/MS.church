@@ -88,27 +88,32 @@ export const homeBody = (): string => `
                             <button class="schedule-tab active" data-index="0" type="button" role="tab" aria-selected="true" data-reveal-sync>
                                 <span class="schedule-tab-eyebrow reveal-eyebrow">Worship</span>
                                 <span class="schedule-tab-title reveal-rise">Sundays · 9:00 AM</span>
-                                <span class="schedule-tab-desc reveal-tight">Morning service, about an hour, with free community breakfast after. Free transportation from select shelters included. <a href="/ministries#worship" class="schedule-tab-link">Learn more →</a></span>
+                                <span class="schedule-tab-desc reveal-tight">Morning service, about an hour, with <a href="/ministries#kids" class="schedule-tab-link">Sunday School</a> for kids and free community breakfast after. Free transportation from select shelters included.</span>
+                                <a href="/ministries#worship" class="schedule-tab-cta">Learn more →</a>
                             </button>
                             <button class="schedule-tab" data-index="1" type="button" role="tab" aria-selected="false" data-reveal-sync>
                                 <span class="schedule-tab-eyebrow reveal-eyebrow">Discipleship</span>
                                 <span class="schedule-tab-title reveal-rise">Tuesdays · 8:30 AM</span>
-                                <span class="schedule-tab-desc reveal-tight">Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffiena State Street</a>. <a href="/ministries#discipleship" class="schedule-tab-link">Learn more →</a></span>
+                                <span class="schedule-tab-desc reveal-tight">Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffiena State Street</a>.</span>
+                                <a href="/ministries#discipleship" class="schedule-tab-cta">Learn more →</a>
                             </button>
                             <button class="schedule-tab" data-index="2" type="button" role="tab" aria-selected="false" data-reveal-sync>
                                 <span class="schedule-tab-eyebrow reveal-eyebrow">Fellowship</span>
                                 <span class="schedule-tab-title reveal-rise">Wednesdays · 6:00 PM</span>
-                                <span class="schedule-tab-desc reveal-tight">Activity Day — open gym + crochet circle. About 3 hours. <a href="/ministries#fellowship" class="schedule-tab-link">Learn more →</a></span>
+                                <span class="schedule-tab-desc reveal-tight">Activity Day — open gym + crochet circle. About 3 hours.</span>
+                                <a href="/ministries#fellowship" class="schedule-tab-cta">Learn more →</a>
                             </button>
                             <button class="schedule-tab" data-index="3" type="button" role="tab" aria-selected="false" data-reveal-sync>
                                 <span class="schedule-tab-eyebrow reveal-eyebrow">Discipleship</span>
                                 <span class="schedule-tab-title reveal-rise">Thursdays · 6:00 PM</span>
-                                <span class="schedule-tab-desc reveal-tight">A 45-minute evening Bible study at the church with free coffee. <a href="/ministries#discipleship" class="schedule-tab-link">Learn more →</a></span>
+                                <span class="schedule-tab-desc reveal-tight">A 45-minute evening Bible study at the church with free coffee.</span>
+                                <a href="/ministries#discipleship" class="schedule-tab-cta">Learn more →</a>
                             </button>
                             <button class="schedule-tab" data-index="4" type="button" role="tab" aria-selected="false" data-reveal-sync>
                                 <span class="schedule-tab-eyebrow reveal-eyebrow">Youth</span>
                                 <span class="schedule-tab-title reveal-rise">Fridays · 7:00 PM</span>
-                                <span class="schedule-tab-desc reveal-tight">Youth service — worship, teaching, and fellowship for our next generation. About an hour. <a href="/ministries#youth" class="schedule-tab-link">Learn more →</a></span>
+                                <span class="schedule-tab-desc reveal-tight">Youth service — worship, teaching, and fellowship for our next generation. About an hour.</span>
+                                <a href="/ministries#youth" class="schedule-tab-cta">Learn more →</a>
                             </button>
                         </div>
                     </div>

@@ -1537,8 +1537,16 @@ export const homeStyles = (): string => `
                 padding: var(--space-md) var(--space-md);
                 text-align: left;
                 cursor: pointer;
-                display: grid;
+                /* Flex column so the cta link can hug the bottom of the
+                   card via margin-top: auto while the eyebrow/title/desc
+                   stack at the top. */
+                display: flex;
+                flex-direction: column;
                 gap: 10px;
+                /* Positioning context for the stretched-link overlay on
+                   .schedule-tab-cta::before (v1.58.0 — whole-card click
+                   navigates to the matching /ministries anchor). */
+                position: relative;
                 font-family: inherit;
                 color: inherit;
                 box-shadow: var(--shadow-md);
@@ -1617,7 +1625,42 @@ export const homeStyles = (): string => `
                 color: var(--gold);
                 text-decoration: underline;
                 text-decoration-color: color-mix(in srgb, var(--gold) 50%, transparent);
-                font-weight: var(--weight-semibold);
+                font-weight: var(--weight-bold);
+                /* Sits above the .schedule-tab-cta::before whole-card click
+                   overlay so the inline link (e.g. "Sunday School" inside
+                   the Worship card description, linking to /ministries#kids)
+                   stays independently clickable. */
+                position: relative;
+                z-index: 2;
+            }
+            .schedule-tab-link:hover {
+                text-decoration-color: var(--gold);
+                color: var(--gold-dark);
+            }
+
+            /* Corner "Learn more →" CTA — bottom-right of each card.
+               Clicking anywhere on the card (other than the inline
+               .schedule-tab-link, e.g. "Sunday School" in the Worship
+               card) navigates to the cta's href. That behavior is
+               JS-delegated (home-scripts.ts schedule-tab click handler)
+               since <a> nested inside <button> doesn't reliably trigger
+               native navigation from clicks outside the <a>'s own box. */
+            .schedule-tab-cta {
+                color: var(--gold);
+                font-family: var(--font-body);
+                font-weight: var(--weight-bold);
+                font-size: var(--text-small);
+                letter-spacing: var(--tracking-normal);
+                text-decoration: none;
+                white-space: nowrap;
+                align-self: flex-end;   /* right-align inside the flex column */
+                margin-top: auto;       /* push to bottom of any extra space */
+                transition: color var(--motion-fast) var(--ease-standard),
+                            transform var(--motion-fast) var(--ease-standard);
+            }
+            .schedule-tab-cta:hover {
+                color: var(--gold-dark);
+                transform: translateX(2px);
             }
 
             /* ============================================================

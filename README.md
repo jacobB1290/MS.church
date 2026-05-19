@@ -107,7 +107,7 @@ The structured-data graph had drifted from the site since the v1.51–1.52 IA wo
 - `hasOfferCatalog` gained two new Services: *Activity Day (Fellowship)* and *Sunday School (Kids)*. Youth Service description updated to specify 15+. Community Outreach description tightened.
 - Two new Event entries: `#wednesday-activity-day` and `#friday-youth-service` (with `PeopleAudience` `suggestedMinAge: 15`, `audienceType: "High school students"`). The graph now declares **all 5 weekly gatherings as Events** (was 3).
 - FAQPage gained 4 new Q&As mirroring the v1.52.0 newcomer-anxiety content: dress code, parking, who greets you at the door, what about kids, what ages is Youth Service for.
-- Replaced 3 `gensparksite.com` base64-upload image URLs with `/static/church-building.jpg` (self-hosted; won't break the rich-result thumbnail if the external host goes away).
+- Replaced 3 external base64-upload image URLs with `/static/church-building.jpg` (self-hosted; won't break the rich-result thumbnail if the external host goes away).
 
 **`/visit` (`routes/visit.ts`):** Description previously said *"Sunday School info, and the free breakfast that follows"* — stale after v1.51.0 folded Sunday School into the 8-step Service Flow as step 3. Rewritten to describe the actual current page (service flow + first-timer practicals: what to wear, where to park, who greets you). Both the JSON-LD description and the page meta description updated.
 

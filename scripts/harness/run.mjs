@@ -129,7 +129,7 @@ const MOBILE  = { width: 390,  height: 844 }
 const IGNORED_ERROR_PATTERNS = [
   /ERR_CERT_AUTHORITY_INVALID/, /ERR_NAME_NOT_RESOLVED/, /ERR_INTERNET_DISCONNECTED/,
   /vercel-insights/, /vercel\.com\/_vercel\/insights/, /Failed to load resource/,
-  /fonts\.googleapis\.com/, /fonts\.gstatic\.com/, /page\.gensparksite\.com/,
+  /fonts\.googleapis\.com/, /fonts\.gstatic\.com/,
   /youtube/i, /lh3\.googleusercontent/, /engagehub/, /jotform/i, /googleapis\.com/,
   /service\?service=/, /script\.js/, /cdn\.vercel-insights/,
 ]

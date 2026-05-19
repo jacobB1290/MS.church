@@ -8,7 +8,7 @@ export function registerHomeRoute(app: Hono) {
     // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
     c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
-<!-- v1.58.1 - "View Full Playlist" red CTA recentered on mobile (specificity fix on .teaser-cta.playlist-btn). /ministries Youth section copy rewritten for 15+ audience (no parent-oriented tips, no drop-off/pick-up, no "leader is always present", dress code = "loosely dressed up" matching the youth.jpg photo). Same updates cascaded to schema.org Service/Event/FAQ entries. See src/index.tsx for the full change log. -->
+<!-- v1.58.2 - /ministries Youth "What to wear" tip rewritten to convey the level generally ("a small step up from everyday casual ... an evening out with friends. Nothing formal.") rather than naming specific clothing items. See src/index.tsx for the full change log. -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

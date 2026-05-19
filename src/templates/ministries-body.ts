@@ -223,7 +223,7 @@ const SECTIONS: Section[] = [
           'A weekly service for high schoolers and older — worship, teaching, and time to actually talk to each other. About an hour, with fellowship after.',
         tips: [
           { label: 'Ages', value: '15 and up — high school through college age.' },
-          { label: 'What to wear', value: 'Most folks come loosely dressed up — a nice top with jeans, a sundress, something between casual and Sunday best.' },
+          { label: 'What to wear', value: 'A small step up from everyday casual — comfortable, but the kind of outfit you might wear out with friends in the evening. Nothing formal.' },
           { label: 'First time', value: 'Walk in, grab a seat — someone will spot you and pull you in. Worship, a short message, fellowship after.' },
         ],
         ctaLabel: 'Ask about Youth Service',

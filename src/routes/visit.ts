@@ -43,6 +43,60 @@ const VISIT_JSON_LD = JSON.stringify({
         { '@type': 'ListItem', position: 2, name: 'Plan Your Visit', item: 'https://ms.church/visit' },
       ],
     },
+    {
+      '@type': 'FAQPage',
+      '@id': 'https://ms.church/visit#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What can a first-time visitor expect at Morning Star Christian Church?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'On your first Sunday at Morning Star Christian Church, expect a warm welcome from greeters at the door, a 60–75 minute worship service starting at 9 AM, and a free community breakfast afterward. There is no signup, no waiver, and no pressure to introduce yourself, donate, or commit to anything. Come exactly as you are.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What is a typical Sunday service like at Morning Star?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'A typical Sunday service at Morning Star Christian Church follows a simple flow: welcome and opening prayer, two opening worship songs, dismissal of kids to Sunday school, scripture reading, the message, closing worship, and dismissal to the free community breakfast.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Is there childcare during the Sunday service at Morning Star?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Sunday school runs in a dedicated classroom during the 9 AM service for kids from preschool through about 5th grade. Children head to the room after the opening worship songs. Older kids usually stay in the service with their family. Drop-off is welcome any Sunday — no signup, no ID required.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How do I get to Morning Star Christian Church?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Morning Star Christian Church is located at 3080 Wildwood Street in West Boise, Idaho 83713 — in the Five Mile and Ustick area, roughly a mile east of Eagle Road and minutes from Maple Grove. The building has a free parking lot on site.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What should I wear to Morning Star Christian Church?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'There is no strict dress code at Morning Star Christian Church beyond keeping it modest. Most folks land on the casual side — jeans and a shirt are completely fine — and you will see plenty of people dressed more formally. Both fit in. Come as you are.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Will I be asked to give money at Morning Star?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. Visitors at Morning Star Christian Church are never asked or expected to give. Members may give voluntarily, but there is no pressure, no plate passed at visitors, and no donation request at the door. The Sunday breakfast is also genuinely free.',
+          },
+        },
+      ],
+    },
   ],
 })
 

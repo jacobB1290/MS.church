@@ -60,6 +60,52 @@ const OUTREACH_JSON_LD = JSON.stringify({
         { '@type': 'ListItem', position: 2, name: 'Outreach', item: 'https://ms.church/outreach' },
       ],
     },
+    {
+      '@type': 'FAQPage',
+      '@id': 'https://ms.church/outreach#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Where can I find a free community breakfast in Boise on Sunday?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Morning Star Christian Church serves a free community breakfast every Sunday after the 9:00 AM service at 3080 Wildwood Street, Boise, Idaho. The breakfast is open to everyone — members, visitors, and neighbors — with no charge, no donation expected, and no signup required.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How does Morning Star Christian Church serve the Boise homeless community?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Morning Star Christian Church serves the Boise homeless community through a monthly cooking ministry at local shelters, a free Sunday community breakfast open to everyone, and transportation from select shelters to the Sunday service.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What is the cooking ministry at Morning Star?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'The cooking ministry at Morning Star Christian Church is a team of volunteers that prepares and serves meals at Boise homeless shelters once a month, and prepares the weekly free Sunday community breakfast for anyone who attends or stops by the church.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Morning Star Christian Church offer transportation to Sunday service?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Morning Star Christian Church provides free transportation from select homeless shelters in Boise to and from the Sunday morning service at 3080 Wildwood Street.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How can I volunteer with Morning Star Christian Church outreach?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Volunteer opportunities at Morning Star Christian Church include the cooking ministry, Sunday breakfast preparation, seasonal community events, and shelter transportation. Reach out through our contact form at ms.church/form or speak to a greeter on a Sunday.',
+          },
+        },
+      ],
+    },
   ],
 })
 

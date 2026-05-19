@@ -39,6 +39,44 @@ const ABOUT_JSON_LD = JSON.stringify({
         { '@type': 'ListItem', position: 2, name: 'About', item: 'https://ms.church/about' },
       ],
     },
+    {
+      '@type': 'FAQPage',
+      '@id': 'https://ms.church/about#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What kind of church is Morning Star Christian Church?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Morning Star Christian Church is a nondenominational, Bible-believing Christian church in Boise, Idaho. We confess Jesus Christ as Lord and Savior, teach the whole counsel of Scripture with both grace and truth, and gather Sundays at 9 AM at 3080 Wildwood Street for worship and a free community breakfast.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What does "Mending the Broken" mean at Morning Star?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Mending the Broken is the mission of Morning Star Christian Church — a commitment to caring for people the world overlooks: the lonely, the grieving, the new-to-faith, the food-insecure, the marginalized. It shapes everything from the free Sunday breakfast to monthly cooking at homeless shelters to how visitors are greeted at the door.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Where is Morning Star Christian Church located in Boise?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Morning Star Christian Church is at 3080 Wildwood Street, Boise, Idaho 83713 — in the Five Mile and Ustick area of West Boise, about a mile east of Eagle Road. There is a free parking lot on site.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How can I get involved at Morning Star Christian Church?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'The first step is simply attending a Sunday at 9 AM at 3080 Wildwood Street. From there, anyone interested can join a weekly Bible study (Tuesday morning at Caffiena State Street or Thursday evening at the church), volunteer with the cooking ministry, or use the contact form at ms.church/form to ask about other ministries.',
+          },
+        },
+      ],
+    },
   ],
 })
 

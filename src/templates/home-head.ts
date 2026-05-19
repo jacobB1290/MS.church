@@ -255,11 +255,12 @@ export const homeHead = (): string => {
             "@context": "https://schema.org",
             "@graph": [
                 {
-                    "@type": ["Church", "PlaceOfWorship"],
+                    "@type": ["Church", "PlaceOfWorship", "LocalBusiness"],
                     "@id": "https://ms.church/#church",
                     "name": "Morning Star Christian Church",
-                    "alternateName": ["Morning Star Church", "MS Church Boise"],
+                    "alternateName": ["Morning Star Church", "MS Church Boise", "Morning Star Boise"],
                     "description": "Morning Star Christian Church is a welcoming, Bible-believing Christian church in Boise, Idaho. We confess Jesus Christ as Lord and Savior and teach the whole counsel of Scripture — grace and truth, with no watered-down version. Join us Sundays at 9 AM for worship and a free community breakfast, Tuesday Bible reading at Caffiena State Street, Wednesday Activity Day (open gym + crochet circle), Thursday Bible study, and Friday Youth Service. We are dedicated to mending the broken through faith, community, and service.",
+                    "keywords": "Boise church, Christian church Boise, nondenominational church Boise, Bible-believing church Boise, family church Boise, Sunday worship Boise, free community breakfast Boise, Bible study Boise, youth group Boise, church 83713, Wildwood Street church Boise, Morning Star Christian Church",
                     "url": "https://ms.church",
                     "email": "morningstarchurchboise@gmail.com",
                     "contactPoint": {
@@ -289,6 +290,44 @@ export const homeHead = (): string => {
                         "https://www.instagram.com/mschurchboise",
                         "https://www.facebook.com/MorningStarBoise/",
                         "https://www.youtube.com/@morningstarboise"
+                    ],
+                    "photo": [
+                        {
+                            "@type": "ImageObject",
+                            "contentUrl": "https://ms.church/static/church-building.jpg",
+                            "caption": "Morning Star Christian Church building exterior at 3080 Wildwood Street, Boise, Idaho",
+                            "keywords": "Morning Star Christian Church, Boise church exterior, Wildwood Street church"
+                        },
+                        {
+                            "@type": "ImageObject",
+                            "contentUrl": "https://ms.church/static/about-congregation.jpg",
+                            "caption": "Morning Star Christian Church congregation worshiping together on a Sunday in Boise, Idaho",
+                            "keywords": "Boise church congregation, Sunday worship Boise, nondenominational church service"
+                        },
+                        {
+                            "@type": "ImageObject",
+                            "contentUrl": "https://ms.church/static/worship.jpg",
+                            "caption": "Sunday morning worship service at Morning Star Christian Church in Boise, with congregation and worship team leading songs",
+                            "keywords": "Sunday worship Boise, church worship team Boise, Bible-believing service"
+                        },
+                        {
+                            "@type": "ImageObject",
+                            "contentUrl": "https://ms.church/static/cooking-ministry.jpg",
+                            "caption": "Morning Star Christian Church cooking ministry volunteers preparing meals for the Boise homeless shelter and the free Sunday community breakfast",
+                            "keywords": "cooking ministry Boise, free breakfast church Boise, church homeless outreach Boise"
+                        },
+                        {
+                            "@type": "ImageObject",
+                            "contentUrl": "https://ms.church/static/community-events.jpg",
+                            "caption": "Morning Star Christian Church community outreach event in a Boise park bringing families and neighbors together",
+                            "keywords": "Boise community outreach, church community events Boise"
+                        },
+                        {
+                            "@type": "ImageObject",
+                            "contentUrl": "https://ms.church/static/youth.jpg",
+                            "caption": "Morning Star Christian Church youth group gathering on a Friday evening — open to high school and college-age students in Boise",
+                            "keywords": "youth group Boise, Friday youth church Boise, teen Christian community Boise"
+                        }
                     ],
                     "openingHoursSpecification": [
                         {
@@ -745,6 +784,118 @@ export const homeHead = (): string => {
                             "acceptedAnswer": {
                                 "@type": "Answer",
                                 "text": "Youth Service is for 15 and up — high schoolers through college age. It runs Fridays at 7:00 PM for about an hour, with fellowship after."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Is Morning Star Christian Church nondenominational?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes, Morning Star Christian Church is a nondenominational Christian church in Boise, Idaho. We are not affiliated with any single denomination — Baptist, Methodist, Presbyterian, or otherwise — and base our teaching directly on the Bible while affirming the historic foundations of Christian faith shared across evangelical traditions."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "What is a nondenominational Christian church?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "A nondenominational Christian church operates independently of established denominational hierarchies such as Baptist, Catholic, Presbyterian, Lutheran, or Methodist organizations. Nondenominational churches teach directly from the Bible, are led by local elders and pastors, and emphasize the core foundations of Christian faith shared across all evangelical traditions."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Does Morning Star Christian Church offer a free community breakfast?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Every Sunday after our 9:00 AM worship service at 3080 Wildwood St, Boise, we serve a free community breakfast open to everyone — members, visitors, and neighbors alike. There is no charge and no expectation of attending the service."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Is the free community breakfast really free?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. The Sunday breakfast at Morning Star Christian Church is genuinely free — no donation expected, no menu pricing, no signup. Anyone can come. We serve breakfast as part of our calling to mend the broken in the Boise community."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "How long is the Sunday service at Morning Star?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Sunday worship at Morning Star Christian Church typically runs about 60 to 75 minutes — beginning at 9:00 AM and ending around 10:15 AM — followed by free community breakfast in our fellowship space."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "What is Morning Star's cooking ministry?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Morning Star's cooking ministry is a team of volunteers who prepare meals served to the Boise homeless shelter on a monthly schedule, plus the weekly Sunday breakfast served free to anyone who attends or stops by the church on Wildwood Street."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Is Morning Star Christian Church a good fit for families with young kids?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Sunday school runs in a dedicated classroom during the 9 AM service for children from preschool through about 5th grade. Older kids stay with their families. After service, kids and parents are welcome to the free community breakfast — no signup, no waiver, no charge."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Do I need to register or sign up before visiting Morning Star?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "No registration is required. Visitors are welcome to walk in any Sunday at 9 AM at 3080 Wildwood St. There is no signup, no waiver, no mandatory contact card, and no introduction required at the front. Greeters at the door will help you find a seat or the kids' classroom if needed."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "What is the worship style at Morning Star Christian Church?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Morning Star's worship is reverent, contemporary, and Bible-centered. We sing both modern worship songs and traditional hymns each Sunday, and the message is grounded directly in Scripture — the whole counsel of God, no watered-down version."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Is Morning Star welcoming to people new to faith or unfamiliar with church?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Morning Star Christian Church is a welcoming place for anyone exploring Christian faith, returning to church after time away, or attending church for the first time. There is no pressure to participate, contribute, or commit. Come as you are and stay as long as feels right."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "What is Wednesday Activity Day at Morning Star?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Wednesday Activity Day at Morning Star runs 6:00 to 9:00 PM at our 3080 Wildwood St location. It includes an open gym (basketball, volleyball, and other activities) and a crochet circle for fellowship. All ages and skill levels are welcome."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Where is the closest nondenominational church to Five Mile Road and Ustick in Boise?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Morning Star Christian Church at 3080 Wildwood St is located in the Five Mile and Ustick area of West Boise in the 83713 ZIP code, roughly a mile east of Eagle Road and a short drive from Maple Grove Road."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Where can I watch past sermons from Morning Star Christian Church?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Past sermons, services, and special messages from Morning Star Christian Church are available on our YouTube channel at youtube.com/@morningstarboise. Sunday worship is live streamed there each week and remains available for later viewing."
+                            }
+                        },
+                        {
+                            "@type": "Question",
+                            "name": "Can I submit a prayer request to Morning Star Christian Church?",
+                            "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Prayer requests can be submitted through our contact form at ms.church/form. Requests are kept confidential and prayed over by the pastoral team at Morning Star Christian Church."
                             }
                         }
                     ]

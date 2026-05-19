@@ -104,6 +104,52 @@ const MINISTRIES_JSON_LD = JSON.stringify({
         { '@type': 'ListItem', position: 2, name: 'Ministries', item: 'https://ms.church/ministries' },
       ],
     },
+    {
+      '@type': 'FAQPage',
+      '@id': 'https://ms.church/ministries#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What Bible studies does Morning Star Christian Church offer in Boise?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Morning Star Christian Church offers two weekly Bible study groups in Boise: a Tuesday morning Bible reading at Caffiena State Street coffee shop at 8:30 AM, and a Thursday evening Bible study at the church at 6:00 PM. Both are free, open to all, and gospel-grounded with free coffee.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'When does the youth group meet at Morning Star?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'The Friday Youth Service at Morning Star Christian Church meets every Friday at 7:00 PM at 3080 Wildwood Street, Boise. It is for high schoolers and older (ages 15 and up) — about an hour of worship and teaching, with fellowship after.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What is Sunday School like at Morning Star Christian Church?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Sunday School at Morning Star Christian Church runs during the 9 AM service in a dedicated classroom. Kids from preschool through about 5th grade head to the room after the opening worship songs. Drop-in is welcome any Sunday — no signup, no waiver, no ID required.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Does Morning Star have small groups or community groups?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Morning Star Christian Church operates two weekly small-group-style gatherings: Tuesday morning Bible reading at Caffiena State Street, and Thursday evening Bible study at the church. Both are open-discussion, paced so newcomers and longtime members can engage together.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Is Wednesday Activity Day at Morning Star really an open gym?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. Wednesday Activity Day at Morning Star Christian Church runs 6:00 to 9:00 PM and includes open gym (basketball, volleyball, and other activities) plus a crochet circle for fellowship. All ages and skill levels welcome. No signup or fee.',
+          },
+        },
+      ],
+    },
   ],
 })
 

@@ -416,17 +416,147 @@ To restore Cloudflare Pages as an alternative, see the comment block at the top 
 
 3. **All HTML, CSS, and JavaScript is inline** (in template strings). For the home page, CSS lives in `src/templates/home-styles.ts` and client JS in `src/templates/home-scripts.ts`. `public/static/style.css` is intentionally empty.
 
-4. **SEO metadata is extensive.** `src/templates/home-head.ts` includes Schema.org JSON-LD, Open Graph, Twitter Card, geo tags, and canonical URL. Preserve and update these when changing page content. `/about`, `/outreach`, etc. have their own JSON-LD blocks in their `routes/*.ts`.
+4. **SEO is best-in-class on V2 and must stay that way.** Before adding a new page, new content, or new images, read the **SEO Conventions** section below. ms.church already exceeds every Boise-church competitor on schema density, security headers, image sitemap, RSS feed, custom-domain email, and AI-crawler directives — closing that gap is much easier than rebuilding it. Mandatory: use `pageHead()` / `homeHead()`, ship FAQ JSON-LD per page, update the sitemap when you add a URL, and prefer hidden-surface SEO (schema, meta, alt text) over visible body copy stuffing.
 
 5. **The harness IS the test suite.** `node scripts/harness/run.mjs` runs Playwright-driven anchor + perf + flow scenarios. **For any animation, scroll/anchor, layout-shift, transform/transition, reveal-observer, or non-trivial design change, run the harness, read `output/report.html`, and iterate until it passes BEFORE pushing.** Push only after a green run. If the bug class you're touching isn't covered, ADD a scenario, then fix. See the "MUST run it" subsection above. Validate visually with `npm run dev` too, but harness is the gate.
 
 6. **Per-version notes** belong in commit messages and the gitignored `CHANGELOG.md`. Don't add changelog blocks to source files. The on-screen `version-footer` div is the public version marker.
 
-7. **Church details** — 3080 Wildwood St, Boise, ID 83713. Email: `morningstarchurchboise@gmail.com`. Sunday service at 9:00 AM.
+7. **Church details** — 3080 Wildwood St, Boise, ID 83713. Public contact email: `support@ms.church` (custom-domain, use everywhere in visible UI + Schema.org). Sunday service at 9:00 AM. The Gmail address `morningstarchurchboise@gmail.com` is intentionally retained ONLY as `CALENDAR_ID` in `src/config.ts` because it identifies the parent church's Google Calendar — don't repurpose it as contact info anywhere.
 
 8. **Calendar events** are fetched server-side in `src/routes/calendar.ts` with a 5-minute in-memory cache. The client calls `/api/calendar/events`; update image-URL handling there if the `lh3.googleusercontent.com` format changes.
 
 9. **Images are self-hosted** with three variants each (`.jpg` / `.webp` / `.avif`) in `public/static/`. Use `<picture>` with AVIF + WebP `<source>` elements for foreground images, or CSS `image-set()` for background images. Generation script in `scripts/_optimize.mjs` (ad-hoc, not committed); sharp is a dev dep. When swapping a static image, regenerate all three variants.
+
+---
+
+## SEO Conventions — Build Best-in-Class by Default
+
+ms.church V2's technical SEO substrate **already exceeds every Boise-church competitor** as of the May 2026 competitive audit: 49 FAQ Q&As across pages, full Schema.org graph wiring with `Church + LocalBusiness + PlaceOfWorship` triple-typing, weekly recurring `Event` schemas, `Service` / `OfferCatalog`, a 6-image `Photo` array with captions, custom-domain email, image sitemap with `<image:title>` + `<image:caption>`, RSS feed advertised in `<head>`, `security.txt`, HSTS with `preload` flag, edge-level Link header preconnect, `Server-Timing`, CSP report-only, and explicit AI-crawler allows for 14 named bots. These conventions keep that lead in place when pages, content, or images are added. **Read this before touching anything that affects search visibility.**
+
+### Core principle — hidden surfaces over visible bloat
+
+Add SEO weight via **JSON-LD, meta tags, alt text, image filenames, sitemap captions, and HTTP headers** — NOT by repeating "Boise" in visible body copy. The user has explicitly rejected keyword stuffing in visible content. Every keyword opportunity should be tested as: *"can this live in schema, meta, alt text, or a sitemap caption instead of body text?"* Default to yes.
+
+### Mandatory head pattern — use the shared helpers
+
+Every new HTML page MUST use `pageHead()` (subpages, from `src/templates/shared/page-head.ts`) or `homeHead()` (home page only, from `src/templates/home-head.ts`). Don't roll your own `<head>`. The helpers guarantee:
+
+- `<title>` formatted `[Page name] · Morning Star Christian Church, Boise`
+- `<meta name="description">` (~155 chars, includes the page's target query naturally)
+- `<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">`
+- `<meta name="googlebot" content="index, follow">`
+- Self-referential `<link rel="canonical">`
+- Full Open Graph + Twitter Card
+- Geographic meta tags (geo.region, geo.position, ICBM)
+- 5-variant favicon set + `<link rel="manifest" href="/site.webmanifest">`
+- `<link rel="alternate" type="application/rss+xml" href="/feed.xml">`
+- JSON-LD passed via the `jsonLd` parameter
+
+If you find a use-case the shared helper doesn't cover, ADD a parameter to the helper rather than forking it.
+
+### Mandatory JSON-LD per page
+
+Every new route's `@graph` must contain at minimum:
+
+1. **A page-type entity** (`WebPage`, `AboutPage`, `CollectionPage`, etc.) with `name`, `description`, `url`, `inLanguage: 'en-US'`, `isPartOf` linking to `https://ms.church/#website`, and `about` linking to `https://ms.church/#church`.
+2. **A `BreadcrumbList`** with position-numbered `ListItem`s.
+3. **A `FAQPage`** with 4–6 page-specific questions. Each `acceptedAnswer.text` is **40–60 words** (featured-snippet sweet spot). Don't repeat the same question on multiple pages — each page owns its own intent.
+
+The home page additionally carries `Church + PlaceOfWorship + LocalBusiness` triple-typing, the 6-image `photo` array, weekly `OpeningHoursSpecification` for all five recurring gatherings, an `OfferCatalog` of services, per-recurring-event `Event` schema, and 24 home-scoped FAQs. **Don't remove any of these.**
+
+### Image SEO additions (beyond the existing image-variants rule in Key Conventions #9)
+
+| Requirement | Why |
+|---|---|
+| Alt text includes brand name ("Morning Star Christian Church") + geographic anchor ("Boise" / "in Boise, Idaho") + concrete subject description | Image-pack discovery; hidden surface so SEO-rich is safe |
+| Filenames are lowercase-with-hyphens, descriptive | Image-search relevance |
+| Hero: `loading="eager"` + `fetchpriority="high"`. All others: `loading="lazy"` + `decoding="async"` | LCP optimization |
+| Explicit `width` + `height` on every `<img>` | Prevents CLS |
+
+When you add a new image to an existing page, ALSO:
+- Add an `<image:image>` block to that page's entry in `src/routes/misc.ts` sitemap with `<image:title>` + `<image:caption>` (descriptive, includes "Boise" naturally)
+- Add the image to the home `photo` array in `src/templates/home-head.ts` if it's home-relevant
+
+### URL conventions for new pages
+
+- **Single-word top-level slugs**: `/sermons`, `/kids`, `/youth`, `/give`, `/blog`. NOT `/ministries/kids` or `/our-sermons`.
+- **Hyphenated multi-word** only when single-word doesn't work: `/bible-study`, `/free-breakfast`.
+- **Stable seasonal URLs**: `/easter` not `/easter-2026`. Backlinks compound year-over-year; update content inside the page.
+- Lowercase only. No trailing slashes (Hono's routing is already trailing-slash-free).
+
+### Cache-Control conventions (set in the route's `c.header()` call or in `vercel.json`)
+
+| Resource type | Header |
+|---|---|
+| Home page HTML | `public, s-maxage=300, stale-while-revalidate=86400` |
+| Static-ish subpage HTML | `public, s-maxage=600, stale-while-revalidate=86400` |
+| `/api/calendar/events` (and similar dynamic JSON) | `public, s-maxage=300, stale-while-revalidate=600` |
+| `/static/(.*)` | `public, max-age=31536000, immutable` (set in `vercel.json`) |
+| `/sitemap.xml` | `public, s-maxage=3600, stale-while-revalidate=86400` |
+| `/feed.xml` | `public, s-maxage=900, stale-while-revalidate=86400` |
+| `/robots.txt`, `/.well-known/security.txt` | `public, max-age=86400` |
+
+### Sitemap maintenance
+
+When you add a new route, add it to `entries` in `src/routes/misc.ts` `/sitemap.xml` handler with `priority`, `changefreq`, and `lastmod`. Use the constants:
+
+- `SITE_LASTMOD` (hardcoded ISO date) — for static content. Bump this constant when content meaningfully changes ship.
+- `HOME_LASTMOD` (today, evaluated per request) — ONLY for pages with legitimately weekly-updating content (currently `/` and `/outreach`, both pull the live calendar).
+
+**Never** apply `new Date()` directly to every entry's lastmod. Google's documented behavior is to ignore (and downweight) sitemaps with always-fresh lastmod values across all entries.
+
+### robots.txt rules
+
+The current `robots.txt` allows everything except `/api/` and `*.json`. It carries Googlebot fast-lane (`Crawl-delay: 0`), Googlebot-Image explicit allow on `/static/`, and explicit `Allow: /` rules for 14 AI search crawlers (GPTBot, ChatGPT-User, OAI-SearchBot, ClaudeBot, Claude-Web, anthropic-ai, PerplexityBot, Perplexity-User, Google-Extended, Applebot, Applebot-Extended, CCBot, meta-externalagent, Bytespider). **Don't remove any of these.** If you add a new path type that crawlers shouldn't index, add an explicit `Disallow` line under `User-agent: *`.
+
+### Anti-patterns observed in competitors — DO NOT copy
+
+These were identified in the May 2026 audit and must not be replicated on ms.church:
+
+- **Don't put visible "Boise" mentions everywhere** for keyword density. The user objects to this. Put weight in hidden surfaces.
+- **Don't write doctrinal statements without scripture citations** (Bridgepoint: 1,850 words of theology, zero verse refs — reads hollow).
+- **Don't ship a staff/leadership page that's only photo tiles with no bios** (Hill City anti-pattern: 21 photos, 0 bio words per person — worse than no page).
+- **Don't carousel autoplay video testimonials** (Life Church: hurts CWV + no first-name attribution).
+- **Don't use stock photography** for "congregation" / "people" images. Every people-image must be real MS members.
+- **Don't put anything in front of the document** — no captcha, no Cloudflare bot mode, no interstitial. Foothills' SiteGround captcha returns `x-robots-tag: noindex` to every non-browser crawler, killing their AI/SearchGPT/Perplexity inclusion.
+- **Don't downgrade HSTS** to `max-age=0` (Boise Church anti-pattern: a real security regression).
+- **Don't ship Universal Analytics tags** (UA-*). GA4 (`G-*`) only; Vercel Analytics + Speed Insights are the current solution.
+- **Don't fork visible `<head>` tags** away from `pageHead()` / `homeHead()`. Add a parameter to the shared helper instead.
+- **Don't keep Gmail addresses** in visible UI or Schema.org — use `support@ms.church`. (See Key Conventions #7 for the calendar-ID exception.)
+
+### Checklist when adding a new page
+
+1. Create `src/routes/<page>.ts` + `src/templates/<page>-body.ts` (per Architecture pattern)
+2. Register the route in `src/app.ts`
+3. Call `pageHead()` with full `jsonLd` — page-type entity + `BreadcrumbList` + `FAQPage`
+4. Add the URL to `entries` in `src/routes/misc.ts` sitemap with `<image:image>` block if there's a hero
+5. Set `Cache-Control` per the table above
+6. Internal-link to the new page from at least one other page with keyword-rich anchor text
+7. Every `<img>` has explicit `width` + `height` + descriptive alt text (brand + Boise + subject)
+8. Hero image: `loading="eager"` + `fetchpriority="high"`; others: `loading="lazy"` + `decoding="async"`
+9. Bump `SITE_LASTMOD` to today
+10. `npm run build` — type-check passes
+11. Run the harness if the page touches layout, motion, or scroll
+12. Commit: `vX.Y.Z — <description>` (per Versioning Convention)
+
+### Checklist when adding new content to an existing page
+
+1. **Don't** add visible "Boise" mentions where natural copy already covers the location
+2. **DO** update that page's `FAQPage` JSON-LD if the new content answers a new user query
+3. **DO** update `<meta name="description">` if the page intent shifted
+4. **DO** bump `SITE_LASTMOD` if the content shift is meaningful
+5. **DO** add `<image:image>` sitemap entries + descriptive alt text for any new images
+6. `npm run build` + harness if layout-affecting
+
+### Where existing SEO patterns live (read these for examples)
+
+- **Home full JSON-LD graph** (Church + Org + Events + FAQ + Photo + OfferCatalog): `src/templates/home-head.ts` around line 252+
+- **Per-page JSON-LD with `FAQPage`**: `src/routes/about.ts`, `beliefs.ts`, `outreach.ts`, `ministries.ts`, `visit.ts`
+- **Sitemap + robots.txt + security.txt + RSS feed**: `src/routes/misc.ts`
+- **Cache headers + CSP + COOP + Link preconnect + HSTS**: `vercel.json`
+- **Security headers + Server-Timing middleware**: `src/app.ts`
+- **Shared favicon + RSS link + canonical + meta pattern**: `src/templates/shared/page-head.ts`
 
 ---
 

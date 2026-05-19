@@ -144,8 +144,11 @@ export function pageHead({
         <meta name="application-name" content="Morning Star Church">
         <meta name="mobile-web-app-capable" content="yes">
 
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16.png">
         <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+        <link rel="manifest" href="/site.webmanifest">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

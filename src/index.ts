@@ -16,5 +16,6 @@ import { serveStatic } from '@hono/node-server/serve-static'
 
 app.use('/static/*', serveStatic({ root: './public' }))
 app.use('/favicon.ico', serveStatic({ root: './public' }))
+app.use('/site.webmanifest', serveStatic({ root: './public' }))
 
 export default app

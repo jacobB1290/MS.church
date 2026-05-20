@@ -33,7 +33,28 @@ const churchAddressPill = (label = '3080 Wildwood St · Boise, Idaho'): string =
   </span>
 `
 
-const caffeinaLink = `<a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener" class="ministry-address-link">Caffeina State Street</a>`
+// Caffeina address pill — same UX as the church pill so the Discipleship
+// section's two addresses ("Caffeina State Street" / "the church") behave
+// identically: tap to open Apple Maps, Google Maps, or copy the name. Before
+// this, Caffeina was a plain anchor that jumped straight to Google Maps
+// while the church was a dropdown — two visually identical gold-underlined
+// addresses with different behaviors.
+const caffeinaPill = (label = 'Caffeina State Street'): string => `
+  <span class="address-dropdown-wrapper">
+    <button type="button" class="address-trigger ministry-address-trigger" data-address="Caffeina State Street, Boise, Idaho">${label}</button>
+    <span class="address-dropdown">
+      <a href="https://maps.apple.com/?q=Caffeina%20State%20Street%2C%20Boise%2C%20Idaho" target="_blank" rel="noopener" class="address-dropdown-item">
+        <span class="address-dropdown-icon">🍎</span><span>Apple Maps</span>
+      </a>
+      <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener" class="address-dropdown-item">
+        <span class="address-dropdown-icon">🗺️</span><span>Google Maps</span>
+      </a>
+      <button type="button" class="address-dropdown-item copy-address" data-address="Caffeina State Street, Boise, Idaho">
+        <span class="address-dropdown-icon">📋</span><span>Copy</span>
+      </button>
+    </span>
+  </span>
+`
 
 type Tip = { label: string; value: string }
 type Entry = {
@@ -165,7 +186,7 @@ const SECTIONS: Section[] = [
       {
         id: 'bible-reading',
         eyebrow: 'Bible Reading',
-        titleHtml: `Tuesdays · 8:30 AM at ${caffeinaLink}`,
+        titleHtml: `Tuesdays · 8:30 AM at ${caffeinaPill()}`,
         description:
           "A morning Bible reading at a coffee shop on State Street. Casual, no curriculum — we read a passage, talk about it, drink coffee, go to work. Drop in any Tuesday.",
         imageSrc: '/static/bible-reading.jpg',

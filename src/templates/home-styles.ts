@@ -3069,13 +3069,42 @@ export const homeStyles = (): string => `
                 }
             }
 
-            .section-card.visit-map-card {
-                padding: 0;
-                overflow: hidden;
+            /* /visit Find Us — editorial 7fr/5fr split (v1.62.30).
+               Map left, info column right, both flush on the warm-
+               cream page surface (no .section-card box — same flush
+               vocabulary the rest of the subpages adopted in
+               v1.62.27). Replaces the previous full-width "section-
+               card wrapped iframe" which read as a Google-Maps widget
+               dropped into the page with no warmth.
+
+               Info column carries the editorial prose ("tucked along
+               Wildwood Street...") + practical anti-anxiety detail
+               (parking, front-door-on-the-lot, 9 AM Sundays) + the
+               two directions buttons. Vertically centers against the
+               map row so a shorter info block on a tall map reads as
+               anchored rather than orphaned top-left.
+
+               Mobile collapses to a single column: map first (16:9
+               banner so it doesn't dominate phone height), then the
+               info column below — same pattern as the rest of the
+               site's image/text splits. */
+            .visit-location-split {
+                display: grid;
+                grid-template-columns: 7fr 5fr;
+                gap: var(--space-2xl);
+                align-items: center;
+                margin-top: var(--space-xl);
             }
             .visit-map-frame {
                 width: 100%;
-                aspect-ratio: 16 / 10;
+                /* 4/3 desktop aspect gives a generous map without
+                   dominating the row. Caps at 520px so on very wide
+                   pages the map doesn't drift to oversized. */
+                aspect-ratio: 4 / 3;
+                max-height: 520px;
+                border-radius: var(--radius-xl);
+                overflow: hidden;
+                box-shadow: var(--shadow-md);
                 background: linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, var(--text-primary-hairline) 100%),
                             linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
             }
@@ -3085,20 +3114,57 @@ export const homeStyles = (): string => `
                 border: 0;
                 display: block;
             }
+            .visit-location-meta {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+            .visit-location-lede {
+                font-family: var(--font-display);
+                font-size: var(--text-lead);
+                font-weight: var(--weight-semibold);
+                line-height: var(--leading-snug);
+                color: var(--text-primary);
+                letter-spacing: var(--tracking-tight);
+                margin: 0;
+                max-width: 24ch;
+            }
+            .visit-location-detail {
+                font-size: var(--text-body);
+                line-height: var(--leading-loose);
+                color: var(--text-primary-muted);
+                margin: 0;
+                max-width: 38ch;
+            }
             .visit-actions {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 12px;
-                justify-content: center;
-                padding: var(--space-lg);
+                margin-top: var(--space-md);
             }
             .visit-actions .event-link-btn {
                 width: auto;
                 padding: 14px 32px;
             }
             @media (max-width: 960px) {
+                .visit-location-split {
+                    grid-template-columns: 1fr;
+                    gap: var(--space-lg);
+                    margin-top: var(--space-md);
+                }
                 .visit-map-frame {
-                    aspect-ratio: 4 / 3;
+                    aspect-ratio: 16 / 9;
+                    max-height: none;
+                    border-radius: var(--radius-lg);
+                }
+                .visit-location-lede {
+                    max-width: none;
+                }
+                .visit-location-detail {
+                    max-width: none;
+                }
+                .visit-actions {
+                    margin-top: var(--space-sm);
                 }
             }
 

@@ -148,13 +148,17 @@ export const visitBody = (): string => `
                 <section id="location">
                     <span class="section-eyebrow">Find Us</span>
                     <h2 class="section-heading">3080 Wildwood St · Boise, Idaho</h2>
-                    <div class="section-card visit-map-card">
+                    <div class="visit-location-split">
                         <div class="visit-map-frame">
                             <iframe class="visit-map" src="${MAP_EMBED}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map of Morning Star Christian Church at 3080 Wildwood St, Boise, Idaho"></iframe>
                         </div>
-                        <div class="visit-actions">
-                            <a class="event-link-btn visit-cta-primary" href="${GOOGLE_DIRECTIONS}" target="_blank" rel="noopener">Get Directions</a>
-                            <a class="event-link-btn event-link-btn-secondary visit-cta-secondary" href="${APPLE_DIRECTIONS}" target="_blank" rel="noopener">Open in Apple Maps</a>
+                        <div class="visit-location-meta">
+                            <p class="visit-location-lede">Tucked along Wildwood Street in West Boise, just off Ustick Road.</p>
+                            <p class="visit-location-detail">Free parking right next to the building — the front doors open onto the lot, so there’s no walking around the block to find the entrance. Sundays at <strong>9:00 AM</strong>, every week.</p>
+                            <div class="visit-actions">
+                                <a class="event-link-btn visit-cta-primary" href="${GOOGLE_DIRECTIONS}" target="_blank" rel="noopener">Get Directions</a>
+                                <a class="event-link-btn event-link-btn-secondary visit-cta-secondary" href="${APPLE_DIRECTIONS}" target="_blank" rel="noopener">Open in Apple Maps</a>
+                            </div>
                         </div>
                     </div>
                 </section>

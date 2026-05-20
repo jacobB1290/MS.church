@@ -23,6 +23,10 @@ export const outreachBody = (): string => `
                     <span class="section-eyebrow">Outreach</span>
                     <h1 class="section-heading">How we serve Boise.</h1>
                     <p class="subpage-intro-lead">Faith without works is dead. Here’s how Morning Star puts love into action — through monthly community service and seasonal events open to anyone in the city.</p>
+                    <nav class="subpage-jump" aria-label="Jump to a section">
+                        <a href="#events">Events</a>
+                        <a href="#meals-hospitality">Meals &amp; Hospitality</a>
+                    </nav>
                     <div class="boise-map boise-map-mobile" role="img" aria-label="Stylized top-down map of Boise with three outreach locations linked by a moving light trail.">
                         <svg viewBox="0 0 600 340" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                             <defs>

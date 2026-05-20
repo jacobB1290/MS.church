@@ -1228,6 +1228,65 @@ export const homeStyles = (): string => `
             .subpage-final-cta .subpage-cta-row {
                 margin-top: 0;
             }
+
+            /* ---- .subpage-jump — inline TOC chips under the lede ----
+               Editorial section break: hairline rule above + small-caps
+               anchor chips below. Used on every subpage that has more
+               than one named section so a reader can survey what's on
+               the page before scrolling. Underline uses transform:
+               scaleX(0)→1 with transform-origin: left so the GPU
+               compositor handles the animation — no per-frame layout,
+               no offset drift, identical width to the text glyph by
+               glyph. Clicks defer to subpage-header.ts's
+               __smoothScrollToHash so each jump animates with the
+               75/90px nav offset (CLAUDE.md #10 motion preference). */
+            .subpage-jump {
+                display: flex;
+                flex-wrap: wrap;
+                gap: var(--space-md) var(--space-lg);
+                margin-top: var(--space-md);
+                padding-top: var(--space-md);
+                border-top: 1px solid var(--text-primary-hairline);
+            }
+            .subpage-jump a {
+                font-family: var(--font-body);
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-semibold);
+                letter-spacing: var(--tracking-wider);
+                text-transform: uppercase;
+                color: var(--text-primary-muted);
+                text-decoration: none;
+                position: relative;
+                padding: 4px 0;
+                transition: color var(--motion-medium) var(--ease-out-soft);
+            }
+            .subpage-jump a::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: 1px;
+                background: var(--gold);
+                transform: scaleX(0);
+                transform-origin: left center;
+                transition: transform var(--motion-medium) var(--ease-out-soft);
+            }
+            .subpage-jump a:hover,
+            .subpage-jump a:focus-visible {
+                color: var(--gold-dark);
+            }
+            .subpage-jump a:hover::after,
+            .subpage-jump a:focus-visible::after {
+                transform: scaleX(1);
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .subpage-jump a,
+                .subpage-jump a::after {
+                    transition: none;
+                }
+            }
+
             @media (max-width: 960px) {
                 .subpage-intro-lead {
                     font-size: clamp(17px, 4.6vw, 19px);
@@ -1235,6 +1294,11 @@ export const homeStyles = (): string => `
                 }
                 .subpage-final-cta-lead {
                     font-size: var(--text-body);
+                }
+                .subpage-jump {
+                    gap: var(--space-sm) var(--space-md);
+                    margin-top: var(--space-sm);
+                    padding-top: var(--space-sm);
                 }
             }
 

@@ -66,7 +66,7 @@ const BELIEFS: Belief[] = [
   {
     title: 'Human Sexuality and Marriage',
     text:
-      "We believe God's plan for human sexuality is to be expressed only within the context of marriage, that God created man and woman as unique biological persons made to complete each other. God instituted monogamous marriage between male and female as the foundation of the family and the basic structure of human society. For this reason, we believe that marriage is exclusively the union of one genetic male and one genetic female.",
+      'We believe God’s plan for human sexuality is to be expressed only within the context of marriage, that God created man and woman as unique biological persons made to complete each other. God instituted monogamous marriage between male and female as the foundation of the family and the basic structure of human society. For this reason, we believe that marriage is exclusively the union of one genetic male and one genetic female.',
     refs: 'Genesis 2:24 · Matthew 19:5–6 · Mark 10:6–9 · Romans 1:26–27 · 1 Corinthians 6:9',
   },
   {

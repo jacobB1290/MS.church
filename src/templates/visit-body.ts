@@ -128,6 +128,12 @@ export const visitBody = (): string => `
                     <span class="section-eyebrow">Plan Your Visit</span>
                     <h1 class="section-heading">We can’t wait to meet you.</h1>
                     <p class="subpage-intro-lead">Here’s everything you need to know before Sunday &mdash; where we are, what an hour at Morning Star looks like, and what happens after the closing song.</p>
+                    <nav class="subpage-jump" aria-label="Jump to a section">
+                        <a href="#location">Find Us</a>
+                        <a href="#what-to-expect">What to Expect</a>
+                        <a href="#before-you-come">Before You Come</a>
+                        <a href="#visit-cta">Contact</a>
+                    </nav>
                     <div class="handshake" role="img" aria-label="Two hands meeting in a handshake.">
                         <svg viewBox="0 38 254 180" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                             <g class="handshake-art" fill="none" stroke-linecap="round" stroke-linejoin="round">

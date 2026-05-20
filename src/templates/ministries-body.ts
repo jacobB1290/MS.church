@@ -1322,65 +1322,12 @@ export const ministriesBody = (): string => `
            jump nav, dateline-styled entry titles, and the intra-
            Discipleship gap tightening. */
 
-        /* 3. Jump nav — five chips, small-caps, gold scale-in underline
-           on hover. A 1px hairline rule above the chips visually closes
-           the intro block (eyebrow + heading + lede) and opens the
-           navigation row — editorial section break.
+        /* 3. Jump nav graduated into the shared .subpage-jump primitive
+           in home-styles.ts (v1.62.28) so /about, /beliefs, /visit, and
+           /outreach can opt into the same TOC pattern. Per-page styles
+           kept here only when they need to override the shared rules.
 
-           Underline uses transform: scaleX(0)→1 with transform-origin:
-           left so the GPU compositor handles the animation — no
-           per-frame layout, no offset drift, identical width to the
-           text. (Previous absolute-positioned left/right approach
-           rendered a few pixels wider than the glyph run and crept
-           visibly during the transition.) */
-        .ministries-jump {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-md) var(--space-lg);
-            margin-top: var(--space-md);
-            padding-top: var(--space-md);
-            border-top: 1px solid var(--text-primary-hairline);
-        }
-        .ministries-jump a {
-            font-family: var(--font-body);
-            font-size: var(--text-eyebrow);
-            font-weight: var(--weight-semibold);
-            letter-spacing: var(--tracking-wider);
-            text-transform: uppercase;
-            color: var(--text-primary-muted);
-            text-decoration: none;
-            position: relative;
-            padding: 4px 0;
-            transition: color var(--motion-medium) var(--ease-out-soft);
-        }
-        .ministries-jump a::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 1px;
-            background: var(--gold);
-            transform: scaleX(0);
-            transform-origin: left center;
-            transition: transform var(--motion-medium) var(--ease-out-soft);
-        }
-        .ministries-jump a:hover,
-        .ministries-jump a:focus-visible {
-            color: var(--gold-dark);
-        }
-        .ministries-jump a:hover::after,
-        .ministries-jump a:focus-visible::after {
-            transform: scaleX(1);
-        }
-        @media (prefers-reduced-motion: reduce) {
-            .ministries-jump a,
-            .ministries-jump a::after {
-                transition: none;
-            }
-        }
-
-        /* 4. Entry titles read as DATELINES, not as competing H3s.
+           4. Entry titles read as DATELINES, not as competing H3s.
            The .ministry-title class is reused on /home (Sunday School)
            and other pages so we scope to .ministry-section / its
            descendants here only. Smaller, lighter, italic — magazine
@@ -1411,19 +1358,8 @@ export const ministriesBody = (): string => `
             gap: var(--space-2xl);
         }
 
-        /* Mobile overrides — keep the jump nav scannable. The lede
-           and final-cta mobile rules now live in home-styles.ts
-           alongside their desktop counterparts (v1.62.27). */
-        @media (max-width: 960px) {
-            .ministries-jump {
-                gap: var(--space-sm) var(--space-md);
-                margin-top: var(--space-sm);
-                padding-top: var(--space-sm);
-            }
-            .ministries-jump a {
-                font-size: var(--text-eyebrow);
-            }
-        }
+        /* Mobile + reduced-motion overrides for the shared subpage
+           primitives moved into home-styles.ts in v1.62.27–28. */
     </style>
     <body>
         <div class="page">
@@ -1434,7 +1370,7 @@ export const ministriesBody = (): string => `
                     <span class="section-eyebrow">Ministries</span>
                     <h1 class="section-heading">How we live out <em class="motto">Mending the Broken</em> week to week.</h1>
                     <p class="subpage-intro-lead">Worship, discipleship, fellowship, and walking with the next generation — the rhythms that keep us together between Sundays. Anyone is welcome at any of these. Drop in, ask questions, or just come see what it looks like.</p>
-                    <nav class="ministries-jump" aria-label="Jump to a ministry">
+                    <nav class="subpage-jump" aria-label="Jump to a ministry">
                         <a href="#worship">Worship</a>
                         <a href="#kids">Kids</a>
                         <a href="#discipleship">Discipleship</a>

@@ -63,9 +63,21 @@ type Entry = {
   /** Day + time + location, rendered as <h3>. Pass HTML so address pills work. */
   titleHtml: string
   description: string
+  /** Utility info tips. Used when the ministry has scannable logistics
+   *  (Worship's first-visit details, Kids' drop-off info, Activity Day's
+   *  what-to-bring). When the section reads better as prose, leave this
+   *  empty and put the equivalent info into `description` (Bible Reading,
+   *  Bible Study, Youth Service take that path — five tip-tables in a row
+   *  flattens the editorial voice). */
   tips: Tip[]
-  ctaLabel: string
-  ctaHref: string
+  /** Optional contextual CTA — a link that takes the reader to a DIFFERENT
+   *  page that meaningfully extends the section (Worship → /visit, Youth
+   *  → /about). Skipped for entries whose only CTA target was the closing
+   *  Contact card — repeating "Ask about X → /#contact" five times under
+   *  five ministries became visual noise. The page's single closing CTA
+   *  carries that load. */
+  ctaLabel?: string
+  ctaHref?: string
   /** Optional secondary action — same .ministry-link styling, rendered on a
    *  second line below the primary CTA. Use for entries that benefit from a
    *  second context-shift link (e.g. Youth → "Read about our church" for
@@ -157,7 +169,7 @@ const SECTIONS: Section[] = [
         eyebrow: 'Sunday Gatherings',
         titleHtml: `Sundays · 9:00 AM at ${churchAddressPill()}`,
         description:
-          "Our weekly worship service runs about an hour: a brief welcome, two opening songs, the teaching, a closing prayer — followed by a free community breakfast for everyone who stays. Songs are on the screen, lyrics included, sing along or just listen. The teaching stays grounded in scripture and runs about 25–30 minutes. New here? Pick any back row and walk in any week — there's no signup and no expectation that you'll know what to do.",
+          "Our weekly worship service runs about an hour: a brief welcome, two opening songs, the teaching, a closing prayer — followed by a free community breakfast for everyone who stays. Songs are on the screen, lyrics included, sing along or just listen. The teaching stays grounded in scripture and runs about 25–30 minutes. New here? Pick any back row and walk in any week — there’s no signup and no expectation that you’ll know what to do.",
         tips: [
           { label: 'What to wear', value: "No strict dress code beyond being modest. Most folks land on the casual side — jeans and a shirt are completely fine — and you will see plenty of people dressed more formally too. Both fit in." },
           { label: 'Where to park', value: 'Parking is right next to the building. You will see the lot as soon as you pull up — free, no permit needed.' },
@@ -181,16 +193,14 @@ const SECTIONS: Section[] = [
         eyebrow: 'Sunday School',
         titleHtml: `Sundays · During the 9 AM service at ${churchAddressPill('the church')}`,
         description:
-          "Children's Sunday School runs in a separate room during the main service, so families can worship together at the start and kids can dive into scripture at their level when it is time. Safe, warm, joyful — and drop-off is welcome any Sunday. Our team is the same set of trusted faces every week so kids know who they are with.",
+          "Children’s Sunday School runs in a separate room during the main service, so families can worship together at the start and kids can dive into scripture at their level when it is time. Safe, warm, joyful — and drop-off is welcome any Sunday. Our team is the same set of trusted faces every week so kids know who they are with.",
         tips: [
           { label: 'Ages', value: 'Preschool through about 5th grade. Older kids usually stay in the service with their family.' },
-          { label: 'When they leave', value: "Kids head to the classroom after the two opening worship songs. We'll point you to the room before the service starts." },
+          { label: 'When they leave', value: "Kids head to the classroom after the two opening worship songs. We’ll point you to the room before the service starts." },
           { label: 'Drop-off', value: 'Walk your child to the classroom door — no signup form, no waiver, no ID required.' },
           { label: 'What they do', value: 'Bible storyline lesson + activity at their level. Snacks happen.' },
           { label: 'Pick-up', value: 'Pick up at the classroom right after the closing song. Stay for breakfast either way.' },
         ],
-        ctaLabel: 'Ask about Sunday School',
-        ctaHref: '/#contact',
       },
     ],
   },
@@ -208,8 +218,16 @@ const SECTIONS: Section[] = [
         id: 'bible-reading',
         eyebrow: 'Bible Reading',
         titleHtml: `Tuesdays · 8:30 AM at ${caffeinaPill()}`,
+        // Tip table preserved (was briefly converted to prose in v1.62.25
+        // for editorial variation, but the per-ministry tips serve as an
+        // anti-anxiety device — scannable labels answer the specific
+        // "what do I wear / bring / do if I'm late" concerns that stop
+        // first-timers from showing up. Burying that in prose forces
+        // anxious readers to scan whole paragraphs for the answers they
+        // came for. Keep the dl format for that scannability everywhere
+        // it carries first-visit info).
         description:
-          "A morning Bible reading at a coffee shop on State Street. Casual, no curriculum — we read a passage, talk about it, drink coffee, go to work. Drop in any Tuesday.",
+          'A morning Bible reading at a coffee shop on State Street. Casual, no curriculum — we read a passage, talk about it, drink coffee, go to work. Drop in any Tuesday.',
         imageSrc: '/static/bible-reading.jpg',
         imageAlt: 'Morning Star Christian Church Tuesday Bible reading at a Boise coffee shop — open Bibles, coffee mugs, and a small group reading scripture together over coffee.',
         // Source: 1200×1500 portrait. Table + Bibles + mugs sit in the bottom
@@ -223,28 +241,30 @@ const SECTIONS: Section[] = [
         // preserving the cafe ceiling lights / wall sign for context.
         imagePositionDesktop: 'center 55%',
         tips: [
-          { label: 'Where', value: 'Caffeina State Street — tap the address above for directions.' },
-          { label: 'What to order', value: 'Whatever you want; the coffee shop is just our meeting spot. We are not buying for the group.' },
-          { label: 'Bring', value: 'A Bible or the Bible app on your phone. Both fine.' },
-          { label: 'Finding the group', value: 'Look for 4–6 people at a table. Wave at any of us — we will pull up another chair.' },
+          { label: 'Bring', value: 'A Bible, or open the Bible app on your phone. Both fine.' },
+          { label: 'What to order', value: 'Whatever you want — the coffee shop is just our meeting spot, not catering for the group.' },
+          { label: 'Finding the group', value: 'Look for 4–6 people at a table. Wave at any of us; we will pull up another chair.' },
         ],
-        ctaLabel: 'Ask about Bible Reading',
-        ctaHref: '/#contact',
       },
       {
         id: 'bible-study',
         eyebrow: 'Bible Study',
         titleHtml: `Thursdays · 6:00 PM at ${churchAddressPill('the church')}`,
+        // Tip table preserved for the anti-anxiety scannability reason
+        // documented on Bible Reading above. Trimmed from 4 to 3 by
+        // dropping the original "Coffee" row — free-coffee-on-the-counter
+        // is nice-to-know, not a top first-visit anxiety. The remaining
+        // three (Bring / Late / First time) each map directly to a
+        // common gate ("do I need to know anything?", "what if I'm
+        // late?", "what happens when I walk in alone?") that stops
+        // newcomers from showing up.
         description:
-          "A 45-minute evening Bible study at the church with free coffee. Open discussion, gospel-grounded, paced so newcomers and longtime members can both engage. Whoever is leading that week opens a passage, asks questions, and we go from there. Honest questions are encouraged — there is no \"too basic\" or \"too hard.\"",
+          'A 45-minute evening Bible study at the church with free coffee. Open discussion, gospel-grounded, paced so newcomers and longtime members can both engage. Whoever is leading that week opens a passage, asks questions, and we go from there. Honest questions are encouraged — there is no “too basic” or “too hard.”',
         tips: [
-          { label: 'What to bring', value: 'A Bible if you have one — we have extras on the back table.' },
-          { label: 'Coffee', value: 'Free and on the counter. Grab a cup whenever.' },
+          { label: 'Bring', value: 'A Bible if you have one — we keep extras on the back table.' },
           { label: 'If you arrive late', value: 'Walk in and grab a chair. We do not pause the discussion for new arrivals; it just keeps going.' },
           { label: 'First time', value: 'Tell whoever greets you it is your first time and they will get you settled.' },
         ],
-        ctaLabel: 'Ask about Bible Study',
-        ctaHref: '/#contact',
       },
     ],
   },
@@ -278,8 +298,6 @@ const SECTIONS: Section[] = [
           { label: 'Who comes', value: 'All ages, from kids through retirees. Beginners welcome at both gym and crochet.' },
           { label: 'Drop-in', value: 'Walk in any week — no signup, no fee.' },
         ],
-        ctaLabel: 'Ask about Activity Day',
-        ctaHref: '/#contact',
       },
     ],
   },
@@ -310,6 +328,13 @@ const SECTIONS: Section[] = [
         id: 'youth-service',
         eyebrow: 'Youth Service',
         titleHtml: `Fridays · 7:00 PM at ${churchAddressPill('the church')}`,
+        // Tip table preserved for the anti-anxiety scannability reason
+        // documented on Bible Reading above. All three rows map to top
+        // first-visit anxieties — "am I the right age?", "what do I
+        // wear?", "what happens if I walk in alone the first time?".
+        // The dress-code beat is intentionally long here because youth
+        // dress code is one of the highest-anxiety questions for a
+        // first-time teen.
         description:
           'A weekly service for high schoolers and older — worship, teaching, and time to actually talk to each other. About an hour, with fellowship after.',
         tips: [
@@ -317,16 +342,22 @@ const SECTIONS: Section[] = [
           { label: 'What to wear', value: 'No strict dress code beyond being modest. Expect a range — most land somewhere above everyday casual and below full formal, with plenty leaning toward the dressier end of that. Folks who come more dressed up usually bring a change of clothes for fellowship time after.' },
           { label: 'First time', value: 'Walk in, grab a seat — someone will spot you and pull you in. Worship, a short message, fellowship after.' },
         ],
-        ctaLabel: 'Ask about Youth Service',
-        ctaHref: '/#contact',
-        secondaryCtaLabel: 'Read about our church',
-        secondaryCtaHref: '/about',
+        // Primary CTA is the contextual /about link (the original
+        // "Ask about Youth Service" → /#contact was dropped along with
+        // every other redundant ask-about CTA; the closing Contact card
+        // carries that load).
+        ctaLabel: 'Read about our church',
+        ctaHref: '/about',
       },
     ],
   },
 ]
 
 function renderTips(tips: Tip[]): string {
+  // Prose-only entries (Bible Reading, Bible Study, Youth Service) pass an
+  // empty tips array — render nothing rather than an empty <dl> shell so
+  // the description prose ends the entry cleanly with no orphan rule.
+  if (tips.length === 0) return ''
   const rows = tips
     .map((t) => `<div><dt>${t.label}</dt><dd>${t.value}</dd></div>`)
     .join('\n                                ')
@@ -340,6 +371,12 @@ function renderEntryLinks(e: Entry): string {
   // (gold arrow link). The secondary sits on its own line below the primary
   // so the visual rhythm reads "primary action, alternate path" rather than
   // two competing peers on one line.
+  //
+  // Both are optional now: every "Ask about X → /#contact" link was dropped
+  // (the page's closing CTA covers that load) so the only entries that emit
+  // a primary link are the two with contextual cross-page targets — Worship
+  // → /visit and Youth → /about. Entries with no CTA render nothing.
+  if (!e.ctaHref || !e.ctaLabel) return ''
   const secondary = e.secondaryCtaHref && e.secondaryCtaLabel
     ? `\n                            <a href="${e.secondaryCtaHref}" class="ministry-link ministry-link--secondary">${e.secondaryCtaLabel} &rarr;</a>`
     : ''
@@ -1244,6 +1281,187 @@ export const ministriesBody = (): string => `
                 white-space: normal;
             }
         }
+
+        /* ============================================================
+           EDITORIAL POLISH PASS — v1.62.25
+           Treats /ministries as an editorial spread rather than a list
+           of identical section cards. Six moves, all additive on top of
+           the existing layout:
+
+           1. Intro heading: italicize "Mending the Broken" (no quotes),
+              treating it as a stated motto rather than a quoted phrase.
+              Pairs with --weight-regular italic in the display family
+              so the phrase reads as set-into the sentence.
+           2. Intro lead: bump to a true editorial lede — larger, slower,
+              more saturated than .section-lead's default body-muted tone.
+           3. Jump nav (.ministries-jump): five small-caps anchor chips
+              under the intro lede so a 6,900-px page is navigable from
+              the top. Editorial AND functional.
+           4. Entry "datelines" (.ministry-title in single-entry context):
+              demote from a competing h3 to a refined supporting line —
+              same family, lighter weight, smaller, italicized. The
+              Sundays · 9 AM · address line now reads as the entry's
+              context-stamp, not as a second heading stacked under the
+              section h2.
+           5. Discipleship intra-pair gap: tighten from --space-3xl to
+              --space-2xl so Bible Reading + Bible Study read as one
+              paired group rather than two unrelated sections.
+           6. Final CTA: drop the white .section-card box; let the
+              eyebrow + heading + lead + button sit flush on the warm-
+              cream page surface like every other section. The closing
+              note reads as the page's last paragraph, not an "ad block".
+           ============================================================ */
+
+        /* 1. Intro heading — italic motto. The display family's italic
+           cut (Playfair) is genuinely calligraphic; setting the motto in
+           italic + drop the straight ASCII quotes preserves the editorial
+           voice while removing the ' typewriter quote tell. */
+        .ministries-intro-heading em {
+            font-style: italic;
+            /* Slight letter-spacing relief — italics read tighter than
+               roman at large sizes, so a hair of tracking restores
+               optical evenness. */
+            letter-spacing: 0;
+        }
+
+        /* 2. Intro lede — promoted body. .section-lead's default is
+           --text-lead size + --text-primary-muted (.72 alpha), tuned for
+           secondary leads on /home and /visit. On /ministries the intro
+           paragraph IS the page lede; bumping size and saturation gives
+           it the weight a lede needs without changing the structural
+           class for everyone else. */
+        .ministries-intro-lead {
+            font-family: var(--font-body);
+            font-size: clamp(18px, 1.5vw, 22px);
+            line-height: var(--leading-loose);
+            color: var(--text-primary-soft);
+            max-width: 60ch;
+            margin: 0 0 var(--space-xl);
+        }
+
+        /* 3. Jump nav — five chips, small-caps, gold underline on hover.
+           Sits under the lede as a tight inline TOC. */
+        .ministries-jump {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-md) var(--space-lg);
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--text-primary-hairline);
+        }
+        .ministries-jump a {
+            font-family: var(--font-body);
+            font-size: var(--text-eyebrow);
+            font-weight: var(--weight-semibold);
+            letter-spacing: var(--tracking-wider);
+            text-transform: uppercase;
+            color: var(--text-primary-muted);
+            text-decoration: none;
+            position: relative;
+            padding: 4px 0;
+            transition: color var(--motion-fast) var(--ease-standard);
+        }
+        .ministries-jump a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 100%;
+            bottom: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: right var(--motion-medium) var(--ease-out-soft);
+        }
+        .ministries-jump a:hover,
+        .ministries-jump a:focus-visible {
+            color: var(--gold-dark);
+        }
+        .ministries-jump a:hover::after,
+        .ministries-jump a:focus-visible::after {
+            right: 0;
+        }
+
+        /* 4. Entry titles read as DATELINES, not as competing H3s.
+           The .ministry-title class is reused on /home (Sunday School)
+           and other pages so we scope to .ministry-section / its
+           descendants here only. Smaller, lighter, italic — magazine
+           "Tuesdays · 8:30 AM at Caffeina" context line. */
+        .ministry-section .ministry-title,
+        .ministry-section--kids .sunday-school-text > .ministry-title {
+            font-family: var(--font-display);
+            font-size: var(--text-lead);
+            font-weight: var(--weight-semibold);
+            font-style: normal;
+            line-height: var(--leading-snug);
+            letter-spacing: var(--tracking-tight);
+            color: var(--text-primary);
+            margin: 0 0 var(--space-xs);
+        }
+        /* The italic-display "·" interpunct + address pill inside the
+           dateline both inherit the new size — make sure the pill's
+           underline still reads at the smaller scale. */
+        .ministry-section .ministry-title .ministry-address-trigger {
+            border-bottom-width: 1px;
+        }
+
+        /* 5. Discipleship two-entry gap: tighter so the pair reads as
+           one group, not as two unrelated sections. Targets the
+           .ministry-section--multi container that already wraps
+           multi-entry sections (currently only Discipleship). */
+        .ministry-section--multi .ministry-section-pairs {
+            gap: var(--space-2xl);
+        }
+
+        /* 6. Final CTA without the white .section-card box. Content
+           sits directly on the page surface — same vocabulary as every
+           other section above it. The eyebrow + heading already
+           introduce the closing note; the lead-paragraph + Contact Us
+           button finish it. Flex column so .teaser-cta's
+           align-self: start actually applies and the gold pill stays
+           intrinsically sized instead of stretching to full row width
+           (the .event-link-btn base width: 100% would otherwise win
+           outside a flex parent). */
+        .ministries-final-cta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            /* Slightly more room above so the close feels deliberate
+               rather than abrupt. Other ministry sections use
+               --space-3xl bottom margin; this one's room comes from the
+               margin-top here PLUS the previous section's bottom margin
+               collapsing. */
+            margin-top: var(--space-2xl);
+        }
+        .ministries-final-cta-lead {
+            font-family: var(--font-body);
+            font-size: var(--text-lead);
+            line-height: var(--leading-loose);
+            color: var(--text-primary-soft);
+            max-width: 60ch;
+            margin: var(--space-md) 0 var(--space-lg);
+        }
+        .ministries-final-cta .event-link-btn.teaser-cta {
+            margin-top: 0;
+        }
+
+        /* Mobile overrides — keep the jump nav scannable and the lede
+           appropriately sized for narrower viewports. */
+        @media (max-width: 960px) {
+            .ministries-intro-lead {
+                font-size: clamp(17px, 4.6vw, 19px);
+                margin: 0 0 var(--space-lg);
+            }
+            .ministries-jump {
+                gap: var(--space-sm) var(--space-md);
+                margin-top: var(--space-sm);
+                padding-top: var(--space-sm);
+            }
+            .ministries-jump a {
+                font-size: var(--text-eyebrow);
+            }
+            .ministries-final-cta-lead {
+                font-size: var(--text-body);
+            }
+        }
     </style>
     <body>
         <div class="page">
@@ -1252,19 +1470,24 @@ export const ministriesBody = (): string => `
             <main>
                 <section id="ministries-intro">
                     <span class="section-eyebrow">Ministries</span>
-                    <h1 class="section-heading">How we live out 'Mending the Broken' week to week.</h1>
-                    <p class="section-lead">Worship, discipleship, fellowship, and walking with the next generation — the rhythms that keep us together between Sundays. Anyone is welcome at any of these. Drop in, ask questions, or just come see what it looks like.</p>
+                    <h1 class="section-heading ministries-intro-heading">How we live out <em>Mending the Broken</em> week to week.</h1>
+                    <p class="ministries-intro-lead">Worship, discipleship, fellowship, and walking with the next generation — the rhythms that keep us together between Sundays. Anyone is welcome at any of these. Drop in, ask questions, or just come see what it looks like.</p>
+                    <nav class="ministries-jump" aria-label="Jump to a ministry">
+                        <a href="#worship">Worship</a>
+                        <a href="#kids">Kids</a>
+                        <a href="#discipleship">Discipleship</a>
+                        <a href="#fellowship">Fellowship</a>
+                        <a href="#youth">Youth</a>
+                    </nav>
                 </section>
 
                 ${sectionsHtml}
 
-                <section id="ministries-cta">
+                <section id="ministries-cta" class="ministries-final-cta">
                     <span class="section-eyebrow">Questions?</span>
                     <h2 class="section-heading">Want to know more about any of these?</h2>
-                    <div class="section-card visit-final-cta">
-                        <p class="section-lead">Reach out and we'll point you to the right person — whether it's a Tuesday morning coffee at Caffeina, a Wednesday open gym, or just figuring out what Sunday morning will be like for your family.</p>
-                        <a class="event-link-btn teaser-cta" href="/#contact">Contact Us</a>
-                    </div>
+                    <p class="ministries-final-cta-lead">Reach out and we’ll point you to the right person — whether it’s a Tuesday morning coffee at Caffeina, a Wednesday open gym, or just figuring out what Sunday morning will be like for your family.</p>
+                    <a class="event-link-btn teaser-cta" href="/#contact">Contact Us</a>
                 </section>
             </main>
 

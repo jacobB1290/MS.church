@@ -45,6 +45,14 @@ type Entry = {
   tips: Tip[]
   ctaLabel: string
   ctaHref: string
+  /** Optional image for multi-entry sections (renderEntryPair). Path to a JPG;
+   *  AVIF + WebP siblings are auto-derived. Without this, the entry renders
+   *  with the placeholder SVG. */
+  imageSrc?: string
+  imageAlt?: string
+  /** object-position values applied to the entry-pair image. */
+  imagePosition?: string
+  imagePositionDesktop?: string
 }
 
 type Section = {
@@ -143,6 +151,18 @@ const SECTIONS: Section[] = [
         titleHtml: `Tuesdays · 8:30 AM at ${caffienaLink}`,
         description:
           "A morning Bible reading at a coffee shop on State Street. Casual, no curriculum — we read a passage, talk about it, drink coffee, go to work. Drop in any Tuesday.",
+        imageSrc: '/static/bible-reading.jpg',
+        imageAlt: 'Morning Star Christian Church Tuesday Bible reading at a Boise coffee shop — open Bibles, coffee mugs, and a small group reading scripture together over coffee.',
+        // Source: 1200×1500 portrait. Table + Bibles + mugs sit in the bottom
+        // ~30% of the frame (cafe ceiling and interior fill the top two-thirds).
+        // Mobile entry-pair image (landscape banner crop) needs to bias DOWN
+        // so the table is in the visible window — Y=75% centers the crop on
+        // the table-and-bibles zone, matching the user-provided reference.
+        imagePosition: 'center 75%',
+        // Desktop entry-pair image (near-square container) has more vertical
+        // room. Y=55% biases slightly down so the table is dominant while
+        // preserving the cafe ceiling lights / wall sign for context.
+        imagePositionDesktop: 'center 55%',
         tips: [
           { label: 'Where', value: 'Caffiena State Street — tap the address above for directions.' },
           { label: 'What to order', value: 'Whatever you want; the coffee shop is just our meeting spot. We are not buying for the group.' },
@@ -253,10 +273,29 @@ function renderEntry(e: Entry): string {
 }
 
 function renderEntryPair(e: Entry, side: 'left' | 'right'): string {
-  return `<article class="ministry-entry-pair ministry-entry-pair--${side}" id="${e.id}">
-                        <div class="ministry-entry-image ministries-image-placeholder" aria-hidden="true">
+  let imgBlock: string
+  if (!e.imageSrc) {
+    imgBlock = `<div class="ministry-entry-image ministries-image-placeholder" aria-hidden="true">
                             ${PLACEHOLDER_SVG}
-                        </div>
+                        </div>`
+  } else {
+    const cssVars: string[] = []
+    if (e.imagePosition) cssVars.push(`--img-pos: ${e.imagePosition}`)
+    if (e.imagePositionDesktop) cssVars.push(`--img-pos-desktop: ${e.imagePositionDesktop}`)
+    const styleAttr = cssVars.length ? ` style="${cssVars.join('; ')};"` : ''
+    const [path, query] = e.imageSrc.split('?')
+    const q = query ? `?${query}` : ''
+    const base = path.replace(/\.jpe?g$/i, '')
+    imgBlock = `<div class="ministry-entry-image"${styleAttr}>
+                            <picture>
+                                <source type="image/avif" srcset="${base}.avif${q}">
+                                <source type="image/webp" srcset="${base}.webp${q}">
+                                <img src="${e.imageSrc}" alt="${e.imageAlt ?? ''}" loading="lazy" decoding="async">
+                            </picture>
+                        </div>`
+  }
+  return `<article class="ministry-entry-pair ministry-entry-pair--${side}" id="${e.id}">
+                        ${imgBlock}
                         <div class="ministry-entry-content">
                             <span class="ministry-eyebrow">${e.eyebrow}</span>
                             <h3 class="ministry-title">${e.titleHtml}</h3>
@@ -582,15 +621,52 @@ export const ministriesBody = (): string => `
             max-height: 620px;
             border-radius: var(--radius-xl);
             overflow: hidden;
+            align-self: stretch;
+            /* position: relative so real-image <picture> children can be
+               absolutely positioned to fill the container (same pattern
+               as .ministry-section-image). The placeholder variant below
+               overrides with grid centering for the SVG. */
+            position: relative;
+        }
+        /* Placeholder variant centers the SVG via grid. Real images use
+           absolute-positioned fill (rules below). */
+        .ministry-entry-image.ministries-image-placeholder {
             display: grid;
             place-items: center;
-            align-self: stretch;
         }
         .ministry-entry-image > svg {
             width: 12%;
             max-width: 96px;
             min-width: 48px;
             height: auto;
+        }
+        /* Real images fill the entry container absolutely — same pattern
+           as the section-level images (object-fit cover + object-position
+           biased via --img-pos / --img-pos-desktop CSS variables). */
+        .ministry-entry-image > img,
+        .ministry-entry-image > picture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .ministry-entry-image > picture > img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .ministry-entry-image > img,
+        .ministry-entry-image > picture > img {
+            object-fit: cover;
+            object-position: var(--img-pos, center);
+        }
+        @media (min-width: 961px) {
+            .ministry-entry-image > img,
+            .ministry-entry-image > picture > img {
+                object-position: var(--img-pos-desktop, var(--img-pos, center));
+            }
         }
         .ministry-entry-content {
             display: flex;

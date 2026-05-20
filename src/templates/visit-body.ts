@@ -39,7 +39,7 @@ const SERVICE_FLOW = [
   { title: 'Teaching', body: 'A sermon from one of our pastors or a discussion-style lesson — we rotate. Either way it stays grounded in scripture and runs about 25–30 minutes.' },
   { title: 'Closing Song', body: 'One more worship song to send us out.' },
   { title: 'Dismissal', body: 'Pastor closes us in prayer — a final blessing before we head into fellowship.' },
-  { title: 'Stay for Breakfast', body: "Right after the closing prayer we head into fellowship time with free breakfast for everyone — guests, members, neighbors, anyone passing through. It's how we end every Sunday: full plates, full hearts, no rush. Free transportation from select shelters available for anyone who needs a ride. <a class=\"schedule-tab-link\" href=\"/outreach#meals-hospitality\">See Community Breakfast &rarr;</a>" },
+  { title: 'Stay for Breakfast', body: "Right after the closing prayer we head into fellowship time with free breakfast for everyone — guests, members, neighbors, anyone passing through. It’s how we end every Sunday: full plates, full hearts, no rush. Free transportation from select shelters available for anyone who needs a ride. <a class=\"schedule-tab-link\" href=\"/outreach#meals-hospitality\">See Community Breakfast &rarr;</a>" },
 ]
 
 const flowItems = SERVICE_FLOW.map(
@@ -126,8 +126,8 @@ export const visitBody = (): string => `
             <main>
                 <section id="visit-intro">
                     <span class="section-eyebrow">Plan Your Visit</span>
-                    <h1 class="section-heading">We can't wait to meet you.</h1>
-                    <p class="section-lead">Here's everything you need to know before Sunday &mdash; where we are, what an hour at Morning Star looks like, and what happens after the closing song.</p>
+                    <h1 class="section-heading">We can’t wait to meet you.</h1>
+                    <p class="subpage-intro-lead">Here’s everything you need to know before Sunday &mdash; where we are, what an hour at Morning Star looks like, and what happens after the closing song.</p>
                     <div class="handshake" role="img" aria-label="Two hands meeting in a handshake.">
                         <svg viewBox="0 38 254 180" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                             <g class="handshake-art" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -156,7 +156,7 @@ export const visitBody = (): string => `
                 <section id="what-to-expect">
                     <span class="section-eyebrow">What to Expect</span>
                     <h2 class="section-heading">A Sunday at Morning Star runs about an hour.</h2>
-                    <p class="section-lead">Same flow every week, so you know what's coming.</p>
+                    <p class="section-lead">Same flow every week, so you know what’s coming.</p>
                     <div class="section-card">
                         <ol class="service-flow">
                                 ${flowItems}
@@ -173,28 +173,26 @@ export const visitBody = (): string => `
                         <article class="ministry-block" id="what-to-wear">
                             <span class="ministry-eyebrow">What to Wear</span>
                             <h3 class="ministry-title">No strict dress code &mdash; come as you are.</h3>
-                            <p class="ministry-text">People land all over the spectrum on Sunday mornings. Most are on the casual side &mdash; jeans and a shirt are completely fine &mdash; and you'll see plenty dressed more formally too. Both fit in. The only ask is that you keep it modest.</p>
+                            <p class="ministry-text">People land all over the spectrum on Sunday mornings. Most are on the casual side &mdash; jeans and a shirt are completely fine &mdash; and you’ll see plenty dressed more formally too. Both fit in. The only ask is that you keep it modest.</p>
                         </article>
                         <article class="ministry-block" id="parking">
                             <span class="ministry-eyebrow">Parking</span>
                             <h3 class="ministry-title">Right next to the building.</h3>
-                            <p class="ministry-text">As soon as you pull up to the church, you'll see the lot. Free, no permit needed, and only a short walk to the front door.</p>
+                            <p class="ministry-text">As soon as you pull up to the church, you’ll see the lot. Free, no permit needed, and only a short walk to the front door.</p>
                         </article>
                         <article class="ministry-block" id="at-the-door">
                             <span class="ministry-eyebrow">At the Door</span>
                             <h3 class="ministry-title">A greeter will meet you.</h3>
-                            <p class="ministry-text">Greeters welcome everyone at the door for the main Sunday service. If you have a question or need a hand finding something &mdash; a seat, the kids' classroom, the bathroom &mdash; they're there to help. No pressure to introduce yourself or sign anything.</p>
+                            <p class="ministry-text">Greeters welcome everyone at the door for the main Sunday service. If you have a question or need a hand finding something &mdash; a seat, the kids’ classroom, the bathroom &mdash; they’re there to help. No pressure to introduce yourself or sign anything.</p>
                         </article>
                     </div>
                 </section>
 
-                <section id="visit-cta">
+                <section id="visit-cta" class="subpage-final-cta">
                     <span class="section-eyebrow">Questions?</span>
-                    <h2 class="section-heading">We'd love to hear from you before Sunday.</h2>
-                    <div class="section-card visit-final-cta">
-                        <p class="section-lead">Curious about what to wear, where to park, whether your kids will be okay, or anything else? Reach out and we'll get you everything you need.</p>
-                        <a class="event-link-btn teaser-cta" href="/#contact">Contact Us</a>
-                    </div>
+                    <h2 class="section-heading">We’d love to hear from you before Sunday.</h2>
+                    <p class="subpage-final-cta-lead">Curious about what to wear, where to park, whether your kids will be okay, or anything else? Reach out and we’ll get you everything you need.</p>
+                    <a class="event-link-btn teaser-cta" href="/#contact">Contact Us</a>
                 </section>
             </main>
 

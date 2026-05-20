@@ -1153,6 +1153,91 @@ export const homeStyles = (): string => `
                 line-height: var(--leading-loose);
             }
 
+            /* ============================================================
+               SHARED SUBPAGE EDITORIAL PRIMITIVES — v1.62.27
+               Three classes any subpage can opt into when it wants the
+               same editorial treatment /ministries got in v1.62.25–26.
+               Keeping them here (instead of per-page inline blocks)
+               means every subpage stays visually consistent and small
+               edits compound across the site.
+
+               1. .subpage-intro-lead — promoted body for the FIRST
+                  paragraph after a subpage's h1. .section-lead's default
+                  treatment is --text-primary-muted (.72 alpha) at
+                  --text-lead size, tuned for secondary leads. On a
+                  subpage intro the first paragraph IS the lede — it
+                  carries the page's voice. Bumped to clamp(18-22px),
+                  --text-primary-soft (.85 alpha), 60ch line-cap so the
+                  ledes on /about, /beliefs, /outreach, /visit,
+                  /ministries all read as ledes, not as captions.
+
+               2. .motto — inline italic gold for stated identity
+                  phrases like "Mending the Broken". Italic Playfair
+                  display cut is calligraphic; gold ties the phrase
+                  into the same accent thread the eyebrows / address
+                  pills / CTA pills carry. Drop ASCII quotes when
+                  applying it — italics convey "this is a stated
+                  motto" by themselves; quotes are redundant chrome.
+
+               3. .subpage-final-cta — flush closing-CTA layout
+                  replacing the inherited .section-card.visit-final-cta
+                  box on every subpage. Card vocabulary was lifted
+                  from /home where it makes sense (a card amid a card-
+                  driven page); on subpages every other section sits
+                  flush on the warm-cream surface and a single closing
+                  card reads as a stray ad block. Flex column with
+                  align-items: flex-start so the gold pill respects
+                  .teaser-cta's intrinsic sizing (.event-link-btn base
+                  width: 100% would otherwise stretch it to full row).
+               ============================================================ */
+            .subpage-intro-lead {
+                font-family: var(--font-body);
+                font-size: clamp(18px, 1.5vw, 22px);
+                line-height: var(--leading-loose);
+                color: var(--text-primary-soft);
+                max-width: 60ch;
+                margin: 0 0 var(--space-xl);
+            }
+            .motto {
+                font-style: italic;
+                color: var(--gold-dark);
+                letter-spacing: 0;
+            }
+            .subpage-final-cta {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                margin-top: var(--space-2xl);
+            }
+            .subpage-final-cta-lead {
+                font-family: var(--font-body);
+                font-size: var(--text-lead);
+                line-height: var(--leading-loose);
+                color: var(--text-primary-soft);
+                max-width: 60ch;
+                margin: var(--space-md) 0 var(--space-lg);
+            }
+            .subpage-final-cta .event-link-btn.teaser-cta {
+                margin-top: 0;
+            }
+            /* CTA row variant — for closing blocks with multiple buttons
+               (/about closes with primary + 2 secondaries). The buttons
+               can still wrap on narrow viewports via .subpage-cta-row
+               which is defined elsewhere; this rule just tightens the
+               row's relationship to the lede above it. */
+            .subpage-final-cta .subpage-cta-row {
+                margin-top: 0;
+            }
+            @media (max-width: 960px) {
+                .subpage-intro-lead {
+                    font-size: clamp(17px, 4.6vw, 19px);
+                    margin: 0 0 var(--space-lg);
+                }
+                .subpage-final-cta-lead {
+                    font-size: var(--text-body);
+                }
+            }
+
             address {
                 font-style: normal;
                 font-size: var(--text-eyebrow);

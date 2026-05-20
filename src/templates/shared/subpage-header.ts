@@ -256,6 +256,30 @@ export function subpageHeader(): string {
                         }
                     }
 
+                    // ----- Smooth-scroll for in-page anchor clicks -----
+                    // Every subpage that includes subpageHeader() gets
+                    // smooth-scroll wiring for free. Uses the
+                    // __smoothScrollToHash helper above (which already
+                    // respects prefers-reduced-motion and applies the
+                    // 75/90px nav offset). External / cross-page links
+                    // (href="/foo#bar", href="https://...") are skipped —
+                    // only same-page hash anchors are intercepted.
+                    // Per project preference (CLAUDE.md #10): every
+                    // anchor jump animates, never instant.
+                    document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+                        a.addEventListener('click', function(e) {
+                            var href = a.getAttribute('href');
+                            if (!href || href === '#' || href.length < 2) return;
+                            var target = document.querySelector(href);
+                            if (!target) return;
+                            e.preventDefault();
+                            window.__smoothScrollToHash(href);
+                            // Reflect the new section in the URL without
+                            // letting the browser do its instant jump.
+                            try { history.replaceState(null, '', location.pathname + location.search + href); } catch (err) {}
+                        });
+                    });
+
                     // Brand: hide on scroll-down, show on scroll-up.
                     // v1.49.26: gate the scroll-hide behind a brief
                     // entrance window so the brand doesn't transition

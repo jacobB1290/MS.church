@@ -1312,43 +1312,20 @@ export const ministriesBody = (): string => `
               note reads as the page's last paragraph, not an "ad block".
            ============================================================ */
 
-        /* 1. Intro heading — italic gold motto. The display family's
-           italic cut (Playfair) is genuinely calligraphic; setting the
-           motto in italic + gold + drop the straight ASCII quotes lifts
-           the phrase visually as a stated identity rather than a
-           parenthetical aside, and reads as the gold accent thread the
-           rest of the page picks up (eyebrows, address pills, CTA pill,
-           jump-nav hover state). */
-        .ministries-intro-heading em {
-            font-style: italic;
-            color: var(--gold-dark);
-            /* Slight letter-spacing relief — italics read tighter than
-               roman at large sizes, so a hair of tracking restores
-               optical evenness. */
-            letter-spacing: 0;
-        }
-
-        /* 2. Intro lede — promoted body. .section-lead's default is
-           --text-lead size + --text-primary-muted (.72 alpha), tuned for
-           secondary leads on /home and /visit. On /ministries the intro
-           paragraph IS the page lede; bumping size and saturation gives
-           it the weight a lede needs without changing the structural
-           class for everyone else. */
-        .ministries-intro-lead {
-            font-family: var(--font-body);
-            font-size: clamp(18px, 1.5vw, 22px);
-            line-height: var(--leading-loose);
-            color: var(--text-primary-soft);
-            max-width: 60ch;
-            margin: 0 0 var(--space-xl);
-        }
+        /* 1. Intro motto + 2. promoted lede + 6. flush closing CTA were
+           inlined here in v1.62.25-26; the styles graduated into
+           home-styles.ts in v1.62.27 as shared subpage primitives
+           (.motto, .subpage-intro-lead, .subpage-final-cta) so every
+           subpage (/about, /beliefs, /visit, /outreach) can opt into
+           the same editorial treatment without duplicating the rules.
+           This file now only carries the /ministries-specific bits:
+           jump nav, dateline-styled entry titles, and the intra-
+           Discipleship gap tightening. */
 
         /* 3. Jump nav — five chips, small-caps, gold scale-in underline
-           on hover. No border-top hairline: a full-page-width 1px rule
-           extending past the lede's 60ch line-cap read as misaligned
-           (the heading + lede column ends at ~800px on desktop while
-           the rule went edge-to-edge). Vertical white space alone now
-           separates the lede block from the chips.
+           on hover. A 1px hairline rule above the chips visually closes
+           the intro block (eyebrow + heading + lede) and opens the
+           navigation row — editorial section break.
 
            Underline uses transform: scaleX(0)→1 with transform-origin:
            left so the GPU compositor handles the animation — no
@@ -1360,7 +1337,9 @@ export const ministriesBody = (): string => `
             display: flex;
             flex-wrap: wrap;
             gap: var(--space-md) var(--space-lg);
-            margin-top: var(--space-lg);
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--text-primary-hairline);
         }
         .ministries-jump a {
             font-family: var(--font-body);
@@ -1432,45 +1411,10 @@ export const ministriesBody = (): string => `
             gap: var(--space-2xl);
         }
 
-        /* 6. Final CTA without the white .section-card box. Content
-           sits directly on the page surface — same vocabulary as every
-           other section above it. The eyebrow + heading already
-           introduce the closing note; the lead-paragraph + Contact Us
-           button finish it. Flex column so .teaser-cta's
-           align-self: start actually applies and the gold pill stays
-           intrinsically sized instead of stretching to full row width
-           (the .event-link-btn base width: 100% would otherwise win
-           outside a flex parent). */
-        .ministries-final-cta {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            /* Slightly more room above so the close feels deliberate
-               rather than abrupt. Other ministry sections use
-               --space-3xl bottom margin; this one's room comes from the
-               margin-top here PLUS the previous section's bottom margin
-               collapsing. */
-            margin-top: var(--space-2xl);
-        }
-        .ministries-final-cta-lead {
-            font-family: var(--font-body);
-            font-size: var(--text-lead);
-            line-height: var(--leading-loose);
-            color: var(--text-primary-soft);
-            max-width: 60ch;
-            margin: var(--space-md) 0 var(--space-lg);
-        }
-        .ministries-final-cta .event-link-btn.teaser-cta {
-            margin-top: 0;
-        }
-
-        /* Mobile overrides — keep the jump nav scannable and the lede
-           appropriately sized for narrower viewports. */
+        /* Mobile overrides — keep the jump nav scannable. The lede
+           and final-cta mobile rules now live in home-styles.ts
+           alongside their desktop counterparts (v1.62.27). */
         @media (max-width: 960px) {
-            .ministries-intro-lead {
-                font-size: clamp(17px, 4.6vw, 19px);
-                margin: 0 0 var(--space-lg);
-            }
             .ministries-jump {
                 gap: var(--space-sm) var(--space-md);
                 margin-top: var(--space-sm);
@@ -1478,9 +1422,6 @@ export const ministriesBody = (): string => `
             }
             .ministries-jump a {
                 font-size: var(--text-eyebrow);
-            }
-            .ministries-final-cta-lead {
-                font-size: var(--text-body);
             }
         }
     </style>
@@ -1491,8 +1432,8 @@ export const ministriesBody = (): string => `
             <main>
                 <section id="ministries-intro">
                     <span class="section-eyebrow">Ministries</span>
-                    <h1 class="section-heading ministries-intro-heading">How we live out <em>Mending the Broken</em> week to week.</h1>
-                    <p class="ministries-intro-lead">Worship, discipleship, fellowship, and walking with the next generation — the rhythms that keep us together between Sundays. Anyone is welcome at any of these. Drop in, ask questions, or just come see what it looks like.</p>
+                    <h1 class="section-heading">How we live out <em class="motto">Mending the Broken</em> week to week.</h1>
+                    <p class="subpage-intro-lead">Worship, discipleship, fellowship, and walking with the next generation — the rhythms that keep us together between Sundays. Anyone is welcome at any of these. Drop in, ask questions, or just come see what it looks like.</p>
                     <nav class="ministries-jump" aria-label="Jump to a ministry">
                         <a href="#worship">Worship</a>
                         <a href="#kids">Kids</a>
@@ -1504,10 +1445,10 @@ export const ministriesBody = (): string => `
 
                 ${sectionsHtml}
 
-                <section id="ministries-cta" class="ministries-final-cta">
+                <section id="ministries-cta" class="subpage-final-cta">
                     <span class="section-eyebrow">Questions?</span>
                     <h2 class="section-heading">Want to know more about any of these?</h2>
-                    <p class="ministries-final-cta-lead">Reach out and we’ll point you to the right person — whether it’s a Tuesday morning coffee at Caffeina, a Wednesday open gym, or just figuring out what Sunday morning will be like for your family.</p>
+                    <p class="subpage-final-cta-lead">Reach out and we’ll point you to the right person — whether it’s a Tuesday morning coffee at Caffeina, a Wednesday open gym, or just figuring out what Sunday morning will be like for your family.</p>
                     <a class="event-link-btn teaser-cta" href="/#contact">Contact Us</a>
                 </section>
             </main>

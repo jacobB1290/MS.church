@@ -21,8 +21,8 @@ export const outreachBody = (): string => `
             <main>
                 <section id="outreach-intro">
                     <span class="section-eyebrow">Outreach</span>
-                    <h1 class="section-heading">How We Serve Boise</h1>
-                    <p class="section-lead">Faith without works is dead. Here's how Morning Star puts love into action — through monthly community service and seasonal events open to anyone in the city.</p>
+                    <h1 class="section-heading">How we serve Boise.</h1>
+                    <p class="subpage-intro-lead">Faith without works is dead. Here’s how Morning Star puts love into action — through monthly community service and seasonal events open to anyone in the city.</p>
                     <div class="boise-map boise-map-mobile" role="img" aria-label="Stylized top-down map of Boise with three outreach locations linked by a moving light trail.">
                         <svg viewBox="0 0 600 340" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                             <defs>
@@ -283,7 +283,7 @@ export const outreachBody = (): string => `
                 <section class="outreach" id="events">
                     <span class="section-eyebrow">Events</span>
                     <h2 class="section-heading">Upcoming &amp; Past Events</h2>
-                    <p class="section-lead">Year-round, Morning Star hosts open-door gatherings designed to feed people, build friendships, and welcome the city — from Friendsgiving in the fall to community-wide events around major holidays. Browse what's coming up next, or scroll back through past gatherings.</p>
+                    <p class="section-lead">Year-round, Morning Star hosts open-door gatherings designed to feed people, build friendships, and welcome the city — from Friendsgiving in the fall to community-wide events around major holidays. Browse what’s coming up next, or scroll back through past gatherings.</p>
 
                     <!-- Stay Tuned Card - shown when no upcoming events -->
                     <div class="stay-tuned-container" id="stay-tuned-container" style="display: none;"></div>
@@ -318,7 +318,7 @@ export const outreachBody = (): string => `
                             <article class="ministry-block" id="cooking-ministry">
                                 <span class="ministry-eyebrow">Cooking Ministry</span>
                                 <h3 class="ministry-title">Monthly &middot; Boise homeless shelters</h3>
-                                <p class="ministry-text">Once a month, a team from Morning Star cooks and serves a full hot meal at local homeless shelters in Boise. It's hands-on, it's humble, and it's one of the most concrete ways we live "mending the broken." No experience required &mdash; only willing hands.</p>
+                                <p class="ministry-text">Once a month, a team from Morning Star cooks and serves a full hot meal at local homeless shelters in Boise. It’s hands-on, it’s humble, and it’s one of the most concrete ways we live <em class="motto">Mending the Broken</em>. No experience required &mdash; only willing hands.</p>
                                 <a href="/#contact" class="ministry-link">Join the next cook &rarr;</a>
                             </article>
                             <article class="ministry-block" id="community-breakfast">

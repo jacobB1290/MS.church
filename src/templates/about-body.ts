@@ -76,10 +76,11 @@ export const aboutBody = (): string => `
                     <span class="section-eyebrow">Leadership</span>
                     <h2 class="section-heading">Meet our pastor.</h2>
                     <div class="section-card">
-                        <div class="schedule-item long-content">
+                        <div class="schedule-item long-content leadership-card">
                             <div class="schedule-item-text">
-                                <p>Our church is shepherded by a small, accessible leadership team rooted in scripture and committed to walking with our congregation through every season. Reach out any time — we'd love to meet you, answer questions, or pray for you.</p>
-                                <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: var(--weight-semibold);">Send us a message →</a></p>
+                                <p>Our church is shepherded by a small, accessible leadership team rooted in scripture and committed to walking with our congregation through every season. We're not a large staff &mdash; leadership is shared among a few who have walked together for years, and we want every conversation to feel personal.</p>
+                                <p>Reach out any time. Whether you have a question, a prayer request, or just want to introduce yourself before Sunday, the same handful of people who lead on Sunday morning are the ones who'll write back.</p>
+                                <p class="leadership-cta-row"><a href="/#contact" class="leadership-cta">Send us a message &rarr;</a></p>
                             </div>
                             <div class="schedule-item-image leadership-portrait">
                                 <picture>

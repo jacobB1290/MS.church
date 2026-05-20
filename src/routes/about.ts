@@ -72,7 +72,7 @@ const ABOUT_JSON_LD = JSON.stringify({
           name: 'How can I get involved at Morning Star Christian Church?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'The first step is simply attending a Sunday at 9 AM at 3080 Wildwood Street. From there, anyone interested can join a weekly Bible study (Tuesday morning at Caffiena State Street or Thursday evening at the church), volunteer with the cooking ministry, or use the contact form at ms.church/form to ask about other ministries.',
+            text: 'The first step is simply attending a Sunday at 9 AM at 3080 Wildwood Street. From there, anyone interested can join a weekly Bible study (Tuesday morning at Caffeina State Street or Thursday evening at the church), volunteer with the cooking ministry, or use the contact form at ms.church/form to ask about other ministries.',
           },
         },
       ],

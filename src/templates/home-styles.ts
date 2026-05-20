@@ -1309,12 +1309,33 @@ export const homeStyles = (): string => `
                 border-radius: var(--radius-lg);
                 overflow: hidden;
             }
-            /* Leadership portrait override — the worship-desktop.jpg pulpit
-               photo is 1025×1400 (4:5 portrait). A 1:1 crop would chop either
-               head or pulpit; keep the source aspect so the editorial framing
-               we tuned for the source survives here too. */
+            /* Leadership card — overrides the base 1fr 1fr schedule-item grid
+               so the portrait sits in a narrower column (text gets ~58% of
+               the row instead of 50%). Pairs with the max-height cap below
+               so the portrait can't dwarf a relatively short bio. Image-
+               column-narrower + text-column-wider together keep the row's
+               vertical heights in roughly proportional reach: a 3-paragraph
+               bio at ~360px tall sits next to a ~440px portrait, not a 670px
+               one. */
+            .schedule-item.long-content.leadership-card {
+                /* Text first, image second in DOM order — so the 7fr/5fr split
+                   gives the text the wider column (58%) and the portrait the
+                   narrower one (42%). Avoids the previous "image dominates a
+                   short bio" problem without resorting to a square crop or
+                   restructured stack. */
+                grid-template-columns: 7fr 5fr;
+                align-items: stretch;
+            }
+            /* Leadership portrait — 4:5 aspect (matches the cropped source's
+               framing) capped at 460px tall so the image stays in visual reach
+               of the bio. object-position keeps the pastor's face anchored if
+               the cap kicks in (only matters on wide viewports where 5fr of
+               the row would otherwise produce a taller 4:5 box). */
             .schedule-item-image.leadership-portrait {
                 aspect-ratio: 4 / 5;
+                max-height: 460px;
+                margin: 0 auto;
+                width: 100%;
             }
 
             .schedule-item-image picture {
@@ -1334,6 +1355,21 @@ export const homeStyles = (): string => `
                the text column is unusually short). */
             .schedule-item-image.leadership-portrait img {
                 object-position: center 20%;
+            }
+            /* Leadership "Send us a message" link — same gold inline-link
+               treatment used in entry CTAs across /ministries and /outreach
+               so the leadership card doesn't need bespoke link styling. */
+            .leadership-cta-row {
+                margin-top: var(--space-sm);
+            }
+            .leadership-cta {
+                color: var(--gold);
+                font-weight: var(--weight-semibold);
+                text-decoration: none;
+            }
+            .leadership-cta:hover {
+                text-decoration: underline;
+                text-underline-offset: 4px;
             }
 
             /* Placeholder tiles — used while real photography is in flight.

@@ -262,7 +262,7 @@ export const homeHead = (): string => {
                     "@id": "https://ms.church/#church",
                     "name": "Morning Star Christian Church",
                     "alternateName": ["Morning Star Church", "MS Church Boise", "Morning Star Boise"],
-                    "description": "Morning Star Christian Church is a welcoming, Bible-believing Christian church in Boise, Idaho. We confess Jesus Christ as Lord and Savior and teach the whole counsel of Scripture — grace and truth, with no watered-down version. Join us Sundays at 9 AM for worship and a free community breakfast, Tuesday Bible reading at Caffiena State Street, Wednesday Activity Day (open gym + crochet circle), Thursday Bible study, and Friday Youth Service. We are dedicated to mending the broken through faith, community, and service.",
+                    "description": "Morning Star Christian Church is a welcoming, Bible-believing Christian church in Boise, Idaho. We confess Jesus Christ as Lord and Savior and teach the whole counsel of Scripture — grace and truth, with no watered-down version. Join us Sundays at 9 AM for worship and a free community breakfast, Tuesday Bible reading at Caffeina State Street, Wednesday Activity Day (open gym + crochet circle), Thursday Bible study, and Friday Youth Service. We are dedicated to mending the broken through faith, community, and service.",
                     "keywords": "Boise church, Christian church Boise, nondenominational church Boise, Bible-believing church Boise, family church Boise, Sunday worship Boise, free community breakfast Boise, Bible study Boise, youth group Boise, church 83713, Wildwood Street church Boise, Morning Star Christian Church",
                     "url": "https://ms.church",
                     "email": "support@ms.church",
@@ -351,7 +351,7 @@ export const homeHead = (): string => {
                             "dayOfWeek": "Tuesday",
                             "opens": "08:30",
                             "closes": "10:00",
-                            "description": "Tuesday Bible Reading at Caffiena State Street"
+                            "description": "Tuesday Bible Reading at Caffeina State Street"
                         },
                         {
                             "@type": "OpeningHoursSpecification",
@@ -583,8 +583,8 @@ export const homeHead = (): string => {
                 {
                     "@type": "Event",
                     "@id": "https://ms.church/#tuesday-bible-reading",
-                    "name": "Tuesday Bible Reading at Caffiena State Street",
-                    "description": "Join Morning Star Christian Church for Tuesday morning Bible reading at 8:30 AM at Caffiena State Street in Boise, Idaho. Open to everyone — come enjoy fellowship and free coffee.",
+                    "name": "Tuesday Bible Reading at Caffeina State Street",
+                    "description": "Join Morning Star Christian Church for Tuesday morning Bible reading at 8:30 AM at Caffeina State Street in Boise, Idaho. Open to everyone — come enjoy fellowship and free coffee.",
                     "eventSchedule": {
                         "@type": "Schedule",
                         "repeatFrequency": "P1W",
@@ -597,7 +597,7 @@ export const homeHead = (): string => {
                     "eventStatus": "https://schema.org/EventScheduled",
                     "location": {
                         "@type": "Place",
-                        "name": "Caffiena State Street",
+                        "name": "Caffeina State Street",
                         "address": {
                             "@type": "PostalAddress",
                             "addressLocality": "Boise",
@@ -736,7 +736,7 @@ export const homeHead = (): string => {
                             "name": "Does Morning Star Church offer Bible study groups?",
                             "acceptedAnswer": {
                                 "@type": "Answer",
-                                "text": "Yes, we offer Tuesday morning Bible reading at 8:30 AM at Caffiena State Street and Thursday evening Bible study at 6:00 PM at the church. Free coffee is provided at both gatherings."
+                                "text": "Yes, we offer Tuesday morning Bible reading at 8:30 AM at Caffeina State Street and Thursday evening Bible study at 6:00 PM at the church. Free coffee is provided at both gatherings."
                             }
                         },
                         {

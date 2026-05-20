@@ -91,7 +91,7 @@ export const homeScripts = (): string => `
                     // target is the corner .schedule-tab-cta's href
                     // (matching /ministries anchor). Inline links inside
                     // the description (e.g. "Sunday School" → /kids,
-                    // "Caffiena State Street" → maps) keep their own
+                    // "Caffeina State Street" → maps) keep their own
                     // destinations via the early-return guard. This is
                     // intentionally attached before the desktop-only
                     // carousel early-return so card navigation works on

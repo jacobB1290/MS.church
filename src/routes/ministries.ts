@@ -53,7 +53,7 @@ const MINISTRIES_JSON_LD = JSON.stringify({
             position: 3,
             name: 'Tuesday Bible Reading (Discipleship)',
             description:
-              'Morning Bible reading at Caffiena State Street coffee shop in Boise. Casual, no curriculum — read a passage, talk about it, drink coffee. Tuesdays at 8:30 AM.',
+              'Morning Bible reading at Caffeina State Street coffee shop in Boise. Casual, no curriculum — read a passage, talk about it, drink coffee. Tuesdays at 8:30 AM.',
             url: 'https://ms.church/ministries#bible-reading',
             provider: { '@id': 'https://ms.church/#church' },
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
@@ -113,7 +113,7 @@ const MINISTRIES_JSON_LD = JSON.stringify({
           name: 'What Bible studies does Morning Star Christian Church offer in Boise?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Morning Star Christian Church offers two weekly Bible study groups in Boise: a Tuesday morning Bible reading at Caffiena State Street coffee shop at 8:30 AM, and a Thursday evening Bible study at the church at 6:00 PM. Both are free, open to all, and gospel-grounded with free coffee.',
+            text: 'Morning Star Christian Church offers two weekly Bible study groups in Boise: a Tuesday morning Bible reading at Caffeina State Street coffee shop at 8:30 AM, and a Thursday evening Bible study at the church at 6:00 PM. Both are free, open to all, and gospel-grounded with free coffee.',
           },
         },
         {
@@ -137,7 +137,7 @@ const MINISTRIES_JSON_LD = JSON.stringify({
           name: 'Does Morning Star have small groups or community groups?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Morning Star Christian Church operates two weekly small-group-style gatherings: Tuesday morning Bible reading at Caffiena State Street, and Thursday evening Bible study at the church. Both are open-discussion, paced so newcomers and longtime members can engage together.',
+            text: 'Morning Star Christian Church operates two weekly small-group-style gatherings: Tuesday morning Bible reading at Caffeina State Street, and Thursday evening Bible study at the church. Both are open-discussion, paced so newcomers and longtime members can engage together.',
           },
         },
         {

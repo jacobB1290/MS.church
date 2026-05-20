@@ -33,7 +33,7 @@ const churchAddressPill = (label = '3080 Wildwood St · Boise, Idaho'): string =
   </span>
 `
 
-const caffienaLink = `<a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener" class="ministry-address-link">Caffiena State Street</a>`
+const caffeinaLink = `<a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener" class="ministry-address-link">Caffeina State Street</a>`
 
 type Tip = { label: string; value: string }
 type Entry = {
@@ -165,7 +165,7 @@ const SECTIONS: Section[] = [
       {
         id: 'bible-reading',
         eyebrow: 'Bible Reading',
-        titleHtml: `Tuesdays · 8:30 AM at ${caffienaLink}`,
+        titleHtml: `Tuesdays · 8:30 AM at ${caffeinaLink}`,
         description:
           "A morning Bible reading at a coffee shop on State Street. Casual, no curriculum — we read a passage, talk about it, drink coffee, go to work. Drop in any Tuesday.",
         imageSrc: '/static/bible-reading.jpg',
@@ -181,7 +181,7 @@ const SECTIONS: Section[] = [
         // preserving the cafe ceiling lights / wall sign for context.
         imagePositionDesktop: 'center 55%',
         tips: [
-          { label: 'Where', value: 'Caffiena State Street — tap the address above for directions.' },
+          { label: 'Where', value: 'Caffeina State Street — tap the address above for directions.' },
           { label: 'What to order', value: 'Whatever you want; the coffee shop is just our meeting spot. We are not buying for the group.' },
           { label: 'Bring', value: 'A Bible or the Bible app on your phone. Both fine.' },
           { label: 'Finding the group', value: 'Look for 4–6 people at a table. Wave at any of us — we will pull up another chair.' },
@@ -963,7 +963,7 @@ export const ministriesBody = (): string => `
                     <span class="section-eyebrow">Questions?</span>
                     <h2 class="section-heading">Want to know more about any of these?</h2>
                     <div class="section-card visit-final-cta">
-                        <p class="section-lead">Reach out and we'll point you to the right person — whether it's a Tuesday morning coffee at Caffiena, a Wednesday open gym, or just figuring out what Sunday morning will be like for your family.</p>
+                        <p class="section-lead">Reach out and we'll point you to the right person — whether it's a Tuesday morning coffee at Caffeina, a Wednesday open gym, or just figuring out what Sunday morning will be like for your family.</p>
                         <a class="event-link-btn teaser-cta" href="/#contact">Contact Us</a>
                     </div>
                 </section>

@@ -98,7 +98,7 @@ export const homeBody = (): string => `
                             <button class="schedule-tab" data-index="1" type="button" role="tab" aria-selected="false" data-reveal-sync>
                                 <span class="schedule-tab-eyebrow reveal-eyebrow">Discipleship</span>
                                 <span class="schedule-tab-title reveal-rise">Tuesdays · 8:30 AM</span>
-                                <span class="schedule-tab-desc reveal-tight">Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffiena State Street</a>.</span>
+                                <span class="schedule-tab-desc reveal-tight">Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffeina State Street</a>.</span>
                                 <a href="/ministries#discipleship" class="schedule-tab-cta">Learn more →</a>
                             </button>
                             <button class="schedule-tab" data-index="2" type="button" role="tab" aria-selected="false" data-reveal-sync>

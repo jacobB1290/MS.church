@@ -655,17 +655,16 @@ export const homeScripts = (): string => `
                     \`;
 
                     if (isDesktop && hasPastEvents) {
-                        // No wrapper div, no inline styles — CSS grid on .stay-tuned-container handles layout
+                        // Desktop: two centered cards side-by-side. The MEMORIES
+                        // top-left badge was removed for symmetry with Stay Tuned
+                        // (which has no chrome at top). Camera icon + "Past Events"
+                        // title + button already convey the archive function.
                         return \`
                             <div class="stay-tuned-card" id="stay-tuned-card-el">
                                 \${stayTunedInner}
                             </div>
                             <div class="past-events-outer">
                                 <div class="event-outer-card">
-                                    <div class="event-card-header">
-                                        <span class="past-card-badge">MEMORIES</span>
-                                        <span></span>
-                                    </div>
                                     <div class="past-events-card" id="btn-view-past-events-desktop">
                                         <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
                                         <h3 class="past-card-title">Past Events</h3>

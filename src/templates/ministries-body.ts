@@ -238,7 +238,7 @@ const SECTIONS: Section[] = [
     // serves both viewports: mobile crops it to a 16:9 banner with the
     // faces biased to the upper portion; desktop uses (close to) the
     // full image in the portrait container with a slight upward bias.
-    imageSrc: '/static/youth.jpg',
+    imageSrc: '/static/youth.jpg?v=2',
     imageAlt: 'Morning Star Christian Church youth group — five teens dressed up arm-in-arm at a Friday Youth Service event in Boise, Idaho, evening backdrop of trees and fencing.',
     // Mobile (16:9 banner from a 9:16 portrait source): tight
     // horizontal band crops aggressively top-and-bottom. Faces sit at
@@ -777,11 +777,20 @@ export const ministriesBody = (): string => `
         .ministry-section--kids .sunday-school-content {
             grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
             max-width: 1040px;
-            align-items: start;
+            /* Video vertically centers within the row instead of hugging the
+               top. Previously align-items: start left the 9:16 video orphaned
+               in the upper-left with ~140px of empty column below it (the
+               text+tips column extends past the video's max-height). Centering
+               eliminates that visual gap and makes the pairing feel anchored. */
+            align-items: center;
             column-gap: var(--space-2xl);
         }
         .ministry-section--kids .sunday-school-video.vertical-video-frame {
-            max-height: 560px;
+            /* Bumped from 560px so the 9:16 vertical frame carries more
+               presence next to the longer right column. At 620px tall the
+               video is ~349px wide — closer to the 360px column width, less
+               in-column slack. */
+            max-height: 620px;
         }
         .ministry-section--kids .sunday-school-text > .ministry-eyebrow {
             margin-bottom: -4px;

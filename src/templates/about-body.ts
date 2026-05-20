@@ -81,7 +81,13 @@ export const aboutBody = (): string => `
                                 <p>Our church is shepherded by a small, accessible leadership team rooted in scripture and committed to walking with our congregation through every season. Reach out any time — we'd love to meet you, answer questions, or pray for you.</p>
                                 <p style="margin-top: 14px;"><a href="/#contact" style="color: var(--gold); font-weight: var(--weight-semibold);">Send us a message →</a></p>
                             </div>
-                            <div class="schedule-item-image schedule-item-image-placeholder" aria-hidden="true">${PLACEHOLDER_SVG}</div>
+                            <div class="schedule-item-image leadership-portrait">
+                                <picture>
+                                    <source type="image/avif" srcset="/static/worship-desktop.avif?v=2">
+                                    <source type="image/webp" srcset="/static/worship-desktop.webp?v=2">
+                                    <img src="/static/worship-desktop.jpg?v=2" alt="Pastor teaching from the pulpit at the Sunday service at Morning Star Christian Church in Boise, Idaho." loading="lazy" decoding="async" width="1025" height="1400">
+                                </picture>
+                            </div>
                         </div>
                     </div>
                 </section>

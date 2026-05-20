@@ -168,8 +168,11 @@ export const beliefsBody = (): string => `
                 grid-template-columns: 1fr;
                 gap: 8px;
             }
+            /* Keep the gold "01" at title-size on mobile too. The previous
+               --text-heading override (26px max) lost the magazine-feature
+               feel that the number is meant to carry. --text-title's mobile
+               floor (36px) keeps the editorial dominance. */
             .belief-num {
-                font-size: var(--text-heading);
                 padding-top: 0;
             }
         }

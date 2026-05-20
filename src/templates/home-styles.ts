@@ -112,7 +112,8 @@ export const homeStyles = (): string => `
 
                 /* Type scale — fluid from mobile to desktop */
                 --text-hero:    clamp(64px, 11vw, 96px);  /* Hero headline — unique, largest. Bespoke curve (steeper vw + higher floor than the regular type scale) so the hero reads as dominant on mobile too — at 414px wide this floors at 64px, almost 2x the section-title floor of 36px, matching the desktop ratio. */
-                --text-title:   clamp(36px, 5vw, 52px);   /* Section h2 titles — all sections */
+                --text-title:   clamp(36px, 5vw, 52px);   /* Page h1 — subpage titles (one per page) */
+                --text-section: clamp(28px, 3.5vw, 40px); /* Section h2 — the editorial step between page title and card heading. Without this, h1 and h2 collapsed to the same size and every subpage read as five equally-weighted titles instead of one page-title over its sections. Ratio to title is ~77%, to heading ~67% — clean geometric step. */
                 --text-heading: clamp(20px, 2.5vw, 26px); /* Card / item h3 sub-headings */
                 --text-lead:    clamp(17px, 1.5vw, 20px); /* Lead paragraphs */
                 --text-body:    16px;                      /* Base body text */
@@ -1135,6 +1136,14 @@ export const homeStyles = (): string => `
                 line-height: var(--leading-tight);
                 letter-spacing: var(--tracking-tight);
             }
+            /* h2 demotion — subpage section titles (and home section h2s) drop
+               to --text-section (40px max) so the page h1 stays dominant.
+               Before this rule h1.section-heading and h2.section-heading were
+               both --text-title (52px max), which collapsed the hierarchy and
+               made every subpage read as a stack of equally-weighted titles. */
+            h2.section-heading {
+                font-size: var(--text-section);
+            }
 
             .section-lead {
                 max-width: 720px;
@@ -1300,6 +1309,13 @@ export const homeStyles = (): string => `
                 border-radius: var(--radius-lg);
                 overflow: hidden;
             }
+            /* Leadership portrait override — the worship-desktop.jpg pulpit
+               photo is 1025×1400 (4:5 portrait). A 1:1 crop would chop either
+               head or pulpit; keep the source aspect so the editorial framing
+               we tuned for the source survives here too. */
+            .schedule-item-image.leadership-portrait {
+                aspect-ratio: 4 / 5;
+            }
 
             .schedule-item-image picture {
                 display: block;
@@ -1312,21 +1328,35 @@ export const homeStyles = (): string => `
                 object-fit: cover;
                 display: block;
             }
+            /* Leadership portrait — bias the crop up so the pastor's face
+               lands in the upper third of the visible window when the
+               container is shorter than the image's natural 4:5 (e.g. when
+               the text column is unusually short). */
+            .schedule-item-image.leadership-portrait img {
+                object-position: center 20%;
+            }
 
+            /* Placeholder tiles — used while real photography is in flight.
+               Previously these had a dashed border and cool-gray gradient that
+               screamed "draft / missing image" and broke the polish of the
+               surrounding page. Restyled as warm-cream tiles that feel like
+               an intentional surface tone, with a faint gold accent and no
+               dashed chrome. When a real <img> replaces the placeholder the
+               transition is invisible. */
             .schedule-item-image-placeholder {
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, var(--text-primary-hairline) 100%),
-                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
+                    radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--gold) 8%, transparent) 0%, transparent 60%),
+                    linear-gradient(180deg, color-mix(in srgb, var(--bg) 96%, var(--gold) 4%) 0%, color-mix(in srgb, var(--bg) 88%, var(--gold) 6%) 100%);
                 display: grid;
                 place-items: center;
                 color: var(--text-primary-fade);
-                border: 1px dashed var(--text-primary-hairline);
             }
 
             .schedule-item-image-placeholder svg {
-                width: 28%;
-                max-width: 56px;
+                width: 22%;
+                max-width: 44px;
                 height: auto;
+                opacity: 0.4;
             }
 
             /* ============================================================
@@ -1787,22 +1817,40 @@ export const homeStyles = (): string => `
                 display: block;
                 border: none;
             }
+            /* Video placeholder — reads as a paused-video frame, not as a
+               missing image. The .vertical-video-frame parent already paints
+               a dark gradient bg (1a1a2e → 2a2a4e); we let it show through
+               and overlay a soft warm-light vignette + a large gold play
+               button. When real video lands in this slot the visual jump is
+               minimal: the same dark surround plus the real frame poster.
+               Previously this slot was a cool-gray rectangle with a dashed
+               border that looked like a draft. */
             .vertical-video-placeholder {
                 position: absolute;
                 inset: 0;
                 display: grid;
                 place-items: center;
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, var(--text-primary-hairline) 100%),
-                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                color: var(--text-primary-fade);
-                border: 1px dashed var(--text-primary-hairline);
+                    radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--gold) 14%, transparent) 0%, transparent 55%),
+                    radial-gradient(circle at 50% 100%, color-mix(in srgb, #0d0d1a 65%, transparent) 0%, transparent 60%);
+                color: rgba(255, 255, 255, 0.95);
                 border-radius: inherit;
             }
             .vertical-video-placeholder svg {
-                width: 22%;
-                max-width: 56px;
+                width: 26%;
+                max-width: 72px;
+                min-width: 48px;
                 height: auto;
+                filter: drop-shadow(0 8px 24px color-mix(in srgb, var(--gold) 30%, transparent));
+            }
+            /* Gold ring around the play triangle so the icon reads as a
+               video-player control, not a generic decorative mark. */
+            .vertical-video-placeholder svg circle {
+                stroke: var(--gold);
+                stroke-width: 1.5;
+            }
+            .vertical-video-placeholder svg polygon {
+                fill: var(--gold);
             }
 
             /* Editorial split wrapper. Centered 880px column on desktop;
@@ -2545,20 +2593,23 @@ export const homeStyles = (): string => `
                 position: relative;
                 background: linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
             }
+            /* Same warm-cream treatment as .schedule-item-image-placeholder
+               so placeholders read as intentional surface tone, not as missing
+               content. Smaller icon, fainter opacity, no dashed border. */
             .ministries-image-placeholder {
                 background:
-                    linear-gradient(135deg, rgba(212, 165, 116, 0.10) 0%, var(--text-primary-hairline) 100%),
-                    linear-gradient(180deg, #eef0f5 0%, #e2e5ec 100%);
-                border: 1px dashed var(--text-primary-hairline);
+                    radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--gold) 8%, transparent) 0%, transparent 60%),
+                    linear-gradient(180deg, color-mix(in srgb, var(--bg) 96%, var(--gold) 4%) 0%, color-mix(in srgb, var(--bg) 88%, var(--gold) 6%) 100%);
                 display: grid;
                 place-items: center;
                 color: var(--text-primary-fade);
             }
             .ministries-image-placeholder > svg {
-                width: 12%;
-                max-width: 96px;
-                min-width: 48px;
+                width: 10%;
+                max-width: 64px;
+                min-width: 36px;
                 height: auto;
+                opacity: 0.4;
             }
             /* Real images fill the .ministries-image container. Selectors
                cover both shapes — a plain <img> child, and the <picture>
@@ -2615,7 +2666,7 @@ export const homeStyles = (): string => `
             .ministry-text {
                 margin: 0;
                 color: var(--text-primary-muted);
-                font-size: var(--text-lead);
+                font-size: var(--text-body);
                 line-height: var(--leading-loose);
             }
             .ministry-link {
@@ -7132,9 +7183,18 @@ export const homeStyles = (): string => `
                 .section-heading {
                     font-size: var(--text-title);
                 }
+                h2.section-heading {
+                    font-size: var(--text-section);
+                }
 
                 .section-lead {
-                    font-size: var(--text-heading);
+                    /* Lead paragraphs sit at --text-lead (20px max). Previously
+                       this rule upgraded them to --text-heading (26px max) on
+                       desktop, which made the lead read as a subheading and
+                       collapsed the rhythm between section-heading → lead → body.
+                       Restored to lead-size so the descending rhythm reads as
+                       a clear three-step (40 → 20 → 16). */
+                    font-size: var(--text-lead);
                     max-width: 720px;
                 }
 

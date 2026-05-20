@@ -333,7 +333,7 @@ export const homeHead = (): string => {
                         },
                         {
                             "@type": "ImageObject",
-                            "contentUrl": "https://ms.church/static/youth.jpg",
+                            "contentUrl": "https://ms.church/static/youth.jpg?v=2",
                             "caption": "Morning Star Christian Church youth group gathering on a Friday evening — open to high school and college-age students in Boise",
                             "keywords": "youth group Boise, Friday youth church Boise, teen Christian community Boise"
                         }

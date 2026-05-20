@@ -84,11 +84,19 @@ export const visitBody = (): string => `
             grid-template-columns: 1fr 1fr;
             gap: var(--space-2xl);
         }
+        /* Three-column variant — replaces the previous image-paired layout
+           (which required a real "what-to-wear" photo we don't have). Three
+           equal info blocks read as a balanced FAQ row, no awkward placeholder
+           dragging down the section. */
+        .visit-faq-grid--three {
+            grid-template-columns: repeat(3, 1fr);
+        }
         @media (max-width: 960px) {
             .visit-faq-pair {
                 margin-bottom: var(--space-xl);
             }
-            .visit-faq-grid {
+            .visit-faq-grid,
+            .visit-faq-grid--three {
                 grid-template-columns: 1fr;
                 gap: var(--space-xl);
             }
@@ -161,18 +169,12 @@ export const visitBody = (): string => `
                     <h2 class="section-heading">A few things visitors usually ask.</h2>
                     <p class="section-lead">The stuff worth knowing before Sunday — small details that take the guesswork out of a first visit.</p>
 
-                    <div class="ministries-pair visit-faq-pair">
-                        <div class="ministries-image ministries-image-placeholder" aria-hidden="true">
-                            ${PLACEHOLDER_SVG}
-                        </div>
+                    <div class="visit-faq-grid visit-faq-grid--three">
                         <article class="ministry-block" id="what-to-wear">
                             <span class="ministry-eyebrow">What to Wear</span>
                             <h3 class="ministry-title">No strict dress code &mdash; come as you are.</h3>
                             <p class="ministry-text">People land all over the spectrum on Sunday mornings. Most are on the casual side &mdash; jeans and a shirt are completely fine &mdash; and you'll see plenty dressed more formally too. Both fit in. The only ask is that you keep it modest.</p>
                         </article>
-                    </div>
-
-                    <div class="visit-faq-grid">
                         <article class="ministry-block" id="parking">
                             <span class="ministry-eyebrow">Parking</span>
                             <h3 class="ministry-title">Right next to the building.</h3>

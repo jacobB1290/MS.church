@@ -315,6 +315,12 @@ export const homeHead = (): string => {
                         },
                         {
                             "@type": "ImageObject",
+                            "contentUrl": "https://ms.church/static/worship-desktop.jpg",
+                            "caption": "Pastor teaching from the pulpit at the 9 AM Sunday service at Morning Star Christian Church in Boise, Idaho",
+                            "keywords": "Boise pastor preaching, Sunday teaching Boise, Bible-grounded preaching, nondenominational pulpit Boise"
+                        },
+                        {
+                            "@type": "ImageObject",
                             "contentUrl": "https://ms.church/static/cooking-ministry.jpg",
                             "caption": "Morning Star Christian Church cooking ministry volunteers preparing meals for the Boise homeless shelter and the free Sunday community breakfast",
                             "keywords": "cooking ministry Boise, free breakfast church Boise, church homeless outreach Boise"

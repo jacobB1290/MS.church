@@ -82,15 +82,17 @@ Sitemap: https://ms.church/sitemap.xml
     // accurate-or-don't-bother). Bump this constant when meaningful content
     // changes ship — not on every deploy. Per-entry overrides handle the
     // home page (event calendar updates weekly) below.
-    const SITE_LASTMOD = '2026-05-19'
+    const SITE_LASTMOD = '2026-05-20'
     const HOME_LASTMOD = new Date().toISOString().split('T')[0]
     const base = 'https://ms.church'
+    type ImageInfo = { loc: string; title: string; caption: string }
     type Entry = {
       loc: string
       lastmod: string
       changefreq: string
       priority: string
-      image?: { loc: string; title: string; caption: string }
+      image?: ImageInfo
+      images?: ImageInfo[]
     }
     const entries: Entry[] = [
       {
@@ -128,11 +130,18 @@ Sitemap: https://ms.church/sitemap.xml
         lastmod: SITE_LASTMOD,
         changefreq: 'monthly',
         priority: '0.9',
-        image: {
-          loc: `${base}/static/worship.jpg`,
-          title: 'Ministries at Morning Star Christian Church',
-          caption: 'Sunday worship at Morning Star Christian Church in Boise — one of six weekly ministries including Bible study, youth, and Sunday school.',
-        },
+        images: [
+          {
+            loc: `${base}/static/worship-desktop.jpg`,
+            title: 'Sunday worship teaching at Morning Star Christian Church',
+            caption: 'Pastor teaching from the pulpit at the 9 AM Sunday service at Morning Star Christian Church in Boise, Idaho — Bible-grounded, nondenominational worship.',
+          },
+          {
+            loc: `${base}/static/worship.jpg`,
+            title: 'Sunday worship team at Morning Star Christian Church',
+            caption: 'Worship team leading songs from the platform at the Sunday service at Morning Star Christian Church in Boise — one of six weekly ministries including Bible study, youth, and Sunday school.',
+          },
+        ],
       },
       {
         loc: `${base}/outreach`,
@@ -174,9 +183,10 @@ Sitemap: https://ms.church/sitemap.xml
 
     const urls = entries
       .map((e) => {
-        const imgBlock = e.image
-          ? `\n    <image:image>\n      <image:loc>${e.image.loc}</image:loc>\n      <image:title>${xmlEscape(e.image.title)}</image:title>\n      <image:caption>${xmlEscape(e.image.caption)}</image:caption>\n    </image:image>`
-          : ''
+        const renderImage = (img: ImageInfo) =>
+          `\n    <image:image>\n      <image:loc>${img.loc}</image:loc>\n      <image:title>${xmlEscape(img.title)}</image:title>\n      <image:caption>${xmlEscape(img.caption)}</image:caption>\n    </image:image>`
+        const imgs: ImageInfo[] = e.images ?? (e.image ? [e.image] : [])
+        const imgBlock = imgs.map(renderImage).join('')
         return `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.lastmod}</lastmod>\n    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>${imgBlock}\n  </url>`
       })
       .join('\n')

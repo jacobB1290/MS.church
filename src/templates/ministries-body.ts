@@ -92,10 +92,24 @@ const SECTIONS: Section[] = [
     heading: 'How we gather together on Sundays.',
     imageSide: 'left',
     imageSrc: '/static/worship.jpg',
-    imageAlt: 'Morning Star Christian Church worship team — five vocalists leading Sunday worship from the platform at our nondenominational service in Boise, Idaho, microphones in hand.',
-    // Faces sit in the upper-middle band; bias the crop upward so portrait
-    // containers on desktop preserve heads/microphones rather than feet.
+    // Desktop-only editorial portrait of the pastor teaching from the pulpit
+    // (1025×1400, cropped from a 1025×1822 source). Replaces the worship-team
+    // landscape on ≥961px where the column container is tall and portrait-
+    // shaped; mobile keeps the 16:9 banner of the team. The 1025×1400 crop
+    // (0.73 aspect) was chosen because at the project's standard desktop column
+    // widths it produces ≤75px of vertical overflow — meaning the cropped
+    // composition is preserved nearly intact in the rendered container, not
+    // re-cropped aggressively by object-fit.
+    imageSrcDesktop: '/static/worship-desktop.jpg',
+    imageAlt: 'Morning Star Christian Church Sunday worship service in Boise, Idaho — pastor teaching from the pulpit and the worship team leading songs at our nondenominational 9 AM gathering.',
+    // Mobile (16:9 banner): faces of the worship team sit in the upper-middle
+    // band; bias upward so heads/microphones are preserved over feet.
     imagePosition: 'center 35%',
+    // Desktop (tall portrait container, ≈380–510 × 620 across 1024–1440px
+    // viewports). The 1025×1400 source already places the eyes at ~21% and
+    // gives ~14% headroom; Y=20% biases the small remaining overflow toward
+    // the top so headroom stays consistent (~80px) across desktop widths.
+    imagePositionDesktop: 'center 20%',
     entries: [
       {
         id: 'sunday-gatherings',

@@ -57,11 +57,12 @@ export const homeHead = (): string => {
                 var html = document.documentElement;
                 var skip=false;
                 var isBackForward=false;
+                var isReload=false;
                 if(location.hash) skip=true;
                 try{
                     var n=performance.getEntriesByType('navigation')[0];
                     if(n&&n.type==='back_forward'){ skip=true; isBackForward=true; }
-                    if(n&&n.type==='reload') skip=true;
+                    if(n&&n.type==='reload'){ skip=true; isReload=true; }
                 }catch(e){}
                 if(document.referrer&&document.referrer.indexOf(location.origin)===0) skip=true;
                 if(skip) html.classList.add('no-entrance');
@@ -91,14 +92,18 @@ export const homeHead = (): string => {
                 // snapshot is captured (Chrome 124+, iOS Safari 18+) —
                 // this is the only event hook that lets us seed the right
                 // scroll position into the snapshot.
+                // Restore on back/forward AND on reload — both are cases
+                // where the user expects to land at their previous scroll
+                // position (and our manual scrollRestoration setting above
+                // means the browser won't restore for us on reload either).
                 addEventListener('pagereveal', function(){
-                    if (isBackForward) restoreScroll();
+                    if (isBackForward || isReload) restoreScroll();
                 });
                 // Fallback for browsers without pagereveal: restore on
                 // pageshow (fires after the transition; jump may be
                 // visible but at least the page lands at the right spot).
                 addEventListener('pageshow', function(e){
-                    if (isBackForward || e.persisted) restoreScroll();
+                    if (isBackForward || isReload || e.persisted) restoreScroll();
                 });
                 // Always tag js-reveals synchronously so the hidden-state
                 // CSS rule applies on first paint. The observer adds

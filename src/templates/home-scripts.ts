@@ -330,9 +330,19 @@ export const homeScripts = (): string => `
                         window.__revealWatchdogTimer = null;
                     }
 
-                    // Reduced-motion: mark everything revealed immediately,
-                    // skip the observer entirely.
-                    if (reducedMotion) {
+                    // Reduced-motion OR a non-fresh visit (back/forward,
+                    // reload, same-origin nav, bfcache, hash-load — anywhere
+                    // the head-script tagged <html class="no-entrance">):
+                    // mark every reveal target as already-revealed and skip
+                    // the observer. Previously the .no-entrance bypass only
+                    // suppressed the section entrance keyframe — the
+                    // .reveal-* IntersectionObserver still ran, so the hero
+                    // tagline, schedule tab eyebrows/titles, About teaser,
+                    // outreach grid, etc. re-animated on every subpage→home
+                    // navigation. Now they read as already-settled on any
+                    // return visit, only animating on the genuinely-first load.
+                    const skipEntrance = html.classList.contains('no-entrance');
+                    if (reducedMotion || skipEntrance) {
                         targets.forEach((el) => el.classList.add('is-revealed'));
                         return;
                     }

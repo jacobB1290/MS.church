@@ -3507,17 +3507,34 @@ export const homeStyles = (): string => `
                 margin-bottom: 0;
             }
 
-            /* Reserve approximate vertical space for the async events area on
-               /outreach so the carousel/stay-tuned load doesn't shift the
-               ministry sections below by ~600px once events arrive. Without
-               this, CLS on a hash-jump to #cooking-ministry was 0.36–0.62
-               (Google's "good" threshold is < 0.10). */
+            /* Reserve the FULL natural height of /outreach's events section
+               so the async stay-tuned / carousel load doesn't shift the
+               ministry sections below it (#meals-hospitality, #cooking-
+               ministry, #community-breakfast) once events arrive.
+
+               Previous min-height (560px) covered only the Stay Tuned card
+               itself, not the eyebrow + heading + lead above it. Result:
+               on a hash-jump to #community-breakfast or #cooking-ministry,
+               subpage-header.ts measured the target Y, scrolled there,
+               then the events fetch resolved ~500-1500ms later, the
+               Stay Tuned card injected into the previously-empty bottom
+               of the section, the section grew from 560 → ~856px on
+               desktop, and the target ministry sat ~296px lower than
+               where the user's viewport had landed.
+
+               Measured settled height on desktop with Stay Tuned + no
+               upcoming events: 855.75px. Round up to 880 to cover small
+               variations in heading/lead wrapping. Mobile didn't shift
+               in practice (the heading/lead wrap to enough lines that
+               natural pre-load height already exceeds the old 460
+               reserve), but bump it slightly for the same defense-in-
+               depth posture. */
             section#events {
-                min-height: 560px;
+                min-height: 880px;
             }
             @media (max-width: 960px) {
                 section#events {
-                    min-height: 460px;
+                    min-height: 840px;
                 }
             }
             
@@ -4205,7 +4222,18 @@ export const homeStyles = (): string => `
                ======================================== */
             .stay-tuned-only {
                 margin-bottom: 0 !important;
-                min-height: auto !important;
+                /* min-height intentionally NOT reset here — the section#events
+                   min-height reserve (set above) is what prevents the
+                   stay-tuned/carousel async-load from shifting #meals-
+                   hospitality / #cooking-ministry / #community-breakfast
+                   below it. Earlier this rule overrode the reserve to
+                   "auto" once .stay-tuned-only was added by JS, which
+                   defeated the whole point of the reserve: section
+                   would render at its reserved height, then collapse
+                   to natural content height the moment .stay-tuned-
+                   only landed, shifting everything below by ~25-300px
+                   right after a hash-jump's scrollTo had landed at the
+                   pre-collapse position. */
             }
 
             .stay-tuned-only .section-heading {
@@ -7040,9 +7068,9 @@ export const homeStyles = (): string => `
                     color: #ffffff;
                 }
 
-                /* Mobile stay-tuned overrides */
+                /* Mobile stay-tuned overrides — see desktop counterpart
+                   for the rationale on NOT resetting min-height here. */
                 .stay-tuned-only {
-                    min-height: auto !important;
                     padding-bottom: 0 !important;
                 }
 
@@ -7540,7 +7568,12 @@ export const homeStyles = (): string => `
                 .past-events-card .past-card-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 24px; box-sizing: border-box; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); border: none; color: #ffffff; border-radius: var(--radius-pill); font-size: var(--text-label); font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; cursor: pointer; transition: all var(--motion-medium) var(--ease-standard); box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent); position: relative; z-index: 2; }
                 .past-events-card .past-card-btn:hover { background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%); box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent); transform: translateY(-2px); }
 
-                .outreach.stay-tuned-only { min-height: auto !important; padding-bottom: 0 !important; margin-bottom: 0 !important; }
+                /* Mobile: same reasoning as the desktop .stay-tuned-only
+                   rule above — keep the section min-height reserve so
+                   the async stay-tuned/carousel load doesn't shift
+                   #meals-hospitality (and the ministry blocks inside
+                   it) once the events fetch resolves. */
+                .outreach.stay-tuned-only { padding-bottom: 0 !important; margin-bottom: 0 !important; }
 
             /* Carousel */
                 .carousel-card {

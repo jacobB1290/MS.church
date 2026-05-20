@@ -198,7 +198,11 @@ const SECTIONS: Section[] = [
     id: 'discipleship',
     eyebrow: 'Discipleship',
     heading: 'How we study scripture and grow together.',
-    imageSide: 'right',
+    // 'left' so Bible Reading's cafe photo starts on the LEFT and Bible
+    // Study auto-alternates to the RIGHT. Pairs with the Kids-flip above to
+    // give the page an unbroken LRLRLR rhythm: worship-L, kids-R,
+    // bible-reading-L, bible-study-R, fellowship-L, youth-R.
+    imageSide: 'left',
     entries: [
       {
         id: 'bible-reading',
@@ -985,7 +989,14 @@ export const ministriesBody = (): string => `
            overall content max-width and shift align-items so the video
            hugs the top of the row rather than floating in the middle. */
         .ministry-section--kids .sunday-school-content {
-            grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+            /* Text column first (wide 1fr), video column second (360px right).
+               Was video-left in earlier versions but that put two consecutive
+               sections (Worship + Kids) on the same side — breaking the
+               LRLRLR editorial rhythm. Video now sits on the right; the grid
+               uses explicit grid-column on each child so HTML source order
+               can stay video-first (so mobile keeps the natural visual-first
+               stack). */
+            grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
             max-width: 1040px;
             /* Video vertically centers within the row instead of hugging the
                top. Previously align-items: start left the 9:16 video orphaned
@@ -994,6 +1005,12 @@ export const ministriesBody = (): string => `
                eliminates that visual gap and makes the pairing feel anchored. */
             align-items: center;
             column-gap: var(--space-2xl);
+        }
+        .ministry-section--kids .sunday-school-video {
+            grid-column: 2;
+        }
+        .ministry-section--kids .sunday-school-text {
+            grid-column: 1;
         }
         .ministry-section--kids .sunday-school-video.vertical-video-frame {
             /* Bumped from 560px so the 9:16 vertical frame carries more
@@ -1029,6 +1046,12 @@ export const ministriesBody = (): string => `
                 row-gap: var(--space-lg);
                 align-items: stretch;
                 justify-items: center;
+            }
+            /* Reset the desktop grid-column overrides so the kids stack
+               follows HTML source order on mobile (video first, text after). */
+            .ministry-section--kids .sunday-school-video,
+            .ministry-section--kids .sunday-school-text {
+                grid-column: auto;
             }
             .ministry-section--kids .sunday-school-video.vertical-video-frame {
                 max-width: 240px;

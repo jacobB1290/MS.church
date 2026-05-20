@@ -33,7 +33,7 @@ export const aboutBody = (): string => `
                         <div class="about-image" aria-hidden="true">${PLACEHOLDER_SVG}</div>
                         <div class="about-text">
                             <p class="about-paragraph">Morning Star was planted in Boise to be a place where people who never thought church was for them could find belonging. We’re young, we’re small, and we believe the gospel is the most powerful force in any city — including ours. So we point people to Jesus, build a family that bears one another’s burdens, and serve Boise with the same compassion we’ve been shown.</p>
-                            <p class="about-paragraph"><em class="motto">Mending the Broken</em> isn’t a slogan — it’s the lens we view every Sunday morning, every Tuesday coffee, every Thursday study, every Friday youth night, and every meal we cook for our city’s most vulnerable. Whether you’ve grown up in church or you’re walking through the door for the first time, you’ll find friendly faces, honest teaching, and free breakfast every Sunday.</p>
+                            <p class="about-paragraph"><em class="motto">Mending the Broken</em> isn’t a slogan — it’s the lens we view every Sunday morning, every Tuesday coffee, every Thursday study, every Friday youth night, every meal we share, and every neighbor we get to know. Whether you’ve grown up in church or you’re walking through the door for the first time, you’ll find friendly faces, honest teaching, and free breakfast every Sunday.</p>
                         </div>
                     </div>
                 </section>

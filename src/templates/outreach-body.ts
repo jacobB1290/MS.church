@@ -22,7 +22,7 @@ export const outreachBody = (): string => `
                 <section id="outreach-intro">
                     <span class="section-eyebrow">Outreach</span>
                     <h1 class="section-heading">How we serve Boise.</h1>
-                    <p class="subpage-intro-lead">Faith without works is dead. Here’s how Morning Star puts love into action — through monthly community service and seasonal events open to anyone in the city.</p>
+                    <p class="subpage-intro-lead">Faith without works is dead. Here’s how Morning Star puts love into action — through monthly community service, seasonal events, and the relationships we carry into our neighborhoods.</p>
                     <nav class="subpage-jump" aria-label="Jump to a section">
                         <a href="#events">Events</a>
                         <a href="#meals-hospitality">Meals &amp; Hospitality</a>
@@ -322,7 +322,7 @@ export const outreachBody = (): string => `
                             <article class="ministry-block" id="cooking-ministry">
                                 <span class="ministry-eyebrow">Cooking Ministry</span>
                                 <h3 class="ministry-title">Monthly &middot; Boise homeless shelters</h3>
-                                <p class="ministry-text">Once a month, a team from Morning Star cooks and serves a full hot meal at local homeless shelters in Boise. It’s hands-on, it’s humble, and it’s one of the most concrete ways we live <em class="motto">Mending the Broken</em>. No experience required &mdash; only willing hands.</p>
+                                <p class="ministry-text">Once a month, a team from Morning Star cooks and serves a full hot meal at local homeless shelters in Boise. It’s hands-on, it’s humble, and it’s one of the ways we put faith to work alongside our city. No experience required &mdash; only willing hands.</p>
                                 <a href="/#contact" class="ministry-link">Join the next cook &rarr;</a>
                             </article>
                             <article class="ministry-block" id="community-breakfast">

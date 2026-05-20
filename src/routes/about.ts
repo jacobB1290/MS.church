@@ -56,7 +56,7 @@ const ABOUT_JSON_LD = JSON.stringify({
           name: 'What does "Mending the Broken" mean at Morning Star?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Mending the Broken is the mission of Morning Star Christian Church — a commitment to caring for people the world overlooks: the lonely, the grieving, the new-to-faith, the food-insecure, the marginalized. It shapes everything from the free Sunday breakfast to monthly cooking at homeless shelters to how visitors are greeted at the door.',
+            text: 'Mending the Broken is how Morning Star Christian Church names our mission: the gospel of Jesus Christ restores what sin has broken — in souls, in relationships, and in our city. It shapes how we preach on Sunday, how we welcome the first-time visitor, how we walk with one another through life, and how we serve our neighbors in Boise — from the free Sunday breakfast and monthly cooking ministry to the coffee shared on a Tuesday morning.',
           },
         },
         {

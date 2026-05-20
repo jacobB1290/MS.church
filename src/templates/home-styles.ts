@@ -113,7 +113,7 @@ export const homeStyles = (): string => `
                 /* Type scale — fluid from mobile to desktop */
                 --text-hero:    clamp(64px, 11vw, 96px);  /* Hero headline — unique, largest. Bespoke curve (steeper vw + higher floor than the regular type scale) so the hero reads as dominant on mobile too — at 414px wide this floors at 64px, almost 2x the section-title floor of 36px, matching the desktop ratio. */
                 --text-title:   clamp(36px, 5vw, 52px);   /* Page h1 — subpage titles (one per page) */
-                --text-section: clamp(28px, 3.5vw, 40px); /* Section h2 — the editorial step between page title and card heading. Without this, h1 and h2 collapsed to the same size and every subpage read as five equally-weighted titles instead of one page-title over its sections. Ratio to title is ~77%, to heading ~67% — clean geometric step. */
+                --text-section: clamp(30px, 3.75vw, 42px); /* Section h2 — the editorial step between page title and card heading. Without this, h1 and h2 collapsed to the same size and every subpage read as five equally-weighted titles instead of one page-title over its sections. Calibrated against benchmark church sites (calvaryboise.com) where section h2 reads ≈50px; we sit a touch lower so the h1 stays clearly dominant. Ratio to title (52) is ~81%, to heading (26) is ~62%. */
                 --text-heading: clamp(20px, 2.5vw, 26px); /* Card / item h3 sub-headings */
                 --text-lead:    clamp(17px, 1.5vw, 20px); /* Lead paragraphs */
                 --text-body:    16px;                      /* Base body text */

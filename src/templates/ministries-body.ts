@@ -694,23 +694,29 @@ export const ministriesBody = (): string => `
         /* Individual entry block — matches /outreach's .ministry-block
            weight (clean text, no surrounding box), with an extra
            .ministry-tips dl below the description. */
+        /* Tip table — sized for editorial reading, not data-sheet density.
+           Labels at --text-label (12px) and values at --text-body (16px) so
+           each tip reads at body parity (was 10px/14px which felt cramped
+           next to the bordered table chrome). Row gap bumped from --space-xs
+           to --space-sm for breathing room — same beat as paragraph spacing
+           in the same column above. */
         .ministry-tips {
             margin: var(--space-xs) 0 0;
             display: grid;
-            gap: var(--space-xs);
+            gap: var(--space-sm);
             padding: var(--space-md) 0;
             border-top: 1px solid var(--text-primary-hairline);
             border-bottom: 1px solid var(--text-primary-hairline);
         }
         .ministry-tips > div {
             display: grid;
-            grid-template-columns: clamp(110px, 12vw, 150px) 1fr;
+            grid-template-columns: clamp(120px, 13vw, 160px) 1fr;
             gap: var(--space-sm);
             align-items: baseline;
         }
         .ministry-tips dt {
             font-family: var(--font-display);
-            font-size: var(--text-eyebrow);
+            font-size: var(--text-label);
             font-weight: var(--weight-bold);
             letter-spacing: var(--tracking-wide);
             text-transform: uppercase;
@@ -720,8 +726,8 @@ export const ministriesBody = (): string => `
         .ministry-tips dd {
             margin: 0;
             color: var(--text-primary-muted);
-            font-size: var(--text-small);
-            line-height: var(--leading-normal);
+            font-size: var(--text-body);
+            line-height: var(--leading-loose);
         }
 
         /* Inline address-pill trigger inside .ministry-title — opens the
@@ -926,11 +932,11 @@ export const ministriesBody = (): string => `
                 border-left: 2px solid rgba(212, 165, 116, 0.35);
             }
             .ministry-tips dt {
-                font-size: var(--text-eyebrow);
+                font-size: var(--text-label);
                 letter-spacing: var(--tracking-wide);
             }
             .ministry-tips dd {
-                font-size: var(--text-small);
+                font-size: var(--text-body);
                 line-height: var(--leading-normal);
             }
 

@@ -96,7 +96,7 @@ export const aboutBody = (): string => `
                     <span class="section-eyebrow">Visit Us</span>
                     <h2 class="section-heading">Plan your first Sunday.</h2>
                     <div class="section-card">
-                        <p class="section-lead">Join us at <strong>9:00 AM</strong> any Sunday at <strong>3080 Wildwood St, Boise</strong>. Coffee and breakfast are on us. Wear what's comfortable. There's no dress code, no insider language — just a room full of people glad you came.</p>
+                        <p class="section-lead">Join us at <strong>9:00 AM</strong> any Sunday at <strong>3080 Wildwood St · Boise, Idaho</strong>. Coffee and breakfast are on us. Wear what's comfortable. There's no dress code, no insider language — just a room full of people glad you came.</p>
                         <div class="subpage-cta-row">
                             <a class="event-link-btn" href="/#schedule">See Full Schedule</a>
                             <a class="event-link-btn event-link-btn-secondary" href="/outreach">Explore Outreach</a>

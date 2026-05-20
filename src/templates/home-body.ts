@@ -334,7 +334,7 @@ export const homeBody = (): string => `
 
                         <address>
                             <div class="address-dropdown-wrapper">
-                                <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St, Boise, Idaho</button>
+                                <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St &middot; Boise, Idaho</button>
                                 <div class="address-dropdown">
                                     <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
                                         <span class="address-dropdown-icon">🍎</span>

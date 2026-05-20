@@ -66,6 +66,12 @@ type Entry = {
   tips: Tip[]
   ctaLabel: string
   ctaHref: string
+  /** Optional secondary action — same .ministry-link styling, rendered on a
+   *  second line below the primary CTA. Use for entries that benefit from a
+   *  second context-shift link (e.g. Youth → "Read about our church" for
+   *  parents/visitors who want the theology context before reaching out). */
+  secondaryCtaLabel?: string
+  secondaryCtaHref?: string
   /** Optional image for multi-entry sections (renderEntryPair). Path to a JPG;
    *  AVIF + WebP siblings are auto-derived. Without this, the entry renders
    *  with the placeholder SVG. */
@@ -281,11 +287,13 @@ const SECTIONS: Section[] = [
           'A weekly service for high schoolers and older — worship, teaching, and time to actually talk to each other. About an hour, with fellowship after.',
         tips: [
           { label: 'Ages', value: '15 and up — high school through college age.' },
-          { label: 'What to wear', value: 'A small step up from everyday casual — comfortable, but the kind of outfit you might wear out with friends in the evening. Nothing formal.' },
+          { label: 'What to wear', value: 'No strict dress code beyond being modest. Expect a range — most land somewhere above everyday casual and below full formal, with plenty leaning toward the dressier end of that. Folks who come more dressed up usually bring a change of clothes for fellowship time after.' },
           { label: 'First time', value: 'Walk in, grab a seat — someone will spot you and pull you in. Worship, a short message, fellowship after.' },
         ],
         ctaLabel: 'Ask about Youth Service',
         ctaHref: '/#contact',
+        secondaryCtaLabel: 'Read about our church',
+        secondaryCtaHref: '/about',
       },
     ],
   },
@@ -298,6 +306,17 @@ function renderTips(tips: Tip[]): string {
   return `<dl class="ministry-tips">
                                 ${rows}
                             </dl>`
+}
+
+function renderEntryLinks(e: Entry): string {
+  // Primary CTA + optional secondary CTA — both styled as .ministry-link
+  // (gold arrow link). The secondary sits on its own line below the primary
+  // so the visual rhythm reads "primary action, alternate path" rather than
+  // two competing peers on one line.
+  const secondary = e.secondaryCtaHref && e.secondaryCtaLabel
+    ? `\n                            <a href="${e.secondaryCtaHref}" class="ministry-link ministry-link--secondary">${e.secondaryCtaLabel} &rarr;</a>`
+    : ''
+  return `<a href="${e.ctaHref}" class="ministry-link">${e.ctaLabel} &rarr;</a>${secondary}`
 }
 
 function renderEntry(e: Entry, showEyebrow = true): string {
@@ -313,7 +332,7 @@ function renderEntry(e: Entry, showEyebrow = true): string {
                             ${eyebrowHtml}<h3 class="ministry-title">${e.titleHtml}</h3>
                             <p class="ministry-text">${e.description}</p>
                             ${renderTips(e.tips)}
-                            <a href="${e.ctaHref}" class="ministry-link">${e.ctaLabel} &rarr;</a>
+                            ${renderEntryLinks(e)}
                         </article>`
 }
 
@@ -346,7 +365,7 @@ function renderEntryPair(e: Entry, side: 'left' | 'right'): string {
                             <h3 class="ministry-title">${e.titleHtml}</h3>
                             <p class="ministry-text">${e.description}</p>
                             ${renderTips(e.tips)}
-                            <a href="${e.ctaHref}" class="ministry-link">${e.ctaLabel} &rarr;</a>
+                            ${renderEntryLinks(e)}
                         </div>
                     </article>`
 }
@@ -370,7 +389,7 @@ function renderSection(s: Section): string {
                             <h3 class="ministry-title">${entry.titleHtml}</h3>
                             <p>${entry.description}</p>
                             ${renderTips(entry.tips)}
-                            <a href="${entry.ctaHref}" class="ministry-link">${entry.ctaLabel} &rarr;</a>
+                            ${renderEntryLinks(entry)}
                         </div>
                     </div>
                 </section>`

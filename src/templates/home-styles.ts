@@ -2717,6 +2717,19 @@ export const homeStyles = (): string => `
                 text-decoration: underline;
                 text-underline-offset: 4px;
             }
+            /* Secondary action — same gold + same arrow, but lighter weight
+               + faint muted color so the visual order reads
+               "primary action, alternate path" rather than two competing
+               peers. Pairs with .ministry-link on its own line via the
+               .ministry-block flex column. */
+            .ministry-link.ministry-link--secondary {
+                color: var(--text-primary-muted);
+                font-weight: var(--weight-medium);
+                margin-top: 2px;
+            }
+            .ministry-link.ministry-link--secondary:hover {
+                color: var(--gold);
+            }
             @media (max-width: 960px) {
                 /* Mobile gets its own treatment, not just a stacked
                    desktop. Three mobile-specific moves:

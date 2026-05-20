@@ -428,6 +428,18 @@ To restore Cloudflare Pages as an alternative, see the comment block at the top 
 
 9. **Images are self-hosted** with three variants each (`.jpg` / `.webp` / `.avif`) in `public/static/`. Use `<picture>` with AVIF + WebP `<source>` elements for foreground images, or CSS `image-set()` for background images. Generation script in `scripts/_optimize.mjs` (ad-hoc, not committed); sharp is a dev dep. When swapping a static image, regenerate all three variants.
 
+10. **Motion preference — everything that moves must animate, never jump.** This is a hard project preference. Anything that changes position, opacity, size, color, or visibility on the screen must do so with a transition or animation — not as an instant state change. The bar is "fluid and intentional," not "fast and instant." Concretely:
+
+    - **In-page anchor jumps** scroll smoothly. Use the global `window.__smoothScrollToHash(hash)` helper exposed by `subpage-header.ts` (it respects `prefers-reduced-motion`, applies the 75/90px navbar offset, and uses native `scrollTo({behavior:'smooth'})` — the same primitive the home hero→contact link uses). When adding a new in-page anchor link, wire its click handler to the helper; do NOT let the browser do its native instant jump.
+    - **Overlays, drawers, modals, dropdowns** open and close with opacity + transform transitions, not `display: none ↔ display: block` flips. Common pattern: `opacity 0 → 1` + `translateY(8px) → 0` + `transition: var(--motion-medium) var(--ease-out-soft)`. Use `visibility: hidden` paired with the opacity transition so screen readers and tab order behave correctly while still letting the fade animate.
+    - **Hover state changes** (color, underline, shadow, lift) transition rather than swap. Default to `var(--motion-fast)` or `var(--motion-medium)` and `var(--ease-out-soft)` from the design tokens. Color crossfades and `transform: scaleX(0)→1` underlines are preferred over absolute-positioned `left/right` keyframes (the latter drift visibly during the transition and can produce sub-pixel offset stutter).
+    - **Carousels and tab switches** ease between states. No instant flip from slide N to N+1; always a transform-based slide or crossfade.
+    - **Reveal-on-scroll** animations stay in the existing `js-reveals` system (see `home-head.ts` / `home-scripts.ts`); do not roll a parallel observer. The system already handles the watchdog and reduced-motion gating.
+    - **Programmatic instant scrolls** (the watchdog re-positioning logic in `subpage-header.ts`'s hash-load path) are the rare exception — they happen while `main` is at opacity 0 during the entrance fade, so the user never sees them. Do not introduce new visible instant scrolls or instant position swaps elsewhere.
+    - **Always honour `prefers-reduced-motion: reduce`.** Wrap heavy transitions in `@media (prefers-reduced-motion: reduce) { ... transition: none; }` blocks. The smooth-scroll helper already does this; CSS-only transitions need their own override.
+
+    Stutter, lag, and abrupt position changes break the editorial feel the site is built for. If a change is hard to animate smoothly at 60fps (and 120fps on capable displays — the harness measures both tiers), find a way before shipping; do not fall back to an instant cut.
+
 ---
 
 ## SEO Conventions — Build Best-in-Class by Default

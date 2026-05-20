@@ -1312,12 +1312,16 @@ export const ministriesBody = (): string => `
               note reads as the page's last paragraph, not an "ad block".
            ============================================================ */
 
-        /* 1. Intro heading — italic motto. The display family's italic
-           cut (Playfair) is genuinely calligraphic; setting the motto in
-           italic + drop the straight ASCII quotes preserves the editorial
-           voice while removing the ' typewriter quote tell. */
+        /* 1. Intro heading — italic gold motto. The display family's
+           italic cut (Playfair) is genuinely calligraphic; setting the
+           motto in italic + gold + drop the straight ASCII quotes lifts
+           the phrase visually as a stated identity rather than a
+           parenthetical aside, and reads as the gold accent thread the
+           rest of the page picks up (eyebrows, address pills, CTA pill,
+           jump-nav hover state). */
         .ministries-intro-heading em {
             font-style: italic;
+            color: var(--gold-dark);
             /* Slight letter-spacing relief — italics read tighter than
                roman at large sizes, so a hair of tracking restores
                optical evenness. */
@@ -1339,15 +1343,24 @@ export const ministriesBody = (): string => `
             margin: 0 0 var(--space-xl);
         }
 
-        /* 3. Jump nav — five chips, small-caps, gold underline on hover.
-           Sits under the lede as a tight inline TOC. */
+        /* 3. Jump nav — five chips, small-caps, gold scale-in underline
+           on hover. No border-top hairline: a full-page-width 1px rule
+           extending past the lede's 60ch line-cap read as misaligned
+           (the heading + lede column ends at ~800px on desktop while
+           the rule went edge-to-edge). Vertical white space alone now
+           separates the lede block from the chips.
+
+           Underline uses transform: scaleX(0)→1 with transform-origin:
+           left so the GPU compositor handles the animation — no
+           per-frame layout, no offset drift, identical width to the
+           text. (Previous absolute-positioned left/right approach
+           rendered a few pixels wider than the glyph run and crept
+           visibly during the transition.) */
         .ministries-jump {
             display: flex;
             flex-wrap: wrap;
             gap: var(--space-md) var(--space-lg);
-            margin-top: var(--space-md);
-            padding-top: var(--space-md);
-            border-top: 1px solid var(--text-primary-hairline);
+            margin-top: var(--space-lg);
         }
         .ministries-jump a {
             font-family: var(--font-body);
@@ -1359,17 +1372,19 @@ export const ministriesBody = (): string => `
             text-decoration: none;
             position: relative;
             padding: 4px 0;
-            transition: color var(--motion-fast) var(--ease-standard);
+            transition: color var(--motion-medium) var(--ease-out-soft);
         }
         .ministries-jump a::after {
             content: '';
             position: absolute;
             left: 0;
-            right: 100%;
+            right: 0;
             bottom: 0;
             height: 1px;
             background: var(--gold);
-            transition: right var(--motion-medium) var(--ease-out-soft);
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform var(--motion-medium) var(--ease-out-soft);
         }
         .ministries-jump a:hover,
         .ministries-jump a:focus-visible {
@@ -1377,7 +1392,13 @@ export const ministriesBody = (): string => `
         }
         .ministries-jump a:hover::after,
         .ministries-jump a:focus-visible::after {
-            right: 0;
+            transform: scaleX(1);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .ministries-jump a,
+            .ministries-jump a::after {
+                transition: none;
+            }
         }
 
         /* 4. Entry titles read as DATELINES, not as competing H3s.
@@ -1536,6 +1557,32 @@ export const ministriesBody = (): string => `
                         setTimeout(function() {
                             dropdowns.forEach(function(d) { d.classList.remove('active'); });
                         }, 300);
+                    });
+                });
+
+                // Smooth-scroll for in-page anchor clicks (jump-nav under
+                // the intro lede + any other same-page #anchor). Defers
+                // to subpage-header.ts's __smoothScrollToHash helper when
+                // available (handles reduced-motion, applies the
+                // 75/90px nav offset, and uses native scrollTo({behavior:
+                // 'smooth'}) which is the same primitive home uses for
+                // hero→contact). Falls back to scrollIntoView smooth
+                // if the helper isn't loaded yet.
+                document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        var hash = link.getAttribute('href');
+                        if (!hash || hash === '#' || hash.length < 2) return;
+                        var target = document.querySelector(hash);
+                        if (!target) return;
+                        e.preventDefault();
+                        if (typeof window.__smoothScrollToHash === 'function') {
+                            window.__smoothScrollToHash(hash);
+                        } else {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                        // Reflect the new section in the URL without
+                        // letting the browser do its instant jump.
+                        try { history.replaceState(null, '', location.pathname + location.search + hash); } catch (e) {}
                     });
                 });
             })();

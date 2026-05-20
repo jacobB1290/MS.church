@@ -989,34 +989,72 @@ export const ministriesBody = (): string => `
            overall content max-width and shift align-items so the video
            hugs the top of the row rather than floating in the middle. */
         .ministry-section--kids .sunday-school-content {
-            /* Text column first (wide 1fr), video column second (360px right).
-               Was video-left in earlier versions but that put two consecutive
-               sections (Worship + Kids) on the same side — breaking the
-               LRLRLR editorial rhythm. Video now sits on the right; the grid
-               uses explicit grid-column on each child so HTML source order
-               can stay video-first (so mobile keeps the natural visual-first
-               stack). */
-            grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
-            max-width: 1040px;
-            /* Video vertically centers within the row instead of hugging the
-               top. Previously align-items: start left the 9:16 video orphaned
-               in the upper-left with ~140px of empty column below it (the
-               text+tips column extends past the video's max-height). Centering
-               eliminates that visual gap and makes the pairing feel anchored. */
+            /* Full-page-width 7fr / 5fr grid matching every other ministry
+               section's --right pattern (Bible Study, Youth). Text on the
+               LEFT (7fr — the wider editorial column for body + tips), video
+               on the RIGHT (5fr — narrower column with the 9:16 video tile
+               centered inside). This gives the Kids section the same left-
+               and right-page-edge alignment as its neighbors so the
+               eye doesn't register a hitch between sections, and crucially
+               aligns the body copy's left edge with the section heading's
+               left edge above it (the previous max-width: 1040 + auto-
+               margin centered the grid inside the page, but left the
+               heading at the page edge — a 120px indent disconnect that
+               read as accidental misalignment, not deliberate composition).
+               max-width / margin overrides defeat the base .sunday-school-
+               content rule inherited from home-styles.ts.
+
+               grid-auto-flow: dense backfills empty cells. Without it, the
+               grid-column overrides below (video set to col 2, text set
+               to col 1) caused the auto-placement cursor to advance past
+               row 1 after placing the video, dropping the text into
+               (col 1, row 2) and leaving (col 1, row 1) empty — the
+               giant gap-below-heading bug. With dense, the algorithm
+               goes back to fill (col 1, row 1) with the text, so both
+               items sit in the same row as intended. The explicit
+               grid-row: 1 on each child below is belt-and-suspenders. */
+            grid-template-columns: 7fr 5fr;
+            max-width: none;
+            margin: 0;
+            /* Match the heading→content gap used by .ministry-section-content
+               on every other section (Worship, Discipleship, Fellowship,
+               Youth). The base .sunday-school-content (from home-styles)
+               had no top margin because on /home the heading-content gap
+               is driven by the surrounding section padding; on /ministries
+               every other section explicitly adds var(--space-xl) to keep
+               the per-section vertical rhythm consistent. Without this,
+               Kids reads as 20px tighter than its neighbors — a subtle
+               but visible rhythm break when scrolling down. */
+            margin-top: var(--space-xl);
+            /* Video vertically centers within the row instead of hugging
+               the top. align-items: start would leave the 9:16 video
+               orphaned in the upper-right with ~140px of empty column
+               below it (the text+tips column extends past the video's
+               max-height). Centering eliminates that visual gap and makes
+               the pairing feel anchored. */
             align-items: center;
             column-gap: var(--space-2xl);
+            grid-auto-flow: dense;
         }
         .ministry-section--kids .sunday-school-video {
             grid-column: 2;
+            grid-row: 1;
         }
         .ministry-section--kids .sunday-school-text {
             grid-column: 1;
+            grid-row: 1;
         }
         .ministry-section--kids .sunday-school-video.vertical-video-frame {
-            /* Bumped from 560px so the 9:16 vertical frame carries more
-               presence next to the longer right column. At 620px tall the
-               video is ~349px wide — closer to the 360px column width, less
-               in-column slack. */
+            /* The 5fr column is ~520px on a 1280px page — wider than the
+               video's natural 9:16 footprint at the chosen 620px max-height
+               (~349px wide). Cap max-width at 360 so the video keeps its
+               vertical-phone-screen proportion regardless of column width;
+               justify-self: center (inherited from the base
+               .sunday-school-video.vertical-video-frame rule) horizontally
+               centers it inside the 5fr column with ~80px breathing room
+               on each side. That centered framing reads as a deliberate
+               vertical accent, not a clipped/stretched poster. */
+            max-width: 360px;
             max-height: 620px;
         }
         .ministry-section--kids .sunday-school-text > .ministry-eyebrow {
@@ -1047,11 +1085,13 @@ export const ministriesBody = (): string => `
                 align-items: stretch;
                 justify-items: center;
             }
-            /* Reset the desktop grid-column overrides so the kids stack
-               follows HTML source order on mobile (video first, text after). */
+            /* Reset the desktop grid-column / grid-row overrides so the
+               kids stack follows HTML source order on mobile (video first,
+               text after). */
             .ministry-section--kids .sunday-school-video,
             .ministry-section--kids .sunday-school-text {
                 grid-column: auto;
+                grid-row: auto;
             }
             .ministry-section--kids .sunday-school-video.vertical-video-frame {
                 max-width: 240px;

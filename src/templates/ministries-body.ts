@@ -109,6 +109,17 @@ type Section = {
       imageSrcDesktop when the desktop image's natural framing needs a
       different focal bias than the mobile image. */
   imagePositionDesktop?: string
+  /** When set to 'pair', the section image renders as TWO polaroid-style
+      tiles inside the same .ministry-section-image footprint instead of a
+      single rounded rectangle. Use imageSrc + imageSrc2 for the two photos
+      (each with optional alt + position). Combined visual mass matches the
+      single-image case. Fellowship uses this — Activity Day's open gym +
+      crochet circle are two distinct activities and benefit from two photos
+      sitting together. */
+  imageLayout?: 'pair'
+  imageSrc2?: string
+  imageAlt2?: string
+  imagePosition2?: string
   entries: Entry[]
 }
 
@@ -238,6 +249,18 @@ const SECTIONS: Section[] = [
     eyebrow: 'Fellowship',
     heading: 'How we spend time together off-Sunday.',
     imageSide: 'left',
+    // Two-photo polaroid pair — Activity Day runs open gym + crochet circle
+    // simultaneously, so the section image deserves two photos (one per
+    // activity) rather than a single representative shot. imageSrc + imageSrc2
+    // will be wired to real photos when the church provides them; the
+    // placeholder tiles below already render in the correct layout so the
+    // photos drop in cleanly.
+    imageLayout: 'pair',
+    imageAlt: 'Wednesday Activity Day at Morning Star Christian Church in Boise, Idaho — open gym and crochet circle running side by side.',
+    // imageSrc + imageSrc2 left undefined for now → renders the placeholder
+    // tiles in the same polaroid layout. Set these when photos arrive:
+    //   imageSrc:  '/static/activity-day-gym.jpg',
+    //   imageSrc2: '/static/activity-day-crochet.jpg',
     entries: [
       {
         id: 'activity-day',
@@ -424,7 +447,43 @@ function renderSection(s: Section): string {
   const showEntryEyebrow = s.entries.length > 1
   const entriesHtml = s.entries.map((e) => renderEntry(e, showEntryEyebrow)).join('\n                        ')
   let imgBlock: string
-  if (!s.imageSrc) {
+
+  // ---- Two-photo polaroid pair layout (imageLayout: 'pair') ----
+  // Renders two slightly-offset polaroid tiles inside the same
+  // .ministry-section-image footprint a single image would occupy. Used by
+  // Fellowship to show open gym + crochet circle as a paired set. Each tile
+  // gets its own --img-pos via inline CSS var. Placeholder fallback used
+  // when one or both images are missing.
+  if (s.imageLayout === 'pair') {
+    const variants = (src: string) => {
+      const [path, query] = src.split('?')
+      const q = query ? `?${query}` : ''
+      const base = path.replace(/\.jpe?g$/i, '')
+      return { avif: `${base}.avif${q}`, webp: `${base}.webp${q}`, jpg: src }
+    }
+    const renderTile = (src: string | undefined, alt: string | undefined, pos: string | undefined, idx: 1 | 2) => {
+      const posStyle = pos ? ` style="--img-pos: ${pos};"` : ''
+      if (!src) {
+        return `<div class="ministry-pair-tile ministry-pair-tile--${idx} ministry-pair-tile-placeholder" aria-hidden="true">
+                                <div class="ministry-pair-tile-inner">${PLACEHOLDER_SVG}</div>
+                            </div>`
+      }
+      const vv = variants(src)
+      return `<div class="ministry-pair-tile ministry-pair-tile--${idx}"${posStyle}>
+                                <div class="ministry-pair-tile-inner">
+                                    <picture>
+                                        <source type="image/avif" srcset="${vv.avif}">
+                                        <source type="image/webp" srcset="${vv.webp}">
+                                        <img src="${vv.jpg}" alt="${alt ?? ''}" loading="lazy" decoding="async">
+                                    </picture>
+                                </div>
+                            </div>`
+    }
+    imgBlock = `<div class="ministry-section-image ministry-section-image--pair" aria-label="${s.imageAlt ?? ''}">
+                            ${renderTile(s.imageSrc, s.imageAlt, s.imagePosition, 1)}
+                            ${renderTile(s.imageSrc2, s.imageAlt2, s.imagePosition2, 2)}
+                        </div>`
+  } else if (!s.imageSrc) {
     imgBlock = `<div class="ministry-section-image ministries-image-placeholder" aria-hidden="true">
                             ${PLACEHOLDER_SVG}
                         </div>`
@@ -606,6 +665,99 @@ export const ministriesBody = (): string => `
             max-width: 96px;
             min-width: 48px;
             height: auto;
+        }
+
+        /* ---------- Pair-layout (.ministry-section-image--pair) ----------
+           Two polaroid-style tiles sitting inside the same container the
+           single-image case would occupy. Container is unchanged so the
+           combined visual mass of the pair matches the size a single
+           ministry-section-image would render at. Borrows the polaroid
+           paper-edge + soft shadow language from the home schedule banner
+           so the pair reads as same-family imagery, not a one-off pattern.
+           Border-radius on the container is removed (lives on each inner
+           tile instead) and overflow is visible so the polaroid shadows can
+           bleed slightly past the column edge. */
+        .ministry-section-image.ministry-section-image--pair {
+            background: transparent;
+            border-radius: 0;
+            overflow: visible;
+        }
+        .ministry-pair-tile {
+            position: absolute;
+            /* 54% width × 4:5 aspect produces tiles where each one's edges
+               stay clearly visible in the diagonal layout (60% caused the
+               back tile to disappear almost entirely behind the front tile).
+               Calibrated so the two tiles overlap in a small central zone,
+               not stacked-and-hidden. */
+            width: 54%;
+            aspect-ratio: 4 / 5;
+            background: #fefcf6;
+            padding: 5px;
+            border-radius: 3px;
+            box-shadow:
+                0 14px 30px var(--text-primary-hairline),
+                0 5px 12px var(--text-primary-hairline),
+                0 1px 3px var(--text-primary-hairline);
+            transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 480ms cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+        .ministry-pair-tile--1 {
+            /* Front tile, tilted left. Sits in the upper-left quadrant so
+               its lower-right corner naturally meets tile 2's upper-left. */
+            top: 0;
+            left: 0;
+            transform: rotate(-3.5deg);
+            z-index: 2;
+        }
+        .ministry-pair-tile--2 {
+            /* Back tile, tilted right. Anchored to bottom-right but lifted
+               slightly off the edge so its top-left corner is visibly above
+               tile 1's bottom edge — the two tiles read as a clear diagonal
+               pair, not as one tile with another behind it. */
+            bottom: 4%;
+            right: 0;
+            transform: rotate(3.5deg);
+            z-index: 1;
+        }
+        .ministry-pair-tile:hover {
+            transform: rotate(0) scale(1.03);
+            z-index: 5;
+            box-shadow:
+                0 22px 44px var(--text-primary-hairline),
+                0 10px 22px var(--text-primary-hairline),
+                0 2px 4px var(--text-primary-hairline);
+        }
+        .ministry-pair-tile-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+        .ministry-pair-tile picture,
+        .ministry-pair-tile img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: var(--img-pos, center);
+        }
+        /* Placeholder tile — same warm-cream + faint-icon treatment as
+           .ministries-image-placeholder so the pair reads as intentional
+           paper photos waiting for content, not a draft surface. */
+        .ministry-pair-tile.ministry-pair-tile-placeholder .ministry-pair-tile-inner {
+            background:
+                radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--gold) 8%, transparent) 0%, transparent 60%),
+                linear-gradient(180deg, color-mix(in srgb, var(--bg) 96%, var(--gold) 4%) 0%, color-mix(in srgb, var(--bg) 88%, var(--gold) 6%) 100%);
+            display: grid;
+            place-items: center;
+            color: var(--text-primary-fade);
+        }
+        .ministry-pair-tile-placeholder .ministry-pair-tile-inner svg {
+            width: 28%;
+            max-width: 64px;
+            min-width: 32px;
+            opacity: 0.4;
         }
         /* Real images fill the container absolutely so they cannot
            influence its height. Use top/left + width/height (not inset)
@@ -915,6 +1067,32 @@ export const ministriesBody = (): string => `
                 top: auto;
                 border-radius: var(--radius-lg);
                 align-self: auto;
+            }
+            /* Pair layout on mobile — 16:9 banner doesn't have headroom for
+               two 4:5 polaroids stacked diagonally (they'd overlap the row),
+               so place them side by side in roughly equal halves. Keep the
+               polaroid styling (paper edge + shadow + slight rotation) so
+               the design language matches desktop. Aspect bumped to 3:2 so
+               the two side-by-side polaroids breathe — combined visual mass
+               is still close to the single-image 16:9 banner case. */
+            .ministry-section-image.ministry-section-image--pair {
+                aspect-ratio: 3 / 2;
+                border-radius: 0;
+            }
+            .ministry-section-image--pair .ministry-pair-tile {
+                width: 44%;
+                aspect-ratio: 4 / 5;
+            }
+            .ministry-section-image--pair .ministry-pair-tile--1 {
+                top: 5%;
+                left: 4%;
+                transform: rotate(-3deg);
+            }
+            .ministry-section-image--pair .ministry-pair-tile--2 {
+                top: auto;
+                bottom: 5%;
+                right: 4%;
+                transform: rotate(3deg);
             }
             .ministry-section-entries {
                 gap: var(--space-xl);

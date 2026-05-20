@@ -132,7 +132,7 @@ Sitemap: https://ms.church/sitemap.xml
         priority: '0.9',
         images: [
           {
-            loc: `${base}/static/worship-desktop.jpg`,
+            loc: `${base}/static/worship-desktop.jpg?v=2`,
             title: 'Sunday worship teaching at Morning Star Christian Church',
             caption: 'Pastor teaching from the pulpit at the 9 AM Sunday service at Morning Star Christian Church in Boise, Idaho — Bible-grounded, nondenominational worship.',
           },

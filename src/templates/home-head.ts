@@ -315,7 +315,7 @@ export const homeHead = (): string => {
                         },
                         {
                             "@type": "ImageObject",
-                            "contentUrl": "https://ms.church/static/worship-desktop.jpg",
+                            "contentUrl": "https://ms.church/static/worship-desktop.jpg?v=2",
                             "caption": "Pastor teaching from the pulpit at the 9 AM Sunday service at Morning Star Christian Church in Boise, Idaho",
                             "keywords": "Boise pastor preaching, Sunday teaching Boise, Bible-grounded preaching, nondenominational pulpit Boise"
                         },

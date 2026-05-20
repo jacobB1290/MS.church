@@ -100,7 +100,10 @@ const SECTIONS: Section[] = [
     // widths it produces ≤75px of vertical overflow — meaning the cropped
     // composition is preserved nearly intact in the rendered container, not
     // re-cropped aggressively by object-fit.
-    imageSrcDesktop: '/static/worship-desktop.jpg',
+    // ?v= query is a cache-bust marker — /static is served with
+    // Cache-Control: immutable, so the URL itself has to change when the
+    // file contents change. Bump this when the cropped image is updated.
+    imageSrcDesktop: '/static/worship-desktop.jpg?v=2',
     imageAlt: 'Morning Star Christian Church Sunday worship service in Boise, Idaho — pastor teaching from the pulpit and the worship team leading songs at our nondenominational 9 AM gathering.',
     // Mobile (16:9 banner): faces of the worship team sit in the upper-middle
     // band; bias upward so heads/microphones are preserved over feet.

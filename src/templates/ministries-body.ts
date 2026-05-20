@@ -279,10 +279,17 @@ function renderTips(tips: Tip[]): string {
                             </dl>`
 }
 
-function renderEntry(e: Entry): string {
+function renderEntry(e: Entry, showEyebrow = true): string {
+  // Eyebrow hidden in single-entry sections — the section-level eyebrow
+  // (WORSHIP / KIDS / FELLOWSHIP / YOUTH) already labels the context, so an
+  // identically-positioned "SUNDAY GATHERINGS" / "ACTIVITY DAY" / etc. reads
+  // as redundant chrome. Multi-entry sections (Discipleship) keep eyebrows
+  // because they distinguish two entries under one section.
+  const eyebrowHtml = showEyebrow
+    ? `<span class="ministry-eyebrow">${e.eyebrow}</span>\n                            `
+    : ''
   return `<article class="ministry-block" id="${e.id}">
-                            <span class="ministry-eyebrow">${e.eyebrow}</span>
-                            <h3 class="ministry-title">${e.titleHtml}</h3>
+                            ${eyebrowHtml}<h3 class="ministry-title">${e.titleHtml}</h3>
                             <p class="ministry-text">${e.description}</p>
                             ${renderTips(e.tips)}
                             <a href="${e.ctaHref}" class="ministry-link">${e.ctaLabel} &rarr;</a>
@@ -329,6 +336,8 @@ function renderSection(s: Section): string {
   // editorial layout from /outreach (.ministries-pair).
   if (s.id === 'kids') {
     const entry = s.entries[0]
+    // Single-entry section — entry eyebrow ("SUNDAY SCHOOL") is omitted
+    // because the section eyebrow ("KIDS") already labels the context.
     return `<section class="ministry-section ministry-section--kids" id="${s.id}">
                     <span class="section-eyebrow">${s.eyebrow}</span>
                     <h2 class="section-heading">${s.heading}</h2>
@@ -337,7 +346,6 @@ function renderSection(s: Section): string {
                             <div class="vertical-video-placeholder">${VIDEO_PLACEHOLDER_SVG}</div>
                         </div>
                         <div class="sunday-school-text">
-                            <span class="ministry-eyebrow">${entry.eyebrow}</span>
                             <h3 class="ministry-title">${entry.titleHtml}</h3>
                             <p>${entry.description}</p>
                             ${renderTips(entry.tips)}
@@ -370,7 +378,11 @@ function renderSection(s: Section): string {
                 </section>`
   }
 
-  const entriesHtml = s.entries.map(renderEntry).join('\n                        ')
+  // Single-entry sections hide the entry-level eyebrow (it duplicates the
+  // section eyebrow above). Multi-entry sections keep eyebrows for
+  // differentiation — but those flow through renderEntryPair earlier.
+  const showEntryEyebrow = s.entries.length > 1
+  const entriesHtml = s.entries.map((e) => renderEntry(e, showEntryEyebrow)).join('\n                        ')
   let imgBlock: string
   if (!s.imageSrc) {
     imgBlock = `<div class="ministry-section-image ministries-image-placeholder" aria-hidden="true">

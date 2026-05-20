@@ -348,7 +348,24 @@ ${items}
           </script>
           
           <style>
-              :root { --gold: ${GOLD}; }
+              :root {
+                  --gold: ${GOLD};
+                  /* Type tokens — duplicated from src/templates/home-styles.ts :root
+                     because /form is a standalone route with its own inline <style>
+                     (no @import from the shared catalog). Keep in sync if the home
+                     scale ever changes. */
+                  --text-title:   clamp(36px, 5vw, 52px);
+                  --text-heading: clamp(20px, 2.5vw, 26px);
+                  --text-lead:    clamp(17px, 1.5vw, 20px);
+                  --text-body:    16px;
+                  --text-small:   14px;
+                  --text-label:   12px;
+                  --text-eyebrow: 10px;
+                  --weight-regular:  400;
+                  --weight-medium:   500;
+                  --weight-semibold: 600;
+                  --weight-bold:     700;
+              }
               * {
                   margin: 0;
                   padding: 0;
@@ -385,33 +402,33 @@ ${items}
               
               .logo h1 {
                   font-family: 'Playfair Display', serif;
-                  font-size: 22px;
-                  font-weight: 700;
+                  font-size: var(--text-heading);
+                  font-weight: var(--weight-bold);
                   color: #1a1a2e;
                   letter-spacing: 3px;
                   text-transform: uppercase;
               }
-              
+
               .logo span {
-                  font-size: 11px;
+                  font-size: var(--text-eyebrow);
                   color: rgba(26, 26, 46, 0.5);
                   letter-spacing: 4px;
                   text-transform: uppercase;
-                  font-weight: 600;
+                  font-weight: var(--weight-semibold);
                   margin-top: 2px;
               }
-              
+
               nav {
                   display: flex;
                   gap: 40px;
                   align-items: center;
               }
-              
+
               nav a {
                   text-decoration: none;
                   color: #1a1a2e;
-                  font-size: 12px;
-                  font-weight: 700;
+                  font-size: var(--text-label);
+                  font-weight: var(--weight-bold);
                   letter-spacing: 2px;
                   text-transform: uppercase;
                   transition: opacity 0.3s;
@@ -439,9 +456,9 @@ ${items}
               
               h2 {
                   font-family: 'Playfair Display', serif;
-                  font-size: 52px;
+                  font-size: var(--text-title);
                   color: #1a1a2e;
-                  font-weight: 700;
+                  font-weight: var(--weight-bold);
                   margin-bottom: 48px;
               }
               
@@ -462,19 +479,19 @@ ${items}
               label {
                   display: block;
                   color: #1a1a2e;
-                  font-size: 13px;
-                  font-weight: 700;
+                  font-size: var(--text-label);
+                  font-weight: var(--weight-bold);
                   margin-bottom: 10px;
                   letter-spacing: 1px;
                   text-transform: uppercase;
               }
-              
+
               input, textarea, select {
                   width: 100%;
                   padding: 16px 20px;
                   border: 1px solid rgba(26, 26, 46, 0.15);
                   border-radius: 16px;
-                  font-size: 16px;
+                  font-size: var(--text-body);
                   font-family: inherit;
                   background: rgba(255, 255, 255, 0.9);
                   transition: all 0.3s;
@@ -498,8 +515,8 @@ ${items}
                   padding: 18px 40px;
                   border-radius: 100px;
                   border: none;
-                  font-size: 12px;
-                  font-weight: 700;
+                  font-size: var(--text-label);
+                  font-weight: var(--weight-bold);
                   letter-spacing: 2px;
                   text-transform: uppercase;
                   cursor: pointer;

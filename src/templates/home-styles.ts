@@ -3116,7 +3116,7 @@ export const homeStyles = (): string => `
                     font-size: var(--text-lead);
                 }
                 .subpage-brand .brand-subtitle {
-                    font-size: 9px;
+                    font-size: var(--text-eyebrow);
                 }
                 .subpage-back {
                     top: 16px;
@@ -6719,7 +6719,7 @@ export const homeStyles = (): string => `
                 .btn-view-past-events {
                     margin-top: 12px;
                     padding: 8px 16px;
-                    font-size: 9px;
+                    font-size: var(--text-eyebrow);
                     background: var(--gold);
                     border-color: var(--gold);
                     color: #ffffff;

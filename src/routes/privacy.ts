@@ -60,7 +60,24 @@ export function registerPrivacyRoute(app: Hono) {
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
           <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
           <style>
-              :root { --gold: ${GOLD}; }
+              :root {
+                  --gold: ${GOLD};
+                  /* Type tokens — duplicated from src/templates/home-styles.ts :root
+                     because /privacy is a standalone route with its own inline <style>
+                     (no @import from the shared catalog). Keep in sync if the home
+                     scale ever changes. */
+                  --text-title:   clamp(36px, 5vw, 52px);
+                  --text-heading: clamp(20px, 2.5vw, 26px);
+                  --text-lead:    clamp(17px, 1.5vw, 20px);
+                  --text-body:    16px;
+                  --text-small:   14px;
+                  --text-label:   12px;
+                  --text-eyebrow: 10px;
+                  --weight-regular:  400;
+                  --weight-medium:   500;
+                  --weight-semibold: 600;
+                  --weight-bold:     700;
+              }
               * {
                   margin: 0;
                   padding: 0;
@@ -87,8 +104,8 @@ export function registerPrivacyRoute(app: Hono) {
                   gap: 8px;
                   color: var(--gold);
                   text-decoration: none;
-                  font-size: 14px;
-                  font-weight: 500;
+                  font-size: var(--text-small);
+                  font-weight: var(--weight-medium);
                   margin-bottom: 40px;
                   transition: opacity 0.3s ease;
               }
@@ -104,14 +121,14 @@ export function registerPrivacyRoute(app: Hono) {
               
               .page-header h1 {
                   font-family: 'Playfair Display', serif;
-                  font-size: clamp(32px, 6vw, 48px);
+                  font-size: var(--text-title);
                   color: #1a1a2e;
                   margin-bottom: 16px;
-                  font-weight: 700;
+                  font-weight: var(--weight-bold);
               }
-              
+
               .page-header .last-updated {
-                  font-size: 14px;
+                  font-size: var(--text-small);
                   color: #6b6b80;
               }
               
@@ -127,8 +144,8 @@ export function registerPrivacyRoute(app: Hono) {
                   padding: 12px 24px;
                   border-radius: 50px;
                   text-decoration: none;
-                  font-size: 14px;
-                  font-weight: 600;
+                  font-size: var(--text-small);
+                  font-weight: var(--weight-semibold);
                   transition: all 0.3s ease;
                   background: rgba(255, 255, 255, 0.6);
                   color: rgba(26, 26, 46, 0.7);
@@ -158,48 +175,58 @@ export function registerPrivacyRoute(app: Hono) {
               
               .section-title {
                   font-family: 'Playfair Display', serif;
-                  font-size: 28px;
+                  font-size: var(--text-heading);
                   color: #1a1a2e;
                   margin-bottom: 24px;
-                  font-weight: 700;
+                  font-weight: var(--weight-bold);
                   padding-bottom: 16px;
                   border-bottom: 2px solid var(--gold);
               }
-              
+
               .legal-section h2 {
                   font-family: 'Playfair Display', serif;
-                  font-size: 22px;
+                  font-size: var(--text-lead);
                   color: #1a1a2e;
                   margin: 32px 0 16px;
-                  font-weight: 600;
+                  font-weight: var(--weight-semibold);
               }
-              
+
               .legal-section h2:first-of-type {
                   margin-top: 0;
               }
-              
+
               .legal-section h3 {
-                  font-size: 17px;
+                  font-size: var(--text-body);
                   color: #1a1a2e;
                   margin: 24px 0 12px;
-                  font-weight: 600;
+                  font-weight: var(--weight-semibold);
               }
-              
+
               .legal-section p {
                   color: rgba(26, 26, 46, 0.75);
                   margin-bottom: 16px;
-                  font-size: 15px;
+                  font-size: var(--text-body);
               }
-              
+
               .legal-section ul {
                   margin: 16px 0;
                   padding-left: 24px;
                   color: rgba(26, 26, 46, 0.75);
               }
-              
+
               .legal-section li {
                   margin-bottom: 8px;
-                  font-size: 15px;
+                  font-size: var(--text-body);
+              }
+
+              /* Volunteer-availability footnote — appears 3x in the page body.
+                 A semantic class so the inline style="font-size: 13px" repeats
+                 below all map to the same canonical token. */
+              .legal-footnote {
+                  font-size: var(--text-small);
+                  color: #6b6b80;
+                  margin-top: 16px;
+                  font-style: italic;
               }
               
               .legal-section a {
@@ -244,7 +271,7 @@ export function registerPrivacyRoute(app: Hono) {
                   
                   .nav-tab {
                       padding: 10px 16px;
-                      font-size: 13px;
+                      font-size: var(--text-label);
                   }
               }
           </style>
@@ -439,7 +466,7 @@ export function registerPrivacyRoute(app: Hono) {
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
                       <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response. For formal requests requiring a response, please contact us by mail.</p>
-                      <p style="font-size: 13px; color: #6b6b80; margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
+                      <p class="legal-footnote"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                   </div>
               </section>
               
@@ -562,7 +589,7 @@ export function registerPrivacyRoute(app: Hono) {
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
                       <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
-                      <p style="font-size: 13px; color: #6b6b80; margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
+                      <p class="legal-footnote"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability.</em></p>
                   </div>
               </section>
               
@@ -649,7 +676,7 @@ export function registerPrivacyRoute(app: Hono) {
                       </p>
                       <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
                       <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
-                      <p style="font-size: 13px; color: #6b6b80; margin-top: 16px;"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability. We will make reasonable efforts to assist with accessibility needs as resources permit.</em></p>
+                      <p class="legal-footnote"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability. We will make reasonable efforts to assist with accessibility needs as resources permit.</em></p>
                   </div>
               </section>
           </div>

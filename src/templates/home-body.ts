@@ -60,7 +60,7 @@ export const homeBody = (): string => `
                                 </a>
                                 <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
                                     <span class="address-dropdown-icon">📋</span>
-                                    <span>Copy Address</span>
+                                    <span>Copy</span>
                                 </button>
                             </div>
                         </div>
@@ -346,7 +346,7 @@ export const homeBody = (): string => `
                                     </a>
                                     <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
                                         <span class="address-dropdown-icon">📋</span>
-                                        <span>Copy Address</span>
+                                        <span>Copy</span>
                                     </button>
                                 </div>
                             </div>

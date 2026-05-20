@@ -27,7 +27,7 @@ const churchAddressPill = (label = '3080 Wildwood St · Boise, Idaho'): string =
         <span class="address-dropdown-icon">🗺️</span><span>Google Maps</span>
       </a>
       <button type="button" class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
-        <span class="address-dropdown-icon">📋</span><span>Copy Address</span>
+        <span class="address-dropdown-icon">📋</span><span>Copy</span>
       </button>
     </span>
   </span>

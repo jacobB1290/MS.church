@@ -37,11 +37,12 @@ export function pageHead({
                 var html = document.documentElement;
                 var skip=false;
                 var isBackForward=false;
+                var isReload=false;
                 if(location.hash) skip=true;
                 try{
                     var n=performance.getEntriesByType('navigation')[0];
                     if(n&&n.type==='back_forward'){ skip=true; isBackForward=true; }
-                    if(n&&n.type==='reload') skip=true;
+                    if(n&&n.type==='reload'){ skip=true; isReload=true; }
                 }catch(e){}
                 if(document.referrer&&document.referrer.indexOf(location.origin)===0) skip=true;
                 if(skip) html.classList.add('no-entrance');
@@ -60,11 +61,15 @@ export function pageHead({
                         if (v && Number(v) > 0) window.scrollTo(0, Number(v));
                     } catch (e) {}
                 }
+                // Restore on back/forward AND on reload — both are cases
+                // where the user expects to land at their previous scroll
+                // position. Manual scrollRestoration above means the browser
+                // won't restore for us on reload, so we have to.
                 addEventListener('pagereveal', function(){
-                    if (isBackForward) restoreScroll();
+                    if (isBackForward || isReload) restoreScroll();
                 });
                 addEventListener('pageshow', function(e){
-                    if (isBackForward || e.persisted) restoreScroll();
+                    if (isBackForward || isReload || e.persisted) restoreScroll();
                 });
                 // Tag js-reveals synchronously so reveal hiding CSS lands
                 // before first paint (no FOUC).

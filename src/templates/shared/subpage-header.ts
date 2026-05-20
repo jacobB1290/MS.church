@@ -266,18 +266,43 @@ export function subpageHeader(): string {
                     // only same-page hash anchors are intercepted.
                     // Per project preference (CLAUDE.md #10): every
                     // anchor jump animates, never instant.
-                    document.querySelectorAll('a[href^="#"]').forEach(function(a) {
-                        a.addEventListener('click', function(e) {
-                            var href = a.getAttribute('href');
-                            if (!href || href === '#' || href.length < 2) return;
-                            var target = document.querySelector(href);
-                            if (!target) return;
-                            e.preventDefault();
+                    //
+                    // CRITICAL: must use event delegation on document,
+                    // NOT a per-element listener. The subpage-header
+                    // <script> tag sits ABOVE the rest of the page body
+                    // in document order, so a forEach over the matched
+                    // anchors at script-execution time would find none
+                    // (the jump-nav links / in-body anchors haven't
+                    // been parsed yet). Delegation works regardless of
+                    // when the elements were added.
+                    //
+                    // Calls history.replaceState (not pushState) so the
+                    // URL reflects the current section without adding a
+                    // new history entry per click. Browser back button
+                    // then goes to the previous PAGE, not a previous
+                    // section — which is what users expect.
+                    document.addEventListener('click', function(e) {
+                        // Defer to any per-element handler that already
+                        // claimed this event (home-scripts.ts attaches
+                        // its own per-anchor handlers on /outreach,
+                        // which uses both subpageHeader and homeScripts).
+                        // Bubbled-phase document listeners fire AFTER
+                        // per-element listeners, so defaultPrevented
+                        // here means another handler took care of it.
+                        if (e.defaultPrevented) return;
+                        var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+                        if (!a) return;
+                        var href = a.getAttribute('href');
+                        if (!href || href === '#' || href.length < 2) return;
+                        var target = document.querySelector(href);
+                        if (!target) return;
+                        e.preventDefault();
+                        if (typeof window.__smoothScrollToHash === 'function') {
                             window.__smoothScrollToHash(href);
-                            // Reflect the new section in the URL without
-                            // letting the browser do its instant jump.
-                            try { history.replaceState(null, '', location.pathname + location.search + href); } catch (err) {}
-                        });
+                        } else {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                        try { history.replaceState(null, '', location.pathname + location.search + href); } catch (err) {}
                     });
 
                     // Brand: hide on scroll-down, show on scroll-up.

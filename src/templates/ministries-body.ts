@@ -1437,31 +1437,10 @@ export const ministriesBody = (): string => `
                     });
                 });
 
-                // Smooth-scroll for in-page anchor clicks (jump-nav under
-                // the intro lede + any other same-page #anchor). Defers
-                // to subpage-header.ts's __smoothScrollToHash helper when
-                // available (handles reduced-motion, applies the
-                // 75/90px nav offset, and uses native scrollTo({behavior:
-                // 'smooth'}) which is the same primitive home uses for
-                // hero→contact). Falls back to scrollIntoView smooth
-                // if the helper isn't loaded yet.
-                document.querySelectorAll('a[href^="#"]').forEach(function(link) {
-                    link.addEventListener('click', function(e) {
-                        var hash = link.getAttribute('href');
-                        if (!hash || hash === '#' || hash.length < 2) return;
-                        var target = document.querySelector(hash);
-                        if (!target) return;
-                        e.preventDefault();
-                        if (typeof window.__smoothScrollToHash === 'function') {
-                            window.__smoothScrollToHash(hash);
-                        } else {
-                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                        // Reflect the new section in the URL without
-                        // letting the browser do its instant jump.
-                        try { history.replaceState(null, '', location.pathname + location.search + hash); } catch (e) {}
-                    });
-                });
+                // Smooth-scroll for in-page anchor clicks is handled
+                // globally by the delegated handler in
+                // subpage-header.ts (v1.62.29). No per-page wiring
+                // needed here.
             })();
         </script>
     </body>`

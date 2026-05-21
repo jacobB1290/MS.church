@@ -1248,27 +1248,30 @@ export const homeStyles = (): string => `
                than one named section so a reader can survey what's on
                the page before scrolling.
 
-               v1.62.57: gold text at rest + persistent gold underline
-               on every chip. An audit then flagged the always-on
-               underline as visual noise — five hairline-underlined
-               chips read as a "list of broken inputs", and on the
-               narrow viewports the row wrapped 4+1 with the last
-               chip orphaned alone on its own row.
+               v1.62.58 added middot separators between chips. v1.62.59
+               removes them — when the row wraps on narrow viewports,
+               the absolute-positioned ::before middot moved with the
+               wrapped chip and orphaned at the start of the new line
+               ("· YOUTH" alone, centered). The fix is to drop the
+               middots entirely; gap + centered alignment carries the
+               row rhythm on its own, and the gold color + hover-
+               underline still mark the chips as interactive without
+               per-item chrome.
 
-               v1.62.58: gold color stays as the at-rest interactive
-               signal (color matches inline links across the site).
-               Drop the always-on underline — reserve it for hover so
-               the row reads as a single quiet editorial line. Add
-               middot separators between chips so they flow as one
-               continuous list rather than five stacked tags. Center-
-               align below 960px so any wrap reads as a balanced
-               finish, not a left-aligned orphan. */
+               Treatment:
+                 • At rest: gold-dark small-caps, no underline, no
+                   separator — a quiet editorial row of links.
+                 • Hover/focus: scaleX(0→1) gold underline + color
+                   deepens to gold-deeper.
+                 • Wide viewports: left-aligned, generous gap.
+                 • Narrow viewports (≤960px): centered, tighter gap
+                   so any wrap reads as a balanced finish. */
             .subpage-jump {
                 display: flex;
                 flex-wrap: wrap;
                 align-items: baseline;
-                column-gap: var(--space-md);
-                row-gap: var(--space-xs);
+                column-gap: var(--space-lg);
+                row-gap: var(--space-sm);
                 margin-top: var(--space-md);
                 padding-top: var(--space-md);
                 border-top: 1px solid var(--text-primary-hairline);
@@ -1284,18 +1287,6 @@ export const homeStyles = (): string => `
                 position: relative;
                 padding: 4px 0;
                 transition: color var(--motion-medium) var(--ease-out-soft);
-            }
-            /* Middot separator between adjacent chips. Sits in the
-               column-gap so the chips themselves carry no chrome —
-               the separator is what binds them into one row. */
-            .subpage-jump a + a::before {
-                content: '·';
-                position: absolute;
-                left: calc(var(--space-md) * -0.5);
-                top: 4px;
-                transform: translateX(-50%);
-                color: var(--text-primary-fade);
-                pointer-events: none;
             }
             /* Hover-only underline. scaleX origin-left so the line
                draws under the glyphs as the user lands on the chip. */
@@ -1328,10 +1319,7 @@ export const homeStyles = (): string => `
             @media (max-width: 960px) {
                 .subpage-jump {
                     justify-content: center;
-                    column-gap: var(--space-sm);
-                }
-                .subpage-jump a + a::before {
-                    left: calc(var(--space-sm) * -0.5);
+                    column-gap: var(--space-md);
                 }
             }
 

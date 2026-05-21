@@ -442,6 +442,116 @@ To restore Cloudflare Pages as an alternative, see the comment block at the top 
 
 ---
 
+## Editorial Philosophy & Design Way of Thinking
+
+The site reads as a restrained editorial spread (Aesop / Monocle / Apple-About / New Yorker tier), not a SaaS product page or a generic church-template site. The principles below are the substrate that polish pass v1.62.25–37 built up. Refer to them before adding new pages, sections, or design changes.
+
+### The bar: would a top-tier editorial site ship this?
+
+Compare every layout, sentence, and interaction against Aesop, Monocle, The New Yorker, Apple-About, the Met. If a section reads as "generic church/SaaS template," it isn't done. The site's voice is *restrained, intentional, warm* — modest about itself, careful about typography, generous with white space, light on chrome. Decorative tricks (lift shadows on every image, glassmorphism overlays, hamburger icons with chunky equal lines) read as "tacky" against that voice. Pick the elegant version of any pattern, not the default one.
+
+### Surface vocabulary: flush by default, cards by exception
+
+The warm-cream page surface IS the design. Content sits directly on it. The `.section-card` class — inherited from /home where cards are the deliberate language — was overused on subpages and created two patterns that drag toward "SaaS widget" territory:
+
+1. **Nested cards.** A `.section-card` wrapping a `.schedule-item` wrapping a rounded image = three frame layers. The eye sees nested chrome before it sees content. The v1.62.35 Leadership card rewrite (drop the `.section-card`, keep only the image's own single rounded frame + soft shadow) is the canonical fix.
+2. **Card-on-every-section.** Every subpage section in a card reads as a list of product modules. The v1.62.27 polish dropped `.section-card` from /about closing, /beliefs closing, /visit closing, /visit Find Us, /ministries throughout, /outreach Cooking + Breakfast — they all sit flush now and the page reads as a journal article.
+
+Rule: **default flush; one frame, not nested; reach for `.section-card` only when the page is genuinely card-driven** (/home schedule + outreach teaser grids, /about's "What We Believe" 4-card grid).
+
+### Editorial typography (the small things matter)
+
+- **Curly U+2019 / U+201C / U+201D in visible content.** ASCII `'` and `"` are the immediate "no one paid attention" tell. Comments + JS string literals stay ASCII; visible body content and SEO descriptions do not. Sweep with `grep -n "'[a-zA-Z]\|n't"` before commit.
+- **Italic + gold for stated identity phrases.** "Mending the Broken" sits in `<em class="motto">` — italic Playfair Display + `--gold-dark`. Drop ASCII quotes around such phrases; italics carry the "this is a stated motto" meaning by themselves (quotes + italics is redundant chrome).
+- **No em dashes in visible copy.** Per user standing preference. Don't just remove the character — *restructure for flow*. Colon when introducing a list, period when the clause earns its own sentence, comma for short asides, parentheses for genuine parentheticals. If the sentence is two thoughts stitched by an em dash, often the cleanest fix is splitting into two sentences. SEO/JSON-LD descriptions in `home-head.ts` + route files keep em dashes per user — they're hidden surface, not "copy."
+- **Sentence case headings, period at the end.** All subpage `h1`/`h2` use sentence case ("How we serve Boise.", "What we hold to.", "Plan your first Sunday."). Title Case in headings reads as marketing-template; sentence case reads as editorial.
+- **Hierarchy distinction inside sections.** When an `h3` (entry title / dateline) sits directly under an `h2` (section heading) in the same column, they fight. Demote the `h3` styling — smaller, lighter, less display-weight — so it reads as supporting context, not as a competing headline. See `.ministry-section .ministry-title` scope override (v1.62.25). The unscoped class stays unchanged for other contexts (/home Sunday School card).
+
+### Shared subpage primitives (single source of truth)
+
+These classes live in `home-styles.ts` and ANY subpage opts in:
+
+| Class | Purpose |
+|---|---|
+| `.subpage-intro-lead` | Promoted lede style for the FIRST paragraph after a subpage h1 — `clamp(18-22px)`, `--leading-loose`, `--text-primary-soft` (.85 alpha not .72 muted), 60ch line cap. The lede reads as a lede, not as a caption. |
+| `.motto` | Inline italic Playfair + `--gold-dark` for stated identity phrases ("Mending the Broken"). |
+| `.subpage-final-cta` + `.subpage-final-cta-lead` | Flex-column flush closing-CTA layout. Replaces the inherited `.section-card.visit-final-cta` box on every subpage. `align-items: flex-start` so the gold pill respects `.teaser-cta`'s intrinsic width. |
+| `.subpage-jump` | Inline TOC chips under the lede. Hairline rule + small-caps anchors + `transform: scaleX(0)→1` gold underline on hover. Pages with multiple sections use it; pages with one main content surface (`/beliefs`) skip it. |
+
+When you need a new shared subpage primitive, add it here. Don't copy-paste rules into the per-page inline `<style>` block.
+
+### Don't recreate, reuse
+
+When two surfaces need the same UI, pass a parameter and call the same function. Don't build a parallel implementation that "looks like" it. v1.62.37 example: the subpage menu open state shows the home page's nav-shell. Implementation = `nav('/')` on subpages (same `nav()` function with a `hashPrefix` param), not a copied `.subpage-menu-panel` that imitates the styling. Single source of truth means design changes to the home nav automatically propagate.
+
+### Anti-anxiety information design (tip tables)
+
+The `.ministry-tips` dl format isn't info-density — it's an anti-anxiety device. Labels like "WHAT TO WEAR", "WHAT IF I'M LATE", "FIRST TIME" let a worried first-time visitor pick the answer instantly. Burying the same info in prose forces them to read whole paragraphs to find the one beat they came for.
+
+Rules:
+- **Keep tip rows that map to top first-visit anxieties** (dress, late arrival, what to bring, first-time social, age fit, parking, childcare).
+- **Trim rows that don't fight anxiety.** Nice-to-know info ("Coffee is on the counter", "Where is the meeting spot" when the address pill already shows it) can be dropped without losing the anti-anxiety function.
+- **Don't replace tips with prose unless the section is short enough that the prose version naturally surfaces the same info.** The v1.62.25 conversion of Bible Reading / Bible Study / Youth Service to pure prose was *too aggressive*; v1.62.25 restored the tip tables (trimmed to anxiety-fighting rows only) per user note.
+
+### Layout variety, not metronomic
+
+Six identical eyebrow → heading → image → text → tips → CTA sections in a row read as a template. Vary the beat: polaroid pair (Fellowship), prose-only vs tips, image L/R alternation (LRLR rhythm), pull-out elements. Same vocabulary, different cadence per section. The page should feel composed, not generated.
+
+### Images: framed by default, edge-to-edge for "pause and feel" moments only
+
+Framed (rounded corners, soft shadow, sits inside `.page` container) is the default — images are *content within a story*, supporting the text. Edge-to-edge (full bleed, no rounded corners, no shadow) is a *statement* — the image owns the screen for an emotional pause.
+
+Use edge-to-edge sparingly: one strategic moment per surface, max. The home hero CSS-background-image is currently the only edge-to-edge moment. Adding more requires a photograph strong enough to own the screen alone (mid-Sunday sanctuary light, congregation hands-raised candid, etc.). Most stock-feeling photos don't earn it.
+
+### Lift shadows: never default; only on truly-clickable image cards
+
+Translate-Y-on-hover + enhanced shadow ("lift") is e-commerce / SaaS vocabulary. It signals interactivity. Applying it to editorial portraits (Leadership pastor, Bible Reading cafe) advertises clickability that doesn't exist and shifts the voice toward fashion-brand product-page.
+
+Only two places where lift might earn its place: /home schedule-tab cards (linked into /ministries) and /home outreach teaser cards (linked into /outreach). Even there, a subtle `translateY(-2px)` + slight shadow deepening is right; don't do dramatic 8-12px lifts.
+
+### Z-axis discipline: overlapping pills fade
+
+When two fixed-position interactive elements overlap visually (BACK pill over the appearing nav-shell brand on menu-open, for example), the one that becomes redundant fades to opacity 0 + `pointer-events: none`. Don't try to z-index your way around overlap — let one element gracefully retreat. v1.62.37 example: `body.menu-open .subpage-back { opacity: 0; }`. The X close-trigger stays on top of the nav-shell so it remains clickable.
+
+### Layout shift discipline (reserve space for async loads)
+
+If a section's height depends on data that arrives async (events from `/api/calendar/events`, lazy-loaded images, etc.), the section MUST reserve its full settled natural height via `min-height` so the page above the fold doesn't shift when data arrives. v1.62.31 example: `section#events { min-height: 880px / 840px }` covers eyebrow + heading + lede + Stay Tuned card (~856px settled). Don't add `min-height: auto !important` overrides that defeat the reserve when JS adds state classes.
+
+### Don't undermine the church's mission in visible copy
+
+The church's standing plan is "Win Souls & Make Disciples" via relational, every-member evangelism (with institutional outreach as ONE channel, not the defining act). Visible copy should support that, not lock the mission into soup-kitchen framing. The v1.62.32 tighten pass: `"every meal we cook for our city's most vulnerable"` → `"every meal we share, and every neighbor we get to know"`, etc. The plan's specifics (5-names practice, 90-day milestones, internal roles) stay OFF the public site — they're internal. But visible phrases shouldn't paint the mission narrower than it is.
+
+### Process discipline
+
+- **Visual verification beats type-checking.** `tsc --noEmit` says the TypeScript compiles. It doesn't say the layout works. Default to Playwright screenshots at 1440 desktop + 393 mobile on every design change. Per CLAUDE.md harness section: animation + design work MUST run the harness before push.
+- **Read before adding.** Before adding a CSS rule, grep for related rules. v1.62.31 fog work failed initially because a `.stay-tuned-only { min-height: auto !important }` rule (added in an earlier session) defeated the new `min-height` reserve. The fix needed BOTH a bigger reserve AND removing the override. Always check what's already there.
+- **Fix the cause, not the symptom.** Specificity battles ("my mobile rule isn't winning") are usually a sign the desktop rule has higher specificity than the mobile rule. Add a matching-specificity override at the right breakpoint — don't reach for `!important`. v1.62.34 Leadership-card fix exemplifies this.
+- **Cross-page consistency.** Changes to shared primitives (`.section-eyebrow`, `.section-heading`, `.event-link-btn`, `.subpage-*`) affect every page that uses them. Skim the other pages after edits — especially `/home`, which has the most usage of those primitives.
+- **Test in real browser context too.** Playwright sandbox doesn't always render Google Maps iframes, doesn't always trigger backdrop-filter exactly like Safari, doesn't fire some animation events. Run `npm run dev` and click through the change in a real browser before pushing anything that touches motion, iframes, or visual effects.
+
+### Where the principles came from (audit trail)
+
+Most of this distilled out of polish passes v1.62.25 → v1.62.37 working through `/ministries`, then standardizing to other subpages, then refining via user direction. The motivating fixes:
+
+- v1.62.24 — Kids section grid row collision (CSS `grid-auto-flow: dense`)
+- v1.62.25 — `/ministries` editorial polish (italic gold motto, jump nav, dateline treatment, CTA story)
+- v1.62.26 — Same fixes + smooth-scroll preference in CLAUDE.md
+- v1.62.27 — Standardize across subpages; shared subpage primitives
+- v1.62.28 — `.subpage-jump` TOC added per page
+- v1.62.29 — Smooth-scroll + back-button delegated handler
+- v1.62.30 — `/visit` Find Us editorial split (replaced full-width map widget)
+- v1.62.31 — `/outreach` async-events layout shift fix
+- v1.62.32 — Tighten mission-framing copy to the church's growth plan
+- v1.62.33 — Strip em dashes from visible copy (restructured, not just removed)
+- v1.62.34 — Leadership card mobile specificity fix
+- v1.62.35 — Leadership card: drop nested-card pattern, flush editorial split
+- v1.62.36 — Fog tuning for chrome zone
+- v1.62.37 — Subpage menu trigger + nav-shell reuse + brand cross-fade
+
+Each version's commit message has the detailed rationale. Read those when something here is unclear.
+
+---
+
 ## SEO Conventions — Build Best-in-Class by Default
 
 ms.church V2's technical SEO substrate **already exceeds every Boise-church competitor** as of the May 2026 competitive audit: 49 FAQ Q&As across pages, full Schema.org graph wiring with `Church + LocalBusiness + PlaceOfWorship` triple-typing, weekly recurring `Event` schemas, `Service` / `OfferCatalog`, a 6-image `Photo` array with captions, custom-domain email, image sitemap with `<image:title>` + `<image:caption>`, RSS feed advertised in `<head>`, `security.txt`, HSTS with `preload` flag, edge-level Link header preconnect, `Server-Timing`, CSP report-only, and explicit AI-crawler allows for 14 named bots. These conventions keep that lead in place when pages, content, or images are added. **Read this before touching anything that affects search visibility.**

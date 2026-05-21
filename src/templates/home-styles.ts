@@ -380,7 +380,18 @@ export const homeStyles = (): string => `
             .nav-form-btn {
                 display: none;
             }
-            
+
+            /* The envelope SVG inside .nav-form-btn is hidden by default;
+               only the text label is shown. At narrow widths the mobile
+               override below flips this — label hides, icon shows, button
+               becomes a circle. */
+            .nav-form-btn-icon {
+                display: none;
+            }
+            .nav-form-btn-label {
+                display: inline;
+            }
+
             .nav-shell.scrolled-mobile nav ul {
                 margin: 0;
             }
@@ -3727,15 +3738,19 @@ export const homeStyles = (): string => `
                    the nav-shell (see subpage-header.ts) so we reuse the
                    home page's existing compressed-nav state verbatim:
                    brand hidden, nav hidden, nav-cta hidden, nav-form-btn
-                   visible at right. No CSS reimplementation needed —
-                   the home nav already does this perfectly.
+                   visible at right.
 
-                   The ONLY subpage-specific override: push the
-                   nav-form-btn left so it doesn't sit underneath the
-                   menu-trigger X pill (which only exists on subpages,
-                   so home doesn't need to clear space for it). */
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn {
-                    right: 64px;
+                   The ONLY subpage-specific override: reserve space at
+                   the right edge of the nav-shell for the fixed-position
+                   close-X trigger pill (right:12-28px from the screen,
+                   44px wide). Padding pushes the Contact button to the
+                   left of that zone so the X stays clear and clickable.
+                   This replaces an earlier right:64px shift on the
+                   button itself — padding-right on the container is the
+                   correct layout primitive since the button is now an
+                   inline flex item, not absolutely positioned. */
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile {
+                    padding-right: 56px;
                 }
             }
 
@@ -6724,7 +6739,14 @@ export const homeStyles = (): string => `
                 html.nav-prerender-scrolled .nav-shell {
                     border-radius: var(--radius-pill);
                     padding: clamp(6px, 1.8vw, 8px) var(--space-md);
-                    gap: 0;
+                    /* Single-row layout: nav items shrink, Contact pill
+                       stays intrinsic. Nothing wraps. Container gap
+                       handles spacing between nav and the Contact button
+                       (was previously a margin-left: 8px on .nav-form-btn,
+                       removed in favor of flex gap so the row reads as a
+                       cohesive group). */
+                    flex-wrap: nowrap;
+                    gap: clamp(6px, 2vw, 12px);
                     margin-bottom: 30px;
                     top: clamp(6px, 1.8vw, 8px);
                     background: rgba(255, 255, 255, 0.72);
@@ -6779,8 +6801,8 @@ export const homeStyles = (): string => `
                     opacity: 1;
                     transform: scale(1);
                     position: relative;
-                    margin-left: 8px;
                     right: auto;
+                    flex-shrink: 0;
                 }
 
                 /* Active state for Contact button */
@@ -6803,8 +6825,20 @@ export const homeStyles = (): string => `
                     order: 1;
                 }
 
+                /* In the compressed pill, nav ul gives up its 100% width
+                   so the Contact button can sit inline beside it without
+                   being pushed to a second row. The nav container
+                   becomes the flexible element (flex: 1) and shrinks
+                   gracefully as the screen narrows; Contact stays at
+                   its intrinsic width until the ≤460px breakpoint
+                   collapses it to an envelope circle. */
+                .nav-shell.scrolled-mobile nav {
+                    flex: 1 1 auto;
+                    min-width: 0;
+                }
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: var(--space-xs);
+                    width: auto;
+                    gap: clamp(8px, 3vw, 16px);
                 }
 
                 nav {
@@ -6842,6 +6876,12 @@ export const homeStyles = (): string => `
                     margin-left: auto;
                     padding: 8px 20px;
                 }
+
+                /* Compressed Contact pill keeps the base .nav-form-btn
+                   padding/type — the goal here is just to confirm intent
+                   that the button stays at intrinsic width in the row
+                   (flex-shrink:0 above) so it doesn't squash when the
+                   nav siblings expand. */
 
                 .brand-title {
                     font-size: var(--text-lead);
@@ -6933,6 +6973,122 @@ export const homeStyles = (): string => `
             @media (max-width: 380px) {
                 .schedule-item {
                     grid-template-columns: 0.85fr 1fr;
+                }
+            }
+
+            /* Narrow phones (≤460px): collapse the compressed Contact
+               pill to a circular envelope icon. At this width the four
+               nav labels (SCHEDULE / ABOUT / OUTREACH / WATCH) plus a
+               "CONTACT" text pill would push the row into a wrap.
+               Trading the word for an envelope reclaims ~50px and keeps
+               everything on a single line. aria-label on the anchor
+               preserves the accessible name. Nav items also tighten
+               (smaller letter-spacing, smaller gap) so the four labels
+               fit comfortably alongside the envelope. */
+            @media (max-width: 460px) {
+                .nav-shell.scrolled-mobile .nav-form-btn {
+                    width: 38px;
+                    height: 38px;
+                    padding: 0;
+                    border-radius: 50%;
+                    flex-shrink: 0;
+                }
+                .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-label {
+                    display: none;
+                }
+                .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-icon {
+                    display: block;
+                    width: 18px;
+                    height: 18px;
+                }
+                /* Active state: white envelope on gold fill, matching
+                   the text-pill active state. */
+                .nav-shell.scrolled-mobile .nav-form-btn.active .nav-form-btn-icon {
+                    stroke: #ffffff;
+                }
+                .nav-shell.scrolled-mobile nav a {
+                    font-size: 11px;
+                    letter-spacing: 0.5px;
+                }
+                .nav-shell.scrolled-mobile nav ul {
+                    gap: clamp(6px, 2vw, 12px);
+                }
+            }
+
+            /* Subpages collapse Contact to the envelope at a wider
+               threshold than the home page (520 vs 460). The fixed-
+               position X trigger pill at the right edge takes ~56px of
+               the nav-shell's interior, which is exactly the room the
+               text "CONTACT" needs. Without an earlier collapse, the
+               text overlaps the last nav item at iPhone-Plus widths
+               (≤500px). Only the icon-collapse rules are subpage-
+               scoped; nav font/gap tightening continues to be handled
+               by the generic ≤460 and ≤380 rules below so a single set
+               of sizes governs both home and subpage. */
+            @media (max-width: 520px) {
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn {
+                    width: 38px;
+                    height: 38px;
+                    padding: 0;
+                    border-radius: 50%;
+                }
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-label {
+                    display: none;
+                }
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-icon {
+                    display: block;
+                    width: 18px;
+                    height: 18px;
+                }
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn.active .nav-form-btn-icon {
+                    stroke: #ffffff;
+                }
+            }
+
+            /* Tiniest phones (≤380px): squeeze the nav row further so
+               the four labels + envelope still fit on a single line.
+               Below this width the screen is too narrow for any other
+               solution short of dropping items entirely. */
+            @media (max-width: 380px) {
+                .nav-shell.scrolled-mobile nav a {
+                    font-size: 10px;
+                    letter-spacing: 0.3px;
+                }
+                .nav-shell.scrolled-mobile nav ul {
+                    gap: 6px;
+                }
+                .nav-shell.scrolled-mobile {
+                    padding-left: 12px;
+                    padding-right: 12px;
+                }
+                /* Subpage menu-open carries an extra X-trigger zone at
+                   the right edge; on the tiniest phones, hold to a
+                   slightly smaller reserve so nav items get a bit more
+                   room and still avoid the X. */
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile {
+                    padding-right: 50px;
+                }
+            }
+
+            /* iPhone 5/SE and Android small (≤340px): last-resort
+               squeeze so the four-label + envelope row still survives
+               on the smallest production devices. Font drops a half
+               point, gaps go to single pixels. */
+            @media (max-width: 340px) {
+                .nav-shell.scrolled-mobile nav a {
+                    font-size: 9.5px;
+                    letter-spacing: 0.2px;
+                }
+                .nav-shell.scrolled-mobile nav ul {
+                    gap: 4px;
+                }
+                .nav-shell.scrolled-mobile {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    gap: 6px;
+                }
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile {
+                    padding-right: 46px;
                 }
             }
 

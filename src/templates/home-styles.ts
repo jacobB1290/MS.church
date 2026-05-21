@@ -1458,35 +1458,6 @@ export const homeStyles = (): string => `
                 border-radius: var(--radius-lg);
                 overflow: hidden;
             }
-            /* Leadership card — overrides the base 1fr 1fr schedule-item grid
-               so the portrait sits in a narrower column (text gets ~58% of
-               the row instead of 50%). Pairs with the max-height cap below
-               so the portrait can't dwarf a relatively short bio. Image-
-               column-narrower + text-column-wider together keep the row's
-               vertical heights in roughly proportional reach: a 3-paragraph
-               bio at ~360px tall sits next to a ~440px portrait, not a 670px
-               one. */
-            .schedule-item.long-content.leadership-card {
-                /* Text first, image second in DOM order — so the 7fr/5fr split
-                   gives the text the wider column (58%) and the portrait the
-                   narrower one (42%). Avoids the previous "image dominates a
-                   short bio" problem without resorting to a square crop or
-                   restructured stack. */
-                grid-template-columns: 7fr 5fr;
-                align-items: stretch;
-            }
-            /* Leadership portrait — 4:5 aspect (matches the cropped source's
-               framing) capped at 460px tall so the image stays in visual reach
-               of the bio. object-position keeps the pastor's face anchored if
-               the cap kicks in (only matters on wide viewports where 5fr of
-               the row would otherwise produce a taller 4:5 box). */
-            .schedule-item-image.leadership-portrait {
-                aspect-ratio: 4 / 5;
-                max-height: 460px;
-                margin: 0 auto;
-                width: 100%;
-            }
-
             .schedule-item-image picture {
                 display: block;
                 width: 100%;
@@ -1498,16 +1469,77 @@ export const homeStyles = (): string => `
                 object-fit: cover;
                 display: block;
             }
-            /* Leadership portrait — bias the crop up so the pastor's face
-               lands in the upper third of the visible window when the
-               container is shorter than the image's natural 4:5 (e.g. when
-               the text column is unusually short). */
-            .schedule-item-image.leadership-portrait img {
+
+            /* /about Leadership: editorial split, NO enclosing card
+               (v1.62.35). Previous markup nested .schedule-item inside
+               .section-card, producing a double-card pattern — outer
+               cream panel + inner rounded image frame — that read as
+               a SaaS widget rather than editorial content and clashed
+               with the flush surface vocabulary the rest of the site
+               adopted in v1.62.27 (/ministries, /visit Find Us, /about
+               and /beliefs closing CTAs, etc.).
+
+               Now: simple grid, image carries its own rounded frame +
+               soft shadow (single frame, no nesting), text reads as
+               full-width paragraphs beside it. Same shape as the
+               /visit Find Us split (7fr text / 5fr image, vertically
+               centered, mobile stacks with image-on-top). */
+            .leadership-split {
+                display: grid;
+                grid-template-columns: 7fr 5fr;
+                gap: var(--space-2xl);
+                align-items: center;
+                margin-top: var(--space-xl);
+            }
+            .leadership-text {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+            .leadership-text p {
+                margin: 0;
+                color: var(--text-primary-muted);
+                font-size: var(--text-body);
+                line-height: var(--leading-loose);
+            }
+            .leadership-portrait {
+                width: 100%;
+                aspect-ratio: 4 / 5;
+                max-height: 480px;
+                border-radius: var(--radius-xl);
+                overflow: hidden;
+                box-shadow: var(--shadow-md);
+                margin: 0 auto;
+            }
+            .leadership-portrait picture,
+            .leadership-portrait img {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+            .leadership-portrait img {
+                object-fit: cover;
+                /* Bias the crop up so the pastor's face lands in the
+                   upper third of the visible window when the 4/5
+                   container caps the height. */
                 object-position: center 20%;
             }
-            /* Leadership "Send us a message" link — same gold inline-link
-               treatment used in entry CTAs across /ministries and /outreach
-               so the leadership card doesn't need bespoke link styling. */
+            @media (max-width: 960px) {
+                .leadership-split {
+                    grid-template-columns: 1fr;
+                    gap: var(--space-lg);
+                    margin-top: var(--space-md);
+                }
+                .leadership-portrait {
+                    order: -1;
+                    max-width: 380px;
+                    max-height: 480px;
+                }
+            }
+
+            /* Leadership "Send us a message" link — gold inline-link
+               treatment matching the entry CTAs across /ministries and
+               /outreach. */
             .leadership-cta-row {
                 margin-top: var(--space-sm);
             }
@@ -2452,31 +2484,12 @@ export const homeStyles = (): string => `
                 .schedule-item.long-content:nth-child(even) .schedule-item-image {
                     order: -1;
                 }
-                /* Leadership card mobile override.
-
-                   Desktop sets .schedule-item.long-content.leadership-card
-                   { grid-template-columns: 7fr 5fr } at 3-class specificity,
-                   which wins over the 2-class .schedule-item.long-content
-                   mobile rule above — leaving the leadership card in a
-                   side-by-side grid on phones, with the bio crushed into a
-                   ~140px-wide column that wraps to 3-word lines. Match
-                   specificity here so mobile actually stacks.
-
-                   Image aspect: keep the 4/5 portrait crop (overrides the
-                   16/9 banner from the rule above) — a wide banner would
-                   slice horizontally through the pastor's face. Capped at
-                   480px tall so the image doesn't push the bio entirely
-                   below the fold on small phones. */
-                .schedule-item.long-content.leadership-card {
-                    grid-template-columns: 1fr;
-                }
-                .schedule-item.long-content .schedule-item-image.leadership-portrait {
-                    aspect-ratio: 4 / 5;
-                    max-height: 480px;
-                    width: 100%;
-                    max-width: 380px;
-                    margin: 0 auto;
-                }
+                /* The previous .schedule-item.long-content.leadership-card
+                   mobile override (added v1.62.34, kept the leadership card
+                   inside a schedule-item with a 16/9-vs-4/5 specificity
+                   wrestling match) is gone — the leadership card no longer
+                   uses .schedule-item at all. See the .leadership-split
+                   block above for the new flush layout. */
             }
 
             /* ============================================================

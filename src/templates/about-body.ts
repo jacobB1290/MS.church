@@ -81,20 +81,18 @@ export const aboutBody = (): string => `
                 <section id="leadership">
                     <span class="section-eyebrow">Leadership</span>
                     <h2 class="section-heading">Meet our pastor.</h2>
-                    <div class="section-card">
-                        <div class="schedule-item long-content leadership-card">
-                            <div class="schedule-item-text">
-                                <p>Our church is shepherded by a small, accessible leadership team rooted in scripture and committed to walking with our congregation through every season. We’re not a large staff. Leadership is shared among a few who have walked together for years, and we want every conversation to feel personal.</p>
-                                <p>Reach out any time. Whether you have a question, a prayer request, or just want to introduce yourself before Sunday, the same handful of people who lead on Sunday morning are the ones who’ll write back.</p>
-                                <p class="leadership-cta-row"><a href="/#contact" class="leadership-cta">Send us a message &rarr;</a></p>
-                            </div>
-                            <div class="schedule-item-image leadership-portrait">
-                                <picture>
-                                    <source type="image/avif" srcset="/static/worship-desktop.avif?v=2">
-                                    <source type="image/webp" srcset="/static/worship-desktop.webp?v=2">
-                                    <img src="/static/worship-desktop.jpg?v=2" alt="Pastor teaching from the pulpit at the Sunday service at Morning Star Christian Church in Boise, Idaho." loading="lazy" decoding="async" width="1025" height="1400">
-                                </picture>
-                            </div>
+                    <div class="leadership-split">
+                        <div class="leadership-text">
+                            <p>Our church is shepherded by a small, accessible leadership team rooted in scripture and committed to walking with our congregation through every season. We’re not a large staff. Leadership is shared among a few who have walked together for years, and we want every conversation to feel personal.</p>
+                            <p>Reach out any time. Whether you have a question, a prayer request, or just want to introduce yourself before Sunday, the same handful of people who lead on Sunday morning are the ones who’ll write back.</p>
+                            <p class="leadership-cta-row"><a href="/#contact" class="leadership-cta">Send us a message &rarr;</a></p>
+                        </div>
+                        <div class="leadership-portrait">
+                            <picture>
+                                <source type="image/avif" srcset="/static/worship-desktop.avif?v=2">
+                                <source type="image/webp" srcset="/static/worship-desktop.webp?v=2">
+                                <img src="/static/worship-desktop.jpg?v=2" alt="Pastor teaching from the pulpit at the Sunday service at Morning Star Christian Church in Boise, Idaho." loading="lazy" decoding="async" width="1025" height="1400">
+                            </picture>
                         </div>
                     </div>
                 </section>

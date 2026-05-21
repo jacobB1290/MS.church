@@ -3340,30 +3340,34 @@ export const homeStyles = (): string => `
                 top: 0;
                 left: 0;
                 right: 0;
-                /* Shorter than before so the fog ends ABOVE where anchor
-                   landings put a section's eyebrow pill (which lives at
-                   scroll-margin-top: 100px desktop / 84px mobile). The
-                   previous 160px reached well below the eyebrow's top
-                   edge — visually it looked like the heading was covered. */
-                height: 110px;
+                /* Tall enough that text scrolling up behind the BACK button
+                   + brand wordmark fades to nothing before reaching the
+                   bottom edge of those elements (BACK + brand sit at
+                   top: 24 / 16 with ~50px of element height, so the fog
+                   needs to remain visually-blocking through ~75-90px and
+                   then taper). Earlier 110px / 88px values had the
+                   transparent end of the mask passing right through the
+                   nav elements, leaving page text legibly poking out at
+                   the moment a section title scrolled past. */
+                height: 150px;
                 z-index: 999;
                 pointer-events: none;
                 -webkit-backdrop-filter: blur(16px);
                 backdrop-filter: blur(16px);
                 background: linear-gradient(180deg,
-                    rgba(250, 248, 245, 0.85) 0%,
-                    rgba(250, 248, 245, 0.55) 45%,
-                    rgba(250, 248, 245, 0.18) 80%,
+                    rgba(250, 248, 245, 0.96) 0%,
+                    rgba(250, 248, 245, 0.85) 55%,
+                    rgba(250, 248, 245, 0.30) 85%,
                     rgba(250, 248, 245, 0) 100%);
                 -webkit-mask: linear-gradient(180deg,
                     black 0%,
-                    rgba(0, 0, 0, 0.95) 30%,
-                    rgba(0, 0, 0, 0.4) 65%,
+                    black 60%,
+                    rgba(0, 0, 0, 0.45) 85%,
                     transparent 100%);
                 mask: linear-gradient(180deg,
                     black 0%,
-                    rgba(0, 0, 0, 0.95) 30%,
-                    rgba(0, 0, 0, 0.4) 65%,
+                    black 60%,
+                    rgba(0, 0, 0, 0.45) 85%,
                     transparent 100%);
             }
 
@@ -3459,7 +3463,13 @@ export const homeStyles = (): string => `
 
             @media (max-width: 960px) {
                 .subpage-top-fog {
-                    height: 88px;
+                    /* Mobile keeps the BACK + brand at top: 16, with
+                       slightly smaller padding/font, so total nav
+                       element height bottoms out around y=70-78. Fog
+                       extends well past that and tapers, so scrolling
+                       text reads as ghost-faded by the time it clears
+                       the chrome instead of competing with it. */
+                    height: 130px;
                 }
                 .subpage-brand {
                     top: 16px;

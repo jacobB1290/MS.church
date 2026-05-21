@@ -1373,6 +1373,7 @@ export const ministriesBody = (): string => `
                         <a href="#worship">Worship</a>
                         <a href="#kids">Kids</a>
                         <a href="#discipleship">Discipleship</a>
+                        <span class="subpage-jump-break" aria-hidden="true"></span>
                         <a href="#fellowship">Fellowship</a>
                         <a href="#youth">Youth</a>
                     </nav>

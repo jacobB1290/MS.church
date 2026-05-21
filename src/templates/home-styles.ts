@@ -1248,24 +1248,33 @@ export const homeStyles = (): string => `
                than one named section so a reader can survey what's on
                the page before scrolling.
 
-               v1.62.58 added middot separators between chips. v1.62.59
-               removes them — when the row wraps on narrow viewports,
-               the absolute-positioned ::before middot moved with the
-               wrapped chip and orphaned at the start of the new line
-               ("· YOUTH" alone, centered). The fix is to drop the
-               middots entirely; gap + centered alignment carries the
-               row rhythm on its own, and the gold color + hover-
-               underline still mark the chips as interactive without
-               per-item chrome.
+               History:
+                 v1.62.58 — middots between chips (CSS ::before).
+                   Bug: at narrow viewports the row wrapped with one
+                   chip alone on row 2, and its leading ::before
+                   middot orphaned ("· YOUTH" centered alone).
+                 v1.62.59 — dropped the middots; gap-only separation.
+                   Fixed the orphan dot but the last chip still
+                   wrapped alone, reading as "one button below the
+                   rest" — visually unbalanced.
+                 v1.62.60 (this) — middots restored, with an explicit
+                   in-DOM <span class="subpage-jump-break"> placed at
+                   each page's deliberate wrap point so narrow
+                   viewports show balanced rows (3+2 on /ministries,
+                   2+2 on /about and /visit). The break element's
+                   adjacent-sibling rule means the chip after the
+                   break is NOT preceded by an <a>, so the a+a::before
+                   middot rule naturally skips it — no orphan dot
+                   ever appears at the start of row 2.
 
                Treatment:
-                 • At rest: gold-dark small-caps, no underline, no
-                   separator — a quiet editorial row of links.
-                 • Hover/focus: scaleX(0→1) gold underline + color
-                   deepens to gold-deeper.
-                 • Wide viewports: left-aligned, generous gap.
-                 • Narrow viewports (≤960px): centered, tighter gap
-                   so any wrap reads as a balanced finish. */
+                 • Gold-dark small-caps text; gold middots between
+                   adjacent chips within each row.
+                 • Hover: color deepens + scaleX(0→1) gold underline.
+                 • Wide viewports (>960px): all chips on one row,
+                   break element hidden via display:none.
+                 • Narrow viewports (≤960px): break element forces
+                   wrap; both rows centered. */
             .subpage-jump {
                 display: flex;
                 flex-wrap: wrap;
@@ -1287,6 +1296,21 @@ export const homeStyles = (): string => `
                 position: relative;
                 padding: 4px 0;
                 transition: color var(--motion-medium) var(--ease-out-soft);
+            }
+            /* Middot separator between adjacent chips. Position is
+               absolute, sitting in the column-gap to the LEFT of the
+               chip. Because the selector requires an <a> immediately
+               before, the rule does NOT fire for the chip following
+               .subpage-jump-break — that chip has the break as its
+               previous sibling, not an <a>, so no leading dot. */
+            .subpage-jump a + a::before {
+                content: '·';
+                position: absolute;
+                left: calc(var(--space-lg) * -0.5);
+                top: 4px;
+                transform: translateX(-50%);
+                color: var(--text-primary-fade);
+                pointer-events: none;
             }
             /* Hover-only underline. scaleX origin-left so the line
                draws under the glyphs as the user lands on the chip. */
@@ -1310,6 +1334,16 @@ export const homeStyles = (): string => `
             .subpage-jump a:focus-visible::after {
                 transform: scaleX(1);
             }
+            /* Deliberate wrap-break element. Hidden on wide; on narrow
+               it becomes a full-width zero-height flex item that
+               forces the chips after it onto a new row. The chip
+               immediately after this element does NOT inherit the
+               a+a::before middot, so row 2 never starts with a dot. */
+            .subpage-jump-break {
+                display: none;
+                flex-basis: 100%;
+                height: 0;
+            }
             @media (prefers-reduced-motion: reduce) {
                 .subpage-jump a,
                 .subpage-jump a::after {
@@ -1320,6 +1354,12 @@ export const homeStyles = (): string => `
                 .subpage-jump {
                     justify-content: center;
                     column-gap: var(--space-md);
+                }
+                .subpage-jump a + a::before {
+                    left: calc(var(--space-md) * -0.5);
+                }
+                .subpage-jump-break {
+                    display: block;
                 }
             }
 

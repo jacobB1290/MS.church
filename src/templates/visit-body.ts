@@ -130,6 +130,7 @@ export const visitBody = (): string => `
                     <nav class="subpage-jump" aria-label="Jump to a section">
                         <a href="#location">Find Us</a>
                         <a href="#what-to-expect">What to Expect</a>
+                        <span class="subpage-jump-break" aria-hidden="true"></span>
                         <a href="#before-you-come">Before You Come</a>
                         <a href="#visit-cta">Contact</a>
                     </nav>

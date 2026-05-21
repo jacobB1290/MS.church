@@ -3340,34 +3340,32 @@ export const homeStyles = (): string => `
                 top: 0;
                 left: 0;
                 right: 0;
-                /* Tall enough that text scrolling up behind the BACK button
-                   + brand wordmark fades to nothing before reaching the
-                   bottom edge of those elements (BACK + brand sit at
-                   top: 24 / 16 with ~50px of element height, so the fog
-                   needs to remain visually-blocking through ~75-90px and
-                   then taper). Earlier 110px / 88px values had the
-                   transparent end of the mask passing right through the
-                   nav elements, leaving page text legibly poking out at
-                   the moment a section title scrolled past. */
-                height: 150px;
+                /* Balance point between v1.62.32 (110/88, 0.85, mask 30%)
+                   which was too short and let scrolling text show through
+                   the chrome, and v1.62.36 (150/130, 0.96, mask 60%)
+                   which was too tall and washed out the eyebrow chips.
+                   Current 120/100 with bg 0.90 + mask 45% hides chrome-
+                   zone text well while leaving the eyebrow-chip zone
+                   clear. */
+                height: 120px;
                 z-index: 999;
                 pointer-events: none;
-                -webkit-backdrop-filter: blur(16px);
-                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(14px);
+                backdrop-filter: blur(14px);
                 background: linear-gradient(180deg,
-                    rgba(250, 248, 245, 0.96) 0%,
-                    rgba(250, 248, 245, 0.85) 55%,
-                    rgba(250, 248, 245, 0.30) 85%,
+                    rgba(250, 248, 245, 0.90) 0%,
+                    rgba(250, 248, 245, 0.68) 50%,
+                    rgba(250, 248, 245, 0.22) 85%,
                     rgba(250, 248, 245, 0) 100%);
                 -webkit-mask: linear-gradient(180deg,
                     black 0%,
-                    black 60%,
-                    rgba(0, 0, 0, 0.45) 85%,
+                    black 45%,
+                    rgba(0, 0, 0, 0.40) 80%,
                     transparent 100%);
                 mask: linear-gradient(180deg,
                     black 0%,
-                    black 60%,
-                    rgba(0, 0, 0, 0.45) 85%,
+                    black 45%,
+                    rgba(0, 0, 0, 0.40) 80%,
                     transparent 100%);
             }
 
@@ -3433,6 +3431,19 @@ export const homeStyles = (): string => `
                 box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
                 transition: all var(--motion-medium) var(--ease-standard);
             }
+            /* When the menu opens the nav-shell occupies the entire top
+               row including the area the BACK pill sits over (the left
+               edge overlaps the nav-shell brand on desktop and the
+               compressed Contact pill on mobile). Per user direction:
+               overlapping elements fade away. BACK fades out with the
+               same motion as the nav-shell fades in; the close-X icon
+               (subpage-menu-trigger) stays visible since it's the
+               dismiss control. */
+            body.menu-open .subpage-back {
+                opacity: 0;
+                pointer-events: none;
+                transform: translateX(-6px);
+            }
             .subpage-back:hover {
                 background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
                 box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
@@ -3441,6 +3452,291 @@ export const homeStyles = (): string => `
             .subpage-back-arrow {
                 font-size: var(--text-body);
                 line-height: 1;
+            }
+
+            /* =====================================================
+               SUBPAGE MENU TRIGGER + SLIDE-IN PANEL (v1.62.37)
+               =====================================================
+               Right-side mirror of the BACK pill. Three thin equal
+               lines (16px / 1.5px / 5px gap) inside a frosted-pill
+               that matches .section-eyebrow's visual weight (white
+               0.8 alpha, subtle shadow, gold-edge border). Clicking
+               morphs the icon to an X, slides the brand wordmark
+               left + dims it slightly, and slides the nav panel in
+               from the right.
+
+               The panel mirrors /home's nav vocabulary: same items
+               (Schedule / About / Outreach / Watch) plus the
+               Contact CTA, with cross-page hashes (/#schedule)
+               since we're on a subpage. Dismiss paths: click
+               trigger, click scrim, click any nav link, ESC key —
+               all funnel through the JS closeMenu() in
+               subpage-header.ts. */
+
+            .subpage-menu-trigger {
+                position: fixed;
+                top: 24px;
+                right: clamp(12px, 3vw, 28px);
+                z-index: 1001;
+                width: 44px;
+                height: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.82);
+                border: 1px solid rgba(255, 255, 255, 0.55);
+                border-radius: var(--radius-pill);
+                padding: 0;
+                margin: 0;
+                cursor: pointer;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                box-shadow: var(--shadow-md);
+                transition: background var(--motion-medium) var(--ease-out-soft),
+                            box-shadow var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-medium) var(--ease-out-soft);
+            }
+            .subpage-menu-trigger:hover {
+                background: rgba(255, 255, 255, 0.95);
+                box-shadow: var(--shadow-lg);
+                transform: translateY(-1px);
+            }
+            .subpage-menu-trigger:focus-visible {
+                outline: 2px solid var(--gold);
+                outline-offset: 3px;
+            }
+
+            /* Three-line icon. Each line is an absolutely-positioned
+               span inside .subpage-menu-icon, so the rotations on
+               open use a fixed pivot (the icon-box center) and don't
+               drift on different DPRs. */
+            .subpage-menu-icon {
+                position: relative;
+                width: 16px;
+                height: 12px;
+                display: block;
+            }
+            .subpage-menu-icon-line {
+                position: absolute;
+                left: 0;
+                width: 100%;
+                height: 1.5px;
+                background: var(--text-primary);
+                border-radius: 1px;
+                transition: transform var(--motion-medium) var(--ease-out-soft),
+                            opacity var(--motion-medium) var(--ease-out-soft),
+                            top var(--motion-medium) var(--ease-out-soft);
+            }
+            .subpage-menu-icon-line:nth-child(1) { top: 0; }
+            .subpage-menu-icon-line:nth-child(2) { top: 50%; transform: translateY(-50%); }
+            .subpage-menu-icon-line:nth-child(3) { top: 100%; transform: translateY(-100%); }
+
+            /* Open state: top line drops to center + rotates +45°,
+               bottom line rises to center + rotates -45°, middle
+               line fades and shrinks. */
+            body.menu-open .subpage-menu-icon-line:nth-child(1) {
+                top: 50%;
+                transform: translateY(-50%) rotate(45deg);
+            }
+            body.menu-open .subpage-menu-icon-line:nth-child(2) {
+                opacity: 0;
+                transform: translateY(-50%) scaleX(0);
+            }
+            body.menu-open .subpage-menu-icon-line:nth-child(3) {
+                top: 50%;
+                transform: translateY(-50%) rotate(-45deg);
+            }
+            body.menu-open .subpage-menu-trigger {
+                background: rgba(255, 255, 255, 0.95);
+            }
+
+            /* The nav-shell on subpages: hidden by default, fades +
+               slides in when body.menu-open. Uses the EXACT same
+               element/styles as /home (nav() function); no separate
+               panel. The home page leaves these properties alone so
+               its nav-shell renders normally.
+
+               CRITICAL: the home nav-shell relies on
+               transform: translateX(-50%) for its centering. We MUST
+               compose translateX(-50%) into our hidden/open transforms
+               or the nav-shell will jump off-center. */
+            body[class*="page-subpage"] .nav-shell {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-10px);
+                pointer-events: none;
+                visibility: hidden;
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-medium) var(--ease-out-soft),
+                            visibility 0s linear var(--motion-medium);
+            }
+            body[class*="page-subpage"].menu-open .nav-shell {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+                pointer-events: auto;
+                visibility: visible;
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-medium) var(--ease-out-soft),
+                            visibility 0s linear 0s;
+            }
+
+            /* On subpages BOTH brand elements exist (subpage-brand at
+               center, nav-shell .brand inside the appearing nav-shell).
+               They cross-fade: subpage brand fades out as nav-shell
+               brand fades in, both at slightly-offset positions so the
+               user perceives one brand element gracefully repositioning.
+               Nav-shell brand starts invisible; .menu-open fades it in. */
+            body[class*="page-subpage"] .nav-shell .brand {
+                opacity: 0;
+                transition: opacity var(--motion-medium) var(--ease-out-soft);
+            }
+            body[class*="page-subpage"].menu-open .nav-shell .brand {
+                opacity: 1;
+                transition-delay: 120ms;
+            }
+
+            /* Stagger nav items + CTA on open for a tasteful cascade. */
+            body[class*="page-subpage"] .nav-shell nav ul li {
+                opacity: 0;
+                transform: translateX(8px);
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-medium) var(--ease-out-soft);
+            }
+            body[class*="page-subpage"].menu-open .nav-shell nav ul li {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(1) { transition-delay: 80ms; }
+            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(2) { transition-delay: 130ms; }
+            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(3) { transition-delay: 180ms; }
+            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(4) { transition-delay: 230ms; }
+            body[class*="page-subpage"] .nav-shell .nav-cta,
+            body[class*="page-subpage"] .nav-shell .nav-form-btn {
+                opacity: 0;
+                transform: translateY(4px);
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-medium) var(--ease-out-soft);
+            }
+            body[class*="page-subpage"].menu-open .nav-shell .nav-cta,
+            body[class*="page-subpage"].menu-open .nav-shell .nav-form-btn {
+                opacity: 1;
+                transform: translateY(0);
+                transition-delay: 280ms;
+            }
+
+            /* Scrim — full-viewport invisible click target that
+               dismisses the menu. Inactive (pointer-events: none) by
+               default; becomes clickable only when .menu-open. No
+               background tint — the panel itself stands out enough
+               via its frosted backdrop. */
+            .subpage-menu-scrim {
+                position: fixed;
+                inset: 0;
+                z-index: 998;
+                background: transparent;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity var(--motion-medium) var(--ease-out-soft);
+            }
+            body.menu-open .subpage-menu-scrim {
+                pointer-events: auto;
+            }
+
+            /* Brand slide+fade choreography. When the menu opens, the
+               brand glides slightly LEFT of its centered home (from
+               translateX(-50%) to translateX(calc(-50% - 80px))) and
+               dims to opacity 0.55 so it visually steps aside without
+               disappearing — per user note, "fade less, not away."
+               The slide ends to the left of where the trigger pill
+               sits, so the panel and brand don't fight for the same
+               horizontal space. */
+            .subpage-brand {
+                transition: transform var(--motion-medium) var(--ease-out-soft),
+                            opacity var(--motion-medium) var(--ease-out-soft);
+            }
+            body.menu-open .subpage-brand {
+                /* Slide subtly LEFT of center and fade most of the way
+                   out (not fully — per user note "fade less, not away").
+                   z-index drops below nav-shell so even the residual
+                   0.18-alpha ghost doesn't peek through the nav-shell
+                   chrome on top of it. */
+                transform: translateX(calc(-50% - clamp(40px, 8vw, 70px))) translateY(0);
+                opacity: 0.18;
+                pointer-events: none;
+                z-index: 999;
+            }
+            /* Disable the existing scroll-hide behavior while the menu
+               is open so a stray scroll event during open doesn't
+               toggle .hidden and conflict with our open-state slide. */
+            body.menu-open .subpage-brand.hidden {
+                transform: translateX(calc(-50% - clamp(40px, 8vw, 70px))) translateY(0);
+                opacity: 0.18;
+                pointer-events: none;
+                z-index: 999;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .subpage-menu-trigger,
+                .subpage-menu-icon-line,
+                .subpage-menu-panel,
+                .subpage-menu-list li,
+                .subpage-menu-cta,
+                .subpage-menu-scrim,
+                .subpage-brand {
+                    transition: none !important;
+                }
+                body.menu-open .subpage-menu-list li {
+                    transition-delay: 0ms !important;
+                }
+                body.menu-open .subpage-menu-cta {
+                    transition-delay: 0ms !important;
+                }
+            }
+
+            /* Mobile: trigger stays in same spot, but the panel
+               compresses to just the Contact pill (matches the
+               /home .scrolled-mobile state — small gold pill on the
+               right). Brand also slides less on mobile because the
+               panel is narrower. */
+            @media (max-width: 960px) {
+                .subpage-menu-trigger {
+                    top: 16px;
+                    width: 40px;
+                    height: 40px;
+                }
+                .subpage-menu-panel {
+                    top: 64px;
+                    padding: var(--space-sm) var(--space-md) var(--space-md);
+                    min-width: 180px;
+                }
+                /* On mobile the menu's compressed nav-shell sits where
+                   the subpage brand was, so even a 0.18-alpha ghost of
+                   the brand creates visible clutter above the bar.
+                   Fade fully on mobile — desktop keeps the soft ghost
+                   per the user note since there's enough horizontal
+                   room for it to read as deliberate. */
+                body.menu-open .subpage-brand {
+                    transform: translateX(calc(-50% - 30px)) translateY(0);
+                    opacity: 0;
+                }
+                body.menu-open .subpage-brand.hidden {
+                    transform: translateX(calc(-50% - 30px)) translateY(0);
+                    opacity: 0;
+                }
+
+                /* On subpage mobile, the JS applies .scrolled-mobile to
+                   the nav-shell (see subpage-header.ts) so we reuse the
+                   home page's existing compressed-nav state verbatim:
+                   brand hidden, nav hidden, nav-cta hidden, nav-form-btn
+                   visible at right. No CSS reimplementation needed —
+                   the home nav already does this perfectly.
+
+                   The ONLY subpage-specific override: push the
+                   nav-form-btn left so it doesn't sit underneath the
+                   menu-trigger X pill (which only exists on subpages,
+                   so home doesn't need to clear space for it). */
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn {
+                    right: 64px;
+                }
             }
 
             /* Spacer that pushes subpage content below the floating brand +
@@ -3463,13 +3759,11 @@ export const homeStyles = (): string => `
 
             @media (max-width: 960px) {
                 .subpage-top-fog {
-                    /* Mobile keeps the BACK + brand at top: 16, with
-                       slightly smaller padding/font, so total nav
-                       element height bottoms out around y=70-78. Fog
-                       extends well past that and tapers, so scrolling
-                       text reads as ghost-faded by the time it clears
-                       the chrome instead of competing with it. */
-                    height: 130px;
+                    /* Mobile chrome (BACK + brand) bottoms out around
+                       y=70-78. 100px height + bg/mask above hides the
+                       chrome zone while leaving the eyebrow / first
+                       heading visually clear. */
+                    height: 100px;
                 }
                 .subpage-brand {
                     top: 16px;

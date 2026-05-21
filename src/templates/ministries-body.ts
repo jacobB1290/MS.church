@@ -1361,7 +1361,7 @@ export const ministriesBody = (): string => `
         /* Mobile + reduced-motion overrides for the shared subpage
            primitives moved into home-styles.ts in v1.62.27–28. */
     </style>
-    <body>
+    <body class="page-subpage">
         <div class="page">
             ${subpageHeader()}
             <div class="subpage-spacer"></div>

@@ -177,7 +177,7 @@ export const beliefsBody = (): string => `
             }
         }
     </style>
-    <body>
+    <body class="page-subpage">
         <div class="page">
             ${subpageHeader()}
             <div class="subpage-spacer"></div>

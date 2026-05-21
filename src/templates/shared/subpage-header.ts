@@ -1,14 +1,22 @@
 // Subpage header for /about and /outreach.
 //
-// Two independent fixed-position pills (NOT a unified nav-shell):
-//   • Brand wordmark with a tapered radial-frost backdrop (no pill outline).
-//     Links to "/" (home / hero). Hides on scroll-down, returns on scroll-up.
-//   • Back button — gold pill, always visible. Uses history.back() with a /
-//     fallback for direct entries.
+// Floating chrome (NOT a unified nav-shell at rest):
+//   • Brand wordmark — links to "/" (home / hero). Hides on scroll-down,
+//     returns on scroll-up. Slides left + dims slightly when menu opens
+//     so the nav-shell brand can take its position.
+//   • Back button — gold pill, always visible. Uses history.back() with a
+//     / fallback for direct entries.
+//   • Menu trigger — right-side mirror of BACK. Three thin lines that
+//     morph to an X when the nav-shell is open.
+//   • Nav-shell — the SAME nav() output that the home page uses, rendered
+//     here too. Hidden by default; slides + fades in when the menu trigger
+//     is activated. Uses cross-page hashes (/#schedule etc.) so anchors
+//     navigate to /home and scroll. Single source of truth — no copy.
 //
 // Pattern reused from the home-scripts.ts mobile nav: rAF-throttled scroll
-// listener with direction tracking via lastScrollY (see home-scripts.ts
-// handleMobileNav — same approach).
+// listener with direction tracking via lastScrollY.
+
+import { nav } from './nav.js'
 
 export function subpageHeader(): string {
   return `<div class="subpage-top-fog" aria-hidden="true"></div>
@@ -20,6 +28,31 @@ export function subpageHeader(): string {
                 <span class="brand-title">Morning Star</span>
                 <span class="brand-subtitle">Christian Church</span>
             </a>
+
+            <!-- Menu trigger pill (mirror of .subpage-back on the right).
+                 Three thin equal lines inside a frosted pill. Open state
+                 morphs the lines to an X (top +45°, bottom -45°, middle
+                 fades). See styles in home-styles.ts. -->
+            <button class="subpage-menu-trigger" id="subpage-menu-trigger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav-shell">
+                <span class="subpage-menu-icon" aria-hidden="true">
+                    <span class="subpage-menu-icon-line"></span>
+                    <span class="subpage-menu-icon-line"></span>
+                    <span class="subpage-menu-icon-line"></span>
+                </span>
+            </button>
+
+            <!-- The home page's nav-shell rendered inline on subpages
+                 via nav('/') — SAME element/styling as /home, not a
+                 copy. Cross-page hashes (href="/#schedule") so links
+                 work from subpages. Hidden by default; body.menu-open
+                 slides + fades it into view. On mobile, the existing
+                 nav-shell mobile CSS already compresses it to the
+                 Contact pill, so we get that for free. -->
+            ${nav('/')}
+
+            <!-- Click-anywhere-to-dismiss overlay, only active when the
+                 nav-shell is open. -->
+            <div class="subpage-menu-scrim" id="subpage-menu-scrim" aria-hidden="true"></div>
             <script>
                 (function() {
                     // Back button: history.back() with /-fallback for direct entries.
@@ -304,6 +337,73 @@ export function subpageHeader(): string {
                         }
                         try { history.replaceState(null, '', location.pathname + location.search + href); } catch (err) {}
                     });
+
+                    // ----- Menu trigger: toggle the nav-shell -----
+                    // .menu-open on <body> drives all the CSS state (icon
+                    // morph, brand slide+fade, nav-shell fade+slide in,
+                    // scrim pointer-events). Dismiss paths: click trigger
+                    // again, click scrim, click a nav link, press ESC.
+                    // All funnel through closeMenu() so animations sync.
+                    var trigger = document.getElementById('subpage-menu-trigger');
+                    var navShell = document.querySelector('.nav-shell');
+                    var scrim = document.getElementById('subpage-menu-scrim');
+                    if (trigger && navShell && scrim) {
+                        // Mirror the home nav's compressed-mobile state on
+                        // subpages: apply .scrolled-mobile at mobile widths
+                        // so the SAME .scrolled-mobile CSS that compresses
+                        // the home nav on scroll also compresses our
+                        // subpage menu nav. Single source of truth — no
+                        // reimplementation of the compressed-nav layout.
+                        var syncMobileNavState = function() {
+                            if (window.innerWidth <= 960) {
+                                navShell.classList.add('scrolled-mobile');
+                            } else {
+                                navShell.classList.remove('scrolled-mobile');
+                            }
+                        };
+                        syncMobileNavState();
+                        window.addEventListener('resize', syncMobileNavState, { passive: true });
+
+                        var openMenu = function() {
+                            document.body.classList.add('menu-open');
+                            trigger.setAttribute('aria-expanded', 'true');
+                            trigger.setAttribute('aria-label', 'Close menu');
+                            navShell.setAttribute('aria-hidden', 'false');
+                        };
+                        var closeMenu = function() {
+                            document.body.classList.remove('menu-open');
+                            trigger.setAttribute('aria-expanded', 'false');
+                            trigger.setAttribute('aria-label', 'Open menu');
+                            navShell.setAttribute('aria-hidden', 'true');
+                        };
+                        // Initialize nav-shell as hidden on subpages.
+                        navShell.setAttribute('aria-hidden', 'true');
+                        trigger.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            if (document.body.classList.contains('menu-open')) {
+                                closeMenu();
+                            } else {
+                                openMenu();
+                            }
+                        });
+                        scrim.addEventListener('click', closeMenu);
+                        // Close on any nav-link click. The smooth-scroll
+                        // delegated handler above runs first and may
+                        // preventDefault for in-page anchors; for cross-
+                        // page anchors (/#schedule) the browser navigates.
+                        // Either way we hide the panel so it's not in the
+                        // way after click.
+                        navShell.querySelectorAll('a').forEach(function(a) {
+                            a.addEventListener('click', function() {
+                                setTimeout(closeMenu, 50);
+                            });
+                        });
+                        document.addEventListener('keydown', function(e) {
+                            if (e.key === 'Escape' && document.body.classList.contains('menu-open')) {
+                                closeMenu();
+                            }
+                        });
+                    }
 
                     // Brand: hide on scroll-down, show on scroll-up.
                     // v1.49.26: gate the scroll-hide behind a brief

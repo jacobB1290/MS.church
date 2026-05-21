@@ -3652,7 +3652,12 @@ export const homeStyles = (): string => `
                 transition-delay: 120ms;
             }
 
-            /* Stagger nav items + CTA on open for a tasteful cascade. */
+            /* Stagger nav items + CTA on open for a tasteful cascade.
+               Cascade runs right-to-left: Watch (4th child, rightmost)
+               animates first, propagating left through Outreach,
+               About, Schedule. The motion reads as "the menu unfurls
+               from the close-X end toward the wordmark" — same
+               directionality as the X morph + nav-shell slide-in. */
             body[class*="page-subpage"] .nav-shell nav ul li {
                 opacity: 0;
                 transform: translateX(8px);
@@ -3663,10 +3668,10 @@ export const homeStyles = (): string => `
                 opacity: 1;
                 transform: translateX(0);
             }
-            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(1) { transition-delay: 80ms; }
-            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(2) { transition-delay: 130ms; }
-            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(3) { transition-delay: 180ms; }
-            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(4) { transition-delay: 230ms; }
+            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(4) { transition-delay: 80ms; }
+            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(3) { transition-delay: 130ms; }
+            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(2) { transition-delay: 180ms; }
+            body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(1) { transition-delay: 230ms; }
             body[class*="page-subpage"] .nav-shell .nav-cta,
             body[class*="page-subpage"] .nav-shell .nav-form-btn {
                 opacity: 0;

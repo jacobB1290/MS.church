@@ -15,7 +15,6 @@ export const aboutBody = (): string => `
             <div class="subpage-spacer"></div>
             <main>
                 <section id="about-intro">
-                    <span class="section-eyebrow">About Us</span>
                     <h1 class="section-heading"><em class="motto">Mending the Broken</em> in Boise, Idaho.</h1>
                     <p class="subpage-intro-lead">Morning Star Christian Church is a welcoming, Bible-believing community in the heart of Boise, where every story, every age, and every burden is met with grace, scripture, and a seat at the table.</p>
                     <nav class="subpage-jump" aria-label="Jump to a section">

@@ -125,7 +125,6 @@ export const visitBody = (): string => `
             <div class="subpage-spacer"></div>
             <main>
                 <section id="visit-intro">
-                    <span class="section-eyebrow">Plan Your Visit</span>
                     <h1 class="section-heading">We can’t wait to meet you.</h1>
                     <p class="subpage-intro-lead">Here’s everything you need to know before Sunday: where we are, what an hour at Morning Star looks like, and what happens after the closing song.</p>
                     <nav class="subpage-jump" aria-label="Jump to a section">

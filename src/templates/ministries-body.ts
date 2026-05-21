@@ -1367,7 +1367,6 @@ export const ministriesBody = (): string => `
             <div class="subpage-spacer"></div>
             <main>
                 <section id="ministries-intro">
-                    <span class="section-eyebrow">Ministries</span>
                     <h1 class="section-heading">How we live out <em class="motto">Mending the Broken</em> week to week.</h1>
                     <p class="subpage-intro-lead">Worship, discipleship, fellowship, and walking with the next generation: the rhythms that keep us together between Sundays. Anyone is welcome at any of these. Drop in, ask questions, or just come see what it looks like.</p>
                     <nav class="subpage-jump" aria-label="Jump to a ministry">

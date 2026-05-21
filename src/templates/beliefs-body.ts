@@ -183,7 +183,6 @@ export const beliefsBody = (): string => `
             <div class="subpage-spacer"></div>
             <main>
                 <section id="beliefs-intro">
-                    <span class="section-eyebrow">Statement of Beliefs</span>
                     <h1 class="section-heading">What we hold to.</h1>
                     <p class="subpage-intro-lead">These eleven convictions, adopted from our parent congregation, are the doctrinal ground beneath everything we teach, sing, pray, and serve. We hold to the whole counsel of Scripture: grace and truth, with no watered-down version.</p>
                 </section>

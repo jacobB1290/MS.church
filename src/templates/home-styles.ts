@@ -1246,17 +1246,29 @@ export const homeStyles = (): string => `
                Editorial section break: hairline rule above + small-caps
                anchor chips below. Used on every subpage that has more
                than one named section so a reader can survey what's on
-               the page before scrolling. Underline uses transform:
-               scaleX(0)→1 with transform-origin: left so the GPU
-               compositor handles the animation — no per-frame layout,
-               no offset drift, identical width to the text glyph by
-               glyph. Clicks defer to subpage-header.ts's
-               __smoothScrollToHash so each jump animates with the
-               75/90px nav offset (CLAUDE.md #10 motion preference). */
+               the page before scrolling.
+
+               v1.62.57: gold text at rest + persistent gold underline
+               on every chip. An audit then flagged the always-on
+               underline as visual noise — five hairline-underlined
+               chips read as a "list of broken inputs", and on the
+               narrow viewports the row wrapped 4+1 with the last
+               chip orphaned alone on its own row.
+
+               v1.62.58: gold color stays as the at-rest interactive
+               signal (color matches inline links across the site).
+               Drop the always-on underline — reserve it for hover so
+               the row reads as a single quiet editorial line. Add
+               middot separators between chips so they flow as one
+               continuous list rather than five stacked tags. Center-
+               align below 960px so any wrap reads as a balanced
+               finish, not a left-aligned orphan. */
             .subpage-jump {
                 display: flex;
                 flex-wrap: wrap;
-                gap: var(--space-md) var(--space-lg);
+                align-items: baseline;
+                column-gap: var(--space-md);
+                row-gap: var(--space-xs);
                 margin-top: var(--space-md);
                 padding-top: var(--space-md);
                 border-top: 1px solid var(--text-primary-hairline);
@@ -1267,12 +1279,26 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-semibold);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: var(--text-primary-muted);
+                color: var(--gold-dark);
                 text-decoration: none;
                 position: relative;
                 padding: 4px 0;
                 transition: color var(--motion-medium) var(--ease-out-soft);
             }
+            /* Middot separator between adjacent chips. Sits in the
+               column-gap so the chips themselves carry no chrome —
+               the separator is what binds them into one row. */
+            .subpage-jump a + a::before {
+                content: '·';
+                position: absolute;
+                left: calc(var(--space-md) * -0.5);
+                top: 4px;
+                transform: translateX(-50%);
+                color: var(--text-primary-fade);
+                pointer-events: none;
+            }
+            /* Hover-only underline. scaleX origin-left so the line
+               draws under the glyphs as the user lands on the chip. */
             .subpage-jump a::after {
                 content: '';
                 position: absolute;
@@ -1287,7 +1313,7 @@ export const homeStyles = (): string => `
             }
             .subpage-jump a:hover,
             .subpage-jump a:focus-visible {
-                color: var(--gold-dark);
+                color: var(--gold-deeper);
             }
             .subpage-jump a:hover::after,
             .subpage-jump a:focus-visible::after {
@@ -1297,6 +1323,15 @@ export const homeStyles = (): string => `
                 .subpage-jump a,
                 .subpage-jump a::after {
                     transition: none;
+                }
+            }
+            @media (max-width: 960px) {
+                .subpage-jump {
+                    justify-content: center;
+                    column-gap: var(--space-sm);
+                }
+                .subpage-jump a + a::before {
+                    left: calc(var(--space-sm) * -0.5);
                 }
             }
 

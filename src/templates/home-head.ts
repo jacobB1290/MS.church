@@ -115,6 +115,20 @@ export const homeHead = (): string => {
                 });
                 if(location.hash && location.hash !== '#'){
                     window.__targetHash = location.hash;
+                    // Same flow as subpages: paint main invisible + 40px
+                    // above its final position synchronously before first
+                    // paint. home-scripts.ts then does an instant scrollTo
+                    // (while invisible) once layout has settled, and adds
+                    // .hash-fade-in to trigger the entrance transition.
+                    // Avoids the "lands on hero, then smooth-scrolls down"
+                    // behavior the user reported when nav'ing to a /#anchor
+                    // from a subpage.
+                    html.classList.add('hash-fade');
+                    // Safety net: guarantee visibility within 2.5s even if
+                    // the script in home-scripts.ts fails to fire.
+                    setTimeout(function() {
+                        html.classList.add('hash-fade-in');
+                    }, 2500);
                     try {
                         history.replaceState(null, '', location.pathname + location.search);
                     } catch(e){}

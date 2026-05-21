@@ -923,44 +923,210 @@ export const homeScripts = (): string => `
                 // (Subpage hash landing is handled in shared/subpage-header.ts,
                 //  which runs on every subpage regardless of homeScripts.)
 
-                // HOME-page hash flow: the inline <head> script already
-                // stripped the hash, so the browser did NOT auto-scroll. Now
-                // run the existing manual scroll: click the matching nav link
-                // (which uses the home-page smooth-scroll JS with navOffset).
+                // ----- Shared home anchor offset (v1.62.50) -----
+                // Single source of truth for "where does an anchor land on
+                // home". Per design intent: each home section's eyebrow is
+                // meant to tuck fully behind the nav-shell — the gold-
+                // highlighted active nav link IS the "you are here" marker,
+                // so the eyebrow's label is redundant when you've landed on
+                // a section via the nav. The previous fixed 30/60 offset
+                // left the eyebrow peeking 7px below the nav on mobile and
+                // pushed it well clear on desktop (inconsistent).
+                //
+                // New behavior: when the target has a .section-eyebrow,
+                // scroll so the eyebrow lands fully INSIDE the nav-shell's
+                // bounds — eyebrow.bottom <= navShell.bottom - 2px buffer.
+                // We compute the target dynamically per call so the landing
+                // adapts to the actual compressed-nav height on the current
+                // viewport (mobile-360 has a shorter compressed nav than
+                // mobile-393, etc.). The .nav-shell.scrolled-mobile CSS
+                // sets padding to clamp(10px, 3vw, 20px) so the height
+                // varies by viewport width.
+                //
+                // Used by:
+                //   • The HOME-page hash flow below (cross-page hash-loads
+                //     from subpages / direct URL visits).
+                //   • The in-page click handler further down (clicking
+                //     "Schedule"/"About"/etc. inside the home nav).
+                // Both paths produce the same landing now.
+                function getHomeAnchorTargetY(hash) {
+                    if (!hash || hash === '#' || hash === '#home') return 0;
+                    const el = document.querySelector(hash);
+                    if (!el) return null;
+                    if (hash === '#gift-form') {
+                        const off = window.innerWidth <= 960 ? 100 : 150;
+                        return Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - off);
+                    }
+                    const eyebrow = el.querySelector('.section-eyebrow');
+                    if (eyebrow) {
+                        const eyebrowRect = eyebrow.getBoundingClientRect();
+                        const eyebrowHeight = eyebrowRect.height || 38;
+                        // Predict the nav-shell's eventual bottom AFTER the
+                        // scroll. On mobile the nav compresses once scrollY
+                        // crosses ~19px; the compressed bottom varies by
+                        // viewport (≈57px on 360w, ≈62px on 768w). We use
+                        // a conservative cap so the eyebrow tucks under the
+                        // narrowest nav we'll encounter. On desktop the nav
+                        // doesn't compress and sits at top:16 / bottom:~106.
+                        const navBottomAfterScroll = window.innerWidth <= 960 ? 56 : 104;
+                        // Tuck so eyebrow.bottom sits 2px ABOVE the nav's
+                        // bottom edge; eyebrow.top is then >= nav's top
+                        // (16) on every viewport where eyebrowHeight <=
+                        // navBottomAfterScroll - 18.
+                        const tuckY = Math.max(16, navBottomAfterScroll - eyebrowHeight - 2);
+                        return Math.max(0, eyebrowRect.top + window.pageYOffset - tuckY);
+                    }
+                    const navOffset = window.innerWidth <= 960 ? 30 : 60;
+                    return Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - navOffset);
+                }
+                window.__getHomeAnchorTargetY = getHomeAnchorTargetY;
+
+                // HOME-page hash flow (v1.62.50).
+                //
+                // When the user clicks a /#anchor link from a subpage, we
+                // want the SAME entrance the subpages use for hash-loads:
+                // main paints invisible (opacity 0, translateY(-40px)),
+                // an instant scroll lands at the target position WHILE
+                // invisible, and then main fades + slides into place.
+                //
+                // The home-head.ts inline <head> script already added
+                // <html class="hash-fade"> synchronously and stashed the
+                // hash on window.__targetHash. Now we:
+                //   1. Wait for window.load + fonts.ready + 2rAF + rIC
+                //      (matching subpage-header.ts).
+                //   2. Compute the target Y using the home nav's offset
+                //      rules (30/60 default, 100/150 for #gift-form).
+                //   3. Subtract the active translateY transform from the
+                //      rect so scrollTo targets the POST-fade position.
+                //   4. Instant scrollTo. Watchdog re-measures every 100ms;
+                //      after 3 stable measurements (300ms of no drift),
+                //      add .hash-fade-in to start the entrance transition.
+                //   5. Restore the URL hash so the page is bookmarkable
+                //      and the back button works. Clear on first user
+                //      scroll so reload preserves actual scroll position.
                 const _isHomePage = window.location.pathname === '/' || window.location.pathname === '';
                 const _homeStashedHash = window.__targetHash || '';
                 if (_isHomePage && _homeStashedHash) {
-                    window.scrollTo(0, 0);
-                    window.addEventListener('load', () => {
+                    let fadeInFired = false;
+                    const fireFadeIn = () => {
+                        if (fadeInFired) return;
+                        fadeInFired = true;
+                        document.documentElement.classList.add('hash-fade-in');
+                        try {
+                            history.replaceState(null, '', location.pathname + location.search + _homeStashedHash);
+                        } catch (e) {}
+                        const clearHashOnScroll = () => {
+                            if (location.hash === _homeStashedHash) {
+                                try {
+                                    history.replaceState(null, '', location.pathname + location.search);
+                                } catch (e) {}
+                            }
+                        };
                         setTimeout(() => {
-                            const navLink = document.querySelector('a[href="' + _homeStashedHash + '"]');
-                            if (navLink) navLink.click();
-                            try {
-                                history.replaceState(null, '', location.pathname + location.search + _homeStashedHash);
-                            } catch (e) {}
-                            // Clear the hash on first user scroll. The hash
-                            // is restored above so the URL is bookmarkable
-                            // and the browser back-button works, but a
-                            // leftover hash means RELOAD always re-jumps
-                            // to the anchor. Clearing on first user scroll
-                            // keeps the hash only while the user is "at"
-                            // the anchor — the moment they scroll
-                            // elsewhere it goes away and reload preserves
-                            // their actual scroll position. The timeout
-                            // delay ignores residual settling scroll from
-                            // the smooth-scroll-to-anchor animation.
-                            const clearHashOnScroll = () => {
-                                if (location.hash === _homeStashedHash) {
-                                    try {
-                                        history.replaceState(null, '', location.pathname + location.search);
-                                    } catch (e) {}
+                            window.addEventListener('scroll', clearHashOnScroll, { once: true, passive: true });
+                        }, 1500);
+                    };
+                    let fired = false;
+                    const fireScroll = () => {
+                        if (fired) return;
+                        fired = true;
+                        if (_homeStashedHash === '#home' || _homeStashedHash === '#') {
+                            window.scrollTo(0, 0);
+                            fireFadeIn();
+                            return;
+                        }
+                        const t = document.querySelector(_homeStashedHash);
+                        if (!t) {
+                            fireFadeIn();
+                            return;
+                        }
+                        const mainEl = document.querySelector('main');
+                        // getBoundingClientRect().top includes the active
+                        // translateY(-40px) on main. Subtract it so we
+                        // scroll to the POST-fade landing position; when
+                        // the transform unwinds the target stays put.
+                        const getTransformY = () => {
+                            if (!mainEl) return 0;
+                            const cs = window.getComputedStyle(mainEl).transform;
+                            if (!cs || cs === 'none') return 0;
+                            const m = cs.match(/matrix\(([^)]+)\)/);
+                            if (m) {
+                                const parts = m[1].split(',');
+                                return parseFloat(parts[5]) || 0;
+                            }
+                            const m3 = cs.match(/matrix3d\(([^)]+)\)/);
+                            if (m3) {
+                                const p3 = m3[1].split(',');
+                                return parseFloat(p3[13]) || 0;
+                            }
+                            return 0;
+                        };
+                        const measureTargetY = () => {
+                            const raw = getHomeAnchorTargetY(_homeStashedHash);
+                            if (raw == null) return null;
+                            // Subtract the active translateY transform on
+                            // main so the scrollY targets the POST-fade
+                            // resting position (the rect inside
+                            // getHomeAnchorTargetY already includes the
+                            // transform, so undo it here).
+                            return Math.max(0, raw - getTransformY());
+                        };
+                        let lastY = measureTargetY();
+                        if (lastY == null) {
+                            fireFadeIn();
+                            return;
+                        }
+                        window.scrollTo(0, lastY);
+                        let stableCount = 0;
+                        const watchdog = setInterval(() => {
+                            const newY = measureTargetY();
+                            if (newY == null) {
+                                clearInterval(watchdog);
+                                fireFadeIn();
+                                return;
+                            }
+                            if (Math.abs(newY - lastY) > 2) {
+                                window.scrollTo(0, newY);
+                                lastY = newY;
+                                stableCount = 0;
+                            } else {
+                                stableCount++;
+                                if (stableCount >= 3) {
+                                    clearInterval(watchdog);
+                                    fireFadeIn();
                                 }
-                            };
-                            setTimeout(() => {
-                                window.addEventListener('scroll', clearHashOnScroll, { once: true, passive: true });
-                            }, 1500);
-                        }, 800);
-                    }, { once: true });
+                            }
+                        }, 100);
+                        setTimeout(() => {
+                            clearInterval(watchdog);
+                            fireFadeIn();
+                        }, 1500);
+                    };
+                    const afterLoad = () => {
+                        const fontsReady = (document.fonts && document.fonts.ready)
+                            ? Promise.race([
+                                document.fonts.ready,
+                                new Promise((r) => setTimeout(r, 150))
+                              ])
+                            : Promise.resolve();
+                        fontsReady.then(() => {
+                            requestAnimationFrame(() => {
+                                requestAnimationFrame(() => {
+                                    if (window.requestIdleCallback) {
+                                        requestIdleCallback(fireScroll, { timeout: 200 });
+                                    } else {
+                                        setTimeout(fireScroll, 40);
+                                    }
+                                });
+                            });
+                        });
+                    };
+                    if (document.readyState === 'complete') {
+                        afterLoad();
+                    } else {
+                        window.addEventListener('load', afterLoad, { once: true });
+                        setTimeout(fireScroll, 1200);
+                    }
                 }
 
                 // Mobile nav compression on scroll
@@ -1280,13 +1446,28 @@ export const homeScripts = (): string => `
                 updateActiveNavLink();
                 window.addEventListener('resize', () => { handleMobileNav(); });
 
-                // Smooth scrolling for navigation links
+                // Smooth scrolling for navigation links.
+                // All home-page anchor landings go through getHomeAnchorTargetY
+                // so the in-page click matches the hashload entrance exactly:
+                // the section's eyebrow tucks behind the nav-shell on every
+                // viewport (no peeking).
+                //
+                // Post-scroll correction: if the user clicks within a second
+                // of page load, async content above the target (calendar
+                // carousel mount, leadership image decode) may still be
+                // settling while the smooth-scroll is in flight. The scroll
+                // commits to the target Y measured at click time and doesn't
+                // react to later layout shifts — so the eyebrow can end up
+                // 1-5px off its tucked spot. We re-measure on scrollend (or
+                // after a 1.2s fallback) and instant-snap if the target
+                // moved. The snap is imperceptible because it lands within
+                // the nav-shell's blurred backdrop zone.
                 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                     anchor.addEventListener('click', function (e) {
-                        e.preventDefault();
                         const targetId = this.getAttribute('href');
-
-                        if (targetId === '#home' || targetId === '#') {
+                        if (!targetId || targetId === '#') return;
+                        if (targetId === '#home') {
+                            e.preventDefault();
                             if (window.innerWidth <= 960) {
                                 if (navShell) navShell.classList.remove('scrolled-mobile');
                                 isNavigatingHome = true;
@@ -1294,29 +1475,22 @@ export const homeScripts = (): string => `
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                             return;
                         }
-
-                        const target = document.querySelector(targetId);
-                        if (target) {
-                            let navOffset = window.innerWidth <= 960 ? 30 : 60;
-
-                            if (targetId === '#outreach') {
-                                const outreachRect = target.getBoundingClientRect();
-                                const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
-                                window.scrollTo({ top: outreachAbsoluteTop - navOffset, behavior: 'smooth' });
-                                return;
+                        const targetY = getHomeAnchorTargetY(targetId);
+                        if (targetY == null) return;
+                        e.preventDefault();
+                        window.scrollTo({ top: targetY, behavior: 'smooth' });
+                        const correctLanding = () => {
+                            const newTarget = getHomeAnchorTargetY(targetId);
+                            if (newTarget == null) return;
+                            if (Math.abs(newTarget - window.scrollY) > 1) {
+                                window.scrollTo(0, newTarget);
                             }
-
-                            if (targetId === '#gift-form') {
-                                navOffset = window.innerWidth <= 960 ? 100 : 150;
-                                const elementRect = target.getBoundingClientRect();
-                                const absoluteElementTop = elementRect.top + window.pageYOffset;
-                                window.scrollTo({ top: absoluteElementTop - navOffset, behavior: 'smooth' });
-                                return;
-                            }
-
-                            const elementRect = target.getBoundingClientRect();
-                            const absoluteElementTop = elementRect.top + window.pageYOffset;
-                            window.scrollTo({ top: absoluteElementTop - navOffset, behavior: 'smooth' });
+                        };
+                        if ('onscrollend' in window) {
+                            window.addEventListener('scrollend', correctLanding, { once: true });
+                            setTimeout(correctLanding, 1500);
+                        } else {
+                            setTimeout(correctLanding, 1200);
                         }
                     });
                 });

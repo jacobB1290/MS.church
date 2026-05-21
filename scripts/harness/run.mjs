@@ -167,6 +167,29 @@ const ANCHOR_SCENARIOS = [
   // anchor scenarios.
   { name: '18-jump-cooking-net3g-mobile',  path: '/outreach', anchor: '#cooking-ministry',    viewport: MOBILE,  expected: 75, netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
   { name: '19-jump-cooking-net3g-desktop', path: '/outreach', anchor: '#cooking-ministry',    viewport: DESKTOP, expected: 90, netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
+
+  // v1.62.50 — home-page hashload landing accuracy. Subpages used the
+  // hash-fade + instant-scroll + watchdog flow for years; the home page
+  // was still doing scrollTo(0,0) + nav-link.click() smooth-scroll, so
+  // /#schedule navigation from a subpage visibly bounced through the
+  // hero before settling. New home-scripts.ts ports the subpage flow
+  // (hash-fade in head, instant scroll while invisible, watchdog,
+  // fade-in).
+  //
+  // Landing math: getHomeAnchorTargetY scrolls so the section eyebrow
+  // tucks behind the nav-shell (eyebrow.bottom <= navBottom - 2px).
+  // The SECTION'S top therefore lands at:
+  //   • mobile (no padding-top on any home section): top = 16
+  //   • desktop most sections (no padding-top): top = 60
+  //   • desktop schedule (padding-top: 100px to clear hero-bridge blur
+  //     when scrolling through hero): top = -40 (scrolled past section
+  //     start so eyebrow lands at 60 in viewport)
+  { name: '83-jump-home-schedule-mobile',   path: '/', anchor: '#schedule', viewport: MOBILE,  expected: 16 },
+  { name: '84-jump-home-schedule-desktop',  path: '/', anchor: '#schedule', viewport: DESKTOP, expected: -40 },
+  { name: '85-jump-home-outreach-mobile',   path: '/', anchor: '#outreach', viewport: MOBILE,  expected: 16 },
+  { name: '86-jump-home-outreach-desktop',  path: '/', anchor: '#outreach', viewport: DESKTOP, expected: 60 },
+  { name: '87-jump-home-about-mobile',      path: '/', anchor: '#about',    viewport: MOBILE,  expected: 16 },
+  { name: '88-jump-home-watch-desktop',     path: '/', anchor: '#watch',    viewport: DESKTOP, expected: 60 },
 ]
 
 // Performance scenarios — each runs an interaction (scroll / hash / click)
@@ -289,6 +312,31 @@ const FLOW_SCENARIOS = [
       { type: 'goto', url: '/' },
       { type: 'navigate', kind: 'click', selector: 'a.find-us-btn', captureFrames: true },
       { type: 'navigate', kind: 'goBack', captureFrames: true },
+    ],
+  },
+  // v1.62.50 — subpage → home-anchor flow. Verifies the user-visible
+  // entrance when clicking a /#schedule (or similar) cross-page link
+  // from a subpage. Before the fix: the home page rendered with the
+  // hero visible at the top, then smooth-scrolled down to the target
+  // section — a visible bounce-through-hero. After: same fade-in
+  // entrance the subpages already use for hash-loads (main paints
+  // invisible, instant scroll lands at target, then main fades +
+  // slides in over ~900ms). Video review confirms the hero is never
+  // visible during the entrance.
+  {
+    name: '26-flow-subpage-to-home-schedule-mobile',
+    viewport: MOBILE,
+    steps: [
+      { type: 'goto', url: '/about' },
+      { type: 'navigate', kind: 'directNav', url: '/#schedule', captureFrames: true },
+    ],
+  },
+  {
+    name: '27-flow-subpage-to-home-outreach-desktop',
+    viewport: DESKTOP,
+    steps: [
+      { type: 'goto', url: '/about' },
+      { type: 'navigate', kind: 'directNav', url: '/#outreach', captureFrames: true },
     ],
   },
   // Scroll-through scenarios — capture video of home page top-to-bottom so
@@ -618,6 +666,14 @@ async function visualProbes(page) {
     // 1. Heading visibility — every section currently intersecting the viewport
     //    must have its eyebrow OR heading at least HEADING_MIN_VISIBLE_PX
     //    uncovered (below the fixed-header zone).
+    //
+    //    Exception: on /home the section eyebrow is intentionally allowed
+    //    to tuck behind the nav-shell when the matching nav link is in
+    //    its .active state — the gold-highlighted nav link IS the
+    //    "you are here" indicator for that section, so the eyebrow's job
+    //    of labeling the section is already covered. Without this skip,
+    //    home-page anchor hashloads (e.g. /#schedule) fail the probe even
+    //    though the design is intentional.
     const fixedHeaderBottom = vw <= 960 ? opts.FIXED_HEADER_BOTTOM_MOBILE : opts.FIXED_HEADER_BOTTOM_DESKTOP
     const sections = Array.from(document.querySelectorAll('section'))
     for (const s of sections) {
@@ -633,7 +689,12 @@ async function visualProbes(page) {
       const visibleBottom = Math.min(cr.bottom, vh)
       const visiblePx = visibleBottom - visibleTop
       if (visiblePx < opts.HEADING_MIN_VISIBLE_PX) {
-        out.issues.push(`heading covered: ${s.id || '<no-id>'} (${visiblePx.toFixed(0)}px visible below header-zone @${fixedHeaderBottom})`)
+        const sid = s.id
+        const hasActiveNav = sid && !!document.querySelector(
+          'nav .nav-shell a[href="#' + sid + '"].active, .nav-shell nav a[href="#' + sid + '"].active'
+        )
+        if (hasActiveNav) continue
+        out.issues.push(`heading covered: ${sid || '<no-id>'} (${visiblePx.toFixed(0)}px visible below header-zone @${fixedHeaderBottom})`)
       }
     }
 
@@ -1515,6 +1576,9 @@ async function runFlowScenarios(launcher, report) {
               await Promise.all([loadWait, withTimeout(page.goBack(), 8_000, 'goBack')])
             } else if (step.kind === 'goForward') {
               await Promise.all([loadWait, withTimeout(page.goForward(), 8_000, 'goForward')])
+            } else if (step.kind === 'directNav') {
+              const url = step.url.startsWith('http') ? step.url : BASE + step.url
+              await Promise.all([loadWait, withTimeout(page.goto(url), 8_000, `goto ${url}`)])
             }
           }
           if (step.captureFrames) {

@@ -442,6 +442,52 @@ To restore Cloudflare Pages as an alternative, see the comment block at the top 
 
 ---
 
+## Way of Working — Proactive, Perfection-Driven, Detail-Obsessed
+
+The bar on this codebase is **right**, not **done**. Sessions routinely run an hour or more because the task isn't finished until the change holds up to scrutiny across viewports, across navigation paths, and across edge cases. Don't rush to ship; spend the time to do it once.
+
+The session that landed v1.62.50 (the /#anchor entrance) is the canonical example. The literal ask was small ("fade in instead of bouncing through the hero"); the actual work was ~an hour of probing viewports, finding the analogous subpage code to reuse, discovering that the in-page nav click and the hashload were landing differently, building a shared landing helper, finding that the section eyebrow peeked 7px on mobile, building a dynamic tuck offset that adapts to compressed-nav height per viewport, then discovering that async layout shifts during the smooth scroll left a 1-5px residual peek, then adding a post-`scrollend` correction. Every one of those was found by *asking the next question*, not by waiting for the user to spot it. That is the standard.
+
+### Be proactive — anticipate the next concern
+
+When you fix a bug, ask "what's the version of this problem the user *didn't* mention but will see next?" Surface those issues yourself rather than waiting to be told. A request to "fix the entrance" implies questions about landing position, cross-viewport behavior, hashload-vs-click consistency, edge sections, async layout settle, and the visual probe — all of those are part of the task even if only one was named.
+
+### Drive variances to zero
+
+A 1-5px off-target landing is a defect, not "close enough." If a smooth-scroll commits to a target measured before async content settles, add a post-`scrollend` re-measure. If a watchdog should re-measure during layout shift, make sure it does. If a tuck threshold leaves 7px of eyebrow peeking on the narrowest mobile, change the algorithm — don't shrug it off. When the user says *"fully hidden, not peeking,"* read that as zero pixels of peek on every viewport, not "mostly hidden."
+
+### Attention to detail — test the matrix, not the example
+
+When the user says "across multiple screen sizes," probe at minimum 5–6 viewport widths (e.g. mobile-360, mobile-393, tablet-768, desktop-1280, desktop-1440, desktop-1920). Default to writing a quick Playwright probe rather than eyeballing two breakpoints. The 4px compressed-nav-shell delta between mobile-360 and mobile-393 is the kind of thing that the two-breakpoint eyeball misses and the matrix catches.
+
+When the user says "all sections," loop through every section including the awkward last-section-at-maxScrollY case, the one with `padding-top`, the one with its own offset rule. Flag what you can't fix in scope; don't pretend it's covered.
+
+### Read before changing — single source of truth, no parallel implementations
+
+Before adding code, find the analogous code that already exists. The hashload entrance was already implemented for subpages in `subpage-header.ts` — reuse the exact mechanism (instant scroll while invisible + watchdog + fade-in transition), don't build a parallel home-only version. Both the hashload AND the in-page nav click should share the same landing-position helper so they can't drift. If you find yourself writing "almost like X" code, the right move is to refactor X to be parameterized, not to fork it.
+
+### Distinguish pre-existing failures from your own
+
+If the harness fails after a change, find out *why* before assuming it's yours. Stash your changes, re-run on the baseline, see which failures pre-existed. Fix only the ones you caused; note the others so the next person knows. Never silence a pre-existing failure to make your run green — that's how baseline rot starts.
+
+### Verify visually, every time
+
+`tsc --noEmit` says the TypeScript compiles. It does *not* say the layout works, the animation is smooth, the eyebrow lands where you expect, or the user's mental model is preserved. For visual or motion changes: capture screenshots at multiple frames of the transition, send them to the user with a one-line caption, run a Playwright probe across viewports and report the matrix. Eyeball + harness, never just one.
+
+### When the harness exposes its own bugs, fix the harness
+
+The harness is code. If `directNav` requires absolute URLs in Playwright but the scenarios were written with relative URLs, fix the step kind in `run.mjs` — don't work around it in each scenario. If a visual probe threshold is wrong for one page's layout (e.g. home eyebrow tuck behind the nav-shell is intentional, but the probe flags it as "heading covered"), teach the probe the exception. The harness gets a little better every session it runs.
+
+### Ask one clarifying question, not five — and only when it actually changes the work
+
+If a design decision could go three ways and the answer materially changes the implementation (e.g. "match in-page click offset" vs "match subpage offset" vs "change both"), use `AskUserQuestion` with the options pre-thought-through and a recommended default. Don't ask for confirmation on every minor sub-decision; the user is paying for judgment, not status updates.
+
+### Time is the right axis, not change count
+
+If the task is to make something work *right*, don't optimize for "minimum changes" or "fastest possible turn." Spend the time. v1.62.50 took ~an hour of probe scripts, viewport sweeps, watchdog tuning, helper refactoring, and post-scroll correction. That's the right amount of time for that task. A 10-minute fix that breaks on the next viewport produces three follow-up sessions and erodes the user's trust in the changelog.
+
+---
+
 ## Editorial Philosophy & Design Way of Thinking
 
 The site reads as a restrained editorial spread (Aesop / Monocle / Apple-About / New Yorker tier), not a SaaS product page or a generic church-template site. The principles below are the substrate that polish pass v1.62.25–37 built up. Refer to them before adding new pages, sections, or design changes.

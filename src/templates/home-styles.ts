@@ -7158,9 +7158,29 @@ export const homeStyles = (): string => `
                 .nav-shell.scrolled-mobile nav a {
                     font-size: clamp(9.5px, 2.5vw, 12px);
                     letter-spacing: clamp(0.4px, 0.18vw, 1.2px);
+                    /* Invisible hit-area expansion. The visible glyph
+                       width + letter-spacing are unchanged, but each
+                       <a> is padded out by 14px vertical / 8px
+                       horizontal and then pulled back into the row
+                       with matching negative margins. Result: labels
+                       look identically positioned, but the tap zones
+                       grow from ~15px tall × ~38-78px wide (a clear
+                       iOS HIG failure on every label) to a clean
+                       ≥44px on both axes for SCHEDULE/ABOUT/OUTREACH/
+                       WATCH. Standard Apple/Monocle/NYT pattern:
+                       expand the tap surface around dense type
+                       without changing the typographic intent. */
+                    padding: 18px 8px;
+                    margin-block: -18px;
+                    margin-inline: -8px;
                 }
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: clamp(7px, 1.8vw, 14px);
+                    /* Smaller visible gap to balance the -8px
+                       horizontal margins on adjacent <a>s — adjacent
+                       hit zones overlap, so the gap boundary lands
+                       midway between visible glyphs, predictable to
+                       the user. */
+                    gap: clamp(4px, 1.4vw, 10px);
                 }
                 .nav-shell.scrolled-mobile {
                     padding: 0 clamp(10px, 3vw, 20px);

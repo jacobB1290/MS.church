@@ -3683,17 +3683,15 @@ export const homeStyles = (): string => `
                 position: fixed;
                 inset: 0;
                 z-index: 998;
-                /* Faint warm-cream tint signals "tap outside to
-                   dismiss" without blurring the page behind. No
-                   backdrop-filter — the page content reads through
-                   the dim cleanly. */
-                background: color-mix(in srgb, var(--bg) 30%, transparent);
+                /* Fully transparent — the page underneath shows
+                   unchanged when the menu opens. No tint, no blur,
+                   no visual change to the page. The scrim still
+                   captures tap events on menu-open so tap-outside
+                   dismisses, just without any visual signal. */
+                background: transparent;
                 pointer-events: none;
-                opacity: 0;
-                transition: opacity var(--motion-medium) var(--ease-out-soft);
             }
             body.menu-open .subpage-menu-scrim {
-                opacity: 1;
                 pointer-events: auto;
             }
 

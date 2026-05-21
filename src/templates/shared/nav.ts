@@ -36,9 +36,9 @@ export function nav(hashPrefix = ''): string {
                 <a class="nav-cta" href="${hashPrefix}#contact">Contact</a>
                 <a class="nav-form-btn" href="${hashPrefix}#contact" aria-label="Contact">
                     <span class="nav-form-btn-label">Contact</span>
-                    <svg class="nav-form-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                        <path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/>
-                        <path d="M3.6 7.2l8.4 6 8.4-6"/>
+                    <svg class="nav-form-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M4 6.5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/>
+                        <path d="M3.6 7.6l8.4 5.6 8.4-5.6"/>
                     </svg>
                 </a>
             </header>`

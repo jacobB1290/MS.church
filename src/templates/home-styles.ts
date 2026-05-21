@@ -3437,6 +3437,7 @@ export const homeStyles = (): string => `
                 z-index: 1001;
                 display: inline-flex;
                 align-items: center;
+                justify-content: center;
                 gap: 8px;
                 /* Fixed height + matching top with .subpage-menu-trigger
                    so the two right/left chrome controls form a perfectly
@@ -3446,8 +3447,13 @@ export const homeStyles = (): string => `
                    "BACK" label and arrow. */
                 height: 40px;
                 box-sizing: border-box;
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-                color: #ffffff;
+                /* Quiet frosted-glass surface. Lowered alpha and
+                   removed border so the chrome pills stop competing
+                   with the wordmark for visual weight. The shadow
+                   stays subtle (sm not md) so the pills "lift" just
+                   enough to read as interactive surfaces, no more. */
+                background: rgba(255, 255, 255, 0.6);
+                color: var(--text-primary);
                 border: none;
                 border-radius: var(--radius-pill);
                 padding: 0 22px;
@@ -3458,8 +3464,16 @@ export const homeStyles = (): string => `
                 text-transform: uppercase;
                 text-decoration: none;
                 white-space: nowrap;
-                box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
-                transition: all var(--motion-medium) var(--ease-standard);
+                box-shadow: var(--shadow-xs);
+                -webkit-backdrop-filter: blur(10px);
+                backdrop-filter: blur(10px);
+                transition: top var(--motion-medium) var(--ease-out-soft),
+                            width var(--motion-medium) var(--ease-out-soft),
+                            height var(--motion-medium) var(--ease-out-soft),
+                            background var(--motion-medium) var(--ease-out-soft),
+                            box-shadow var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-medium) var(--ease-out-soft),
+                            opacity var(--motion-medium) var(--ease-out-soft);
             }
             /* When the menu opens the nav-shell occupies the entire top
                row including the area the BACK pill sits over (the left
@@ -3475,13 +3489,15 @@ export const homeStyles = (): string => `
                 transform: translateX(-6px);
             }
             .subpage-back:hover {
-                background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
-                box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
-                transform: translateY(-2px);
+                background: rgba(255, 255, 255, 0.85);
+                box-shadow: var(--shadow-md);
+                transform: translateY(-1px);
             }
             .subpage-back-arrow {
-                font-size: var(--text-body);
-                line-height: 1;
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+                display: block;
             }
 
             /* =====================================================
@@ -3505,9 +3521,11 @@ export const homeStyles = (): string => `
 
             .subpage-menu-trigger {
                 position: fixed;
-                /* Desktop: matches .subpage-back exactly (top:24,
-                   height:40, pill radius). Mobile override below drops
-                   to 30x30 to pair with the in-shell envelope. */
+                /* Desktop matches .subpage-back exactly (top:24,
+                   height:40, pill radius, identical surface). Both
+                   pills read as a paired chrome set, paired in turn
+                   with the wordmark sitting between them. Quiet
+                   surface treatment lets the wordmark dominate. */
                 top: 24px;
                 right: clamp(12px, 3vw, 28px);
                 z-index: 1001;
@@ -3516,22 +3534,29 @@ export const homeStyles = (): string => `
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                background: rgba(255, 255, 255, 0.82);
-                border: 1px solid rgba(255, 255, 255, 0.55);
+                background: rgba(255, 255, 255, 0.6);
+                border: none;
                 border-radius: var(--radius-pill);
                 padding: 0;
                 margin: 0;
                 cursor: pointer;
                 backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
-                box-shadow: var(--shadow-md);
-                transition: background var(--motion-medium) var(--ease-out-soft),
+                box-shadow: var(--shadow-xs);
+                /* Transitions cover the closed→open size morph: trigger
+                   grows from a small chrome pill to a shell-matching
+                   pair when the menu opens. All dynamic props animate
+                   in lock-step so the morph reads as a single intent. */
+                transition: top var(--motion-medium) var(--ease-out-soft),
+                            width var(--motion-medium) var(--ease-out-soft),
+                            height var(--motion-medium) var(--ease-out-soft),
+                            background var(--motion-medium) var(--ease-out-soft),
                             box-shadow var(--motion-medium) var(--ease-out-soft),
                             transform var(--motion-medium) var(--ease-out-soft);
             }
             .subpage-menu-trigger:hover {
-                background: rgba(255, 255, 255, 0.95);
-                box-shadow: var(--shadow-lg);
+                background: rgba(255, 255, 255, 0.85);
+                box-shadow: var(--shadow-md);
                 transform: translateY(-1px);
             }
             .subpage-menu-trigger:focus-visible {
@@ -3725,24 +3750,98 @@ export const homeStyles = (): string => `
                 }
             }
 
-            /* Mobile: trigger compresses to the same 30x30 footprint
-               as the in-shell envelope (.nav-form-btn icon-mode) so
-               the two right-side controls read as a paired chrome row
-               instead of mismatched sizes. The top:21 lands the X
-               vertically centered on the nav-shell content (which
-               sits at y=21-51 with shell at top:14 + 7px padding +
-               30px content). Together the envelope and X appear as
-               twin circles at the same height. */
+            /* Mobile closed-state: trigger pairs with BACK as a 36x36
+               chrome pill at top:18 — slightly above the prior 30x30
+               so the tap target satisfies HIG ergonomics (target ≥36)
+               while still reading as a quiet chrome dot. When the menu
+               opens the trigger expands to the shell height + drops
+               its own background so it visually MERGES with the shell
+               surface instead of floating beside it as a separate
+               pill. The X icon then reads as the shell's terminal
+               control rather than as a standalone close button.
+
+               Horizontal offset matches the .nav-shell side margin
+               (2vw = (100vw - 96vw)/2). max() floors at 8px so the
+               trigger stays a comfortable distance from the screen
+               edge on iPhone 5/SE class screens. */
             @media (max-width: 960px) {
                 .subpage-menu-trigger {
-                    top: 21px;
-                    width: 30px;
-                    height: 30px;
+                    top: 18px;
+                    right: max(8px, 2vw);
+                    width: 36px;
+                    height: 36px;
                 }
                 .subpage-menu-icon {
-                    width: 12px;
-                    height: 10px;
+                    width: 14px;
+                    height: 11px;
+                    transition: width var(--motion-medium) var(--ease-out-soft),
+                                height var(--motion-medium) var(--ease-out-soft);
                 }
+                body.menu-open .subpage-menu-trigger {
+                    top: 14px;
+                    width: clamp(40px, 12vw, 48px);
+                    height: clamp(40px, 12vw, 48px);
+                    /* Fully transparent bg so the X icon sits directly
+                       on the shell's surface (no alpha-stacking that
+                       would make the X area appear denser than the
+                       shell). The X reads as the rightmost glyph in
+                       the shell row, not as a circular button glued
+                       onto the end. */
+                    background: transparent;
+                    border-color: transparent;
+                    box-shadow: none;
+                    backdrop-filter: none;
+                    -webkit-backdrop-filter: none;
+                }
+                body.menu-open .subpage-menu-icon {
+                    width: 18px;
+                    height: 14px;
+                }
+            }
+
+            /* Desktop alignment: the X right edge meets the nav-shell's
+               right edge exactly. Shell desktop width is min(1280px,
+               94%), so its side margin is (100% - that) / 2. Using
+               that same value for the trigger's right offset means
+               there is no gap or overhang between the shell and X
+               when the menu opens; they look like one row of chrome.
+               Vertical: in the closed state the X stays at top:24
+               next to the BACK pill; on menu-open it shifts down to
+               36px to align with the CONTACT pill inside the shell
+               (shell top 16 + 20px padding = 36px). */
+            @media (min-width: 961px) {
+                .subpage-menu-trigger,
+                .subpage-back {
+                    --chrome-margin: max(28px, calc((100% - min(1280px, 94%)) / 2));
+                }
+                .subpage-menu-trigger {
+                    right: var(--chrome-margin);
+                }
+                .subpage-back {
+                    left: var(--chrome-margin);
+                }
+                /* Open state: X merges into the shell — fully
+                   transparent so no alpha-stacking, just the icon on
+                   the shell surface. Reads as the shell's rightmost
+                   glyph, paired with the CONTACT pill (same vertical
+                   center at y=61). */
+                body.menu-open .subpage-menu-trigger {
+                    top: 37px;
+                    width: 48px;
+                    height: 48px;
+                    background: transparent;
+                    border-color: transparent;
+                    box-shadow: none;
+                    backdrop-filter: none;
+                    -webkit-backdrop-filter: none;
+                }
+                body.menu-open .subpage-menu-icon {
+                    width: 18px;
+                    height: 14px;
+                }
+            }
+
+            @media (max-width: 960px) {
                 .subpage-menu-panel {
                     top: 64px;
                     padding: var(--space-sm) var(--space-md) var(--space-md);
@@ -3811,20 +3910,33 @@ export const homeStyles = (): string => `
                 }
                 .subpage-brand {
                     top: 16px;
-                    padding: 6px 20px;
+                    padding: 6px 12px;
+                    /* Cap the visual width so the centered wordmark
+                       never collides with the BACK pill at narrow
+                       phone widths. Reserves ~140px on each side
+                       (BACK pill + trigger pill + breathing room). */
+                    max-width: calc(100% - 280px);
+                    box-sizing: border-box;
                 }
                 .subpage-brand .brand-title {
-                    font-size: var(--text-lead);
+                    font-size: clamp(12px, 4.2vw, 20px);
+                    letter-spacing: clamp(0.4px, 0.5vw, 2px);
                 }
                 .subpage-brand .brand-subtitle {
-                    font-size: var(--text-eyebrow);
+                    font-size: clamp(7px, 2.1vw, 10px);
+                    letter-spacing: clamp(1.2px, 0.55vw, 3px);
                 }
                 /* Mobile: match .subpage-menu-trigger exactly so BACK
                    and X (or hamburger) form a perfectly aligned pair —
-                   same top, same height, same pill radius. */
+                   same top, same height, same pill radius. Left offset
+                   uses the same max(8px, 2vw) formula as the trigger
+                   so both pills line up with the nav-shell's side
+                   margins when the shell appears. Height bumped to
+                   36 to match HIG-aligned tap targets. */
                 .subpage-back {
-                    top: 21px;
-                    height: 30px;
+                    top: 18px;
+                    left: max(8px, 2vw);
+                    height: 36px;
                     padding: 0 16px;
                     font-size: var(--text-eyebrow);
                 }
@@ -6771,24 +6883,22 @@ export const homeStyles = (): string => `
                 .nav-shell.scrolled-mobile,
                 html.nav-prerender-scrolled .nav-shell {
                     border-radius: var(--radius-pill);
-                    padding: clamp(6px, 1.8vw, 8px) var(--space-md);
+                    /* Explicit height so the X close-trigger (when menu
+                       open) can match it exactly via the same clamp().
+                       Same height + same border-radius means both pills
+                       share the same outer curvature — the X reads as a
+                       paired chrome control nested against the shell's
+                       end, not a smaller circle floating above it. */
+                    height: clamp(40px, 12vw, 48px);
+                    /* Padding becomes purely horizontal because the
+                       explicit height handles vertical centering via
+                       align-items. Avoids the prior padding+content
+                       drift that made shell heights vary 44-48px. */
+                    padding: 0 var(--space-md);
                     /* Single-row layout: nav items shrink, Contact pill
-                       stays intrinsic. Nothing wraps. Container gap
-                       handles spacing between nav and the Contact button
-                       (was previously a margin-left: 8px on .nav-form-btn,
-                       removed in favor of flex gap so the row reads as a
-                       cohesive group). */
+                       stays intrinsic. Nothing wraps. */
                     flex-wrap: nowrap;
                     gap: clamp(6px, 2vw, 12px);
-                    /* Override the base .nav-shell margin (20px top) so
-                       the compressed pill sits aligned with the fixed-
-                       position BACK + X trigger pills (top:16 on mobile).
-                       Without this override the shell rendered ~20px
-                       below the trigger pills, breaking the editorial
-                       intent that BACK + nav-shell + X read as a single
-                       row of chrome. The bottom margin remains since
-                       it spaces the shell from later layout in the
-                       expanded-state cascade. */
                     margin-top: 0;
                     margin-bottom: 30px;
                     top: 14px;
@@ -6873,8 +6983,17 @@ export const homeStyles = (): string => `
                    being pushed to a second row. The nav container
                    becomes the flexible element (flex: 1) and shrinks
                    gracefully as the screen narrows; Contact stays at
-                   its intrinsic width until the ≤460px breakpoint
-                   collapses it to an envelope circle. */
+                   its intrinsic width.
+
+                   Above 460px the nav-ul gets a growing left padding
+                   so the four labels migrate inward as the viewport
+                   widens. This absorbs the extra horizontal space
+                   that would otherwise pool as dead air between the
+                   nav cluster (left) and the Contact+X cluster
+                   (right). Inter-label gaps stay constant — only
+                   the position of the cluster moves. Editorial
+                   intent: the four labels read as a dense menu unit,
+                   not as four chips spreading to fill space. */
                 .nav-shell.scrolled-mobile nav {
                     flex: 1 1 auto;
                     min-width: 0;
@@ -6882,6 +7001,7 @@ export const homeStyles = (): string => `
                 .nav-shell.scrolled-mobile nav ul {
                     width: auto;
                     gap: clamp(8px, 3vw, 16px);
+                    padding-left: clamp(0px, calc((100vw - 460px) * 0.35), 120px);
                 }
 
                 nav {
@@ -7019,134 +7139,114 @@ export const homeStyles = (): string => `
                 }
             }
 
-            /* Mobile nav (compressed pill) — letter-spacing tightening.
-               This runs at all phone widths up to small tablets so the
-               four labels (Schedule / About / Outreach / Watch) fit on
-               a single row alongside the text-mode Contact pill on home
-               and beside the X-trigger reserve on subpages.
-
-               Range extends to 540px because the subpage menu-open
-               variant reserves ~56px on the right for the X trigger;
-               without tightening, the default mobile font causes the
-               text Contact pill to overlap "Watch" at 461-510px. At
-               541+ the default sizing has enough room without help. */
-            @media (max-width: 540px) {
+            /* Mobile nav (compressed pill) — unified type scale.
+               One smooth clamp() handles every phone width from
+               iPhone 5/SE (320) through small tablets (~960). No
+               cascading 460/380/340 breakpoints with hard font jumps;
+               the type breathes continuously with the viewport.
+               Floors (9px font, 0.2 letter-spacing, 4px gap) are tuned
+               so the four labels + envelope + X-reserve still fit at
+               320 — tight, but it reads as editorial compression
+               rather than truncation. Caps (12px, 1.2, 14px) settle
+               into the default label size at common phone widths. */
+            @media (max-width: 960px) {
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: 11px;
-                    letter-spacing: 0.5px;
+                    font-size: clamp(9.5px, 2.5vw, 12px);
+                    letter-spacing: clamp(0.4px, 0.18vw, 1.2px);
                 }
                 .nav-shell.scrolled-mobile nav ul {
-                    gap: clamp(6px, 2vw, 12px);
+                    gap: clamp(7px, 1.8vw, 14px);
+                }
+                .nav-shell.scrolled-mobile {
+                    padding: 0 clamp(10px, 3vw, 20px);
+                    /* Container gap separates the nav-text cluster
+                       from the Contact pill — deliberately wider than
+                       the inter-nav-item gap so the eye reads the
+                       Contact pill as its own region (a CTA chip),
+                       not as a fifth nav word. */
+                    gap: clamp(10px, 3vw, 20px);
                 }
             }
 
-            /* HOME page icon collapse: only at the tightest widths
-               (≤340px = iPhone 5/SE and equivalent). At wider phone
-               widths the tightened text-mode pill fits cleanly — we
-               do NOT collapse to icon just because the device is
-               "mobile". The icon is a solution to a real overflow
-               problem, not a default mobile treatment.
+            /* Narrow phones (≤399px) — Contact pill drops from the
+               shell row entirely. The four nav labels + X close
+               trigger have the full shell width and breathe at
+               editorial type sizes (9.5px+ font, real tracking, real
+               gaps). Contact remains reachable via the destination
+               page hash. Dropping a single CTA at the smallest
+               breakpoint is the canonical Apple/Monocle compromise:
+               the chrome stays editorial; the user does one extra
+               tap on a device where they were already going to scroll.
 
-               Icon-pill dimensions match the text-mode pill height
-               (30px) so swapping forms does not change the nav-shell
-               height. Editorial intent: the swap is invisible aside
-               from the glyph change. */
-            @media (max-width: 340px) {
+               Cutoff measured empirically: at 380-399 the Contact
+               pill has only ~2-3px of breathing room from Watch,
+               which reads as visually touching even when the math
+               says clean. At 400+ the gap opens to a visible ~6-8px
+               and the row reads as deliberately composed. */
+            @media (max-width: 399px) {
                 .nav-shell.scrolled-mobile .nav-form-btn {
-                    width: 30px;
-                    height: 30px;
-                    padding: 0;
-                    border-radius: 50%;
-                    flex-shrink: 0;
-                }
-                .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-label {
                     display: none;
+                }
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile {
+                    /* X trigger reserve still needs the right padding
+                       — Contact is gone but the X is still there. */
+                    padding-right: clamp(46px, 13vw, 56px);
+                }
+            }
+
+            /* Compressed Contact button is ALWAYS text "Contact" — no
+               icon collapse. Editorial reasoning (after design review):
+               the four nav labels (SCHEDULE / ABOUT / OUTREACH / WATCH)
+               are spelled-out words, so the fifth control should also
+               be a word. Mixing word-nav with an icon-glyph in the
+               same row breaks the typographic register. The text
+               tightens at narrow widths via the .nav-form-btn font /
+               letter-spacing clamps below; even on iPhone 5/SE it fits
+               on a single line. */
+            @media (max-width: 460px) {
+                .nav-shell.scrolled-mobile .nav-form-btn {
+                    font-size: clamp(9px, 2.6vw, 11px);
+                    letter-spacing: clamp(0.3px, 0.3vw, 1.2px);
+                    padding: 0 clamp(8px, 2.6vw, 14px);
+                    height: clamp(28px, 7.5vw, 34px);
                 }
                 .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-icon {
-                    display: block;
-                    width: 14px;
-                    height: 14px;
-                }
-                .nav-shell.scrolled-mobile .nav-form-btn.active .nav-form-btn-icon {
-                    stroke: #ffffff;
-                }
-            }
-
-            /* SUBPAGE menu-open icon collapse: ≤460px. The fixed-
-               position X close-trigger reserves ~56px on the right
-               edge of the nav-shell (padding-right rule below), which
-               is exactly the room the text "CONTACT" needs. Empirical
-               wrap point measurement shows text overlaps the last nav
-               item up through ~430px; we set the threshold at 460 to
-               give a small safety margin. Above 460 the natural sizing
-               has plenty of room.
-
-               Icon dimensions match the home-page collapse (30x30,
-               14x14 SVG) so the nav-shell does not get thicker. */
-            @media (max-width: 460px) {
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn {
-                    width: 30px;
-                    height: 30px;
-                    padding: 0;
-                    border-radius: 50%;
-                }
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-label {
                     display: none;
                 }
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-icon {
-                    display: block;
-                    width: 14px;
-                    height: 14px;
-                }
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn.active .nav-form-btn-icon {
-                    stroke: #ffffff;
+            }
+
+            /* Subpage X-trigger reserve. Trigger width is clamp(40,
+               12vw, 48); reserve sits just above X width so the gap
+               between the Contact pill and the X stays a consistent
+               ~6-10px across the mobile range. Cap at 56 to prevent
+               the row from going loose at small-tablet widths
+               (500-650px) where extra reserve would read as dead
+               air between Contact and X rather than as composed
+               breathing room. */
+            @media (max-width: 960px) {
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile {
+                    padding-right: clamp(48px, 12vw, 56px);
                 }
             }
 
-            /* Tiniest phones (≤380px): squeeze the nav row further so
-               the four labels + envelope still fit on a single line.
-               Below this width the screen is too narrow for any other
-               solution short of dropping items entirely. */
-            @media (max-width: 380px) {
-                .nav-shell.scrolled-mobile nav a {
-                    font-size: 10px;
-                    letter-spacing: 0.3px;
-                }
-                .nav-shell.scrolled-mobile nav ul {
-                    gap: 6px;
-                }
-                .nav-shell.scrolled-mobile {
-                    padding-left: 12px;
-                    padding-right: 12px;
-                }
-                /* Subpage menu-open carries an extra X-trigger zone at
-                   the right edge; on the tiniest phones, hold to a
-                   slightly smaller reserve so nav items get a bit more
-                   room and still avoid the X. */
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile {
-                    padding-right: 50px;
-                }
-            }
 
-            /* iPhone 5/SE and Android small (≤340px): last-resort
-               squeeze so the four-label + envelope row still survives
-               on the smallest production devices. Font drops a half
-               point, gaps go to single pixels. */
-            @media (max-width: 340px) {
-                .nav-shell.scrolled-mobile nav a {
-                    font-size: 9.5px;
-                    letter-spacing: 0.2px;
-                }
-                .nav-shell.scrolled-mobile nav ul {
-                    gap: 4px;
-                }
-                .nav-shell.scrolled-mobile {
-                    padding-left: 10px;
-                    padding-right: 10px;
+            /* Below ~360px the BACK label is tighter against the
+               brand than at wider widths — but it stays visible
+               because the typographic "BACK" word is what makes the
+               pill read as editorial chrome rather than a system
+               back-arrow. The chevron-only variant felt like an OS
+               affordance; the labeled pill keeps the row in the
+               magazine register. */
+            @media (max-width: 360px) {
+                .subpage-back {
+                    padding: 0 12px;
+                    font-size: clamp(9px, 2.8vw, 10px);
+                    letter-spacing: 0.6px;
                     gap: 6px;
                 }
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile {
-                    padding-right: 46px;
+                .subpage-back-arrow {
+                    width: 13px;
+                    height: 13px;
                 }
             }
 

@@ -21,7 +21,9 @@ import { nav } from './nav.js'
 export function subpageHeader(): string {
   return `<div class="subpage-top-fog" aria-hidden="true"></div>
             <a class="subpage-back" href="/" id="subpage-back-link" aria-label="Go back">
-                <span class="subpage-back-arrow" aria-hidden="true">&#8592;</span>
+                <svg class="subpage-back-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <path d="M15 5l-7 7 7 7"/>
+                </svg>
                 <span class="subpage-back-label">Back</span>
             </a>
             <a class="subpage-brand" href="/" id="subpage-brand-link" aria-label="Morning Star Christian Church · Home">

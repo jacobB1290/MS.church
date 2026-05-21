@@ -32,14 +32,14 @@ const PLACEHOLDER_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentCol
 // likewise links into /outreach#meals-hospitality for Community
 // Breakfast detail.
 const SERVICE_FLOW = [
-  { title: 'Welcome', body: 'A brief intro from the front: who we are, what is happening this morning, and a moment to settle in. No pressure — just glad you came.' },
+  { title: 'Welcome', body: 'A brief intro from the front: who we are, what is happening this morning, and a moment to settle in. No pressure, just glad you came.' },
   { title: 'Two Worship Songs', body: 'Live worship led by our team. Sing along if you want, listen if you want. Lyrics are on the screen.' },
-  { title: 'Sunday School (Kids)', body: 'Kids head to their own classroom for a Bible lesson at their level while families worship together. Safe, warm, joyful — drop-off welcome any Sunday. <a class="schedule-tab-link" href="/ministries#kids">Learn more &rarr;</a>' },
+  { title: 'Sunday School (Kids)', body: 'Kids head to their own classroom for a Bible lesson at their level while families worship together. Safe, warm, joyful. Drop-off welcome any Sunday. <a class="schedule-tab-link" href="/ministries#kids">Learn more &rarr;</a>' },
   { title: 'Greet One Another', body: 'A few minutes to turn around, say hi to the people next to you, and meet someone new before we sit back down.' },
-  { title: 'Teaching', body: 'A sermon from one of our pastors or a discussion-style lesson — we rotate. Either way it stays grounded in scripture and runs about 25–30 minutes.' },
+  { title: 'Teaching', body: 'A sermon from one of our pastors or a discussion-style lesson, and we rotate between the two. Either way it stays grounded in scripture and runs about 25–30 minutes.' },
   { title: 'Closing Song', body: 'One more worship song to send us out.' },
-  { title: 'Dismissal', body: 'Pastor closes us in prayer — a final blessing before we head into fellowship.' },
-  { title: 'Stay for Breakfast', body: "Right after the closing prayer we head into fellowship time with free breakfast for everyone — guests, members, neighbors, anyone passing through. It’s how we end every Sunday: full plates, full hearts, no rush. Free transportation from select shelters available for anyone who needs a ride. <a class=\"schedule-tab-link\" href=\"/outreach#meals-hospitality\">See Community Breakfast &rarr;</a>" },
+  { title: 'Dismissal', body: 'Pastor closes us in prayer, a final blessing before we head into fellowship.' },
+  { title: 'Stay for Breakfast', body: "Right after the closing prayer we head into fellowship time with free breakfast for everyone: guests, members, neighbors, anyone passing through. It’s how we end every Sunday: full plates, full hearts, no rush. Free transportation from select shelters available for anyone who needs a ride. <a class=\"schedule-tab-link\" href=\"/outreach#meals-hospitality\">See Community Breakfast &rarr;</a>" },
 ]
 
 const flowItems = SERVICE_FLOW.map(
@@ -127,7 +127,7 @@ export const visitBody = (): string => `
                 <section id="visit-intro">
                     <span class="section-eyebrow">Plan Your Visit</span>
                     <h1 class="section-heading">We can’t wait to meet you.</h1>
-                    <p class="subpage-intro-lead">Here’s everything you need to know before Sunday &mdash; where we are, what an hour at Morning Star looks like, and what happens after the closing song.</p>
+                    <p class="subpage-intro-lead">Here’s everything you need to know before Sunday: where we are, what an hour at Morning Star looks like, and what happens after the closing song.</p>
                     <nav class="subpage-jump" aria-label="Jump to a section">
                         <a href="#location">Find Us</a>
                         <a href="#what-to-expect">What to Expect</a>
@@ -154,7 +154,7 @@ export const visitBody = (): string => `
                         </div>
                         <div class="visit-location-meta">
                             <p class="visit-location-lede">Tucked along Wildwood Street in West Boise, just off Ustick Road.</p>
-                            <p class="visit-location-detail">Free parking right next to the building — the front doors open onto the lot, so there’s no walking around the block to find the entrance. Sundays at <strong>9:00 AM</strong>, every week.</p>
+                            <p class="visit-location-detail">Free parking is right next to the building. The front doors open onto the lot, so there’s no walking around the block to find the entrance. Sundays at <strong>9:00 AM</strong>, every week.</p>
                             <div class="visit-actions">
                                 <a class="event-link-btn visit-cta-primary" href="${GOOGLE_DIRECTIONS}" target="_blank" rel="noopener">Get Directions</a>
                                 <a class="event-link-btn event-link-btn-secondary visit-cta-secondary" href="${APPLE_DIRECTIONS}" target="_blank" rel="noopener">Open in Apple Maps</a>
@@ -177,13 +177,13 @@ export const visitBody = (): string => `
                 <section id="before-you-come">
                     <span class="section-eyebrow">Before You Come</span>
                     <h2 class="section-heading">A few things visitors usually ask.</h2>
-                    <p class="section-lead">The stuff worth knowing before Sunday — small details that take the guesswork out of a first visit.</p>
+                    <p class="section-lead">The stuff worth knowing before Sunday: small details that take the guesswork out of a first visit.</p>
 
                     <div class="visit-faq-grid visit-faq-grid--three">
                         <article class="ministry-block" id="what-to-wear">
                             <span class="ministry-eyebrow">What to Wear</span>
-                            <h3 class="ministry-title">No strict dress code &mdash; come as you are.</h3>
-                            <p class="ministry-text">People land all over the spectrum on Sunday mornings. Most are on the casual side &mdash; jeans and a shirt are completely fine &mdash; and you’ll see plenty dressed more formally too. Both fit in. The only ask is that you keep it modest.</p>
+                            <h3 class="ministry-title">No strict dress code. Come as you are.</h3>
+                            <p class="ministry-text">People land all over the spectrum on Sunday mornings. Most are on the casual side (jeans and a shirt are completely fine), and you’ll see plenty dressed more formally too. Both fit in. The only ask is that you keep it modest.</p>
                         </article>
                         <article class="ministry-block" id="parking">
                             <span class="ministry-eyebrow">Parking</span>
@@ -193,7 +193,7 @@ export const visitBody = (): string => `
                         <article class="ministry-block" id="at-the-door">
                             <span class="ministry-eyebrow">At the Door</span>
                             <h3 class="ministry-title">A greeter will meet you.</h3>
-                            <p class="ministry-text">Greeters welcome everyone at the door for the main Sunday service. If you have a question or need a hand finding something &mdash; a seat, the kids’ classroom, the bathroom &mdash; they’re there to help. No pressure to introduce yourself or sign anything.</p>
+                            <p class="ministry-text">Greeters welcome everyone at the door for the main Sunday service. If you have a question or need a hand finding something (a seat, the kids’ classroom, the bathroom), they’re there to help. No pressure to introduce yourself or sign anything.</p>
                         </article>
                     </div>
                 </section>

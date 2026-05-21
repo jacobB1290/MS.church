@@ -154,7 +154,7 @@ const SECTIONS: Section[] = [
     // Cache-Control: immutable, so the URL itself has to change when the
     // file contents change. Bump this when the cropped image is updated.
     imageSrcDesktop: '/static/worship-desktop.jpg?v=2',
-    imageAlt: 'Morning Star Christian Church Sunday worship service in Boise, Idaho — pastor teaching from the pulpit and the worship team leading songs at our nondenominational 9 AM gathering.',
+    imageAlt: 'Morning Star Christian Church Sunday worship service in Boise, Idaho. Pastor teaching from the pulpit and the worship team leading songs at our nondenominational 9 AM gathering.',
     // Mobile (16:9 banner): faces of the worship team sit in the upper-middle
     // band; bias upward so heads/microphones are preserved over feet.
     imagePosition: 'center 35%',
@@ -169,13 +169,13 @@ const SECTIONS: Section[] = [
         eyebrow: 'Sunday Gatherings',
         titleHtml: `Sundays · 9:00 AM at ${churchAddressPill()}`,
         description:
-          "Our weekly worship service runs about an hour: a brief welcome, two opening songs, the teaching, a closing prayer — followed by a free community breakfast for everyone who stays. Songs are on the screen, lyrics included, sing along or just listen. The teaching stays grounded in scripture and runs about 25–30 minutes. New here? Pick any back row and walk in any week — there’s no signup and no expectation that you’ll know what to do.",
+          "Our weekly worship service runs about an hour: a brief welcome, two opening songs, the teaching, and a closing prayer. A free community breakfast follows for everyone who stays. Songs are on the screen, lyrics included, so sing along or just listen. The teaching stays grounded in scripture and runs about 25–30 minutes. New here? Pick any back row and walk in any week. There’s no signup and no expectation that you’ll know what to do.",
         tips: [
-          { label: 'What to wear', value: "No strict dress code beyond being modest. Most folks land on the casual side — jeans and a shirt are completely fine — and you will see plenty of people dressed more formally too. Both fit in." },
-          { label: 'Where to park', value: 'Parking is right next to the building. You will see the lot as soon as you pull up — free, no permit needed.' },
-          { label: 'At the door', value: 'Greeters meet everyone at the door for Sunday service. Any questions or need a hand finding something? They will help — no pressure.' },
+          { label: 'What to wear', value: "No strict dress code beyond being modest. Most folks land on the casual side (jeans and a shirt are completely fine), and you will see plenty of people dressed more formally too. Both fit in." },
+          { label: 'Where to park', value: 'Parking is right next to the building. You will see the lot as soon as you pull up. Free, no permit needed.' },
+          { label: 'At the door', value: 'Greeters meet everyone at the door for Sunday service. Any questions or need a hand finding something? They will help, no pressure.' },
           { label: 'If you arrive late', value: 'Slip in through the back. The back rows are the easiest entry. Nobody turns around.' },
-          { label: 'Bringing kids', value: 'Sunday School runs for kids after the opening songs — see Kids below, or just stay in the service with us; both are welcome.' },
+          { label: 'Bringing kids', value: 'Sunday School runs for kids after the opening songs (see Kids below for details). You can also keep them in the service with you; both are welcome.' },
         ],
         ctaLabel: 'Plan Your First Visit',
         ctaHref: '/visit',
@@ -193,11 +193,11 @@ const SECTIONS: Section[] = [
         eyebrow: 'Sunday School',
         titleHtml: `Sundays · During the 9 AM service at ${churchAddressPill('the church')}`,
         description:
-          "Children’s Sunday School runs in a separate room during the main service, so families can worship together at the start and kids can dive into scripture at their level when it is time. Safe, warm, joyful — and drop-off is welcome any Sunday. Our team is the same set of trusted faces every week so kids know who they are with.",
+          "Children’s Sunday School runs in a separate room during the main service, so families can worship together at the start and kids can dive into scripture at their level when it is time. Safe, warm, joyful. Drop-off is welcome any Sunday, and our team is the same set of trusted faces every week so kids know who they are with.",
         tips: [
           { label: 'Ages', value: 'Preschool through about 5th grade. Older kids usually stay in the service with their family.' },
           { label: 'When they leave', value: "Kids head to the classroom after the two opening worship songs. We’ll point you to the room before the service starts." },
-          { label: 'Drop-off', value: 'Walk your child to the classroom door — no signup form, no waiver, no ID required.' },
+          { label: 'Drop-off', value: 'Walk your child to the classroom door. No signup form, no waiver, no ID required.' },
           { label: 'What they do', value: 'Bible storyline lesson + activity at their level. Snacks happen.' },
           { label: 'Pick-up', value: 'Pick up at the classroom right after the closing song. Stay for breakfast either way.' },
         ],
@@ -227,9 +227,9 @@ const SECTIONS: Section[] = [
         // came for. Keep the dl format for that scannability everywhere
         // it carries first-visit info).
         description:
-          'A morning Bible reading at a coffee shop on State Street. Casual, no curriculum — we read a passage, talk about it, drink coffee, go to work. Drop in any Tuesday.',
+          'A morning Bible reading at a coffee shop on State Street. Casual, no curriculum: we read a passage, talk about it, drink coffee, go to work. Drop in any Tuesday.',
         imageSrc: '/static/bible-reading.jpg',
-        imageAlt: 'Morning Star Christian Church Tuesday Bible reading at a Boise coffee shop — open Bibles, coffee mugs, and a small group reading scripture together over coffee.',
+        imageAlt: 'Morning Star Christian Church Tuesday Bible reading at a Boise coffee shop. Open Bibles, coffee mugs, and a small group reading scripture together over coffee.',
         // Source: 1200×1500 portrait. Table + Bibles + mugs sit in the bottom
         // ~30% of the frame (cafe ceiling and interior fill the top two-thirds).
         // Mobile entry-pair image (landscape banner crop) needs to bias DOWN
@@ -242,7 +242,7 @@ const SECTIONS: Section[] = [
         imagePositionDesktop: 'center 55%',
         tips: [
           { label: 'Bring', value: 'A Bible, or open the Bible app on your phone. Both fine.' },
-          { label: 'What to order', value: 'Whatever you want — the coffee shop is just our meeting spot, not catering for the group.' },
+          { label: 'What to order', value: 'Whatever you want. The coffee shop is just our meeting spot, not catering for the group.' },
           { label: 'Finding the group', value: 'Look for 4–6 people at a table. Wave at any of us; we will pull up another chair.' },
         ],
       },
@@ -259,9 +259,9 @@ const SECTIONS: Section[] = [
         // late?", "what happens when I walk in alone?") that stops
         // newcomers from showing up.
         description:
-          'A 45-minute evening Bible study at the church with free coffee. Open discussion, gospel-grounded, paced so newcomers and longtime members can both engage. Whoever is leading that week opens a passage, asks questions, and we go from there. Honest questions are encouraged — there is no “too basic” or “too hard.”',
+          'A 45-minute evening Bible study at the church with free coffee. Open discussion, gospel-grounded, paced so newcomers and longtime members can both engage. Whoever is leading that week opens a passage, asks questions, and we go from there. Honest questions are encouraged. There is no “too basic” or “too hard.”',
         tips: [
-          { label: 'Bring', value: 'A Bible if you have one — we keep extras on the back table.' },
+          { label: 'Bring', value: 'A Bible if you have one. We keep extras on the back table.' },
           { label: 'If you arrive late', value: 'Walk in and grab a chair. We do not pause the discussion for new arrivals; it just keeps going.' },
           { label: 'First time', value: 'Tell whoever greets you it is your first time and they will get you settled.' },
         ],
@@ -280,7 +280,7 @@ const SECTIONS: Section[] = [
     // placeholder tiles below already render in the correct layout so the
     // photos drop in cleanly.
     imageLayout: 'pair',
-    imageAlt: 'Wednesday Activity Day at Morning Star Christian Church in Boise, Idaho — open gym and crochet circle running side by side.',
+    imageAlt: 'Wednesday Activity Day at Morning Star Christian Church in Boise, Idaho. Open gym and crochet circle running side by side.',
     // imageSrc + imageSrc2 left undefined for now → renders the placeholder
     // tiles in the same polaroid layout. Set these when photos arrive:
     //   imageSrc:  '/static/activity-day-gym.jpg',
@@ -296,7 +296,7 @@ const SECTIONS: Section[] = [
           { label: 'What to wear', value: 'Athletic clothes + flat shoes if you are playing; whatever is comfortable if you are crocheting.' },
           { label: 'Bring', value: 'Just yourself. Basketballs, volleyballs, and crochet supplies are all provided. Bring your own yarn if you have a project in mind.' },
           { label: 'Who comes', value: 'All ages, from kids through retirees. Beginners welcome at both gym and crochet.' },
-          { label: 'Drop-in', value: 'Walk in any week — no signup, no fee.' },
+          { label: 'Drop-in', value: 'Walk in any week. No signup, no fee.' },
         ],
       },
     ],
@@ -311,7 +311,7 @@ const SECTIONS: Section[] = [
     // faces biased to the upper portion; desktop uses (close to) the
     // full image in the portrait container with a slight upward bias.
     imageSrc: '/static/youth.jpg?v=2',
-    imageAlt: 'Morning Star Christian Church youth group — five teens dressed up arm-in-arm at a Friday Youth Service event in Boise, Idaho, evening backdrop of trees and fencing.',
+    imageAlt: 'Morning Star Christian Church youth group. Five teens dressed up arm-in-arm at a Friday Youth Service event in Boise, Idaho, evening backdrop of trees and fencing.',
     // Mobile (16:9 banner from a 9:16 portrait source): tight
     // horizontal band crops aggressively top-and-bottom. Faces sit at
     // source y≈950-1200 (≈45% from top of source). Y=50% centers the
@@ -336,11 +336,11 @@ const SECTIONS: Section[] = [
         // dress code is one of the highest-anxiety questions for a
         // first-time teen.
         description:
-          'A weekly service for high schoolers and older — worship, teaching, and time to actually talk to each other. About an hour, with fellowship after.',
+          'A weekly service for high schoolers and older: worship, teaching, and time to actually talk to each other. About an hour, with fellowship after.',
         tips: [
-          { label: 'Ages', value: '15 and up — high school through college age.' },
-          { label: 'What to wear', value: 'No strict dress code beyond being modest. Expect a range — most land somewhere above everyday casual and below full formal, with plenty leaning toward the dressier end of that. Folks who come more dressed up usually bring a change of clothes for fellowship time after.' },
-          { label: 'First time', value: 'Walk in, grab a seat — someone will spot you and pull you in. Worship, a short message, fellowship after.' },
+          { label: 'Ages', value: '15 and up, high school through college age.' },
+          { label: 'What to wear', value: 'No strict dress code beyond being modest. Expect a range. Most land somewhere above everyday casual and below full formal, with plenty leaning toward the dressier end of that. Folks who come more dressed up usually bring a change of clothes for fellowship time after.' },
+          { label: 'First time', value: 'Walk in, grab a seat. Someone will spot you and pull you in. Worship, a short message, fellowship after.' },
         ],
         // Primary CTA is the contextual /about link (the original
         // "Ask about Youth Service" → /#contact was dropped along with
@@ -1369,7 +1369,7 @@ export const ministriesBody = (): string => `
                 <section id="ministries-intro">
                     <span class="section-eyebrow">Ministries</span>
                     <h1 class="section-heading">How we live out <em class="motto">Mending the Broken</em> week to week.</h1>
-                    <p class="subpage-intro-lead">Worship, discipleship, fellowship, and walking with the next generation — the rhythms that keep us together between Sundays. Anyone is welcome at any of these. Drop in, ask questions, or just come see what it looks like.</p>
+                    <p class="subpage-intro-lead">Worship, discipleship, fellowship, and walking with the next generation: the rhythms that keep us together between Sundays. Anyone is welcome at any of these. Drop in, ask questions, or just come see what it looks like.</p>
                     <nav class="subpage-jump" aria-label="Jump to a ministry">
                         <a href="#worship">Worship</a>
                         <a href="#kids">Kids</a>
@@ -1384,7 +1384,7 @@ export const ministriesBody = (): string => `
                 <section id="ministries-cta" class="subpage-final-cta">
                     <span class="section-eyebrow">Questions?</span>
                     <h2 class="section-heading">Want to know more about any of these?</h2>
-                    <p class="subpage-final-cta-lead">Reach out and we’ll point you to the right person — whether it’s a Tuesday morning coffee at Caffeina, a Wednesday open gym, or just figuring out what Sunday morning will be like for your family.</p>
+                    <p class="subpage-final-cta-lead">Reach out and we’ll point you to the right person, whether it’s a Tuesday morning coffee at Caffeina, a Wednesday open gym, or just figuring out what Sunday morning will be like for your family.</p>
                     <a class="event-link-btn teaser-cta" href="/#contact">Contact Us</a>
                 </section>
             </main>

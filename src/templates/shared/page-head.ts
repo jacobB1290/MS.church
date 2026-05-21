@@ -154,7 +154,7 @@ export function pageHead({
         <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16.png">
         <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
         <link rel="manifest" href="/site.webmanifest">
-        <link rel="alternate" type="application/rss+xml" title="Morning Star Christian Church — Events &amp; News" href="/feed.xml">
+        <link rel="alternate" type="application/rss+xml" title="Morning Star Christian Church · Events &amp; News" href="/feed.xml">
 
         <!-- Self-hosted fonts — see home-head.ts and home-styles.ts. -->
         <link rel="preload" as="font" type="font/woff2" href="/static/fonts/inter-400.woff2" crossorigin>

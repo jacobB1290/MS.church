@@ -15,7 +15,7 @@ export function nav(): string {
   ).join('\n                        ')
 
   return `<header class="nav-shell">
-                <a class="brand" href="#home" aria-label="Morning Star Christian Church — Home">
+                <a class="brand" href="#home" aria-label="Morning Star Christian Church · Home">
                     <span class="brand-title">Morning Star</span>
                     <span class="brand-subtitle">Christian Church</span>
                 </a>

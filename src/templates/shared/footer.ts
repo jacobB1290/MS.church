@@ -4,7 +4,7 @@
 export function footer(): string {
   return `<footer class="site-footer">
                 <div class="footer-content">
-                    <a class="footer-brand" href="/" aria-label="Morning Star Christian Church — Home">
+                    <a class="footer-brand" href="/" aria-label="Morning Star Christian Church · Home">
                         <span class="footer-brand-title">Morning Star</span>
                         <span class="footer-brand-subtitle">Christian Church</span>
                     </a>

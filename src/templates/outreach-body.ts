@@ -22,7 +22,7 @@ export const outreachBody = (): string => `
                 <section id="outreach-intro">
                     <span class="section-eyebrow">Outreach</span>
                     <h1 class="section-heading">How we serve Boise.</h1>
-                    <p class="subpage-intro-lead">Faith without works is dead. Here’s how Morning Star puts love into action — through monthly community service, seasonal events, and the relationships we carry into our neighborhoods.</p>
+                    <p class="subpage-intro-lead">Faith without works is dead. Morning Star puts love into action through monthly community service, seasonal events, and the relationships we carry into our neighborhoods.</p>
                     <nav class="subpage-jump" aria-label="Jump to a section">
                         <a href="#events">Events</a>
                         <a href="#meals-hospitality">Meals &amp; Hospitality</a>
@@ -287,7 +287,7 @@ export const outreachBody = (): string => `
                 <section class="outreach" id="events">
                     <span class="section-eyebrow">Events</span>
                     <h2 class="section-heading">Upcoming &amp; Past Events</h2>
-                    <p class="section-lead">Year-round, Morning Star hosts open-door gatherings designed to feed people, build friendships, and welcome the city — from Friendsgiving in the fall to community-wide events around major holidays. Browse what’s coming up next, or scroll back through past gatherings.</p>
+                    <p class="section-lead">Year-round, Morning Star hosts open-door gatherings designed to feed people, build friendships, and welcome the city: Friendsgiving in the fall, community-wide events around major holidays, and the gatherings between. Browse what’s coming up next, or scroll back through past gatherings.</p>
 
                     <!-- Stay Tuned Card - shown when no upcoming events -->
                     <div class="stay-tuned-container" id="stay-tuned-container" style="display: none;"></div>
@@ -322,13 +322,13 @@ export const outreachBody = (): string => `
                             <article class="ministry-block" id="cooking-ministry">
                                 <span class="ministry-eyebrow">Cooking Ministry</span>
                                 <h3 class="ministry-title">Monthly &middot; Boise homeless shelters</h3>
-                                <p class="ministry-text">Once a month, a team from Morning Star cooks and serves a full hot meal at local homeless shelters in Boise. It’s hands-on, it’s humble, and it’s one of the ways we put faith to work alongside our city. No experience required &mdash; only willing hands.</p>
+                                <p class="ministry-text">Once a month, a team from Morning Star cooks and serves a full hot meal at local homeless shelters in Boise. It’s hands-on, it’s humble, and it’s one of the ways we put faith to work alongside our city. No experience required. Only willing hands.</p>
                                 <a href="/#contact" class="ministry-link">Join the next cook &rarr;</a>
                             </article>
                             <article class="ministry-block" id="community-breakfast">
                                 <span class="ministry-eyebrow">Community Breakfast</span>
                                 <h3 class="ministry-title">Every Sunday &middot; After service</h3>
-                                <p class="ministry-text">Every Sunday morning after worship, breakfast is on us &mdash; for guests, members, neighbors, and anyone passing through. We also offer free transportation from select Boise shelters so the table is open to people who need it most.</p>
+                                <p class="ministry-text">Every Sunday morning after worship, breakfast is on us: for guests, members, neighbors, and anyone passing through. We also offer free transportation from select Boise shelters so the table is open to people who need it most.</p>
                                 <a href="/visit#what-to-expect" class="ministry-link">More about Sunday morning &rarr;</a>
                             </article>
                         </div>

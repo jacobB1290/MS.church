@@ -16,7 +16,7 @@ export function subpageHeader(): string {
                 <span class="subpage-back-arrow" aria-hidden="true">&#8592;</span>
                 <span class="subpage-back-label">Back</span>
             </a>
-            <a class="subpage-brand" href="/" id="subpage-brand-link" aria-label="Morning Star Christian Church — Home">
+            <a class="subpage-brand" href="/" id="subpage-brand-link" aria-label="Morning Star Christian Church · Home">
                 <span class="brand-title">Morning Star</span>
                 <span class="brand-subtitle">Christian Church</span>
             </a>

@@ -18,11 +18,11 @@ export const homeBody = (): string => `
                     <div class="hero-blur-layer blur-2"></div>
                     <div class="hero-blur-layer blur-3"></div>
                     <div class="hero-blur-layer blur-4"></div>
-                    <h1 class="sr-only">Morning Star Christian Church — A Welcoming Christian Church in Boise, Idaho</h1>
+                    <h1 class="sr-only">Morning Star Christian Church · A Welcoming Christian Church in Boise, Idaho</h1>
                     <p class="hero-tagline">Mending the Broken.</p>
                     <div class="hero-body">
                         <p class="hero-service-time">Join us Sundays at 9 AM</p>
-                        <div class="hero-image" role="img" aria-label="Morning Star Christian Church building exterior at 3080 Wildwood Street, Boise, Idaho — a welcoming Bible-believing nondenominational church">
+                        <div class="hero-image" role="img" aria-label="Morning Star Christian Church building exterior at 3080 Wildwood Street, Boise, Idaho. A welcoming Bible-believing nondenominational church.">
                             <!-- The visible church photo is the CSS background-image
                                  on .hero (desktop: church-building, mobile: hero-mobile).
                                  image-set() picks AVIF / WebP / JPG by browser support
@@ -104,7 +104,7 @@ export const homeBody = (): string => `
                             <button class="schedule-tab" data-index="2" type="button" role="tab" aria-selected="false" data-reveal-sync>
                                 <span class="schedule-tab-eyebrow reveal-eyebrow">Fellowship</span>
                                 <span class="schedule-tab-title reveal-rise">Wednesdays · 6:00 PM</span>
-                                <span class="schedule-tab-desc reveal-tight">Activity Day — open gym + crochet circle. About 3 hours.</span>
+                                <span class="schedule-tab-desc reveal-tight">Activity Day: open gym and crochet circle. About 3 hours.</span>
                                 <a href="/ministries#fellowship" class="schedule-tab-cta">Learn more →</a>
                             </button>
                             <button class="schedule-tab" data-index="3" type="button" role="tab" aria-selected="false" data-reveal-sync>
@@ -144,7 +144,7 @@ export const homeBody = (): string => `
                             </picture>
                         </div>
                         <div class="about-text">
-                            <p class="about-paragraph reveal-rise-slow">Morning Star is a small, Bible-believing community where every story, every age, and every burden is met with grace and a seat at the table. We confess Jesus Christ as Lord and Savior, teach the whole counsel of Scripture, and exist to mend the broken — through faith, family, and serving the city we love.</p>
+                            <p class="about-paragraph reveal-rise-slow">Morning Star is a small, Bible-believing community where every story, every age, and every burden is met with grace and a seat at the table. We confess Jesus Christ as Lord and Savior, teach the whole counsel of Scripture, and exist to mend the broken through faith, family, and serving the city we love.</p>
                             <a class="event-link-btn about-cta reveal-fill" href="/about">Learn More About Us</a>
                         </div>
                     </div>
@@ -160,7 +160,7 @@ export const homeBody = (): string => `
                                 <div class="schedule-item-text">
                                     <span>Events</span>
                                     <h3>Community Events</h3>
-                                    <p>Year-round open-door gatherings — Friendsgiving, holidays, and city-wide outreach.</p>
+                                    <p>Year-round open-door gatherings: Friendsgiving, holidays, and city-wide outreach.</p>
                                     <span class="teaser-more">Learn more <span class="teaser-more-arrow" aria-hidden="true">&rarr;</span></span>
                                 </div>
                                 <div class="schedule-item-image">
@@ -241,7 +241,7 @@ export const homeBody = (): string => `
                                         <div class="video-embed-wrapper" id="video-embed-wrapper">
                                             <div class="video-thumbnail" id="video-thumbnail">
                                                 <img class="video-thumbnail-img" id="video-thumbnail-img"
-                                                     alt="Latest Sunday worship service from Morning Star Christian Church in Boise, Idaho — live-streamed and archived on our YouTube channel"
+                                                     alt="Latest Sunday worship service from Morning Star Christian Church in Boise, Idaho. Live-streamed and archived on our YouTube channel."
                                                      width="1280" height="720"
                                                      loading="lazy">
                                                 <button class="video-play-btn" id="video-play-btn" aria-label="Play video">

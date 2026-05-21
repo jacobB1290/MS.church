@@ -7165,25 +7165,34 @@ export const homeStyles = (): string => `
                into the default label size at common phone widths. */
             @media (max-width: 960px) {
                 .nav-shell.scrolled-mobile nav a {
-                    /* Font scales modestly so the four labels fit in
-                       the constrained 400-460 band where Contact + X
-                       reserve leaves the nav element under ~250px
-                       wide. Below that band the labels would still
-                       fit, but smaller content lets space-between
-                       distribute more breathing room between them
-                       at narrow widths. At 500+ the font climbs to
-                       its natural size as the nav opens up. */
+                    /* HOME page baseline. The home nav (when scrolled
+                       into compressed state) has no X close-trigger
+                       eating right-side room — only nav + Contact —
+                       so the labels can carry a heftier type size.
+                       This matches the editorial reference where the
+                       four labels sit at ~13-14px with clear visual
+                       weight, paired with the Contact CTA pill on the
+                       right end. */
+                    font-size: clamp(11px, 2.8vw, 14px);
+                    letter-spacing: clamp(0.4px, 0.2vw, 1.4px);
+                    /* Invisible hit-area expansion via ::before pseudo
+                       below. The <a> itself stays at glyph width ×
+                       glyph height so flex space-between distributes
+                       labels correctly. The pseudo extends the tap
+                       surface 18px vertically and 10px horizontally
+                       to clear iOS HIG 44pt on both axes. */
+                    position: relative;
+                }
+                /* SUBPAGE menu-open variant: smaller, tighter type so
+                   the four labels still distribute cleanly against
+                   the X close-trigger reserve (~52px) on the right
+                   edge of the shell. Without this scope-down the
+                   subpage open state would either overflow or
+                   crush the labels into one another in the 400-460
+                   band. */
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile nav a {
                     font-size: clamp(9px, 2.1vw, 12px);
                     letter-spacing: clamp(0.3px, 0.18vw, 1.2px);
-                    /* Invisible hit-area expansion is handled by the
-                       ::before pseudo below — the <a> itself stays at
-                       glyph width × glyph height so flex space-
-                       between distributes labels correctly without
-                       rendered overshoot colliding with the Contact
-                       pill. The pseudo extends the tap surface 18px
-                       vertically and 10px horizontally to clear iOS
-                       HIG 44pt on both axes. */
-                    position: relative;
                 }
                 .nav-shell.scrolled-mobile nav a::before {
                     content: '';
@@ -7232,9 +7241,20 @@ export const homeStyles = (): string => `
                on a single line. */
             @media (max-width: 460px) {
                 .nav-shell.scrolled-mobile .nav-form-btn {
-                    font-size: clamp(9px, 2.6vw, 11px);
+                    /* Home Contact pill stays close to the natural
+                       mobile size so it pairs visually with the
+                       heftier home nav labels (clamp 11-14). */
+                    font-size: clamp(10.5px, 2.6vw, 12px);
+                    letter-spacing: clamp(0.4px, 0.3vw, 1.2px);
+                    padding: 0 clamp(10px, 3vw, 16px);
+                    height: clamp(30px, 7.5vw, 36px);
+                }
+                /* Subpage menu-open Contact pill: smaller to fit
+                   alongside the X close-trigger reserve. */
+                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn {
+                    font-size: clamp(9px, 2.4vw, 11px);
                     letter-spacing: clamp(0.3px, 0.3vw, 1.2px);
-                    padding: 0 clamp(8px, 2.6vw, 14px);
+                    padding: 0 clamp(8px, 2.4vw, 14px);
                     height: clamp(28px, 7.5vw, 34px);
                 }
                 .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-icon {

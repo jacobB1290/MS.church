@@ -1359,32 +1359,37 @@ export const homeStyles = (): string => `
                 }
             }
             @media (max-width: 960px) {
-                /* Center the row on narrow viewports. Chip type and
-                   tracking stay at full --text-eyebrow size — wrap
-                   is the fallback when the row doesn't fit, not
-                   typographic shrink (which was making the chips
-                   read smaller than the editorial baseline). */
+                /* Center the row on narrow viewports. Tighter column-
+                   gap + tracking so the 5-chip /ministries row fits
+                   on a single line on standard modern phone widths
+                   (393, 414, 430) — the editorial bar is "no wrap if
+                   we can avoid it." Font-size stays at the full
+                   --text-eyebrow (10px) so the chips still read at
+                   the editorial baseline; only the inter-chip and
+                   inter-letter space tightens. */
                 .subpage-jump {
-                    --jump-gap: var(--space-md);
+                    --jump-gap: clamp(6px, 2vw, 16px);
                     column-gap: var(--jump-gap);
                     justify-content: center;
+                }
+                .subpage-jump a {
+                    letter-spacing: clamp(1.2px, 0.35vw, 2.5px);
                 }
                 .subpage-jump a + a::before {
                     left: calc(var(--jump-gap) * -0.5);
                 }
             }
-            /* Per-page break thresholds. Chip widths differ per page
-               so the "row doesn't fit on one line" point also differs.
-               At full --text-eyebrow type size (restored in v1.62.62):
-                 /ministries (5 chips) wraps up to ~479px → break ≤479
-                 /about (4 short chips) wraps at 320 only → break ≤320
+            /* Per-page break thresholds. With v1.62.63's tighter
+               tracking and column-gap on mobile (font stays full
+               size), the natural fit widens significantly:
+                 /ministries (5 chips) wraps only at 320 → break ≤320
+                 /about (4 short chips) fits at 320 — no break
                  /visit (4 chips with BEFORE YOU COME) wraps up to
-                   ~539px → break ≤539
-               Tight row-gap is applied at every wrapping width so
-               the two wrapped rows read as a cohesive two-line index
-               instead of two floating groups. */
-            @media (max-width: 539px) {
-                /* /visit only — long-chip variant wraps up to ~539. */
+                   ~413px → break ≤413 via .subpage-jump--long-chip
+               Tight row-gap when wrapping so the two rows read as
+               one cohesive index. */
+            @media (max-width: 413px) {
+                /* /visit only — long-chip variant wraps up to ~413. */
                 .subpage-jump--long-chip {
                     row-gap: 6px;
                 }
@@ -1394,25 +1399,15 @@ export const homeStyles = (): string => `
                     height: 0;
                 }
             }
-            @media (max-width: 479px) {
-                /* Default (/ministries) — 5 chips wrap up to ~479. */
-                .subpage-jump:not(.subpage-jump--short-set):not(.subpage-jump--long-chip) {
-                    row-gap: 6px;
-                }
-                .subpage-jump:not(.subpage-jump--short-set):not(.subpage-jump--long-chip) > .subpage-jump-break {
-                    display: block;
-                    flex-basis: 100%;
-                    height: 0;
-                }
-            }
             @media (max-width: 320px) {
-                /* /about (4 short chips) only wraps at the very
-                   narrowest. The --short-set modifier limits the
-                   break to that tier. */
-                .subpage-jump--short-set {
+                /* Default (/ministries) — 5 chips fit single-line on
+                   every standard phone width; only the very narrowest
+                   (iPhone SE 1st gen et al.) need the deliberate
+                   3+2 wrap. */
+                .subpage-jump:not(.subpage-jump--long-chip) {
                     row-gap: 6px;
                 }
-                .subpage-jump--short-set .subpage-jump-break {
+                .subpage-jump:not(.subpage-jump--long-chip) > .subpage-jump-break {
                     display: block;
                     flex-basis: 100%;
                     height: 0;

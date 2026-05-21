@@ -3543,13 +3543,7 @@ export const homeStyles = (): string => `
                 backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
                 box-shadow: var(--shadow-xs);
-                /* Transitions cover the closed→open size morph: trigger
-                   grows from a small chrome pill to a shell-matching
-                   pair when the menu opens. All dynamic props animate
-                   in lock-step so the morph reads as a single intent. */
-                transition: top var(--motion-medium) var(--ease-out-soft),
-                            width var(--motion-medium) var(--ease-out-soft),
-                            height var(--motion-medium) var(--ease-out-soft),
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
                             background var(--motion-medium) var(--ease-out-soft),
                             box-shadow var(--motion-medium) var(--ease-out-soft),
                             transform var(--motion-medium) var(--ease-out-soft);
@@ -3589,14 +3583,18 @@ export const homeStyles = (): string => `
             .subpage-menu-icon-line:nth-child(2) { top: 50%; transform: translateY(-50%); }
             .subpage-menu-icon-line:nth-child(3) { top: 100%; transform: translateY(-100%); }
 
-            /* Per editorial + UX consulting (v1.62.47): the trigger no
-               longer morphs to an X on menu-open. The hamburger stays
-               a hamburger; tapping it again toggles. The home page has
-               shipped without any close-X for a long time and reads
-               cleanly; aligning the subpage open-state to that same
-               vocabulary removes the "this is a modal" SaaS signal.
-               Dismiss paths: re-tap the hamburger, scroll, click the
-               scrim (now tinted, see below), click a link, press ESC. */
+            /* Per user direction (v1.62.48): the trigger morphs AWAY
+               on menu-open so the subpage nav-shell renders identical
+               to the home page nav — no chrome buttons floating
+               outside it, no padding reserved for a trigger. The
+               trigger fades to opacity 0 (with pointer-events:none
+               so it can't be clicked behind the shell), and returns
+               on close. Dismiss paths while open: scroll, click the
+               tinted scrim, click a nav link, press ESC. */
+            body.menu-open .subpage-menu-trigger {
+                opacity: 0;
+                pointer-events: none;
+            }
 
             /* The nav-shell on subpages: hidden by default, fades +
                slides in when body.menu-open. Uses the EXACT same
@@ -3685,14 +3683,11 @@ export const homeStyles = (): string => `
                 position: fixed;
                 inset: 0;
                 z-index: 998;
-                /* A faint warm-cream tint becomes the visible signal
-                   that the page behind is unavailable and tapping
-                   here dismisses. Without this tint the menu had no
-                   discoverable close affordance (per UX consulting,
-                   v1.62.47). Stays at 0 opacity until .menu-open. */
+                /* Faint warm-cream tint signals "tap outside to
+                   dismiss" without blurring the page behind. No
+                   backdrop-filter — the page content reads through
+                   the dim cleanly. */
                 background: color-mix(in srgb, var(--bg) 30%, transparent);
-                -webkit-backdrop-filter: blur(2px);
-                backdrop-filter: blur(2px);
                 pointer-events: none;
                 opacity: 0;
                 transition: opacity var(--motion-medium) var(--ease-out-soft);
@@ -3833,23 +3828,13 @@ export const homeStyles = (): string => `
                 }
 
                 /* On subpage mobile, the JS applies .scrolled-mobile to
-                   the nav-shell (see subpage-header.ts) so we reuse the
-                   home page's existing compressed-nav state verbatim:
-                   brand hidden, nav hidden, nav-cta hidden, nav-form-btn
-                   visible at right.
-
-                   The ONLY subpage-specific override: reserve space at
-                   the right edge of the nav-shell for the fixed-position
-                   close-X trigger pill (right:12-28px from the screen,
-                   44px wide). Padding pushes the Contact button to the
-                   left of that zone so the X stays clear and clickable.
-                   This replaces an earlier right:64px shift on the
-                   button itself — padding-right on the container is the
-                   correct layout primitive since the button is now an
-                   inline flex item, not absolutely positioned. */
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile {
-                    padding-right: 56px;
-                }
+                   the nav-shell (see subpage-header.ts) so we reuse
+                   the home page's compressed-nav state VERBATIM —
+                   same brand hidden, same nav layout, same Contact
+                   pill at the right edge. The trigger fades out on
+                   menu-open (v1.62.48) so no right-side reserve is
+                   needed. The subpage shell is now visually identical
+                   to the home shell when open. */
             }
 
             /* Spacer that pushes subpage content below the floating brand +
@@ -7148,17 +7133,11 @@ export const homeStyles = (): string => `
                        to clear iOS HIG 44pt on both axes. */
                     position: relative;
                 }
-                /* SUBPAGE menu-open variant: smaller, tighter type so
-                   the four labels still distribute cleanly against
-                   the X close-trigger reserve (~52px) on the right
-                   edge of the shell. Without this scope-down the
-                   subpage open state would either overflow or
-                   crush the labels into one another in the 400-460
-                   band. */
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile nav a {
-                    font-size: clamp(9px, 2.1vw, 12px);
-                    letter-spacing: clamp(0.3px, 0.18vw, 1.2px);
-                }
+                /* Subpage menu-open uses the SAME nav-shell sizing as
+                   home (v1.62.48) — the trigger fades on open, so
+                   there's no chrome eating right-side room, and the
+                   shell can render identically. No subpage-specific
+                   font/letter-spacing override needed. */
                 .nav-shell.scrolled-mobile nav a::before {
                     content: '';
                     position: absolute;
@@ -7214,30 +7193,8 @@ export const homeStyles = (): string => `
                     padding: 0 clamp(10px, 3vw, 16px);
                     height: clamp(30px, 7.5vw, 36px);
                 }
-                /* Subpage menu-open Contact pill: smaller to fit
-                   alongside the X close-trigger reserve. */
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn {
-                    font-size: clamp(9px, 2.4vw, 11px);
-                    letter-spacing: clamp(0.3px, 0.3vw, 1.2px);
-                    padding: 0 clamp(8px, 2.4vw, 14px);
-                    height: clamp(28px, 7.5vw, 34px);
-                }
                 .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-icon {
                     display: none;
-                }
-            }
-
-            /* Subpage X-trigger reserve. Trigger width is clamp(40,
-               12vw, 48); reserve sits just above X width so the gap
-               between the Contact pill and the X stays a consistent
-               ~6-10px across the mobile range. Cap at 56 to prevent
-               the row from going loose at small-tablet widths
-               (500-650px) where extra reserve would read as dead
-               air between Contact and X rather than as composed
-               breathing room. */
-            @media (max-width: 960px) {
-                body[class*="page-subpage"] .nav-shell.scrolled-mobile {
-                    padding-right: clamp(48px, 12vw, 56px);
                 }
             }
 

@@ -3589,24 +3589,14 @@ export const homeStyles = (): string => `
             .subpage-menu-icon-line:nth-child(2) { top: 50%; transform: translateY(-50%); }
             .subpage-menu-icon-line:nth-child(3) { top: 100%; transform: translateY(-100%); }
 
-            /* Open state: top line drops to center + rotates +45°,
-               bottom line rises to center + rotates -45°, middle
-               line fades and shrinks. */
-            body.menu-open .subpage-menu-icon-line:nth-child(1) {
-                top: 50%;
-                transform: translateY(-50%) rotate(45deg);
-            }
-            body.menu-open .subpage-menu-icon-line:nth-child(2) {
-                opacity: 0;
-                transform: translateY(-50%) scaleX(0);
-            }
-            body.menu-open .subpage-menu-icon-line:nth-child(3) {
-                top: 50%;
-                transform: translateY(-50%) rotate(-45deg);
-            }
-            body.menu-open .subpage-menu-trigger {
-                background: rgba(255, 255, 255, 0.95);
-            }
+            /* Per editorial + UX consulting (v1.62.47): the trigger no
+               longer morphs to an X on menu-open. The hamburger stays
+               a hamburger; tapping it again toggles. The home page has
+               shipped without any close-X for a long time and reads
+               cleanly; aligning the subpage open-state to that same
+               vocabulary removes the "this is a modal" SaaS signal.
+               Dismiss paths: re-tap the hamburger, scroll, click the
+               scrim (now tinted, see below), click a link, press ESC. */
 
             /* The nav-shell on subpages: hidden by default, fades +
                slides in when body.menu-open. Uses the EXACT same
@@ -3695,12 +3685,20 @@ export const homeStyles = (): string => `
                 position: fixed;
                 inset: 0;
                 z-index: 998;
-                background: transparent;
+                /* A faint warm-cream tint becomes the visible signal
+                   that the page behind is unavailable and tapping
+                   here dismisses. Without this tint the menu had no
+                   discoverable close affordance (per UX consulting,
+                   v1.62.47). Stays at 0 opacity until .menu-open. */
+                background: color-mix(in srgb, var(--bg) 30%, transparent);
+                -webkit-backdrop-filter: blur(2px);
+                backdrop-filter: blur(2px);
                 pointer-events: none;
                 opacity: 0;
                 transition: opacity var(--motion-medium) var(--ease-out-soft);
             }
             body.menu-open .subpage-menu-scrim {
+                opacity: 1;
                 pointer-events: auto;
             }
 
@@ -3782,26 +3780,10 @@ export const homeStyles = (): string => `
                     transition: width var(--motion-medium) var(--ease-out-soft),
                                 height var(--motion-medium) var(--ease-out-soft);
                 }
-                body.menu-open .subpage-menu-trigger {
-                    top: 14px;
-                    width: clamp(40px, 12vw, 48px);
-                    height: clamp(40px, 12vw, 48px);
-                    /* Fully transparent bg so the X icon sits directly
-                       on the shell's surface (no alpha-stacking that
-                       would make the X area appear denser than the
-                       shell). The X reads as the rightmost glyph in
-                       the shell row, not as a circular button glued
-                       onto the end. */
-                    background: transparent;
-                    border-color: transparent;
-                    box-shadow: none;
-                    backdrop-filter: none;
-                    -webkit-backdrop-filter: none;
-                }
-                body.menu-open .subpage-menu-icon {
-                    width: 18px;
-                    height: 14px;
-                }
+                /* Trigger stays in its closed-state position (top:18,
+                   36x36, frosted bg) when the menu opens. No morph,
+                   no merge. The user re-taps the same target to close.
+                   Per v1.62.47 editorial + UX consult. */
             }
 
             /* Desktop alignment: the X right edge meets the nav-shell's
@@ -3825,25 +3807,8 @@ export const homeStyles = (): string => `
                 .subpage-back {
                     left: var(--chrome-margin);
                 }
-                /* Open state: X merges into the shell — fully
-                   transparent so no alpha-stacking, just the icon on
-                   the shell surface. Reads as the shell's rightmost
-                   glyph, paired with the CONTACT pill (same vertical
-                   center at y=61). */
-                body.menu-open .subpage-menu-trigger {
-                    top: 37px;
-                    width: 48px;
-                    height: 48px;
-                    background: transparent;
-                    border-color: transparent;
-                    box-shadow: none;
-                    backdrop-filter: none;
-                    -webkit-backdrop-filter: none;
-                }
-                body.menu-open .subpage-menu-icon {
-                    width: 18px;
-                    height: 14px;
-                }
+                /* Trigger stays in its closed-state position on desktop
+                   too (no morph, no merge). Per v1.62.47 consult. */
             }
 
             @media (max-width: 960px) {

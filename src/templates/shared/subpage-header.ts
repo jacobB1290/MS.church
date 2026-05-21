@@ -366,11 +366,20 @@ export function subpageHeader(): string {
                         syncMobileNavState();
                         window.addEventListener('resize', syncMobileNavState, { passive: true });
 
+                        // Scroll-to-dismiss bookkeeping. After openMenu()
+                        // we capture the scrollY at open and ignore
+                        // scroll events for 250ms (lockout absorbs the
+                        // open-animation's stray scroll signals and iOS
+                        // rubber-band overscroll at the top).
+                        var scrollLockUntil = 0;
+                        var openScrollY = 0;
                         var openMenu = function() {
                             document.body.classList.add('menu-open');
                             trigger.setAttribute('aria-expanded', 'true');
                             trigger.setAttribute('aria-label', 'Close menu');
                             navShell.setAttribute('aria-hidden', 'false');
+                            scrollLockUntil = performance.now() + 250;
+                            openScrollY = window.scrollY;
                         };
                         var closeMenu = function() {
                             document.body.classList.remove('menu-open');
@@ -405,6 +414,18 @@ export function subpageHeader(): string {
                                 closeMenu();
                             }
                         });
+                        // Scroll-to-dismiss. Any user scroll while the
+                        // menu is open closes it. The 250ms lockout
+                        // (set inside openMenu) absorbs entrance-
+                        // animation scroll noise and iOS rubber-band.
+                        // The 6px threshold ignores sub-pixel scroll
+                        // drift that doesn't represent user intent.
+                        window.addEventListener('scroll', function() {
+                            if (!document.body.classList.contains('menu-open')) return;
+                            if (performance.now() < scrollLockUntil) return;
+                            if (Math.abs(window.scrollY - openScrollY) < 6) return;
+                            closeMenu();
+                        }, { passive: true });
                     }
 
                     // Brand: hide on scroll-down, show on scroll-up.

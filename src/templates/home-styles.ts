@@ -6747,8 +6747,18 @@ export const homeStyles = (): string => `
                        cohesive group). */
                     flex-wrap: nowrap;
                     gap: clamp(6px, 2vw, 12px);
+                    /* Override the base .nav-shell margin (20px top) so
+                       the compressed pill sits aligned with the fixed-
+                       position BACK + X trigger pills (top:16 on mobile).
+                       Without this override the shell rendered ~20px
+                       below the trigger pills, breaking the editorial
+                       intent that BACK + nav-shell + X read as a single
+                       row of chrome. The bottom margin remains since
+                       it spaces the shell from later layout in the
+                       expanded-state cascade. */
+                    margin-top: 0;
                     margin-bottom: 30px;
-                    top: clamp(6px, 1.8vw, 8px);
+                    top: 14px;
                     background: rgba(255, 255, 255, 0.72);
                 }
                 /* Pre-paint hide of .brand + .nav-cta when scroll position
@@ -6976,36 +6986,18 @@ export const homeStyles = (): string => `
                 }
             }
 
-            /* Narrow phones (≤460px): collapse the compressed Contact
-               pill to a circular envelope icon. At this width the four
-               nav labels (SCHEDULE / ABOUT / OUTREACH / WATCH) plus a
-               "CONTACT" text pill would push the row into a wrap.
-               Trading the word for an envelope reclaims ~50px and keeps
-               everything on a single line. aria-label on the anchor
-               preserves the accessible name. Nav items also tighten
-               (smaller letter-spacing, smaller gap) so the four labels
-               fit comfortably alongside the envelope. */
-            @media (max-width: 460px) {
-                .nav-shell.scrolled-mobile .nav-form-btn {
-                    width: 38px;
-                    height: 38px;
-                    padding: 0;
-                    border-radius: 50%;
-                    flex-shrink: 0;
-                }
-                .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-label {
-                    display: none;
-                }
-                .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-icon {
-                    display: block;
-                    width: 18px;
-                    height: 18px;
-                }
-                /* Active state: white envelope on gold fill, matching
-                   the text-pill active state. */
-                .nav-shell.scrolled-mobile .nav-form-btn.active .nav-form-btn-icon {
-                    stroke: #ffffff;
-                }
+            /* Mobile nav (compressed pill) — letter-spacing tightening.
+               This runs at all phone widths up to small tablets so the
+               four labels (Schedule / About / Outreach / Watch) fit on
+               a single row alongside the text-mode Contact pill on home
+               and beside the X-trigger reserve on subpages.
+
+               Range extends to 540px because the subpage menu-open
+               variant reserves ~56px on the right for the X trigger;
+               without tightening, the default mobile font causes the
+               text Contact pill to overlap "Watch" at 461-510px. At
+               541+ the default sizing has enough room without help. */
+            @media (max-width: 540px) {
                 .nav-shell.scrolled-mobile nav a {
                     font-size: 11px;
                     letter-spacing: 0.5px;
@@ -7015,20 +7007,53 @@ export const homeStyles = (): string => `
                 }
             }
 
-            /* Subpages collapse Contact to the envelope at a wider
-               threshold than the home page (520 vs 460). The fixed-
-               position X trigger pill at the right edge takes ~56px of
-               the nav-shell's interior, which is exactly the room the
-               text "CONTACT" needs. Without an earlier collapse, the
-               text overlaps the last nav item at iPhone-Plus widths
-               (≤500px). Only the icon-collapse rules are subpage-
-               scoped; nav font/gap tightening continues to be handled
-               by the generic ≤460 and ≤380 rules below so a single set
-               of sizes governs both home and subpage. */
-            @media (max-width: 520px) {
+            /* HOME page icon collapse: only at the tightest widths
+               (≤340px = iPhone 5/SE and equivalent). At wider phone
+               widths the tightened text-mode pill fits cleanly — we
+               do NOT collapse to icon just because the device is
+               "mobile". The icon is a solution to a real overflow
+               problem, not a default mobile treatment.
+
+               Icon-pill dimensions match the text-mode pill height
+               (30px) so swapping forms does not change the nav-shell
+               height. Editorial intent: the swap is invisible aside
+               from the glyph change. */
+            @media (max-width: 340px) {
+                .nav-shell.scrolled-mobile .nav-form-btn {
+                    width: 30px;
+                    height: 30px;
+                    padding: 0;
+                    border-radius: 50%;
+                    flex-shrink: 0;
+                }
+                .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-label {
+                    display: none;
+                }
+                .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-icon {
+                    display: block;
+                    width: 14px;
+                    height: 14px;
+                }
+                .nav-shell.scrolled-mobile .nav-form-btn.active .nav-form-btn-icon {
+                    stroke: #ffffff;
+                }
+            }
+
+            /* SUBPAGE menu-open icon collapse: ≤460px. The fixed-
+               position X close-trigger reserves ~56px on the right
+               edge of the nav-shell (padding-right rule below), which
+               is exactly the room the text "CONTACT" needs. Empirical
+               wrap point measurement shows text overlaps the last nav
+               item up through ~430px; we set the threshold at 460 to
+               give a small safety margin. Above 460 the natural sizing
+               has plenty of room.
+
+               Icon dimensions match the home-page collapse (30x30,
+               14x14 SVG) so the nav-shell does not get thicker. */
+            @media (max-width: 460px) {
                 body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn {
-                    width: 38px;
-                    height: 38px;
+                    width: 30px;
+                    height: 30px;
                     padding: 0;
                     border-radius: 50%;
                 }
@@ -7037,8 +7062,8 @@ export const homeStyles = (): string => `
                 }
                 body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn .nav-form-btn-icon {
                     display: block;
-                    width: 18px;
-                    height: 18px;
+                    width: 14px;
+                    height: 14px;
                 }
                 body[class*="page-subpage"] .nav-shell.scrolled-mobile .nav-form-btn.active .nav-form-btn-icon {
                     stroke: #ffffff;

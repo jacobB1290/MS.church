@@ -1475,7 +1475,7 @@ export const homeScripts = (): string => `
 
                         const target = document.querySelector(targetId);
                         if (target) {
-                            let navOffset = window.innerWidth <= 960 ? 30 : 60;
+                            let navOffset = window.innerWidth <= 960 ? 40 : 80;
 
                             if (targetId === '#outreach') {
                                 const outreachRect = target.getBoundingClientRect();

@@ -432,12 +432,20 @@ export function subpageHeader(): string {
                             return;
                         }
                         var y = window.scrollY;
+                        // Mirror the brand's visibility on <body> so the
+                        // top-fog can weaken once the chrome zone has
+                        // nothing to hide (brand gone, only the BACK +
+                        // menu trigger remain — both small targets, so
+                        // the fog no longer needs to mute much content).
                         if (y < threshold) {
                             brand.classList.remove('hidden');
+                            document.body.classList.remove('subpage-brand-hidden');
                         } else if (y > lastY) {
                             brand.classList.add('hidden');
+                            document.body.classList.add('subpage-brand-hidden');
                         } else if (y < lastY) {
                             brand.classList.remove('hidden');
+                            document.body.classList.remove('subpage-brand-hidden');
                         }
                         lastY = y;
                         ticking = false;

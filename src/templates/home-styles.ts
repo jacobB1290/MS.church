@@ -3378,6 +3378,17 @@ export const homeStyles = (): string => `
                     black 45%,
                     rgba(0, 0, 0, 0.40) 80%,
                     transparent 100%);
+                transition: opacity 0.45s var(--ease-out-soft);
+            }
+
+            /* When the brand has scrolled away there is no large chrome
+               element left to mute behind, so the fog drops to a soft
+               whisper — the BACK + menu pills are small enough that body
+               text reads cleanly around them. JS toggles
+               body.subpage-brand-hidden in lock-step with
+               .subpage-brand.hidden. */
+            body.subpage-brand-hidden .subpage-top-fog {
+                opacity: 0.18;
             }
 
             .subpage-brand {
@@ -3427,11 +3438,19 @@ export const homeStyles = (): string => `
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
+                /* Fixed height + matching top with .subpage-menu-trigger
+                   so the two right/left chrome controls form a perfectly
+                   aligned pair (same top edge, same bottom edge, same
+                   pill radius). Padding lost its vertical component;
+                   height + align-items:center handles centering the
+                   "BACK" label and arrow. */
+                height: 40px;
+                box-sizing: border-box;
                 background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
                 color: #ffffff;
                 border: none;
                 border-radius: var(--radius-pill);
-                padding: 12px 22px;
+                padding: 0 22px;
                 font-family: var(--font-body);
                 font-size: var(--text-label);
                 font-weight: var(--weight-bold);
@@ -3486,11 +3505,14 @@ export const homeStyles = (): string => `
 
             .subpage-menu-trigger {
                 position: fixed;
+                /* Desktop: matches .subpage-back exactly (top:24,
+                   height:40, pill radius). Mobile override below drops
+                   to 30x30 to pair with the in-shell envelope. */
                 top: 24px;
                 right: clamp(12px, 3vw, 28px);
                 z-index: 1001;
-                width: 44px;
-                height: 44px;
+                width: 40px;
+                height: 40px;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
@@ -3703,16 +3725,23 @@ export const homeStyles = (): string => `
                 }
             }
 
-            /* Mobile: trigger stays in same spot, but the panel
-               compresses to just the Contact pill (matches the
-               /home .scrolled-mobile state — small gold pill on the
-               right). Brand also slides less on mobile because the
-               panel is narrower. */
+            /* Mobile: trigger compresses to the same 30x30 footprint
+               as the in-shell envelope (.nav-form-btn icon-mode) so
+               the two right-side controls read as a paired chrome row
+               instead of mismatched sizes. The top:21 lands the X
+               vertically centered on the nav-shell content (which
+               sits at y=21-51 with shell at top:14 + 7px padding +
+               30px content). Together the envelope and X appear as
+               twin circles at the same height. */
             @media (max-width: 960px) {
                 .subpage-menu-trigger {
-                    top: 16px;
-                    width: 40px;
-                    height: 40px;
+                    top: 21px;
+                    width: 30px;
+                    height: 30px;
+                }
+                .subpage-menu-icon {
+                    width: 12px;
+                    height: 10px;
                 }
                 .subpage-menu-panel {
                     top: 64px;
@@ -3790,9 +3819,13 @@ export const homeStyles = (): string => `
                 .subpage-brand .brand-subtitle {
                     font-size: var(--text-eyebrow);
                 }
+                /* Mobile: match .subpage-menu-trigger exactly so BACK
+                   and X (or hamburger) form a perfectly aligned pair —
+                   same top, same height, same pill radius. */
                 .subpage-back {
-                    top: 16px;
-                    padding: 10px 18px;
+                    top: 21px;
+                    height: 30px;
+                    padding: 0 16px;
                     font-size: var(--text-eyebrow);
                 }
                 .subpage-spacer {
@@ -7117,16 +7150,6 @@ export const homeStyles = (): string => `
                 }
             }
 
-            /* Mobile: tighten subpage back-button padding */
-            @media (max-width: 960px) {
-                .subpage-back {
-                    padding: 10px 16px;
-                    font-size: var(--text-eyebrow);
-                }
-                .subpage-back-label {
-                    /* keep visible — short label fits */
-                }
-            }
 
             @media (max-width: 960px) {
                 .page {

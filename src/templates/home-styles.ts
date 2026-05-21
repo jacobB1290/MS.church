@@ -1359,51 +1359,60 @@ export const homeStyles = (): string => `
                 }
             }
             @media (max-width: 960px) {
-                /* Aggressive shrink so the row stays on a single line
-                   at typical mobile widths (360+). Font, tracking, and
-                   column-gap all clamp down with viewport. */
+                /* Center the row on narrow viewports. Chip type and
+                   tracking stay at full --text-eyebrow size — wrap
+                   is the fallback when the row doesn't fit, not
+                   typographic shrink (which was making the chips
+                   read smaller than the editorial baseline). */
                 .subpage-jump {
-                    --jump-gap: clamp(8px, 2.4vw, 24px);
+                    --jump-gap: var(--space-md);
                     column-gap: var(--jump-gap);
                     justify-content: center;
-                }
-                .subpage-jump a {
-                    font-size: clamp(9px, 1.8vw, 10px);
-                    letter-spacing: clamp(1.2px, 0.35vw, 2.5px);
                 }
                 .subpage-jump a + a::before {
                     left: calc(var(--jump-gap) * -0.5);
                 }
             }
-            @media (max-width: 364px) {
-                /* /ministries (5 chips) — chips fit single-line at
-                   362+ via shrink; below that the break activates
-                   for a deliberate 3+2 wrap. /about's 4 short chips
-                   fit at 320+ so there's no break element in that
-                   DOM. Row-gap tightened so the two wrapped rows
-                   read as one cohesive index, not two floating
-                   groups. */
-                .subpage-jump {
+            /* Per-page break thresholds. Chip widths differ per page
+               so the "row doesn't fit on one line" point also differs.
+               At full --text-eyebrow type size (restored in v1.62.62):
+                 /ministries (5 chips) wraps up to ~479px → break ≤479
+                 /about (4 short chips) wraps at 320 only → break ≤320
+                 /visit (4 chips with BEFORE YOU COME) wraps up to
+                   ~539px → break ≤539
+               Tight row-gap is applied at every wrapping width so
+               the two wrapped rows read as a cohesive two-line index
+               instead of two floating groups. */
+            @media (max-width: 539px) {
+                /* /visit only — long-chip variant wraps up to ~539. */
+                .subpage-jump--long-chip {
                     row-gap: 6px;
                 }
-                .subpage-jump-break {
+                .subpage-jump--long-chip .subpage-jump-break {
                     display: block;
                     flex-basis: 100%;
                     height: 0;
                 }
             }
-            @media (max-width: 392px) {
-                /* /visit has a long chip ("Before You Come") that
-                   prevents single-line up to ~393px. The modifier
-                   class on its nav extends the deliberate break to
-                   that wider threshold so /visit gets a clean 2+2
-                   at narrow phone widths instead of a 3+1 with
-                   Contact orphaned. Tighter row-gap matches the
-                   <365px tier. */
-                .subpage-jump--long-chip {
+            @media (max-width: 479px) {
+                /* Default (/ministries) — 5 chips wrap up to ~479. */
+                .subpage-jump:not(.subpage-jump--short-set):not(.subpage-jump--long-chip) {
                     row-gap: 6px;
                 }
-                .subpage-jump--long-chip .subpage-jump-break {
+                .subpage-jump:not(.subpage-jump--short-set):not(.subpage-jump--long-chip) > .subpage-jump-break {
+                    display: block;
+                    flex-basis: 100%;
+                    height: 0;
+                }
+            }
+            @media (max-width: 320px) {
+                /* /about (4 short chips) only wraps at the very
+                   narrowest. The --short-set modifier limits the
+                   break to that tier. */
+                .subpage-jump--short-set {
+                    row-gap: 6px;
+                }
+                .subpage-jump--short-set .subpage-jump-break {
                     display: block;
                     flex-basis: 100%;
                     height: 0;

@@ -923,32 +923,29 @@ export const homeScripts = (): string => `
                 // (Subpage hash landing is handled in shared/subpage-header.ts,
                 //  which runs on every subpage regardless of homeScripts.)
 
-                // ----- Shared home anchor offset (v1.62.50) -----
-                // Single source of truth for "where does an anchor land on
-                // home". Per design intent: each home section's eyebrow is
-                // meant to tuck fully behind the nav-shell — the gold-
-                // highlighted active nav link IS the "you are here" marker,
-                // so the eyebrow's label is redundant when you've landed on
-                // a section via the nav. The previous fixed 30/60 offset
-                // left the eyebrow peeking 7px below the nav on mobile and
-                // pushed it well clear on desktop (inconsistent).
+                // ----- Hashload anchor offset (v1.62.50) -----
+                // Where a cross-page /#anchor hash-load lands on home.
+                // Per design intent: each home section's eyebrow tucks
+                // fully behind the nav-shell on hash-load — the gold-
+                // highlighted active nav link IS the "you are here"
+                // marker, so the eyebrow's label is redundant.
                 //
-                // New behavior: when the target has a .section-eyebrow,
-                // scroll so the eyebrow lands fully INSIDE the nav-shell's
-                // bounds — eyebrow.bottom <= navShell.bottom - 2px buffer.
-                // We compute the target dynamically per call so the landing
-                // adapts to the actual compressed-nav height on the current
-                // viewport (mobile-360 has a shorter compressed nav than
-                // mobile-393, etc.). The .nav-shell.scrolled-mobile CSS
-                // sets padding to clamp(10px, 3vw, 20px) so the height
-                // varies by viewport width.
+                // Behavior: when the target has a .section-eyebrow,
+                // compute a scroll target so the eyebrow lands inside
+                // the nav-shell's bounds (eyebrow.bottom <= navBottom
+                // - 2px buffer). Predict the eventual compressed-nav
+                // bottom so the math adapts to viewport width (mobile-
+                // 360 has a 4px shorter compressed nav than mobile-393).
                 //
-                // Used by:
-                //   • The HOME-page hash flow below (cross-page hash-loads
-                //     from subpages / direct URL visits).
-                //   • The in-page click handler further down (clicking
-                //     "Schedule"/"About"/etc. inside the home nav).
-                // Both paths produce the same landing now.
+                // SCOPED TO HASHLOAD ONLY. The in-page click handler
+                // (further down) uses the simple OLD 30/60 offset and
+                // a single smooth scrollTo with no correction — the
+                // post-scrollend re-measure that originally lived
+                // alongside this helper fought the in-flight smooth-
+                // scroll and produced the "scrolling then jumping back
+                // and forth" glitch. The correction is safe ONLY when
+                // main is invisible (hashload fade-in path), where any
+                // re-position is unseen.
                 function getHomeAnchorTargetY(hash) {
                     if (!hash || hash === '#' || hash === '#home') return 0;
                     const el = document.querySelector(hash);
@@ -979,7 +976,6 @@ export const homeScripts = (): string => `
                     const navOffset = window.innerWidth <= 960 ? 30 : 60;
                     return Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - navOffset);
                 }
-                window.__getHomeAnchorTargetY = getHomeAnchorTargetY;
 
                 // HOME-page hash flow (v1.62.50).
                 //
@@ -1446,28 +1442,29 @@ export const homeScripts = (): string => `
                 updateActiveNavLink();
                 window.addEventListener('resize', () => { handleMobileNav(); });
 
-                // Smooth scrolling for navigation links.
-                // All home-page anchor landings go through getHomeAnchorTargetY
-                // so the in-page click matches the hashload entrance exactly:
-                // the section's eyebrow tucks behind the nav-shell on every
-                // viewport (no peeking).
+                // Smooth scrolling for in-page navigation links on /home.
+                // Restored to the simple pre-v1.62.50 behavior: a single
+                // smooth scrollTo at click time, 30/60 default offset
+                // (100/150 for #gift-form), no post-scroll correction.
                 //
-                // Post-scroll correction: if the user clicks within a second
-                // of page load, async content above the target (calendar
-                // carousel mount, leadership image decode) may still be
-                // settling while the smooth-scroll is in flight. The scroll
-                // commits to the target Y measured at click time and doesn't
-                // react to later layout shifts — so the eyebrow can end up
-                // 1-5px off its tucked spot. We re-measure on scrollend (or
-                // after a 1.2s fallback) and instant-snap if the target
-                // moved. The snap is imperceptible because it lands within
-                // the nav-shell's blurred backdrop zone.
+                // v1.62.50 briefly tried to share getHomeAnchorTargetY +
+                // a post-scrollend re-measure so the eyebrow tucked behind
+                // the nav-shell as cleanly as the cross-page hashload does.
+                // The re-measure fought the in-flight smooth-scroll on
+                // every click — the user saw "scroll then jump back and
+                // forth." That correction only makes sense in the
+                // invisible-then-fade-in hashload path; an in-page click
+                // is fully visible, so any snap reads as a glitch.
+                // The eyebrow may peek a couple of pixels under the nav
+                // on the narrowest mobile widths — that matches the
+                // long-standing in-page click behavior and is preferable
+                // to the fighting-scroll glitch.
                 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                     anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
                         const targetId = this.getAttribute('href');
-                        if (!targetId || targetId === '#') return;
-                        if (targetId === '#home') {
-                            e.preventDefault();
+
+                        if (targetId === '#home' || targetId === '#') {
                             if (window.innerWidth <= 960) {
                                 if (navShell) navShell.classList.remove('scrolled-mobile');
                                 isNavigatingHome = true;
@@ -1475,22 +1472,29 @@ export const homeScripts = (): string => `
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                             return;
                         }
-                        const targetY = getHomeAnchorTargetY(targetId);
-                        if (targetY == null) return;
-                        e.preventDefault();
-                        window.scrollTo({ top: targetY, behavior: 'smooth' });
-                        const correctLanding = () => {
-                            const newTarget = getHomeAnchorTargetY(targetId);
-                            if (newTarget == null) return;
-                            if (Math.abs(newTarget - window.scrollY) > 1) {
-                                window.scrollTo(0, newTarget);
+
+                        const target = document.querySelector(targetId);
+                        if (target) {
+                            let navOffset = window.innerWidth <= 960 ? 30 : 60;
+
+                            if (targetId === '#outreach') {
+                                const outreachRect = target.getBoundingClientRect();
+                                const outreachAbsoluteTop = outreachRect.top + window.pageYOffset;
+                                window.scrollTo({ top: outreachAbsoluteTop - navOffset, behavior: 'smooth' });
+                                return;
                             }
-                        };
-                        if ('onscrollend' in window) {
-                            window.addEventListener('scrollend', correctLanding, { once: true });
-                            setTimeout(correctLanding, 1500);
-                        } else {
-                            setTimeout(correctLanding, 1200);
+
+                            if (targetId === '#gift-form') {
+                                navOffset = window.innerWidth <= 960 ? 100 : 150;
+                                const elementRect = target.getBoundingClientRect();
+                                const absoluteElementTop = elementRect.top + window.pageYOffset;
+                                window.scrollTo({ top: absoluteElementTop - navOffset, behavior: 'smooth' });
+                                return;
+                            }
+
+                            const elementRect = target.getBoundingClientRect();
+                            const absoluteElementTop = elementRect.top + window.pageYOffset;
+                            window.scrollTo({ top: absoluteElementTop - navOffset, behavior: 'smooth' });
                         }
                     });
                 });

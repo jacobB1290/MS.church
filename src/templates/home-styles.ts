@@ -6983,30 +6983,39 @@ export const homeStyles = (): string => `
                     order: 1;
                 }
 
-                /* In the compressed pill, nav ul gives up its 100% width
-                   so the Contact button can sit inline beside it without
-                   being pushed to a second row. The nav container
-                   becomes the flexible element (flex: 1) and shrinks
-                   gracefully as the screen narrows; Contact stays at
-                   its intrinsic width.
+                /* In the compressed pill, the nav-ul becomes the
+                   distribution band: justify-content space-between
+                   anchors SCHEDULE flush-left and WATCH flush-right
+                   inside the ul, with the two middle gaps mathematically
+                   equal. As the shell grows the inter-label gaps grow
+                   in lockstep — labels stay anchored as one composed
+                   unit that BREATHES rather than left-clustering.
 
-                   Above 460px the nav-ul gets a growing left padding
-                   so the four labels migrate inward as the viewport
-                   widens. This absorbs the extra horizontal space
-                   that would otherwise pool as dead air between the
-                   nav cluster (left) and the Contact+X cluster
-                   (right). Inter-label gaps stay constant — only
-                   the position of the cluster moves. Editorial
-                   intent: the four labels read as a dense menu unit,
-                   not as four chips spreading to fill space. */
+                   max-width caps the ul so the spread can't exceed
+                   the editorial-voice ceiling (above ~460px wide the
+                   labels detach into "four chips"). margin-inline:auto
+                   centers the capped band inside its flex-1 parent,
+                   so on wider mobile/tablet widths the extra room
+                   appears as breathing space AROUND the cluster, not
+                   inside the inter-label gaps. */
                 .nav-shell.scrolled-mobile nav {
                     flex: 1 1 auto;
                     min-width: 0;
                 }
                 .nav-shell.scrolled-mobile nav ul {
-                    width: auto;
-                    gap: clamp(8px, 3vw, 16px);
-                    padding-left: clamp(0px, calc((100vw - 460px) * 0.35), 120px);
+                    width: 100%;
+                    justify-content: space-between;
+                    /* gap floor 0 — space-between distributes ALL
+                       spacing dynamically. The nav element (constrained
+                       by the shell minus padding minus Contact minus
+                       X reserve) sets the edges; the four labels flow
+                       into position based on available room. Tight
+                       when narrow, spread when wide. No max-width cap
+                       — the labels use the full nav width at every
+                       viewport so the eye never sees dead space
+                       between the cluster and the Contact pill. */
+                    gap: 0;
+                    padding-left: 0;
                 }
 
                 nav {
@@ -7156,31 +7165,36 @@ export const homeStyles = (): string => `
                into the default label size at common phone widths. */
             @media (max-width: 960px) {
                 .nav-shell.scrolled-mobile nav a {
-                    font-size: clamp(9.5px, 2.5vw, 12px);
-                    letter-spacing: clamp(0.4px, 0.18vw, 1.2px);
-                    /* Invisible hit-area expansion. The visible glyph
-                       width + letter-spacing are unchanged, but each
-                       <a> is padded out by 14px vertical / 8px
-                       horizontal and then pulled back into the row
-                       with matching negative margins. Result: labels
-                       look identically positioned, but the tap zones
-                       grow from ~15px tall × ~38-78px wide (a clear
-                       iOS HIG failure on every label) to a clean
-                       ≥44px on both axes for SCHEDULE/ABOUT/OUTREACH/
-                       WATCH. Standard Apple/Monocle/NYT pattern:
-                       expand the tap surface around dense type
-                       without changing the typographic intent. */
-                    padding: 18px 8px;
-                    margin-block: -18px;
-                    margin-inline: -8px;
+                    /* Font scales modestly so the four labels fit in
+                       the constrained 400-460 band where Contact + X
+                       reserve leaves the nav element under ~250px
+                       wide. Below that band the labels would still
+                       fit, but smaller content lets space-between
+                       distribute more breathing room between them
+                       at narrow widths. At 500+ the font climbs to
+                       its natural size as the nav opens up. */
+                    font-size: clamp(9px, 2.1vw, 12px);
+                    letter-spacing: clamp(0.3px, 0.18vw, 1.2px);
+                    /* Invisible hit-area expansion is handled by the
+                       ::before pseudo below — the <a> itself stays at
+                       glyph width × glyph height so flex space-
+                       between distributes labels correctly without
+                       rendered overshoot colliding with the Contact
+                       pill. The pseudo extends the tap surface 18px
+                       vertically and 10px horizontally to clear iOS
+                       HIG 44pt on both axes. */
+                    position: relative;
+                }
+                .nav-shell.scrolled-mobile nav a::before {
+                    content: '';
+                    position: absolute;
+                    inset: -18px -10px;
                 }
                 .nav-shell.scrolled-mobile nav ul {
-                    /* Smaller visible gap to balance the -8px
-                       horizontal margins on adjacent <a>s — adjacent
-                       hit zones overlap, so the gap boundary lands
-                       midway between visible glyphs, predictable to
-                       the user. */
-                    gap: clamp(4px, 1.4vw, 10px);
+                    /* No floor — let space-between resolve all spacing
+                       so the row never overflows. Final distribution
+                       comes from the primary ul rule above. */
+                    gap: 0;
                 }
                 .nav-shell.scrolled-mobile {
                     padding: 0 clamp(10px, 3vw, 20px);
@@ -7195,19 +7209,7 @@ export const homeStyles = (): string => `
 
             /* Narrow phones (≤399px) — Contact pill drops from the
                shell row entirely. The four nav labels + X close
-               trigger have the full shell width and breathe at
-               editorial type sizes (9.5px+ font, real tracking, real
-               gaps). Contact remains reachable via the destination
-               page hash. Dropping a single CTA at the smallest
-               breakpoint is the canonical Apple/Monocle compromise:
-               the chrome stays editorial; the user does one extra
-               tap on a device where they were already going to scroll.
-
-               Cutoff measured empirically: at 380-399 the Contact
-               pill has only ~2-3px of breathing room from Watch,
-               which reads as visually touching even when the math
-               says clean. At 400+ the gap opens to a visible ~6-8px
-               and the row reads as deliberately composed. */
+               trigger have the full shell width to distribute. */
             @media (max-width: 399px) {
                 .nav-shell.scrolled-mobile .nav-form-btn {
                     display: none;

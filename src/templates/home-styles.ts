@@ -2452,6 +2452,31 @@ export const homeStyles = (): string => `
                 .schedule-item.long-content:nth-child(even) .schedule-item-image {
                     order: -1;
                 }
+                /* Leadership card mobile override.
+
+                   Desktop sets .schedule-item.long-content.leadership-card
+                   { grid-template-columns: 7fr 5fr } at 3-class specificity,
+                   which wins over the 2-class .schedule-item.long-content
+                   mobile rule above — leaving the leadership card in a
+                   side-by-side grid on phones, with the bio crushed into a
+                   ~140px-wide column that wraps to 3-word lines. Match
+                   specificity here so mobile actually stacks.
+
+                   Image aspect: keep the 4/5 portrait crop (overrides the
+                   16/9 banner from the rule above) — a wide banner would
+                   slice horizontally through the pastor's face. Capped at
+                   480px tall so the image doesn't push the bio entirely
+                   below the fold on small phones. */
+                .schedule-item.long-content.leadership-card {
+                    grid-template-columns: 1fr;
+                }
+                .schedule-item.long-content .schedule-item-image.leadership-portrait {
+                    aspect-ratio: 4 / 5;
+                    max-height: 480px;
+                    width: 100%;
+                    max-width: 380px;
+                    margin: 0 auto;
+                }
             }
 
             /* ============================================================

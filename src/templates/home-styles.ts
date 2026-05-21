@@ -1121,20 +1121,22 @@ export const homeStyles = (): string => `
                .event-link-btn.event-link-btn-secondary. */
 
             /* Section Headers */
+            /* Editorial section eyebrow (v1.62.55).
+               Flat typography — no pill chrome. The previous pill (white
+               background + border + shadow + blur) read as a button on
+               every section opener, indistinguishable from the CONTACT
+               pill in the nav-shell and the PLAN A VISIT CTA. Per the
+               editorial bar (Aesop / Monocle / Apple-About: light on
+               chrome, content sits on the warm-cream surface) these
+               should be quiet typographic labels, not chips. */
             .section-eyebrow {
                 display: inline-flex;
-                padding: 12px 28px;
-                border-radius: var(--radius-pill);
-                background: rgba(255, 255, 255, 0.8);
                 text-transform: uppercase;
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wider);
-                color: #6b6b80;
+                color: var(--text-primary-faint);
                 margin-bottom: 32px;
-                box-shadow: var(--shadow-md);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.5);
             }
 
             .section-heading {
@@ -7268,7 +7270,6 @@ export const homeStyles = (): string => `
 
                 .section-eyebrow {
                     font-size: var(--text-eyebrow);
-                    padding: 10px 20px;
                     letter-spacing: clamp(2px, 0.3vw, 2.5px);
                     margin-bottom: var(--space-md);
                 }

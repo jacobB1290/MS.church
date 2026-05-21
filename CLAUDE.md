@@ -486,6 +486,64 @@ If a design decision could go three ways and the answer materially changes the i
 
 If the task is to make something work *right*, don't optimize for "minimum changes" or "fastest possible turn." Spend the time. v1.62.50 took ~an hour of probe scripts, viewport sweeps, watchdog tuning, helper refactoring, and post-scroll correction. That's the right amount of time for that task. A 10-minute fix that breaks on the next viewport produces three follow-up sessions and erodes the user's trust in the changelog.
 
+### The consultant panel — how to get honest design feedback
+
+For design / IA / "does this read right?" questions where your own judgement is likely to rationalize the current state, run a **parallel consultant panel** via the `Agent` tool. v1.62.55 (the .section-eyebrow flatten) is the canonical example: a single unbiased Opus consultant identified the pill chrome as the largest role-ambiguity issue on the page, and a follow-up panel of four divergent POVs confirmed both the fix (no one flagged the new flat eyebrow) and surfaced unrelated issues (broken images, "Learn more" inconsistency) that the original task had hidden.
+
+**When to use it**
+
+- Visual / design / interaction questions where you suspect bias ("does this look like a button?", "is this section reading as cluttered?", "is the hierarchy clear?").
+- Cross-checking a recommendation before shipping a meaningful design change.
+- Auditing a surface that's been worked on heavily — fresh eyes catch what the working eye has stopped seeing.
+
+**When NOT to use it**
+
+- Code logic, type errors, narrow factual questions — a single agent is enough.
+- Pre-decided changes you just want validated — that's not a panel, that's a rubber stamp.
+- Anything where the user has already given a clear directive — implement, then maybe panel-check after.
+
+**Set up the panel**
+
+- **3–5 agents, in parallel, in a single message.** Cost goes linearly with agents; wall-clock time stays flat. Send all the Agent tool calls in one assistant turn.
+- **Use Opus**, set `model: "opus"` explicitly. Sonnet can rationalize too; the strict critic role needs Opus's bite.
+- **Same artifact for every agent.** Same screenshots, same code paths, same context — comparability is the entire point.
+- **Distinct, well-defined POVs.** Generic "design reviewer × 4" gives generic × 4 answers. Calibrate each role.
+
+**Suggested roster (pick 3–5)**
+
+| Role | Lens | Calibration |
+|---|---|---|
+| **Strict editorial critic** | Zero tolerance for cliché / template / default UI; high editorial bar | Name the reference brands (Aesop, Monocle, New Yorker, Apple-About) in the prompt so the bar is concrete |
+| **IA / accessibility consultant** | Signal clarity, role legibility, hit targets, contrast, semantic hierarchy | Focuses on can-a-user-tell-what-this-is, not aesthetics |
+| **User proxy** | Specific demographic the site is built for (40yo parent shopping for a church, etc.) | Plain language, not designer-talk. "Don't try to sound smart" |
+| **Devil's advocate** | Find what's wrong, list nothing OK | Permission to be uncharitable. Skips polite validation |
+| **Brand / voice consultant** (optional 5th) | Does the copy and visual voice match the stated identity? | Useful when the surface is text-heavy or mission-related |
+
+**Prompting rules (this is where unbiased lives or dies)**
+
+- **Never name the element you're probing.** Asking "does the eyebrow look like a button?" leads the witness. Ask "audit the visual hierarchy and flag any role-ambiguity issues" — let them find the eyebrow themselves. If they don't flag it, that's information: it's not a problem.
+- **Never tell them your hypothesis.** "I think this is too subtle" pre-loads agreement. Show the artifact, ask for their read.
+- **Word limit** (~500 words) forces focused output. Long prompts get long, hedged, exhaustive answers; short prompts get the consultant's actual top concerns.
+- **Explicit permission to be brutal.** "Don't soften your critique to be polite." Without this, every Opus agent reverts to consultant-speak and buries the lede.
+- **Define the POV's blind spot indirectly.** The strict critic shouldn't care about a11y. The user proxy shouldn't sound like a designer. Each agent's strength is also a deliberate weakness — that's why the panel works.
+- **Specific questions per role** (numbered list of 3–6 items) — not "give me feedback." Each role gets a different question set tuned to their lens.
+
+**Reading the panel**
+
+- **Convergence (3+/4 agree)** → act on it, high confidence. This is the panel's primary value.
+- **Notable absence** is signal too. If nobody flagged the element you were probing, the change worked. If your edit didn't appear in any "what's wrong" list, that's confirmation.
+- **Divergence (1/4 outlier)** → consider whether the outlier's POV catches something others miss (the strict critic's "single biggest fix" is often the highest-leverage change — they're calibrated for it), or whether the outlier is just role bias.
+- **User-proxy reactions outweigh designer reactions** when the question is "will users get it?" Designers will rationalize. Users won't. The 40yo-parent proxy in v1.62.55 said "is this place actually together?" about the broken images — no designer used that framing, but it's the truth.
+- **Don't average the feedback.** Read each agent's report as its own coherent argument from its POV. Then look for what they all reached independently.
+
+**Anti-patterns**
+
+- All four agents with the same prompt → redundant, no triangulation, just N copies of one opinion.
+- Telling agents what you think first → biases the panel before it starts.
+- Generic "what do you think?" → vague, unactionable answers.
+- Single agent for a design decision → loses the convergence signal that makes the method work.
+- Asking the panel to vote on YOUR proposed fix → that's a survey, not consulting. Ask them to identify problems and propose fixes independently; THEN compare to your proposal.
+
 ---
 
 ## Editorial Philosophy & Design Way of Thinking

@@ -1249,32 +1249,41 @@ export const homeStyles = (): string => `
                the page before scrolling.
 
                History:
-                 v1.62.58 — middots between chips (CSS ::before).
-                   Bug: at narrow viewports the row wrapped with one
-                   chip alone on row 2, and its leading ::before
-                   middot orphaned ("· YOUTH" centered alone).
-                 v1.62.59 — dropped the middots; gap-only separation.
-                   Fixed the orphan dot but the last chip still
-                   wrapped alone, reading as "one button below the
-                   rest" — visually unbalanced.
-                 v1.62.60 (this) — middots restored, with an explicit
-                   in-DOM <span class="subpage-jump-break"> placed at
-                   each page's deliberate wrap point so narrow
-                   viewports show balanced rows (3+2 on /ministries,
-                   2+2 on /about and /visit). The break element's
-                   adjacent-sibling rule means the chip after the
-                   break is NOT preceded by an <a>, so the a+a::before
-                   middot rule naturally skips it — no orphan dot
-                   ever appears at the start of row 2.
+                 v1.62.58 — middots between chips. Bug: row wrapped
+                   on narrow with one chip alone on row 2 + leading
+                   orphan dot.
+                 v1.62.59 — dropped middots; gap-only. Still had the
+                   solo-chip wrap (no orphan dot but unbalanced row).
+                 v1.62.60 — middots restored + in-DOM break element
+                   forced a balanced 3+2 / 2+2 wrap on narrow. A
+                   verification panel then read the deliberate wrap
+                   as "wrap-of-convenience" — composed at first
+                   glance, but two stacked rows still felt template-
+                   default to the editorial eye.
+                 v1.62.61 (this) — single row by default at every
+                   viewport via aggressive shrink on narrow widths.
+                   The font, tracking, and inter-chip gap all scale
+                   down with viewport width (clamp) so the five
+                   /ministries chips fit on one line from 360px up.
+                   At ≤360 (where the chips genuinely overflow even
+                   at the smallest readable shrink) the in-DOM break
+                   element activates as a fallback for a balanced
+                   wrap. The break stays hidden everywhere else.
 
                Treatment:
                  • Gold-dark small-caps text; gold middots between
-                   adjacent chips within each row.
+                   adjacent chips.
                  • Hover: color deepens + scaleX(0→1) gold underline.
-                 • Wide viewports (>960px): all chips on one row,
-                   break element hidden via display:none.
-                 • Narrow viewports (≤960px): break element forces
-                   wrap; both rows centered. */
+                 • Wide (>960px): full --text-eyebrow, --tracking-wider,
+                   --space-lg column gap. Left-aligned.
+                 • Narrow (≤960px): font, tracking, and gap clamp
+                   down with viewport so the row fits on one line.
+                   Center-aligned.
+                 • Very narrow (≤360px): break element activates;
+                   chips wrap to a centered 3+2 (/ministries) or 2+2
+                   (/about, /visit). Adjacent-sibling rule on the
+                   middot means the chip after the break has no
+                   leading dot. */
             .subpage-jump {
                 display: flex;
                 flex-wrap: wrap;
@@ -1334,15 +1343,14 @@ export const homeStyles = (): string => `
             .subpage-jump a:focus-visible::after {
                 transform: scaleX(1);
             }
-            /* Deliberate wrap-break element. Hidden on wide; on narrow
-               it becomes a full-width zero-height flex item that
-               forces the chips after it onto a new row. The chip
-               immediately after this element does NOT inherit the
-               a+a::before middot, so row 2 never starts with a dot. */
+            /* Deliberate wrap-break element. Hidden by default. Only
+               activates at the narrowest viewports (≤360px) where the
+               chips genuinely overflow even at the smallest readable
+               shrink. The chip immediately after this element does NOT
+               inherit the a+a::before middot, so row 2 never starts
+               with a dot. */
             .subpage-jump-break {
                 display: none;
-                flex-basis: 100%;
-                height: 0;
             }
             @media (prefers-reduced-motion: reduce) {
                 .subpage-jump a,
@@ -1351,15 +1359,54 @@ export const homeStyles = (): string => `
                 }
             }
             @media (max-width: 960px) {
+                /* Aggressive shrink so the row stays on a single line
+                   at typical mobile widths (360+). Font, tracking, and
+                   column-gap all clamp down with viewport. */
                 .subpage-jump {
+                    --jump-gap: clamp(8px, 2.4vw, 24px);
+                    column-gap: var(--jump-gap);
                     justify-content: center;
-                    column-gap: var(--space-md);
+                }
+                .subpage-jump a {
+                    font-size: clamp(9px, 1.8vw, 10px);
+                    letter-spacing: clamp(1.2px, 0.35vw, 2.5px);
                 }
                 .subpage-jump a + a::before {
-                    left: calc(var(--space-md) * -0.5);
+                    left: calc(var(--jump-gap) * -0.5);
+                }
+            }
+            @media (max-width: 364px) {
+                /* /ministries (5 chips) — chips fit single-line at
+                   362+ via shrink; below that the break activates
+                   for a deliberate 3+2 wrap. /about's 4 short chips
+                   fit at 320+ so there's no break element in that
+                   DOM. Row-gap tightened so the two wrapped rows
+                   read as one cohesive index, not two floating
+                   groups. */
+                .subpage-jump {
+                    row-gap: 6px;
                 }
                 .subpage-jump-break {
                     display: block;
+                    flex-basis: 100%;
+                    height: 0;
+                }
+            }
+            @media (max-width: 392px) {
+                /* /visit has a long chip ("Before You Come") that
+                   prevents single-line up to ~393px. The modifier
+                   class on its nav extends the deliberate break to
+                   that wider threshold so /visit gets a clean 2+2
+                   at narrow phone widths instead of a 3+1 with
+                   Contact orphaned. Tighter row-gap matches the
+                   <365px tier. */
+                .subpage-jump--long-chip {
+                    row-gap: 6px;
+                }
+                .subpage-jump--long-chip .subpage-jump-break {
+                    display: block;
+                    flex-basis: 100%;
+                    height: 0;
                 }
             }
 
@@ -1372,7 +1419,10 @@ export const homeStyles = (): string => `
                     font-size: var(--text-body);
                 }
                 .subpage-jump {
-                    gap: var(--space-sm) var(--space-md);
+                    /* gap is managed by the .subpage-jump @media
+                       blocks above (column-gap clamps with viewport,
+                       row-gap tightens at ≤364px). Don't override
+                       it here or the cascade order kills both. */
                     margin-top: var(--space-sm);
                     padding-top: var(--space-sm);
                 }

@@ -127,7 +127,7 @@ export const visitBody = (): string => `
                 <section id="visit-intro">
                     <h1 class="section-heading">We can’t wait to meet you.</h1>
                     <p class="subpage-intro-lead">Here’s everything you need to know before Sunday: where we are, what an hour at Morning Star looks like, and what happens after the closing song.</p>
-                    <nav class="subpage-jump" aria-label="Jump to a section">
+                    <nav class="subpage-jump subpage-jump--long-chip" aria-label="Jump to a section">
                         <a href="#location">Find Us</a>
                         <a href="#what-to-expect">What to Expect</a>
                         <span class="subpage-jump-break" aria-hidden="true"></span>

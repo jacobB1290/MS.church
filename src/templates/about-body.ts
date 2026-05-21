@@ -20,7 +20,6 @@ export const aboutBody = (): string => `
                     <nav class="subpage-jump" aria-label="Jump to a section">
                         <a href="#mission">Our Story</a>
                         <a href="#beliefs">Beliefs</a>
-                        <span class="subpage-jump-break" aria-hidden="true"></span>
                         <a href="#leadership">Leadership</a>
                         <a href="#visit">Visit</a>
                     </nav>

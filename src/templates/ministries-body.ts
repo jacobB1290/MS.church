@@ -949,7 +949,9 @@ export const ministriesBody = (): string => `
             margin: var(--space-xs) 0 0;
             display: grid;
             gap: 10px;
-            padding: 0;
+            padding: var(--space-md) 0;
+            border-top: 1px solid var(--text-primary-hairline);
+            border-bottom: 1px solid var(--text-primary-hairline);
         }
         .ministry-tips > div {
             display: grid;
@@ -1246,18 +1248,18 @@ export const ministriesBody = (): string => `
                 display: none;
             }
 
-            /* Tips stacked label-above-value, no left-border chrome —
-               the small-caps gold key + tighter leading already creates
-               enough role separation against the surrounding prose. */
+            /* Tips stacked label-above-value, hairline left margin so
+               each tip reads as a separate beat instead of merging into
+               a paragraph. */
             .ministry-tips {
                 gap: 10px;
-                padding: 0;
+                padding: var(--space-sm) 0;
             }
             .ministry-tips > div {
                 grid-template-columns: 1fr;
                 gap: 2px;
-                padding-left: 0;
-                border-left: 0;
+                padding-left: var(--space-xs);
+                border-left: 2px solid rgba(212, 165, 116, 0.35);
             }
             .ministry-tips dt {
                 font-size: var(--text-micro);

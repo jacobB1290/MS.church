@@ -1297,7 +1297,7 @@ export const homeStyles = (): string => `
             .subpage-jump a {
                 font-family: var(--font-body);
                 font-size: var(--text-eyebrow);
-                font-weight: var(--weight-semibold);
+                font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
                 color: var(--gold-dark);
@@ -1359,37 +1359,39 @@ export const homeStyles = (): string => `
                 }
             }
             @media (max-width: 960px) {
-                /* Center the row on narrow viewports. Tighter column-
-                   gap + tracking so the 5-chip /ministries row fits
-                   on a single line on standard modern phone widths
-                   (393, 414, 430) — the editorial bar is "no wrap if
-                   we can avoid it." Font-size stays at the full
-                   --text-eyebrow (10px) so the chips still read at
-                   the editorial baseline; only the inter-chip and
-                   inter-letter space tightens. */
+                /* Center the row on narrow viewports. Type stays at
+                   full --text-eyebrow / --tracking-wider — that's the
+                   editorial-baseline size the user benchmarked against
+                   (the iPhone 17 Pro Max target screenshot). Column-
+                   gap matches the editorial chip rhythm. Wrap (the
+                   per-page deliberate break below) is the fallback
+                   when the row can't fit, not typographic shrink. */
                 .subpage-jump {
-                    --jump-gap: clamp(6px, 2vw, 16px);
+                    --jump-gap: var(--space-md);
                     column-gap: var(--jump-gap);
                     justify-content: center;
-                }
-                .subpage-jump a {
-                    letter-spacing: clamp(1.2px, 0.35vw, 2.5px);
                 }
                 .subpage-jump a + a::before {
                     left: calc(var(--jump-gap) * -0.5);
                 }
             }
-            /* Per-page break thresholds. With v1.62.63's tighter
-               tracking and column-gap on mobile (font stays full
-               size), the natural fit widens significantly:
-                 /ministries (5 chips) wraps only at 320 → break ≤320
-                 /about (4 short chips) fits at 320 — no break
-                 /visit (4 chips with BEFORE YOU COME) wraps up to
-                   ~413px → break ≤413 via .subpage-jump--long-chip
-               Tight row-gap when wrapping so the two rows read as
-               one cohesive index. */
-            @media (max-width: 413px) {
-                /* /visit only — long-chip variant wraps up to ~413. */
+            /* Per-page break thresholds (v1.62.64). Type is at full
+               --text-eyebrow + --weight-bold + --tracking-wider on
+               every viewport (matches the .section-eyebrow style
+               the user benchmarked against). Natural fit per page:
+                 /ministries (5 chips) wraps up to ~439 → break ≤439
+                 /about (4 short chips) wraps only at 320 → break ≤320
+                 /visit (4 chips, BEFORE YOU COME long) wraps up to
+                   ~479 → break ≤479
+               Row-gap tightens to 6px whenever the break fires so
+               the two wrapped rows read as one cohesive index.
+               The chip immediately after .subpage-jump-break has
+               the break (not an <a>) as its previous sibling, so
+               the a+a::before middot rule correctly skips it — no
+               orphan dot at the start of row 2. */
+            @media (max-width: 479px) {
+                /* /visit only — .subpage-jump--long-chip handles the
+                   wider wrap range caused by "Before You Come". */
                 .subpage-jump--long-chip {
                     row-gap: 6px;
                 }
@@ -1399,15 +1401,25 @@ export const homeStyles = (): string => `
                     height: 0;
                 }
             }
-            @media (max-width: 320px) {
-                /* Default (/ministries) — 5 chips fit single-line on
-                   every standard phone width; only the very narrowest
-                   (iPhone SE 1st gen et al.) need the deliberate
-                   3+2 wrap. */
-                .subpage-jump:not(.subpage-jump--long-chip) {
+            @media (max-width: 439px) {
+                /* /ministries — 5 chips wrap up to ~439, single
+                   line at 440+ (iPhone 17 Pro Max territory). */
+                .subpage-jump:not(.subpage-jump--short-set):not(.subpage-jump--long-chip) {
                     row-gap: 6px;
                 }
-                .subpage-jump:not(.subpage-jump--long-chip) > .subpage-jump-break {
+                .subpage-jump:not(.subpage-jump--short-set):not(.subpage-jump--long-chip) > .subpage-jump-break {
+                    display: block;
+                    flex-basis: 100%;
+                    height: 0;
+                }
+            }
+            @media (max-width: 320px) {
+                /* /about's 4 short chips only fail to fit at the
+                   very narrowest legacy phone widths. */
+                .subpage-jump--short-set {
+                    row-gap: 6px;
+                }
+                .subpage-jump--short-set .subpage-jump-break {
                     display: block;
                     flex-basis: 100%;
                     height: 0;

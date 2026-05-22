@@ -1790,7 +1790,7 @@ export const homeScripts = (): string => `
                     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
                     var params = 'enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
                     if (muted) params += '&autoplay=1&mute=1';
-                    iframe.src = 'https://www.youtube.com/embed/' + videoId + '?' + params;
+                    iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?' + params;
                     videoWrapper.insertBefore(iframe, videoWrapper.firstChild);
                     _preloadedIframe = iframe;
                     iframe.addEventListener('load', function() {
@@ -1847,7 +1847,7 @@ export const homeScripts = (): string => `
                         iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
                         var fallbackParams = 'autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
                         if (_shouldAutoPlay) fallbackParams += '&mute=1';
-                        iframe.src = 'https://www.youtube.com/embed/' + _ytVideoId
+                        iframe.src = 'https://www.youtube-nocookie.com/embed/' + _ytVideoId
                             + '?' + fallbackParams;
                         videoWrapper.appendChild(iframe);
                         _preloadedIframe = iframe;
@@ -2084,7 +2084,7 @@ export const homeScripts = (): string => `
                         var iframe = document.createElement('iframe');
                         iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
                         iframe.setAttribute('allowfullscreen', '');
-                        iframe.src = 'https://www.youtube.com/embed/' + videoId
+                        iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId
                             + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
                         _playerSlot.innerHTML = '';
                         _playerSlot.appendChild(iframe);

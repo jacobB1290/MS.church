@@ -11,24 +11,24 @@ export function registerPrivacyRoute(app: Hono) {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           
           <!-- Primary Meta Tags -->
-          <title>Privacy Policy, Terms & Accessibility | Morning Star Christian Church</title>
-          <meta name="title" content="Privacy Policy, Terms & Accessibility | Morning Star Christian Church">
-          <meta name="description" content="Privacy Policy, Terms of Service, and Accessibility Statement for Morning Star Christian Church in Boise, Idaho. Learn how we protect your data and our commitment to accessibility.">
+          <title>Privacy Policy & Terms | Morning Star Christian Church</title>
+          <meta name="title" content="Privacy Policy & Terms | Morning Star Christian Church">
+          <meta name="description" content="Privacy Policy and Terms of Service for Morning Star Christian Church in Boise, Idaho. Learn how we protect your data when you use our website.">
           <meta name="robots" content="index, follow">
           <link rel="canonical" href="https://ms.church/privacy">
-          
+
           <!-- Open Graph / Facebook -->
           <meta property="og:type" content="website">
           <meta property="og:url" content="https://ms.church/privacy">
           <meta property="og:title" content="Legal Information | Morning Star Christian Church">
-          <meta property="og:description" content="Privacy Policy, Terms of Service, and Accessibility Statement for Morning Star Christian Church.">
+          <meta property="og:description" content="Privacy Policy and Terms of Service for Morning Star Christian Church.">
           <meta property="og:site_name" content="Morning Star Christian Church">
-          
+
           <!-- Twitter -->
           <meta name="twitter:card" content="summary">
           <meta name="twitter:url" content="https://ms.church/privacy">
           <meta name="twitter:title" content="Legal Information | Morning Star Christian Church">
-          <meta name="twitter:description" content="Privacy Policy, Terms of Service, and Accessibility Statement for Morning Star Christian Church.">
+          <meta name="twitter:description" content="Privacy Policy and Terms of Service for Morning Star Christian Church.">
           
           <!-- Schema.org Structured Data — minimal page entry tied to the
                canonical Church + WebSite entities from the home page graph. -->
@@ -40,8 +40,8 @@ export function registerPrivacyRoute(app: Hono) {
                       "@type": "WebPage",
                       "@id": "https://ms.church/privacy#page",
                       "url": "https://ms.church/privacy",
-                      "name": "Privacy Policy, Terms & Accessibility · Morning Star Christian Church",
-                      "description": "Privacy Policy, Terms of Service, and Accessibility Statement for Morning Star Christian Church in Boise, Idaho.",
+                      "name": "Privacy Policy & Terms · Morning Star Christian Church",
+                      "description": "Privacy Policy and Terms of Service for Morning Star Christian Church in Boise, Idaho.",
                       "isPartOf": { "@id": "https://ms.church/#website" },
                       "about": { "@id": "https://ms.church/#church" },
                       "inLanguage": "en-US"
@@ -287,13 +287,12 @@ export function registerPrivacyRoute(app: Hono) {
               
               <div class="page-header">
                   <h1>Legal Information</h1>
-                  <p class="last-updated">Last Updated: February 3, 2026</p>
+                  <p class="last-updated">Effective Date: May 22, 2026 &middot; Last Updated: May 22, 2026</p>
               </div>
-              
+
               <nav class="nav-tabs">
                   <a href="#privacy" class="nav-tab">Privacy Policy</a>
                   <a href="#terms" class="nav-tab">Terms of Service</a>
-                  <a href="#accessibility" class="nav-tab">Accessibility</a>
               </nav>
               
               <!-- ==================== PRIVACY POLICY ==================== -->
@@ -307,16 +306,17 @@ export function registerPrivacyRoute(app: Hono) {
                   <h2>Information We Collect</h2>
                   
                   <h3>1. Information You Provide Voluntarily</h3>
-                  <p>When you use our contact form (powered by Jotform), you may voluntarily provide us with personal information, including but not limited to:</p>
+                  <p>When you use our contact form, you may voluntarily provide us with personal information, including but not limited to:</p>
                   <ul>
-                      <li><strong>Full Name</strong> – to identify and address you personally</li>
-                      <li><strong>Email Address</strong> – to respond to your inquiries and communicate with you</li>
-                      <li><strong>Phone Number</strong> – to contact you if requested or necessary</li>
-                      <li><strong>Message Content</strong> – any additional information you choose to share</li>
+                      <li><strong>Full Name</strong> &ndash; to identify and address you personally</li>
+                      <li><strong>Email Address</strong> &ndash; to respond to your inquiries and communicate with you</li>
+                      <li><strong>Phone Number</strong> &ndash; to contact you if requested or necessary</li>
+                      <li><strong>Message Content</strong> &ndash; any additional information you choose to share</li>
                   </ul>
-                  <p>This information is collected for the purpose of potentially responding to your inquiries, facilitating communication regarding church activities, services, or prayer requests, and sending you promotional materials about our church including newsletters, event announcements, and ministry updates via email and text message. <strong>Please note:</strong> Submitting information through our contact form does not obligate us to respond or take any action. See our Terms of Service for details.</p>
+                  <p>Our contact form is provided by <strong>EngageBay, Inc.</strong> (also operating under the &ldquo;Engage Hub&rdquo; brand at engagehub.app), a U.S.-based customer-relationship-management (CRM) and marketing-automation platform. Form data you submit is transmitted to and stored in EngageBay&rsquo;s CRM, where authorized church staff and volunteers can access it to respond to your inquiry, organize ministry follow-up, and &mdash; where you have consented &mdash; send church communications by email or SMS text message. The EngageBay form embed is delivered through Amazon CloudFront (a content-delivery network); loading the form may cause your browser to receive cookies or similar identifiers set by EngageBay.</p>
+                  <p>This information is collected for the purpose of potentially responding to your inquiries, facilitating communication regarding church activities, services, or prayer requests, and sending you informational and ministry communications including newsletters, event announcements, and prayer updates via email and SMS text message. <strong>Please note:</strong> Submitting information through our contact form does not obligate us to respond or take any action. See our Terms of Service for details.</p>
                   <p><strong>Sensitive Information Warning:</strong> Please do not submit sensitive personal information (such as medical details, financial information, or other confidential data) through our contact form unless you choose to share it. If you include such information (for example, in a prayer request), you understand it may be viewed by church staff and volunteers who handle these requests.</p>
-                  <p><strong>Who Receives Your Information:</strong> When you submit information through our contact form, it is stored in Jotform, emailed to church staff at our church email address, and may be accessed by authorized church members and volunteers for the purpose of responding to your inquiry or fulfilling ministry-related activities (such as outreach drives).</p>
+                  <p><strong>Who Receives Your Information:</strong> When you submit information through our contact form, it is stored in EngageBay&rsquo;s CRM, emailed to church staff at our church email address, and may be accessed by authorized church members and volunteers for the purpose of responding to your inquiry or fulfilling ministry-related activities (such as outreach drives).</p>
                   
                   <h3>2. Automatically Collected Information (Analytics)</h3>
                   <p>We use <strong>Vercel Web Analytics</strong> and <strong>Vercel Speed Insights</strong> to understand overall traffic and website performance. These services are designed to be privacy-focused. The data collected may include:</p>
@@ -339,14 +339,14 @@ export function registerPrivacyRoute(app: Hono) {
                       <li>To improve our website and user experience based on aggregated analytics</li>
                       <li>To maintain the security and functionality of our Site</li>
                   </ul>
-                  <p><strong>Consent:</strong> Our contact form requires you to agree to receive church updates by email and text message before submission. By checking the required consent boxes and submitting the form, you expressly consent to receiving communications from Morning Star Christian Church at the email address and phone number you provide. Standard message and data rates may apply to text messages. Message frequency varies. <strong>Consent to receive messages is not a condition of attending church services or receiving ministry support.</strong></p>
-                  <p><strong>Opt-Out:</strong> You may opt out of communications at any time. See the "Your Rights" section below for opt-out instructions. Reply HELP to any text message for assistance.</p>
+                  <p><strong>Consent:</strong> Our contact form requires you to agree to receive church updates by email and SMS text message before submission. By checking the required consent boxes and submitting the form, you expressly consent to receiving communications from Morning Star Christian Church at the email address and phone number you provide. Message and data rates may apply to text messages. Message frequency varies. Carriers are not liable for delayed or undelivered messages. <strong>Consent to receive messages is not a condition of attending church services or receiving ministry support.</strong> Your consent is given to Morning Star Christian Church only; we will not sell or share your phone number, email address, or consent record with third parties for their marketing purposes.</p>
+                  <p><strong>Opt-Out:</strong> You may opt out of communications at any time. See the &ldquo;Your Rights&rdquo; section below for opt-out instructions. Reply HELP to any text message for assistance.</p>
                   <p><strong>Access Controls:</strong> Access to your personal information is limited to church staff and authorized volunteers who need it to respond to your inquiry or fulfill ministry-related activities.</p>
                   
                   <h2>Third-Party Services</h2>
                   
-                  <h3>Jotform (Contact Form)</h3>
-                  <p>Our contact form is powered by Jotform. Jotform processes form submissions on our behalf. When you submit information through our form, it is stored by Jotform and also emailed to our church staff. Jotform maintains industry-standard security measures. For more information, please review <a href="https://www.jotform.com/privacy/" target="_blank" rel="noopener">Jotform's Privacy Policy</a>.</p>
+                  <h3>EngageBay / Engage Hub (Contact Form and CRM)</h3>
+                  <p>Our contact form is powered by EngageBay, Inc. (operating under the &ldquo;Engage Hub&rdquo; brand at engagehub.app). EngageBay processes form submissions on our behalf and stores them in its CRM for our staff to access, and is also the platform we use to send church emails and SMS text messages to subscribers. The form embed script is delivered through Amazon CloudFront. EngageBay may collect technical data (IP address, browser/device information, page URL) and set cookies when the form loads, in accordance with its own privacy practices. For more information, please review <a href="https://www.engagebay.com/privacy-policy" target="_blank" rel="noopener">EngageBay&rsquo;s Privacy Policy</a>.</p>
                   
                   <h3>Vercel (Hosting and Analytics)</h3>
                   <p>Our website is hosted on Vercel, which also provides our analytics services. Vercel Web Analytics is designed to be privacy-focused and does not use cookies. For more information, please review <a href="https://vercel.com/docs/analytics/privacy-policy" target="_blank" rel="noopener">Vercel's Analytics Privacy Policy</a>.</p>
@@ -373,10 +373,10 @@ export function registerPrivacyRoute(app: Hono) {
                   </ul>
                   <p>We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.</p>
                   
-                  <p><strong>Important:</strong> Even though our own analytics do not use cookies, third-party embedded content (such as YouTube videos and the Jotform contact form) may collect data and set cookies independently. We cannot control or monitor this third-party data collection.</p>
+                  <p><strong>Important:</strong> Even though our own analytics do not use cookies, third-party embedded content (such as YouTube videos and the EngageBay contact form) may collect data and set cookies independently. We cannot control or monitor this third-party data collection.</p>
                   
                   <h2>Data Retention</h2>
-                  <p><strong>Contact Form Submissions:</strong> Form submissions are retained in Jotform and our email records for as long as needed for ministry purposes and church recordkeeping. We periodically review stored data and delete or anonymize information when it is no longer needed. If you would like your information deleted sooner, please submit a written request by mail as described in the "Your Rights" section below.</p>
+                  <p><strong>Contact Form Submissions:</strong> Form submissions are retained in our EngageBay CRM and in our email records for as long as needed for ministry purposes and church recordkeeping. We periodically review stored data and delete or anonymize information when it is no longer needed. If you would like your information deleted sooner, please submit a written request by mail as described in the &ldquo;Your Rights&rdquo; section below.</p>
                   <p><strong>Analytics Data:</strong> Analytics data is retained in accordance with Vercel's data retention policies and is used solely for aggregated statistical purposes.</p>
                   <p><strong>Backups:</strong> Please note that your information may also exist in routine backups, which are retained for operational and security purposes.</p>
                   
@@ -393,7 +393,7 @@ export function registerPrivacyRoute(app: Hono) {
                   <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. This includes:</p>
                   <ul>
                       <li>SSL/TLS encryption for all data transmitted to and from our Site</li>
-                      <li>Secure form submission through Jotform's encrypted platform</li>
+                      <li>Secure form submission through EngageBay&rsquo;s TLS-encrypted platform</li>
                       <li>Limited access to personal information on a need-to-know basis</li>
                   </ul>
                   <p>However, please be aware that no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
@@ -437,8 +437,8 @@ export function registerPrivacyRoute(app: Hono) {
                   <p>If we receive a valid privacy request, we will make reasonable efforts to respond within a reasonable time. Response times may vary depending on the nature of the request, the need to verify your identity, and the availability of staff and volunteers. As a religious organization operated primarily by volunteers, we appreciate your patience.</p>
                   <p>To protect your privacy, we may need to verify your identity before processing your request.</p>
                   
-                  <h2>Children's Privacy</h2>
-                  <p>Our Site is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately by mail or email (see "How to Contact Us" below) so we can delete such information.</p>
+                  <h2>Children&rsquo;s Privacy</h2>
+                  <p>Morning Star Christian Church warmly welcomes children of all ages to our worship services and ministry programs in person. The data-collection portions of this Site &mdash; the contact form, email list, and SMS text message service &mdash; are intended for use by adults (age 13 and older). We do not knowingly collect personal information online from children under 13 through the Site. If you are a parent or guardian and believe your child has submitted information through our website, please contact us immediately by mail or email (see &ldquo;How to Contact Us&rdquo; below) so we can delete such information.</p>
                   
                   <h2>Changes to This Policy</h2>
                   <p>We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any material changes by posting the new Privacy Policy on this page with an updated "Last Updated" date. We encourage you to review this Privacy Policy periodically.</p>
@@ -453,8 +453,8 @@ export function registerPrivacyRoute(app: Hono) {
                   <p>If you are accessing our Site from outside the United States, please be aware that your information may be transferred to, stored, and processed in the United States where our servers are located. By using our Site, you consent to such transfer.</p>
                   
                   <h2>How to Contact Us</h2>
-                  <p>If you have any questions about this Privacy Policy or our data practices, you may contact us using the methods below.</p>
-                  
+                  <p>If you have any questions about this Privacy Policy or our data practices, or if you need assistance accessing information on this Site, you may contact us using the methods below. We will make reasonable efforts, as a volunteer-operated congregation, to provide the information you need in a format that works for you.</p>
+
                   <div class="contact-box">
                       <h3>Contact Information</h3>
                       <p><strong>By Mail (Primary Method):</strong></p>
@@ -561,7 +561,7 @@ export function registerPrivacyRoute(app: Hono) {
                   <p>This website may contain links to third-party websites, including social media platforms, for your convenience and reference. These links do not constitute an endorsement or approval of the content, products, services, or opinions expressed on those external sites. Morning Star Christian Church has no control over and assumes no responsibility for the content, privacy policies, or practices of any third-party websites. You access external links at your own risk and subject to the terms and conditions of those sites.</p>
                   
                   <h2>Third-Party Services</h2>
-                  <p>Our Site uses third-party services including but not limited to Jotform (contact forms), Vercel (hosting and analytics), and YouTube (embedded videos). Your use of these services is subject to their respective terms of service and privacy policies. We are not responsible for the practices of these third-party services.</p>
+                  <p>Our Site uses third-party services including but not limited to EngageBay (contact form and CRM), Vercel (hosting and analytics), and YouTube (embedded videos). Your use of these services is subject to their respective terms of service and privacy policies. We are not responsible for the practices of these third-party services.</p>
                   
                   <h2>Governing Law and Jurisdiction</h2>
                   <p>These Terms shall be governed by and construed in accordance with the laws of the State of Idaho, United States, without regard to its conflict of law provisions. Any legal action or proceeding arising out of or relating to these Terms or your use of the Site shall be brought exclusively in the state or federal courts located in Ada County, Idaho, and you consent to the personal jurisdiction of such courts.</p>
@@ -570,7 +570,7 @@ export function registerPrivacyRoute(app: Hono) {
                   <p>If any provision of these Terms is found to be unenforceable or invalid by a court of competent jurisdiction, that provision shall be limited or eliminated to the minimum extent necessary so that these Terms shall otherwise remain in full force and effect and enforceable.</p>
                   
                   <h2>Entire Agreement</h2>
-                  <p>These Terms, together with our Privacy Policy and Accessibility Statement, constitute the entire agreement between you and Morning Star Christian Church regarding your use of the Site and supersede all prior and contemporaneous understandings, agreements, representations, and warranties.</p>
+                  <p>These Terms, together with our Privacy Policy, constitute the entire agreement between you and Morning Star Christian Church regarding your use of the Site and supersede all prior and contemporaneous understandings, agreements, representations, and warranties.</p>
                   
                   <h2>Waiver</h2>
                   <p>The failure of Morning Star Christian Church to enforce any right or provision of these Terms will not be deemed a waiver of such right or provision. Any waiver of any provision of these Terms will be effective only if in writing and signed by Morning Star Christian Church.</p>
@@ -593,92 +593,6 @@ export function registerPrivacyRoute(app: Hono) {
                   </div>
               </section>
               
-              <!-- ==================== ACCESSIBILITY STATEMENT ==================== -->
-              <section id="accessibility" class="legal-section">
-                  <h1 class="section-title">Accessibility Statement</h1>
-                  
-                  <h2>Religious Organization Status</h2>
-                  <p>Morning Star Christian Church is a religious organization. As a religious entity, we are generally exempt from Title III of the Americans with Disabilities Act (ADA). This exemption is recognized by the ADA National Network and is rooted in the First Amendment to the United States Constitution, which protects the free exercise of religion. However, we recognize that laws and requirements can vary by situation and jurisdiction.</p>
-                  <p>Regardless of any legal exemptions, we want our website to be as accessible and welcoming as practical for all visitors. Our commitment to accessibility reflects our values of inclusion and service to our community.</p>
-                  
-                  <h2>Our Voluntary Commitment to Accessibility</h2>
-                  <p>While Morning Star Christian Church is legally exempt from ADA compliance requirements, we are committed to making our website as accessible as possible to all visitors, including those with disabilities. This commitment reflects our core values of love, inclusion, and service to our community.</p>
-                  <p>We voluntarily strive to follow the principles of the <strong>Web Content Accessibility Guidelines (WCAG) 2.1</strong> where practical, recognizing that digital accessibility aligns with our mission to welcome all people.</p>
-                  
-                  <h2>Accessibility Features</h2>
-                  <p>We have made efforts to include the following accessibility considerations on our website:</p>
-                  <ul>
-                      <li>Semantic HTML structure for screen reader compatibility</li>
-                      <li>Descriptive alt text for images where applicable</li>
-                      <li>Clear navigation and logical page structure</li>
-                      <li>Readable fonts and text sizing</li>
-                      <li>ARIA labels on interactive elements</li>
-                      <li>Sufficient color contrast for text readability</li>
-                      <li>Keyboard-navigable interface elements</li>
-                  </ul>
-                  
-                  <h2>Known Limitations</h2>
-                  <p>As a volunteer-operated religious organization with limited resources, some areas of our website may not fully meet all accessibility standards. We are continually working to improve the accessibility of our site as resources permit. Known limitations may include:</p>
-                  <ul>
-                      <li>Some older content may not have complete alt text descriptions</li>
-                      <li>Certain interactive elements may have limited keyboard accessibility</li>
-                      <li>Video content may not have closed captions in all cases</li>
-                  </ul>
-                  
-                  <h2>Third-Party Content</h2>
-                  <p>Our website may include embedded content from third-party services (such as YouTube videos, Jotform contact forms, and social media platforms). We do not control the accessibility features of these external services, and their accessibility practices are governed by their respective providers:</p>
-                  <ul>
-                      <li><strong>YouTube</strong> – <a href="https://support.google.com/youtube/answer/189278" target="_blank" rel="noopener">YouTube Accessibility Features</a></li>
-                      <li><strong>Jotform</strong> – <a href="https://www.jotform.com/accessibility/" target="_blank" rel="noopener">Jotform Accessibility</a></li>
-                  </ul>
-                  
-                  <h2>Assistive Technologies</h2>
-                  <p>Our website is designed to be compatible with the following assistive technologies:</p>
-                  <ul>
-                      <li>Screen readers (such as JAWS, NVDA, VoiceOver)</li>
-                      <li>Screen magnification software</li>
-                      <li>Speech recognition software</li>
-                      <li>Keyboard-only navigation</li>
-                  </ul>
-                  
-                  <h2>Alternative Formats</h2>
-                  <p>If you need information from our website in an alternative format, we are happy to help as resources permit. Upon request, we can provide key information in formats such as:</p>
-                  <ul>
-                      <li>Large print documents</li>
-                      <li>Information read aloud over the phone</li>
-                      <li>Plain text versions of content</li>
-                  </ul>
-                  <p>Please contact us using the methods described in "How to Contact Us" below to request an alternative format.</p>
-                  
-                  <h2>Feedback and Assistance</h2>
-                  <p>We welcome feedback on the accessibility of our website. If you encounter any accessibility barriers or need assistance accessing any content, please contact us using the methods described in "How to Contact Us" below. We will make reasonable efforts to provide the information you need in an accessible format.</p>
-                  <p>When contacting us about accessibility, please include:</p>
-                  <ul>
-                      <li>The web address (URL) of the content you were trying to access</li>
-                      <li>A description of the accessibility problem you encountered</li>
-                      <li>Your preferred format for receiving the information (e.g., large print, audio, etc.)</li>
-                  </ul>
-                  
-                  <h2>Continuous Improvement</h2>
-                  <p>We are committed to continuously improving the accessibility of our website. We periodically review our site for accessibility issues and work to address them as resources allow. If you have suggestions for improving accessibility, we welcome your input.</p>
-                  
-                  <h2>How to Contact Us</h2>
-                  <p>If you need assistance, want to report an accessibility issue, or have suggestions for improvement, you may contact us using the methods below.</p>
-                  
-                  <div class="contact-box">
-                      <h3>Contact Information</h3>
-                      <p><strong>By Mail (Primary Method):</strong></p>
-                      <p style="margin-left: 20px;">
-                          Morning Star Christian Church<br>
-                          Attn: Accessibility<br>
-                          3080 Wildwood St<br>
-                          Boise, Idaho 83713
-                      </p>
-                      <p style="margin-top: 16px;"><strong>By Email or Contact Form (Convenience):</strong></p>
-                      <p>You may also reach us by email at <a href="mailto:support@ms.church">support@ms.church</a> or through our <a href="/#contact">website contact form</a>. Please note that email and form submissions are provided as a convenience only. These channels may not be monitored regularly, and we cannot guarantee a response.</p>
-                      <p class="legal-footnote"><em>Note: As a volunteer-operated religious organization, we are under no obligation to respond to any communication. Response times vary based on volunteer availability. We will make reasonable efforts to assist with accessibility needs as resources permit.</em></p>
-                  </div>
-              </section>
           </div>
           
           <script>

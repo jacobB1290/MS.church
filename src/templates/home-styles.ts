@@ -7105,7 +7105,13 @@ export const homeStyles = (): string => `
                     padding-left: 0;
                 }
 
-                nav {
+                /* Header nav inside the .nav-shell. Selector is
+                   scoped so it does NOT leak to other <nav> elements
+                   like .subpage-jump (which is a <nav> too and was
+                   inheriting justify-content: center from a bare-tag
+                   selector here — v1.62.70 removed the chip-strip's
+                   own centering but missed this ancestor rule). */
+                .nav-shell nav {
                     text-align: center;
                     flex: 1;
                     display: flex;

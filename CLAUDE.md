@@ -335,9 +335,9 @@ The numbers below are the source of truth; if anything here differs from `:root`
 | **Color — event tints** | `--bg-event1..5` | Calendar event card backgrounds (rotating) |
 | **Color — text** | `--text-primary`, `--text-primary-soft` (.85), `-muted` (.72), `-faint` (.55), `-fade` (.30), `-hairline` (.10) | Headings → faint metadata → dividers. Use the alpha that's closest; don't invent new alphas. |
 | **Font family** | `--font-display` (Playfair), `--font-body` (Inter) | Headings → display; everything else → body |
-| **Type scale** | `--text-hero`, `--text-title`, `--text-heading`, `--text-lead`, `--text-body`, `--text-small`, `--text-label`, `--text-eyebrow` | 8-step fluid scale. Snap raw px to the nearest. |
+| **Type scale** | `--text-hero`, `--text-title`, `--text-heading`, `--text-lead`, `--text-body`, `--text-compact`, `--text-small`, `--text-label`, `--text-micro`, `--text-eyebrow` | 10-step fluid scale. Snap raw px to the nearest. `--text-compact` (15px) and `--text-micro` (11px) are for dense info modules (tip tables, gazetteer keys, provenance lines) where body needs to read quieter than `--text-body` sitting in the same column. |
 | **Weights** | `--weight-regular` (400), `--weight-medium` (500), `--weight-semibold` (600), `--weight-bold` (700) | Use the named token, not the number |
-| **Leading** | `--leading-tight` (1.1), `--leading-snug` (1.3), `--leading-normal` (1.6), `--leading-loose` (1.8) | Display → snug, body → normal, prose lead → loose |
+| **Leading** | `--leading-tight` (1.1), `--leading-snug` (1.3), `--leading-prose` (1.5), `--leading-normal` (1.6), `--leading-loose` (1.8) | Display → snug; dense info modules → prose; body → normal; prose lead → loose |
 | **Tracking** | `--tracking-tight` (-0.02em), `--tracking-normal` (0), `--tracking-wide` (0.12em), `--tracking-wider` (0.25em) | Eyebrows → wider, buttons → wide |
 | **Spacing — T-shirt** | `--space-xs` (≈10), `-sm` (≈14), `-md` (≈20), `-lg` (≈28), `-xl` (≈36), `-2xl` (≈52), `-3xl` (≈72) | Every `padding` / `margin` / `gap` / `row-gap` / `column-gap`. All are fluid clamps. |
 | **Border radius** | `--radius-sm` (8), `-md` (16), `-lg` (~22), `-xl` (~26), `-2xl` (~40), `-pill` (100), `-circle` (50%) | Pill chips → pill; cards → md/lg/xl; page wraps → 2xl |

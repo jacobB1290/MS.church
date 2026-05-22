@@ -948,20 +948,18 @@ export const ministriesBody = (): string => `
         .ministry-tips {
             margin: var(--space-xs) 0 0;
             display: grid;
-            gap: var(--space-sm);
-            padding: var(--space-md) 0;
-            border-top: 1px solid var(--text-primary-hairline);
-            border-bottom: 1px solid var(--text-primary-hairline);
+            gap: 10px;
+            padding: 0;
         }
         .ministry-tips > div {
             display: grid;
-            grid-template-columns: clamp(120px, 13vw, 160px) 1fr;
+            grid-template-columns: clamp(96px, 10vw, 128px) 1fr;
             gap: var(--space-sm);
             align-items: baseline;
         }
         .ministry-tips dt {
             font-family: var(--font-display);
-            font-size: var(--text-label);
+            font-size: var(--text-micro);
             font-weight: var(--weight-bold);
             letter-spacing: var(--tracking-wide);
             text-transform: uppercase;
@@ -971,8 +969,8 @@ export const ministriesBody = (): string => `
         .ministry-tips dd {
             margin: 0;
             color: var(--text-primary-muted);
-            font-size: var(--text-body);
-            line-height: var(--leading-loose);
+            font-size: var(--text-compact);
+            line-height: var(--leading-prose);
         }
 
         /* Inline address-pill trigger inside .ministry-title — opens the
@@ -1248,26 +1246,26 @@ export const ministriesBody = (): string => `
                 display: none;
             }
 
-            /* Tips stacked label-above-value, hairline left margin so
-               each tip reads as a separate beat instead of merging into
-               a paragraph. */
+            /* Tips stacked label-above-value, no left-border chrome —
+               the small-caps gold key + tighter leading already creates
+               enough role separation against the surrounding prose. */
             .ministry-tips {
-                gap: var(--space-sm);
-                padding: var(--space-sm) 0;
+                gap: 10px;
+                padding: 0;
             }
             .ministry-tips > div {
                 grid-template-columns: 1fr;
                 gap: 2px;
-                padding-left: var(--space-xs);
-                border-left: 2px solid rgba(212, 165, 116, 0.35);
+                padding-left: 0;
+                border-left: 0;
             }
             .ministry-tips dt {
-                font-size: var(--text-label);
+                font-size: var(--text-micro);
                 letter-spacing: var(--tracking-wide);
             }
             .ministry-tips dd {
-                font-size: var(--text-body);
-                line-height: var(--leading-normal);
+                font-size: var(--text-compact);
+                line-height: var(--leading-prose);
             }
 
             /* Address pills become bigger tap targets on mobile. */

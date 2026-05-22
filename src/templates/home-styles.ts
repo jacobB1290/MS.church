@@ -117,8 +117,10 @@ export const homeStyles = (): string => `
                 --text-heading: clamp(20px, 2.5vw, 26px); /* Card / item h3 sub-headings */
                 --text-lead:    clamp(17px, 1.5vw, 20px); /* Lead paragraphs */
                 --text-body:    16px;                      /* Base body text */
+                --text-compact: 15px;                      /* Dense info modules — tip tables, sidebars, anywhere body needs to read as quieter than --text-body sitting in the same column. One step down from body without crossing into --text-small. */
                 --text-small:   14px;                      /* Nav links, secondary text */
                 --text-label:   12px;                      /* Buttons, UI labels */
+                --text-micro:   11px;                      /* Compact uppercase scan-labels (tip-row keys, gazetteer keys, provenance). Sits between --text-label and --text-eyebrow; needs wide tracking + bold weight to stay legible at small caps. */
                 --text-eyebrow: 10px;                      /* Eyebrows, badges, overlines */
 
                 /* Font weights */
@@ -130,6 +132,7 @@ export const homeStyles = (): string => `
                 /* Line heights */
                 --leading-tight:  1.1;   /* Display headings */
                 --leading-snug:   1.3;   /* Sub-headings */
+                --leading-prose:  1.5;   /* Compact info modules — tip tables, dense reference. Tighter than --leading-normal so rows read as a single beat, not as expanded prose. */
                 --leading-normal: 1.6;   /* Body text */
                 --leading-loose:  1.8;   /* Lead / prose */
 

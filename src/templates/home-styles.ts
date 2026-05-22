@@ -1362,17 +1362,22 @@ export const homeStyles = (): string => `
                 }
             }
             @media (max-width: 960px) {
-                /* Center the row on narrow viewports. Type stays at
-                   full --text-eyebrow / --tracking-wider — that's the
-                   editorial-baseline size the user benchmarked against
-                   (the iPhone 17 Pro Max target screenshot). Column-
-                   gap matches the editorial chip rhythm. Wrap (the
-                   per-page deliberate break below) is the fallback
-                   when the row can't fit, not typographic shrink. */
+                /* Mobile chip rhythm matches desktop's left-anchor
+                   spine. Type stays at full --text-eyebrow /
+                   --tracking-wider — that's the editorial-baseline
+                   size the user benchmarked against (the iPhone 17
+                   Pro Max target screenshot). Column-gap matches the
+                   editorial chip rhythm. Wrap (the per-page
+                   deliberate break below) is the fallback when the
+                   row can't fit, not typographic shrink. Row 2's
+                   first chip sits directly under row 1's first chip
+                   so the eye drops down one axis with no re-anchor;
+                   the right-side void on a short wrap row reads as
+                   intentional editorial air, the same shape Aesop /
+                   Monocle / NYer category navs use. */
                 .subpage-jump {
                     --jump-gap: var(--space-md);
                     column-gap: var(--jump-gap);
-                    justify-content: center;
                 }
                 .subpage-jump a + a::before {
                     left: calc(var(--jump-gap) * -0.5);

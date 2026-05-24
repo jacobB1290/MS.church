@@ -140,7 +140,7 @@ export const homeBody = (): string => `
                             <picture>
                                 <source srcset="/static/about-congregation.avif" type="image/avif">
                                 <source srcset="/static/about-congregation.webp" type="image/webp">
-                                <img src="/static/about-congregation.jpg" alt="Morning Star Christian Church congregation in Boise on a Sunday morning, hands raised together during worship at our nondenominational service" width="1600" height="1200" loading="lazy" decoding="async">
+                                <img src="/static/about-congregation.jpg" alt="Two members of Morning Star Christian Church greeting and welcoming each other in the sanctuary" width="1200" height="675" loading="lazy" decoding="async">
                             </picture>
                         </div>
                         <div class="about-text">

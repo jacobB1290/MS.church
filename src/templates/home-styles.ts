@@ -6036,44 +6036,6 @@ export const homeStyles = (): string => `
                 padding: 0;
             }
 
-            /* Ways-to-reach-us block beneath the invitation (left column) */
-            .contact-meta {
-                display: flex;
-                flex-direction: column;
-                gap: var(--space-xs);
-                margin-top: var(--space-lg);
-            }
-
-            .contact-meta-item {
-                display: flex;
-                align-items: baseline;
-                gap: var(--space-sm);
-                font-size: var(--text-body);
-                color: var(--text-primary-soft);
-                line-height: var(--leading-snug);
-            }
-
-            .contact-meta-item .contact-meta-key {
-                flex: 0 0 auto;
-                font-size: var(--text-micro);
-                font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide);
-                text-transform: uppercase;
-                color: var(--text-primary-faint);
-                min-width: 88px;
-            }
-
-            .contact-meta-item a {
-                color: var(--gold-dark);
-                text-decoration: none;
-                border-bottom: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
-                transition: border-color var(--motion-fast) var(--ease-standard);
-            }
-
-            .contact-meta-item a:hover {
-                border-bottom-color: var(--gold-dark);
-            }
-
             .contact-form-col {
                 width: 100%;
             }
@@ -6385,10 +6347,6 @@ export const homeStyles = (): string => `
                 margin: calc(-1 * var(--space-xs)) 0 0;
                 font-size: var(--text-small);
                 color: var(--text-primary-faint);
-            }
-
-            .contact-meta-address {
-                font-style: normal;
             }
 
             /* Clothes Drive Form Styles */
@@ -7544,10 +7502,6 @@ export const homeStyles = (): string => `
                 .contact {
                     grid-template-columns: 1fr;
                     gap: var(--space-xl);
-                }
-
-                .contact-meta {
-                    margin-top: var(--space-md);
                 }
 
                 .preview-screen {

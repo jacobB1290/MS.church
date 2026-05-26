@@ -335,39 +335,6 @@ export const homeBody = (): string => `
                         <p class="section-lead reveal-rise-slow">
                             We'd love to hear from you. Whether it's a question, a prayer request, or simply hello, send us a note and someone from our team will be in touch.
                         </p>
-
-                        <div class="contact-meta reveal-rise-slow">
-                            <div class="contact-meta-item">
-                                <span class="contact-meta-key">Gather</span>
-                                <span>Sundays at 9:00 AM</span>
-                            </div>
-                            <div class="contact-meta-item">
-                                <span class="contact-meta-key">Visit</span>
-                                <address class="contact-meta-address">
-                                    <div class="address-dropdown-wrapper">
-                                        <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St &middot; Boise, Idaho</button>
-                                        <div class="address-dropdown">
-                                            <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
-                                                <span class="address-dropdown-icon">🍎</span>
-                                                <span>Apple Maps</span>
-                                            </a>
-                                            <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
-                                                <span class="address-dropdown-icon">🗺️</span>
-                                                <span>Google Maps</span>
-                                            </a>
-                                            <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
-                                                <span class="address-dropdown-icon">📋</span>
-                                                <span>Copy</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </address>
-                            </div>
-                            <div class="contact-meta-item">
-                                <span class="contact-meta-key">Email</span>
-                                <a href="mailto:support@ms.church">support@ms.church</a>
-                            </div>
-                        </div>
                     </div>
                     <div class="contact-form-col">
                         <div class="contact-form-card reveal-pop" id="contact-form">

@@ -6303,18 +6303,62 @@ export const homeStyles = (): string => `
                 transform: translateY(-2px);
             }
 
-            /* Consent group — sits a touch apart from the fields above it */
-            .form-consent {
+            /* Soft step indicator — a quiet label, never a gamified progress bar */
+            .form-progress {
+                margin: 0 0 var(--space-md);
+                font-size: var(--text-micro);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                color: var(--text-primary-faint);
+            }
+
+            .form-step {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+
+            .form-step[hidden] {
+                display: none;
+            }
+
+            .form-step--enter {
+                animation: cfStepIn var(--motion-medium) var(--ease-out-soft) both;
+            }
+
+            @keyframes cfStepIn {
+                from { opacity: 0; transform: translateY(8px); }
+                to   { opacity: 1; transform: none; }
+            }
+
+            .form-optional {
+                font-weight: var(--weight-regular);
+                color: var(--text-primary-faint);
+            }
+
+            /* Phone + email grouped so "enter at least one" reads as one ask */
+            .form-fieldset {
+                border: 0;
+                margin: 0;
+                padding: 0;
                 display: flex;
                 flex-direction: column;
                 gap: var(--space-sm);
-                margin-top: var(--space-xs);
+            }
+
+            .form-legend {
+                padding: 0;
+                font-size: var(--text-small);
+                font-weight: var(--weight-semibold);
+                color: var(--text-primary-soft);
             }
 
             .form-check {
                 display: flex;
                 align-items: flex-start;
                 gap: var(--space-sm);
+                min-height: 44px;
                 font-size: var(--text-small);
                 line-height: var(--leading-normal);
                 color: var(--text-primary-muted);
@@ -6336,6 +6380,45 @@ export const homeStyles = (): string => `
                 text-underline-offset: 2px;
             }
 
+            /* Optional marketing opt-in reads quieter than the required terms line */
+            .form-check--subtle {
+                font-size: var(--text-small);
+                color: var(--text-primary-faint);
+            }
+
+            .form-actions {
+                display: flex;
+                align-items: center;
+                gap: var(--space-md);
+                margin-top: var(--space-xs);
+            }
+
+            .form-actions .btn-submit {
+                margin-top: 0;
+            }
+
+            .form-back {
+                background: none;
+                border: 0;
+                padding: 8px 4px;
+                font-family: var(--font-body);
+                font-size: var(--text-small);
+                font-weight: var(--weight-medium);
+                color: var(--text-primary-muted);
+                cursor: pointer;
+                transition: color var(--motion-fast) var(--ease-standard);
+            }
+
+            .form-back:hover {
+                color: var(--text-primary);
+            }
+
+            .form-reassure {
+                margin: var(--space-xs) 0 0;
+                font-size: var(--text-small);
+                color: var(--text-primary-faint);
+            }
+
             .form-error {
                 margin: 0;
                 font-size: var(--text-small);
@@ -6344,9 +6427,13 @@ export const homeStyles = (): string => `
             }
 
             .form-hint {
-                margin: calc(-1 * var(--space-xs)) 0 0;
+                margin: 0;
                 font-size: var(--text-small);
                 color: var(--text-primary-faint);
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .form-step--enter { animation: none; }
             }
 
             /* Clothes Drive Form Styles */
@@ -7789,6 +7876,16 @@ export const homeStyles = (): string => `
                     width: 100%;
                     align-self: stretch;
                     padding: 16px 32px;
+                }
+
+                /* Keep Back + Send usable on one row; Send takes the space */
+                .form-actions .btn-submit {
+                    width: auto;
+                    flex: 1;
+                }
+
+                .form-back {
+                    flex: 0 0 auto;
                 }
 
                 .contact-info {

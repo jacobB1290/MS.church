@@ -333,49 +333,61 @@ export const homeBody = (): string => `
                         <span class="section-eyebrow reveal-eyebrow">Contact</span>
                         <h2 class="section-heading reveal-rise">Contact Us</h2>
                         <p class="section-lead reveal-rise-slow">
-                            We'd love to hear from you. Whether it's a question, a prayer request, or simply hello, send us a note and someone from our team will be in touch.
+                            We&rsquo;d love to hear from you. Whether it&rsquo;s a question, a prayer request, or simply hello, send us a note and someone from our team will be in touch.
                         </p>
                     </div>
                     <div class="contact-form-col">
                         <div class="contact-form-card reveal-pop" id="contact-form">
+                            <p class="form-progress" id="cf-progress" aria-live="polite">Step <span id="cf-step-num">1</span> of 2 &middot; <span id="cf-step-label">Your note</span></p>
                             <form class="contact-form" id="contact-form-el" novalidate>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="cf-first">First name</label>
-                                        <input type="text" id="cf-first" name="firstName" autocomplete="given-name">
+                                <div class="form-step" data-step="1" id="cf-step-1">
+                                    <div class="form-group form-group-full">
+                                        <label for="cf-message">What&rsquo;s on your heart?</label>
+                                        <textarea id="cf-message" name="message" rows="5" placeholder="Share a question, a prayer request, or just say hello."></textarea>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="cf-last">Last name</label>
-                                        <input type="text" id="cf-last" name="lastName" autocomplete="family-name">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="cf-first">First name <span class="form-optional">(optional)</span></label>
+                                            <input type="text" id="cf-first" name="firstName" autocomplete="given-name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cf-last">Last name <span class="form-optional">(optional)</span></label>
+                                            <input type="text" id="cf-last" name="lastName" autocomplete="family-name">
+                                        </div>
                                     </div>
+                                    <button type="button" class="event-link-btn btn-submit" id="cf-next">Continue</button>
                                 </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="cf-phone">Phone number</label>
-                                        <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(208) 000-0000">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="cf-email">Email address</label>
-                                        <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com">
-                                    </div>
-                                </div>
-                                <p class="form-hint">Add a phone number or email so we can reply.</p>
-                                <div class="form-group form-group-full">
-                                    <label for="cf-message">Your question, prayer request, or message</label>
-                                    <textarea id="cf-message" name="message" rows="5"></textarea>
-                                </div>
-                                <div class="form-consent">
-                                    <label class="form-check">
+
+                                <div class="form-step" data-step="2" id="cf-step-2" hidden>
+                                    <fieldset class="form-fieldset">
+                                        <legend class="form-legend">How can we reach you?</legend>
+                                        <p class="form-hint" id="cf-reach-hint">Add a phone number or email so we can reply. One is enough.</p>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="cf-phone">Phone number</label>
+                                                <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(208) 000-0000" aria-describedby="cf-reach-hint">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="cf-email">Email address</label>
+                                                <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com" aria-describedby="cf-reach-hint">
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <label class="form-check form-check--subtle">
                                         <input type="checkbox" name="updatesOptIn" id="cf-updates">
-                                        <span>I agree to receive church updates by email and text message from Morning Star Christian Church at the contact info I provide. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help.</span>
+                                        <span>Send me occasional church updates by email or text <span class="form-optional">(optional)</span>. Msg &amp; data rates may apply; reply STOP to opt out, HELP for help.</span>
                                     </label>
-                                    <label class="form-check">
+                                    <p class="form-error" id="cf-error" role="alert" aria-live="assertive" hidden></p>
+                                    <label class="form-check form-check--terms">
                                         <input type="checkbox" name="termsAccepted" id="cf-terms" required>
                                         <span>I agree to the <a href="/privacy" target="_blank" rel="noopener">terms &amp; conditions</a>.</span>
                                     </label>
+                                    <div class="form-actions">
+                                        <button type="button" class="form-back" id="cf-back">&larr; Back</button>
+                                        <button type="submit" class="event-link-btn btn-submit" id="cf-submit">Send message</button>
+                                    </div>
+                                    <p class="form-reassure">A real person on our team reads every note.</p>
                                 </div>
-                                <p class="form-error" id="cf-error" role="alert" hidden></p>
-                                <button type="submit" class="event-link-btn btn-submit" id="cf-submit">Send message</button>
                             </form>
                         </div>
                         <div class="form-success" id="contact-success" style="display: none;">

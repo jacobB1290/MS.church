@@ -1562,21 +1562,49 @@ export const homeScripts = (): string => `
                     }, false);
                 }
 
-                // Native contact form → POST /api/contact (server signs + forwards to the church CRM)
+                // Native two-step contact form → POST /api/contact (server signs + forwards to the church CRM).
+                // Step 1 (message + name) leads, then Step 2 (contact + consent). Message-first creates
+                // momentum and keeps the legal fine-print out of the way until after the visitor has written.
                 {
                     const form = document.getElementById('contact-form-el');
                     if (form) {
                         const submitBtn = document.getElementById('cf-submit');
+                        const nextBtn = document.getElementById('cf-next');
+                        const backBtn = document.getElementById('cf-back');
                         const errorEl = document.getElementById('cf-error');
-                        const showError = (msg) => {
-                            if (!errorEl) return;
-                            errorEl.textContent = msg;
-                            errorEl.hidden = false;
+                        const stepNum = document.getElementById('cf-step-num');
+                        const stepLabel = document.getElementById('cf-step-label');
+                        const steps = Array.from(form.querySelectorAll('.form-step'));
+                        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                        const labels = { 1: 'Your note', 2: 'How to reach you' };
+
+                        const showError = (msg, focusEl) => {
+                            if (errorEl) { errorEl.textContent = msg; errorEl.hidden = false; }
+                            if (focusEl) focusEl.focus();
                         };
+                        const clearError = () => { if (errorEl) errorEl.hidden = true; };
+
+                        const showStep = (n) => {
+                            steps.forEach((s) => {
+                                const active = Number(s.dataset.step) === n;
+                                s.hidden = !active;
+                                s.classList.remove('form-step--enter');
+                            });
+                            const target = steps.find((s) => Number(s.dataset.step) === n);
+                            if (target && !reduceMotion) { void target.offsetWidth; target.classList.add('form-step--enter'); }
+                            if (stepNum) stepNum.textContent = String(n);
+                            if (stepLabel) stepLabel.textContent = labels[n] || '';
+                            // Move focus to the first field of the new step for keyboard + screen-reader users.
+                            const firstField = target && target.querySelector('textarea, input:not([type=checkbox]), input');
+                            if (firstField) firstField.focus({ preventScroll: true });
+                        };
+
+                        if (nextBtn) nextBtn.addEventListener('click', () => { clearError(); showStep(2); });
+                        if (backBtn) backBtn.addEventListener('click', () => { clearError(); showStep(1); });
 
                         form.addEventListener('submit', async (e) => {
                             e.preventDefault();
-                            if (errorEl) errorEl.hidden = true;
+                            clearError();
 
                             const data = {
                                 firstName: form.firstName.value,
@@ -1590,11 +1618,11 @@ export const homeScripts = (): string => `
                             };
 
                             if (!data.phone.trim() && !data.email.trim()) {
-                                showError('Please add a phone number or email so we can reach you.');
+                                showError('Please add a phone number or email so we can reply.', form.phone);
                                 return;
                             }
                             if (!data.termsAccepted) {
-                                showError('Please agree to the terms & conditions.');
+                                showError('Please agree to the terms & conditions to send your message.', form.termsAccepted);
                                 return;
                             }
 

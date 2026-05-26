@@ -4,7 +4,7 @@
 
 The official website for **Morning Star Christian Church** in Boise, Idaho ([ms.church](https://ms.church)). A server-rendered Hono app (TypeScript) deployed to Vercel.
 
-Sections: hero/welcome, service schedule, ministries, outreach, About, beliefs, visit (map + service flow), watch (live + YouTube playlist), contact (Jotform), plus a Google Calendar–driven events feed.
+Sections: hero/welcome, service schedule, ministries, outreach, About, beliefs, visit (map + service flow), watch (live + YouTube playlist), contact (native form posting to the church CRM), plus a Google Calendar–driven events feed.
 
 ---
 
@@ -305,7 +305,7 @@ The main landing page (`/`) contains these sections in order:
 2. **Hero** — Church tagline ("Mending the Broken"), church image, "Find Us" frosted glass button with address dropdown (Apple Maps / Google Maps / Copy)
 3. **Schedule** — Sunday service time and location info
 4. **Outreach / Events** — Horizontal carousel of upcoming events (fetched from Google Calendar or hardcoded JSON); "Stay Tuned" card when no upcoming events; past events accessible via modal
-5. **Contact** — Embedded Jotform iframe
+5. **Contact** — Native form (`#contact-form-el`) that POSTs JSON to `/api/contact`, which HMAC-signs it server-side and forwards it to the church CRM. See "Contact form → CRM" below.
 6. **Footer** — Links, social media, version number
 
 ---
@@ -393,6 +393,23 @@ Every section (schedule, outreach, watch, contact, footer) should use `width: 10
 ## Analytics
 
 Vercel Analytics and Speed Insights are loaded conditionally in the client via dynamic `<script>` injection. To disable tracking for development/testing, append `?notrack=true` to any page URL.
+
+---
+
+## Contact form → CRM
+
+The contact form (home `#contact` section and the standalone `/form` page) is a native HTML form. It posts JSON to **`POST /api/contact`** (`src/routes/contact.ts`), which signs the submission server-side and forwards it to the church's own CRM (`ms-management`). The HMAC secret never reaches the browser.
+
+**Required environment variables** (set in Vercel project settings, and a local `.env` for dev — see `.env.example`):
+
+| Var | Purpose |
+|-----|---------|
+| `PUBLIC_FORM_HMAC_SECRET` | Shared secret. **Must be byte-for-byte identical to the CRM's** `PUBLIC_FORM_HMAC_SECRET`, or every submission is rejected. |
+| `CRM_FORM_ENDPOINT` | The CRM's public-form URL, e.g. `https://<crm-host>/api/public-form`. |
+
+If either is missing, `/api/contact` returns `503` and the form shows a friendly "temporarily unavailable" error.
+
+**The signing contract (do not break it):** the CRM verifies an `HMAC-SHA256` **hex** digest of the **raw request body**, sent in the **`x-form-signature`** header. So the route builds the JSON body string **once** and signs those exact bytes (Web Crypto `crypto.subtle`, which is byte-identical to Node's `createHmac(...).digest('hex')` and works on both Vercel and Cloudflare). The body must include `_ts` (unix ms, the CRM rejects anything >5 min old) and a unique `_nonce` (replay protection), plus `form_id`, `name`, `phone`, `email`, `consent_method`, `marketing_opt_in`, and a `payload` object. The CRM's zod schema strips unknown top-level keys, so the free-text `message` is nested **inside `payload`** to be persisted. The "receive updates" checkbox maps to `marketing_opt_in` (express marketing consent); "terms accepted" is required and recorded in `payload`. The matching CRM code lives in `ms-management` at `src/app/api/public-form/route.ts` + `src/server/webhooks/verify.ts`.
 
 ---
 

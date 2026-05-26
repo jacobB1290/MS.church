@@ -356,18 +356,48 @@ export const homeBody = (): string => `
                             </div>
                         </address>
                     </div>
-                    <div class="jotform-container reveal-pop" id="contact-form">
-                        <div class="engage-hub-form-embed" id="eh_form_5064126720901120" data-id="5064126720901120"></div>
-                        <script type="text/javascript">
-                        var EhAPI = EhAPI || {}; EhAPI.after_load = function(){
-                            EhAPI.set_account('trohddh7jp05vmrl417ue6lbpm', 'gmailidoy');
-                            EhAPI.execute('rules');
-                        };(function(d,s,f) {
-                            var sc=document.createElement(s);sc.type='text/javascript';
-                            sc.async=true;sc.src=f;var m=document.getElementsByTagName(s)[0];
-                            m.parentNode.insertBefore(sc,m);
-                        })(document, 'script', '//d2p078bqz5urf7.cloudfront.net/jsapi/ehform.js?v' + new Date().getHours());
-                        </script>
+                    <div class="contact-form-card reveal-pop" id="contact-form">
+                        <form class="contact-form" id="contact-form-el" novalidate>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cf-first">First name</label>
+                                    <input type="text" id="cf-first" name="firstName" autocomplete="given-name" placeholder="First name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cf-last">Last name</label>
+                                    <input type="text" id="cf-last" name="lastName" autocomplete="family-name" placeholder="Last name">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cf-phone">Phone number</label>
+                                    <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(208) 000-0000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cf-email">Email address</label>
+                                    <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-full">
+                                <label for="cf-message">Your question, prayer request, or message</label>
+                                <textarea id="cf-message" name="message" rows="5"></textarea>
+                            </div>
+                            <label class="form-check">
+                                <input type="checkbox" name="updatesOptIn" id="cf-updates">
+                                <span>I agree to receive church updates by email and text message from Morning Star Christian Church at the contact info I provide. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help.</span>
+                            </label>
+                            <label class="form-check">
+                                <input type="checkbox" name="termsAccepted" id="cf-terms" required>
+                                <span>I agree to the <a href="/privacy" target="_blank" rel="noopener">terms &amp; conditions</a>.</span>
+                            </label>
+                            <p class="form-error" id="cf-error" role="alert" hidden></p>
+                            <button type="submit" class="event-link-btn btn-submit" id="cf-submit">Submit</button>
+                        </form>
+                    </div>
+                    <div class="form-success" id="contact-success" style="display: none;">
+                        <div class="success-icon">🕊️</div>
+                        <h3 class="success-heading">Thank you</h3>
+                        <p class="success-message">Thanks for reaching out. Someone from our team will get back to you soon.</p>
                     </div>
                 </section>
             </main>

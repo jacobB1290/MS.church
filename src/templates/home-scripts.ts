@@ -1562,64 +1562,72 @@ export const homeScripts = (): string => `
                     }, false);
                 }
 
-                // EngageBay form container auto-shrink
-                // The SDK sets inline heights on wrapper divs when content grows
-                // but never removes them when content shrinks. We observe textareas
-                // for resize and clear only the wrapper-level inline heights,
-                // leaving the SDK's deeper layout elements untouched.
+                // Native contact form → POST /api/contact (server signs + forwards to the church CRM)
                 {
-                    const container = document.querySelector('.jotform-container');
-                    if (container) {
-                        const resetWrapperHeights = () => {
-                            const embed = container.querySelector('.engage-hub-form-embed');
-                            if (!embed) return;
-                            if (embed.style.height) embed.style.height = '';
-                            for (const child of embed.children) {
-                                if (child.style && child.style.height) child.style.height = '';
-                            }
+                    const form = document.getElementById('contact-form-el');
+                    if (form) {
+                        const submitBtn = document.getElementById('cf-submit');
+                        const errorEl = document.getElementById('cf-error');
+                        const showError = (msg) => {
+                            if (!errorEl) return;
+                            errorEl.textContent = msg;
+                            errorEl.hidden = false;
                         };
 
-                        // Textarea resize ends on mouseup anywhere in the document
-                        let watching = false;
-                        const startWatch = () => {
-                            if (!watching) {
-                                watching = true;
-                                document.addEventListener('mouseup', () => {
-                                    watching = false;
-                                    resetWrapperHeights();
-                                }, { once: true });
-                            }
-                        };
+                        form.addEventListener('submit', async (e) => {
+                            e.preventDefault();
+                            if (errorEl) errorEl.hidden = true;
 
-                        // Attach to textareas (SDK may add them after load)
-                        const bindTextareas = () => {
-                            container.querySelectorAll('textarea').forEach(ta => {
-                                if (!ta.dataset.watched) {
-                                    ta.dataset.watched = '1';
-                                    ta.addEventListener('mousedown', startWatch);
-                                    new ResizeObserver(resetWrapperHeights).observe(ta);
+                            const data = {
+                                firstName: form.firstName.value,
+                                lastName: form.lastName.value,
+                                phone: form.phone.value,
+                                email: form.email.value,
+                                message: form.message.value,
+                                updatesOptIn: form.updatesOptIn.checked,
+                                termsAccepted: form.termsAccepted.checked,
+                                sourcePage: '/#contact'
+                            };
+
+                            if (!data.phone.trim() && !data.email.trim()) {
+                                showError('Please add a phone number or email so we can reach you.');
+                                return;
+                            }
+                            if (!data.termsAccepted) {
+                                showError('Please agree to the terms & conditions.');
+                                return;
+                            }
+
+                            const originalLabel = submitBtn ? submitBtn.textContent : '';
+                            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+
+                            let ok = false;
+                            try {
+                                const res = await fetch('/api/contact', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(data)
+                                });
+                                ok = res.ok;
+                                if (!ok) {
+                                    const payload = await res.json().catch(() => null);
+                                    showError((payload && payload.error) || 'Something went wrong. Please try again.');
                                 }
-                            });
-                        };
+                            } catch (_) {
+                                showError('Network error. Please try again.');
+                            }
 
-                        // Run once SDK renders, then watch for new elements
-                        bindTextareas();
-                        new MutationObserver(bindTextareas).observe(container, { childList: true, subtree: true });
+                            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+                            if (ok) showSuccessState();
+                        });
                     }
                 }
 
-                // JotForm Submission Handler (legacy — kept for EngageBay compat)
-                window.addEventListener('message', function(e) {
-                    if (typeof e.data === 'object' && e.data.action === 'submission-completed') {
-                        showSuccessState();
-                    }
-                });
-
                 function showSuccessState() {
-                    const jotformContainer = document.querySelector('.jotform-container');
-                    const successState = document.querySelector('.form-success');
-                    if (jotformContainer && successState) {
-                        jotformContainer.style.display = 'none';
+                    const formCard = document.getElementById('contact-form');
+                    const successState = document.getElementById('contact-success');
+                    if (formCard && successState) {
+                        formCard.style.display = 'none';
                         successState.style.display = 'flex';
                         createConfetti();
                         successState.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1627,7 +1635,8 @@ export const homeScripts = (): string => `
                 }
 
                 function createConfetti() {
-                    const confettiEmojis = ['🎁', '🎁', '🎁', '🎁', '🎁'];
+                    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                    const confettiEmojis = ['🕊️', '✨', '💛', '🌿', '⭐'];
                     for (let i = 0; i < 50; i++) {
                         setTimeout(() => {
                             const confetti = document.createElement('div');

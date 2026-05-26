@@ -529,6 +529,70 @@ ${items}
                   transform: translateY(-4px);
                   box-shadow: 0 20px 50px color-mix(in srgb, var(--gold) 45%, transparent);
               }
+
+              .form-check {
+                  display: flex;
+                  align-items: flex-start;
+                  gap: 12px;
+                  margin-bottom: 20px;
+                  font-size: var(--text-small);
+                  line-height: 1.5;
+                  color: rgba(26, 26, 46, 0.7);
+                  text-transform: none;
+                  letter-spacing: normal;
+                  font-weight: var(--weight-regular);
+                  cursor: pointer;
+              }
+
+              .form-check input[type="checkbox"] {
+                  width: 20px;
+                  height: 20px;
+                  flex: 0 0 auto;
+                  margin-top: 2px;
+                  padding: 0;
+                  border: 1px solid rgba(26, 26, 46, 0.25);
+                  border-radius: 6px;
+                  accent-color: var(--gold);
+                  cursor: pointer;
+                  -webkit-appearance: auto;
+                  appearance: auto;
+              }
+
+              .form-check a { color: var(--gold); }
+
+              .form-error {
+                  margin: 0 0 16px;
+                  font-size: var(--text-small);
+                  font-weight: var(--weight-medium);
+                  color: #b3261e;
+              }
+
+              .form-success-msg {
+                  max-width: 700px;
+                  background: rgba(255, 255, 255, 0.85);
+                  padding: 64px 48px;
+                  border-radius: 32px;
+                  box-shadow: 0 32px 80px rgba(0,0,0,0.08);
+                  border: 1px solid rgba(255, 255, 255, 0.6);
+                  backdrop-filter: blur(20px);
+                  text-align: center;
+              }
+
+              .form-success-msg .success-icon { font-size: 56px; }
+
+              .form-success-msg h3 {
+                  font-family: 'Playfair Display', serif;
+                  font-size: var(--text-title);
+                  color: #1a1a2e;
+                  font-weight: var(--weight-bold);
+                  margin: 16px 0 12px;
+              }
+
+              .form-success-msg p {
+                  font-size: var(--text-lead);
+                  color: rgba(26, 26, 46, 0.6);
+                  line-height: 1.6;
+              }
           </style>
       </head>
       <body>
@@ -550,43 +614,99 @@ ${items}
           
           <div class="content">
               <h2>Contact Us</h2>
-              <div class="form-container">
-                  <form>
+              <div class="form-container" id="form-card">
+                  <form id="contact-form-el" novalidate>
                       <div class="form-group">
-                          <label for="name">Name</label>
-                          <input type="text" id="name" name="name" required>
+                          <label for="cf-first">First name</label>
+                          <input type="text" id="cf-first" name="firstName" autocomplete="given-name" placeholder="First name">
                       </div>
-                      
+
                       <div class="form-group">
-                          <label for="email">Email</label>
-                          <input type="email" id="email" name="email" required>
+                          <label for="cf-last">Last name</label>
+                          <input type="text" id="cf-last" name="lastName" autocomplete="family-name" placeholder="Last name">
                       </div>
-                      
+
                       <div class="form-group">
-                          <label for="phone">Phone</label>
-                          <input type="tel" id="phone" name="phone">
+                          <label for="cf-phone">Phone number</label>
+                          <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(208) 000-0000">
                       </div>
-                      
+
                       <div class="form-group">
-                          <label for="subject">Subject</label>
-                          <select id="subject" name="subject" required>
-                              <option value="">Select a subject</option>
-                              <option value="general">General Inquiry</option>
-                              <option value="prayer">Prayer Request</option>
-                              <option value="volunteer">Volunteer</option>
-                              <option value="other">Other</option>
-                          </select>
+                          <label for="cf-email">Email address</label>
+                          <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com">
                       </div>
-                      
+
                       <div class="form-group">
-                          <label for="message">Message</label>
-                          <textarea id="message" name="message" required></textarea>
+                          <label for="cf-message">Your question, prayer request, or message</label>
+                          <textarea id="cf-message" name="message"></textarea>
                       </div>
-                      
-                      <button type="submit" class="submit-btn">Submit Form</button>
+
+                      <label class="form-check">
+                          <input type="checkbox" name="updatesOptIn" id="cf-updates">
+                          <span>I agree to receive church updates by email and text message from Morning Star Christian Church at the contact info I provide. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help.</span>
+                      </label>
+
+                      <label class="form-check">
+                          <input type="checkbox" name="termsAccepted" id="cf-terms" required>
+                          <span>I agree to the <a href="/privacy" target="_blank" rel="noopener">terms &amp; conditions</a>.</span>
+                      </label>
+
+                      <p class="form-error" id="cf-error" role="alert" hidden></p>
+
+                      <button type="submit" class="submit-btn" id="cf-submit">Submit Form</button>
                   </form>
               </div>
+
+              <div class="form-success-msg" id="form-success" hidden>
+                  <div class="success-icon">🕊️</div>
+                  <h3>Thank you</h3>
+                  <p>Thanks for reaching out. Someone from our team will get back to you soon.</p>
+              </div>
           </div>
+
+          <script>
+              (function () {
+                  const form = document.getElementById('contact-form-el');
+                  if (!form) return;
+                  const submitBtn = document.getElementById('cf-submit');
+                  const errorEl = document.getElementById('cf-error');
+                  const card = document.getElementById('form-card');
+                  const success = document.getElementById('form-success');
+                  const showError = (msg) => { if (errorEl) { errorEl.textContent = msg; errorEl.hidden = false; } };
+
+                  form.addEventListener('submit', async (e) => {
+                      e.preventDefault();
+                      if (errorEl) errorEl.hidden = true;
+
+                      const data = {
+                          firstName: form.firstName.value,
+                          lastName: form.lastName.value,
+                          phone: form.phone.value,
+                          email: form.email.value,
+                          message: form.message.value,
+                          updatesOptIn: form.updatesOptIn.checked,
+                          termsAccepted: form.termsAccepted.checked,
+                          sourcePage: '/form'
+                      };
+
+                      if (!data.phone.trim() && !data.email.trim()) { showError('Please add a phone number or email so we can reach you.'); return; }
+                      if (!data.termsAccepted) { showError('Please agree to the terms & conditions.'); return; }
+
+                      const original = submitBtn ? submitBtn.textContent : '';
+                      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+
+                      let ok = false;
+                      try {
+                          const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                          ok = res.ok;
+                          if (!ok) { const payload = await res.json().catch(() => null); showError((payload && payload.error) || 'Something went wrong. Please try again.'); }
+                      } catch (_) { showError('Network error. Please try again.'); }
+
+                      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = original; }
+                      if (ok && card && success) { card.hidden = true; success.hidden = false; success.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+                  });
+              })();
+          </script>
       </body>
       </html>
     `)

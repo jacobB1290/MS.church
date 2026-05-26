@@ -6286,7 +6286,39 @@ export const homeStyles = (): string => `
             .btn-submit:hover {
                 transform: translateY(-4px) scale(1.02);
             }
-            
+
+            .form-check {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                font-size: var(--text-small);
+                line-height: var(--leading-normal);
+                color: var(--text-primary-muted);
+                cursor: pointer;
+            }
+
+            .form-check input[type="checkbox"] {
+                flex: 0 0 auto;
+                width: 20px;
+                height: 20px;
+                margin-top: 2px;
+                accent-color: var(--gold);
+                cursor: pointer;
+            }
+
+            .form-check a {
+                color: var(--gold-dark);
+                text-decoration: underline;
+                text-underline-offset: 2px;
+            }
+
+            .form-error {
+                margin: 0;
+                font-size: var(--text-small);
+                font-weight: var(--weight-medium);
+                color: #b3261e;
+            }
+
             /* Clothes Drive Form Styles */
             .form-message {
                 font-size: var(--text-lead);
@@ -6385,8 +6417,8 @@ export const homeStyles = (): string => `
                 cursor: pointer;
             }
             
-            /* Engage Hub Form Container */
-            .jotform-container {
+            /* Contact form card — native form posting to /api/contact */
+            .contact-form-card {
                 width: 100%;
                 background: var(--surface);
                 border-radius: var(--radius-lg);
@@ -6397,11 +6429,11 @@ export const homeStyles = (): string => `
                 padding: 32px;
             }
 
-            .jotform-container::before {
+            .contact-form-card::before {
                 display: none;
             }
 
-            .jotform-container::after {
+            .contact-form-card::after {
                 display: none;
             }
             
@@ -6410,11 +6442,11 @@ export const homeStyles = (): string => `
                 font-size: var(--text-body) !important;
             }
 
-            /* Ensure JotForm inputs don't trigger zoom */
-            .jotform-container input,
-            .jotform-container select,
-            .jotform-container textarea,
-            .jotform-container button {
+            /* Prevent input zoom inside the contact form card on mobile Safari */
+            .contact-form-card input,
+            .contact-form-card select,
+            .contact-form-card textarea,
+            .contact-form-card button {
                 font-size: var(--text-body) !important;
             }
             
@@ -7781,7 +7813,7 @@ export const homeStyles = (): string => `
                 }
 
                 /* Form container - mobile sizing */
-                .jotform-container {
+                .contact-form-card {
                     border-radius: var(--radius-lg);
                     padding: 8px 0;
                 }

@@ -12,6 +12,7 @@ import { registerOutreachRoute } from './routes/outreach.js'
 import { registerVisitRoute } from './routes/visit.js'
 import { registerMinistriesRoute } from './routes/ministries.js'
 import { registerPrivacyRoute } from './routes/privacy.js'
+import { registerContactRoute } from './routes/contact.js'
 import { registerMiscRoutes } from './routes/misc.js'
 import { GOLD } from './design-tokens.js'
 
@@ -48,6 +49,7 @@ registerOutreachRoute(app)
 registerVisitRoute(app)
 registerMinistriesRoute(app)
 registerPrivacyRoute(app)
+registerContactRoute(app)
 registerMiscRoutes(app)
 
 // 404 handler — branded page with link back to home

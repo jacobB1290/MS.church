@@ -248,10 +248,8 @@ export const homeHead = (): string => {
 
         <!-- Preconnect for Performance -->
         <link rel="preconnect" href="https://www.youtube-nocookie.com">
-        <link rel="preconnect" href="https://engagehub.app">
         <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
         <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
-        <link rel="dns-prefetch" href="https://engagehub.app">
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
 
         <!-- Preload LCP hero image — three preload candidates, one per format.

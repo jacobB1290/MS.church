@@ -350,10 +350,18 @@ ${items}
           <style>
               :root {
                   --gold: ${GOLD};
-                  /* Type tokens — duplicated from src/templates/home-styles.ts :root
+                  --gold-dark:   color-mix(in srgb, var(--gold) 70%, black);
+                  --gold-deeper: color-mix(in srgb, var(--gold) 55%, black);
+                  /* Tokens — duplicated from src/templates/home-styles.ts :root
                      because /form is a standalone route with its own inline <style>
                      (no @import from the shared catalog). Keep in sync if the home
                      scale ever changes. */
+                  --surface: #fdfcfa;
+                  --white:   #fefdfb;
+                  --text-primary:       #1a1a2e;
+                  --text-primary-soft:  rgba(26, 26, 46, 0.85);
+                  --text-primary-faint: rgba(26, 26, 46, 0.55);
+                  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                   --text-title:   clamp(36px, 5vw, 52px);
                   --text-heading: clamp(20px, 2.5vw, 26px);
                   --text-lead:    clamp(17px, 1.5vw, 20px);
@@ -365,6 +373,12 @@ ${items}
                   --weight-medium:   500;
                   --weight-semibold: 600;
                   --weight-bold:     700;
+                  --radius-sm:   8px;
+                  --radius-pill: 100px;
+                  --tracking-wide: 0.12em;
+                  --motion-fast:   0.2s;
+                  --motion-medium: 0.3s;
+                  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
               }
               * {
                   margin: 0;
@@ -478,56 +492,74 @@ ${items}
               
               label {
                   display: block;
-                  color: #1a1a2e;
-                  font-size: var(--text-label);
-                  font-weight: var(--weight-bold);
-                  margin-bottom: 10px;
-                  letter-spacing: 1px;
-                  text-transform: uppercase;
+                  color: var(--text-primary-soft);
+                  font-size: var(--text-small);
+                  font-weight: var(--weight-semibold);
+                  margin-bottom: 8px;
+                  letter-spacing: normal;
+                  text-transform: none;
               }
 
               input, textarea, select {
                   width: 100%;
-                  padding: 16px 20px;
-                  border: 1px solid rgba(26, 26, 46, 0.15);
-                  border-radius: 16px;
+                  padding: 14px 16px;
+                  border: 1px solid color-mix(in srgb, var(--text-primary) 20%, transparent);
+                  border-radius: var(--radius-sm);
                   font-size: var(--text-body);
-                  font-family: inherit;
-                  background: rgba(255, 255, 255, 0.9);
-                  transition: all 0.3s;
+                  font-family: var(--font-body);
+                  color: var(--text-primary);
+                  background: var(--surface);
+                  transition: border-color var(--motion-fast) var(--ease-standard),
+                              box-shadow var(--motion-fast) var(--ease-standard),
+                              background var(--motion-fast) var(--ease-standard);
               }
-              
+
+              input::placeholder, textarea::placeholder {
+                  color: var(--text-primary-faint);
+              }
+
               input:focus, textarea:focus, select:focus {
                   outline: none;
                   border-color: var(--gold);
-                  background: white;
-                  box-shadow: 0 8px 24px color-mix(in srgb, var(--gold) 15%, transparent);
+                  background: var(--white);
+                  box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 14%, transparent);
               }
-              
+
+              input:-webkit-autofill,
+              input:-webkit-autofill:hover,
+              input:-webkit-autofill:focus {
+                  -webkit-text-fill-color: var(--text-primary);
+                  -webkit-box-shadow: 0 0 0 1000px var(--white) inset;
+              }
+
               textarea {
-                  min-height: 140px;
+                  min-height: 132px;
                   resize: vertical;
+                  line-height: 1.6;
               }
-              
+
               .submit-btn {
-                  background: linear-gradient(135deg, var(--gold) 0%, var(--gold) 100%);
-                  color: white;
-                  padding: 18px 40px;
-                  border-radius: 100px;
+                  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                  color: #fff;
+                  padding: 15px 40px;
+                  border-radius: var(--radius-pill);
                   border: none;
-                  font-size: var(--text-label);
+                  font-family: var(--font-body);
+                  font-size: var(--text-small);
                   font-weight: var(--weight-bold);
-                  letter-spacing: 2px;
+                  letter-spacing: var(--tracking-wide);
                   text-transform: uppercase;
                   cursor: pointer;
-                  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                  width: 100%;
-                  box-shadow: 0 16px 40px color-mix(in srgb, var(--gold) 35%, transparent);
+                  transition: transform var(--motion-medium) var(--ease-standard),
+                              box-shadow var(--motion-medium) var(--ease-standard),
+                              background var(--motion-medium) var(--ease-standard);
+                  box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
               }
-              
+
               .submit-btn:hover {
-                  transform: translateY(-4px);
-                  box-shadow: 0 20px 50px color-mix(in srgb, var(--gold) 45%, transparent);
+                  transform: translateY(-2px);
+                  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
+                  box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
               }
 
               .form-check {
@@ -545,10 +577,10 @@ ${items}
               }
 
               .form-check input[type="checkbox"] {
-                  width: 20px;
-                  height: 20px;
+                  width: 22px;
+                  height: 22px;
                   flex: 0 0 auto;
-                  margin-top: 2px;
+                  margin-top: 1px;
                   padding: 0;
                   border: 1px solid rgba(26, 26, 46, 0.25);
                   border-radius: 6px;
@@ -618,12 +650,12 @@ ${items}
                   <form id="contact-form-el" novalidate>
                       <div class="form-group">
                           <label for="cf-first">First name</label>
-                          <input type="text" id="cf-first" name="firstName" autocomplete="given-name" placeholder="First name">
+                          <input type="text" id="cf-first" name="firstName" autocomplete="given-name">
                       </div>
 
                       <div class="form-group">
                           <label for="cf-last">Last name</label>
-                          <input type="text" id="cf-last" name="lastName" autocomplete="family-name" placeholder="Last name">
+                          <input type="text" id="cf-last" name="lastName" autocomplete="family-name">
                       </div>
 
                       <div class="form-group">

@@ -6019,18 +6019,63 @@ export const homeStyles = (): string => `
                 outline-offset: 3px;
             }
 
-            /* Contact Section */
+            /* Contact Section — two-column editorial layout on desktop:
+               invitation + ways-to-reach-us on the left, the form on the right.
+               Collapses to a single stacked column on mobile. */
             .contact {
-                display: flex;
-                flex-direction: column;
-                gap: 48px;
+                display: grid;
+                grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+                gap: var(--space-2xl);
+                align-items: start;
             }
-            
+
             .contact-header {
-                text-align: left; /* Left aligned on desktop like other sections */
-                max-width: 800px;
+                text-align: left;
+                max-width: 480px;
                 margin: 0;
                 padding: 0;
+            }
+
+            /* Ways-to-reach-us block beneath the invitation (left column) */
+            .contact-meta {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-xs);
+                margin-top: var(--space-lg);
+            }
+
+            .contact-meta-item {
+                display: flex;
+                align-items: baseline;
+                gap: var(--space-sm);
+                font-size: var(--text-body);
+                color: var(--text-primary-soft);
+                line-height: var(--leading-snug);
+            }
+
+            .contact-meta-item .contact-meta-key {
+                flex: 0 0 auto;
+                font-size: var(--text-micro);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                color: var(--text-primary-faint);
+                min-width: 88px;
+            }
+
+            .contact-meta-item a {
+                color: var(--gold-dark);
+                text-decoration: none;
+                border-bottom: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+                transition: border-color var(--motion-fast) var(--ease-standard);
+            }
+
+            .contact-meta-item a:hover {
+                border-bottom-color: var(--gold-dark);
+            }
+
+            .contact-form-col {
+                width: 100%;
             }
             
             /* Gift Gallery - Images always in a row, scale to fit */
@@ -6205,19 +6250,19 @@ export const homeStyles = (): string => `
             .contact-form {
                 display: flex;
                 flex-direction: column;
-                gap: 24px;
+                gap: var(--space-md);
             }
-            
+
             .form-row {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 20px;
+                gap: var(--space-md);
             }
-            
+
             .form-group {
                 display: flex;
                 flex-direction: column;
-                gap: 10px;
+                gap: var(--space-xs);
             }
             
             .form-group-full {
@@ -6225,44 +6270,53 @@ export const homeStyles = (): string => `
             }
             
             .form-group label {
-                font-size: var(--text-eyebrow);
-                font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide);
-                text-transform: uppercase;
-                color: var(--text-primary-muted);
+                font-size: var(--text-small);
+                font-weight: var(--weight-semibold);
+                letter-spacing: var(--tracking-normal);
+                color: var(--text-primary-soft);
             }
-            
+
             .form-group input,
             .form-group select,
             .form-group textarea {
-                padding: 16px 20px;
-                border: 2px solid var(--text-primary-hairline);
-                border-radius: var(--radius-md);
+                padding: 14px 16px;
+                border: 1px solid color-mix(in srgb, var(--text-primary) 20%, transparent);
+                border-radius: var(--radius-sm);
                 font-size: var(--text-body);
-                font-family: inherit;
-                background: rgba(255, 255, 255, 0.9);
+                font-family: var(--font-body);
+                background: var(--surface);
                 color: var(--text-primary);
-                transition: all var(--motion-medium) var(--ease-standard);
+                transition: border-color var(--motion-fast) var(--ease-standard),
+                            box-shadow var(--motion-fast) var(--ease-standard),
+                            background var(--motion-fast) var(--ease-standard);
             }
-            
+
             .form-group input::placeholder,
             .form-group textarea::placeholder {
-                color: #767690;
+                color: var(--text-primary-faint);
             }
-            
+
             .form-group input:focus,
             .form-group select:focus,
             .form-group textarea:focus {
                 outline: none;
                 border-color: var(--gold);
                 background: var(--white);
-                box-shadow: 0 8px 24px color-mix(in srgb, var(--gold) 15%, transparent);
-                transform: translateY(-2px);
+                box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 14%, transparent);
             }
-            
+
+            /* Keep browser autofill on-theme instead of the default blue/yellow fill */
+            .form-group input:-webkit-autofill,
+            .form-group input:-webkit-autofill:hover,
+            .form-group input:-webkit-autofill:focus {
+                -webkit-text-fill-color: var(--text-primary);
+                -webkit-box-shadow: 0 0 0 1000px var(--white) inset;
+                caret-color: var(--text-primary);
+            }
+
             .form-group textarea {
                 resize: vertical;
-                min-height: 140px;
+                min-height: 132px;
                 line-height: var(--leading-normal);
             }
             
@@ -6276,21 +6330,29 @@ export const homeStyles = (): string => `
             }
             
             .btn-submit {
-                width: 100%;
-                margin-top: 8px;
+                width: auto;
+                align-self: flex-start;
+                margin-top: var(--space-sm);
                 cursor: pointer;
-                font-size: var(--text-label);
-                padding: 20px 40px;
+                padding: 15px 40px;
             }
-            
+
             .btn-submit:hover {
-                transform: translateY(-4px) scale(1.02);
+                transform: translateY(-2px);
+            }
+
+            /* Consent group — sits a touch apart from the fields above it */
+            .form-consent {
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-sm);
+                margin-top: var(--space-xs);
             }
 
             .form-check {
                 display: flex;
                 align-items: flex-start;
-                gap: 12px;
+                gap: var(--space-sm);
                 font-size: var(--text-small);
                 line-height: var(--leading-normal);
                 color: var(--text-primary-muted);
@@ -6299,9 +6361,9 @@ export const homeStyles = (): string => `
 
             .form-check input[type="checkbox"] {
                 flex: 0 0 auto;
-                width: 20px;
-                height: 20px;
-                margin-top: 2px;
+                width: 22px;
+                height: 22px;
+                margin-top: 0;
                 accent-color: var(--gold);
                 cursor: pointer;
             }
@@ -6317,6 +6379,16 @@ export const homeStyles = (): string => `
                 font-size: var(--text-small);
                 font-weight: var(--weight-medium);
                 color: #b3261e;
+            }
+
+            .form-hint {
+                margin: calc(-1 * var(--space-xs)) 0 0;
+                font-size: var(--text-small);
+                color: var(--text-primary-faint);
+            }
+
+            .contact-meta-address {
+                font-style: normal;
             }
 
             /* Clothes Drive Form Styles */
@@ -6417,53 +6489,36 @@ export const homeStyles = (): string => `
                 cursor: pointer;
             }
             
-            /* Contact form card — native form posting to /api/contact */
+            /* Contact form — native form posting to /api/contact.
+               Flush on the cream surface (no card chrome); the inputs supply
+               the structure. Constrained to a comfortable reading column. */
             .contact-form-card {
                 width: 100%;
-                background: var(--surface);
-                border-radius: var(--radius-lg);
-                border: 1px solid rgba(255, 255, 255, 0.6);
-                box-shadow: var(--shadow-xl);
-                overflow: visible;
+                max-width: 600px;
                 position: relative;
-                padding: 32px;
             }
 
-            .contact-form-card::before {
-                display: none;
-            }
-
-            .contact-form-card::after {
-                display: none;
-            }
-            
-            /* Prevent zoom on form inputs - Mobile Safari Fix */
-            input, select, textarea, button {
-                font-size: var(--text-body) !important;
-            }
-
-            /* Prevent input zoom inside the contact form card on mobile Safari */
-            .contact-form-card input,
-            .contact-form-card select,
-            .contact-form-card textarea,
-            .contact-form-card button {
+            /* 16px minimum on form controls so mobile Safari never auto-zooms
+               on focus. !important because some controls also pick up smaller
+               type tokens at the mobile breakpoint. */
+            input, select, textarea {
                 font-size: var(--text-body) !important;
             }
             
-            /* Form Success State */
+            /* Form Success State — calm, constrained block that replaces the
+               form in place (not the tall event-registration block it grew from). */
             .form-success {
                 display: flex;
                 flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                padding: 64px 48px;
-                min-height: 600px;
-                gap: 32px;
+                align-items: flex-start;
+                text-align: left;
+                max-width: 600px;
+                padding: var(--space-xl) 0;
+                gap: var(--space-md);
             }
-            
+
             .success-icon {
-                font-size: var(--text-hero);
+                font-size: var(--text-title);
                 animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             }
             
@@ -6475,18 +6530,18 @@ export const homeStyles = (): string => `
             
             .success-heading {
                 font-family: var(--font-display);
-                font-size: var(--text-title);
+                font-size: var(--text-section);
                 color: var(--text-primary);
                 font-weight: var(--weight-bold);
                 margin: 0;
             }
-            
+
             .success-message {
-                font-size: var(--text-heading);
+                font-size: var(--text-lead);
                 color: var(--text-primary-muted);
-                max-width: 500px;
+                max-width: 480px;
                 margin: 0;
-                line-height: var(--leading-normal);
+                line-height: var(--leading-loose);
             }
             
             .success-details {
@@ -7487,7 +7542,12 @@ export const homeStyles = (): string => `
                 }
 
                 .contact {
-                    gap: var(--space-lg);
+                    grid-template-columns: 1fr;
+                    gap: var(--space-xl);
+                }
+
+                .contact-meta {
+                    margin-top: var(--space-md);
                 }
 
                 .preview-screen {
@@ -7538,8 +7598,7 @@ export const homeStyles = (): string => `
                 }
 
                 .form-success {
-                    padding: var(--space-2xl) var(--space-lg);
-                    min-height: clamp(450px, 55vw, 500px);
+                    padding: var(--space-xl) 0;
                 }
 
                 .success-icon {
@@ -7761,15 +7820,10 @@ export const homeStyles = (): string => `
                     margin: clamp(5px, 0.8vw, 6px) auto var(--space-xs);
                 }
 
-                .form-group label {
-                    font-size: var(--text-small);
-                }
-
                 .form-group input,
                 .form-group select,
                 .form-group textarea {
-                    padding: 14px 18px;
-                    font-size: var(--text-small);
+                    padding: 14px 16px;
                     border-radius: var(--radius-md);
                 }
 
@@ -7778,8 +7832,9 @@ export const homeStyles = (): string => `
                 }
 
                 .btn-submit {
+                    width: 100%;
+                    align-self: stretch;
                     padding: 16px 32px;
-                    font-size: var(--text-small);
                 }
 
                 .contact-info {

@@ -333,71 +333,89 @@ export const homeBody = (): string => `
                         <span class="section-eyebrow reveal-eyebrow">Contact</span>
                         <h2 class="section-heading reveal-rise">Contact Us</h2>
                         <p class="section-lead reveal-rise-slow">
-                            We'd love to hear from you! Whether you have questions, prayer requests, or just want to connect, fill out the form below and someone from our team will get back to you.
+                            We'd love to hear from you. Whether it's a question, a prayer request, or simply hello, send us a note and someone from our team will be in touch.
                         </p>
 
-                        <address>
-                            <div class="address-dropdown-wrapper">
-                                <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St &middot; Boise, Idaho</button>
-                                <div class="address-dropdown">
-                                    <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
-                                        <span class="address-dropdown-icon">🍎</span>
-                                        <span>Apple Maps</span>
-                                    </a>
-                                    <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
-                                        <span class="address-dropdown-icon">🗺️</span>
-                                        <span>Google Maps</span>
-                                    </a>
-                                    <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
-                                        <span class="address-dropdown-icon">📋</span>
-                                        <span>Copy</span>
-                                    </button>
-                                </div>
+                        <div class="contact-meta reveal-rise-slow">
+                            <div class="contact-meta-item">
+                                <span class="contact-meta-key">Gather</span>
+                                <span>Sundays at 9:00 AM</span>
                             </div>
-                        </address>
+                            <div class="contact-meta-item">
+                                <span class="contact-meta-key">Visit</span>
+                                <address class="contact-meta-address">
+                                    <div class="address-dropdown-wrapper">
+                                        <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St &middot; Boise, Idaho</button>
+                                        <div class="address-dropdown">
+                                            <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
+                                                <span class="address-dropdown-icon">🍎</span>
+                                                <span>Apple Maps</span>
+                                            </a>
+                                            <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
+                                                <span class="address-dropdown-icon">🗺️</span>
+                                                <span>Google Maps</span>
+                                            </a>
+                                            <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
+                                                <span class="address-dropdown-icon">📋</span>
+                                                <span>Copy</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </address>
+                            </div>
+                            <div class="contact-meta-item">
+                                <span class="contact-meta-key">Email</span>
+                                <a href="mailto:support@ms.church">support@ms.church</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="contact-form-card reveal-pop" id="contact-form">
-                        <form class="contact-form" id="contact-form-el" novalidate>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="cf-first">First name</label>
-                                    <input type="text" id="cf-first" name="firstName" autocomplete="given-name" placeholder="First name">
+                    <div class="contact-form-col">
+                        <div class="contact-form-card reveal-pop" id="contact-form">
+                            <form class="contact-form" id="contact-form-el" novalidate>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="cf-first">First name</label>
+                                        <input type="text" id="cf-first" name="firstName" autocomplete="given-name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cf-last">Last name</label>
+                                        <input type="text" id="cf-last" name="lastName" autocomplete="family-name">
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="cf-last">Last name</label>
-                                    <input type="text" id="cf-last" name="lastName" autocomplete="family-name" placeholder="Last name">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="cf-phone">Phone number</label>
+                                        <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(208) 000-0000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cf-email">Email address</label>
+                                        <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="cf-phone">Phone number</label>
-                                    <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(208) 000-0000">
+                                <p class="form-hint">Add a phone number or email so we can reply.</p>
+                                <div class="form-group form-group-full">
+                                    <label for="cf-message">Your question, prayer request, or message</label>
+                                    <textarea id="cf-message" name="message" rows="5"></textarea>
                                 </div>
-                                <div class="form-group">
-                                    <label for="cf-email">Email address</label>
-                                    <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com">
+                                <div class="form-consent">
+                                    <label class="form-check">
+                                        <input type="checkbox" name="updatesOptIn" id="cf-updates">
+                                        <span>I agree to receive church updates by email and text message from Morning Star Christian Church at the contact info I provide. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help.</span>
+                                    </label>
+                                    <label class="form-check">
+                                        <input type="checkbox" name="termsAccepted" id="cf-terms" required>
+                                        <span>I agree to the <a href="/privacy" target="_blank" rel="noopener">terms &amp; conditions</a>.</span>
+                                    </label>
                                 </div>
-                            </div>
-                            <div class="form-group form-group-full">
-                                <label for="cf-message">Your question, prayer request, or message</label>
-                                <textarea id="cf-message" name="message" rows="5"></textarea>
-                            </div>
-                            <label class="form-check">
-                                <input type="checkbox" name="updatesOptIn" id="cf-updates">
-                                <span>I agree to receive church updates by email and text message from Morning Star Christian Church at the contact info I provide. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help.</span>
-                            </label>
-                            <label class="form-check">
-                                <input type="checkbox" name="termsAccepted" id="cf-terms" required>
-                                <span>I agree to the <a href="/privacy" target="_blank" rel="noopener">terms &amp; conditions</a>.</span>
-                            </label>
-                            <p class="form-error" id="cf-error" role="alert" hidden></p>
-                            <button type="submit" class="event-link-btn btn-submit" id="cf-submit">Submit</button>
-                        </form>
-                    </div>
-                    <div class="form-success" id="contact-success" style="display: none;">
-                        <div class="success-icon">🕊️</div>
-                        <h3 class="success-heading">Thank you</h3>
-                        <p class="success-message">Thanks for reaching out. Someone from our team will get back to you soon.</p>
+                                <p class="form-error" id="cf-error" role="alert" hidden></p>
+                                <button type="submit" class="event-link-btn btn-submit" id="cf-submit">Send message</button>
+                            </form>
+                        </div>
+                        <div class="form-success" id="contact-success" style="display: none;">
+                            <div class="success-icon">🕊️</div>
+                            <h3 class="success-heading">Thank you</h3>
+                            <p class="success-message">Thanks for reaching out. Someone from our team will be in touch soon.</p>
+                        </div>
                     </div>
                 </section>
             </main>

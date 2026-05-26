@@ -1,4 +1,5 @@
 import { type Hono } from 'hono'
+import { createHmac, randomUUID } from 'node:crypto'
 
 // Public contact form receiver. The browser posts plain JSON here; this
 // server-side route signs the exact bytes with PUBLIC_FORM_HMAC_SECRET and
@@ -10,6 +11,10 @@ import { type Hono } from 'hono'
 // (_nonce) submissions. We therefore build the body string once and sign those
 // exact bytes. See ms-management src/server/webhooks/verify.ts for the matching
 // verification.
+//
+// Uses Node's crypto (the active deploy target is Vercel's Node runtime). To
+// run on Cloudflare Workers instead, swap to Web Crypto (crypto.subtle) — the
+// hex digest is byte-identical.
 
 type ContactBody = {
   firstName?: string
@@ -25,23 +30,13 @@ type ContactBody = {
 const getEnv = (name: string): string | undefined =>
   typeof process !== 'undefined' ? process.env?.[name] : undefined
 
-const encoder = new TextEncoder()
+// HMAC-SHA256 → lowercase hex.
+const signHmacHex = (secret: string, body: string): string =>
+  createHmac('sha256', secret).update(body).digest('hex')
 
-// HMAC-SHA256 → lowercase hex, byte-identical to Node's
-// crypto.createHmac('sha256', secret).update(body).digest('hex').
-async function signHmacHex(secret: string, body: string): Promise<string> {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign']
-  )
-  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(body))
-  return Array.from(new Uint8Array(sig))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-}
+// Hard cap on the CRM forward so a slow/unreachable endpoint can never hold the
+// serverless function open to its platform timeout.
+const CRM_TIMEOUT_MS = 10_000
 
 export function registerContactRoute(app: Hono) {
   app.post('/api/contact', async (c) => {
@@ -52,8 +47,10 @@ export function registerContactRoute(app: Hono) {
       return c.json({ error: 'Contact form is temporarily unavailable.' }, 503)
     }
 
+    console.log('[contact] received submission')
     const f = await c.req.json<ContactBody>().catch(() => null)
     if (!f) return c.json({ error: 'Bad request' }, 400)
+    console.log('[contact] body parsed')
 
     const phone = (f.phone ?? '').trim()
     const email = (f.email ?? '').trim()
@@ -76,7 +73,7 @@ export function registerContactRoute(app: Hono) {
     // the raw text it receives, so the string we sign must be the string we send.
     const body = JSON.stringify({
       _ts: Date.now(),
-      _nonce: crypto.randomUUID(),
+      _nonce: randomUUID(),
       form_id: 'contact',
       name,
       phone: phone || null,
@@ -94,7 +91,8 @@ export function registerContactRoute(app: Hono) {
       },
     })
 
-    const signature = await signHmacHex(secret, body)
+    const signature = signHmacHex(secret, body)
+    console.log('[contact] signed, forwarding to CRM')
 
     try {
       const res = await fetch(endpoint, {
@@ -104,12 +102,15 @@ export function registerContactRoute(app: Hono) {
           'x-form-signature': signature,
         },
         body,
+        signal: AbortSignal.timeout(CRM_TIMEOUT_MS),
       })
+      console.log('[contact] CRM responded', res.status)
       if (!res.ok) {
         return c.json({ error: 'Could not submit. Please try again.' }, 502)
       }
       return c.json({ ok: true })
-    } catch {
+    } catch (err) {
+      console.error('[contact] forward failed', err instanceof Error ? err.message : err)
       return c.json({ error: 'Network error. Please try again.' }, 502)
     }
   })

@@ -1960,14 +1960,8 @@ export const homeStyles = (): string => `
                     0 2px 6px var(--text-primary-hairline);
                 background: #ffffff;
             }
-            /* Non-active tiles recede a step so the focal photo
-               dominates — gentle dim, no blur (blur read as low-quality
-               on the placeholder tiles). */
-            .schedule-banner:hover .schedule-banner-slide:not(:hover):not(.active),
-            .schedule-banner.has-active .schedule-banner-slide:not(.active) {
-                opacity: 0.5;
-                filter: saturate(0.85);
-            }
+            /* Inactive tiles stay at full opacity — only the active tile
+               lifts, scales, and glows. No dimming of the rest. */
             .schedule-banner-slide img {
                 width: 100%;
                 height: 100%;
@@ -2072,11 +2066,8 @@ export const homeStyles = (): string => `
                     box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1),
                     transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
             }
-            /* Inactive cards dim slightly when one tile/card is active
-               so the focal pair (tile + card) reads as a pair. */
-            .schedule-list.has-active .schedule-tab:not(.active) {
-                opacity: 0.62;
-            }
+            /* Inactive cards stay at full opacity — only the active card
+               carries the white surface + gold underglow. */
             .schedule-list .schedule-tab {
                 transition:
                     background 280ms cubic-bezier(0.4, 0, 0.2, 1),

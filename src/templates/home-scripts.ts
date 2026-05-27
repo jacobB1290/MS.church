@@ -188,6 +188,23 @@ export const homeScripts = (): string => `
                             });
                         });
 
+                        // Once each tile's toss-in entrance finishes, release
+                        // the animation so the .active lift/scale (a transform)
+                        // can transition smoothly. The entrance uses
+                        // animation-fill-mode: forwards, which otherwise freezes
+                        // transform at the final frame and suppresses the
+                        // transform transition — making the active tile SNAP to
+                        // the front instead of fading up over its neighbors.
+                        // Pin opacity to 1 first so dropping the animation
+                        // doesn't fall back to the base opacity: 0.
+                        slides.forEach((slide) => {
+                            slide.addEventListener('animationend', (e) => {
+                                if (e.animationName !== 'tossIn') return;
+                                slide.style.opacity = '1';
+                                slide.style.animation = 'none';
+                            });
+                        });
+
                         const scheduleSection = document.getElementById('schedule');
                         if (scheduleSection) {
                             scheduleSection.addEventListener('mouseenter', () => { paused = true; });

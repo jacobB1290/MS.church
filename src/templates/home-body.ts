@@ -6,6 +6,7 @@
 
 import { nav } from './shared/nav.js'
 import { footer } from './shared/footer.js'
+import { WEDNESDAY_ENABLED } from '../config.js'
 
 export const homeBody = (): string => `
     <body>
@@ -70,7 +71,7 @@ export const homeBody = (): string => `
                          and the cards stack as a plain list. No .section-card wrapper —
                          the layout sits directly on the page background like the About
                          teaser, for a quieter editorial feel. -->
-                    <div class="schedule-layout">
+                    <div class="schedule-layout${WEDNESDAY_ENABLED ? '' : ' schedule-layout--no-wed'}">
                         <div class="schedule-banner reveal-power" id="schedule-banner" aria-live="polite">
                             <div class="schedule-banner-slide schedule-banner-placeholder active" data-index="0" role="img" aria-label="Sunday Gatherings">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -78,9 +79,9 @@ export const homeBody = (): string => `
                             <div class="schedule-banner-slide schedule-banner-placeholder" data-index="1" role="img" aria-label="Tuesday Bible Reading">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                             </div>
-                            <div class="schedule-banner-slide schedule-banner-placeholder" data-index="2" role="img" aria-label="Wednesday Activity Day">
+                            ${WEDNESDAY_ENABLED ? `<div class="schedule-banner-slide schedule-banner-placeholder" data-index="2" role="img" aria-label="Wednesday Activity Day">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                            </div>
+                            </div>` : ''}
                             <div class="schedule-banner-slide schedule-banner-placeholder" data-index="3" role="img" aria-label="Thursday Bible Study">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                             </div>
@@ -101,12 +102,12 @@ export const homeBody = (): string => `
                                 <span class="schedule-tab-desc reveal-tight">Bible Reading at <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener noreferrer" class="schedule-tab-link">Caffeina State Street</a>.</span>
                                 <a href="/ministries#discipleship" class="schedule-tab-cta">Learn more →</a>
                             </button>
-                            <button class="schedule-tab" data-index="2" type="button" role="tab" aria-selected="false" data-reveal-sync>
+                            ${WEDNESDAY_ENABLED ? `<button class="schedule-tab" data-index="2" type="button" role="tab" aria-selected="false" data-reveal-sync>
                                 <span class="schedule-tab-eyebrow reveal-eyebrow">Fellowship</span>
                                 <span class="schedule-tab-title reveal-rise">Wednesdays · 6:00 PM</span>
                                 <span class="schedule-tab-desc reveal-tight">Activity Day: open gym and crochet circle. About 3 hours.</span>
                                 <a href="/ministries#fellowship" class="schedule-tab-cta">Learn more →</a>
-                            </button>
+                            </button>` : ''}
                             <button class="schedule-tab" data-index="3" type="button" role="tab" aria-selected="false" data-reveal-sync>
                                 <span class="schedule-tab-eyebrow reveal-eyebrow">Discipleship</span>
                                 <span class="schedule-tab-title reveal-rise">Thursdays · 6:00 PM</span>

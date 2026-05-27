@@ -1925,6 +1925,16 @@ export const homeStyles = (): string => `
                 --rot: -3deg;
                 z-index: 5;
             }
+            /* Wednesday hidden: the data-index="2" tile is dropped, leaving four
+               tiles (indices 0,1,3,4). Re-cascade them into four even slots that
+               line up with the four schedule cards on the right, and even out the
+               toss-delays, so the banner reads as a deliberate 4-tile composition
+               instead of a 5-tile one with a gap. The extra .schedule-layout--no-wed
+               class outranks the 5-tile defaults above. (Banner is desktop-only.) */
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  4%; left:  8%; --rot: -3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 27%; left: 50%; --rot:  3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 50%; left: 16%; --rot: -2deg; --toss-delay: 380ms; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 73%; left: 52%; --rot:  3deg; --toss-delay: 520ms; }
             .schedule-banner-slide {
                 transform: rotate(var(--rot, 0deg)) translateZ(0);
             }

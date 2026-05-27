@@ -1,5 +1,6 @@
 import { subpageHeader } from './shared/subpage-header.js'
 import { footer } from './shared/footer.js'
+import { WEDNESDAY_ENABLED } from '../config.js'
 
 // /ministries — five-category hub for our weekly programs.
 // Editorial design language matching /outreach (no boxed cards — clean
@@ -324,7 +325,11 @@ const SECTIONS: Section[] = [
     id: 'youth',
     eyebrow: 'Youth',
     heading: 'How we walk with the next generation.',
-    imageSide: 'right',
+    // Image side flips with the Wednesday flag to keep the page's L/R/L/R image
+    // rhythm intact. With Fellowship shown the run ends ...fellowship-L, youth-R;
+    // with Fellowship hidden it ends ...bible-study-R, youth-L. Either way no two
+    // adjacent section images sit on the same side.
+    imageSide: WEDNESDAY_ENABLED ? 'right' : 'left',
     // Single source — the 1320×2347 portrait of 5 girls. Same file
     // serves both viewports: mobile crops it to a 16:9 banner with the
     // faces biased to the upper portion; desktop uses (close to) the
@@ -618,7 +623,13 @@ function renderSection(s: Section): string {
                 </section>`
 }
 
-const sectionsHtml = SECTIONS.map(renderSection).join('\n\n                ')
+// Fellowship (Wednesday Activity Day) is dropped from the page when the
+// Wednesday flag is off. The youth section's imageSide (above) flips in step so
+// the surviving sections still alternate L/R/L/R with no two images on one side.
+const sectionsHtml = SECTIONS
+  .filter((s) => WEDNESDAY_ENABLED || s.id !== 'fellowship')
+  .map(renderSection)
+  .join('\n\n                ')
 
 export const ministriesBody = (): string => `
     <style>
@@ -1407,8 +1418,8 @@ export const ministriesBody = (): string => `
                         <a href="#worship">Worship</a>
                         <a href="#kids">Kids</a>
                         <a href="#discipleship">Discipleship</a>
-                        <span class="subpage-jump-break" aria-hidden="true"></span>
-                        <a href="#fellowship">Fellowship</a>
+                        ${WEDNESDAY_ENABLED ? `<span class="subpage-jump-break" aria-hidden="true"></span>
+                        <a href="#fellowship">Fellowship</a>` : ''}
                         <a href="#youth">Youth</a>
                     </nav>
                 </section>
@@ -1418,7 +1429,7 @@ export const ministriesBody = (): string => `
                 <section id="ministries-cta" class="subpage-final-cta">
                     <span class="section-eyebrow">Questions?</span>
                     <h2 class="section-heading">Want to know more about any of these?</h2>
-                    <p class="subpage-final-cta-lead">Reach out and we’ll point you to the right person, whether it’s a Tuesday morning coffee at Caffeina, a Wednesday open gym, or just figuring out what Sunday morning will be like for your family.</p>
+                    <p class="subpage-final-cta-lead">Reach out and we’ll point you to the right person, whether it’s a Tuesday morning coffee at Caffeina${WEDNESDAY_ENABLED ? ', a Wednesday open gym,' : ''} or just figuring out what Sunday morning will be like for your family.</p>
                     <a class="event-link-btn teaser-cta" href="/#contact">Contact Us</a>
                 </section>
             </main>

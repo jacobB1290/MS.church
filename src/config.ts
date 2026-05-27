@@ -35,3 +35,20 @@ export const YOUTUBE_CONFIG = {
   // Hardcoded fallback when RSS feed is unreachable (update periodically)
   FALLBACK_VIDEO_ID: '8EP7I-lXdFI',
 }
+
+// ========================================
+// FEATURE FLAGS
+// ========================================
+// Wednesday Activity Day is not official yet. While this is false it is hidden
+// from every ON-SCREEN surface:
+//   - Home schedule: the Wednesday tab + its banner tile are dropped, and the
+//     banner rebalances from five tiles to four (via .schedule-layout--no-wed).
+//   - /ministries: the Fellowship section and its jump-nav chip are dropped,
+//     and the Youth section's image side auto-flips so the L/R image rhythm
+//     still alternates cleanly without Fellowship in the sequence.
+//   - The one visible CTA line that named "a Wednesday open gym" drops that
+//     clause.
+// TO MAKE IT OFFICIAL: flip this to true and redeploy — everything above comes
+// back in one move, no other edits needed.
+// (SEO/JSON-LD still lists Activity Day by design, so search/AI keep the data.)
+export const WEDNESDAY_ENABLED: boolean = false

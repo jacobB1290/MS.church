@@ -1934,15 +1934,16 @@ export const homeStyles = (): string => `
                banner height, so the bottom tile tops out at ~60% to stay inside.
                .schedule-layout--no-wed outranks the 5-tile defaults above.
                (Banner is desktop-only.) */
-            /* Four tiles cascade as a tight, CONNECTED ribbon — matching the
-               five-tile (Wednesday-on) look. Same tile size (38%) and a close
-               left/right zigzag so consecutive tiles overlap at the corners
-               (no floating gaps), with ~16% vertical overlap. Each tile still
-               sits roughly inline with its card on the right. */
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  4%; left:  8%; width: 38%; --rot: -3deg; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 23%; left: 50%; width: 38%; --rot:  3deg; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 42%; left: 14%; width: 38%; --rot: -3deg; --toss-delay: 380ms; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 61%; left: 50%; width: 38%; --rot:  3deg; --toss-delay: 520ms; }
+            /* Four tiles as a continuous DIAGONAL sweep (top-left → bottom-right).
+               A 4-tile left/right zigzag pairs into a stacked 2×2 grid (two tiles
+               share each column → looks jumbled), so instead each tile drifts
+               steadily across and down: no two share a column, consecutive tiles
+               corner-overlap into one flowing ribbon, and the sweep ends near the
+               cards. Each tile still sits roughly inline with its card. */
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  3%; left:  3%; width: 36%; --rot: -3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 23%; left: 21%; width: 36%; --rot:  2deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 43%; left: 39%; width: 36%; --rot: -2deg; --toss-delay: 380ms; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 62%; left: 56%; width: 36%; --rot:  3deg; --toss-delay: 520ms; }
             .schedule-banner-slide {
                 transform: rotate(var(--rot, 0deg)) translateZ(0);
             }

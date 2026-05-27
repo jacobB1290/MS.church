@@ -1,16 +1,12 @@
-import build from '@hono/vite-build/cloudflare-pages'
 import devServer from '@hono/vite-dev-server'
-import adapter from '@hono/vite-dev-server/cloudflare'
 import { defineConfig } from 'vite'
+
+// Vite is dev-only here. Vercel deploys the Hono app via api/index.ts
+// (Node serverless function) — no Vite build artifacts are used in prod.
+// `npm run build` is a type-check (tsc --noEmit), not a bundle step.
 
 export default defineConfig({
   plugins: [
-    build({
-      entry: 'src/index.tsx'
-    }),
-    devServer({
-      adapter,
-      entry: 'src/index.tsx'
-    })
-  ]
+    devServer({ entry: 'src/index.ts' }),
+  ],
 })

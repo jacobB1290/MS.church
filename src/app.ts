@@ -1,16 +1,32 @@
-// Core Hono application — shared by both Cloudflare and Vercel entries.
-// Platform-specific middleware (serveStatic) is added in index.tsx / index.ts.
+// Core Hono application — every route + middleware lives here.
+// Platform-specific serveStatic is added in src/index.ts (Node/Vercel).
 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { registerCalendarRoute } from './routes/calendar.js'
 import { registerYouTubeRoute } from './routes/youtube.js'
 import { registerHomeRoute } from './routes/home.js'
+import { registerAboutRoute } from './routes/about.js'
+import { registerBeliefsRoute } from './routes/beliefs.js'
+import { registerOutreachRoute } from './routes/outreach.js'
+import { registerVisitRoute } from './routes/visit.js'
+import { registerMinistriesRoute } from './routes/ministries.js'
 import { registerPrivacyRoute } from './routes/privacy.js'
+import { registerContactRoute } from './routes/contact.js'
 import { registerMiscRoutes } from './routes/misc.js'
 import { GOLD } from './design-tokens.js'
 
 const app = new Hono()
+
+// Server-Timing header — exposes Hono render time to DevTools, Lighthouse,
+// and Vercel Speed Insights so we can see request-phase cost separately
+// from network/CDN. Must be the FIRST middleware so it wraps every route.
+app.use('*', async (c, next) => {
+  const start = performance.now()
+  await next()
+  const dur = (performance.now() - start).toFixed(1)
+  c.header('Server-Timing', `hono;dur=${dur};desc="render"`)
+})
 
 // Security headers for all responses
 app.use('*', async (c, next) => {
@@ -27,7 +43,13 @@ app.use('/api/*', cors())
 registerCalendarRoute(app)
 registerYouTubeRoute(app)
 registerHomeRoute(app)
+registerAboutRoute(app)
+registerBeliefsRoute(app)
+registerOutreachRoute(app)
+registerVisitRoute(app)
+registerMinistriesRoute(app)
 registerPrivacyRoute(app)
+registerContactRoute(app)
 registerMiscRoutes(app)
 
 // 404 handler — branded page with link back to home

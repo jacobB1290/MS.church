@@ -12,6 +12,26 @@
 
 export const homeScripts = (): string => `
         <script>
+            // Sync nav-shell.scrolled-mobile with the actual scroll
+            // position BEFORE DOMContentLoaded so the boolean state on
+            // .nav-shell matches the visual state from first paint.
+            // Without this, browsers that restore scroll position
+            // (Safari iOS bfcache, session-history) paint the nav-shell
+            // in its tall pill state, then handleMobileNav (registered
+            // in DOMContentLoaded) detects the scroll and adds
+            // .scrolled-mobile via the 0.6s transition — the user sees
+            // the brand visibly slide away after first paint.
+            // This early IIFE runs immediately after the body parses
+            // .nav-shell, so it captures the scroll position whether
+            // the head script's syncNavScrolled() got a chance or not.
+            (function(){
+                if (window.innerWidth > 960) return;
+                var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+                if (sy <= 19) return;
+                var nav = document.querySelector('.nav-shell');
+                if (nav) nav.classList.add('scrolled-mobile');
+            })();
+
             document.addEventListener('DOMContentLoaded', () => {
                 const body = document.body;
                 const outreachSection = document.querySelector('.outreach');
@@ -46,6 +66,382 @@ export const homeScripts = (): string => `
                         statusBarObserver.observe(heroEl);
                     }
                 }
+
+                // ========================================
+                // SCHEDULE BANNER CAROUSEL
+                // Banner crossfades through schedule images. Clicking any tab
+                // (Sunday / Tuesday / Wednesday / Thursday / Friday) snaps the
+                // banner to that slide and activates the card. Auto-cycles
+                // every 6s; pauses while the user is hovering or focused
+                // inside the section; respects prefers-reduced-motion.
+                // Wrapped in an IIFE so any internal early-return only exits
+                // this block — must NOT short-circuit the outer DOMContentLoaded
+                // handler (which still has to register the nav scroll-compress
+                // listener and everything else below).
+                // ========================================
+                (() => {
+                    const banner = document.getElementById('schedule-banner');
+                    const list = document.querySelector('.schedule-list');
+                    const tabs = document.querySelectorAll('.schedule-tab');
+                    const slides = banner ? banner.querySelectorAll('.schedule-banner-slide') : [];
+                    if (!tabs.length) return;
+
+                    // ── Whole-card click → navigate (desktop + mobile) ──
+                    // Every schedule card is fully clickable; the click
+                    // target is the corner .schedule-tab-cta's href
+                    // (matching /ministries anchor). Inline links inside
+                    // the description (e.g. "Sunday School" → /kids,
+                    // "Caffeina State Street" → maps) keep their own
+                    // destinations via the early-return guard. This is
+                    // intentionally attached before the desktop-only
+                    // carousel early-return so card navigation works on
+                    // every viewport.
+                    tabs.forEach((tab) => {
+                        tab.addEventListener('click', (e) => {
+                            if (e.target.closest && e.target.closest('a.schedule-tab-link')) return;
+                            const cta = tab.querySelector('a.schedule-tab-cta');
+                            const href = cta && cta.getAttribute('href');
+                            if (href) {
+                                window.location.href = href;
+                            }
+                        });
+                    });
+
+                    // ── Desktop-only banner carousel ──
+                    if (!banner || tabs.length !== slides.length) return;
+                    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    // Banner is hidden on mobile via CSS — skip the carousel logic entirely
+                    // so no auto-cycle timer runs and tap targets stay plain card buttons.
+                    const isMobile = window.matchMedia('(max-width: 960px)').matches;
+                    if (isMobile) return;
+                        const AUTO_MS = 5200;
+                        const RESUME_MS = 9000;
+                        let activeIndex = 0;
+                        let autoTimer = null;
+                        let paused = false;
+                        let resumeTimer = null;
+
+                        function setActive(i, opts) {
+                            activeIndex = ((i % tabs.length) + tabs.length) % tabs.length;
+                            tabs.forEach((t, idx) => {
+                                const on = idx === activeIndex;
+                                t.classList.toggle('active', on);
+                                t.setAttribute('aria-selected', on ? 'true' : 'false');
+                            });
+                            slides.forEach((s, idx) => s.classList.toggle('active', idx === activeIndex));
+                            // 'has-active' on the parents lets the inactive
+                            // tiles/cards dim slightly so the focal pair
+                            // reads as the foreground.
+                            if (banner) banner.classList.add('has-active');
+                            if (list) list.classList.add('has-active');
+                        }
+
+                        function clearActive() {
+                            tabs.forEach((t) => {
+                                t.classList.remove('active');
+                                t.setAttribute('aria-selected', 'false');
+                            });
+                            slides.forEach((s) => s.classList.remove('active'));
+                            if (banner) banner.classList.remove('has-active');
+                            if (list) list.classList.remove('has-active');
+                        }
+
+                        function startAuto() {
+                            if (reducedMotion || autoTimer) return;
+                            autoTimer = setInterval(() => {
+                                if (!paused) setActive(activeIndex + 1);
+                            }, AUTO_MS);
+                        }
+
+                        function pauseFor(ms) {
+                            paused = true;
+                            if (resumeTimer) clearTimeout(resumeTimer);
+                            resumeTimer = setTimeout(() => {
+                                paused = false;
+                                resumeTimer = null;
+                            }, ms);
+                        }
+
+                        tabs.forEach((tab, i) => {
+                            // Card-click navigation is wired up earlier
+                            // (above the desktop-only early return) so it
+                            // runs on every viewport. Here we only handle
+                            // the desktop-specific tab/banner sync.
+                            tab.addEventListener('focus', () => {
+                                setActive(i);
+                                pauseFor(RESUME_MS);
+                            });
+                            // Hover the card → activate the matching tile +
+                            // pause auto so the user can read.
+                            tab.addEventListener('mouseenter', () => {
+                                setActive(i);
+                                paused = true;
+                            });
+                        });
+
+                        // Hover any tile → activate it (and its matching
+                        // card). Same paused/resume behavior as card hover.
+                        slides.forEach((slide, i) => {
+                            slide.addEventListener('mouseenter', () => {
+                                setActive(i);
+                                paused = true;
+                            });
+                        });
+
+                        // Once each tile's toss-in entrance finishes, release
+                        // the animation so the .active lift/scale (a transform)
+                        // can transition smoothly. The entrance uses
+                        // animation-fill-mode: forwards, which otherwise freezes
+                        // transform at the final frame and suppresses the
+                        // transform transition — making the active tile SNAP to
+                        // the front instead of fading up over its neighbors.
+                        // Pin opacity to 1 first so dropping the animation
+                        // doesn't fall back to the base opacity: 0.
+                        //
+                        // Special case the tile that's already .active when its
+                        // entrance ends (the initial tile on first load): its
+                        // .active transform is in the cascade but masked by the
+                        // forwards-fill, so simply dropping the animation would
+                        // expose the lifted transform with no transition (the
+                        // reported first-load "jump"). Pin the resting transform
+                        // for one frame, force a reflow, then release — so the
+                        // lift transitions in. Box-shadow isn't touched, so the
+                        // glow doesn't flicker.
+                        slides.forEach((slide) => {
+                            slide.addEventListener('animationend', (e) => {
+                                if (e.animationName !== 'tossIn') return;
+                                if (slide.classList.contains('active')) {
+                                    const resting = getComputedStyle(slide).transform;
+                                    slide.style.opacity = '1';
+                                    slide.style.animation = 'none';
+                                    slide.style.transform = resting;
+                                    void slide.offsetWidth;
+                                    slide.style.transform = '';
+                                } else {
+                                    slide.style.opacity = '1';
+                                    slide.style.animation = 'none';
+                                }
+                            });
+                        });
+
+                        const scheduleSection = document.getElementById('schedule');
+                        if (scheduleSection) {
+                            scheduleSection.addEventListener('mouseenter', () => { paused = true; });
+                            scheduleSection.addEventListener('mouseleave', () => {
+                                // Re-arm the auto-cycle after a short delay so
+                                // it doesn't snap to a new tile the instant
+                                // the cursor exits.
+                                pauseFor(1200);
+                            });
+                        }
+
+                        // Pause auto-cycle while the section isn't visible
+                        // (saves work + prevents users returning to an unexpected slide).
+                        if ('IntersectionObserver' in window) {
+                            const visObserver = new IntersectionObserver((entries) => {
+                                const visible = entries[0].isIntersecting;
+                                if (!visible) paused = true;
+                                else if (!resumeTimer) paused = false;
+                            }, { threshold: 0.25 });
+                            visObserver.observe(banner);
+                        }
+
+                    setActive(0);
+                    startAuto();
+                })();
+
+                // ========================================
+                // SCROLL-DRIVEN REVEALS
+                // Adds .is-revealed to .reveal / .reveal-scale elements
+                // when they enter the viewport. Stagger via per-element
+                // --reveal-delay CSS variable, set here based on each
+                // element's index within its [data-reveal-group] parent.
+                // Wrapped in an IIFE so any early-return stays local.
+                // ========================================
+                (() => {
+                    const html = document.documentElement;
+                    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    // Enable the CSS layer that hides .reveal elements before
+                    // they're observed. Always add the class so the no-JS path
+                    // (no class set) keeps everything visible.
+                    html.classList.add('js-reveals');
+
+                    // All reveal class variants — the v1.46 motion vocabulary
+                    // (plus the v1.46.0 generic .reveal/.reveal-scale kept
+                    // for backwards compat). When adding a new variant,
+                    // include it here so the observer picks it up.
+                    const REVEAL_SEL = [
+                        '.reveal', '.reveal-scale',
+                        '.reveal-eyebrow', '.reveal-rise', '.reveal-rise-slow', '.reveal-tight',
+                        '.reveal-from-left', '.reveal-from-right', '.reveal-from-above',
+                        '.reveal-photo', '.reveal-power', '.reveal-pop', '.reveal-fill',
+                    ].join(', ');
+
+                    // Compute per-element stagger delays. Each [data-reveal-group]
+                    // distributes its direct-child reveal targets across an
+                    // i^0.85 curve (early items distinct, tail compresses).
+                    // Nested groups compound: a card that has its own group
+                    // inherits the parent group's delay as a "base offset"
+                    // for its own children's delays. This makes 5 stacked
+                    // cards each with an inner eyebrow/title/desc cascade
+                    // animate as a coherent staircase.
+                    //
+                    // [data-reveal-sync] is a special form of group — its
+                    // children all fire at the same moment (delay 0 across
+                    // them) when the parent enters viewport. Each child
+                    // keeps its own transform/duration/easing so they still
+                    // move differently, just on the same beat. Used where
+                    // a set of inner elements should land as "one moment"
+                    // rather than a cascade.
+                    function applyGroupDelays(group, parentOffset) {
+                        const isSync = group.hasAttribute('data-reveal-sync');
+                        const baseDelay = isSync
+                            ? 0
+                            : parseInt(group.getAttribute('data-reveal-delay') || '90', 10);
+                        const maxDelay = parseInt(group.getAttribute('data-reveal-max') || '520', 10);
+                        const offset = parentOffset || 0;
+                        const items = Array.from(group.children).filter((c) => c.matches(REVEAL_SEL));
+                        const n = items.length;
+                        items.forEach((item, i) => {
+                            const t = n > 1 ? Math.pow(i / (n - 1), 0.85) * (n - 1) : 0;
+                            const own = Math.min(t * baseDelay, maxDelay);
+                            item.style.setProperty('--reveal-delay', (offset + own) + 'ms');
+                        });
+                        // Direct-child nested groups inherit a base offset.
+                        Array.from(group.children).forEach((child, idx) => {
+                            if (child.matches('[data-reveal-group], [data-reveal-sync]')) {
+                                const directIndex = items.indexOf(child);
+                                const t = (directIndex >= 0 && n > 1)
+                                    ? Math.pow(directIndex / (n - 1), 0.85) * (n - 1)
+                                    : idx * 0.5;
+                                const childOffset = offset + Math.min(t * baseDelay, maxDelay);
+                                applyGroupDelays(child, childOffset);
+                            }
+                        });
+                    }
+                    // Top-level groups only.
+                    document.querySelectorAll('[data-reveal-group], [data-reveal-sync]').forEach((group) => {
+                        if (!group.parentElement || !group.parentElement.closest('[data-reveal-group], [data-reveal-sync]')) {
+                            applyGroupDelays(group, 0);
+                        }
+                    });
+
+                    // Collect children of sync parents — they should NOT be
+                    // observed individually. Instead, the sync observer
+                    // fires them all together when the parent intersects.
+                    //
+                    // EXCEPTION: .reveal-fill (CTA buttons) is opted out of
+                    // sync grouping. Fill is a high-attention motion — the
+                    // gold wash flowing across the button is meant to be
+                    // watched. When a fill button sits at the bottom of a
+                    // tall sync parent (e.g. About CTA below the paragraph,
+                    // Playlist button below the video), firing it the moment
+                    // the parent's top enters viewport means the entire
+                    // 1300ms animation completes while the button is still
+                    // below the fold. By the time the user scrolls to it,
+                    // the wipe is over and the button is just sitting
+                    // there static. Individual observation makes the fill
+                    // wait until the button itself reaches viewport.
+                    const syncParents = Array.from(document.querySelectorAll('[data-reveal-sync]'));
+                    const syncedChildren = new Set();
+                    syncParents.forEach((p) => {
+                        p.querySelectorAll(REVEAL_SEL).forEach((c) => {
+                            if (!c.classList.contains('reveal-fill')) {
+                                syncedChildren.add(c);
+                            }
+                        });
+                    });
+
+                    const targets = document.querySelectorAll(REVEAL_SEL);
+                    if (!targets.length) return;
+
+                    // The reveal observer is taking over from the
+                    // head-script watchdog. Cancel the watchdog so it
+                    // doesn't later force every below-the-fold reveal
+                    // to .is-revealed before the user has scrolled to
+                    // it (which would defeat the point of scroll-
+                    // triggered reveals).
+                    if (window.__revealWatchdogTimer) {
+                        clearTimeout(window.__revealWatchdogTimer);
+                        window.__revealWatchdogTimer = null;
+                    }
+
+                    // Reduced-motion OR a non-fresh visit (back/forward,
+                    // reload, same-origin nav, bfcache, hash-load — anywhere
+                    // the head-script tagged <html class="no-entrance">):
+                    // mark every reveal target as already-revealed and skip
+                    // the observer. Previously the .no-entrance bypass only
+                    // suppressed the section entrance keyframe — the
+                    // .reveal-* IntersectionObserver still ran, so the hero
+                    // tagline, schedule tab eyebrows/titles, About teaser,
+                    // outreach grid, etc. re-animated on every subpage→home
+                    // navigation. Now they read as already-settled on any
+                    // return visit, only animating on the genuinely-first load.
+                    const skipEntrance = html.classList.contains('no-entrance');
+                    if (reducedMotion || skipEntrance) {
+                        targets.forEach((el) => el.classList.add('is-revealed'));
+                        return;
+                    }
+
+                    // Standard observer — fires per-element as each enters viewport.
+                    const revealObserver = new IntersectionObserver((entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('is-revealed');
+                                revealObserver.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
+
+                    // Sync observer — observes [data-reveal-sync] parents and,
+                    // when one enters viewport, marks ALL its reveal-class
+                    // children .is-revealed simultaneously. Used so a card's
+                    // inner elements land as one beat instead of cascading.
+                    // .reveal-fill is intentionally skipped here (see the
+                    // syncedChildren build above) so fill buttons wait for
+                    // their own viewport entry.
+                    const syncObserver = new IntersectionObserver((entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                entry.target.querySelectorAll(REVEAL_SEL).forEach((c) => {
+                                    if (c.classList.contains('reveal-fill')) return;
+                                    c.classList.add('is-revealed');
+                                });
+                                syncObserver.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
+
+                    targets.forEach((el) => {
+                        // Skip elements that aren't in the layout — e.g. the
+                        // schedule banner which is display:none on mobile.
+                        // IntersectionObserver never fires for zero-area
+                        // elements, so they'd sit hidden forever. Mark them
+                        // revealed immediately so they're ready if a resize
+                        // ever brings them into the layout.
+                        const r = el.getBoundingClientRect();
+                        if (r.width === 0 && r.height === 0) {
+                            el.classList.add('is-revealed');
+                            return;
+                        }
+                        // Sync-managed children are fired by the sync observer
+                        // via their parent — don't observe them individually
+                        // or the topmost one would fire early.
+                        if (syncedChildren.has(el)) return;
+                        revealObserver.observe(el);
+                    });
+
+                    // Attach the sync observer to each sync parent.
+                    syncParents.forEach((p) => {
+                        const r = p.getBoundingClientRect();
+                        if (r.width === 0 && r.height === 0) {
+                            // Hidden parent — mark all children revealed too.
+                            p.querySelectorAll(REVEAL_SEL).forEach((c) => c.classList.add('is-revealed'));
+                            return;
+                        }
+                        syncObserver.observe(p);
+                    });
+                })();
 
                 // ========================================
                 // DYNAMIC EVENT MANAGER
@@ -305,17 +701,16 @@ export const homeScripts = (): string => `
                     \`;
 
                     if (isDesktop && hasPastEvents) {
-                        // No wrapper div, no inline styles — CSS grid on .stay-tuned-container handles layout
+                        // Desktop: two centered cards side-by-side. The MEMORIES
+                        // top-left badge was removed for symmetry with Stay Tuned
+                        // (which has no chrome at top). Camera icon + "Past Events"
+                        // title + button already convey the archive function.
                         return \`
                             <div class="stay-tuned-card" id="stay-tuned-card-el">
                                 \${stayTunedInner}
                             </div>
                             <div class="past-events-outer">
                                 <div class="event-outer-card">
-                                    <div class="event-card-header">
-                                        <span class="past-card-badge">MEMORIES</span>
-                                        <span></span>
-                                    </div>
                                     <div class="past-events-card" id="btn-view-past-events-desktop">
                                         <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
                                         <h3 class="past-card-title">Past Events</h3>
@@ -367,7 +762,7 @@ export const homeScripts = (): string => `
                     // [CTA:...] tag button (frosted-glass overlay on mobile, standalone button on desktop)
                     const hasRealLink = event.cta && event.cta.link && event.cta.link !== '#contact' && event.cta.link.startsWith('http');
                     const ctaHtml = hasRealLink
-                        ? \`<div class="event-cta"><a href="\${event.cta.link}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">\${event.cta.text}</a></div>\`
+                        ? \`<div class="event-cta"><a href="\${event.cta.link}" class="event-link-btn" target="_blank" rel="noopener noreferrer">\${event.cta.text}</a></div>\`
                         : '';
 
                     // Description-link: gold pill button BELOW the image card (not overlaid),
@@ -561,17 +956,209 @@ export const homeScripts = (): string => `
                 }
 
                 })(); // End of async event initialization IIFE
+                // (Subpage hash landing is handled in shared/subpage-header.ts,
+                //  which runs on every subpage regardless of homeScripts.)
 
-                // Handle hash in URL on page load (e.g., ms.church/#contact)
-                if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '') {
-                    const hash = window.location.hash;
-                    window.scrollTo(0, 0);
-                    window.addEventListener('load', () => {
+                // ----- Hashload anchor offset (v1.62.50) -----
+                // Where a cross-page /#anchor hash-load lands on home.
+                // Per design intent: each home section's eyebrow tucks
+                // fully behind the nav-shell on hash-load — the gold-
+                // highlighted active nav link IS the "you are here"
+                // marker, so the eyebrow's label is redundant.
+                //
+                // Behavior: when the target has a .section-eyebrow,
+                // compute a scroll target so the eyebrow lands inside
+                // the nav-shell's bounds (eyebrow.bottom <= navBottom
+                // - 2px buffer). Predict the eventual compressed-nav
+                // bottom so the math adapts to viewport width (mobile-
+                // 360 has a 4px shorter compressed nav than mobile-393).
+                //
+                // SCOPED TO HASHLOAD ONLY. The in-page click handler
+                // (further down) uses the simple OLD 30/60 offset and
+                // a single smooth scrollTo with no correction — the
+                // post-scrollend re-measure that originally lived
+                // alongside this helper fought the in-flight smooth-
+                // scroll and produced the "scrolling then jumping back
+                // and forth" glitch. The correction is safe ONLY when
+                // main is invisible (hashload fade-in path), where any
+                // re-position is unseen.
+                function getHomeAnchorTargetY(hash) {
+                    if (!hash || hash === '#' || hash === '#home') return 0;
+                    const el = document.querySelector(hash);
+                    if (!el) return null;
+                    if (hash === '#gift-form') {
+                        const off = window.innerWidth <= 960 ? 100 : 150;
+                        return Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - off);
+                    }
+                    const eyebrow = el.querySelector('.section-eyebrow');
+                    if (eyebrow) {
+                        const eyebrowRect = eyebrow.getBoundingClientRect();
+                        const eyebrowHeight = eyebrowRect.height || 38;
+                        // Predict the nav-shell's eventual bottom AFTER the
+                        // scroll. On mobile the nav compresses once scrollY
+                        // crosses ~19px; the compressed bottom varies by
+                        // viewport (≈57px on 360w, ≈62px on 768w). We use
+                        // a conservative cap so the eyebrow tucks under the
+                        // narrowest nav we'll encounter. On desktop the nav
+                        // doesn't compress and sits at top:16 / bottom:~106.
+                        const navBottomAfterScroll = window.innerWidth <= 960 ? 56 : 104;
+                        // Tuck so eyebrow.bottom sits 2px ABOVE the nav's
+                        // bottom edge; eyebrow.top is then >= nav's top
+                        // (16) on every viewport where eyebrowHeight <=
+                        // navBottomAfterScroll - 18.
+                        const tuckY = Math.max(16, navBottomAfterScroll - eyebrowHeight - 2);
+                        return Math.max(0, eyebrowRect.top + window.pageYOffset - tuckY);
+                    }
+                    const navOffset = window.innerWidth <= 960 ? 30 : 60;
+                    return Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - navOffset);
+                }
+
+                // HOME-page hash flow (v1.62.50).
+                //
+                // When the user clicks a /#anchor link from a subpage, we
+                // want the SAME entrance the subpages use for hash-loads:
+                // main paints invisible (opacity 0, translateY(-40px)),
+                // an instant scroll lands at the target position WHILE
+                // invisible, and then main fades + slides into place.
+                //
+                // The home-head.ts inline <head> script already added
+                // <html class="hash-fade"> synchronously and stashed the
+                // hash on window.__targetHash. Now we:
+                //   1. Wait for window.load + fonts.ready + 2rAF + rIC
+                //      (matching subpage-header.ts).
+                //   2. Compute the target Y using the home nav's offset
+                //      rules (30/60 default, 100/150 for #gift-form).
+                //   3. Subtract the active translateY transform from the
+                //      rect so scrollTo targets the POST-fade position.
+                //   4. Instant scrollTo. Watchdog re-measures every 100ms;
+                //      after 3 stable measurements (300ms of no drift),
+                //      add .hash-fade-in to start the entrance transition.
+                //   5. Restore the URL hash so the page is bookmarkable
+                //      and the back button works. Clear on first user
+                //      scroll so reload preserves actual scroll position.
+                const _isHomePage = window.location.pathname === '/' || window.location.pathname === '';
+                const _homeStashedHash = window.__targetHash || '';
+                if (_isHomePage && _homeStashedHash) {
+                    let fadeInFired = false;
+                    const fireFadeIn = () => {
+                        if (fadeInFired) return;
+                        fadeInFired = true;
+                        document.documentElement.classList.add('hash-fade-in');
+                        try {
+                            history.replaceState(null, '', location.pathname + location.search + _homeStashedHash);
+                        } catch (e) {}
+                        const clearHashOnScroll = () => {
+                            if (location.hash === _homeStashedHash) {
+                                try {
+                                    history.replaceState(null, '', location.pathname + location.search);
+                                } catch (e) {}
+                            }
+                        };
                         setTimeout(() => {
-                            const navLink = document.querySelector('a[href="' + hash + '"]');
-                            if (navLink) navLink.click();
-                        }, 800);
-                    }, { once: true });
+                            window.addEventListener('scroll', clearHashOnScroll, { once: true, passive: true });
+                        }, 1500);
+                    };
+                    let fired = false;
+                    const fireScroll = () => {
+                        if (fired) return;
+                        fired = true;
+                        if (_homeStashedHash === '#home' || _homeStashedHash === '#') {
+                            window.scrollTo(0, 0);
+                            fireFadeIn();
+                            return;
+                        }
+                        const t = document.querySelector(_homeStashedHash);
+                        if (!t) {
+                            fireFadeIn();
+                            return;
+                        }
+                        const mainEl = document.querySelector('main');
+                        // getBoundingClientRect().top includes the active
+                        // translateY(-40px) on main. Subtract it so we
+                        // scroll to the POST-fade landing position; when
+                        // the transform unwinds the target stays put.
+                        const getTransformY = () => {
+                            if (!mainEl) return 0;
+                            const cs = window.getComputedStyle(mainEl).transform;
+                            if (!cs || cs === 'none') return 0;
+                            const m = cs.match(/matrix\(([^)]+)\)/);
+                            if (m) {
+                                const parts = m[1].split(',');
+                                return parseFloat(parts[5]) || 0;
+                            }
+                            const m3 = cs.match(/matrix3d\(([^)]+)\)/);
+                            if (m3) {
+                                const p3 = m3[1].split(',');
+                                return parseFloat(p3[13]) || 0;
+                            }
+                            return 0;
+                        };
+                        const measureTargetY = () => {
+                            const raw = getHomeAnchorTargetY(_homeStashedHash);
+                            if (raw == null) return null;
+                            // Subtract the active translateY transform on
+                            // main so the scrollY targets the POST-fade
+                            // resting position (the rect inside
+                            // getHomeAnchorTargetY already includes the
+                            // transform, so undo it here).
+                            return Math.max(0, raw - getTransformY());
+                        };
+                        let lastY = measureTargetY();
+                        if (lastY == null) {
+                            fireFadeIn();
+                            return;
+                        }
+                        window.scrollTo(0, lastY);
+                        let stableCount = 0;
+                        const watchdog = setInterval(() => {
+                            const newY = measureTargetY();
+                            if (newY == null) {
+                                clearInterval(watchdog);
+                                fireFadeIn();
+                                return;
+                            }
+                            if (Math.abs(newY - lastY) > 2) {
+                                window.scrollTo(0, newY);
+                                lastY = newY;
+                                stableCount = 0;
+                            } else {
+                                stableCount++;
+                                if (stableCount >= 3) {
+                                    clearInterval(watchdog);
+                                    fireFadeIn();
+                                }
+                            }
+                        }, 100);
+                        setTimeout(() => {
+                            clearInterval(watchdog);
+                            fireFadeIn();
+                        }, 1500);
+                    };
+                    const afterLoad = () => {
+                        const fontsReady = (document.fonts && document.fonts.ready)
+                            ? Promise.race([
+                                document.fonts.ready,
+                                new Promise((r) => setTimeout(r, 150))
+                              ])
+                            : Promise.resolve();
+                        fontsReady.then(() => {
+                            requestAnimationFrame(() => {
+                                requestAnimationFrame(() => {
+                                    if (window.requestIdleCallback) {
+                                        requestIdleCallback(fireScroll, { timeout: 200 });
+                                    } else {
+                                        setTimeout(fireScroll, 40);
+                                    }
+                                });
+                            });
+                        });
+                    };
+                    if (document.readyState === 'complete') {
+                        afterLoad();
+                    } else {
+                        window.addEventListener('load', afterLoad, { once: true });
+                        setTimeout(fireScroll, 1200);
+                    }
                 }
 
                 // Mobile nav compression on scroll
@@ -585,8 +1172,26 @@ export const homeScripts = (): string => `
                 let isNavigatingHome = false;
 
                 function handleMobileNav() {
+                    // This script also runs on /outreach where there's no
+                    // .nav-shell — guard every classList access so the
+                    // subpage doesn't throw "Cannot read properties of null".
+                    if (!navShell) return;
                     const currentScrollY = window.scrollY;
                     const scrollThreshold = getScrollThreshold();
+                    // Clear the head-script's nav-prerender-scrolled flag
+                    // once we've taken over. The flag's only job is to
+                    // suppress the .nav-shell transition for the very
+                    // first paint after a scroll-restored page load —
+                    // after that we want the normal transition curve.
+                    if (document.documentElement.classList.contains('nav-prerender-scrolled')) {
+                        // Defer one frame so the initial paint already
+                        // landed under "transition: none". The class
+                        // removal then re-enables transitions for
+                        // subsequent scroll-driven class toggles.
+                        requestAnimationFrame(() => {
+                            document.documentElement.classList.remove('nav-prerender-scrolled');
+                        });
+                    }
 
                     if (window.innerWidth <= 960) {
                         if (isNavigatingHome) {
@@ -873,7 +1478,23 @@ export const homeScripts = (): string => `
                 updateActiveNavLink();
                 window.addEventListener('resize', () => { handleMobileNav(); });
 
-                // Smooth scrolling for navigation links
+                // Smooth scrolling for in-page navigation links on /home.
+                // Restored to the simple pre-v1.62.50 behavior: a single
+                // smooth scrollTo at click time, 30/60 default offset
+                // (100/150 for #gift-form), no post-scroll correction.
+                //
+                // v1.62.50 briefly tried to share getHomeAnchorTargetY +
+                // a post-scrollend re-measure so the eyebrow tucked behind
+                // the nav-shell as cleanly as the cross-page hashload does.
+                // The re-measure fought the in-flight smooth-scroll on
+                // every click — the user saw "scroll then jump back and
+                // forth." That correction only makes sense in the
+                // invisible-then-fade-in hashload path; an in-page click
+                // is fully visible, so any snap reads as a glitch.
+                // The eyebrow may peek a couple of pixels under the nav
+                // on the narrowest mobile widths — that matches the
+                // long-standing in-page click behavior and is preferable
+                // to the fighting-scroll glitch.
                 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                     anchor.addEventListener('click', function (e) {
                         e.preventDefault();
@@ -881,7 +1502,7 @@ export const homeScripts = (): string => `
 
                         if (targetId === '#home' || targetId === '#') {
                             if (window.innerWidth <= 960) {
-                                navShell.classList.remove('scrolled-mobile');
+                                if (navShell) navShell.classList.remove('scrolled-mobile');
                                 isNavigatingHome = true;
                             }
                             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -890,7 +1511,7 @@ export const homeScripts = (): string => `
 
                         const target = document.querySelector(targetId);
                         if (target) {
-                            let navOffset = window.innerWidth <= 960 ? 30 : 60;
+                            let navOffset = window.innerWidth <= 960 ? 20 : 40;
 
                             if (targetId === '#outreach') {
                                 const outreachRect = target.getBoundingClientRect();
@@ -977,64 +1598,124 @@ export const homeScripts = (): string => `
                     }, false);
                 }
 
-                // EngageBay form container auto-shrink
-                // The SDK sets inline heights on wrapper divs when content grows
-                // but never removes them when content shrinks. We observe textareas
-                // for resize and clear only the wrapper-level inline heights,
-                // leaving the SDK's deeper layout elements untouched.
+                // Native two-step contact form → POST /api/contact (server signs + forwards to the church CRM).
+                // Step 1 (message + name) leads, then Step 2 (contact + consent). Message-first creates
+                // momentum and keeps the legal fine-print out of the way until after the visitor has written.
                 {
-                    const container = document.querySelector('.jotform-container');
-                    if (container) {
-                        const resetWrapperHeights = () => {
-                            const embed = container.querySelector('.engage-hub-form-embed');
-                            if (!embed) return;
-                            if (embed.style.height) embed.style.height = '';
-                            for (const child of embed.children) {
-                                if (child.style && child.style.height) child.style.height = '';
-                            }
+                    const form = document.getElementById('contact-form-el');
+                    if (form) {
+                        const submitBtn = document.getElementById('cf-submit');
+                        const nextBtn = document.getElementById('cf-next');
+                        const backBtn = document.getElementById('cf-back');
+                        const errorEl = document.getElementById('cf-error');
+                        const errorEl1 = document.getElementById('cf-error-1');
+                        const stepNum = document.getElementById('cf-step-num');
+                        const stepLabel = document.getElementById('cf-step-label');
+                        const steps = Array.from(form.querySelectorAll('.form-step'));
+                        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                        const labels = { 1: 'Your note', 2: 'How to reach you' };
+
+                        const showError = (el, msg, focusEl) => {
+                            if (el) { el.textContent = msg; el.hidden = false; }
+                            if (focusEl) focusEl.focus();
+                        };
+                        const clearError = () => {
+                            if (errorEl) errorEl.hidden = true;
+                            if (errorEl1) errorEl1.hidden = true;
                         };
 
-                        // Textarea resize ends on mouseup anywhere in the document
-                        let watching = false;
-                        const startWatch = () => {
-                            if (!watching) {
-                                watching = true;
-                                document.addEventListener('mouseup', () => {
-                                    watching = false;
-                                    resetWrapperHeights();
-                                }, { once: true });
-                            }
-                        };
-
-                        // Attach to textareas (SDK may add them after load)
-                        const bindTextareas = () => {
-                            container.querySelectorAll('textarea').forEach(ta => {
-                                if (!ta.dataset.watched) {
-                                    ta.dataset.watched = '1';
-                                    ta.addEventListener('mousedown', startWatch);
-                                    new ResizeObserver(resetWrapperHeights).observe(ta);
-                                }
+                        const showStep = (n) => {
+                            steps.forEach((s) => {
+                                const active = Number(s.dataset.step) === n;
+                                s.hidden = !active;
+                                s.classList.remove('form-step--enter');
                             });
+                            const target = steps.find((s) => Number(s.dataset.step) === n);
+                            if (target && !reduceMotion) { void target.offsetWidth; target.classList.add('form-step--enter'); }
+                            if (stepNum) stepNum.textContent = String(n);
+                            if (stepLabel) stepLabel.textContent = labels[n] || '';
+                            // Move focus to the first field of the new step for keyboard + screen-reader users.
+                            const firstField = target && target.querySelector('textarea, input:not([type=checkbox]), input');
+                            if (firstField) firstField.focus({ preventScroll: true });
                         };
 
-                        // Run once SDK renders, then watch for new elements
-                        bindTextareas();
-                        new MutationObserver(bindTextareas).observe(container, { childList: true, subtree: true });
+                        if (nextBtn) nextBtn.addEventListener('click', () => {
+                            clearError();
+                            if (!form.message.value.trim()) { showError(errorEl1, 'Please share a message before continuing.', form.message); return; }
+                            if (!form.firstName.value.trim()) { showError(errorEl1, 'Please enter your first name.', form.firstName); return; }
+                            if (!form.lastName.value.trim()) { showError(errorEl1, 'Please enter your last name.', form.lastName); return; }
+                            showStep(2);
+                        });
+                        if (backBtn) backBtn.addEventListener('click', () => { clearError(); showStep(1); });
+
+                        form.addEventListener('submit', async (e) => {
+                            e.preventDefault();
+                            clearError();
+
+                            const data = {
+                                firstName: form.firstName.value,
+                                lastName: form.lastName.value,
+                                phone: form.phone.value,
+                                email: form.email.value,
+                                message: form.message.value,
+                                updatesOptIn: form.updatesOptIn.checked,
+                                termsAccepted: form.termsAccepted.checked,
+                                sourcePage: '/#contact'
+                            };
+
+                            // Defensive: step 1 gates these, but never submit with them empty.
+                            if (!data.message.trim() || !data.firstName.trim() || !data.lastName.trim()) {
+                                showStep(1);
+                                showError(errorEl1, 'Please complete your message and name.', form.message);
+                                return;
+                            }
+                            if (!data.phone.trim()) {
+                                showError(errorEl, 'Please enter your phone number.', form.phone);
+                                return;
+                            }
+                            if (!data.email.trim()) {
+                                showError(errorEl, 'Please enter your email address.', form.email);
+                                return;
+                            }
+                            if (!form.email.checkValidity()) {
+                                showError(errorEl, 'Please enter a valid email address.', form.email);
+                                return;
+                            }
+                            if (!data.termsAccepted) {
+                                showError(errorEl, 'Please agree to the terms & conditions to send your message.', form.termsAccepted);
+                                return;
+                            }
+
+                            const originalLabel = submitBtn ? submitBtn.textContent : '';
+                            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+
+                            let ok = false;
+                            try {
+                                const res = await fetch('/api/contact', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(data)
+                                });
+                                ok = res.ok;
+                                if (!ok) {
+                                    const payload = await res.json().catch(() => null);
+                                    showError((payload && payload.error) || 'Something went wrong. Please try again.');
+                                }
+                            } catch (_) {
+                                showError('Network error. Please try again.');
+                            }
+
+                            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+                            if (ok) showSuccessState();
+                        });
                     }
                 }
 
-                // JotForm Submission Handler (legacy — kept for EngageBay compat)
-                window.addEventListener('message', function(e) {
-                    if (typeof e.data === 'object' && e.data.action === 'submission-completed') {
-                        showSuccessState();
-                    }
-                });
-
                 function showSuccessState() {
-                    const jotformContainer = document.querySelector('.jotform-container');
-                    const successState = document.querySelector('.form-success');
-                    if (jotformContainer && successState) {
-                        jotformContainer.style.display = 'none';
+                    const formCard = document.getElementById('contact-form');
+                    const successState = document.getElementById('contact-success');
+                    if (formCard && successState) {
+                        formCard.style.display = 'none';
                         successState.style.display = 'flex';
                         createConfetti();
                         successState.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1042,7 +1723,8 @@ export const homeScripts = (): string => `
                 }
 
                 function createConfetti() {
-                    const confettiEmojis = ['🎁', '🎁', '🎁', '🎁', '🎁'];
+                    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                    const confettiEmojis = ['🕊️', '✨', '💛', '🌿', '⭐'];
                     for (let i = 0; i < 50; i++) {
                         setTimeout(() => {
                             const confetti = document.createElement('div');
@@ -1155,10 +1837,18 @@ export const homeScripts = (): string => `
                     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-                    document.getElementById('days').textContent = days;
-                    document.getElementById('hours').textContent = hours;
-                    document.getElementById('minutes').textContent = minutes;
-                    document.getElementById('seconds').textContent = seconds;
+                    // Guard each lookup — these elements only exist on the
+                    // home page (watch section countdown). On /outreach this
+                    // same script runs but the IDs don't exist.
+                    const daysEl = document.getElementById('days');
+                    const hoursEl = document.getElementById('hours');
+                    const minutesEl = document.getElementById('minutes');
+                    const secondsEl = document.getElementById('seconds');
+                    if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+                    daysEl.textContent = days;
+                    hoursEl.textContent = hours;
+                    minutesEl.textContent = minutes;
+                    secondsEl.textContent = seconds;
                 }
 
                 updateCountdown();
@@ -1177,6 +1867,15 @@ export const homeScripts = (): string => `
                 var _preloadedIframe = null;
                 var _playbackConfirmed = false;
                 var _revealTimeout = null;
+                var _latestThumbnailUrl = null;
+                var _playerOverlay = document.getElementById('video-player-overlay');
+                var _playerBackdrop = document.getElementById('video-player-backdrop');
+                var _playerFrame = document.getElementById('video-player-frame');
+                var _playerSlot = document.getElementById('video-player-slot');
+                var _playerClose = document.getElementById('video-player-close');
+                var _activeSourceCard = null;
+                var _playerEscListener = null;
+                var _playerCloseFallback = null;
 
                 // Pre-embed iframe hidden behind thumbnail so it's fully loaded on tap.
                 // When muted=true, adds autoplay=1&mute=1 so browsers allow auto-start.
@@ -1188,7 +1887,7 @@ export const homeScripts = (): string => `
                     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
                     var params = 'enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
                     if (muted) params += '&autoplay=1&mute=1';
-                    iframe.src = 'https://www.youtube.com/embed/' + videoId + '?' + params;
+                    iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + '?' + params;
                     videoWrapper.insertBefore(iframe, videoWrapper.firstChild);
                     _preloadedIframe = iframe;
                     iframe.addEventListener('load', function() {
@@ -1245,7 +1944,7 @@ export const homeScripts = (): string => `
                         iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
                         var fallbackParams = 'autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1';
                         if (_shouldAutoPlay) fallbackParams += '&mute=1';
-                        iframe.src = 'https://www.youtube.com/embed/' + _ytVideoId
+                        iframe.src = 'https://www.youtube-nocookie.com/embed/' + _ytVideoId
                             + '?' + fallbackParams;
                         videoWrapper.appendChild(iframe);
                         _preloadedIframe = iframe;
@@ -1311,39 +2010,283 @@ export const homeScripts = (): string => `
 
                 function setupVideo(videoId, thumbnailUrl) {
                     _ytVideoId = videoId;
-                    // If auto-play is pending, preload with autoplay+mute so browsers allow it
-                    preloadIframe(videoId, _shouldAutoPlay);
+                    _latestThumbnailUrl = thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg');
                     if (videoThumbnailImg) {
-                        videoThumbnailImg.src = thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg');
+                        videoThumbnailImg.src = _latestThumbnailUrl;
                         videoThumbnailImg.onerror = function() {
                             this.onerror = null;
                             this.src = 'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
+                            _latestThumbnailUrl = this.src;
                         };
                     }
+
+                    // Service-time auto-play (rare): preserves the existing
+                    // in-place iframe behavior so the live stream just appears
+                    // in the latest card during the 9am Sunday window.
+                    if (_shouldAutoPlay) {
+                        preloadIframe(videoId, true);
+                        _isMutedAutoPlay = true;
+                        activateVideo();
+                        return;
+                    }
+
+                    // Typical visit: clicks open the centered video player overlay.
+                    var card1 = document.getElementById('video-card-1');
                     if (videoPlayBtn) {
                         videoPlayBtn.addEventListener('click', function(e) {
                             e.stopPropagation();
-                            activateVideo();
+                            expandCardPlayer(card1, videoId, _latestThumbnailUrl);
                         });
                     }
                     if (videoThumbnail) {
-                        videoThumbnail.addEventListener('click', activateVideo);
+                        videoThumbnail.addEventListener('click', function(e) {
+                            if (e.target.closest('.video-play-btn, .video-unmute-btn')) return;
+                            expandCardPlayer(card1, videoId, _latestThumbnailUrl);
+                        });
                     }
-                    if (_shouldAutoPlay) {
-                        // iframe was created with autoplay=1&mute=1, so playback
-                        // starts automatically — just reveal it
-                        _isMutedAutoPlay = true;
-                        activateVideo();
+                }
+
+                function formatVideoDate(iso) {
+                    if (!iso) return '';
+                    var d = new Date(iso);
+                    if (isNaN(d.getTime())) return '';
+                    // Services air Sunday morning in Boise; upload timestamp can
+                    // land late-Sunday-evening UTC = Monday UTC. Render in the
+                    // church's timezone so the chip reads "Sun, May 17", not Mon.
+                    var tz = 'America/Boise';
+                    var weekday = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: tz });
+                    var monthDay = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: tz });
+                    var year = parseInt(d.toLocaleDateString('en-US', { year: 'numeric', timeZone: tz }), 10);
+                    var thisYear = new Date().getFullYear();
+                    return year === thisYear
+                        ? weekday + ', ' + monthDay
+                        : weekday + ', ' + monthDay + ', ' + year;
+                }
+
+                function populateRecentCard(index, video) {
+                    var card = document.getElementById('video-card-' + index);
+                    var img = document.getElementById('video-card-' + index + '-img');
+                    var dateEl = document.getElementById('video-card-' + index + '-date');
+                    var titleEl = document.getElementById('video-card-' + index + '-title');
+                    if (!card || !video) return;
+                    var thumbUrl = video.thumbnailUrl || ('https://img.youtube.com/vi/' + video.videoId + '/maxresdefault.jpg');
+                    if (img) {
+                        img.src = thumbUrl;
+                        img.alt = video.title || 'Sunday service';
+                        img.onerror = function() {
+                            this.onerror = null;
+                            this.src = 'https://img.youtube.com/vi/' + video.videoId + '/hqdefault.jpg';
+                        };
                     }
+                    if (dateEl) dateEl.textContent = formatVideoDate(video.publishedAt);
+                    if (titleEl) titleEl.textContent = video.title || 'Sunday Service';
+                    if (card.tagName === 'A') {
+                        card.href = 'https://www.youtube.com/watch?v=' + video.videoId;
+                    }
+                    card.addEventListener('click', function(e) {
+                        // Desktop: open centered video player. Mobile (≤960px)
+                        // cards 2-3 are display:none so this never fires there,
+                        // but the link still works for right-click / new-tab.
+                        if (window.innerWidth > 960) {
+                            e.preventDefault();
+                            expandCardPlayer(card, video.videoId, thumbUrl);
+                        }
+                    });
+                }
+
+                // ===== Centered video player overlay (desktop click-to-expand) =====
+
+                function pauseSourceIframe(card) {
+                    var iframe = card && card.querySelector('iframe.youtube-embed');
+                    if (iframe && iframe.contentWindow) {
+                        try {
+                            iframe.contentWindow.postMessage(
+                                '{"event":"command","func":"pauseVideo","args":""}', '*'
+                            );
+                        } catch (e) {}
+                    }
+                }
+
+                function getCardThumbRect(card) {
+                    var thumb = card.querySelector('.video-embed-wrapper, .video-card-thumb');
+                    return thumb ? thumb.getBoundingClientRect() : null;
+                }
+
+                function expandCardPlayer(card, videoId, thumbnailUrl) {
+                    if (!_playerOverlay || !_playerFrame || !_playerSlot || !card || !videoId) return;
+                    if (_activeSourceCard) return;
+                    if (window.innerWidth <= 960) {
+                        // Defensive fallback: shouldn't happen because mobile
+                        // cards 2-3 are display:none and card 1 falls through
+                        // to the inline auto-play path.
+                        window.open('https://www.youtube.com/watch?v=' + videoId, '_blank', 'noopener');
+                        return;
+                    }
+
+                    pauseSourceIframe(card);
+
+                    // Make overlay measurable
+                    _playerOverlay.classList.add('is-mounted');
+
+                    // Reset frame to natural position so we can measure it
+                    _playerFrame.style.transition = 'none';
+                    _playerFrame.style.transform = '';
+                    _playerFrame.style.backgroundImage = '';
+                    // Force reflow to apply the reset
+                    void _playerFrame.offsetWidth;
+
+                    var sourceRect = getCardThumbRect(card);
+                    var targetRect = _playerFrame.getBoundingClientRect();
+                    if (!sourceRect || !targetRect || !targetRect.width) {
+                        // Fallback: just open YouTube
+                        _playerOverlay.classList.remove('is-mounted');
+                        window.open('https://www.youtube.com/watch?v=' + videoId, '_blank', 'noopener');
+                        return;
+                    }
+
+                    var sourceCx = sourceRect.left + sourceRect.width / 2;
+                    var sourceCy = sourceRect.top + sourceRect.height / 2;
+                    var targetCx = targetRect.left + targetRect.width / 2;
+                    var targetCy = targetRect.top + targetRect.height / 2;
+                    var dx = sourceCx - targetCx;
+                    var dy = sourceCy - targetCy;
+                    var scale = sourceRect.width / targetRect.width;
+
+                    // Position frame at the source card (with its thumbnail as bg)
+                    _playerFrame.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(' + scale + ')';
+                    _playerFrame.style.backgroundImage = 'url(' + (thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg')) + ')';
+
+                    // Fade out the source card so it doesn't double under the moving frame
+                    card.classList.add('is-source', 'is-source-hidden');
+
+                    // Lock scroll while overlay is open
+                    document.documentElement.style.overflow = 'hidden';
+                    document.body.style.overflow = 'hidden';
+
+                    // Force reflow before activating to ensure the start transform sticks
+                    void _playerFrame.offsetWidth;
+
+                    // Animate frame to natural (centered) position + fade in backdrop
+                    _playerOverlay.classList.add('is-active');
+                    _playerOverlay.setAttribute('aria-hidden', 'false');
+                    _playerFrame.style.transition = '';
+                    _playerFrame.style.transform = '';
+
+                    _activeSourceCard = card;
+
+                    // Inject iframe after the morph is mostly settled (350ms of the 600ms transition).
+                    // Gives the user a moment to register the move, then the video appears.
+                    _playerCloseFallback = setTimeout(function() {
+                        if (_activeSourceCard !== card) return;
+                        var iframe = document.createElement('iframe');
+                        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                        iframe.setAttribute('allowfullscreen', '');
+                        iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId
+                            + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
+                        _playerSlot.innerHTML = '';
+                        _playerSlot.appendChild(iframe);
+                        _playerCloseFallback = null;
+                    }, 350);
+
+                    // Keyboard close (Escape)
+                    _playerEscListener = function(e) {
+                        if (e.key === 'Escape' || e.keyCode === 27) {
+                            closeExpandedCard();
+                        }
+                    };
+                    document.addEventListener('keydown', _playerEscListener);
+                }
+
+                function closeExpandedCard() {
+                    if (!_activeSourceCard) return;
+                    var card = _activeSourceCard;
+
+                    if (_playerCloseFallback) {
+                        clearTimeout(_playerCloseFallback);
+                        _playerCloseFallback = null;
+                    }
+                    if (_playerEscListener) {
+                        document.removeEventListener('keydown', _playerEscListener);
+                        _playerEscListener = null;
+                    }
+
+                    // Stop video audio immediately
+                    if (_playerSlot) _playerSlot.innerHTML = '';
+
+                    // Restore scroll
+                    document.documentElement.style.overflow = '';
+                    document.body.style.overflow = '';
+
+                    // Compute reverse transform from current (centered) to source rect
+                    var sourceRect = getCardThumbRect(card);
+                    var targetRect = _playerFrame ? _playerFrame.getBoundingClientRect() : null;
+                    if (sourceRect && targetRect && targetRect.width) {
+                        var dx = (sourceRect.left + sourceRect.width / 2) - (targetRect.left + targetRect.width / 2);
+                        var dy = (sourceRect.top + sourceRect.height / 2) - (targetRect.top + targetRect.height / 2);
+                        var scale = sourceRect.width / targetRect.width;
+                        _playerFrame.style.transition = '';
+                        _playerFrame.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(' + scale + ')';
+                    }
+
+                    // Fade out backdrop and restore source card
+                    _playerOverlay.classList.remove('is-active');
+                    card.classList.remove('is-source-hidden');
+
+                    var cleanup = function() {
+                        if (_playerOverlay) {
+                            _playerOverlay.classList.remove('is-mounted');
+                            _playerOverlay.setAttribute('aria-hidden', 'true');
+                        }
+                        if (_playerFrame) {
+                            _playerFrame.style.transition = 'none';
+                            _playerFrame.style.transform = '';
+                            _playerFrame.style.backgroundImage = '';
+                        }
+                        card.classList.remove('is-source');
+                        _activeSourceCard = null;
+                    };
+
+                    // Wait for transform transition to finish, then cleanup
+                    var onEnd = function(e) {
+                        if (e && e.target !== _playerFrame) return;
+                        if (e && e.propertyName && e.propertyName !== 'transform') return;
+                        if (_playerFrame) _playerFrame.removeEventListener('transitionend', onEnd);
+                        cleanup();
+                    };
+                    if (_playerFrame) {
+                        _playerFrame.addEventListener('transitionend', onEnd);
+                        // Safety: fire cleanup even if transitionend doesn't (e.g. transition was 'none')
+                        setTimeout(function() {
+                            if (_activeSourceCard === card) {
+                                if (_playerFrame) _playerFrame.removeEventListener('transitionend', onEnd);
+                                cleanup();
+                            }
+                        }, 750);
+                    } else {
+                        cleanup();
+                    }
+                }
+
+                if (_playerBackdrop) _playerBackdrop.addEventListener('click', closeExpandedCard);
+                if (_playerClose) _playerClose.addEventListener('click', closeExpandedCard);
+
+                function populateLatestMeta(video) {
+                    var dateEl = document.getElementById('video-card-1-date');
+                    var titleEl = document.getElementById('video-card-1-title');
+                    if (dateEl) dateEl.textContent = formatVideoDate(video.publishedAt);
+                    if (titleEl) titleEl.textContent = video.title || 'Sunday Service';
                 }
 
                 fetch('/api/youtube/latest-video')
                     .then(function(r) { return r.json(); })
                     .then(function(data) {
-                        if (data.success && data.videoId) {
-                            setupVideo(data.videoId, data.thumbnailUrl);
+                        var videos = (data && data.videos) || [];
+                        if (videos.length > 0) {
+                            setupVideo(videos[0].videoId, videos[0].thumbnailUrl);
+                            populateLatestMeta(videos[0]);
+                            if (videos[1]) populateRecentCard(2, videos[1]);
+                            if (videos[2]) populateRecentCard(3, videos[2]);
                         } else {
-                            // API returned error — use fallback video
                             setupVideo(FALLBACK_VIDEO_ID, null);
                         }
                     })

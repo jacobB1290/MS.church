@@ -5,10 +5,12 @@ import { homeScripts } from '../templates/home-scripts.js'
 
 export function registerHomeRoute(app: Hono) {
   app.get('/', (c) => {
-    // Cache the rendered HTML at the CDN edge for 60s, serve stale up to 5min while revalidating
-    c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+    // Cache the rendered HTML at the CDN edge for 5min, serve stale up to 1 day while
+    // revalidating. The home page changes infrequently (calendar feed is the dynamic
+    // bit and lives behind its own 5-min in-memory cache), so a long SWR window keeps
+    // origin load near-zero while never serving content that is more than 5 min stale.
+    c.header('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400')
     return c.html(`<!DOCTYPE html>
-<!-- v1.38.1 - Fix timezone bug in event date categorization -->
 <html lang="en">
 ${homeHead()}
 ${homeBody()}

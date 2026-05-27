@@ -197,11 +197,30 @@ export const homeScripts = (): string => `
                         // the front instead of fading up over its neighbors.
                         // Pin opacity to 1 first so dropping the animation
                         // doesn't fall back to the base opacity: 0.
+                        //
+                        // Special case the tile that's already .active when its
+                        // entrance ends (the initial tile on first load): its
+                        // .active transform is in the cascade but masked by the
+                        // forwards-fill, so simply dropping the animation would
+                        // expose the lifted transform with no transition (the
+                        // reported first-load "jump"). Pin the resting transform
+                        // for one frame, force a reflow, then release — so the
+                        // lift transitions in. Box-shadow isn't touched, so the
+                        // glow doesn't flicker.
                         slides.forEach((slide) => {
                             slide.addEventListener('animationend', (e) => {
                                 if (e.animationName !== 'tossIn') return;
-                                slide.style.opacity = '1';
-                                slide.style.animation = 'none';
+                                if (slide.classList.contains('active')) {
+                                    const resting = getComputedStyle(slide).transform;
+                                    slide.style.opacity = '1';
+                                    slide.style.animation = 'none';
+                                    slide.style.transform = resting;
+                                    void slide.offsetWidth;
+                                    slide.style.transform = '';
+                                } else {
+                                    slide.style.opacity = '1';
+                                    slide.style.animation = 'none';
+                                }
                             });
                         });
 

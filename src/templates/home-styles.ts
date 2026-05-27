@@ -1934,10 +1934,15 @@ export const homeStyles = (): string => `
                banner height, so the bottom tile tops out at ~60% to stay inside.
                .schedule-layout--no-wed outranks the 5-tile defaults above.
                (Banner is desktop-only.) */
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  6%; left:  9%; width: 33%; --rot: -3deg; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 26%; left: 53%; width: 33%; --rot:  3deg; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 46%; left: 18%; width: 33%; --rot: -3deg; --toss-delay: 380ms; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 64%; left: 53%; width: 33%; --rot:  3deg; --toss-delay: 520ms; }
+            /* Four tiles cascade as a tight, CONNECTED ribbon — matching the
+               five-tile (Wednesday-on) look. Same tile size (38%) and a close
+               left/right zigzag so consecutive tiles overlap at the corners
+               (no floating gaps), with ~16% vertical overlap. Each tile still
+               sits roughly inline with its card on the right. */
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  4%; left:  8%; width: 38%; --rot: -3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 23%; left: 50%; width: 38%; --rot:  3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 42%; left: 14%; width: 38%; --rot: -3deg; --toss-delay: 380ms; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 61%; left: 50%; width: 38%; --rot:  3deg; --toss-delay: 520ms; }
             .schedule-banner-slide {
                 transform: rotate(var(--rot, 0deg)) translateZ(0);
             }

@@ -88,6 +88,12 @@ type Entry = {
    *  AVIF + WebP siblings are auto-derived. Without this, the entry renders
    *  with the placeholder SVG. */
   imageSrc?: string
+  /** Optional desktop-only override (≥961px), same contract as Section's
+   *  imageSrcDesktop. The entry image is a wide 16:9 banner at ≤960px but a
+   *  tall portrait slot at ≥961px, so a single crop can't serve both — set
+   *  this to load a portrait crop on desktop while imageSrc stays the mobile
+   *  banner. */
+  imageSrcDesktop?: string
   imageAlt?: string
   /** object-position values applied to the entry-pair image. */
   imagePosition?: string
@@ -260,17 +266,18 @@ const SECTIONS: Section[] = [
         // newcomers from showing up.
         description:
           'A 45-minute evening Bible study at the church with free coffee. Open discussion, gospel-grounded, paced so newcomers and longtime members can both engage. Whoever is leading that week opens a passage, asks questions, and we go from there. Honest questions are encouraged. There is no “too basic” or “too hard.”',
-        imageSrc: '/static/bible-study.jpg',
-        imageAlt: 'Thursday evening Bible study at Morning Star Christian Church in Boise, Idaho. An open Bible on a wood table with coffee, in a warm lounge with soft lighting.',
-        // Source: 704×880 portrait crop of a wider lounge shot. The open Bible
-        // (subject) sits in the lower-center with the coffee mug beside it; the
-        // leather + green couches recede behind for depth. Container is the
-        // portrait-ish entry-pair slot, so bias DOWN to keep the Bible dominant
-        // and let the lounge read as context above it. Mobile crops to a wide-
-        // short banner (like Bible Reading above) so it needs a stronger DOWN
-        // bias to pull the Bible into the visible band; desktop's taller slot
-        // keeps the Bible prominent with the lounge above at a gentler bias.
-        imagePosition: 'center 80%',
+        // The entry-pair image slot is a wide 16:9 banner at ≤960px but a tall
+        // portrait at ≥961px, so two crops of the same lounge shot are served:
+        //  - imageSrc (mobile banner): a 16:9 crop that keeps the whole inviting
+        //    scene — open Bible foreground, coffee, journal, and the leather +
+        //    green couches behind. A single portrait crop here zoomed hard into
+        //    a thin band and lost the room, so the banner shows the full scene.
+        //  - imageSrcDesktop (portrait): a tighter crop with the open Bible as
+        //    the dominant subject and the lounge reading as context above.
+        imageSrc: '/static/bible-study.jpg?v=2',
+        imageSrcDesktop: '/static/bible-study-desktop.jpg',
+        imageAlt: 'Thursday evening Bible study at Morning Star Christian Church in Boise, Idaho. An open Bible on a wood table with coffee in a warm lounge.',
+        imagePosition: 'center 50%',
         imagePositionDesktop: 'center 58%',
         tips: [
           { label: 'Bring', value: 'A Bible if you have one. We keep extras on the back table.' },
@@ -423,14 +430,29 @@ function renderEntryPair(e: Entry, side: 'left' | 'right'): string {
     if (e.imagePosition) cssVars.push(`--img-pos: ${e.imagePosition}`)
     if (e.imagePositionDesktop) cssVars.push(`--img-pos-desktop: ${e.imagePositionDesktop}`)
     const styleAttr = cssVars.length ? ` style="${cssVars.join('; ')};"` : ''
-    const [path, query] = e.imageSrc.split('?')
-    const q = query ? `?${query}` : ''
-    const base = path.replace(/\.jpe?g$/i, '')
+    const variants = (src: string) => {
+      const [path, query] = src.split('?')
+      const q = query ? `?${query}` : ''
+      const b = path.replace(/\.jpe?g$/i, '')
+      return { avif: `${b}.avif${q}`, webp: `${b}.webp${q}`, jpg: src }
+    }
+    const v = variants(e.imageSrc)
+    // Two-source pattern (matches renderSection): when a desktop crop is set,
+    // ≥961px loads it and ≤960px loads the banner crop, each as AVIF/WebP/JPG.
+    const desktopSources = e.imageSrcDesktop
+      ? (() => {
+          const vd = variants(e.imageSrcDesktop)
+          return `
+                                <source media="(min-width: 961px)" type="image/avif" srcset="${vd.avif}">
+                                <source media="(min-width: 961px)" type="image/webp" srcset="${vd.webp}">
+                                <source media="(min-width: 961px)" srcset="${vd.jpg}">`
+        })()
+      : ''
     imgBlock = `<div class="ministry-entry-image"${styleAttr}>
-                            <picture>
-                                <source type="image/avif" srcset="${base}.avif${q}">
-                                <source type="image/webp" srcset="${base}.webp${q}">
-                                <img src="${e.imageSrc}" alt="${e.imageAlt ?? ''}" loading="lazy" decoding="async">
+                            <picture>${desktopSources}
+                                <source type="image/avif" srcset="${v.avif}">
+                                <source type="image/webp" srcset="${v.webp}">
+                                <img src="${v.jpg}" alt="${e.imageAlt ?? ''}" loading="lazy" decoding="async">
                             </picture>
                         </div>`
   }

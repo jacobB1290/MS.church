@@ -1934,10 +1934,10 @@ export const homeStyles = (): string => `
                banner height, so the bottom tile tops out at ~60% to stay inside.
                .schedule-layout--no-wed outranks the 5-tile defaults above.
                (Banner is desktop-only.) */
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  2%; left:  8%; --rot: -3deg; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 21%; left: 50%; --rot:  3deg; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 41%; left: 16%; --rot: -2deg; --toss-delay: 380ms; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 60%; left: 52%; --rot:  3deg; --toss-delay: 520ms; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  4%; left: 10%; width: 32%; --rot: -3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 25%; left: 52%; width: 32%; --rot:  3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 46%; left: 14%; width: 32%; --rot: -2deg; --toss-delay: 380ms; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 67%; left: 50%; width: 32%; --rot:  3deg; --toss-delay: 520ms; }
             .schedule-banner-slide {
                 transform: rotate(var(--rot, 0deg)) translateZ(0);
             }

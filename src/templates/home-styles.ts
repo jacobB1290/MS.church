@@ -1940,10 +1940,10 @@ export const homeStyles = (): string => `
                steadily across and down: no two share a column, consecutive tiles
                corner-overlap into one flowing ribbon, and the sweep ends near the
                cards. Each tile still sits roughly inline with its card. */
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  3%; left:  3%; width: 36%; --rot: -3deg; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 23%; left: 21%; width: 36%; --rot:  2deg; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 43%; left: 39%; width: 36%; --rot: -2deg; --toss-delay: 380ms; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 62%; left: 56%; width: 36%; --rot:  3deg; --toss-delay: 520ms; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  2%; left:  5%; width: 36%; --rot: -3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 21%; left: 44%; width: 36%; --rot:  3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 42%; left: 11%; width: 36%; --rot: -2deg; --toss-delay: 380ms; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 60%; left: 48%; width: 36%; --rot:  3deg; --toss-delay: 520ms; }
             .schedule-banner-slide {
                 transform: rotate(var(--rot, 0deg)) translateZ(0);
             }

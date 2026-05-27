@@ -1757,7 +1757,7 @@ export const homeStyles = (): string => `
                 /* Subtle ambient warm wash behind the tiles so the
                    collage sits on something instead of floating on
                    pure white. Plus extra top/side padding so a hover-
-                   scaled tile (1.42x) doesn't get clipped by the
+                   scaled tile (1.25x) doesn't get clipped by the
                    section-card edges. */
                 background:
                     radial-gradient(ellipse 75% 65% at 50% 50%,
@@ -1948,11 +1948,11 @@ export const homeStyles = (): string => `
                 transform: rotate(var(--rot, 0deg)) translateZ(0);
             }
             /* Active / hover state — the focal photo. Rises out of
-               the composition with a noticeable scale (1.4x), lifts
+               the composition with a gentle scale (1.25x), lifts
                up, un-rotates, casts a deep gold-tinted shadow. */
             .schedule-banner-slide:hover,
             .schedule-banner-slide.active {
-                transform: rotate(0deg) translateY(-12px) scale(1.4);
+                transform: rotate(0deg) translateY(-10px) scale(1.25);
                 z-index: 30;
                 box-shadow:
                     0 36px 64px rgba(212, 165, 116, 0.32),

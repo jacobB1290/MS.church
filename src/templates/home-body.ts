@@ -181,9 +181,9 @@ export const homeBody = (): string => `
                                 </div>
                                 <div class="schedule-item-image">
                                     <picture>
-                                        <source media="(min-width: 961px)" srcset="/static/cooking-ministry-desktop.avif?v=2" type="image/avif">
-                                        <source media="(min-width: 961px)" srcset="/static/cooking-ministry-desktop.webp?v=2" type="image/webp">
-                                        <source media="(min-width: 961px)" srcset="/static/cooking-ministry-desktop.jpg?v=2">
+                                        <source media="(min-width: 961px)" srcset="/static/cooking-ministry-desktop.avif?v=3" type="image/avif">
+                                        <source media="(min-width: 961px)" srcset="/static/cooking-ministry-desktop.webp?v=3" type="image/webp">
+                                        <source media="(min-width: 961px)" srcset="/static/cooking-ministry-desktop.jpg?v=3">
                                         <source srcset="/static/cooking-ministry.avif?v=3" type="image/avif">
                                         <source srcset="/static/cooking-ministry.webp?v=3" type="image/webp">
                                         <img src="/static/cooking-ministry.jpg?v=3" alt="Morning Star Christian Church volunteer preparing fresh vegetables for the Boise homeless-shelter cooking ministry and Sunday community breakfast" width="1000" height="1333" loading="lazy" decoding="async" style="object-position: 0% 50%;">

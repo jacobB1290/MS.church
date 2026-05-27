@@ -90,8 +90,12 @@ export const homeBody = (): string => `
                             ${WEDNESDAY_ENABLED ? `<div class="schedule-banner-slide schedule-banner-placeholder" data-index="2" role="img" aria-label="Wednesday Activity Day">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                             </div>` : ''}
-                            <div class="schedule-banner-slide schedule-banner-placeholder" data-index="3" role="img" aria-label="Thursday Bible Study">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            <div class="schedule-banner-slide" data-index="3">
+                                <picture>
+                                    <source srcset="/static/schedule-thursday.avif" type="image/avif">
+                                    <source srcset="/static/schedule-thursday.webp" type="image/webp">
+                                    <img src="/static/schedule-thursday.jpg" alt="An open Bible, a cup of coffee, and a notebook on a wooden table set for Morning Star Christian Church's Thursday evening Bible study in Boise" width="880" height="1100" loading="lazy" decoding="async" style="object-position: 50% 55%;">
+                                </picture>
                             </div>
                             <div class="schedule-banner-slide" data-index="4">
                                 <picture>

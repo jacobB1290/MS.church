@@ -1926,15 +1926,18 @@ export const homeStyles = (): string => `
                 z-index: 5;
             }
             /* Wednesday hidden: the data-index="2" tile is dropped, leaving four
-               tiles (indices 0,1,3,4). Re-cascade them into four even slots that
-               line up with the four schedule cards on the right, and even out the
-               toss-delays, so the banner reads as a deliberate 4-tile composition
-               instead of a 5-tile one with a gap. The extra .schedule-layout--no-wed
-               class outranks the 5-tile defaults above. (Banner is desktop-only.) */
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  4%; left:  8%; --rot: -3deg; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 27%; left: 50%; --rot:  3deg; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 50%; left: 16%; --rot: -2deg; --toss-delay: 380ms; }
-            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 73%; left: 52%; --rot:  3deg; --toss-delay: 520ms; }
+               tiles (indices 0,1,3,4). The four-card list is SHORTER than the
+               five-card one, but each tile's height is fixed by its width — so the
+               five-tile tops (…72%) made the bottom tile overflow the shorter
+               banner and collide with the "Explore Our Ministries" CTA below.
+               Re-cascade the four into tops that fit: each tile is ~37% of the
+               banner height, so the bottom tile tops out at ~60% to stay inside.
+               .schedule-layout--no-wed outranks the 5-tile defaults above.
+               (Banner is desktop-only.) */
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="0"] { top:  2%; left:  8%; --rot: -3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="1"] { top: 21%; left: 50%; --rot:  3deg; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="3"] { top: 41%; left: 16%; --rot: -2deg; --toss-delay: 380ms; }
+            .schedule-layout--no-wed .schedule-banner-slide[data-index="4"] { top: 60%; left: 52%; --rot:  3deg; --toss-delay: 520ms; }
             .schedule-banner-slide {
                 transform: rotate(var(--rot, 0deg)) translateZ(0);
             }

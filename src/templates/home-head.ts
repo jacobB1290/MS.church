@@ -1,12 +1,16 @@
 import { homeStyles } from './home-styles.js'
 import { prefetchSnippet } from './shared/prefetch.js'
 
-function getNextSundayISO(): { start: string; end: string } {
+// Next future occurrence of a given weekday (0 = Sunday) at the given local
+// times, formatted as an ISO 8601 string with the America/Boise UTC offset.
+// Used to anchor each weekly recurring Event's required schema.org startDate.
+function getNextWeekdayISO(targetDow: number, startTime: string, endTime: string): { start: string; end: string } {
     const now = new Date()
     const day = now.getUTCDay() // 0 = Sunday
-    const daysUntilSunday = day === 0 ? 7 : 7 - day // always next Sunday, not today
+    let daysUntil = (targetDow - day + 7) % 7
+    if (daysUntil === 0) daysUntil = 7 // always the next occurrence, never today
     const next = new Date(now)
-    next.setUTCDate(next.getUTCDate() + daysUntilSunday)
+    next.setUTCDate(next.getUTCDate() + daysUntil)
     const yyyy = next.getUTCFullYear()
     const mm = String(next.getUTCMonth() + 1).padStart(2, '0')
     const dd = String(next.getUTCDate()).padStart(2, '0')
@@ -24,13 +28,17 @@ function getNextSundayISO(): { start: string; end: string } {
         (month === 10 && dateNum < novFirstSun)
     const offset = isDST ? '-06:00' : '-07:00'
     return {
-        start: `${yyyy}-${mm}-${dd}T09:00:00${offset}`,
-        end: `${yyyy}-${mm}-${dd}T11:00:00${offset}`
+        start: `${yyyy}-${mm}-${dd}T${startTime}${offset}`,
+        end: `${yyyy}-${mm}-${dd}T${endTime}${offset}`
     }
 }
 
 export const homeHead = (): string => {
-    const nextSunday = getNextSundayISO()
+    const nextSunday = getNextWeekdayISO(0, '09:00:00', '11:00:00')
+    const nextTuesday = getNextWeekdayISO(2, '08:30:00', '10:00:00')
+    const nextWednesday = getNextWeekdayISO(3, '18:00:00', '21:00:00')
+    const nextThursday = getNextWeekdayISO(4, '18:00:00', '19:30:00')
+    const nextFriday = getNextWeekdayISO(5, '19:00:00', '20:30:00')
     return `
     <head>
         <meta charset="UTF-8">
@@ -602,6 +610,8 @@ export const homeHead = (): string => {
                     "@id": "https://ms.church/#tuesday-bible-reading",
                     "name": "Tuesday Bible Reading at Caffeina State Street",
                     "description": "Join Morning Star Christian Church for Tuesday morning Bible reading at 8:30 AM at Caffeina State Street in Boise, Idaho. Open to everyone — come enjoy fellowship and free coffee.",
+                    "startDate": "${nextTuesday.start}",
+                    "endDate": "${nextTuesday.end}",
                     "eventSchedule": {
                         "@type": "Schedule",
                         "repeatFrequency": "P1W",
@@ -632,6 +642,8 @@ export const homeHead = (): string => {
                     "@id": "https://ms.church/#wednesday-activity-day",
                     "name": "Wednesday Activity Day at Morning Star Christian Church",
                     "description": "Open gym for basketball and volleyball plus a crochet circle, all ages welcome — Wednesdays at 6 PM at Morning Star Christian Church in Boise. About three hours, no signup, no fee.",
+                    "startDate": "${nextWednesday.start}",
+                    "endDate": "${nextWednesday.end}",
                     "eventSchedule": {
                         "@type": "Schedule",
                         "repeatFrequency": "P1W",
@@ -664,6 +676,8 @@ export const homeHead = (): string => {
                     "@id": "https://ms.church/#thursday-bible-study",
                     "name": "Thursday Evening Bible Study at Morning Star Christian Church",
                     "description": "Join Morning Star Christian Church for Thursday evening Bible study at 6 PM in Boise, Idaho. Free coffee provided. All are welcome.",
+                    "startDate": "${nextThursday.start}",
+                    "endDate": "${nextThursday.end}",
                     "eventSchedule": {
                         "@type": "Schedule",
                         "repeatFrequency": "P1W",
@@ -696,6 +710,8 @@ export const homeHead = (): string => {
                     "@id": "https://ms.church/#friday-youth-service",
                     "name": "Friday Youth Service at Morning Star Christian Church",
                     "description": "Weekly Friday-night service for high schoolers and older (15 and up) — worship, teaching, and time to actually talk to each other. About an hour, with fellowship after.",
+                    "startDate": "${nextFriday.start}",
+                    "endDate": "${nextFriday.end}",
                     "eventSchedule": {
                         "@type": "Schedule",
                         "repeatFrequency": "P1W",

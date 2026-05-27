@@ -73,11 +73,19 @@ export const homeBody = (): string => `
                          teaser, for a quieter editorial feel. -->
                     <div class="schedule-layout${WEDNESDAY_ENABLED ? '' : ' schedule-layout--no-wed'}">
                         <div class="schedule-banner reveal-power" id="schedule-banner" aria-live="polite">
-                            <div class="schedule-banner-slide schedule-banner-placeholder active" data-index="0" role="img" aria-label="Sunday Gatherings">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            <div class="schedule-banner-slide active" data-index="0">
+                                <picture>
+                                    <source srcset="/static/schedule-sunday.avif" type="image/avif">
+                                    <source srcset="/static/schedule-sunday.webp" type="image/webp">
+                                    <img src="/static/schedule-sunday.jpg" alt="A worship leader singing during Sunday morning service at Morning Star Christian Church in Boise" width="880" height="1100" loading="lazy" decoding="async" style="object-position: 50% 30%;">
+                                </picture>
                             </div>
-                            <div class="schedule-banner-slide schedule-banner-placeholder" data-index="1" role="img" aria-label="Tuesday Bible Reading">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            <div class="schedule-banner-slide" data-index="1">
+                                <picture>
+                                    <source srcset="/static/schedule-tuesday.avif" type="image/avif">
+                                    <source srcset="/static/schedule-tuesday.webp" type="image/webp">
+                                    <img src="/static/schedule-tuesday.jpg" alt="An open Bible and a cup of coffee at a Boise coffee shop during Morning Star's Tuesday morning Bible reading" width="860" height="1528" loading="lazy" decoding="async" style="object-position: 50% 56%;">
+                                </picture>
                             </div>
                             ${WEDNESDAY_ENABLED ? `<div class="schedule-banner-slide schedule-banner-placeholder" data-index="2" role="img" aria-label="Wednesday Activity Day">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -85,8 +93,12 @@ export const homeBody = (): string => `
                             <div class="schedule-banner-slide schedule-banner-placeholder" data-index="3" role="img" aria-label="Thursday Bible Study">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                             </div>
-                            <div class="schedule-banner-slide schedule-banner-placeholder" data-index="4" role="img" aria-label="Friday Youth Service">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            <div class="schedule-banner-slide" data-index="4">
+                                <picture>
+                                    <source srcset="/static/schedule-friday.avif" type="image/avif">
+                                    <source srcset="/static/schedule-friday.webp" type="image/webp">
+                                    <img src="/static/schedule-friday.jpg" alt="A young woman holding her Bible before Friday youth service at Morning Star Christian Church in Boise" width="716" height="1273" loading="lazy" decoding="async" style="object-position: 50% 30%;">
+                                </picture>
                             </div>
                         </div>
                         <div class="schedule-list" role="tablist" aria-label="Weekly gatherings, with links into the Ministries page" data-reveal-group data-reveal-delay="80">

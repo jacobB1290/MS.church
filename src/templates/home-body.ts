@@ -363,33 +363,34 @@ export const homeBody = (): string => `
                                 <div class="form-step" data-step="1" id="cf-step-1">
                                     <div class="form-group form-group-full">
                                         <label for="cf-message">What&rsquo;s on your heart?</label>
-                                        <textarea id="cf-message" name="message" rows="5" placeholder="Share a question, a prayer request, or just say hello."></textarea>
+                                        <textarea id="cf-message" name="message" rows="5" placeholder="Share a question, a prayer request, or just say hello." required aria-required="true"></textarea>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group">
-                                            <label for="cf-first">First name <span class="form-optional">(optional)</span></label>
-                                            <input type="text" id="cf-first" name="firstName" autocomplete="given-name">
+                                            <label for="cf-first">First name</label>
+                                            <input type="text" id="cf-first" name="firstName" autocomplete="given-name" required aria-required="true">
                                         </div>
                                         <div class="form-group">
-                                            <label for="cf-last">Last name <span class="form-optional">(optional)</span></label>
-                                            <input type="text" id="cf-last" name="lastName" autocomplete="family-name">
+                                            <label for="cf-last">Last name</label>
+                                            <input type="text" id="cf-last" name="lastName" autocomplete="family-name" required aria-required="true">
                                         </div>
                                     </div>
+                                    <p class="form-error" id="cf-error-1" role="alert" aria-live="assertive" hidden></p>
                                     <button type="button" class="event-link-btn btn-submit" id="cf-next">Continue</button>
                                 </div>
 
                                 <div class="form-step" data-step="2" id="cf-step-2" hidden>
                                     <fieldset class="form-fieldset">
                                         <legend class="form-legend">How can we reach you?</legend>
-                                        <p class="form-hint" id="cf-reach-hint">Add a phone number or email so we can reply. One is enough.</p>
+                                        <p class="form-hint" id="cf-reach-hint">Add your phone number and email so we can reply.</p>
                                         <div class="form-row">
                                             <div class="form-group">
                                                 <label for="cf-phone">Phone number</label>
-                                                <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(208) 000-0000" aria-describedby="cf-reach-hint">
+                                                <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(208) 000-0000" aria-describedby="cf-reach-hint" required aria-required="true">
                                             </div>
                                             <div class="form-group">
                                                 <label for="cf-email">Email address</label>
-                                                <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com" aria-describedby="cf-reach-hint">
+                                                <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com" aria-describedby="cf-reach-hint" required aria-required="true">
                                             </div>
                                         </div>
                                     </fieldset>

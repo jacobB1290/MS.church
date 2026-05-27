@@ -650,27 +650,27 @@ ${items}
                   <form id="contact-form-el" novalidate>
                       <div class="form-group">
                           <label for="cf-first">First name</label>
-                          <input type="text" id="cf-first" name="firstName" autocomplete="given-name">
+                          <input type="text" id="cf-first" name="firstName" autocomplete="given-name" required aria-required="true">
                       </div>
 
                       <div class="form-group">
                           <label for="cf-last">Last name</label>
-                          <input type="text" id="cf-last" name="lastName" autocomplete="family-name">
+                          <input type="text" id="cf-last" name="lastName" autocomplete="family-name" required aria-required="true">
                       </div>
 
                       <div class="form-group">
                           <label for="cf-phone">Phone number</label>
-                          <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(208) 000-0000">
+                          <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="(208) 000-0000" required aria-required="true">
                       </div>
 
                       <div class="form-group">
                           <label for="cf-email">Email address</label>
-                          <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com">
+                          <input type="email" id="cf-email" name="email" autocomplete="email" placeholder="you@example.com" required aria-required="true">
                       </div>
 
                       <div class="form-group">
                           <label for="cf-message">Your question, prayer request, or message</label>
-                          <textarea id="cf-message" name="message"></textarea>
+                          <textarea id="cf-message" name="message" required aria-required="true"></textarea>
                       </div>
 
                       <label class="form-check">
@@ -721,7 +721,12 @@ ${items}
                           sourcePage: '/form'
                       };
 
-                      if (!data.phone.trim() && !data.email.trim()) { showError('Please add a phone number or email so we can reach you.'); return; }
+                      if (!data.firstName.trim()) { showError('Please enter your first name.'); form.firstName.focus(); return; }
+                      if (!data.lastName.trim()) { showError('Please enter your last name.'); form.lastName.focus(); return; }
+                      if (!data.phone.trim()) { showError('Please enter your phone number.'); form.phone.focus(); return; }
+                      if (!data.email.trim()) { showError('Please enter your email address.'); form.email.focus(); return; }
+                      if (!form.email.checkValidity()) { showError('Please enter a valid email address.'); form.email.focus(); return; }
+                      if (!data.message.trim()) { showError('Please enter your message.'); form.message.focus(); return; }
                       if (!data.termsAccepted) { showError('Please agree to the terms & conditions.'); return; }
 
                       const original = submitBtn ? submitBtn.textContent : '';

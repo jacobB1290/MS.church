@@ -1608,17 +1608,21 @@ export const homeScripts = (): string => `
                         const nextBtn = document.getElementById('cf-next');
                         const backBtn = document.getElementById('cf-back');
                         const errorEl = document.getElementById('cf-error');
+                        const errorEl1 = document.getElementById('cf-error-1');
                         const stepNum = document.getElementById('cf-step-num');
                         const stepLabel = document.getElementById('cf-step-label');
                         const steps = Array.from(form.querySelectorAll('.form-step'));
                         const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                         const labels = { 1: 'Your note', 2: 'How to reach you' };
 
-                        const showError = (msg, focusEl) => {
-                            if (errorEl) { errorEl.textContent = msg; errorEl.hidden = false; }
+                        const showError = (el, msg, focusEl) => {
+                            if (el) { el.textContent = msg; el.hidden = false; }
                             if (focusEl) focusEl.focus();
                         };
-                        const clearError = () => { if (errorEl) errorEl.hidden = true; };
+                        const clearError = () => {
+                            if (errorEl) errorEl.hidden = true;
+                            if (errorEl1) errorEl1.hidden = true;
+                        };
 
                         const showStep = (n) => {
                             steps.forEach((s) => {
@@ -1635,7 +1639,13 @@ export const homeScripts = (): string => `
                             if (firstField) firstField.focus({ preventScroll: true });
                         };
 
-                        if (nextBtn) nextBtn.addEventListener('click', () => { clearError(); showStep(2); });
+                        if (nextBtn) nextBtn.addEventListener('click', () => {
+                            clearError();
+                            if (!form.message.value.trim()) { showError(errorEl1, 'Please share a message before continuing.', form.message); return; }
+                            if (!form.firstName.value.trim()) { showError(errorEl1, 'Please enter your first name.', form.firstName); return; }
+                            if (!form.lastName.value.trim()) { showError(errorEl1, 'Please enter your last name.', form.lastName); return; }
+                            showStep(2);
+                        });
                         if (backBtn) backBtn.addEventListener('click', () => { clearError(); showStep(1); });
 
                         form.addEventListener('submit', async (e) => {
@@ -1653,12 +1663,26 @@ export const homeScripts = (): string => `
                                 sourcePage: '/#contact'
                             };
 
-                            if (!data.phone.trim() && !data.email.trim()) {
-                                showError('Please add a phone number or email so we can reply.', form.phone);
+                            // Defensive: step 1 gates these, but never submit with them empty.
+                            if (!data.message.trim() || !data.firstName.trim() || !data.lastName.trim()) {
+                                showStep(1);
+                                showError(errorEl1, 'Please complete your message and name.', form.message);
+                                return;
+                            }
+                            if (!data.phone.trim()) {
+                                showError(errorEl, 'Please enter your phone number.', form.phone);
+                                return;
+                            }
+                            if (!data.email.trim()) {
+                                showError(errorEl, 'Please enter your email address.', form.email);
+                                return;
+                            }
+                            if (!form.email.checkValidity()) {
+                                showError(errorEl, 'Please enter a valid email address.', form.email);
                                 return;
                             }
                             if (!data.termsAccepted) {
-                                showError('Please agree to the terms & conditions to send your message.', form.termsAccepted);
+                                showError(errorEl, 'Please agree to the terms & conditions to send your message.', form.termsAccepted);
                                 return;
                             }
 

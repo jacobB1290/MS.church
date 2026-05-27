@@ -141,7 +141,7 @@ const SECTIONS: Section[] = [
     eyebrow: 'Worship',
     heading: 'How we gather together on Sundays.',
     imageSide: 'left',
-    imageSrc: '/static/worship.jpg',
+    imageSrc: '/static/worship.jpg?v=3',
     // Desktop-only editorial portrait of the pastor teaching from the pulpit
     // (1025×1400, cropped from a 1025×1822 source). Replaces the worship-team
     // landscape on ≥961px where the column container is tall and portrait-
@@ -153,7 +153,7 @@ const SECTIONS: Section[] = [
     // ?v= query is a cache-bust marker — /static is served with
     // Cache-Control: immutable, so the URL itself has to change when the
     // file contents change. Bump this when the cropped image is updated.
-    imageSrcDesktop: '/static/worship-desktop.jpg?v=2',
+    imageSrcDesktop: '/static/worship-desktop.jpg?v=3',
     imageAlt: 'Morning Star Christian Church Sunday worship service in Boise, Idaho. Pastor teaching from the pulpit and the worship team leading songs at our nondenominational 9 AM gathering.',
     // Mobile (16:9 banner): faces of the worship team sit in the upper-middle
     // band; bias upward so heads/microphones are preserved over feet.
@@ -260,6 +260,18 @@ const SECTIONS: Section[] = [
         // newcomers from showing up.
         description:
           'A 45-minute evening Bible study at the church with free coffee. Open discussion, gospel-grounded, paced so newcomers and longtime members can both engage. Whoever is leading that week opens a passage, asks questions, and we go from there. Honest questions are encouraged. There is no “too basic” or “too hard.”',
+        imageSrc: '/static/bible-study.jpg',
+        imageAlt: 'Thursday evening Bible study at Morning Star Christian Church in Boise, Idaho. An open Bible on a wood table with coffee, in a warm lounge with soft lighting.',
+        // Source: 704×880 portrait crop of a wider lounge shot. The open Bible
+        // (subject) sits in the lower-center with the coffee mug beside it; the
+        // leather + green couches recede behind for depth. Container is the
+        // portrait-ish entry-pair slot, so bias DOWN to keep the Bible dominant
+        // and let the lounge read as context above it. Mobile crops to a wide-
+        // short banner (like Bible Reading above) so it needs a stronger DOWN
+        // bias to pull the Bible into the visible band; desktop's taller slot
+        // keeps the Bible prominent with the lounge above at a gentler bias.
+        imagePosition: 'center 80%',
+        imagePositionDesktop: 'center 58%',
         tips: [
           { label: 'Bring', value: 'A Bible if you have one. We keep extras on the back table.' },
           { label: 'If you arrive late', value: 'Walk in and grab a chair. We do not pause the discussion for new arrivals; it just keeps going.' },
@@ -310,7 +322,7 @@ const SECTIONS: Section[] = [
     // serves both viewports: mobile crops it to a 16:9 banner with the
     // faces biased to the upper portion; desktop uses (close to) the
     // full image in the portrait container with a slight upward bias.
-    imageSrc: '/static/youth.jpg?v=2',
+    imageSrc: '/static/youth.jpg?v=3',
     imageAlt: 'Morning Star Christian Church youth group. Five teens dressed up arm-in-arm at a Friday Youth Service event in Boise, Idaho, evening backdrop of trees and fencing.',
     // Mobile (16:9 banner from a 9:16 portrait source): tight
     // horizontal band crops aggressively top-and-bottom. Faces sit at

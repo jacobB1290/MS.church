@@ -132,12 +132,12 @@ Sitemap: https://ms.church/sitemap.xml
         priority: '0.9',
         images: [
           {
-            loc: `${base}/static/worship-desktop.jpg?v=2`,
+            loc: `${base}/static/worship-desktop.jpg?v=3`,
             title: 'Sunday worship teaching at Morning Star Christian Church',
             caption: 'Pastor teaching from the pulpit at the 9 AM Sunday service at Morning Star Christian Church in Boise, Idaho — Bible-grounded, nondenominational worship.',
           },
           {
-            loc: `${base}/static/worship.jpg`,
+            loc: `${base}/static/worship.jpg?v=3`,
             title: 'Sunday worship team at Morning Star Christian Church',
             caption: 'Worship team leading songs from the platform at the Sunday service at Morning Star Christian Church in Boise — one of six weekly ministries including Bible study, youth, and Sunday school.',
           },
@@ -151,7 +151,7 @@ Sitemap: https://ms.church/sitemap.xml
         changefreq: 'weekly',
         priority: '0.9',
         image: {
-          loc: `${base}/static/cooking-ministry.jpg`,
+          loc: `${base}/static/cooking-ministry.jpg?v=3`,
           title: 'Outreach at Morning Star Christian Church',
           caption: 'Morning Star Christian Church cooking ministry volunteers preparing meals for the Boise homeless shelter and the free Sunday community breakfast.',
         },

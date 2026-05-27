@@ -326,31 +326,31 @@ export const homeHead = (): string => {
                         },
                         {
                             "@type": "ImageObject",
-                            "contentUrl": "https://ms.church/static/worship.jpg",
+                            "contentUrl": "https://ms.church/static/worship.jpg?v=3",
                             "caption": "Sunday morning worship service at Morning Star Christian Church in Boise, with congregation and worship team leading songs",
                             "keywords": "Sunday worship Boise, church worship team Boise, Bible-believing service"
                         },
                         {
                             "@type": "ImageObject",
-                            "contentUrl": "https://ms.church/static/worship-desktop.jpg?v=2",
+                            "contentUrl": "https://ms.church/static/worship-desktop.jpg?v=3",
                             "caption": "Pastor teaching from the pulpit at the 9 AM Sunday service at Morning Star Christian Church in Boise, Idaho",
                             "keywords": "Boise pastor preaching, Sunday teaching Boise, Bible-grounded preaching, nondenominational pulpit Boise"
                         },
                         {
                             "@type": "ImageObject",
-                            "contentUrl": "https://ms.church/static/cooking-ministry.jpg",
+                            "contentUrl": "https://ms.church/static/cooking-ministry.jpg?v=3",
                             "caption": "Morning Star Christian Church cooking ministry volunteers preparing meals for the Boise homeless shelter and the free Sunday community breakfast",
                             "keywords": "cooking ministry Boise, free breakfast church Boise, church homeless outreach Boise"
                         },
                         {
                             "@type": "ImageObject",
-                            "contentUrl": "https://ms.church/static/community-events.jpg",
+                            "contentUrl": "https://ms.church/static/community-events.jpg?v=3",
                             "caption": "Morning Star Christian Church community outreach event in a Boise park bringing families and neighbors together",
                             "keywords": "Boise community outreach, church community events Boise"
                         },
                         {
                             "@type": "ImageObject",
-                            "contentUrl": "https://ms.church/static/youth.jpg?v=2",
+                            "contentUrl": "https://ms.church/static/youth.jpg?v=3",
                             "caption": "Morning Star Christian Church youth group gathering on a Friday evening — open to high school and college-age students in Boise",
                             "keywords": "youth group Boise, Friday youth church Boise, teen Christian community Boise"
                         }

@@ -95,9 +95,9 @@ export const aboutBody = (): string => `
                         </div>
                         <div class="leadership-portrait">
                             <picture>
-                                <source type="image/avif" srcset="/static/worship-desktop.avif?v=2">
-                                <source type="image/webp" srcset="/static/worship-desktop.webp?v=2">
-                                <img src="/static/worship-desktop.jpg?v=2" alt="Pastor teaching from the pulpit at the Sunday service at Morning Star Christian Church in Boise, Idaho." loading="lazy" decoding="async" width="1025" height="1400">
+                                <source type="image/avif" srcset="/static/worship-desktop.avif?v=3">
+                                <source type="image/webp" srcset="/static/worship-desktop.webp?v=3">
+                                <img src="/static/worship-desktop.jpg?v=3" alt="Pastor teaching from the pulpit at the Sunday service at Morning Star Christian Church in Boise, Idaho." loading="lazy" decoding="async" width="1025" height="1400">
                             </picture>
                         </div>
                     </div>

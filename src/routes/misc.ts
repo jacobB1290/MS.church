@@ -625,6 +625,21 @@ ${items}
                   color: rgba(26, 26, 46, 0.6);
                   line-height: 1.6;
               }
+
+              /* Mobile — the desktop header nav doesn't wrap, which forced the
+                 document wider than the viewport (horizontal overflow). Stack
+                 the header, let the nav wrap, and shrink the fixed 60px gutters
+                 so the page fits a phone with no sideways scroll. */
+              @media (max-width: 700px) {
+                  .header { padding: 18px 20px; }
+                  .header-content { flex-direction: column; align-items: flex-start; gap: 14px; }
+                  nav { gap: 16px 20px; flex-wrap: wrap; }
+                  nav a { font-size: 11px; letter-spacing: 1.5px; }
+                  nav a:last-child { padding: 10px 22px; }
+                  .content { padding: 40px 20px; }
+                  h2 { margin-bottom: 28px; }
+                  .form-container, .form-success-msg { max-width: 100%; padding: 28px 22px; }
+              }
           </style>
       </head>
       <body>

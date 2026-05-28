@@ -5,7 +5,8 @@
     "dev": "vite",
     "build": "tsc --noEmit",
     "harness": "node scripts/harness/run.mjs",
-    "shots": "node scripts/shots/capture.mjs"
+    "shots": "node scripts/shots/capture.mjs",
+    "pdf": "node scripts/shots/build-pdf.mjs"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",

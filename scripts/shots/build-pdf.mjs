@@ -51,7 +51,6 @@ const ROUTES = [
   { slug: 'outreach', path: '/outreach', title: 'Outreach & Events', blurb: 'How we serve the city of Boise.' },
   { slug: 'visit', path: '/visit', title: 'Plan a Visit', blurb: 'What a first Sunday looks like.' },
   { slug: 'beliefs', path: '/beliefs', title: 'Beliefs', blurb: 'What we hold to, with scripture.' },
-  { slug: 'form', path: '/form', title: 'Contact', blurb: 'Reach the church directly.' },
   { slug: 'privacy', path: '/privacy', title: 'Privacy & Terms', blurb: 'Legal information.' },
 ]
 

@@ -155,6 +155,7 @@ function contentsHtml() {
       <div class="clist" style="margin-top:10px;">
         <div class="crow"><span class="cn">A1</span><span class="ct">Performance</span><span class="cdot"></span><span class="cp">Core Web Vitals</span></div>
         <div class="crow"><span class="cn">A2</span><span class="ct">Motion &amp; interaction</span><span class="cdot"></span><span class="cp">How it moves</span></div>
+        <div class="crow"><span class="cn">A3</span><span class="ct">Capture notes</span><span class="cdot"></span><span class="cp">Live vs. export</span></div>
       </div>
       <p class="sub" style="margin-top:30px;line-height:1.7;max-width:430px;">Each page shows the first screen
       (above the fold) followed by the full-length page, as rendered on an iPhone 17 Pro Max. The appendix
@@ -302,6 +303,38 @@ function motionHtml() {
   )
 }
 
+function captureNotesHtml() {
+  const rows = [
+    ['Interactive map', 'The Find Us panel on Plan a Visit is a live, interactive Google Map on the site. It shows a placeholder here because external map tiles were unavailable to the capture environment.'],
+    ['Live service video', 'The Watch section streams the latest Sunday service from YouTube and shows real playlist thumbnails. The placeholders stand in for embeds the capture environment couldn&rsquo;t load.'],
+    ['Live events', 'The events carousel shows its &ldquo;Stay Tuned&rdquo; empty state in this export because the Google Calendar feed was unreachable during capture. On the live site it lists upcoming events with images and links, pulled from the church calendar.'],
+    ['Built for every screen', 'These pages are a single device (iPhone 17 Pro Max). The live layout is fluid and scales cleanly across phones, tablets, and desktops.'],
+    ['Seen best in motion', 'Every frame here is static. On the live site the page animates throughout &mdash; see Motion &amp; interaction.'],
+  ]
+  const list = rows.map(([t, d]) =>
+    `<div class="defrow"><div class="dt">${t}</div><div class="dd">${d}</div></div>`,
+  ).join('')
+  return shell(
+    `<div class="sheet apx">
+      <div class="eyebrow">Appendix A3 &nbsp;·&nbsp; Capture notes</div>
+      <h1 class="title apxttl">Notes on this capture.</h1>
+      <div class="sub" style="max-width:448px;line-height:1.5;">The placeholders in this export are a limitation
+      of the capture environment, not the site. A few things render or behave better on the live site:</div>
+      <div class="rule" style="margin-top:22px;margin-bottom:6px;"></div>
+      <div class="deflist">${list}</div>
+      ${apxFoot('Appendix A3')}
+    </div>`,
+    `.apx{padding-top:64px;padding-bottom:54px;display:flex;flex-direction:column;min-height:944px;}
+     .apxttl{font-size:38px;margin:14px 0 12px;}
+     .deflist{margin-top:6px;}
+     .defrow{padding:15px 0;border-bottom:1px solid var(--hairline);}
+     .defrow:last-child{border-bottom:none;}
+     .dt{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--ink);}
+     .dd{font-family:var(--sans);font-size:12.5px;line-height:1.62;color:var(--ink-muted);margin-top:5px;max-width:448px;}
+     .apx .pagefoot{margin-top:auto;}`,
+  )
+}
+
 async function render(page, html, outPath) {
   const file = join(OUT, '_render.html')
   writeFileSync(file, html)
@@ -350,6 +383,7 @@ async function renderMasters() {
     ['90-appendix-opener', sectionOpenerHtml()],
     ['91-appendix-performance', performanceHtml()],
     ['92-appendix-motion', motionHtml()],
+    ['93-appendix-notes', captureNotesHtml()],
   ]
   for (const [name, html] of apx) {
     const out = join(PAGES, `${name}.png`)

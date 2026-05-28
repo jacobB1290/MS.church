@@ -34,8 +34,15 @@ const CREAM = '#faf8f5'
 const SURFACE = '#fdfcfa'
 const INK = '#1a1a2e'
 
-const PAPER_W = 680 // CSS px — the "paper" width
-const SHOT_W = 462 // CSS px — on-paper screenshot width
+// The phone screenshot is fixed-resolution (440 CSS px x 3 = 1320 px native),
+// so we DON'T enlarge it past native (that would upscale + soften). Instead the
+// page is kept narrow and the outer cream margin trim, so the phone fills a
+// large fraction of each page at native sharpness — i.e. it reads big on screen
+// when the PDF is fit-to-width, without any upscaling. Content box = PAPER_W -
+// 2*56 = 468, and SHOT_W fills it.
+const PAPER_W = 580 // CSS px — the "paper" width
+const SHOT_W = 468 // CSS px — on-paper screenshot width (fills the content box)
+const SHEET_PAD = 56 // CSS px — outer cream margin each side
 // Master render scale. At 3x the on-paper phone screenshot (462 CSS px) renders
 // at ~1386 px — at/above its native 1320 px capture width — so no detail is
 // lost. The /privacy full page is ~24k CSS px tall; rendering THAT at 3x is
@@ -79,7 +86,7 @@ const BASE_CSS = `
   }
   html,body{background:var(--cream);}
   body{width:${PAPER_W}px;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;}
-  .sheet{width:${PAPER_W}px;background:var(--cream);padding:0 109px;position:relative;}
+  .sheet{width:${PAPER_W}px;background:var(--cream);padding:0 ${SHEET_PAD}px;position:relative;}
   .eyebrow{font-family:var(--sans);font-weight:600;font-size:10.5px;letter-spacing:.14em;
     text-transform:uppercase;color:var(--gold-dark);}
   .title{font-family:var(--serif);font-weight:700;color:var(--ink);letter-spacing:-.01em;line-height:1.04;}
@@ -122,7 +129,7 @@ function coverHtml() {
      .goldrule{width:64px;height:3px;background:var(--gold);margin:38px 0;}
      .device{font-family:var(--serif);font-weight:600;font-size:23px;color:var(--ink-soft);}
      .spec{font-family:var(--sans);font-size:13.5px;color:var(--ink-muted);margin-top:12px;letter-spacing:.01em;}
-     .covermeta{position:absolute;bottom:60px;left:109px;right:109px;display:flex;justify-content:space-between;
+     .covermeta{position:absolute;bottom:60px;left:${SHEET_PAD}px;right:${SHEET_PAD}px;display:flex;justify-content:space-between;
        font-family:var(--sans);font-weight:600;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);}`,
   )
 }
@@ -146,7 +153,7 @@ function contentsHtml() {
       <div class="clist">${rows}</div>
       <p class="sub" style="margin-top:34px;line-height:1.7;max-width:430px;">Each page shows the first screen
       (above the fold) followed by the full-length page, as rendered on an iPhone 17 Pro Max.</p>
-      <div class="pagefoot" style="position:absolute;bottom:60px;left:109px;right:109px;">
+      <div class="pagefoot" style="position:absolute;bottom:60px;left:${SHEET_PAD}px;right:${SHEET_PAD}px;">
         <span>Morning Star Christian Church</span><span>ms.church</span>
       </div>
     </div>`,

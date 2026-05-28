@@ -29,6 +29,10 @@ logs/
 *.tar.gz
 *.zip
 
+# Generated review artifacts (screenshots / PDF / zip) — regenerated on demand
+scripts/shots/output/
+scripts/harness/output/
+
 # OS files
 .DS_Store
 Thumbs.db

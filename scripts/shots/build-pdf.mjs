@@ -151,15 +151,21 @@ function contentsHtml() {
       <h1 class="title" style="font-size:40px;margin:18px 0 30px;">The pages</h1>
       <div class="rule"></div>
       <div class="clist">${rows}</div>
-      <p class="sub" style="margin-top:34px;line-height:1.7;max-width:430px;">Each page shows the first screen
-      (above the fold) followed by the full-length page, as rendered on an iPhone 17 Pro Max.</p>
+      <div class="eyebrow" style="margin-top:30px;">Appendix &nbsp;·&nbsp; Beyond the static frame</div>
+      <div class="clist" style="margin-top:10px;">
+        <div class="crow"><span class="cn">A1</span><span class="ct">Performance</span><span class="cdot"></span><span class="cp">Core Web Vitals</span></div>
+        <div class="crow"><span class="cn">A2</span><span class="ct">Motion &amp; interaction</span><span class="cdot"></span><span class="cp">How it moves</span></div>
+      </div>
+      <p class="sub" style="margin-top:30px;line-height:1.7;max-width:430px;">Each page shows the first screen
+      (above the fold) followed by the full-length page, as rendered on an iPhone 17 Pro Max. The appendix
+      covers what a still image leaves out.</p>
       <div class="pagefoot" style="position:absolute;bottom:60px;left:${SHEET_PAD}px;right:${SHEET_PAD}px;">
         <span>Morning Star Christian Church</span><span>ms.church</span>
       </div>
     </div>`,
     `.clist{margin-top:2px;}
      .crow{display:flex;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--hairline);}
-     .cn{font-family:var(--serif);font-weight:600;font-size:14px;color:var(--gold-dark);flex:0 0 30px;}
+     .cn{font-family:var(--serif);font-weight:600;font-size:14px;color:var(--gold-dark);flex:0 0 36px;}
      .ct{font-family:var(--serif);font-weight:600;font-size:19px;color:var(--ink);}
      .cdot{flex:1;border-bottom:1.5px dotted rgba(26,26,46,.22);margin:0 12px 5px;}
      .cp{font-family:var(--sans);font-size:13px;color:var(--ink-muted);letter-spacing:.02em;}`,
@@ -190,6 +196,109 @@ function pageHtml(route, idx, variant, imgRel) {
      .pgttl{font-size:38px;margin:14px 0 12px;}
      .stage{display:flex;justify-content:center;margin:40px 0 44px;}
      .foot{margin-top:8px;}`,
+  )
+}
+
+// ── Appendix: the qualities a static screenshot can't convey ──
+
+const apxFoot = (label) =>
+  `<div class="rule" style="margin-bottom:14px;"></div>
+   <div class="pagefoot"><span>Morning Star Christian Church</span><span>${label}</span></div>`
+
+function sectionOpenerHtml() {
+  return shell(
+    `<div class="sheet opener">
+      <div class="eyebrow">Appendix</div>
+      <h1 class="title openttl">What a still<br>image can’t show.</h1>
+      <div class="goldrule"></div>
+      <p class="lead">A website is speed, motion, and interaction as much as it is layout. The pages that
+      follow document the qualities the screenshots leave out: real-world performance, the motion system,
+      and how navigation behaves.</p>
+    </div>`,
+    `.opener{min-height:944px;display:flex;flex-direction:column;justify-content:center;}
+     .openttl{font-weight:600;font-size:46px;line-height:1.1;margin:22px 0 0;}
+     .goldrule{width:64px;height:3px;background:var(--gold);margin:36px 0;}
+     .lead{font-family:var(--sans);font-size:15px;line-height:1.78;color:var(--ink-soft);max-width:440px;}`,
+  )
+}
+
+function performanceHtml() {
+  const metrics = [
+    ['First Contentful Paint', '0.48', 's', 'Good · &lt; 1.8s'],
+    ['Largest Contentful Paint', '0.59', 's', 'Good · &lt; 2.5s'],
+    ['Interaction to Next Paint', '40', 'ms', 'Good · &lt; 200ms'],
+    ['Cumulative Layout Shift', '0', '', 'Good · &lt; 0.1'],
+  ]
+  const cards = metrics.map(([k, v, u, g]) =>
+    `<div class="metric"><div class="k">${k}</div><div class="v">${v}<small>${u}</small></div><div class="g">${g}</div></div>`,
+  ).join('')
+  return shell(
+    `<div class="sheet apx">
+      <div class="eyebrow">Appendix A1 &nbsp;·&nbsp; Performance</div>
+      <h1 class="title apxttl">Measured performance.</h1>
+      <div class="sub">Vercel Speed Insights &mdash; real users, mobile, production, trailing 7 days.</div>
+      <div class="rule" style="margin-top:22px;"></div>
+      <div class="res">
+        <div class="ring">100</div>
+        <div class="reslab"><div class="rk">Real Experience Score</div><div class="rv">Great</div>
+        <div class="rs">Field data from real mobile visitors, scored against Google&rsquo;s Core Web Vitals.</div></div>
+      </div>
+      <div class="grid">${cards}</div>
+      <p class="note">All four Core Web Vitals sit well inside Google&rsquo;s &ldquo;good&rdquo; band, giving a
+      perfect Real Experience Score of 100. The page paints in roughly half a second, responds to input in
+      40&nbsp;milliseconds, and never shifts layout while loading.</p>
+      ${apxFoot('Appendix A1')}
+    </div>`,
+    `.apx{padding-top:64px;padding-bottom:54px;display:flex;flex-direction:column;min-height:944px;}
+     .apxttl{font-size:38px;margin:14px 0 12px;}
+     .res{display:flex;align-items:center;gap:22px;margin:34px 0 30px;}
+     .ring{flex:0 0 96px;width:96px;height:96px;border-radius:50%;border:4px solid var(--gold);
+       display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:600;
+       font-size:34px;color:var(--ink);}
+     .rk{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);font-weight:600;}
+     .rv{font-family:var(--serif);font-weight:600;font-size:24px;color:var(--ink);margin:3px 0 6px;}
+     .rs{font-size:12px;line-height:1.5;color:var(--ink-muted);max-width:300px;}
+     .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+     .metric{background:var(--surface);border:1px solid var(--hairline);border-radius:14px;padding:16px 16px 15px;}
+     .metric .k{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);font-weight:600;line-height:1.3;}
+     .metric .v{font-family:var(--serif);font-weight:600;font-size:30px;color:var(--ink);margin-top:9px;}
+     .metric .v small{font-size:15px;color:var(--ink-muted);font-family:var(--sans);font-weight:500;margin-left:2px;}
+     .metric .g{margin-top:8px;font-size:10px;color:var(--ink-muted);font-weight:600;display:flex;align-items:center;gap:6px;}
+     .metric .g::before{content:'';width:7px;height:7px;border-radius:50%;background:#2e9e57;}
+     .note{font-family:var(--sans);font-size:13px;line-height:1.7;color:var(--ink-muted);max-width:440px;margin-top:26px;}
+     .apx .pagefoot{margin-top:auto;}`,
+  )
+}
+
+function motionHtml() {
+  const rows = [
+    ['Reveal on scroll', 'Sections and elements ease up and fade in as they enter the viewport, staggered within each group so a card&rsquo;s eyebrow, heading, and body arrive as a cascade rather than all at once.'],
+    ['Cross-page transitions', 'Moving between pages uses the View Transitions API: the page crossfades into the next and the brand wordmark animates as a shared element, instead of a hard white reload. Scroll position is restored on back and forward.'],
+    ['Smooth anchor scrolling', 'In-page links ease to their target with a fixed navigation offset. A deep link holds the page invisible until layout settles, then fades in already at the right spot, so the reader never sees a jump.'],
+    ['One navigation, everywhere', 'On subpages the menu trigger unfolds the exact same navigation shell the home page uses, not a copy. The back-button brand slides aside as the shell&rsquo;s brand cross-fades in. A tap, the scrim, Escape, or a scroll dismisses it.'],
+    ['Events carousel', 'Upcoming events advance on a gentle five-second timer and ease between slides, pausing the moment a visitor interacts.'],
+    ['Respects reduced motion', 'When the operating system asks for reduced motion, every transition collapses to an instant state. (It is also why these screenshots render fully settled.)'],
+  ]
+  const list = rows.map(([t, d]) =>
+    `<div class="defrow"><div class="dt">${t}</div><div class="dd">${d}</div></div>`,
+  ).join('')
+  return shell(
+    `<div class="sheet apx">
+      <div class="eyebrow">Appendix A2 &nbsp;·&nbsp; Motion</div>
+      <h1 class="title apxttl">Motion &amp; interaction.</h1>
+      <div class="sub">How the site moves &mdash; the part a still frame can&rsquo;t carry.</div>
+      <div class="rule" style="margin-top:22px;margin-bottom:6px;"></div>
+      <div class="deflist">${list}</div>
+      ${apxFoot('Appendix A2')}
+    </div>`,
+    `.apx{padding-top:64px;padding-bottom:54px;display:flex;flex-direction:column;min-height:944px;}
+     .apxttl{font-size:38px;margin:14px 0 12px;}
+     .deflist{margin-top:6px;}
+     .defrow{padding:15px 0;border-bottom:1px solid var(--hairline);}
+     .defrow:last-child{border-bottom:none;}
+     .dt{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--ink);}
+     .dd{font-family:var(--sans);font-size:12.5px;line-height:1.62;color:var(--ink-muted);margin-top:5px;max-width:448px;}
+     .apx .pagefoot{margin-top:auto;}`,
   )
 }
 
@@ -234,6 +343,19 @@ async function renderMasters() {
       masters.push(out)
       process.stdout.write(`  rendered ${n}-${r.slug}-${v}${useLo ? ' (2x)' : ''}\n`)
     }
+  }
+
+  // Appendix — what static screenshots can't show.
+  const apx = [
+    ['90-appendix-opener', sectionOpenerHtml()],
+    ['91-appendix-performance', performanceHtml()],
+    ['92-appendix-motion', motionHtml()],
+  ]
+  for (const [name, html] of apx) {
+    const out = join(PAGES, `${name}.png`)
+    await render(pageHi, html, out)
+    masters.push(out)
+    process.stdout.write(`  rendered ${name}\n`)
   }
   await browser.close()
   rmSync(join(OUT, '_render.html'), { force: true })

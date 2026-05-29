@@ -82,7 +82,7 @@ Sitemap: https://ms.church/sitemap.xml
     // accurate-or-don't-bother). Bump this constant when meaningful content
     // changes ship — not on every deploy. Per-entry overrides handle the
     // home page (event calendar updates weekly) below.
-    const SITE_LASTMOD = '2026-05-20'
+    const SITE_LASTMOD = '2026-05-29'
     const HOME_LASTMOD = new Date().toISOString().split('T')[0]
     const base = 'https://ms.church'
     type ImageInfo = { loc: string; title: string; caption: string }

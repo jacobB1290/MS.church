@@ -602,7 +602,18 @@ export const homeHead = (): string => {
                     "organizer": {
                         "@id": "https://ms.church/#church"
                     },
+                    "performer": {
+                        "@id": "https://ms.church/#church"
+                    },
                     "isAccessibleForFree": true,
+                    "offers": {
+                        "@type": "Offer",
+                        "url": "https://ms.church",
+                        "price": "0",
+                        "priceCurrency": "USD",
+                        "availability": "https://schema.org/InStock",
+                        "validFrom": "${nextSunday.start}"
+                    },
                     "image": "https://ms.church/static/church-building.jpg"
                 },
                 {
@@ -635,7 +646,19 @@ export const homeHead = (): string => {
                     "organizer": {
                         "@id": "https://ms.church/#church"
                     },
-                    "isAccessibleForFree": true
+                    "performer": {
+                        "@id": "https://ms.church/#church"
+                    },
+                    "isAccessibleForFree": true,
+                    "offers": {
+                        "@type": "Offer",
+                        "url": "https://ms.church",
+                        "price": "0",
+                        "priceCurrency": "USD",
+                        "availability": "https://schema.org/InStock",
+                        "validFrom": "${nextTuesday.start}"
+                    },
+                    "image": "https://ms.church/static/schedule-tuesday.jpg"
                 },
                 {
                     "@type": "Event",
@@ -669,7 +692,19 @@ export const homeHead = (): string => {
                     "organizer": {
                         "@id": "https://ms.church/#church"
                     },
-                    "isAccessibleForFree": true
+                    "performer": {
+                        "@id": "https://ms.church/#church"
+                    },
+                    "isAccessibleForFree": true,
+                    "offers": {
+                        "@type": "Offer",
+                        "url": "https://ms.church",
+                        "price": "0",
+                        "priceCurrency": "USD",
+                        "availability": "https://schema.org/InStock",
+                        "validFrom": "${nextWednesday.start}"
+                    },
+                    "image": "https://ms.church/static/church-building.jpg"
                 },
                 {
                     "@type": "Event",
@@ -703,7 +738,19 @@ export const homeHead = (): string => {
                     "organizer": {
                         "@id": "https://ms.church/#church"
                     },
-                    "isAccessibleForFree": true
+                    "performer": {
+                        "@id": "https://ms.church/#church"
+                    },
+                    "isAccessibleForFree": true,
+                    "offers": {
+                        "@type": "Offer",
+                        "url": "https://ms.church",
+                        "price": "0",
+                        "priceCurrency": "USD",
+                        "availability": "https://schema.org/InStock",
+                        "validFrom": "${nextThursday.start}"
+                    },
+                    "image": "https://ms.church/static/schedule-thursday.jpg"
                 },
                 {
                     "@type": "Event",
@@ -742,7 +789,19 @@ export const homeHead = (): string => {
                     "organizer": {
                         "@id": "https://ms.church/#church"
                     },
-                    "isAccessibleForFree": true
+                    "performer": {
+                        "@id": "https://ms.church/#church"
+                    },
+                    "isAccessibleForFree": true,
+                    "offers": {
+                        "@type": "Offer",
+                        "url": "https://ms.church",
+                        "price": "0",
+                        "priceCurrency": "USD",
+                        "availability": "https://schema.org/InStock",
+                        "validFrom": "${nextFriday.start}"
+                    },
+                    "image": "https://ms.church/static/schedule-friday.jpg"
                 },
                 {
                     "@type": "FAQPage",

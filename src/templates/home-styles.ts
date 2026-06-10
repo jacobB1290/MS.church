@@ -240,7 +240,7 @@ export const homeStyles = (): string => `
             html {
                 background-color: var(--bg-color);
                 min-height: 100%;
-                min-height: -webkit-fill-available;
+                min-height: 100dvh;
                 overflow-x: hidden;
             }
             
@@ -290,7 +290,7 @@ export const homeStyles = (): string => `
                 background: var(--bg-default);
                 color: var(--text-primary);
                 min-height: 100vh;
-                min-height: -webkit-fill-available;
+                min-height: 100dvh;
                 line-height: var(--leading-normal);
                 overflow-x: hidden;
                 transition: background 1.8s var(--ease-standard);

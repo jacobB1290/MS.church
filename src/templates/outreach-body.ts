@@ -312,9 +312,9 @@ export const outreachBody = (): string => `
                     <div class="ministries-pair">
                         <div class="ministries-image">
                             <picture>
-                                <source srcset="/static/meals-hospitality.avif?v=3" type="image/avif">
-                                <source srcset="/static/meals-hospitality.webp?v=3" type="image/webp">
-                                <img src="/static/meals-hospitality.jpg?v=3" alt="Morning Star Christian Church cooking ministry volunteer team gathered in the kitchen after preparing meals for Boise homeless shelters and the free Sunday community breakfast" width="1800" height="1350" loading="lazy" decoding="async" style="object-position: 50% 10%;">
+                                <source srcset="/static/meals-hospitality.avif?v=4" type="image/avif">
+                                <source srcset="/static/meals-hospitality.webp?v=4" type="image/webp">
+                                <img src="/static/meals-hospitality.jpg?v=4" alt="Morning Star Christian Church cooking ministry volunteer team gathered in the kitchen after serving meals together in Boise" width="1800" height="1350" loading="lazy" decoding="async" style="object-position: 50% 10%;">
                             </picture>
                         </div>
                         <div class="ministries-grid">

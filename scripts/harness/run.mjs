@@ -150,12 +150,18 @@ const ANCHOR_SCENARIOS = [
 
   { name: '10-jump-cooking-desktop',   path: '/outreach', anchor: '#cooking-ministry',    viewport: DESKTOP, expected: 90 },
   { name: '11-jump-cooking-mobile',    path: '/outreach', anchor: '#cooking-ministry',    viewport: MOBILE,  expected: 75 },
-  { name: '12-jump-sunday-desktop',    path: '/visit',    anchor: '#sunday-school',       viewport: DESKTOP, expected: 90 },
-  { name: '13-jump-sunday-mobile',     path: '/visit',    anchor: '#sunday-school',       viewport: MOBILE,  expected: 75 },
+  { name: '12-jump-before-desktop',    path: '/visit',    anchor: '#before-you-come',     viewport: DESKTOP, expected: 90 },
+  { name: '13-jump-before-mobile',     path: '/visit',    anchor: '#before-you-come',     viewport: MOBILE,  expected: 75 },
   { name: '14-jump-breakfast-mobile',  path: '/outreach', anchor: '#community-breakfast', viewport: MOBILE,  expected: 75 },
   { name: '15-jump-mission-mobile',    path: '/about',    anchor: '#mission',             viewport: MOBILE,  expected: 75 },
   { name: '16-jump-expect-desktop',    path: '/visit',    anchor: '#what-to-expect',      viewport: DESKTOP, expected: 90 },
-  { name: '17-jump-sundayschool-mobile', path: '/visit',  anchor: '#sunday-school',       viewport: MOBILE,  expected: 75 },
+  { name: '17-jump-location-mobile',   path: '/visit',    anchor: '#location',            viewport: MOBILE,  expected: 75 },
+
+  // /privacy rebuilt onto the standard subpage chrome (subpageHeader +
+  // subpage-jump) — verify its #terms anchor lands at the standard
+  // subpage offsets like every other in-page jump.
+  { name: '17b-jump-privacy-terms-desktop', path: '/privacy', anchor: '#terms', viewport: DESKTOP, expected: 90 },
+  { name: '17c-jump-privacy-terms-mobile',  path: '/privacy', anchor: '#terms', viewport: MOBILE,  expected: 75 },
 
   // 18s — NETWORK-THROTTLED landing-accuracy. Routine check that
   // the hashload lands at the right offset even when the calendar
@@ -203,7 +209,7 @@ const PERF_SCENARIOS = [
   { name: '34-perf-scroll-about-mobile',     viewport: MOBILE,  path: '/about',    action: 'scroll' },
 
   // 35s — smooth-scroll-to-hash (anchor jumps on the same page).
-  { name: '35-perf-hash-visit-sundayschool-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#sunday-school' },
+  { name: '35-perf-hash-visit-sundayschool-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#before-you-come' },
   { name: '36-perf-hash-visit-whattoexpect-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#what-to-expect' },
   { name: '37-perf-hash-outreach-cooking-mobile',   viewport: MOBILE, path: '/outreach', action: 'hash', hash: '#cooking-ministry' },
 
@@ -217,8 +223,8 @@ const PERF_SCENARIOS = [
   // scroll-position deltas (perceived smoothness), and CLS during the
   // auto-scroll. This is what users feel on first visit, not what a
   // programmatic scrollIntoView() call feels like.
-  { name: '40-perf-hashload-visit-sunday-desktop',   viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#sunday-school' },
-  { name: '41-perf-hashload-visit-sunday-mobile',    viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school' },
+  { name: '40-perf-hashload-visit-sunday-desktop',   viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#before-you-come' },
+  { name: '41-perf-hashload-visit-sunday-mobile',    viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#before-you-come' },
   { name: '42-perf-hashload-visit-expect-desktop',   viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#what-to-expect' },
   { name: '43-perf-hashload-outreach-cook-desktop',  viewport: DESKTOP, path: '/outreach', action: 'hashload', hash: '#cooking-ministry' },
   { name: '44-perf-hashload-outreach-cook-mobile',   viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry' },
@@ -230,15 +236,15 @@ const PERF_SCENARIOS = [
   // perf will surface it as long-tasks, LoAF spikes, or stutters.
   // Use the actual user path (URL with hash → subpage-header.ts
   // auto-trigger) so we test browser-native scrollTo under load.
-  { name: '50-perf-cpu4x-hashload-visit-sunday-desktop',  viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#sunday-school',    cpuThrottle: 4 },
-  { name: '51-perf-cpu4x-hashload-visit-sunday-mobile',   viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school',    cpuThrottle: 4 },
+  { name: '50-perf-cpu4x-hashload-visit-sunday-desktop',  viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#before-you-come',    cpuThrottle: 4 },
+  { name: '51-perf-cpu4x-hashload-visit-sunday-mobile',   viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#before-you-come',    cpuThrottle: 4 },
   { name: '52-perf-cpu4x-hashload-outreach-cook-mobile',  viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry', cpuThrottle: 4 },
   { name: '53-perf-cpu4x-hashload-about-mission-mobile',  viewport: MOBILE,  path: '/about',    action: 'hashload', hash: '#mission',          cpuThrottle: 4 },
 
   // 60s — HARDER: 6× CPU throttle. Mimics an entry-level Android
   // device. Real users on cheap phones will hit this; if our scroll
   // perf collapses at 6× we need to find the bottleneck.
-  { name: '60-perf-cpu6x-hashload-visit-sunday-mobile',   viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school',    cpuThrottle: 6 },
+  { name: '60-perf-cpu6x-hashload-visit-sunday-mobile',   viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#before-you-come',    cpuThrottle: 6 },
   { name: '61-perf-cpu6x-hashload-outreach-cook-mobile',  viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry', cpuThrottle: 6 },
 
   // 70s — A/B BASELINE PAIRS. The home page anchor-click scroll feels
@@ -254,11 +260,11 @@ const PERF_SCENARIOS = [
   // side-by-side. INFORMATIONAL — they always pass; the gap data is
   // what we iterate against.
   { name: '70-ab-home-click-contact-mobile',           viewport: MOBILE,  path: '/',         action: 'homeclick', anchor: '#contact', ab: 'mobile-long' },
-  { name: '71-ab-hashload-visit-sunday-mobile',        viewport: MOBILE,  path: '/visit',    action: 'hashload',  hash: '#sunday-school',  ab: 'mobile-long' },
+  { name: '71-ab-hashload-visit-sunday-mobile',        viewport: MOBILE,  path: '/visit',    action: 'hashload',  hash: '#before-you-come',  ab: 'mobile-long' },
   { name: '72-ab-hashload-outreach-cooking-mobile',    viewport: MOBILE,  path: '/outreach', action: 'hashload',  hash: '#cooking-ministry', ab: 'mobile-long' },
   { name: '73-ab-hashload-about-mission-mobile',       viewport: MOBILE,  path: '/about',    action: 'hashload',  hash: '#mission',          ab: 'mobile-long' },
   { name: '74-ab-home-click-contact-desktop',          viewport: DESKTOP, path: '/',         action: 'homeclick', anchor: '#contact', ab: 'desktop-long' },
-  { name: '75-ab-hashload-visit-sunday-desktop',       viewport: DESKTOP, path: '/visit',    action: 'hashload',  hash: '#sunday-school',  ab: 'desktop-long' },
+  { name: '75-ab-hashload-visit-sunday-desktop',       viewport: DESKTOP, path: '/visit',    action: 'hashload',  hash: '#before-you-come',  ab: 'desktop-long' },
   { name: '76-ab-hashload-outreach-cooking-desktop',   viewport: DESKTOP, path: '/outreach', action: 'hashload',  hash: '#cooking-ministry', ab: 'desktop-long' },
 
   // 80s — NETWORK-THROTTLED hashloads. Routine landing-accuracy
@@ -273,7 +279,7 @@ const PERF_SCENARIOS = [
   // catches "lands 50% off target" regressions before they ship.
   { name: '80-perf-net3g-hashload-outreach-cooking-mobile', viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry', netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
   { name: '81-perf-net3g-hashload-outreach-cooking-desktop', viewport: DESKTOP, path: '/outreach', action: 'hashload', hash: '#cooking-ministry', netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
-  { name: '82-perf-net3g-hashload-visit-sunday-mobile',    viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school',    netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
+  { name: '82-perf-net3g-hashload-visit-sunday-mobile',    viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#before-you-come',    netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
 ]
 
 const FLOW_SCENARIOS = [
@@ -441,7 +447,7 @@ const FLICKER_SCENARIOS = [
     name: '116-hash-fade-brand-static-desktop',
     viewport: DESKTOP,
     load: '/visit',
-    hash: '#sunday-school',
+    hash: '#before-you-come',
     expectBrandStatic: true,
   },
   // 120s — SCROLL-RESTORE-JUMP scenarios. User is on home scrolled
@@ -688,7 +694,14 @@ async function visualProbes(page) {
       const visibleTop = Math.max(cr.top, fixedHeaderBottom)
       const visibleBottom = Math.min(cr.bottom, vh)
       const visiblePx = visibleBottom - visibleTop
-      if (visiblePx < opts.HEADING_MIN_VISIBLE_PX) {
+      // The candidate may be SHORTER than HEADING_MIN_VISIBLE_PX — the
+      // flattened .section-eyebrow is a ~16px box, so a fully visible
+      // eyebrow could never reach the 24px bar and every subpage failed
+      // the probe even though nothing was covered. Require the candidate
+      // to be (nearly) fully visible when its own height is below the
+      // threshold; the 1px slack absorbs sub-pixel rounding.
+      const requiredPx = Math.min(opts.HEADING_MIN_VISIBLE_PX, cr.height - 1)
+      if (visiblePx < requiredPx) {
         const sid = s.id
         const hasActiveNav = sid && !!document.querySelector(
           'nav .nav-shell a[href="#' + sid + '"].active, .nav-shell nav a[href="#' + sid + '"].active'
@@ -807,7 +820,12 @@ async function runAnchorScenarios(launcher, report) {
             const el = document.querySelector(sel)
             if (!el) return null
             const r = el.getBoundingClientRect()
-            return { top: Math.round(r.top), scrollY: Math.round(window.scrollY) }
+            const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+            return {
+              top: Math.round(r.top),
+              scrollY: Math.round(window.scrollY),
+              atMaxScroll: window.scrollY >= maxScrollY - 2,
+            }
           }, s.anchor)
           driftMeasurements.push({ t, ...m })
         }
@@ -815,7 +833,14 @@ async function runAnchorScenarios(launcher, report) {
         if (!last || last.top == null) issues.push(`target not in DOM`)
         else {
           const landDrift = Math.abs(last.top - s.expected)
-          if (landDrift > DRIFT_LAND_TOLERANCE) {
+          // Targets in the page's LAST section can be clamp-limited: the page
+          // runs out of scroll room before the target reaches the standard
+          // offset (e.g. /outreach#community-breakfast on mobile). When the
+          // final sample sits at maxScrollY and the residual is "target too
+          // low" (top > expected), the landing code did the best the layout
+          // allows — that is not a drift defect.
+          const clampLimited = last.atMaxScroll && last.top > s.expected
+          if (landDrift > DRIFT_LAND_TOLERANCE && !clampLimited) {
             issues.push(`landDrift=${landDrift} (expected ~${s.expected}±${DRIFT_LAND_TOLERANCE})`)
           }
           // Stability across the last DRIFT_STABLE_SAMPLES samples. Earlier

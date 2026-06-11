@@ -4624,23 +4624,23 @@ export const homeStyles = (): string => `
                 font-size: var(--text-heading); font-weight: var(--weight-semibold); margin: 0 0 8px 0; color: var(--text-primary);
             }
             .carousel-past-card .past-card-text {
-                font-size: var(--text-body); color: #595970;
+                font-size: var(--text-body); color: var(--text-primary-muted);
                 line-height: var(--leading-normal); margin-bottom: 14px;
             }
             .carousel-past-card .past-card-btn {
                 display: flex; align-items: center; justify-content: center;
                 width: 100%; padding: 12px 24px; box-sizing: border-box;
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                background: var(--btn-cta-bg);
                 border: none; color: #ffffff; border-radius: var(--radius-pill);
                 font-size: var(--text-small); font-weight: var(--weight-bold);
                 letter-spacing: 0.3px; text-transform: none;
                 cursor: pointer; transition: all var(--motion-medium) var(--ease-standard);
-                box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
+                box-shadow: var(--btn-cta-shadow);
                 position: relative; z-index: 2;
             }
             .carousel-past-card .past-card-btn:hover {
-                background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
-                box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
+                background: var(--btn-cta-bg-hover);
+                box-shadow: var(--btn-cta-shadow-hover);
                 transform: translateY(-2px);
             }
 
@@ -8470,8 +8470,11 @@ export const homeStyles = (): string => `
                 .past-events-card .past-card-icon { font-size: var(--text-title); margin-bottom: 8px; }
                 .past-events-card .past-card-title { font-family: var(--font-display); font-size: var(--text-heading); font-weight: var(--weight-bold); margin: 0 0 8px 0; color: var(--text-primary); }
                 .past-events-card .past-card-text { font-size: var(--text-small); color: var(--text-primary-muted); line-height: var(--leading-normal); margin-bottom: 14px; }
-                .past-events-card .past-card-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 24px; box-sizing: border-box; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); border: none; color: #ffffff; border-radius: var(--radius-pill); font-size: var(--text-label); font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; cursor: pointer; transition: all var(--motion-medium) var(--ease-standard); box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent); position: relative; z-index: 2; }
-                .past-events-card .past-card-btn:hover { background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%); box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent); transform: translateY(-2px); }
+                /* Sentence case + 0.3px tracking to match the carousel
+                   "Browse Memories" variant — the two renders of this button
+                   must read identically across desktop grid and mobile. */
+                .past-events-card .past-card-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px 24px; box-sizing: border-box; background: var(--btn-cta-bg); border: none; color: #ffffff; border-radius: var(--radius-pill); font-size: var(--text-small); font-weight: var(--weight-bold); letter-spacing: 0.3px; text-transform: none; cursor: pointer; transition: all var(--motion-medium) var(--ease-standard); box-shadow: var(--btn-cta-shadow); position: relative; z-index: 2; }
+                .past-events-card .past-card-btn:hover { background: var(--btn-cta-bg-hover); box-shadow: var(--btn-cta-shadow-hover); transform: translateY(-2px); }
 
                 /* Mobile: same reasoning as the desktop .stay-tuned-only
                    rule above — keep the section min-height reserve so

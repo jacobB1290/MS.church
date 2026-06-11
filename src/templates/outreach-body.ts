@@ -285,7 +285,7 @@ export const outreachBody = (): string => `
 
                 <section class="outreach" id="events">
                     <span class="section-eyebrow">Events</span>
-                    <h2 class="section-heading">Upcoming &amp; Past Events</h2>
+                    <h2 class="section-heading">Upcoming &amp; past events.</h2>
                     <p class="section-lead">Year-round, Morning Star hosts open-door gatherings designed to feed people, build friendships, and welcome the city: Friendsgiving in the fall, community-wide events around major holidays, and the gatherings between. Browse what’s coming up next, or scroll back through past gatherings.</p>
 
                     <!-- Stay Tuned Card - shown when no upcoming events -->

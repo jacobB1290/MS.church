@@ -82,7 +82,7 @@ Sitemap: https://ms.church/sitemap.xml
     // accurate-or-don't-bother). Bump this constant when meaningful content
     // changes ship — not on every deploy. Per-entry overrides handle the
     // home page (event calendar updates weekly) below.
-    const SITE_LASTMOD = '2026-05-29'
+    const SITE_LASTMOD = '2026-06-11'
     const HOME_LASTMOD = new Date().toISOString().split('T')[0]
     const base = 'https://ms.church'
     type ImageInfo = { loc: string; title: string; caption: string }
@@ -267,8 +267,8 @@ ${items}
       <html lang="en">
       <head>
           <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-          
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+
           <!-- Primary Meta Tags -->
           <title>Contact Us | Morning Star Christian Church - Boise, Idaho</title>
           <meta name="title" content="Contact Us | Morning Star Christian Church - Boise, Idaho">
@@ -293,10 +293,19 @@ ${items}
           <meta name="theme-color" content="#faf8f5">
           <meta name="apple-mobile-web-app-status-bar-style" content="default">
           
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-          <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-          
+          <!-- Self-hosted fonts — same files the rest of the site uses
+               (see home-styles.ts). Replaces the old Google Fonts link so
+               /form matches the site's font pipeline (no third-party CSS). -->
+          <link rel="preload" as="font" type="font/woff2" href="/static/fonts/inter-400.woff2" crossorigin>
+          <link rel="preload" as="font" type="font/woff2" href="/static/fonts/playfair-display-700.woff2" crossorigin>
+          <style>
+              @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('/static/fonts/inter-400.woff2') format('woff2'); }
+              @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url('/static/fonts/inter-500.woff2') format('woff2'); }
+              @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url('/static/fonts/inter-600.woff2') format('woff2'); }
+              @font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url('/static/fonts/inter-700.woff2') format('woff2'); }
+              @font-face { font-family: 'Playfair Display'; font-style: normal; font-weight: 700; font-display: swap; src: url('/static/fonts/playfair-display-700.woff2') format('woff2'); }
+          </style>
+
           <!-- Vercel Analytics & Speed Insights (disabled with ?notrack=true parameter) -->
           <script>
               // Check if notrack parameter is present in URL
@@ -379,6 +388,10 @@ ${items}
                   --motion-fast:   0.2s;
                   --motion-medium: 0.3s;
                   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+                  --btn-cta-bg:           linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                  --btn-cta-bg-hover:     linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
+                  --btn-cta-shadow:       0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
+                  --btn-cta-shadow-hover: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
               }
               * {
                   margin: 0;
@@ -454,18 +467,32 @@ ${items}
               }
               
               nav a:last-child {
-                  background: linear-gradient(135deg, var(--gold) 0%, var(--gold) 100%);
+                  background: var(--btn-cta-bg);
                   color: white;
                   padding: 12px 28px;
                   border-radius: 100px;
                   opacity: 1;
+                  white-space: nowrap;
               }
-              
+
               .content {
-                  padding: 80px 60px;
+                  padding: clamp(40px, 8vw, 80px) clamp(20px, 5vw, 60px);
                   max-width: 1400px;
                   margin: 0 auto;
                   width: 100%;
+              }
+
+              /* The header was desktop-only (fixed 60px padding + 40px nav
+                 gaps) and overflowed the layout viewport on phones, which
+                 squeezed the form card to half width. The page is a focused
+                 funnel — on small screens show only the wordmark. */
+              @media (max-width: 760px) {
+                  .header {
+                      padding: 18px 20px;
+                  }
+                  nav {
+                      display: none;
+                  }
               }
               
               h2 {
@@ -539,7 +566,7 @@ ${items}
               }
 
               .submit-btn {
-                  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+                  background: var(--btn-cta-bg);
                   color: #fff;
                   padding: 15px 40px;
                   border-radius: var(--radius-pill);
@@ -553,13 +580,13 @@ ${items}
                   transition: transform var(--motion-medium) var(--ease-standard),
                               box-shadow var(--motion-medium) var(--ease-standard),
                               background var(--motion-medium) var(--ease-standard);
-                  box-shadow: 0 6px 20px color-mix(in srgb, var(--gold) 35%, transparent);
+                  box-shadow: var(--btn-cta-shadow);
               }
 
               .submit-btn:hover {
                   transform: translateY(-2px);
-                  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-deeper) 100%);
-                  box-shadow: 0 10px 28px color-mix(in srgb, var(--gold) 45%, transparent);
+                  background: var(--btn-cta-bg-hover);
+                  box-shadow: var(--btn-cta-shadow-hover);
               }
 
               .form-check {
@@ -645,7 +672,7 @@ ${items}
           </header>
           
           <div class="content">
-              <h2>Contact Us</h2>
+              <h2>Get in touch.</h2>
               <div class="form-container" id="form-card">
                   <form id="contact-form-el" novalidate>
                       <div class="form-group">

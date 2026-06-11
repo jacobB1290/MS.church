@@ -18,6 +18,8 @@ type PageHeadOptions = {
   ogImage?: string
   ogImageAlt?: string
   jsonLd?: string
+  /** Override the robots directive (e.g. 'noindex, nofollow' for the 404 page). */
+  robots?: string
 }
 
 export function pageHead({
@@ -27,6 +29,7 @@ export function pageHead({
   ogImage = DEFAULT_OG_IMAGE,
   ogImageAlt = 'Morning Star Christian Church building in Boise, Idaho',
   jsonLd,
+  robots,
 }: PageHeadOptions): string {
   return `
     <head>
@@ -111,8 +114,8 @@ export function pageHead({
         <meta name="title" content="${title}">
         <meta name="description" content="${description}">
         <meta name="author" content="Morning Star Christian Church">
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-        <meta name="googlebot" content="index, follow">
+        <meta name="robots" content="${robots ?? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}">
+        <meta name="googlebot" content="${robots ?? 'index, follow'}">
         <link rel="canonical" href="${canonical}">
 
         <!-- Geographic Meta Tags (Local SEO) -->
@@ -141,8 +144,10 @@ export function pageHead({
         <meta name="twitter:image" content="${ogImage}">
         <meta name="twitter:image:alt" content="${ogImageAlt}">
 
-        <meta name="theme-color" content="#f8f9fd">
-        <meta name="theme-color" content="#f8f9fd" media="(prefers-color-scheme: light)">
+        <!-- Matches --bg (#faf8f5) so the Safari status bar tints warm like the page,
+             not the cool blue-white left over from the pre-V2 palette. -->
+        <meta name="theme-color" content="#faf8f5">
+        <meta name="theme-color" content="#faf8f5" media="(prefers-color-scheme: light)">
         <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-title" content="Morning Star Church">

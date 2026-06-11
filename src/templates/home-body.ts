@@ -46,7 +46,7 @@ export const homeBody = (): string => `
 
                 <section class="schedule" id="schedule">
                     <span class="section-eyebrow reveal-eyebrow">Schedule</span>
-                    <h2 class="section-heading reveal-rise">Sunday Worship, Bible Study & Fellowship in Boise</h2>
+                    <h2 class="section-heading reveal-rise">Sunday worship, Bible study &amp; fellowship in Boise.</h2>
                     <address class="reveal-rise">
                         <div class="address-dropdown-wrapper">
                             <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St · Boise, Idaho</button>
@@ -231,7 +231,7 @@ export const homeBody = (): string => `
                 <section class="watch" id="watch">
                     <div class="watch-header">
                         <span class="section-eyebrow reveal-eyebrow">Watch</span>
-                        <h2 class="section-heading reveal-rise">Watch Our Sunday Service Live from Boise</h2>
+                        <h2 class="section-heading reveal-rise">Watch our Sunday service live from Boise.</h2>
                     </div>
                     <div class="watch-card">
                         <div class="watch-main">
@@ -258,7 +258,7 @@ export const homeBody = (): string => `
                                         </div>
                                     </div>
                                 </div>
-                                <p class="live-verse reveal-rise-slow">"Consequently, faith comes from hearing the message, and the message is heard through the word about Christ."<small>Romans 10:17</small></p>
+                                <p class="live-verse reveal-rise-slow">&ldquo;Consequently, faith comes from hearing the message, and the message is heard through the word about Christ.&rdquo;<small>Romans 10:17</small></p>
 
                                 <div class="video-grid reveal-power" id="video-grid">
                                     <article class="video-card video-card-latest" id="video-card-1">
@@ -351,7 +351,7 @@ export const homeBody = (): string => `
                 <section class="contact" id="contact">
                     <div class="contact-header">
                         <span class="section-eyebrow reveal-eyebrow">Contact</span>
-                        <h2 class="section-heading reveal-rise">Contact Us</h2>
+                        <h2 class="section-heading reveal-rise">Get in touch.</h2>
                         <p class="section-lead reveal-rise-slow">
                             We&rsquo;d love to hear from you. Whether it&rsquo;s a question, a prayer request, or simply hello, send us a note and someone from our team will be in touch.
                         </p>

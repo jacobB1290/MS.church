@@ -434,13 +434,11 @@ export const homeStyles = (): string => `
                 top: 16px;
             }
             
-            .nav-shell.scrolled-mobile .brand {
-                display: none;
-            }
-            
-            .nav-shell.scrolled-mobile .nav-cta {
-                display: none;
-            }
+            /* .brand / .nav-cta hide in the compressed state is handled in
+               the mobile block below with an ANIMATED collapse (max-height +
+               opacity + transform) — the old display:none here made the most
+               visible nav state change on mobile an instant pop, violating
+               the motion law. */
             
             /* Mobile-only form button for scrolled state */
             .nav-form-btn {
@@ -1072,6 +1070,31 @@ export const homeStyles = (): string => `
                 opacity: 1;
                 transform: none;
                 filter: none;
+            }
+
+            /* Non-fresh visits (back/forward, reload, same-origin nav): show
+               reveals immediately with NO transition. The reveal observer adds
+               .is-revealed synchronously under html.no-entrance, but without
+               this rule the long opacity transitions still animated from 0 —
+               a visible flash when scroll restore drops the user mid-page. */
+            html.no-entrance.js-reveals .reveal,
+            html.no-entrance.js-reveals .reveal-scale,
+            html.no-entrance.js-reveals .reveal-eyebrow,
+            html.no-entrance.js-reveals .reveal-rise,
+            html.no-entrance.js-reveals .reveal-rise-slow,
+            html.no-entrance.js-reveals .reveal-tight,
+            html.no-entrance.js-reveals .reveal-from-left,
+            html.no-entrance.js-reveals .reveal-from-right,
+            html.no-entrance.js-reveals .reveal-from-above,
+            html.no-entrance.js-reveals .reveal-photo,
+            html.no-entrance.js-reveals .reveal-power,
+            html.no-entrance.js-reveals .reveal-pop,
+            html.no-entrance.js-reveals .reveal-fill {
+                opacity: 1;
+                transform: none;
+                transition: none;
+                clip-path: none;
+                -webkit-clip-path: none;
             }
 
             /* Reduced-motion: skip every variant. Show content immediately. */
@@ -1935,6 +1958,14 @@ export const homeStyles = (): string => `
             .schedule-banner-slide[data-index="2"] { --toss-delay:  380ms; }
             .schedule-banner-slide[data-index="3"] { --toss-delay:  520ms; }
             .schedule-banner-slide[data-index="4"] { --toss-delay:  660ms; }
+            /* Skip the toss on non-fresh visits (back/forward, reload,
+               same-origin nav). html.no-entrance section { animation:none }
+               doesn't reach these — the slides are divs inside the section,
+               so the cascade replayed on every back-navigation. */
+            html.no-entrance .schedule-banner.is-revealed .schedule-banner-slide {
+                animation: none;
+                opacity: 1;
+            }
             /* Reduced-motion: just fade tiles in, no toss. */
             @media (prefers-reduced-motion: reduce) {
                 .schedule-banner.is-revealed .schedule-banner-slide {
@@ -7173,7 +7204,10 @@ export const homeStyles = (): string => `
                     flex-wrap: wrap;
                     justify-content: center;
                     border-radius: var(--radius-2xl);
-                    gap: 16px;
+                    /* Row rhythm lives on the nav element's margin-block (animatable
+                       to 0) instead of gap — flex gap doesn't collapse for
+                       zero-height rows, which left phantom space mid-morph. */
+                    gap: 0;
                     margin: 20px auto 50px;
                     padding: var(--space-sm) var(--space-md);
                     top: calc(env(safe-area-inset-top, 0px) + clamp(8px, 1.2vw, 12px));
@@ -7185,28 +7219,94 @@ export const homeStyles = (): string => `
                     backdrop-filter: blur(40px) saturate(1.8);
                     border: 1px solid rgba(255, 255, 255, 0.4);
                     box-shadow: var(--shadow-md);
-                    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    /* Every geometric property of the compress/expand morph is
+                       animated explicitly. The previous "all 0.6s overshoot"
+                       only ever animated padding/radius (the dominant change —
+                       brand/CTA rows — was a display:none pop), and the bounce
+                       ease read as gimmicky on frosted chrome. */
+                    transition: padding var(--motion-medium) var(--ease-out-soft),
+                                border-radius var(--motion-medium) var(--ease-out-soft),
+                                top var(--motion-medium) var(--ease-out-soft),
+                                margin var(--motion-medium) var(--ease-out-soft),
+                                background var(--motion-slow) var(--ease-standard),
+                                box-shadow var(--motion-slow) var(--ease-standard);
+                }
+
+                /* The nav row carries the vertical rhythm between brand /
+                   links / CTA in the expanded shell, and collapses it to 0
+                   when compressed. min-height gives the compressed pill its
+                   vertical mass (replacing the old un-animatable explicit
+                   height on the shell) — 22px is the row's natural expanded
+                   height, so the expanded design is pixel-identical. */
+                .nav-shell nav {
+                    margin-block: 16px;
+                    transition: margin var(--motion-medium) var(--ease-out-soft);
+                }
+                .nav-shell nav ul {
+                    min-height: 22px;
+                    align-items: center;
+                    transition: min-height var(--motion-medium) var(--ease-out-soft);
+                }
+                .nav-shell.scrolled-mobile nav,
+                html.nav-prerender-scrolled .nav-shell nav {
+                    margin-block: 0;
+                }
+                .nav-shell.scrolled-mobile nav ul,
+                html.nav-prerender-scrolled .nav-shell nav ul {
+                    min-height: clamp(40px, 12vw, 48px);
+                }
+
+                /* Animated collapse of the brand + Contact rows. max-height
+                   drives the row-space, opacity+transform carry the visual
+                   exit; visibility delays until the fade completes so AT and
+                   tab order drop the hidden controls. */
+                .nav-shell .brand,
+                .nav-shell .nav-cta {
+                    max-height: 56px;
+                    overflow: hidden;
+                    transition: max-height var(--motion-medium) var(--ease-out-soft),
+                                opacity var(--motion-medium) var(--ease-out-soft),
+                                transform var(--motion-medium) var(--ease-out-soft),
+                                visibility 0s 0s;
+                }
+                .nav-shell.scrolled-mobile .brand,
+                .nav-shell.scrolled-mobile .nav-cta {
+                    max-height: 0;
+                    opacity: 0;
+                    transform: translateY(-6px) scale(0.97);
+                    visibility: hidden;
+                    pointer-events: none;
+                    transition: max-height var(--motion-medium) var(--ease-out-soft),
+                                opacity var(--motion-fast) var(--ease-out-soft),
+                                transform var(--motion-medium) var(--ease-out-soft),
+                                visibility 0s var(--motion-medium);
+                }
+
+                /* The morph animates ONLY after the page has settled
+                   (html.nav-anim-ready, added ~350ms post-init by the nav
+                   scripts). Scroll-restore, prerender and first-sync class
+                   flips are repositions, not motion moments — they must
+                   paint instantly, and on subpages they'd otherwise run
+                   dozens of transitions on a nav-shell that isn't even
+                   visible. */
+                html:not(.nav-anim-ready) .nav-shell,
+                html:not(.nav-anim-ready) .nav-shell nav,
+                html:not(.nav-anim-ready) .nav-shell nav ul,
+                html:not(.nav-anim-ready) .nav-shell .brand,
+                html:not(.nav-anim-ready) .nav-shell .nav-cta,
+                html:not(.nav-anim-ready) .nav-shell .nav-form-btn {
+                    transition: none;
                 }
 
                 .nav-shell.scrolled-mobile,
                 html.nav-prerender-scrolled .nav-shell {
                     border-radius: var(--radius-pill);
-                    /* Explicit height so the X close-trigger (when menu
-                       open) can match it exactly via the same clamp().
-                       Same height + same border-radius means both pills
-                       share the same outer curvature — the X reads as a
-                       paired chrome control nested against the shell's
-                       end, not a smaller circle floating above it. */
-                    height: clamp(40px, 12vw, 48px);
-                    /* Padding becomes purely horizontal because the
-                       explicit height handles vertical centering via
-                       align-items. Avoids the prior padding+content
-                       drift that made shell heights vary 44-48px. */
+                    /* The compressed pill's height = ul min-height
+                       (clamp(40px,12vw,48px)) + zero vertical padding — the
+                       same clamp the X close-trigger uses, so both pills
+                       share the same outer curvature. The old explicit
+                       height couldn't animate from the expanded auto. */
                     padding: 0 var(--space-md);
-                    /* Single-row layout: nav items shrink, Contact pill
-                       stays intrinsic. Nothing wraps. */
-                    flex-wrap: nowrap;
-                    gap: clamp(6px, 2vw, 12px);
                     margin-top: 0;
                     margin-bottom: 30px;
                     top: 14px;
@@ -7221,20 +7321,25 @@ export const homeStyles = (): string => `
                     display: none;
                 }
                 html.nav-prerender-scrolled .nav-shell .nav-form-btn {
-                    display: inline-flex;
+                    visibility: visible;
                     opacity: 1;
-                    transform: scale(1);
-                    position: relative;
-                    margin-left: 8px;
-                    right: auto;
+                    transform: translateY(-50%) scale(1);
                 }
 
                 .nav-shell.scrolled-mobile .nav-cta {
                     display: none;
                 }
 
+                /* The Contact pill is an absolutely-positioned overlay at the
+                   shell's right end (vertically centered), faded + scaled in
+                   when compressed. It used to flip display:none → flex AND
+                   static → relative, which popped. As an overlay it never
+                   participates in row layout, so the morph stays continuous;
+                   the nav reserves right-side room for it via padding (the
+                   same idiom the subpage X-trigger reserve uses). */
                 .nav-form-btn {
-                    display: none;
+                    display: inline-flex;
+                    visibility: hidden;
                     padding: 6px 14px;
                     border-radius: var(--radius-pill);
                     background: rgba(255, 255, 255, 0.9);
@@ -7247,23 +7352,43 @@ export const homeStyles = (): string => `
                     -webkit-backdrop-filter: blur(10px);
                     backdrop-filter: blur(10px);
                     border: 1px solid rgba(255, 255, 255, 0.5);
-                    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+                    transition: opacity var(--motion-medium) var(--ease-out-soft),
+                                transform var(--motion-medium) var(--ease-out-soft),
+                                visibility 0s var(--motion-medium);
                     align-items: center;
                     justify-content: center;
                     white-space: nowrap;
                     opacity: 0;
-                    transform: scale(0.85);
                     position: absolute;
-                    right: 18px;
+                    top: 50%;
+                    right: 14px;
+                    transform: translateY(-50%) scale(0.85);
                 }
 
                 .nav-shell.scrolled-mobile .nav-form-btn {
-                    display: inline-flex;
+                    visibility: visible;
                     opacity: 1;
-                    transform: scale(1);
-                    position: relative;
-                    right: auto;
-                    flex-shrink: 0;
+                    transform: translateY(-50%) scale(1);
+                    transition: opacity var(--motion-medium) var(--ease-out-soft),
+                                transform var(--motion-medium) var(--ease-out-soft),
+                                visibility 0s 0s;
+                }
+
+                /* Subpage nav-shells (the menu panel) manage their own
+                   chrome — the Contact pill overlay is a home-page-only
+                   affordance, exactly as before this morph existed. */
+                body[class*="page-subpage"] .nav-form-btn {
+                    display: none;
+                }
+
+                /* Links reserve room for the overlay pill (400-960px; below
+                   400 the pill is dropped entirely, see the 399 rule).
+                   Home only — subpage nav-shells have no Contact overlay
+                   (and carry their own X-trigger reserve instead). */
+                @media (min-width: 400px) {
+                    body:not([class*="page-subpage"]) .nav-shell.scrolled-mobile nav {
+                        padding-right: clamp(104px, 26vw, 124px);
+                    }
                 }
 
                 /* Active state for Contact button */
@@ -7357,12 +7482,6 @@ export const homeStyles = (): string => `
                 }
 
                 /* Contact button - shift right when compressed */
-                .nav-shell.scrolled-mobile .nav-cta {
-                    width: auto;
-                    margin-left: auto;
-                    padding: 8px 20px;
-                }
-
                 /* Compressed Contact pill keeps the base .nav-form-btn
                    padding/type — the goal here is just to confirm intent
                    that the button stays at intrinsic width in the row
@@ -7510,12 +7629,9 @@ export const homeStyles = (): string => `
                 }
                 .nav-shell.scrolled-mobile {
                     padding: 0 clamp(10px, 3vw, 20px);
-                    /* Container gap separates the nav-text cluster
-                       from the Contact pill — deliberately wider than
-                       the inter-nav-item gap so the eye reads the
-                       Contact pill as its own region (a CTA chip),
-                       not as a fifth nav word. */
-                    gap: clamp(10px, 3vw, 20px);
+                    /* (The old container gap separating links from the
+                       Contact pill is obsolete — the pill is an overlay
+                       now and the nav reserves its room via padding.) */
                 }
             }
 

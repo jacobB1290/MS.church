@@ -195,6 +195,7 @@ export function subpageHeader(): string {
                         var fireScroll = function() {
                             if (fired) return;
                             fired = true;
+                            window.__hashScrollFired = true; // signal the page-head safety timer to stand down
                             var t = document.querySelector(hash);
                             if (!t) {
                                 fireFadeIn();
@@ -366,6 +367,27 @@ export function subpageHeader(): string {
                         };
                         syncMobileNavState();
                         window.addEventListener('resize', syncMobileNavState, { passive: true });
+
+                        // Arm the nav morph transitions only after the
+                        // initial state sync — the CSS gates every morph
+                        // transition behind html.nav-anim-ready so init
+                        // and restore-time class flips paint instantly.
+                        var armNavMorph = function() {
+                            requestAnimationFrame(function() {
+                                setTimeout(function() {
+                                    document.documentElement.classList.add('nav-anim-ready');
+                                }, 350);
+                            });
+                        };
+                        armNavMorph();
+                        // bfcache snapshots keep nav-anim-ready — disarm,
+                        // re-sync instantly, re-arm (same as home-scripts).
+                        window.addEventListener('pageshow', function(e) {
+                            if (!e.persisted) return;
+                            document.documentElement.classList.remove('nav-anim-ready');
+                            syncMobileNavState();
+                            armNavMorph();
+                        });
 
                         // Scroll-to-dismiss bookkeeping. After openMenu()
                         // we capture the scrollY at open and ignore

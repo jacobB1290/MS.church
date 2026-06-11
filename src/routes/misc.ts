@@ -637,7 +637,7 @@ ${items}
                   text-align: center;
               }
 
-              .form-success-msg .success-icon { font-size: 56px; }
+              .form-success-msg .success-icon svg { width: 56px; height: 56px; filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--gold) 30%, transparent)); }
 
               .form-success-msg h3 {
                   font-family: 'Playfair Display', serif;
@@ -717,8 +717,8 @@ ${items}
               </div>
 
               <div class="form-success-msg" id="form-success" hidden>
-                  <div class="success-icon">🕊️</div>
-                  <h3>Thank you</h3>
+                  <div class="success-icon"><svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M40 8 L44 32 L68 28 L48 40 L68 52 L44 48 L40 72 L36 48 L12 52 L32 40 L12 28 L36 32 Z" fill="url(#successGoldGrad)" opacity="0.9"/><defs><linearGradient id="successGoldGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="var(--gold)"/><stop offset="100%" stop-color="var(--gold-dark)"/></linearGradient></defs></svg></div>
+                  <h3>Thank you.</h3>
                   <p>Thanks for reaching out. Someone from our team will get back to you soon.</p>
               </div>
           </div>

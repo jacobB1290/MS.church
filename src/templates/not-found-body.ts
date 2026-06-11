@@ -38,7 +38,7 @@ export const notFoundBody = (): string => `
         <div class="page">
             ${subpageHeader()}
             <div class="subpage-spacer"></div>
-            <main>
+            <main id="main">
                 <section class="notfound-section">
                     <p class="notfound-code" aria-hidden="true">404</p>
                     <h1 class="section-heading">We couldn&rsquo;t find that page.</h1>

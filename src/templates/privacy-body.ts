@@ -106,7 +106,7 @@ export const privacyBody = (): string => `
         <div class="page">
             ${subpageHeader()}
             <div class="subpage-spacer"></div>
-            <main>
+            <main id="main">
                 <section id="legal-intro">
                     <h1 class="section-heading">Privacy &amp; terms.</h1>
                     <p class="subpage-intro-lead">How we collect and protect your information, and the terms that apply when you use this site. Both are written to be read, not buried.</p>

@@ -11,9 +11,10 @@ import { WEDNESDAY_ENABLED } from '../config.js'
 export const homeBody = (): string => `
     <body>
         <div class="page">
+            <a class="skip-link" href="#main">Skip to content</a>
             ${nav()}
             <div class="nav-spacer"></div>
-            <main>
+            <main id="main">
                 <section class="hero" id="home">
                     <div class="hero-blur-layer blur-1"></div>
                     <div class="hero-blur-layer blur-2"></div>
@@ -22,7 +23,7 @@ export const homeBody = (): string => `
                     <h1 class="sr-only">Morning Star Christian Church · A Welcoming Christian Church in Boise, Idaho</h1>
                     <p class="hero-tagline">Mending the Broken.</p>
                     <div class="hero-body">
-                        <p class="hero-service-time">Join us Sundays at 9 AM</p>
+                        <p class="hero-service-time">Join us Sundays at 9:00 AM</p>
                         <div class="hero-image" role="img" aria-label="Morning Star Christian Church building exterior at 3080 Wildwood Street, Boise, Idaho. A welcoming Bible-believing nondenominational church.">
                             <!-- The visible church photo is the CSS background-image
                                  on .hero (desktop: church-building, mobile: hero-mobile).
@@ -52,15 +53,15 @@ export const homeBody = (): string => `
                             <button class="address-trigger" data-address="3080 Wildwood St, Boise, Idaho">3080 Wildwood St · Boise, Idaho</button>
                             <div class="address-dropdown">
                                 <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
-                                    <span class="address-dropdown-icon">🍎</span>
+                                    <span class="address-dropdown-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
                                     <span>Apple Maps</span>
                                 </a>
                                 <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
-                                    <span class="address-dropdown-icon">🗺️</span>
+                                    <span class="address-dropdown-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3 3.6 5.2A1 1 0 0 0 3 6.13V20l6-2.4 6 2.4 5.4-2.2a1 1 0 0 0 .6-.92V3l-6 2.4L9 3Z"/><path d="M9 3v14.6"/><path d="M15 5.4V20"/></svg></span>
                                     <span>Google Maps</span>
                                 </a>
                                 <button class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
-                                    <span class="address-dropdown-icon">📋</span>
+                                    <span class="address-dropdown-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
                                     <span>Copy</span>
                                 </button>
                             </div>
@@ -412,8 +413,8 @@ export const homeBody = (): string => `
                             </form>
                         </div>
                         <div class="form-success" id="contact-success" style="display: none;">
-                            <div class="success-icon">🕊️</div>
-                            <h3 class="success-heading">Thank you</h3>
+                            <div class="success-icon"><svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M40 8 L44 32 L68 28 L48 40 L68 52 L44 48 L40 72 L36 48 L12 52 L32 40 L12 28 L36 32 Z" fill="url(#successGoldGrad)" opacity="0.9"/><defs><linearGradient id="successGoldGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="var(--gold)"/><stop offset="100%" stop-color="var(--gold-dark)"/></linearGradient></defs></svg></div>
+                            <h3 class="success-heading">Thank you.</h3>
                             <p class="success-message">Thanks for reaching out. Someone from our team will be in touch soon.</p>
                         </div>
                     </div>

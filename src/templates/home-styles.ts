@@ -243,7 +243,70 @@ export const homeStyles = (): string => `
                 min-height: 100dvh;
                 overflow-x: hidden;
             }
-            
+
+            /* Brand text selection — the default blue highlight reads as
+               foreign chrome against the warm cream + gold palette. A
+               translucent gold keeps selected text legible while staying
+               in the brand's voice. */
+            ::selection {
+                background: color-mix(in srgb, var(--gold) 28%, transparent);
+                color: var(--text-primary);
+            }
+
+            /* Every interactive element provides its own pressed/hover
+               feedback (transitions, lifts, underlines) — the default
+               grey tap flash on mobile fights that and reads as
+               unstyled. */
+            * {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            /* Brand keyboard focus ring — the UA default (blue) reads as
+               foreign chrome here, same as the default selection color.
+               Component-specific :focus-visible rules (subpage-jump,
+               schedule-tab, menu trigger…) have higher specificity and
+               keep their own treatments; this is the site-wide floor. */
+            :focus-visible {
+                outline: 2px solid var(--gold-dark);
+                outline-offset: 3px;
+            }
+            /* On gold-filled controls the gold ring would vanish into the
+               fill — switch to ink for those. */
+            .event-link-btn:focus-visible,
+            .past-card-btn:focus-visible,
+            .btn-submit:focus-visible {
+                outline-color: var(--text-primary);
+            }
+
+            /* Skip link — first focusable element on every page. Visually
+               absent until keyboard focus, then a gold pill above all
+               chrome. The jump itself is instant by design: skip links
+               serve keyboard/AT users for whom the smooth-scroll wait is
+               friction, and the element is never seen by pointer users. */
+            .skip-link {
+                position: fixed;
+                top: var(--space-sm);
+                left: 50%;
+                transform: translateX(-50%) translateY(-200%);
+                z-index: 10001;
+                padding: 12px 24px;
+                border-radius: var(--radius-pill);
+                background: var(--btn-cta-bg);
+                color: #ffffff;
+                font-size: var(--text-small);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                text-decoration: none;
+                box-shadow: var(--btn-cta-shadow);
+                transition: transform var(--motion-medium) var(--ease-out-soft);
+            }
+            .skip-link:focus-visible {
+                transform: translateX(-50%) translateY(0);
+                outline: 2px solid var(--text-primary);
+                outline-offset: 2px;
+            }
+
             /* Fallback for older iOS devices (iPhone 6S, iPhone X, etc.) that don't support backdrop-filter */
             /* Replace frosted glass effect with solid white backgrounds */
             @supports not (backdrop-filter: blur(1px)) {
@@ -436,7 +499,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: #6b6b80;
+                color: var(--text-primary-faint);
                 font-weight: var(--weight-semibold);
                 margin-top: 2px;
                 white-space: nowrap;
@@ -1077,7 +1140,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wider);
-                color: #595970;
+                color: var(--text-primary-muted);
                 box-shadow: var(--shadow-md);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.5);
@@ -1457,7 +1520,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: #6b6b80;
+                color: var(--text-primary-faint);
                 margin-bottom: 48px;
                 font-weight: var(--weight-semibold);
             }
@@ -1531,8 +1594,15 @@ export const homeStyles = (): string => `
             }
             
             .address-dropdown-icon {
-                font-size: var(--text-lead);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
                 flex-shrink: 0;
+                color: var(--gold-dark);
+            }
+            .address-dropdown-icon svg {
+                width: 18px;
+                height: 18px;
             }
             
             /* Hero "Plan a Visit" CTA wrapper. Positions the canonical
@@ -2087,7 +2157,7 @@ export const homeStyles = (): string => `
                 letter-spacing: var(--tracking-wide);
                 font-size: var(--text-small); /* larger than --text-eyebrow (10px) */
                 font-weight: var(--weight-bold);
-                color: #6b6b80;
+                color: var(--text-primary-faint);
             }
             .schedule-tab-title {
                 font-size: var(--text-heading);
@@ -3570,7 +3640,7 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: #6b6b80;
+                color: var(--text-primary-faint);
                 font-weight: var(--weight-semibold);
                 white-space: nowrap;
             }
@@ -4055,7 +4125,7 @@ export const homeStyles = (): string => `
                 letter-spacing: var(--tracking-wide);
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
-                color: #6b6b80;
+                color: var(--text-primary-faint);
             }
 
             .schedule-item h3 {
@@ -4384,7 +4454,7 @@ export const homeStyles = (): string => `
                 align-items: center;
                 justify-content: center;
                 font-size: var(--text-body);
-                color: #6b6b80;
+                color: var(--text-primary-faint);
                 font-weight: var(--weight-semibold);
                 text-transform: uppercase;
                 letter-spacing: 2px;
@@ -6573,8 +6643,12 @@ export const homeStyles = (): string => `
             }
 
             .success-icon {
-                font-size: var(--text-title);
                 animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            }
+            .success-icon svg {
+                width: clamp(48px, 6vw, 64px);
+                height: clamp(48px, 6vw, 64px);
+                filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--gold) 30%, transparent));
             }
             
             @keyframes bounceIn {
@@ -6627,7 +6701,7 @@ export const homeStyles = (): string => `
             .detail-label {
                 font-size: var(--text-body);
                 font-weight: var(--weight-semibold);
-                color: #595970;
+                color: var(--text-primary-muted);
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -7652,8 +7726,9 @@ export const homeStyles = (): string => `
                     padding: var(--space-xl) 0;
                 }
 
-                .success-icon {
-                    font-size: var(--text-hero);
+                .success-icon svg {
+                    width: clamp(56px, 14vw, 72px);
+                    height: clamp(56px, 14vw, 72px);
                 }
 
                 .success-heading {
@@ -8635,11 +8710,81 @@ export const homeStyles = (): string => `
                 font-size: var(--text-eyebrow);
                 letter-spacing: var(--tracking-wider);
                 text-transform: uppercase;
-                color: #6b6b80;
+                color: var(--text-primary-faint);
                 font-weight: var(--weight-semibold);
                 margin-top: 4px;
             }
             
+            /* When / where / email — the answers a visitor actually scrolls
+               to a church footer for. Service time leads at near-solid ink;
+               address + email sit a step quieter and underline on hover. */
+            .footer-meta {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+                text-align: center;
+            }
+            .footer-meta-when {
+                font-size: var(--text-small);
+                font-weight: var(--weight-semibold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                color: var(--text-primary-soft);
+            }
+            .footer-meta-link {
+                font-size: var(--text-small);
+                color: var(--text-primary-faint);
+                text-decoration: underline;
+                text-decoration-color: transparent;
+                text-underline-offset: 3px;
+                transition: color var(--motion-fast) var(--ease-out-soft),
+                            text-decoration-color var(--motion-fast) var(--ease-out-soft);
+            }
+            .footer-meta-link:hover {
+                color: var(--gold-dark);
+                text-decoration-color: currentColor;
+            }
+
+            /* Quick links — one-tap path to every page. Same scaleX gold
+               underline vocabulary as .subpage-jump so hover reads as one
+               system across the site. */
+            .footer-nav {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: var(--space-sm) var(--space-md);
+            }
+            .footer-nav a {
+                position: relative;
+                font-size: var(--text-label);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                color: var(--text-primary-muted);
+                text-decoration: none;
+                padding-bottom: 3px;
+                transition: color var(--motion-fast) var(--ease-out-soft);
+            }
+            .footer-nav a::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: 1px;
+                background: var(--gold);
+                transform: scaleX(0);
+                transform-origin: center;
+                transition: transform var(--motion-medium) var(--ease-out-soft);
+            }
+            .footer-nav a:hover {
+                color: var(--gold-dark);
+            }
+            .footer-nav a:hover::after {
+                transform: scaleX(1);
+            }
+
             .footer-social {
                 display: flex;
                 gap: 24px;
@@ -8655,7 +8800,7 @@ export const homeStyles = (): string => `
                 border-radius: var(--radius-circle);
                 background: var(--text-primary-hairline);
                 color: var(--text-primary);
-                transition: all var(--motion-medium) ease;
+                transition: all var(--motion-medium) var(--ease-out-soft);
             }
             
             .footer-social a:hover {
@@ -8681,9 +8826,9 @@ export const homeStyles = (): string => `
             
             .footer-link {
                 font-size: var(--text-small);
-                color: #595970;
+                color: var(--text-primary-muted);
                 text-decoration: none;
-                transition: color var(--motion-medium) ease;
+                transition: color var(--motion-medium) var(--ease-out-soft);
             }
 
             .footer-link:hover {
@@ -8697,7 +8842,7 @@ export const homeStyles = (): string => `
 
             .footer-copyright {
                 font-size: var(--text-small);
-                color: #6b6b80;
+                color: var(--text-primary-faint);
                 text-align: center;
             }
             
@@ -8711,6 +8856,11 @@ export const homeStyles = (): string => `
 
                 .footer-content {
                     gap: var(--space-lg);
+                }
+
+                .footer-nav {
+                    gap: var(--space-sm) var(--space-md);
+                    padding: 0 var(--space-md);
                 }
 
                 .footer-brand-title {

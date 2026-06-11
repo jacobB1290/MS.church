@@ -18,7 +18,7 @@ export const outreachBody = (): string => `
         <div class="page">
             ${subpageHeader()}
             <div class="subpage-spacer"></div>
-            <main>
+            <main id="main">
                 <section id="outreach-intro">
                     <h1 class="section-heading">How we serve Boise.</h1>
                     <p class="subpage-intro-lead">Faith without works is dead. Morning Star puts love into action through monthly community service, seasonal events, and the relationships we carry into our neighborhoods.</p>

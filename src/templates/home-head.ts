@@ -1027,6 +1027,10 @@ export const homeHead = (): string => {
             ]
         }
         </script>
+<!-- Motion (self-hosted) — spring physics for the nav motion engine.
+             Deferred; the engine in footer.ts boots when it lands and the CSS
+             transitions remain the no-JS fallback. -->
+        <script defer src="/static/js/motion.min.js"></script>
 ${prefetchSnippet()}
 
         <!-- Self-hosted Inter + Playfair Display (v1.62.7). The @font-face

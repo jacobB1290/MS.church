@@ -207,6 +207,10 @@ export function pageHead({
         </style>
 
         ${jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : ''}
+<!-- Motion (self-hosted) — spring physics for the nav motion engine.
+             Deferred; the engine in footer.ts boots when it lands and the CSS
+             transitions remain the no-JS fallback. -->
+        <script defer src="/static/js/motion.min.js"></script>
 ${prefetchSnippet()}
 
         <!-- Vercel Analytics & Speed Insights (disabled with ?notrack=true parameter) -->

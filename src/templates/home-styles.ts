@@ -3858,22 +3858,28 @@ export const homeStyles = (): string => `
                transform: translateX(-50%) for its centering. We MUST
                compose translateX(-50%) into our hidden/open transforms
                or the nav-shell will jump off-center. */
+            /* Menu-open choreography (v1.62.77): the panel GROWS out of the
+               trigger's corner (transform-origin top-right, where the tap
+               happened) with the spring's snap-into-place, instead of a flat
+               slide+fade. Exit is deliberately quicker and bounce-free —
+               entrances perform, exits get out of the way. */
             body[class*="page-subpage"] .nav-shell {
                 opacity: 0;
-                transform: translateX(-50%) translateY(-10px);
+                transform: translateX(-50%) translateY(-12px) scale(0.94);
+                transform-origin: calc(100% - 44px) 0;
                 pointer-events: none;
                 visibility: hidden;
-                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                transition: opacity var(--motion-fast) var(--ease-out-soft),
                             transform var(--motion-medium) var(--ease-out-soft),
                             visibility 0s linear var(--motion-medium);
             }
             body[class*="page-subpage"].menu-open .nav-shell {
                 opacity: 1;
-                transform: translateX(-50%) translateY(0);
+                transform: translateX(-50%) translateY(0) scale(1);
                 pointer-events: auto;
                 visibility: visible;
                 transition: opacity var(--motion-medium) var(--ease-out-soft),
-                            transform var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-springy) var(--ease-spring),
                             visibility 0s linear 0s;
             }
 
@@ -3885,10 +3891,15 @@ export const homeStyles = (): string => `
                Nav-shell brand starts invisible; .menu-open fades it in. */
             body[class*="page-subpage"] .nav-shell .brand {
                 opacity: 0;
-                transition: opacity var(--motion-medium) var(--ease-out-soft);
+                transform: translateY(-4px);
+                transition: opacity var(--motion-fast) var(--ease-out-soft),
+                            transform var(--motion-fast) var(--ease-out-soft);
             }
             body[class*="page-subpage"].menu-open .nav-shell .brand {
                 opacity: 1;
+                transform: translateY(0);
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-springy) var(--ease-spring);
                 transition-delay: 120ms;
             }
 
@@ -3900,13 +3911,19 @@ export const homeStyles = (): string => `
                directionality as the X morph + nav-shell slide-in. */
             body[class*="page-subpage"] .nav-shell nav ul li {
                 opacity: 0;
-                transform: translateX(8px);
-                transition: opacity var(--motion-medium) var(--ease-out-soft),
-                            transform var(--motion-medium) var(--ease-out-soft);
+                transform: translateX(10px) translateY(4px) scale(0.96);
+                filter: blur(3px);
+                transition: opacity var(--motion-fast) var(--ease-out-soft),
+                            transform var(--motion-fast) var(--ease-out-soft),
+                            filter var(--motion-fast) var(--ease-out-soft);
             }
             body[class*="page-subpage"].menu-open .nav-shell nav ul li {
                 opacity: 1;
-                transform: translateX(0);
+                transform: translateX(0) translateY(0) scale(1);
+                filter: blur(0);
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-springy) var(--ease-spring),
+                            filter var(--motion-medium) var(--ease-out-soft);
             }
             body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(4) { transition-delay: 80ms; }
             body[class*="page-subpage"].menu-open .nav-shell nav ul li:nth-child(3) { transition-delay: 130ms; }
@@ -3915,15 +3932,48 @@ export const homeStyles = (): string => `
             body[class*="page-subpage"] .nav-shell .nav-cta,
             body[class*="page-subpage"] .nav-shell .nav-form-btn {
                 opacity: 0;
-                transform: translateY(4px);
-                transition: opacity var(--motion-medium) var(--ease-out-soft),
-                            transform var(--motion-medium) var(--ease-out-soft);
+                transform: translateY(6px) scale(0.96);
+                filter: blur(3px);
+                transition: opacity var(--motion-fast) var(--ease-out-soft),
+                            transform var(--motion-fast) var(--ease-out-soft),
+                            filter var(--motion-fast) var(--ease-out-soft);
             }
             body[class*="page-subpage"].menu-open .nav-shell .nav-cta,
             body[class*="page-subpage"].menu-open .nav-shell .nav-form-btn {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-springy) var(--ease-spring),
+                            filter var(--motion-medium) var(--ease-out-soft);
                 transition-delay: 280ms;
+            }
+
+            /* ── Engine mode (html.motion-engine, set once the self-hosted
+               Motion bundle boots) — the JS engine drives every menu
+               property inline with real springs + interruption continuity,
+               so the CSS transitions above stand down. The shell's
+               transform reads from engine vars in BOTH states (composed
+               with the centering translateX). */
+            html.motion-engine body[class*="page-subpage"] .nav-shell,
+            html.motion-engine body[class*="page-subpage"].menu-open .nav-shell {
+                transform: translateX(-50%) translateY(var(--mnav-y, -12px)) scale(var(--mnav-s, 0.94));
+                transition: visibility 0s linear var(--motion-medium);
+            }
+            html.motion-engine body[class*="page-subpage"].menu-open .nav-shell {
+                transition: visibility 0s linear 0s;
+            }
+            html.motion-engine body[class*="page-subpage"] .nav-shell nav ul li,
+            html.motion-engine body[class*="page-subpage"] .nav-shell .brand,
+            html.motion-engine body[class*="page-subpage"] .nav-shell .nav-cta,
+            html.motion-engine body[class*="page-subpage"] .nav-shell .nav-form-btn {
+                transition: none;
+            }
+            /* Exit hold — the engine plays the close on a panel the class
+               flip would otherwise hide instantly. */
+            body.menu-closing .nav-shell {
+                visibility: visible !important;
+                pointer-events: none !important;
             }
 
             /* Scrim — full-viewport invisible click target that
@@ -3987,8 +4037,14 @@ export const homeStyles = (): string => `
                 .subpage-menu-list li,
                 .subpage-menu-cta,
                 .subpage-menu-scrim,
-                .subpage-brand {
+                .subpage-brand,
+                body[class*="page-subpage"] .nav-shell,
+                body[class*="page-subpage"] .nav-shell nav ul li,
+                body[class*="page-subpage"] .nav-shell .brand,
+                body[class*="page-subpage"] .nav-shell .nav-cta,
+                body[class*="page-subpage"] .nav-shell .nav-form-btn {
                     transition: none !important;
+                    filter: none !important;
                 }
                 body.menu-open .subpage-menu-list li {
                     transition-delay: 0ms !important;
@@ -7298,6 +7354,38 @@ export const homeStyles = (): string => `
                 html:not(.nav-anim-ready) .nav-shell .nav-cta,
                 html:not(.nav-anim-ready) .nav-shell .nav-form-btn {
                     transition: none;
+                }
+
+                /* ── Engine mode: the Motion engine owns the morph geometry
+                   inline (padding, radius, row rhythm, collapse, pill pop).
+                   CSS keeps only what the engine deliberately leaves to it
+                   (background/shadow tone, top/margin offsets) plus the
+                   visibility timing that lets engine fades complete. */
+                html.motion-engine .nav-shell {
+                    transition: background var(--motion-slow) var(--ease-standard),
+                                box-shadow var(--motion-slow) var(--ease-standard),
+                                top var(--motion-springy) var(--ease-spring),
+                                margin var(--motion-springy) var(--ease-spring);
+                }
+                html.motion-engine .nav-shell nav,
+                html.motion-engine .nav-shell nav ul {
+                    transition: none;
+                }
+                html.motion-engine .nav-shell .brand,
+                html.motion-engine .nav-shell .nav-cta {
+                    transition: visibility 0s 0s;
+                }
+                html.motion-engine .nav-shell.scrolled-mobile .brand,
+                html.motion-engine .nav-shell.scrolled-mobile .nav-cta {
+                    transition: visibility 0s var(--motion-medium);
+                }
+                html.motion-engine .nav-form-btn {
+                    transform: translateY(-50%) scale(var(--pill-s, 0.85));
+                    transition: visibility 0s 0.25s;
+                }
+                html.motion-engine .nav-shell.scrolled-mobile .nav-form-btn {
+                    transform: translateY(-50%) scale(var(--pill-s, 1));
+                    transition: visibility 0s 0s;
                 }
 
                 .nav-shell.scrolled-mobile,

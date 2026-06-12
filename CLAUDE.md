@@ -19,6 +19,7 @@ Sections: hero/welcome, service schedule, ministries, outreach, About, beliefs, 
 | Build | `tsc --noEmit` (type-check only; Vercel compiles `api/index.ts` natively) |
 | Deployment | Vercel (Node serverless function via `api/index.ts`) |
 | Tests | Playwright harness (`scripts/harness/run.mjs`) |
+| Motion | [Motion](https://motion.dev) UMD bundle, self-hosted at `public/static/js/motion.min.js` (npm dep `motion`, copy on upgrade) — powers the nav motion engine in `src/templates/shared/motion-engine.ts`. Progressive enhancement: the CSS spring transitions remain the no-JS fallback. |
 
 To switch back to Cloudflare Pages, see the comment block at the top of `src/index.ts`.
 

@@ -1,3 +1,5 @@
+import { motionEngine } from './motion-engine.js'
+
 // Shared site footer.
 // Used by every page so brand/social/legal/copyright stay consistent.
 //
@@ -59,5 +61,6 @@ export function footer(): string {
                     <p class="footer-copyright">© <span id="copyright-year"></span> Morning Star Christian Church. All rights reserved.</p>
                     <script>document.getElementById('copyright-year').textContent = new Date().getFullYear();</script>
                 </div>
-            </footer>`
+            </footer>
+            ${motionEngine()}`
 }

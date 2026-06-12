@@ -1,5 +1,13 @@
 // Shared site footer.
 // Used by every page so brand/social/legal/copyright stay consistent.
+//
+// Composition (centered editorial stack):
+//   brand → when/where/email meta → quick links → social → legal → ©
+// The meta block answers the two questions every church-site visitor
+// brings to a footer ("what time?" / "where?") without scrolling back
+// up; the quick links give every page a one-tap path to every other
+// page. Both are deliberately quiet — small sizes, faint inks — so the
+// footer stays a colophon, not a second navigation bar.
 
 export function footer(): string {
   return `<footer class="site-footer">
@@ -8,6 +16,21 @@ export function footer(): string {
                         <span class="footer-brand-title">Morning Star</span>
                         <span class="footer-brand-subtitle">Christian Church</span>
                     </a>
+
+                    <div class="footer-meta">
+                        <span class="footer-meta-when">Sundays &middot; 9:00 AM</span>
+                        <a class="footer-meta-link" href="https://maps.google.com/?q=3080+Wildwood+St,+Boise,+ID+83713" target="_blank" rel="noopener">3080 Wildwood St, Boise, Idaho 83713</a>
+                        <a class="footer-meta-link" href="mailto:support@ms.church">support@ms.church</a>
+                    </div>
+
+                    <nav class="footer-nav" aria-label="Footer">
+                        <a href="/visit">Visit</a>
+                        <a href="/ministries">Ministries</a>
+                        <a href="/outreach">Outreach</a>
+                        <a href="/about">About</a>
+                        <a href="/beliefs">Beliefs</a>
+                        <a href="/#contact">Contact</a>
+                    </nav>
 
                     <div class="footer-social">
                         <a href="https://www.instagram.com/mschurchboise" target="_blank" rel="noopener" aria-label="Instagram">
@@ -30,7 +53,7 @@ export function footer(): string {
                     <div class="footer-divider"></div>
 
                     <div class="footer-links">
-                        <a href="/privacy" class="footer-link">Legal</a>
+                        <a href="/privacy" class="footer-link">Privacy &amp; Terms</a>
                     </div>
 
                     <p class="footer-copyright">© <span id="copyright-year"></span> Morning Star Christian Church. All rights reserved.</p>

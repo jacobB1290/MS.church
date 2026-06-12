@@ -132,6 +132,10 @@ const IGNORED_ERROR_PATTERNS = [
   /fonts\.googleapis\.com/, /fonts\.gstatic\.com/,
   /youtube/i, /lh3\.googleusercontent/, /engagehub/, /jotform/i, /googleapis\.com/,
   /service\?service=/, /script\.js/, /cdn\.vercel-insights/,
+  // The UA's own cross-document view-transition promise rejects with
+  // this when rapid navigation skips the transition — browser-internal,
+  // not initiated or catchable by site code.
+  /Transition was skipped/,
 ]
 const isIgnoredError = (text) => IGNORED_ERROR_PATTERNS.some((re) => re.test(text))
 
@@ -150,12 +154,18 @@ const ANCHOR_SCENARIOS = [
 
   { name: '10-jump-cooking-desktop',   path: '/outreach', anchor: '#cooking-ministry',    viewport: DESKTOP, expected: 90 },
   { name: '11-jump-cooking-mobile',    path: '/outreach', anchor: '#cooking-ministry',    viewport: MOBILE,  expected: 75 },
-  { name: '12-jump-sunday-desktop',    path: '/visit',    anchor: '#sunday-school',       viewport: DESKTOP, expected: 90 },
-  { name: '13-jump-sunday-mobile',     path: '/visit',    anchor: '#sunday-school',       viewport: MOBILE,  expected: 75 },
+  { name: '12-jump-before-desktop',    path: '/visit',    anchor: '#before-you-come',     viewport: DESKTOP, expected: 90 },
+  { name: '13-jump-before-mobile',     path: '/visit',    anchor: '#before-you-come',     viewport: MOBILE,  expected: 75 },
   { name: '14-jump-breakfast-mobile',  path: '/outreach', anchor: '#community-breakfast', viewport: MOBILE,  expected: 75 },
   { name: '15-jump-mission-mobile',    path: '/about',    anchor: '#mission',             viewport: MOBILE,  expected: 75 },
   { name: '16-jump-expect-desktop',    path: '/visit',    anchor: '#what-to-expect',      viewport: DESKTOP, expected: 90 },
-  { name: '17-jump-sundayschool-mobile', path: '/visit',  anchor: '#sunday-school',       viewport: MOBILE,  expected: 75 },
+  { name: '17-jump-location-mobile',   path: '/visit',    anchor: '#location',            viewport: MOBILE,  expected: 75 },
+
+  // /privacy rebuilt onto the standard subpage chrome (subpageHeader +
+  // subpage-jump) — verify its #terms anchor lands at the standard
+  // subpage offsets like every other in-page jump.
+  { name: '17b-jump-privacy-terms-desktop', path: '/privacy', anchor: '#terms', viewport: DESKTOP, expected: 90 },
+  { name: '17c-jump-privacy-terms-mobile',  path: '/privacy', anchor: '#terms', viewport: MOBILE,  expected: 75 },
 
   // 18s — NETWORK-THROTTLED landing-accuracy. Routine check that
   // the hashload lands at the right offset even when the calendar
@@ -203,13 +213,14 @@ const PERF_SCENARIOS = [
   { name: '34-perf-scroll-about-mobile',     viewport: MOBILE,  path: '/about',    action: 'scroll' },
 
   // 35s — smooth-scroll-to-hash (anchor jumps on the same page).
-  { name: '35-perf-hash-visit-sundayschool-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#sunday-school' },
+  { name: '35-perf-hash-visit-sundayschool-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#before-you-come' },
   { name: '36-perf-hash-visit-whattoexpect-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#what-to-expect' },
   { name: '37-perf-hash-outreach-cooking-mobile',   viewport: MOBILE, path: '/outreach', action: 'hash', hash: '#cooking-ministry' },
 
   // 38s — cross-page click navigations (view-transition path).
-  { name: '38-perf-click-findus-mobile',  viewport: MOBILE,  path: '/', action: 'click', selector: 'a.find-us-btn' },
-  { name: '39-perf-click-findus-desktop', viewport: DESKTOP, path: '/', action: 'click', selector: 'a.find-us-btn' },
+  // The hero Find Us button became the Plan a Visit navigation link; selector retargeted, perf profile (click → navigate → observe) unchanged.
+  { name: '38-perf-click-planavisit-mobile',  viewport: MOBILE,  path: '/', action: 'click', selector: 'a.find-us-link' },
+  { name: '39-perf-click-planavisit-desktop', viewport: DESKTOP, path: '/', action: 'click', selector: 'a.find-us-link' },
 
   // 40s — hash-LOAD smooth-scroll. Tests the actual user path: load
   // a subpage URL with a hash; the subpage-header.ts inline script
@@ -217,8 +228,8 @@ const PERF_SCENARIOS = [
   // scroll-position deltas (perceived smoothness), and CLS during the
   // auto-scroll. This is what users feel on first visit, not what a
   // programmatic scrollIntoView() call feels like.
-  { name: '40-perf-hashload-visit-sunday-desktop',   viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#sunday-school' },
-  { name: '41-perf-hashload-visit-sunday-mobile',    viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school' },
+  { name: '40-perf-hashload-visit-sunday-desktop',   viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#before-you-come' },
+  { name: '41-perf-hashload-visit-sunday-mobile',    viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#before-you-come' },
   { name: '42-perf-hashload-visit-expect-desktop',   viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#what-to-expect' },
   { name: '43-perf-hashload-outreach-cook-desktop',  viewport: DESKTOP, path: '/outreach', action: 'hashload', hash: '#cooking-ministry' },
   { name: '44-perf-hashload-outreach-cook-mobile',   viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry' },
@@ -230,15 +241,15 @@ const PERF_SCENARIOS = [
   // perf will surface it as long-tasks, LoAF spikes, or stutters.
   // Use the actual user path (URL with hash → subpage-header.ts
   // auto-trigger) so we test browser-native scrollTo under load.
-  { name: '50-perf-cpu4x-hashload-visit-sunday-desktop',  viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#sunday-school',    cpuThrottle: 4 },
-  { name: '51-perf-cpu4x-hashload-visit-sunday-mobile',   viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school',    cpuThrottle: 4 },
+  { name: '50-perf-cpu4x-hashload-visit-sunday-desktop',  viewport: DESKTOP, path: '/visit',    action: 'hashload', hash: '#before-you-come',    cpuThrottle: 4 },
+  { name: '51-perf-cpu4x-hashload-visit-sunday-mobile',   viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#before-you-come',    cpuThrottle: 4 },
   { name: '52-perf-cpu4x-hashload-outreach-cook-mobile',  viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry', cpuThrottle: 4 },
   { name: '53-perf-cpu4x-hashload-about-mission-mobile',  viewport: MOBILE,  path: '/about',    action: 'hashload', hash: '#mission',          cpuThrottle: 4 },
 
   // 60s — HARDER: 6× CPU throttle. Mimics an entry-level Android
   // device. Real users on cheap phones will hit this; if our scroll
   // perf collapses at 6× we need to find the bottleneck.
-  { name: '60-perf-cpu6x-hashload-visit-sunday-mobile',   viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school',    cpuThrottle: 6 },
+  { name: '60-perf-cpu6x-hashload-visit-sunday-mobile',   viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#before-you-come',    cpuThrottle: 6 },
   { name: '61-perf-cpu6x-hashload-outreach-cook-mobile',  viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry', cpuThrottle: 6 },
 
   // 70s — A/B BASELINE PAIRS. The home page anchor-click scroll feels
@@ -254,11 +265,11 @@ const PERF_SCENARIOS = [
   // side-by-side. INFORMATIONAL — they always pass; the gap data is
   // what we iterate against.
   { name: '70-ab-home-click-contact-mobile',           viewport: MOBILE,  path: '/',         action: 'homeclick', anchor: '#contact', ab: 'mobile-long' },
-  { name: '71-ab-hashload-visit-sunday-mobile',        viewport: MOBILE,  path: '/visit',    action: 'hashload',  hash: '#sunday-school',  ab: 'mobile-long' },
+  { name: '71-ab-hashload-visit-sunday-mobile',        viewport: MOBILE,  path: '/visit',    action: 'hashload',  hash: '#before-you-come',  ab: 'mobile-long' },
   { name: '72-ab-hashload-outreach-cooking-mobile',    viewport: MOBILE,  path: '/outreach', action: 'hashload',  hash: '#cooking-ministry', ab: 'mobile-long' },
   { name: '73-ab-hashload-about-mission-mobile',       viewport: MOBILE,  path: '/about',    action: 'hashload',  hash: '#mission',          ab: 'mobile-long' },
   { name: '74-ab-home-click-contact-desktop',          viewport: DESKTOP, path: '/',         action: 'homeclick', anchor: '#contact', ab: 'desktop-long' },
-  { name: '75-ab-hashload-visit-sunday-desktop',       viewport: DESKTOP, path: '/visit',    action: 'hashload',  hash: '#sunday-school',  ab: 'desktop-long' },
+  { name: '75-ab-hashload-visit-sunday-desktop',       viewport: DESKTOP, path: '/visit',    action: 'hashload',  hash: '#before-you-come',  ab: 'desktop-long' },
   { name: '76-ab-hashload-outreach-cooking-desktop',   viewport: DESKTOP, path: '/outreach', action: 'hashload',  hash: '#cooking-ministry', ab: 'desktop-long' },
 
   // 80s — NETWORK-THROTTLED hashloads. Routine landing-accuracy
@@ -273,7 +284,7 @@ const PERF_SCENARIOS = [
   // catches "lands 50% off target" regressions before they ship.
   { name: '80-perf-net3g-hashload-outreach-cooking-mobile', viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry', netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
   { name: '81-perf-net3g-hashload-outreach-cooking-desktop', viewport: DESKTOP, path: '/outreach', action: 'hashload', hash: '#cooking-ministry', netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
-  { name: '82-perf-net3g-hashload-visit-sunday-mobile',    viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#sunday-school',    netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
+  { name: '82-perf-net3g-hashload-visit-sunday-mobile',    viewport: MOBILE,  path: '/visit',    action: 'hashload', hash: '#before-you-come',    netThrottle: { latencyMs: 250, downKbps: 1500, upKbps: 750 } },
 ]
 
 const FLOW_SCENARIOS = [
@@ -292,7 +303,8 @@ const FLOW_SCENARIOS = [
     viewport: MOBILE,
     steps: [
       { type: 'goto', url: '/' },
-      { type: 'navigate', kind: 'click', selector: 'a[href="/outreach#cooking-ministry"]', captureFrames: true },
+      // Retargeted from /outreach#cooking-ministry → /outreach#meals-hospitality (teaser anchor changed).
+      { type: 'navigate', kind: 'click', selector: 'a[href="/outreach#meals-hospitality"]', captureFrames: true },
       { type: 'navigate', kind: 'goBack', captureFrames: true },
     ],
   },
@@ -306,11 +318,11 @@ const FLOW_SCENARIOS = [
     ],
   },
   {
-    name: '23-flow-home-find-us-to-visit-and-back-mobile',
+    name: '23-flow-home-planavisit-to-visit-and-back-mobile',
     viewport: MOBILE,
     steps: [
       { type: 'goto', url: '/' },
-      { type: 'navigate', kind: 'click', selector: 'a.find-us-btn', captureFrames: true },
+      { type: 'navigate', kind: 'click', selector: 'a.find-us-link', captureFrames: true },
       { type: 'navigate', kind: 'goBack', captureFrames: true },
     ],
   },
@@ -441,7 +453,7 @@ const FLICKER_SCENARIOS = [
     name: '116-hash-fade-brand-static-desktop',
     viewport: DESKTOP,
     load: '/visit',
-    hash: '#sunday-school',
+    hash: '#before-you-come',
     expectBrandStatic: true,
   },
   // 120s — SCROLL-RESTORE-JUMP scenarios. User is on home scrolled
@@ -502,6 +514,8 @@ function attachPageMonitors(page) {
     }
   })
   page.on('requestfailed', (r) => {
+    // ERR_ABORTED means the browser cancelled an in-flight request because navigation moved away — normal and never actionable.
+    if (r.failure()?.errorText === 'net::ERR_ABORTED') return
     const url = r.url()
     if (url.startsWith(BASE) && !isIgnoredError(url)) {
       errors.push(`reqfailed: ${url} (${r.failure()?.errorText})`)
@@ -688,7 +702,14 @@ async function visualProbes(page) {
       const visibleTop = Math.max(cr.top, fixedHeaderBottom)
       const visibleBottom = Math.min(cr.bottom, vh)
       const visiblePx = visibleBottom - visibleTop
-      if (visiblePx < opts.HEADING_MIN_VISIBLE_PX) {
+      // The candidate may be SHORTER than HEADING_MIN_VISIBLE_PX — the
+      // flattened .section-eyebrow is a ~16px box, so a fully visible
+      // eyebrow could never reach the 24px bar and every subpage failed
+      // the probe even though nothing was covered. Require the candidate
+      // to be (nearly) fully visible when its own height is below the
+      // threshold; the 1px slack absorbs sub-pixel rounding.
+      const requiredPx = Math.min(opts.HEADING_MIN_VISIBLE_PX, cr.height - 1)
+      if (visiblePx < requiredPx) {
         const sid = s.id
         const hasActiveNav = sid && !!document.querySelector(
           'nav .nav-shell a[href="#' + sid + '"].active, .nav-shell nav a[href="#' + sid + '"].active'
@@ -717,6 +738,16 @@ async function visualProbes(page) {
       const contentH = contentBottom - contentTop
       const waste = minH - contentH
       if (waste > opts.RESERVED_WASTE_THRESHOLD) {
+        // #events reserves its settled height while the calendar fetch is
+        // in flight (the anti-CLS reserve). If neither the stay-tuned card
+        // nor the carousel has mounted yet the section is still loading —
+        // the reserve is the fix working, not waste.
+        if (s.id === 'events') {
+          const st = s.querySelector('#stay-tuned-container')
+          const cw = s.querySelector('#carousel-wrapper')
+          const mounted = (el) => el && getComputedStyle(el).display !== 'none'
+          if (!mounted(st) && !mounted(cw)) continue
+        }
         out.issues.push(`wasted space: ${s.id || '<no-id>'} minH=${minH.toFixed(0)} content=${contentH.toFixed(0)} (${waste.toFixed(0)}px empty)`)
       }
     }
@@ -807,7 +838,49 @@ async function runAnchorScenarios(launcher, report) {
             const el = document.querySelector(sel)
             if (!el) return null
             const r = el.getBoundingClientRect()
-            return { top: Math.round(r.top), scrollY: Math.round(window.scrollY) }
+            const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+            const html = document.documentElement
+            // Record WHEN the page became visible using the page's own
+            // clock — under CDP network throttling the harness's sample
+            // scheduling jitters by hundreds of ms, so comparing class
+            // state at evaluate-time misattributes pre-fade corrections
+            // as visible instability. A MutationObserver pins the real
+            // fade-in moment.
+            if (!window.__fadeWatch) {
+              window.__fadeWatch = true
+              if (html.classList.contains('hash-fade-in') || !html.classList.contains('hash-fade')) {
+                window.__fadeInAt = performance.now()
+              } else {
+                new MutationObserver(() => {
+                  if (window.__fadeInAt == null && html.classList.contains('hash-fade-in')) {
+                    window.__fadeInAt = performance.now()
+                  }
+                }).observe(html, { attributes: true, attributeFilter: ['class'] })
+              }
+            }
+            // Subtract main's live transform — the hash-fade entrance
+            // animates main's translateY, which moves bounding rects while
+            // the page glides into place. The site's own landing code
+            // (subpage-header measureTargetY) subtracts this the same way;
+            // without it the entrance motion itself reads as "drift".
+            let ty = 0
+            const mainEl = document.querySelector('main')
+            if (mainEl) {
+              const tr = getComputedStyle(mainEl).transform
+              if (tr && tr !== 'none') {
+                const m2 = tr.match(/matrix\(([^)]+)\)/)
+                const m3 = tr.match(/matrix3d\(([^)]+)\)/)
+                if (m2) ty = parseFloat(m2[1].split(',')[5]) || 0
+                else if (m3) ty = parseFloat(m3[1].split(',')[13]) || 0
+              }
+            }
+            return {
+              top: Math.round(r.top - ty),
+              scrollY: Math.round(window.scrollY),
+              atMaxScroll: window.scrollY >= maxScrollY - 2,
+              pageT: Math.round(performance.now()),
+              fadeInAt: window.__fadeInAt == null ? null : Math.round(window.__fadeInAt),
+            }
           }, s.anchor)
           driftMeasurements.push({ t, ...m })
         }
@@ -815,13 +888,28 @@ async function runAnchorScenarios(launcher, report) {
         if (!last || last.top == null) issues.push(`target not in DOM`)
         else {
           const landDrift = Math.abs(last.top - s.expected)
-          if (landDrift > DRIFT_LAND_TOLERANCE) {
+          // Targets in the page's LAST section can be clamp-limited: the page
+          // runs out of scroll room before the target reaches the standard
+          // offset (e.g. /outreach#community-breakfast on mobile). When the
+          // final sample sits at maxScrollY and the residual is "target too
+          // low" (top > expected), the landing code did the best the layout
+          // allows — that is not a drift defect.
+          const clampLimited = last.atMaxScroll && last.top > s.expected
+          if (landDrift > DRIFT_LAND_TOLERANCE && !clampLimited) {
             issues.push(`landDrift=${landDrift} (expected ~${s.expected}±${DRIFT_LAND_TOLERANCE})`)
           }
           // Stability across the last DRIFT_STABLE_SAMPLES samples. Earlier
           // samples may still be mid-smooth-scroll, which is intentional.
           const tail = driftMeasurements.slice(-DRIFT_STABLE_SAMPLES)
+          const fadeInAt = tail.map((x) => x.fadeInAt).find((v) => v != null) ?? null
           for (let i = 1; i < tail.length; i++) {
+            // Movement is only user-visible instability if the page was
+            // already visible at the EARLIER sample — under throttled
+            // networks the hash-fade flow corrects position while main is
+            // still invisible (the designed pattern), then fades in.
+            // Compared on the page's own clock (see fadeInAt above).
+            const earlierVisible = fadeInAt != null && tail[i - 1].pageT != null && tail[i - 1].pageT >= fadeInAt
+            if (!earlierVisible) continue
             const move = Math.abs(tail[i].top - tail[i - 1].top)
             if (move > DRIFT_STABLE_TOLERANCE) {
               issues.push(`unstable after settle: moved ${move}px between ${tail[i - 1].t}ms→${tail[i].t}ms`)
@@ -1803,6 +1891,14 @@ async function installFlickerProbe(page) {
             const t = a.effect && a.effect.getComputedTiming && a.effect.getComputedTiming()
             if (t && t.iterations === Infinity) return false
           } catch (e) {}
+          // Ambient auto-rotators (schedule-banner crossfade, events
+          // carousel auto-tick) run recurring finite transitions by
+          // design — whether a settle sample coincides with a rotation
+          // tick is timing luck, not a leak.
+          try {
+            const el = a.effect && a.effect.target
+            if (el && el.closest && el.closest('.schedule-banner, .carousel-track, .carousel-card, #events')) return false
+          } catch (e) {}
           return true
         }).length,
       }
@@ -1885,6 +1981,10 @@ async function installFlickerProbe(page) {
           inlineDisplay: getComputedStyle(navShell).display,
         }
       }
+      try {
+        const fp = performance.getEntriesByType('paint')[0]
+        out.firstPaintT = fp ? Math.round(fp.startTime) : null
+      } catch (e) { out.firstPaintT = null }
       return out
     }
   })
@@ -1920,6 +2020,12 @@ async function runFlickerScenarios(launcher, report) {
     const pngStats = []
     console.log(`▶ ${s.name}`)
 
+    // Set to Date.now() immediately before the navigation/action fires so that
+    // wallRelativeMs on each sample is measured from the action trigger, not
+    // from the page's absolute performance.now() clock. Samples collected
+    // before the action (pre samples) get negative or ~0 values — correct.
+    let actionStartMs = null
+
     const collectAt = async (label, t) => {
       let probe = null
       try { probe = await page.evaluate(() => window.__flickerProbe ? window.__flickerProbe() : null) } catch (e) {}
@@ -1939,7 +2045,10 @@ async function runFlickerScenarios(launcher, report) {
         const stats = decodePngStats(buf)
         pngStats.push({ label, t, stats })
       }
-      if (probe) samples.push({ label, t, ...probe })
+      if (probe) {
+        const wallRelativeMs = actionStartMs !== null ? Date.now() - actionStartMs : null
+        samples.push({ label, t, wallRelativeMs, ...probe })
+      }
     }
 
     const body = (async () => {
@@ -2001,6 +2110,7 @@ async function runFlickerScenarios(launcher, report) {
         // Baseline sample on the subpage (pre-back).
         await collectAt('pre', 0)
         // Trigger goBack and sample.
+        actionStartMs = Date.now()
         const fireP = page.goBack().catch(() => {})
         let prev = 0
         for (const t of NAV_SAMPLE_TIMES_MS) {
@@ -2056,6 +2166,13 @@ async function runFlickerScenarios(launcher, report) {
         if (s.preScroll) {
           await page.evaluate((y) => window.scrollTo(0, y), s.preScroll)
           await page.waitForTimeout(200)
+          // The subpage chrome (BACK pill, brand) hides on scroll-down.
+          // A real user scrolls up a touch to bring it back before
+          // tapping BACK — without this nudge the click lands on a
+          // pointer-events:none pill and silently never navigates,
+          // leaving the sampler measuring the source page forever.
+          await page.evaluate(() => window.scrollBy(0, -40))
+          await page.waitForTimeout(450)
         }
         // Baseline sample (pre-click). This is the "OLD page"
         // baseline used for see-through detection during the
@@ -2063,6 +2180,7 @@ async function runFlickerScenarios(launcher, report) {
         await collectAt('pre', 0)
         // Fire the action. Don't await its load — we want to sample
         // during the navigation.
+        actionStartMs = Date.now()
         const action = s.action
         const fireP = action.type === 'click'
           ? page.click(action.selector).catch(() => {})
@@ -2133,6 +2251,15 @@ async function runFlickerScenarios(launcher, report) {
       let revealsHiddenSamples = 0
       let maxRevealsHiddenInView = 0
       for (const sample of samples) {
+        // 'pre' samples measure the SOURCE page's baseline before the
+        // action fires — mid-scroll reveals there are normal choreography,
+        // not destination FOUC.
+        if (sample.label === 'pre') continue
+        // Skip the first ~80ms after commit: the head script that sets
+        // no-entrance/is-revealed runs synchronously during parse, but the
+        // probe's earliest sample can race it before ANY paint occurred —
+        // a state the user cannot see. Real FOUC persists past 80ms.
+        if (sample.t != null && sample.t < 80) continue
         if (sample.reveals && sample.reveals.inView > 2 && sample.reveals.hiddenInView >= sample.reveals.inView * 0.5) {
           revealsHiddenSamples++
           maxRevealsHiddenInView = Math.max(maxRevealsHiddenInView, sample.reveals.hiddenInView)
@@ -2234,14 +2361,26 @@ async function runFlickerScenarios(launcher, report) {
       let navShellFlips = 0
       let prevScrolled = null
       let prevSampleT = -1
+      let prevUrl = null
       for (const sample of samples) {
+        // A class-state difference across two DIFFERENT documents
+        // (source page pre-samples vs destination nav-samples) is not
+        // a flip — reset the comparison at every URL boundary.
+        if (sample.url !== prevUrl) {
+          prevScrolled = null
+          prevSampleT = -1
+          prevUrl = sample.url
+        }
         if (sample.navShell) {
           if (prevScrolled !== null && prevScrolled !== sample.navShell.scrolledMobile) {
-            // Only count this as a flip if it happened past the early
-            // settle window. Early flips are the head scroll listener
-            // catching restored scroll — fine because CSS doesn't
-            // transition the geometry properties.
-            if (sample.t > 200 && prevSampleT > 200) navShellFlips++
+            // Only count this as a flip if BOTH samples landed after the
+            // page's actual first paint (plus an 80ms settle margin) —
+            // the restoreScroll/pagereveal state sync happens pre-paint
+            // but on slow loads sits later than any fixed clock guard.
+            // Pre-paint mutations are invisible by definition; the morph
+            // transitions are also gated off until ~350ms post-init.
+            const fpGuard = Math.max(200, (sample.firstPaintT ?? 0) + 80)
+            if (sample.t > fpGuard && prevSampleT > fpGuard) navShellFlips++
           }
           prevScrolled = sample.navShell.scrolledMobile
           prevSampleT = sample.t
@@ -2272,7 +2411,17 @@ async function runFlickerScenarios(launcher, report) {
       //    landed should have all entrance animations completed by
       //    1500ms. Any sample past 1500ms with > 4 inflight is
       //    a long-running animation budget leak.
-      const lateSamples = samples.filter((s) => s.t > 1500)
+      //
+      // Filter uses s.t = probe.t = the in-page performance.now() clock,
+      // which starts near 0 when the destination page loads — so it
+      // correctly measures "time since destination page loaded" for
+      // nav/back/settled samples. The one exception is the 'pre' baseline
+      // sample, which runs on the SOURCE page whose clock may already read
+      // 2400ms+ (a long-lived pre-navigation page). Exclude 'pre' samples
+      // explicitly: they measure source-page state, not destination-page
+      // animation settle, and were the cause of false inflight-anim-leak
+      // reports on scenarios where the source page was open for >1.5s.
+      const lateSamples = samples.filter((s) => s.label !== 'pre' && s.t > 1500)
       const lateAnimMax = lateSamples.length ? Math.max(...lateSamples.map((s) => s.inflightAnimations)) : 0
       if (lateAnimMax > 6) {
         issues.push(`inflight-anim-leak: ${lateAnimMax} animations running at t > 1.5s (excl. expected loops)`)

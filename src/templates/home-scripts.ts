@@ -32,6 +32,33 @@ export const homeScripts = (): string => `
                 if (nav) nav.classList.add('scrolled-mobile');
             })();
 
+            // Arm the nav morph transitions only after init + scroll-restore
+            // settle — restore-time class flips must paint instantly (the
+            // CSS gates every morph transition behind html.nav-anim-ready).
+            function armNavMorph() {
+                requestAnimationFrame(function() {
+                    setTimeout(function() {
+                        document.documentElement.classList.add('nav-anim-ready');
+                    }, 350);
+                });
+            }
+            armNavMorph();
+
+            // bfcache restores resurrect the page WITH nav-anim-ready in the
+            // snapshot, so the restore-time state flip would animate (and
+            // run dozens of transitions on a mid-restore frame). Disarm,
+            // sync the state instantly, then re-arm.
+            window.addEventListener('pageshow', function(e) {
+                if (!e.persisted) return;
+                document.documentElement.classList.remove('nav-anim-ready');
+                var nav = document.querySelector('.nav-shell');
+                if (nav && window.innerWidth <= 960) {
+                    var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+                    nav.classList.toggle('scrolled-mobile', sy > 19);
+                }
+                armNavMorph();
+            });
+
             document.addEventListener('DOMContentLoaded', () => {
                 const body = document.body;
                 const outreachSection = document.querySelector('.outreach');
@@ -695,7 +722,7 @@ export const homeScripts = (): string => `
                             </div>
                             <h3 class="stay-tuned-title">Stay Tuned</h3>
                             <div class="stay-tuned-rule"></div>
-                            <p class="stay-tuned-text">New events are on the horizon.<br>Check back soon for what's next.</p>
+                            <p class="stay-tuned-text">New events are on the horizon.<br>Check back soon for what’s next.</p>
                             \${hasPastEvents && !isDesktop ? '<button class="btn-view-past-events" id="btn-view-past-events">View Past Events</button>' : ''}
                         </div>
                     \`;
@@ -714,7 +741,7 @@ export const homeScripts = (): string => `
                                     <div class="past-events-card" id="btn-view-past-events-desktop">
                                         <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
                                         <h3 class="past-card-title">Past Events</h3>
-                                        <p class="past-card-text">Take a look back at the moments we've shared together in our community.</p>
+                                        <p class="past-card-text">Take a look back at the moments we’ve shared together in our community.</p>
                                         <span class="past-card-btn">Browse Memories</span>
                                     </div>
                                 </div>
@@ -840,7 +867,7 @@ export const homeScripts = (): string => `
                                         <div class="carousel-past-card" id="carousel-see-past">
                                             <div class="past-card-icon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M7 6V5a2 2 0 012-2h6a2 2 0 012 2v1"/></svg></div>
                                             <h3 class="past-card-title">Past Events</h3>
-                                            <p class="past-card-text">Take a look back at the moments we've shared together in our community.</p>
+                                            <p class="past-card-text">Take a look back at the moments we’ve shared together in our community.</p>
                                         </div>
                                         <button class="event-link-btn" id="carousel-see-past-btn">Browse Memories</button>
                                     </div>
@@ -1062,6 +1089,7 @@ export const homeScripts = (): string => `
                     const fireScroll = () => {
                         if (fired) return;
                         fired = true;
+                        window.__hashScrollFired = true; // signal the head safety timer to stand down
                         if (_homeStashedHash === '#home' || _homeStashedHash === '#') {
                             window.scrollTo(0, 0);
                             fireFadeIn();
@@ -1200,7 +1228,16 @@ export const homeScripts = (): string => `
                             return;
                         }
 
-                        if (currentScrollY <= scrollThreshold && currentScrollY < lastNavScrollY) {
+                        if (currentScrollY === 0) {
+                            // At the very top there is nothing to debounce —
+                            // expand immediately. Without this, a single
+                            // scroll event that lands AT 0 (iOS status-bar
+                            // tap, programmatic scrollTo) never reaches the
+                            // two-event count below and the nav stays
+                            // compressed forever at the top of the page.
+                            navShell.classList.remove('scrolled-mobile');
+                            scrollUpAtTopCount = 0;
+                        } else if (currentScrollY <= scrollThreshold && currentScrollY < lastNavScrollY) {
                             scrollUpAtTopCount++;
                             if (scrollUpAtTopCount >= 2) {
                                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1724,12 +1761,18 @@ export const homeScripts = (): string => `
 
                 function createConfetti() {
                     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-                    const confettiEmojis = ['🕊️', '✨', '💛', '🌿', '⭐'];
+                    // Brand glyphs, not platform emoji: ✦/✧ are text characters
+                    // that render in CSS color on every OS — the celebration
+                    // falls in the site's own gold ramp (the morning star motif).
+                    const confettiGlyphs = ['✦', '✧', '✦', '✧', '·'];
+                    const confettiInks = ['var(--gold)', 'var(--gold-dark)', 'var(--gold-deeper)'];
                     for (let i = 0; i < 50; i++) {
                         setTimeout(() => {
                             const confetti = document.createElement('div');
                             confetti.className = 'confetti';
-                            confetti.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
+                            confetti.textContent = confettiGlyphs[Math.floor(Math.random() * confettiGlyphs.length)];
+                            confetti.style.color = confettiInks[Math.floor(Math.random() * confettiInks.length)];
+                            confetti.style.fontSize = (22 + Math.random() * 18) + 'px';
                             confetti.style.left = Math.random() * 100 + '%';
                             confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
                             confetti.style.animationDelay = Math.random() * 0.5 + 's';
@@ -2063,6 +2106,27 @@ export const homeScripts = (): string => `
                         : weekday + ', ' + monthDay + ', ' + year;
                 }
 
+                // The raw feed title ("LIVE - Sunday Morning 9:00am | 6/07/2026
+                // | Morning Star Church of Boise") is upload metadata, not copy —
+                // in the Playfair card heading it truncated mid-word and read as
+                // a data dump. Editorially every entry IS the Sunday service;
+                // what distinguishes them is the date, so the designed dateline
+                // becomes the title ("Sunday, June 7") and the small chip
+                // carries the role label instead.
+                function formatVideoTitle(iso) {
+                    if (!iso) return '';
+                    var d = new Date(iso);
+                    if (isNaN(d.getTime())) return '';
+                    var tz = 'America/Boise';
+                    var weekday = d.toLocaleDateString('en-US', { weekday: 'long', timeZone: tz });
+                    var monthDay = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: tz });
+                    var year = parseInt(d.toLocaleDateString('en-US', { year: 'numeric', timeZone: tz }), 10);
+                    var thisYear = new Date().getFullYear();
+                    return year === thisYear
+                        ? weekday + ', ' + monthDay
+                        : weekday + ', ' + monthDay + ', ' + year;
+                }
+
                 function populateRecentCard(index, video) {
                     var card = document.getElementById('video-card-' + index);
                     var img = document.getElementById('video-card-' + index + '-img');
@@ -2078,8 +2142,8 @@ export const homeScripts = (): string => `
                             this.src = 'https://img.youtube.com/vi/' + video.videoId + '/hqdefault.jpg';
                         };
                     }
-                    if (dateEl) dateEl.textContent = formatVideoDate(video.publishedAt);
-                    if (titleEl) titleEl.textContent = video.title || 'Sunday Service';
+                    if (dateEl) dateEl.textContent = 'Sunday service';
+                    if (titleEl) titleEl.textContent = formatVideoTitle(video.publishedAt) || 'Sunday service';
                     if (card.tagName === 'A') {
                         card.href = 'https://www.youtube.com/watch?v=' + video.videoId;
                     }
@@ -2273,8 +2337,8 @@ export const homeScripts = (): string => `
                 function populateLatestMeta(video) {
                     var dateEl = document.getElementById('video-card-1-date');
                     var titleEl = document.getElementById('video-card-1-title');
-                    if (dateEl) dateEl.textContent = formatVideoDate(video.publishedAt);
-                    if (titleEl) titleEl.textContent = video.title || 'Sunday Service';
+                    if (dateEl) dateEl.textContent = 'Streamed live \u00b7 9:00 AM';
+                    if (titleEl) titleEl.textContent = formatVideoTitle(video.publishedAt) || 'Sunday service';
                 }
 
                 fetch('/api/youtube/latest-video')

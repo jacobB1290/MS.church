@@ -22,13 +22,13 @@ const churchAddressPill = (label = '3080 Wildwood St · Boise, Idaho'): string =
     <button type="button" class="address-trigger ministry-address-trigger" data-address="3080 Wildwood St, Boise, Idaho">${label}</button>
     <span class="address-dropdown">
       <a href="https://maps.apple.com/place?place-id=I975B333A92084AE7" target="_blank" rel="noopener" class="address-dropdown-item">
-        <span class="address-dropdown-icon">🍎</span><span>Apple Maps</span>
+        <span class="address-dropdown-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span>Apple Maps</span>
       </a>
       <a href="https://maps.app.goo.gl/nmYV7hSLXKVGexu38?g_st=ipc" target="_blank" rel="noopener" class="address-dropdown-item">
-        <span class="address-dropdown-icon">🗺️</span><span>Google Maps</span>
+        <span class="address-dropdown-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3 3.6 5.2A1 1 0 0 0 3 6.13V20l6-2.4 6 2.4 5.4-2.2a1 1 0 0 0 .6-.92V3l-6 2.4L9 3Z"/><path d="M9 3v14.6"/><path d="M15 5.4V20"/></svg></span><span>Google Maps</span>
       </a>
       <button type="button" class="address-dropdown-item copy-address" data-address="3080 Wildwood St, Boise, Idaho">
-        <span class="address-dropdown-icon">📋</span><span>Copy</span>
+        <span class="address-dropdown-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span><span>Copy</span>
       </button>
     </span>
   </span>
@@ -45,13 +45,13 @@ const caffeinaPill = (label = 'Caffeina State Street'): string => `
     <button type="button" class="address-trigger ministry-address-trigger" data-address="Caffeina State Street, Boise, Idaho">${label}</button>
     <span class="address-dropdown">
       <a href="https://maps.apple.com/?q=Caffeina%20State%20Street%2C%20Boise%2C%20Idaho" target="_blank" rel="noopener" class="address-dropdown-item">
-        <span class="address-dropdown-icon">🍎</span><span>Apple Maps</span>
+        <span class="address-dropdown-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span>Apple Maps</span>
       </a>
       <a href="https://maps.app.goo.gl/XkJR5aLy36VVD3356?g_st=ic" target="_blank" rel="noopener" class="address-dropdown-item">
-        <span class="address-dropdown-icon">🗺️</span><span>Google Maps</span>
+        <span class="address-dropdown-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3 3.6 5.2A1 1 0 0 0 3 6.13V20l6-2.4 6 2.4 5.4-2.2a1 1 0 0 0 .6-.92V3l-6 2.4L9 3Z"/><path d="M9 3v14.6"/><path d="M15 5.4V20"/></svg></span><span>Google Maps</span>
       </a>
       <button type="button" class="address-dropdown-item copy-address" data-address="Caffeina State Street, Boise, Idaho">
-        <span class="address-dropdown-icon">📋</span><span>Copy</span>
+        <span class="address-dropdown-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span><span>Copy</span>
       </button>
     </span>
   </span>
@@ -1410,7 +1410,7 @@ export const ministriesBody = (): string => `
         <div class="page">
             ${subpageHeader()}
             <div class="subpage-spacer"></div>
-            <main>
+            <main id="main">
                 <section id="ministries-intro">
                     <h1 class="section-heading">How we live out <em class="motto">Mending the Broken</em> week to week.</h1>
                     <p class="subpage-intro-lead">Worship, discipleship, fellowship, and walking with the next generation: the rhythms that keep us together between Sundays. Anyone is welcome at any of these. Drop in, ask questions, or just come see what it looks like.</p>

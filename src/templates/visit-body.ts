@@ -123,7 +123,7 @@ export const visitBody = (): string => `
         <div class="page">
             ${subpageHeader()}
             <div class="subpage-spacer"></div>
-            <main>
+            <main id="main">
                 <section id="visit-intro">
                     <h1 class="section-heading">We can’t wait to meet you.</h1>
                     <p class="subpage-intro-lead">Here’s everything you need to know before Sunday: where we are, what an hour at Morning Star looks like, and what happens after the closing song.</p>

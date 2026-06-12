@@ -25,6 +25,10 @@ export const homeScripts = (): string => `
             // .nav-shell, so it captures the scroll position whether
             // the head script's syncNavScrolled() got a chance or not.
             (function(){
+                // Fallback path only — under html.nav-sda the scroll-driven
+                // animation computes the correct first-paint pose itself and
+                // nav-morph.ts owns the pole class (with hysteresis).
+                if (document.documentElement.classList.contains('nav-sda')) return;
                 if (window.innerWidth > 960) return;
                 var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
                 if (sy <= 19) return;
@@ -51,10 +55,15 @@ export const homeScripts = (): string => `
             window.addEventListener('pageshow', function(e) {
                 if (!e.persisted) return;
                 document.documentElement.classList.remove('nav-anim-ready');
-                var nav = document.querySelector('.nav-shell');
-                if (nav && window.innerWidth <= 960) {
-                    var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
-                    nav.classList.toggle('scrolled-mobile', sy > 19);
+                // Fallback path only — under nav-sda the class belongs to
+                // nav-morph.ts's hysteresis (a mid-range toggle here would
+                // disagree with it).
+                if (!document.documentElement.classList.contains('nav-sda')) {
+                    var nav = document.querySelector('.nav-shell');
+                    if (nav && window.innerWidth <= 960) {
+                        var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+                        nav.classList.toggle('scrolled-mobile', sy > 19);
+                    }
                 }
                 armNavMorph();
             });
@@ -1221,11 +1230,12 @@ export const homeScripts = (): string => `
                         });
                     }
 
-                    // The motion engine's scroll scrubber (motion-engine.ts)
-                    // owns the nav state continuously when active — progress
-                    // is scrubbed by scroll position and the class is synced
-                    // from the scrub. This threshold logic is the no-JS /
-                    // no-Motion fallback only.
+                    // The scroll-driven nav morph (html.nav-sda + nav-morph.ts)
+                    // owns the nav continuously when active — the pose is
+                    // scrubbed natively by the scroll timeline and nav-morph's
+                    // hysteresis owns the pole class. This threshold logic is
+                    // the fallback for browsers without scroll-driven
+                    // animations (and reduced-motion users).
                     if (window.__navScrubActive) {
                         lastNavScrollY = currentScrollY;
                         return;

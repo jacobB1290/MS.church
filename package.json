@@ -5,6 +5,7 @@
     "dev": "vite",
     "build": "tsc --noEmit",
     "harness": "node scripts/harness/run.mjs",
+    "harness:nav": "node scripts/harness/nav-morph.mjs",
     "shots": "node scripts/shots/capture.mjs",
     "pdf": "node scripts/shots/build-pdf.mjs"
   },

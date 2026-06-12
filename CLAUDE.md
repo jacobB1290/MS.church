@@ -18,8 +18,9 @@ Sections: hero/welcome, service schedule, ministries, outreach, About, beliefs, 
 | Dev server | Vite + `@hono/vite-dev-server` |
 | Build | `tsc --noEmit` (type-check only; Vercel compiles `api/index.ts` natively) |
 | Deployment | Vercel (Node serverless function via `api/index.ts`) |
-| Tests | Playwright harness (`scripts/harness/run.mjs`) |
-| Motion | [Motion](https://motion.dev) UMD bundle, self-hosted at `public/static/js/motion.min.js` (npm dep `motion`, copy on upgrade) — powers the nav motion engine in `src/templates/shared/motion-engine.ts`. Progressive enhancement: the CSS spring transitions remain the no-JS fallback. |
+| Tests | Playwright harness (`scripts/harness/run.mjs`) + nav morph suite (`scripts/harness/nav-morph.mjs`, Chromium **and** WebKit) |
+| Motion | [Motion](https://motion.dev) UMD bundle, self-hosted at `public/static/js/motion.min.js` (npm dep `motion`, copy on upgrade) — powers the **subpage menu choreography** in `src/templates/shared/motion-engine.ts`. Loaded on subpages only; the home page doesn't load it. Progressive enhancement: the CSS spring transitions remain the no-JS fallback. |
+| Nav morph | The home mobile nav's full↔compressed morph is a **native CSS scroll-driven animation** (`animation-timeline: scroll()`, `html.nav-sda`) — see "Home Nav Morph" below. No JS in the per-frame loop. |
 
 To switch back to Cloudflare Pages, see the comment block at the top of `src/index.ts`.
 
@@ -160,6 +161,7 @@ After it finishes, open `scripts/harness/output/report.html` in a browser — co
 | `ANCHOR_SCENARIOS` | 16 direct-render + cross-page hash-jump checks (home, /about, /outreach, /visit, deep anchors like `/outreach#cooking`, `/visit#sunday-school`). Verifies anchor scroll lands on-section, not in dead space. |
 | `PERF_SCENARIOS` | Scrolls + hash jumps + clicks measured against both a **60fps tier** and **120fps tier** (`PERF_60` / `PERF_120` thresholds). Captures rAF interval distribution, longtasks, long-animation-frame (LoAF), CLS via `PerformanceObserver`, and input latency. Chromium runs with `--disable-frame-rate-limit --disable-gpu-vsync` so rAF reflects actual per-frame work cost rather than display refresh. |
 | `FLOW_SCENARIOS` | Click-through navigation flows recorded as `.webm` video + per-frame PNGs (e.g. home → outreach → back, hero "Plan a Visit" → /visit → back). Lets a human review actual transition smoothness, not just metrics. |
+| `nav-morph.mjs` (separate file, `npm run harness:nav`) | The home nav full↔compressed morph, in **Chromium AND WebKit** (Playwright's WebKit ≈ current Safari — the main harness is Chromium-only, and the morph was architected around WebKit). Asserts: scroll-timeline animations attached, pose is a linear + deterministic pure function of scrollY (no hunting), pole poses pixel-match the fallback class poses, expanded link cluster centered with exact token gaps, mid-range parks settle the page to the nearest pole, zero pose reversals + frame health during continuous wheel scrub, and the no-SDA fallback path still thresholds correctly. **MUST pass before pushing any nav change.** ~16s. |
 
 ### When to run it
 
@@ -218,6 +220,63 @@ A slow test loop is a test loop that gets skipped. **Every time you write or run
 - **Iterate on the harness itself.** If a scenario gets slower because of new content, fix the scenario (tighter waits, better selectors) instead of adding budget. The harness is code; treat it like code.
 
 This rule applies to every kind of test, not just the committed `run.mjs` suite — ad-hoc screenshot scripts, manual repros, perf checks, anything that takes wall-clock time during development. A fast test loop runs more often, catches regressions earlier, and produces better software.
+
+---
+
+## Home Nav Morph (mobile) — scroll-driven animation architecture
+
+The home page's full↔compressed nav morph (≤960px) is a **native CSS
+scroll-driven animation**, not JS. This replaced the Motion-engine scroll
+scrubber (v1.62.80–82), which was structurally incapable of butter on iOS:
+scroll events fire at ~60Hz max on iPhone and trail the 120Hz composited
+scroll, rAF throttles during touch, and the settle springs hunted against
+the finger. Don't reintroduce a JS-driven scrub — WebKit cannot be beaten
+from the main thread.
+
+### How it works
+
+- `home-head.ts` sets `html.nav-sda` **pre-paint** when
+  `CSS.supports('animation-timeline: scroll()')` passes and the user
+  doesn't prefer reduced motion.
+- The `html.nav-sda` block in `home-styles.ts` (inside the ≤960 media
+  query) attaches `mnav-*` keyframes with `animation-timeline:
+  scroll(root block)` + `animation-range: 4px 134px` to the shell, nav
+  row, link list, links, brand, CTA, and Contact pill. The browser samples
+  the pose in lockstep with the committed scroll offset — zero JS per
+  frame. On Safari 26.4+ the opacity/transform keyframes run on the
+  compositor thread and track 120Hz ProMotion scrolling.
+- `nav-morph.ts` (emitted right after the nav markup in `home-body.ts`)
+  supplies the three things CSS can't: one-time **measurement**
+  (`--nav-spread` for the link-cluster centering emulation,
+  `--mnav-brand-h`/`--mnav-cta-h` for linear row collapse), the
+  **pole-class hysteresis** (`.scrolled-mobile` at p<0.08 / p>0.92), and
+  the **settle** — a parked mid-range scroll nudges the PAGE to the
+  nearest pole (UIKit large-title pattern), so nav pose and scroll can
+  never disagree.
+- Fallback (no SDA support, reduced motion): the pre-existing threshold
+  class toggle + `--ease-spring` CSS transitions, untouched.
+
+### Rules (violations break determinism or iOS acceleration)
+
+1. **Keyframes are `to{}`-only** wherever possible — the from-pose is the
+   live cascade, so poles can't drift from the class-defined design.
+2. Because of (1), **the cascade must always present the EXPANDED pose**
+   under `html.nav-sda`: every property the `.scrolled-mobile` class state
+   sets is pinned back to expanded values in the cascade-pinning rules.
+   If you add a property to the compressed class state, you MUST either
+   add it to the keyframes or pin it — otherwise the pose stops being a
+   pure function of scrollY the moment the class flips.
+3. **No `var()` inside `mnav-*` keyframes** (WebKit SDA sampling showed
+   flaky whole-animation failures with var() endpoints — probed June
+   2026). Pole values are literal clamps mirroring their tokens; `var()`
+   in base styles is fine.
+4. **Accelerated properties (opacity/transform/visibility) live in their
+   own keyframes**, separate from geometry, so WebKit can thread them.
+5. The morph's geometry endpoints duplicate the compressed class values —
+   when you change the compressed design, change BOTH the class rule and
+   the keyframe (the nav-morph suite's pole-parity check catches a miss).
+6. Any nav change: `npm run harness:nav` (Chromium + WebKit) must pass,
+   plus the standard harness rule below.
 
 ---
 

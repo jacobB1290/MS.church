@@ -180,6 +180,18 @@ export const homeHead = (): string => {
                     document.querySelectorAll(sel).forEach(function(el){ el.classList.add('is-revealed'); });
                 }, 12000);
 
+                // Scroll-driven nav morph capability flag — set BEFORE first
+                // paint so the html.nav-sda CSS (home-styles.ts) computes the
+                // correct nav pose for any restored scroll position at first
+                // style resolution. Reduced-motion users stay on the fallback
+                // (class-flip) path, which their media query gates to instant.
+                try {
+                    if (CSS.supports('animation-timeline: scroll()') &&
+                        !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+                        html.classList.add('nav-sda');
+                    }
+                } catch (e) {}
+
                 // Pre-paint nav-shell.scrolled-mobile state — when the
                 // browser restores scroll position (bfcache, back/forward,
                 // or session-history), the nav-shell would otherwise
@@ -192,7 +204,10 @@ export const homeHead = (): string => {
                 // restoration (which can fire after parse-end) syncs the
                 // nav-shell class as soon as it happens — before
                 // handleMobileNav's DOMContentLoaded handler runs.
+                // Fallback path only — under html.nav-sda the scroll
+                // timeline itself produces the correct first-paint pose.
                 function syncNavScrolled(){
+                    if (html.classList.contains('nav-sda')) return;
                     if (window.innerWidth > 960) {
                         html.classList.remove('nav-prerender-scrolled');
                         var navOff = document.querySelector('.nav-shell');
@@ -1027,10 +1042,11 @@ export const homeHead = (): string => {
             ]
         }
         </script>
-<!-- Motion (self-hosted) — spring physics for the nav motion engine.
-             Deferred; the engine in footer.ts boots when it lands and the CSS
-             transitions remain the no-JS fallback. -->
-        <script defer src="/static/js/motion.min.js"></script>
+<!-- Motion (self-hosted) is NOT loaded on home: the nav compress/expand
+             morph is a native CSS scroll-driven animation (html.nav-sda), and
+             the motion engine's only remaining job — the subpage menu
+             choreography — never runs here. Subpages load the bundle via
+             page-head.ts. -->
 ${prefetchSnippet()}
 
         <!-- Self-hosted Inter + Playfair Display (v1.62.7). The @font-face

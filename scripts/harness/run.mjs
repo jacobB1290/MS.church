@@ -217,6 +217,14 @@ const PERF_SCENARIOS = [
   { name: '36-perf-hash-visit-whattoexpect-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#what-to-expect' },
   { name: '37-perf-hash-outreach-cooking-mobile',   viewport: MOBILE, path: '/outreach', action: 'hash', hash: '#cooking-ministry' },
 
+  // 34b — nav morph scrub: the scroll-driven full↔compressed nav
+  // animation, scrubbed across its 0–134px range in both directions.
+  // Catches per-frame cost regressions in the morph (keyframe bloat,
+  // accidental layout invalidation outside the nav subtree). The
+  // dedicated nav-morph.mjs suite covers correctness in Chromium AND
+  // WebKit; this keeps the routine perf gate watching it too.
+  { name: '34b-perf-navscrub-home-mobile',   viewport: MOBILE,  path: '/',         action: 'navscrub' },
+
   // 38s — cross-page click navigations (view-transition path).
   // The hero Find Us button became the Plan a Visit navigation link; selector retargeted, perf profile (click → navigate → observe) unchanged.
   { name: '38-perf-click-planavisit-mobile',  viewport: MOBILE,  path: '/', action: 'click', selector: 'a.find-us-link' },
@@ -1466,6 +1474,18 @@ async function runPerfScenarios(launcher, report) {
         // Browser-native smooth scroll on a long distance (~3000px) takes
         // ~700-900ms; pad to 1500ms to capture the deceleration tail.
         await page.waitForTimeout(1500)
+      } else if (s.action === 'navscrub') {
+        // Scrub the nav morph range (0–134px) down and back up, twice —
+        // the scroll-driven full↔compressed nav animation is sampled
+        // per frame across its whole range in both directions. Frame
+        // intervals here ARE the morph's cost; the dedicated nav-morph
+        // suite (nav-morph.mjs, Chromium + WebKit) covers correctness.
+        for (let pass = 0; pass < 2; pass++) {
+          for (let i = 0; i < 13; i++) { await page.mouse.wheel(0, 14); await page.waitForTimeout(32) }
+          await page.waitForTimeout(450)
+          for (let i = 0; i < 13; i++) { await page.mouse.wheel(0, -14); await page.waitForTimeout(32) }
+          await page.waitForTimeout(450)
+        }
       }
 
       const perf = await page.evaluate(() => {
@@ -1887,6 +1907,13 @@ async function installFlickerProbe(page) {
         // and should not flag as a "leak".
         inflightAnimations: document.getAnimations().filter((a) => {
           if (a.playState !== 'running') return false
+          // Scroll-driven animations (the nav morph) are persistently
+          // 'running' by design — they advance with the scroll offset
+          // and consume nothing while it's idle. "Still running after
+          // settle" is only meaningful for time-based animations.
+          try {
+            if (a.timeline && a.timeline.constructor && /Scroll|View/.test(a.timeline.constructor.name)) return false
+          } catch (e) {}
           try {
             const t = a.effect && a.effect.getComputedTiming && a.effect.getComputedTiming()
             if (t && t.iterations === Infinity) return false

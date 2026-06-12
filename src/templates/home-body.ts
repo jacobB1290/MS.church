@@ -5,6 +5,7 @@
 // The hero church-building image is above the fold — no lazy loading.
 
 import { nav } from './shared/nav.js'
+import { navMorph } from './shared/nav-morph.js'
 import { footer } from './shared/footer.js'
 import { WEDNESDAY_ENABLED } from '../config.js'
 
@@ -13,6 +14,7 @@ export const homeBody = (): string => `
         <div class="page">
             <a class="skip-link" href="#main">Skip to content</a>
             ${nav()}
+            ${navMorph()}
             <div class="nav-spacer"></div>
             <main id="main">
                 <section class="hero" id="home">

@@ -7356,39 +7356,256 @@ export const homeStyles = (): string => `
                     transition: none;
                 }
 
-                /* The mobile compress/expand morph runs on the CSS --ease-spring
-                   transitions above as the no-JS / no-Motion FALLBACK. When the
-                   motion engine's scroll scrubber boots on home (html.nav-scrub),
-                   it owns these properties with per-frame inline writes (scroll-
-                   coupled progress + velocity-fed settle springs) — the CSS
-                   transitions on the scrubbed properties must stand down or every
-                   frame write would smear through a 0.5s transition. Discrete
-                   class-driven styles (link type scale, space-between, top,
-                   pill reserve) keep their own transitions. */
-                html.nav-scrub .nav-shell {
-                    transition: background var(--motion-slow) var(--ease-standard),
-                                box-shadow var(--motion-slow) var(--ease-standard);
+                /* ════════════ Scroll-driven nav morph (html.nav-sda) ════════════
+                   The home mobile compress/expand is a native CSS scroll-driven
+                   animation: animation-timeline: scroll(root) scrubs the morph
+                   over the first 4–134px of scroll. The browser samples the pose
+                   in the render pipeline, in lockstep with the COMMITTED scroll
+                   offset — no scroll-event latency, no rAF throttling, no JS in
+                   the loop. On Safari 26.4+/iOS the opacity/transform keyframes
+                   below run on the compositor thread and track the native 120Hz
+                   scroll even while page rendering runs at 60Hz; the geometry
+                   keyframes (padding, radius, row collapse) sample main-thread
+                   at render rate with zero lag. html.nav-sda is set pre-paint by
+                   the home-head script when CSS.supports('animation-timeline:
+                   scroll()') and the user doesn't prefer reduced motion; every
+                   other browser keeps the --ease-spring class-flip transitions
+                   above as the fallback, untouched.
+
+                   Rules of this block:
+                   • Keyframes are to{}-only wherever possible — the from-pose is
+                     the live cascade (the expanded design), so the two poles can
+                     never drift from the class-defined CSS.
+                   • No var() INSIDE keyframes — WebKit's scroll-driven animation
+                     sampling has shown flaky whole-animation failures with var()
+                     keyframe endpoints (probed June 2026), so pole values are
+                     literal clamps mirroring the tokens they correspond to.
+                     var() in BASE styles (e.g. --nav-spread) is safe and used.
+                   • Accelerated properties (opacity/transform/visibility) live in
+                     their own keyframes, separate from geometry, so WebKit can
+                     run them threaded.
+                   • fill-mode: both keeps the sampled pose authoritative at every
+                     scroll position including first paint after scroll restore —
+                     the nav-prerender-scrolled machinery is fallback-only. */
+
+                /* Measurement escape hatch: the nav-morph boot script toggles
+                   this class inside one synchronous block to read the expanded-
+                   pose metrics (cluster width for --nav-spread, brand/CTA row
+                   heights) regardless of current scroll position. Never painted. */
+                html.nav-measuring .nav-shell,
+                html.nav-measuring .nav-shell * {
+                    animation: none !important;
                 }
-                /* The scrubber drives link typography inline per frame —
-                   the 0.4s link transitions would smear each write. */
-                html.nav-scrub .nav-shell nav a {
-                    transition: color 0.4s var(--ease-standard), opacity 0.4s var(--ease-standard);
+
+                /* Shell geometry (main-thread tier) and shell rise (compositor
+                   tier). The vertical travel between poles lives ENTIRELY in the
+                   transform — top/margin-top stay at their expanded values (see
+                   the .scrolled-mobile neutralization below) so the rise is
+                   accelerated. translateY = compressed-y − expanded-y =
+                   14px − (clamp(8px,1.2vw,12px) + 20px margin). */
+                @keyframes mnav-shell-geo {
+                    to {
+                        padding: 0 clamp(10px, 3vw, 20px);
+                        border-radius: 100px; /* --radius-pill */
+                    }
                 }
-                html.nav-scrub .nav-shell nav,
-                html.nav-scrub .nav-shell nav ul {
-                    transition: none;
+                @keyframes mnav-shell-rise {
+                    to { transform: translateX(-50%) translateY(calc(14px - clamp(8px, 1.2vw, 12px) - 20px)); }
                 }
-                html.nav-scrub .nav-shell .brand,
-                html.nav-scrub .nav-shell .nav-cta {
-                    transition: visibility 0s 0s;
+
+                /* Link-row rhythm collapse + the right-side reserve for the
+                   Contact pill overlay (the reserve only exists ≥400px — below
+                   that the pill is dropped entirely, so the row keeps the full
+                   width). @keyframes resolve per matching @media block. */
+                @media (min-width: 400px) {
+                    @keyframes mnav-row {
+                        to { margin-block: 0; padding-right: clamp(104px, 26vw, 124px); }
+                    }
                 }
-                html.nav-scrub .nav-shell.scrolled-mobile .brand,
-                html.nav-scrub .nav-shell.scrolled-mobile .nav-cta {
-                    transition: visibility 0s var(--motion-medium);
+                @media (max-width: 399px) {
+                    @keyframes mnav-row {
+                        to { margin-block: 0; }
+                    }
                 }
-                html.nav-scrub .nav-form-btn,
-                html.nav-scrub .nav-shell.scrolled-mobile .nav-form-btn {
-                    transition: visibility 0s 0s;
+                @keyframes mnav-list {
+                    to {
+                        min-height: clamp(40px, 12vw, 48px);
+                        padding-left: 0px;
+                        padding-right: 0px;
+                    }
+                }
+                @keyframes mnav-link {
+                    to {
+                        font-size: clamp(11px, 2.8vw, 14px);
+                        letter-spacing: clamp(0.4px, 0.2vw, 1.4px);
+                    }
+                }
+
+                /* Brand + Contact row exit. Geometry (row space) separate from
+                   the accelerated fade/drift. Opacity reaches 0 at 53% of the
+                   range (the row should read as gone well before its space
+                   finishes collapsing); visibility's discrete interpolation
+                   keeps it visible until the very end, then hides it from AT
+                   and the tab order at the compressed pole. */
+                @keyframes mnav-bye-geo {
+                    to { max-height: 0px; }
+                }
+                /* The Contact CTA row carries its own vertical padding and
+                   1px borders — border-box max-height floors at
+                   padding+border, so max-height alone leaves a ~17px residual
+                   row at the pole (the fallback path masks this with
+                   display:none). Collapse the padding and border widths with
+                   the row. */
+                @keyframes mnav-bye-cta-geo {
+                    to {
+                        max-height: 0px;
+                        padding-top: 0px;
+                        padding-bottom: 0px;
+                        border-top-width: 0px;
+                        border-bottom-width: 0px;
+                    }
+                }
+                @keyframes mnav-bye {
+                    0%   { opacity: 1; transform: translateY(0) scale(1); visibility: visible; pointer-events: auto; }
+                    45%  { pointer-events: auto; }
+                    53%  { opacity: 0; }
+                    55%  { pointer-events: none; }
+                    100% { opacity: 0; transform: translateY(-6px) scale(0.97); visibility: hidden; pointer-events: none; }
+                }
+
+                /* Contact pill entrance: silent until 45%, fades in over the
+                   back half while scaling 0.85→1 (scale holds until 30% so the
+                   pill never reads as moving while still invisible). pointer-
+                   events' discrete flip lands at ~92% — taps only land on the
+                   pill once it is essentially settled. */
+                @keyframes mnav-pill {
+                    0%   { opacity: 0; transform: translateY(-50%) scale(0.85); pointer-events: none; }
+                    30%  { transform: translateY(-50%) scale(0.85); }
+                    45%  { opacity: 0; }
+                    85%  { pointer-events: none; }
+                    100% { opacity: 1; transform: translateY(-50%) scale(1); pointer-events: auto; visibility: visible; }
+                }
+
+                /* Attachment — home page only (subpage nav-shells are the menu
+                   panel: always compressed, choreographed by the motion engine). */
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell {
+                    animation: mnav-shell-geo linear both, mnav-shell-rise linear both;
+                    animation-timeline: scroll(root block), scroll(root block);
+                    animation-range: 4px 134px, 4px 134px;
+                }
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell nav {
+                    animation: mnav-row linear both;
+                    animation-timeline: scroll(root block);
+                    animation-range: 4px 134px;
+                }
+                /* The link row is space-between from the start under the
+                   scrubbed morph; --nav-spread (measured once by the boot
+                   script: half the slack around the centered link cluster)
+                   emulates the centered-with-gap expanded layout exactly, and
+                   scrubs to 0 so the distribution interpolates instead of
+                   jumping at a justify-content flip. gap stays as the floor —
+                   space-between distributes the slack above it. */
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell nav ul {
+                    justify-content: space-between;
+                    padding-inline: var(--nav-spread, 0px);
+                    animation: mnav-list linear both;
+                    animation-timeline: scroll(root block);
+                    animation-range: 4px 134px;
+                }
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell nav a {
+                    animation: mnav-link linear both;
+                    animation-timeline: scroll(root block);
+                    animation-range: 4px 134px;
+                }
+                /* Measured natural row heights (set by the boot script) replace
+                   the 56px max-height cap so the row-space collapse is linear
+                   across the whole range — no dead zone while max-height shrinks
+                   through the gap between cap and actual content height. */
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell .brand {
+                    max-height: var(--mnav-brand-h, 56px);
+                }
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell .nav-cta {
+                    max-height: var(--mnav-cta-h, 56px);
+                }
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell .brand {
+                    animation: mnav-bye-geo linear both, mnav-bye linear both;
+                    animation-timeline: scroll(root block), scroll(root block);
+                    animation-range: 4px 134px, 4px 134px;
+                }
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell .nav-cta {
+                    animation: mnav-bye-cta-geo linear both, mnav-bye linear both;
+                    animation-timeline: scroll(root block), scroll(root block);
+                    animation-range: 4px 134px, 4px 134px;
+                }
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell .nav-form-btn {
+                    animation: mnav-pill linear both;
+                    animation-timeline: scroll(root block);
+                    animation-range: 4px 134px;
+                }
+
+                /* Pole-class cascade pinning. The to{}-only keyframes above
+                   interpolate FROM THE UNDERLYING CASCADE VALUE — so the
+                   cascade must always present the EXPANDED pose, with the
+                   animation as the only source of the compressed pose. If the
+                   .scrolled-mobile class were allowed to flip the underlying
+                   values (it still toggles at the poles, with hysteresis, for
+                   semantics + fallback parity), every neutral from-value would
+                   silently become the compressed value the moment the class
+                   lands, and the pose would stop being a pure function of
+                   scrollY (the revisit-determinism failure the nav-morph
+                   harness asserts against). Everything the class state sets is
+                   pinned back to the expanded design here; properties with
+                   explicit 0% keyframes (opacity/transform/visibility) don't
+                   need pinning because their from-values never consult the
+                   cascade. */
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell.scrolled-mobile,
+                html.nav-sda.nav-prerender-scrolled body:not([class*="page-subpage"]) .nav-shell {
+                    /* the rise lives in mnav-shell-rise's transform */
+                    top: calc(env(safe-area-inset-top, 0px) + clamp(8px, 1.2vw, 12px));
+                    margin-top: 20px;
+                    padding: var(--space-sm) var(--space-md);
+                    border-radius: var(--radius-2xl);
+                }
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell.scrolled-mobile nav {
+                    margin-block: 16px;
+                    padding-right: 0;
+                }
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell.scrolled-mobile nav ul {
+                    min-height: 22px;
+                    gap: var(--space-xs);
+                }
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell.scrolled-mobile nav a {
+                    font-size: var(--text-label);
+                    letter-spacing: clamp(0.8px, 0.3vw, 2px);
+                }
+                html.nav-sda body:not([class*="page-subpage"]) .nav-shell.scrolled-mobile .nav-cta {
+                    display: flex;
+                }
+
+                /* The Contact pill doesn't exist below 400px (the compressed
+                   row gives all its width to the four labels — the pre-morph
+                   design). Under the scrubbed morph the pill must be absent
+                   at EVERY scroll position, not display:none'd at the pole
+                   flip: the old path let it fade in mid-scrub and then pop
+                   out when the class landed. */
+                @media (max-width: 399px) {
+                    html.nav-sda body:not([class*="page-subpage"]) .nav-shell .nav-form-btn {
+                        display: none;
+                    }
+                }
+                /* ≤460px compressed pill sizing applies continuously under the
+                   morph — sized by a .scrolled-mobile rule it would jump from
+                   base to compressed metrics at the pole flip while ~90%
+                   opaque. The pill is only ever VISIBLE in compressed-ish
+                   poses, so wearing the compressed sizing at all times is the
+                   same design with no pop. */
+                @media (max-width: 460px) {
+                    html.nav-sda body:not([class*="page-subpage"]) .nav-shell .nav-form-btn {
+                        font-size: clamp(10.5px, 2.6vw, 12px);
+                        letter-spacing: clamp(0.4px, 0.3vw, 1.2px);
+                        padding: 0 clamp(10px, 3vw, 16px);
+                        height: clamp(30px, 7.5vw, 36px);
+                    }
                 }
 
                 .nav-shell.scrolled-mobile,
@@ -7402,18 +7619,25 @@ export const homeStyles = (): string => `
                     padding: 0 var(--space-md);
                     margin-top: 0;
                     margin-bottom: 30px;
-                    top: 14px;
+                    /* env() so the compressed pill clears the notch/island in
+                       standalone (PWA) contexts; resolves to plain 14px in
+                       normal browsing where the inset is 0. */
+                    top: calc(env(safe-area-inset-top, 0px) + 14px);
                     background: rgba(255, 255, 255, 0.72);
                 }
                 /* Pre-paint hide of .brand + .nav-cta when scroll position
                    already exceeds the threshold at first paint — matches
                    the JS-driven .scrolled-mobile behavior so the nav looks
-                   right immediately rather than after a 600ms transition. */
-                html.nav-prerender-scrolled .nav-shell .brand,
-                html.nav-prerender-scrolled .nav-shell .nav-cta {
+                   right immediately rather than after a 600ms transition.
+                   Fallback path only: under html.nav-sda the scroll-driven
+                   animation computes the correct pose for any restored
+                   scroll position at first style resolution (display:none
+                   here would knock out the row-space the morph animates). */
+                html.nav-prerender-scrolled:not(.nav-sda) .nav-shell .brand,
+                html.nav-prerender-scrolled:not(.nav-sda) .nav-shell .nav-cta {
                     display: none;
                 }
-                html.nav-prerender-scrolled .nav-shell .nav-form-btn {
+                html.nav-prerender-scrolled:not(.nav-sda) .nav-shell .nav-form-btn {
                     visibility: visible;
                     opacity: 1;
                     transform: translateY(-50%) scale(1);

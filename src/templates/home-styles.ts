@@ -193,6 +193,8 @@ export const homeStyles = (): string => `
                 --motion-slow:    0.6s;
                 --ease-standard:  cubic-bezier(0.4, 0, 0.2, 1);
                 --ease-out-soft:  cubic-bezier(0.32, 0.72, 0, 1);
+                --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1); /* snap-into-place with a bubbly overshoot — nav morph, playful state changes. Same personality as the original nav bounce, now applied to properties that actually animate. */
+                --motion-springy: 0.5s;  /* paired with --ease-spring; long enough for the overshoot to read */
 
                 /* ── Primary CTA button (the canonical gold pill) ──
                    Reach for these whenever a brand call-to-action gold pill
@@ -7224,10 +7226,10 @@ export const homeStyles = (): string => `
                        only ever animated padding/radius (the dominant change —
                        brand/CTA rows — was a display:none pop), and the bounce
                        ease read as gimmicky on frosted chrome. */
-                    transition: padding var(--motion-medium) var(--ease-out-soft),
-                                border-radius var(--motion-medium) var(--ease-out-soft),
-                                top var(--motion-medium) var(--ease-out-soft),
-                                margin var(--motion-medium) var(--ease-out-soft),
+                    transition: padding var(--motion-springy) var(--ease-spring),
+                                border-radius var(--motion-springy) var(--ease-spring),
+                                top var(--motion-springy) var(--ease-spring),
+                                margin var(--motion-springy) var(--ease-spring),
                                 background var(--motion-slow) var(--ease-standard),
                                 box-shadow var(--motion-slow) var(--ease-standard);
                 }
@@ -7240,12 +7242,12 @@ export const homeStyles = (): string => `
                    height, so the expanded design is pixel-identical. */
                 .nav-shell nav {
                     margin-block: 16px;
-                    transition: margin var(--motion-medium) var(--ease-out-soft);
+                    transition: margin var(--motion-springy) var(--ease-spring);
                 }
                 .nav-shell nav ul {
                     min-height: 22px;
                     align-items: center;
-                    transition: min-height var(--motion-medium) var(--ease-out-soft);
+                    transition: min-height var(--motion-springy) var(--ease-spring);
                 }
                 .nav-shell.scrolled-mobile nav,
                 html.nav-prerender-scrolled .nav-shell nav {
@@ -7264,9 +7266,9 @@ export const homeStyles = (): string => `
                 .nav-shell .nav-cta {
                     max-height: 56px;
                     overflow: hidden;
-                    transition: max-height var(--motion-medium) var(--ease-out-soft),
+                    transition: max-height var(--motion-springy) var(--ease-spring),
                                 opacity var(--motion-medium) var(--ease-out-soft),
-                                transform var(--motion-medium) var(--ease-out-soft),
+                                transform var(--motion-springy) var(--ease-spring),
                                 visibility 0s 0s;
                 }
                 .nav-shell.scrolled-mobile .brand,
@@ -7276,9 +7278,9 @@ export const homeStyles = (): string => `
                     transform: translateY(-6px) scale(0.97);
                     visibility: hidden;
                     pointer-events: none;
-                    transition: max-height var(--motion-medium) var(--ease-out-soft),
+                    transition: max-height var(--motion-springy) var(--ease-spring),
                                 opacity var(--motion-fast) var(--ease-out-soft),
-                                transform var(--motion-medium) var(--ease-out-soft),
+                                transform var(--motion-springy) var(--ease-spring),
                                 visibility 0s var(--motion-medium);
                 }
 
@@ -7370,7 +7372,7 @@ export const homeStyles = (): string => `
                     opacity: 1;
                     transform: translateY(-50%) scale(1);
                     transition: opacity var(--motion-medium) var(--ease-out-soft),
-                                transform var(--motion-medium) var(--ease-out-soft),
+                                transform var(--motion-springy) var(--ease-spring),
                                 visibility 0s 0s;
                 }
 

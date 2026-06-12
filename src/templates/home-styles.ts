@@ -7356,37 +7356,11 @@ export const homeStyles = (): string => `
                     transition: none;
                 }
 
-                /* ── Engine mode: the Motion engine owns the morph geometry
-                   inline (padding, radius, row rhythm, collapse, pill pop).
-                   CSS keeps only what the engine deliberately leaves to it
-                   (background/shadow tone, top/margin offsets) plus the
-                   visibility timing that lets engine fades complete. */
-                html.motion-engine .nav-shell {
-                    transition: background var(--motion-slow) var(--ease-standard),
-                                box-shadow var(--motion-slow) var(--ease-standard),
-                                top var(--motion-springy) var(--ease-spring),
-                                margin var(--motion-springy) var(--ease-spring);
-                }
-                html.motion-engine .nav-shell nav,
-                html.motion-engine .nav-shell nav ul {
-                    transition: none;
-                }
-                html.motion-engine .nav-shell .brand,
-                html.motion-engine .nav-shell .nav-cta {
-                    transition: visibility 0s 0s;
-                }
-                html.motion-engine .nav-shell.scrolled-mobile .brand,
-                html.motion-engine .nav-shell.scrolled-mobile .nav-cta {
-                    transition: visibility 0s var(--motion-medium);
-                }
-                html.motion-engine .nav-form-btn {
-                    transform: translateY(-50%) scale(var(--pill-s, 0.85));
-                    transition: visibility 0s 0.25s;
-                }
-                html.motion-engine .nav-shell.scrolled-mobile .nav-form-btn {
-                    transform: translateY(-50%) scale(var(--pill-s, 1));
-                    transition: visibility 0s 0s;
-                }
+                /* The mobile compress/expand morph runs on the CSS --ease-spring
+                   transitions above (NOT the Motion engine) — proven smooth on
+                   both Chromium and WebKit/iOS, where the engine's scroll-coupled
+                   morph stepped. The engine owns only the discrete subpage menu
+                   action. See motion-engine.ts for the rationale. */
 
                 .nav-shell.scrolled-mobile,
                 html.nav-prerender-scrolled .nav-shell {

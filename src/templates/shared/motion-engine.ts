@@ -35,7 +35,23 @@ export function motionEngine(): string {
                     running = [];
                 }
                 function go(el, kf, opts) {
-                    var a = window.Motion.animate(el, kf, opts);
+                    // Force Motion's main-thread driver on every animation.
+                    // WebKit's Web Animations API (through Safari 26 / WebKit
+                    // 26.4, verified) refuses to interpolate custom properties
+                    // and layout properties (padding, min-height, border-radius,
+                    // max-height): it reports the animation "running" but pins
+                    // the start value, then snaps to the end on finish — so the
+                    // shell transform (driven by --mnav-y/--mnav-s), the pill
+                    // scale (--pill-s), and the compress/expand morph all
+                    // stepped instead of animating on iOS. Motion's main-thread
+                    // driver (engaged by supplying onUpdate) interpolates every
+                    // property identically across engines, and because it writes
+                    // the live value to inline style each frame, interruption
+                    // (stop + retarget-from-current) is exact. The compositor
+                    // cost for these brief, small nav animations is negligible.
+                    var o = opts || {};
+                    if (!o.onUpdate) { o = Object.assign({}, o, { onUpdate: function() {} }); }
+                    var a = window.Motion.animate(el, kf, o);
                     running.push(a);
                     return a;
                 }
@@ -138,105 +154,17 @@ export function motionEngine(): string {
                         }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
                     }
 
-                    /* ─────────── Mobile compress/expand morph (home + subpages) ─────────── */
-                    if (shell) {
-                        var mBrand = shell.querySelector('.brand');
-                        var mCta = shell.querySelector('.nav-cta');
-                        var mNav = shell.querySelector('nav');
-                        var mUl = shell.querySelector('nav ul');
-                        var pill = shell.querySelector('.nav-form-btn');
-                        var mobile = function() { return window.innerWidth <= 960; };
-
-                        // Fluid targets, mirroring the CSS clamps.
-                        var clampPx = function(min, vw, max) { return Math.min(max, Math.max(min, vw * window.innerWidth / 100)); };
-                        var targets = function(compressed) {
-                            return compressed ? {
-                                rowH: clampPx(40, 12, 48), navM: 0, padV: 0,
-                                radius: 100, collapseH: 0, collapseO: 0, collapseY: -6, collapseS: 0.97,
-                                pillO: 1, pillS: 1
-                            } : {
-                                rowH: 22, navM: 16, padV: clampPx(12, 1.7, 16),
-                                radius: clampPx(28, 3.5, 48), collapseH: 56, collapseO: 1, collapseY: 0, collapseS: 1,
-                                pillO: 0, pillS: 0.85
-                            };
-                        };
-
-                        var seed = function() {
-                            if (!mobile()) return;
-                            var t = targets(shell.classList.contains('scrolled-mobile'));
-                            shell.style.paddingTop = t.padV + 'px';
-                            shell.style.paddingBottom = t.padV + 'px';
-                            shell.style.borderRadius = t.radius + 'px';
-                            if (mNav) { mNav.style.marginTop = t.navM + 'px'; mNav.style.marginBottom = t.navM + 'px'; }
-                            if (mUl) mUl.style.minHeight = t.rowH + 'px';
-                            [mBrand, mCta].forEach(function(el) {
-                                if (!el) return;
-                                el.style.maxHeight = t.collapseH + 'px';
-                                el.style.opacity = String(t.collapseO);
-                                el.style.transform = 'translateY(' + t.collapseY + 'px) scale(' + t.collapseS + ')';
-                            });
-                            if (pill) { pill.style.opacity = String(t.pillO); pill.style.setProperty('--pill-s', String(t.pillS)); }
-                        };
-                        var clear = function() {
-                            ['paddingTop', 'paddingBottom', 'borderRadius'].forEach(function(k) { shell.style[k] = ''; });
-                            if (mNav) { mNav.style.marginTop = ''; mNav.style.marginBottom = ''; }
-                            if (mUl) mUl.style.minHeight = '';
-                            [mBrand, mCta].forEach(function(el) {
-                                if (!el) return;
-                                el.style.maxHeight = ''; el.style.opacity = ''; el.style.transform = '';
-                            });
-                            if (pill) { pill.style.opacity = ''; pill.style.removeProperty('--pill-s'); }
-                        };
-                        seed();
-
-                        var morph = function(compressed) {
-                            if (!mobile()) return;
-                            stopAll();
-                            var t = targets(compressed);
-                            go(shell, { paddingTop: t.padV + 'px', paddingBottom: t.padV + 'px', borderRadius: t.radius + 'px' }, SNAP);
-                            if (mNav) go(mNav, { marginTop: t.navM + 'px', marginBottom: t.navM + 'px' }, SNAP);
-                            if (mUl) go(mUl, { minHeight: t.rowH + 'px' }, SNAP);
-                            [mBrand, mCta].forEach(function(el) {
-                                if (!el) return;
-                                go(el, { maxHeight: t.collapseH + 'px' }, SNAP);
-                                go(el, { opacity: t.collapseO }, compressed ? EXIT : FADE);
-                                go(el, { transform: 'translateY(' + t.collapseY + 'px) scale(' + t.collapseS + ')' }, SNAP);
-                            });
-                            if (pill) {
-                                go(pill, { opacity: t.pillO }, compressed ? FADE : EXIT);
-                                go(pill, { '--pill-s': t.pillS }, SNAP);
-                            }
-                        };
-
-                        var morphWas = shell.classList.contains('scrolled-mobile');
-                        new MutationObserver(function() {
-                            var is = shell.classList.contains('scrolled-mobile');
-                            if (is === morphWas) return;
-                            morphWas = is;
-                            // Restore/init-time flips are repositions, not motion
-                            // moments — same contract as the CSS nav-anim-ready
-                            // gate. Snap to pose instead of animating.
-                            if (!html.classList.contains('nav-anim-ready')) { seed(); return; }
-                            // Subpage menus reuse .scrolled-mobile for the panel's
-                            // compressed LAYOUT, but the panel itself is hidden
-                            // chrome — only the home nav morphs in view.
-                            if (!isSubpage) morph(is);
-                            else seed();
-                        }).observe(shell, { attributes: true, attributeFilter: ['class'] });
-
-                        // Every-case hygiene: snap to rest pose on restore/resize.
-                        window.addEventListener('pageshow', function(e) {
-                            if (e.persisted) { stopAll(); morphWas = shell.classList.contains('scrolled-mobile'); seed(); }
-                        });
-                        var rsT = null;
-                        window.addEventListener('resize', function() {
-                            if (rsT) clearTimeout(rsT);
-                            rsT = setTimeout(function() {
-                                stopAll();
-                                if (mobile()) seed(); else clear();
-                            }, 120);
-                        }, { passive: true });
-                    }
+                    // NOTE: the mobile compress/expand morph is intentionally NOT
+                    // engine-driven. It is a continuous, scroll-coupled state
+                    // change best left to the CSS spring (the --ease-spring
+                    // transitions in home-styles.ts, gated by nav-anim-ready),
+                    // which the browser optimizes and which renders identically
+                    // on Chromium AND WebKit/iOS. An earlier engine-driven morph
+                    // animated smoothly on Chromium but the scroll-triggered path
+                    // stepped on WebKit (Safari 26 / iOS), whereas the CSS spring
+                    // is solid on both. The engine owns the DISCRETE menu action
+                    // (above), where JS spring choreography is worth it and is
+                    // verified smooth cross-engine. Single responsibility per tool.
                 }
 
                 // Live reduced-motion change tears the engine down — CSS

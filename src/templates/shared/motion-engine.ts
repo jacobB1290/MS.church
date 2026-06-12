@@ -81,12 +81,17 @@ export function motionEngine(): string {
                         var cta = shell.querySelector('.nav-cta');
                         var closeTimer = null;
 
-                        // Rest pose for the shell's engine-driven vars.
-                        shell.style.setProperty('--mnav-y', '-12px');
-                        shell.style.setProperty('--mnav-s', '0.94');
-                        shell.style.opacity = '0';
-
-                        var setItemRest = function() {
+                        // Synchronously write the FULL rest pose (shell vars +
+                        // every item) to inline style. Called at boot, at the top
+                        // of each open, and after each close. This guarantees the
+                        // pre-animation frame is already at rest, so there is never
+                        // a stale frame from the previous close's end pose before
+                        // Motion's first tick — belt-and-suspenders with the
+                        // explicit from→to keyframes in openMenu.
+                        var seedRest = function() {
+                            shell.style.setProperty('--mnav-y', '-12px');
+                            shell.style.setProperty('--mnav-s', '0.94');
+                            shell.style.opacity = '0';
                             items.forEach(function(li) {
                                 li.style.opacity = '0';
                                 li.style.transform = 'translateX(10px) translateY(4px) scale(0.96)';
@@ -95,30 +100,43 @@ export function motionEngine(): string {
                             if (brand) { brand.style.opacity = '0'; brand.style.transform = 'translateY(-4px)'; }
                             if (cta) { cta.style.opacity = '0'; cta.style.transform = 'translateY(6px) scale(0.96)'; cta.style.filter = 'blur(3px)'; }
                         };
-                        setItemRest();
+                        seedRest();
 
                         var openMenu = function() {
                             stopAll();
                             if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
                             document.body.classList.remove('menu-closing');
-                            // Panel grows out of the trigger corner with the snap.
-                            go(shell, { '--mnav-y': '0px', '--mnav-s': 1 }, SNAP);
-                            go(shell, { opacity: 1 }, FADE);
+                            // Rest pose written synchronously so the first painted
+                            // frame is identical for every open (no stale carry-over
+                            // from the close), then sprung in via the keyframes below.
+                            seedRest();
+                            // EXPLICIT from→to keyframes ([from, to]) make every
+                            // open self-contained: it always starts from the true
+                            // rest pose, so the 2nd, 3rd … open is byte-identical to
+                            // the gorgeous first one. Without this, Motion springs
+                            // from its INTERNAL cached value (the close's end pose,
+                            // e.g. --mnav-y:-8), which a manual style reseed does
+                            // NOT update — so the panel travelled -8→0 instead of
+                            // -12→0 and every reopen looked flatter and lost the
+                            // de-blur "load-in". The seeded rest pose below keeps
+                            // the from-values and the live DOM identical.
+                            go(shell, { '--mnav-y': ['-12px', '0px'], '--mnav-s': [0.94, 1] }, SNAP);
+                            go(shell, { opacity: [0, 1] }, FADE);
                             // Links pour in right-to-left behind the chrome.
                             items.forEach(function(li, i) {
                                 var delay = 0.05 + 0.045 * (items.length - 1 - i);
-                                go(li, { x: 0, y: 0, scale: 1 }, Object.assign({}, POUR, { delay: delay }));
-                                go(li, { opacity: 1 }, Object.assign({}, FADE, { delay: delay }));
-                                go(li, { filter: 'blur(0px)' }, { duration: 0.3, ease: 'easeOut', delay: delay });
+                                go(li, { x: [10, 0], y: [4, 0], scale: [0.96, 1] }, Object.assign({}, POUR, { delay: delay }));
+                                go(li, { opacity: [0, 1] }, Object.assign({}, FADE, { delay: delay }));
+                                go(li, { filter: ['blur(3px)', 'blur(0px)'] }, { duration: 0.3, ease: 'easeOut', delay: delay });
                             });
                             if (brand) {
-                                go(brand, { y: 0 }, Object.assign({}, POUR, { delay: 0.1 }));
-                                go(brand, { opacity: 1 }, Object.assign({}, FADE, { delay: 0.1 }));
+                                go(brand, { y: [-4, 0] }, Object.assign({}, POUR, { delay: 0.1 }));
+                                go(brand, { opacity: [0, 1] }, Object.assign({}, FADE, { delay: 0.1 }));
                             }
                             if (cta) {
-                                go(cta, { y: 0, scale: 1 }, Object.assign({}, SNAP, { delay: 0.24 }));
-                                go(cta, { opacity: 1 }, Object.assign({}, FADE, { delay: 0.24 }));
-                                go(cta, { filter: 'blur(0px)' }, { duration: 0.3, ease: 'easeOut', delay: 0.24 });
+                                go(cta, { y: [6, 0], scale: [0.96, 1] }, Object.assign({}, SNAP, { delay: 0.24 }));
+                                go(cta, { opacity: [0, 1] }, Object.assign({}, FADE, { delay: 0.24 }));
+                                go(cta, { filter: ['blur(3px)', 'blur(0px)'] }, { duration: 0.3, ease: 'easeOut', delay: 0.24 });
                             }
                         };
 
@@ -137,10 +155,7 @@ export function motionEngine(): string {
                             if (closeTimer) clearTimeout(closeTimer);
                             closeTimer = setTimeout(function() {
                                 document.body.classList.remove('menu-closing');
-                                // Re-seed rest pose so the next open starts clean.
-                                shell.style.setProperty('--mnav-y', '-12px');
-                                shell.style.setProperty('--mnav-s', '0.94');
-                                setItemRest();
+                                seedRest();   // tidy the hidden closed state
                                 closeTimer = null;
                             }, 200);
                         };

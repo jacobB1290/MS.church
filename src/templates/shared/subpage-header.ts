@@ -397,6 +397,14 @@ export function subpageHeader(): string {
                         var scrollLockUntil = 0;
                         var openScrollY = 0;
                         var openMenu = function() {
+                            // Re-assert the compressed pill layout on EVERY open.
+                            // The subpage nav must always open compressed, but a
+                            // resize/bfcache/view-transition race could occasionally
+                            // leave .scrolled-mobile off, so the menu opened as the
+                            // full expanded nav at the top of the page. The shell is
+                            // still invisible (opacity 0) at this instant, so forcing
+                            // the class here is never seen as a morph.
+                            syncMobileNavState();
                             document.body.classList.add('menu-open');
                             trigger.setAttribute('aria-expanded', 'true');
                             trigger.setAttribute('aria-label', 'Close menu');

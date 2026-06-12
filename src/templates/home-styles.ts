@@ -7357,10 +7357,36 @@ export const homeStyles = (): string => `
                 }
 
                 /* The mobile compress/expand morph runs on the CSS --ease-spring
-                   transitions above (NOT the Motion engine) — proven smooth on
-                   both Chromium and WebKit/iOS, where the engine's scroll-coupled
-                   morph stepped. The engine owns only the discrete subpage menu
-                   action. See motion-engine.ts for the rationale. */
+                   transitions above as the no-JS / no-Motion FALLBACK. When the
+                   motion engine's scroll scrubber boots on home (html.nav-scrub),
+                   it owns these properties with per-frame inline writes (scroll-
+                   coupled progress + velocity-fed settle springs) — the CSS
+                   transitions on the scrubbed properties must stand down or every
+                   frame write would smear through a 0.5s transition. Discrete
+                   class-driven styles (link type scale, space-between, top,
+                   pill reserve) keep their own transitions. */
+                html.nav-scrub .nav-shell {
+                    transition: background var(--motion-slow) var(--ease-standard),
+                                box-shadow var(--motion-slow) var(--ease-standard),
+                                top var(--motion-springy) var(--ease-spring),
+                                margin var(--motion-springy) var(--ease-spring);
+                }
+                html.nav-scrub .nav-shell nav,
+                html.nav-scrub .nav-shell nav ul {
+                    transition: none;
+                }
+                html.nav-scrub .nav-shell .brand,
+                html.nav-scrub .nav-shell .nav-cta {
+                    transition: visibility 0s 0s;
+                }
+                html.nav-scrub .nav-shell.scrolled-mobile .brand,
+                html.nav-scrub .nav-shell.scrolled-mobile .nav-cta {
+                    transition: visibility 0s var(--motion-medium);
+                }
+                html.nav-scrub .nav-form-btn,
+                html.nav-scrub .nav-shell.scrolled-mobile .nav-form-btn {
+                    transition: visibility 0s 0s;
+                }
 
                 .nav-shell.scrolled-mobile,
                 html.nav-prerender-scrolled .nav-shell {

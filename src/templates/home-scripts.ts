@@ -1221,6 +1221,16 @@ export const homeScripts = (): string => `
                         });
                     }
 
+                    // The motion engine's scroll scrubber (motion-engine.ts)
+                    // owns the nav state continuously when active — progress
+                    // is scrubbed by scroll position and the class is synced
+                    // from the scrub. This threshold logic is the no-JS /
+                    // no-Motion fallback only.
+                    if (window.__navScrubActive) {
+                        lastNavScrollY = currentScrollY;
+                        return;
+                    }
+
                     if (window.innerWidth <= 960) {
                         if (isNavigatingHome) {
                             if (currentScrollY === 0) isNavigatingHome = false;

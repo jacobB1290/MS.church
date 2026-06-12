@@ -7367,9 +7367,12 @@ export const homeStyles = (): string => `
                    pill reserve) keep their own transitions. */
                 html.nav-scrub .nav-shell {
                     transition: background var(--motion-slow) var(--ease-standard),
-                                box-shadow var(--motion-slow) var(--ease-standard),
-                                top var(--motion-springy) var(--ease-spring),
-                                margin var(--motion-springy) var(--ease-spring);
+                                box-shadow var(--motion-slow) var(--ease-standard);
+                }
+                /* The scrubber drives link typography inline per frame —
+                   the 0.4s link transitions would smear each write. */
+                html.nav-scrub .nav-shell nav a {
+                    transition: color 0.4s var(--ease-standard), opacity 0.4s var(--ease-standard);
                 }
                 html.nav-scrub .nav-shell nav,
                 html.nav-scrub .nav-shell nav ul {

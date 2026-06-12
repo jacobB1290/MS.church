@@ -170,97 +170,175 @@ export function motionEngine(): string {
                     }
 
                     /* ─────────── Home nav scrubber: scroll-coupled morph ───────────
-                       The compress/expand is NOT a binary state — it is a continuous
-                       progress value p (0 = full nav, 1 = pill) scrubbed directly by
-                       scroll position over the first SCRUB_RANGE px. While the user
-                       scrolls, every property tracks the finger with a slight organic
-                       lag; stop mid-scroll and the morph stops mid-pose. When the
-                       scroll pauses, the measured scroll VELOCITY is fed into a spring
-                       that settles p to the nearest pole — a fast flick lands with a
-                       big bubble, a gentle stop gets a soft rebound, and arriving at
-                       either end overshoots and bounces. Every frame is a plain inline
-                       style write (no WAAPI), so it renders identically on WebKit/iOS
-                       and Chromium. The CSS --ease-spring morph remains the
-                       no-JS / no-Motion fallback (html.nav-scrub disables it). */
+                       The compress/expand is a continuous progress value p (0 = full
+                       nav, 1 = pill) scrubbed by scroll position over the first
+                       SCRUB_RANGE px. EVERY property is interpolated — geometry,
+                       link typography, link distribution, the pill reserve, top and
+                       margins — so there is no discrete jump anywhere in the range.
+                       The two poles are MEASURED from the real CSS (both class
+                       states read in one synchronous block, so the browser never
+                       paints the probe), which keeps the scrub pixel-faithful to
+                       the design at every viewport. When scrolling pauses, the
+                       measured scroll velocity feeds an under-damped spring that
+                       settles to the nearest pole with a bubble; at rest the
+                       inline styles are CLEARED so the class-defined CSS owns the
+                       pose exactly — any drift self-corrects at every stop.
+                       Smoothing is time-based (exponential, dt-aware) so the feel
+                       is identical at 30, 60 or 120Hz. */
                     if (shell && !isSubpage) {
                         var sBrand = shell.querySelector('.brand');
                         var sCta = shell.querySelector('.nav-cta');
                         var sNav = shell.querySelector('nav');
                         var sUl = shell.querySelector('nav ul');
                         var sPill = shell.querySelector('.nav-form-btn');
+                        var sLinks = Array.prototype.slice.call(shell.querySelectorAll('nav ul a'));
                         var isMobile = function() { return window.innerWidth <= 960; };
-                        var cpx = function(min, vw, max) { return Math.min(max, Math.max(min, vw * window.innerWidth / 100)); };
                         var clamp01 = function(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); };
+                        var lerp = function(a, b, t) { return a + (b - a) * t; };
 
                         var SCRUB_START = 4;     // px of scroll before the morph begins
                         var SCRUB_RANGE = 130;   // px of scroll for the full morph
                         var IDLE_MS = 120;       // scroll silence before the settle spring fires
-                        // The settle voice is deliberately UNDER-damped — the bubble is
-                        // the point. ~1.5 visible oscillations on a strong flick.
+                        // Under-damped on purpose — the bubble is the point.
                         var SETTLE = { type: 'spring', stiffness: 340, damping: 15, mass: 1 };
-                        var VEL_BOOST = 1.6;     // amplify real scroll velocity into the spring
-                        var VEL_MAX = 6;         // but keep a violent flick civilized
+                        var VEL_BOOST = 1.6;
+                        var VEL_MAX = 6;
 
-                        // Geometry poles, refreshed on resize. Brand/CTA heights are
-                        // measured so the collapse tracks real content across viewports.
-                        var G = {};
+                        // ── Dual-state measurement ──
+                        // Both poles are read from the real rendered CSS by toggling
+                        // the class inside one synchronous block (no paint between).
+                        // Heights use scrollHeight so a collapsed/clipped element
+                        // still reports its true content size — measuring while
+                        // compressed previously fell back to a constant and the
+                        // expanded brand came back CLIPPED.
+                        var G = null;
+                        var SCRUBBED_PROPS = ['paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'borderRadius', 'top', 'marginTop', 'marginBottom'];
+                        var clearInline = function() {
+                            SCRUBBED_PROPS.forEach(function(k) { shell.style[k] = ''; });
+                            if (sNav) { sNav.style.marginTop = ''; sNav.style.marginBottom = ''; sNav.style.paddingRight = ''; }
+                            if (sUl) { sUl.style.minHeight = ''; sUl.style.paddingLeft = ''; sUl.style.paddingRight = ''; sUl.style.justifyContent = ''; sUl.style.gap = ''; }
+                            sLinks.forEach(function(a) { a.style.fontSize = ''; a.style.letterSpacing = ''; });
+                            [sBrand, sCta].forEach(function(el) {
+                                if (el) { el.style.maxHeight = ''; el.style.opacity = ''; el.style.transform = ''; el.style.pointerEvents = ''; }
+                            });
+                            if (sPill) { sPill.style.visibility = ''; sPill.style.opacity = ''; sPill.style.transform = ''; sPill.style.pointerEvents = ''; }
+                            lastW = {};
+                        };
+                        var readPole = function() {
+                            var cs = getComputedStyle(shell);
+                            var ucs = sUl ? getComputedStyle(sUl) : null;
+                            var lcs = sLinks[0] ? getComputedStyle(sLinks[0]) : null;
+                            return {
+                                padV: parseFloat(cs.paddingTop) || 0,
+                                padH: parseFloat(cs.paddingLeft) || 0,
+                                radius: parseFloat(cs.borderRadius) || 0,
+                                top: parseFloat(cs.top) || 0,
+                                mTop: parseFloat(cs.marginTop) || 0,
+                                mBot: parseFloat(cs.marginBottom) || 0,
+                                navM: sNav ? (parseFloat(getComputedStyle(sNav).marginTop) || 0) : 0,
+                                navPadR: sNav ? (parseFloat(getComputedStyle(sNav).paddingRight) || 0) : 0,
+                                rowH: sUl ? Math.max(parseFloat(ucs.minHeight) || 0, sUl.getBoundingClientRect().height) : 0,
+                                gap: ucs ? (parseFloat(ucs.columnGap) || 0) : 0,
+                                font: lcs ? (parseFloat(lcs.fontSize) || 14) : 14,
+                                ls: lcs ? (parseFloat(lcs.letterSpacing) || 0) : 0,
+                                linkW: sLinks.reduce(function(t, a) { return t + a.getBoundingClientRect().width; }, 0),
+                                ulW: sUl ? sUl.getBoundingClientRect().width : 0,
+                                brandH: sBrand ? sBrand.scrollHeight : 0,
+                                ctaH: sCta ? sCta.scrollHeight : 0
+                            };
+                        };
                         var measure = function() {
-                            G.padV = cpx(12, 1.7, 16);
-                            G.radius = cpx(28, 3.5, 48);
-                            G.rowH0 = 22;
-                            G.rowH1 = cpx(40, 12, 48);
-                            G.navM = 16;
-                            G.brandH = (sBrand && sBrand.offsetHeight > 4) ? Math.min(56, sBrand.offsetHeight + 1) : 30;
-                            G.ctaH = (sCta && sCta.offsetHeight > 4) ? Math.min(56, sCta.offsetHeight + 1) : 38;
-                            G.pillOn = sPill && getComputedStyle(sPill).display !== 'none';
+                            if (!isMobile()) { G = null; return; }
+                            var had = shell.classList.contains('scrolled-mobile');
+                            clearInline();
+                            shell.classList.remove('scrolled-mobile');
+                            var E = readPole();
+                            shell.classList.add('scrolled-mobile');
+                            var C = readPole();
+                            shell.classList.toggle('scrolled-mobile', had);
+                            // Emulated expanded cluster: with space-between + side
+                            // padding P0, the links sit exactly where the natural
+                            // centered-with-gap layout puts them — so distribution
+                            // interpolates instead of jumping at a justify flip.
+                            var cluster = E.linkW + Math.max(0, sLinks.length - 1) * E.gap;
+                            G = {
+                                E: E, C: C,
+                                P0: Math.max(0, (E.ulW - cluster) / 2),
+                                pillOn: sPill ? getComputedStyle(sPill).display !== 'none' : false
+                            };
                         };
 
-                        var lerp = function(a, b, t) { return a + (b - a) * t; };
-                        var p = null; // current progress; may overshoot [0,1] for the bubble
+                        // ── Cached writer: skip identical writes, round to 0.1px ──
+                        var lastW = {};
+                        var W = function(el, prop, val) {
+                            var key = (el === shell ? 's' : (el.className || 'x')) + ':' + prop;
+                            if (lastW[key] === val) return;
+                            lastW[key] = val;
+                            el.style[prop] = val;
+                        };
+                        // Quarter-px quantization halves style invalidations vs
+                        // 0.1px — sub-quarter-pixel layout deltas are invisible,
+                        // and every skipped write is one less backdrop-filter
+                        // re-composite on iOS.
+                        var px = function(v) { return (Math.round(v * 4) / 4) + 'px'; };
+
+                        var p = 0; // progress; may overshoot [0,1] for the bubble
 
                         var applyP = function(v) {
                             p = v;
-                            var c = clamp01(v); // opacity / collapse never extrapolate
-                            shell.style.paddingTop = Math.max(0, lerp(G.padV, 0, v)) + 'px';
-                            shell.style.paddingBottom = Math.max(0, lerp(G.padV, 0, v)) + 'px';
-                            shell.style.borderRadius = lerp(G.radius, 100, c) + 'px';
+                            if (!G) return;
+                            var c = clamp01(v);
+                            var E = G.E, C = G.C;
+                            W(shell, 'paddingTop', px(Math.max(0, lerp(E.padV, C.padV, v))));
+                            W(shell, 'paddingBottom', px(Math.max(0, lerp(E.padV, C.padV, v))));
+                            W(shell, 'paddingLeft', px(Math.max(0, lerp(E.padH, C.padH, c))));
+                            W(shell, 'paddingRight', px(Math.max(0, lerp(E.padH, C.padH, c))));
+                            W(shell, 'borderRadius', px(lerp(E.radius, C.radius, c)));
+                            W(shell, 'top', px(lerp(E.top, C.top, c)));
+                            W(shell, 'marginTop', px(lerp(E.mTop, C.mTop, c)));
+                            W(shell, 'marginBottom', px(lerp(E.mBot, C.mBot, c)));
                             if (sNav) {
-                                var m = Math.max(0, lerp(G.navM, 0, v));
-                                sNav.style.marginTop = m + 'px';
-                                sNav.style.marginBottom = m + 'px';
+                                W(sNav, 'marginTop', px(Math.max(0, lerp(E.navM, C.navM, v))));
+                                W(sNav, 'marginBottom', px(Math.max(0, lerp(E.navM, C.navM, v))));
+                                W(sNav, 'paddingRight', px(lerp(E.navPadR, C.navPadR, c)));
                             }
-                            // The row height carries the overshoot — the pill visibly
-                            // bounces past its resting size and springs back.
-                            if (sUl) sUl.style.minHeight = Math.max(G.rowH0, lerp(G.rowH0, G.rowH1, v)) + 'px';
-                            if (sBrand) {
-                                sBrand.style.maxHeight = Math.max(0, lerp(G.brandH, 0, v)) + 'px';
-                                sBrand.style.opacity = String(clamp01(1 - c * 1.9)); // gone by ~p=.53
-                                sBrand.style.transform = 'translateY(' + (-6 * c) + 'px) scale(' + (1 - 0.03 * c) + ')';
+                            if (sUl) {
+                                // The row carries the overshoot — the pill visibly
+                                // bounces past its resting size and springs back.
+                                W(sUl, 'minHeight', px(Math.max(E.rowH, lerp(E.rowH, C.rowH, v))));
+                                W(sUl, 'justifyContent', 'space-between');
+                                W(sUl, 'gap', '0px');
+                                W(sUl, 'paddingLeft', px(lerp(G.P0, 0, c)));
+                                W(sUl, 'paddingRight', px(lerp(G.P0, 0, c)));
                             }
-                            if (sCta) {
-                                sCta.style.maxHeight = Math.max(0, lerp(G.ctaH, 0, v)) + 'px';
-                                sCta.style.opacity = String(clamp01(1 - c * 1.9));
-                                sCta.style.transform = 'translateY(' + (-6 * c) + 'px) scale(' + (1 - 0.03 * c) + ')';
+                            for (var i = 0; i < sLinks.length; i++) {
+                                W(sLinks[i], 'fontSize', px(lerp(E.font, C.font, c)));
+                                W(sLinks[i], 'letterSpacing', px(lerp(E.ls, C.ls, c)));
                             }
+                            [[sBrand, E.brandH], [sCta, E.ctaH]].forEach(function(pair) {
+                                var el = pair[0];
+                                if (!el) return;
+                                // At the expanded pole, no clamp at all — the element
+                                // is exactly its natural self (no clipped subtitle,
+                                // ever, regardless of measurement).
+                                W(el, 'maxHeight', c <= 0.015 ? '' : px(Math.max(0, lerp(pair[1], 0, v))));
+                                W(el, 'opacity', String(Math.round(clamp01(1 - c * 1.9) * 100) / 100));
+                                W(el, 'transform', 'translateY(' + Math.round(-6 * c * 10) / 10 + 'px) scale(' + (Math.round((1 - 0.03 * c) * 1000) / 1000) + ')');
+                                W(el, 'pointerEvents', c > 0.5 ? 'none' : '');
+                            });
                             if (sPill && G.pillOn) {
-                                sPill.style.opacity = String(clamp01((c - 0.45) * 1.9)); // arrives in the back half
-                                sPill.style.transform = 'translateY(-50%) scale(' + (0.85 + 0.15 * Math.max(0, v - 0.3) / 0.7) + ')';
+                                W(sPill, 'visibility', c > 0.4 ? 'visible' : 'hidden');
+                                W(sPill, 'opacity', String(Math.round(clamp01((c - 0.45) * 1.9) * 100) / 100));
+                                W(sPill, 'transform', 'translateY(-50%) scale(' + (Math.round((0.85 + 0.15 * Math.max(0, v - 0.3) / 0.7) * 1000) / 1000) + ')');
+                                W(sPill, 'pointerEvents', c > 0.85 ? '' : 'none');
                             }
-                            // Semantic state for the discrete styles (link type scale,
-                            // space-between distribution, pill reserve). Their own CSS
-                            // transitions carry them; geometry is inline-owned here.
-                            var want = c > 0.5;
-                            if (shell.classList.contains('scrolled-mobile') !== want) {
-                                shell.classList.toggle('scrolled-mobile', want);
-                            }
-                        };
-
-                        var clearScrub = function() {
-                            ['paddingTop', 'paddingBottom', 'borderRadius'].forEach(function(k) { shell.style[k] = ''; });
-                            if (sNav) { sNav.style.marginTop = ''; sNav.style.marginBottom = ''; }
-                            if (sUl) sUl.style.minHeight = '';
-                            [sBrand, sCta].forEach(function(el) { if (el) { el.style.maxHeight = ''; el.style.opacity = ''; el.style.transform = ''; } });
-                            if (sPill) { sPill.style.opacity = ''; sPill.style.transform = ''; }
+                            // Class flips only at the POLES (hysteresis) — never at
+                            // 0.5 mid-scrub, where the discrete CSS used to yank the
+                            // link row. Everything discrete is inline-interpolated
+                            // above, so the flip is visually a no-op.
+                            var cur = shell.classList.contains('scrolled-mobile');
+                            if (cur && c < 0.08) shell.classList.remove('scrolled-mobile');
+                            else if (!cur && c > 0.92) shell.classList.add('scrolled-mobile');
                         };
 
                         var pTarget = function() {
@@ -271,42 +349,67 @@ export function motionEngine(): string {
                         var rafOn = false;
                         var lastScrollT = 0;
                         var lastTickT = 0;
+                        var prevFrameT = 0;
                         var settleAnim = null;
                         var settleStartT = 0;
                         var settlePole = 0;
-                        var settledAt = null; // pole we are resting at, or null
-                        var hist = [];        // [t, p] pairs for velocity capture
+                        var settledAt = null;
+                        var hist = [];
 
                         var stopSettle = function() {
                             if (settleAnim) { try { settleAnim.stop(); } catch (e) {} settleAnim = null; }
                         };
 
+                        // Rest is self-correcting: snap the class to the pole and
+                        // clear every inline style, so the pure CSS class state
+                        // owns the pose. Any measurement drift vanishes at every
+                        // stop instead of accumulating.
+                        var restAt = function(pole) {
+                            p = pole;
+                            settledAt = pole;
+                            shell.classList.toggle('scrolled-mobile', pole === 1);
+                            clearInline();
+                        };
+
+                        // One smoothing step toward the finger. Driven from BOTH
+                        // the rAF tick and the scroll event itself: iOS 26 WebKit
+                        // throttles rAF during touch scrolling while scroll events
+                        // keep firing, so rAF-only stepping visibly stuttered
+                        // there. The exponential dt-based smoothing makes double
+                        // stepping in one frame harmless (tiny dt → tiny alpha),
+                        // and the feel is identical at 30, 60 and 120Hz.
+                        var lastStepT = 0;
+                        var scrubStep = function(now, dt) {
+                            var t = pTarget();
+                            var alpha = 1 - Math.exp(-dt / 55);
+                            var next = p + (t - p) * alpha;
+                            if (Math.abs(next - t) < 0.002) next = t;
+                            if (next !== p) applyP(next);
+                            settledAt = null;
+                            lastStepT = now;
+                            hist.push([now, p]);
+                            if (hist.length > 6) hist.shift();
+                        };
+
                         var tick = function(now) {
                             lastTickT = now;
                             if (!isMobile()) { rafOn = false; return; }
-                            // Settle watchdog — if the spring animation ever goes
-                            // inert (observed intermittently: the returned controls
-                            // stop ticking without completing), it would otherwise
-                            // block both branches forever and park the nav mid-pose.
-                            // Force-land the pole after a generous deadline.
+                            var dt = prevFrameT ? Math.min(64, now - prevFrameT) : 16;
+                            prevFrameT = now;
+                            // Settle watchdog — if the spring controls ever go inert
+                            // they would block both branches and park the nav
+                            // mid-pose. Force-land the pole after a deadline.
                             if (settleAnim && (now - settleStartT) > 1200) {
                                 stopSettle();
-                                applyP(settlePole);
-                                settledAt = settlePole;
+                                restAt(settlePole);
                             }
                             var scrolling = (now - lastScrollT) < IDLE_MS;
                             if (scrolling && !settleAnim) {
-                                // SCRUB: track the finger with a touch of organic lag.
-                                var t = pTarget();
-                                var next = p + (t - p) * 0.36;
-                                if (Math.abs(next - t) < 0.002) next = t;
-                                if (next !== p) applyP(next);
-                                settledAt = null;
-                                hist.push([now, p]);
-                                if (hist.length > 6) hist.shift();
+                                scrubStep(now, dt);
                             } else if (!scrolling && !settleAnim && settledAt === null) {
-                                // SETTLE: spring to the nearest pole, carrying the real
-                                // scroll velocity in — a flick lands with a bigger bubble.
+                                // SETTLE: spring to the nearest pole carrying the
+                                // real scroll velocity — a flick lands with a bigger
+                                // bubble than a gentle stop.
                                 var pole = p >= 0.5 ? 1 : 0;
                                 var vel = 0;
                                 if (hist.length > 1) {
@@ -316,7 +419,7 @@ export function motionEngine(): string {
                                 vel = Math.max(-VEL_MAX, Math.min(VEL_MAX, vel * VEL_BOOST));
                                 hist = [];
                                 if (Math.abs(p - pole) < 0.001 && Math.abs(vel) < 0.05) {
-                                    settledAt = pole; applyP(pole);
+                                    restAt(pole);
                                 } else {
                                     settleStartT = now;
                                     settlePole = pole;
@@ -324,62 +427,71 @@ export function motionEngine(): string {
                                         velocity: vel,
                                         onUpdate: function(v) { applyP(v); },
                                         onComplete: function() {
-                                            if (settleAnim === anim) { settleAnim = null; settledAt = pole; applyP(pole); }
+                                            if (settleAnim === anim) { settleAnim = null; restAt(pole); }
                                         }
                                     }));
                                     settleAnim = anim;
-                                    // Belt-and-suspenders: the controls are thenable —
-                                    // clear via the promise too in case onComplete is
-                                    // skipped (covers the inert-controls race).
                                     if (anim && typeof anim.then === 'function') {
                                         anim.then(function() {
-                                            if (settleAnim === anim) { settleAnim = null; settledAt = pole; applyP(pole); }
+                                            if (settleAnim === anim) { settleAnim = null; restAt(pole); }
                                         }, function() {});
                                     }
                                 }
                             }
-                            // Idle out once resting and quiet; the scroll listener re-arms.
-                            if (settledAt !== null && !settleAnim && (now - lastScrollT) > 400) { rafOn = false; return; }
+                            if (settledAt !== null && !settleAnim && (now - lastScrollT) > 400) { rafOn = false; prevFrameT = 0; return; }
                             requestAnimationFrame(tick);
                         };
 
                         var wake = function() {
                             var now = performance.now();
                             lastScrollT = now;
-                            // A new gesture mid-settle: hand control back to the finger
-                            // from the spring's current value — continuity, no jump.
+                            // New gesture mid-settle: the finger takes over from the
+                            // spring's current value — continuity, never a jump.
                             if (settleAnim) { stopSettle(); }
                             settledAt = null;
+                            // Event-driven step: when rAF is throttled mid-gesture
+                            // (iOS 26), the scroll event itself advances the scrub
+                            // so the morph never falls behind the finger.
+                            if (isMobile() && !settleAnim && (now - lastStepT) > 12) {
+                                scrubStep(now, Math.min(64, lastStepT ? now - lastStepT : 16));
+                            }
                             // Self-healing: if the rAF chain ever died with the flag
-                            // still up (an exception mid-frame, a throttled tab), the
-                            // nav would freeze. Re-arm whenever ticks have gone quiet.
+                            // up (exception, throttled tab), re-arm on quiet ticks.
                             if ((!rafOn || (now - lastTickT) > 250) && isMobile()) {
                                 rafOn = true;
+                                prevFrameT = 0;
                                 requestAnimationFrame(tick);
                             }
                         };
 
-                        // Take ownership: home-scripts' class toggling stands down.
+                        // Take ownership: home-scripts' threshold logic stands down
+                        // (it remains the no-JS / no-Motion fallback).
                         window.__navScrubActive = true;
                         html.classList.add('nav-scrub');
                         measure();
-                        applyP(shell.classList.contains('scrolled-mobile') ? 1 : (pTarget() >= 0.5 ? 1 : 0));
-                        settledAt = clamp01(p) >= 0.5 ? 1 : 0;
+                        restAt(pTarget() >= 0.5 ? 1 : 0);
 
                         window.addEventListener('scroll', wake, { passive: true });
                         window.addEventListener('pageshow', function(e) {
                             if (!e.persisted) return;
                             stopSettle(); hist = [];
-                            measure(); applyP(pTarget() >= 0.5 ? 1 : 0);
-                            settledAt = clamp01(p);
+                            measure();
+                            restAt(pTarget() >= 0.5 ? 1 : 0);
                         });
+                        // Late font swaps change the brand/link metrics — refresh
+                        // the poles once type is final (only while at rest).
+                        if (document.fonts && document.fonts.ready) {
+                            document.fonts.ready.then(function() {
+                                if (settledAt !== null && !settleAnim) { measure(); restAt(settledAt); }
+                            });
+                        }
                         var rsT2 = null;
                         window.addEventListener('resize', function() {
                             if (rsT2) clearTimeout(rsT2);
                             rsT2 = setTimeout(function() {
                                 stopSettle(); hist = [];
-                                if (isMobile()) { measure(); applyP(pTarget() >= 0.5 ? 1 : 0); settledAt = clamp01(p); }
-                                else { clearScrub(); }
+                                if (isMobile()) { measure(); restAt(pTarget() >= 0.5 ? 1 : 0); }
+                                else { G = null; clearInline(); }
                             }, 120);
                         }, { passive: true });
                     }

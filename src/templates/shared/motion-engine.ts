@@ -198,7 +198,7 @@ export function motionEngine(): string {
 
                         var SCRUB_START = 4;     // px of scroll before the morph begins
                         var SCRUB_RANGE = 130;   // px of scroll for the full morph
-                        var IDLE_MS = 120;       // scroll silence before the settle spring fires
+                        var IDLE_MS = 160;       // scroll silence = momentum finished
                         // Under-damped on purpose — the bubble is the point.
                         var SETTLE = { type: 'spring', stiffness: 340, damping: 15, mass: 1 };
                         var VEL_BOOST = 1.6;
@@ -360,6 +360,45 @@ export function motionEngine(): string {
                             if (settleAnim) { try { settleAnim.stop(); } catch (e) {} settleAnim = null; }
                         };
 
+                        // One settle per gesture: spring to the pole with the
+                        // gesture's measured velocity (boosted, capped).
+                        var startSettle = function(now, pole) {
+                            if (settleAnim) return;
+                            var vel = 0;
+                            if (hist.length > 1) {
+                                var h0 = hist[0], h1 = hist[hist.length - 1];
+                                if (h1[0] > h0[0]) vel = (h1[1] - h0[1]) / ((h1[0] - h0[0]) / 1000);
+                            }
+                            vel = Math.max(-VEL_MAX, Math.min(VEL_MAX, vel * VEL_BOOST));
+                            hist = [];
+                            if (Math.abs(p - pole) < 0.001 && Math.abs(vel) < 0.05) {
+                                restAt(pole);
+                                return;
+                            }
+                            settleStartT = now;
+                            settlePole = pole;
+                            var anim = window.Motion.animate(p, pole, Object.assign({}, SETTLE, {
+                                velocity: vel,
+                                onUpdate: function(v) { applyP(v); },
+                                onComplete: function() {
+                                    if (settleAnim === anim) { settleAnim = null; restAt(pole); }
+                                }
+                            }));
+                            settleAnim = anim;
+                            if (anim && typeof anim.then === 'function') {
+                                anim.then(function() {
+                                    if (settleAnim === anim) { settleAnim = null; restAt(pole); }
+                                }, function() {});
+                            }
+                        };
+
+                        // Gesture truth: while a finger is on the glass, the scrub
+                        // belongs to the finger — no settling, park anywhere.
+                        var touchActive = false;
+                        window.addEventListener('touchstart', function() { touchActive = true; }, { passive: true });
+                        window.addEventListener('touchend', function() { touchActive = false; }, { passive: true });
+                        window.addEventListener('touchcancel', function() { touchActive = false; }, { passive: true });
+
                         // Rest is self-correcting: snap the class to the pole and
                         // clear every inline style, so the pure CSS class state
                         // owns the pose. Any measurement drift vanishes at every
@@ -382,6 +421,7 @@ export function motionEngine(): string {
                         var scrubStep = function(now, dt) {
                             var t = pTarget();
                             var alpha = 1 - Math.exp(-dt / 55);
+                            var prev = p;
                             var next = p + (t - p) * alpha;
                             if (Math.abs(next - t) < 0.002) next = t;
                             if (next !== p) applyP(next);
@@ -389,6 +429,14 @@ export function motionEngine(): string {
                             lastStepT = now;
                             hist.push([now, p]);
                             if (hist.length > 6) hist.shift();
+                            // Arrival bounce: a gesture that carries the scrub INTO a
+                            // pole bounces immediately — no idle wait. startSettle
+                            // measures the gesture's velocity itself, so a fast flick
+                            // rings the pole while a slow creep rests quietly (its
+                            // small-velocity branch is a clean restAt).
+                            if ((next === 0 || next === 1) && prev !== next && settledAt !== next) {
+                                startSettle(now, next);
+                            }
                         };
 
                         var tick = function(now) {
@@ -406,39 +454,16 @@ export function motionEngine(): string {
                             var scrolling = (now - lastScrollT) < IDLE_MS;
                             if (scrolling && !settleAnim) {
                                 scrubStep(now, dt);
-                            } else if (!scrolling && !settleAnim && settledAt === null) {
-                                // SETTLE: spring to the nearest pole carrying the
-                                // real scroll velocity — a flick lands with a bigger
-                                // bubble than a gentle stop.
-                                var pole = p >= 0.5 ? 1 : 0;
-                                var vel = 0;
-                                if (hist.length > 1) {
-                                    var a = hist[0], b2 = hist[hist.length - 1];
-                                    if (b2[0] > a[0]) vel = (b2[1] - a[1]) / ((b2[0] - a[0]) / 1000);
-                                }
-                                vel = Math.max(-VEL_MAX, Math.min(VEL_MAX, vel * VEL_BOOST));
-                                hist = [];
-                                if (Math.abs(p - pole) < 0.001 && Math.abs(vel) < 0.05) {
-                                    restAt(pole);
-                                } else {
-                                    settleStartT = now;
-                                    settlePole = pole;
-                                    var anim = window.Motion.animate(p, pole, Object.assign({}, SETTLE, {
-                                        velocity: vel,
-                                        onUpdate: function(v) { applyP(v); },
-                                        onComplete: function() {
-                                            if (settleAnim === anim) { settleAnim = null; restAt(pole); }
-                                        }
-                                    }));
-                                    settleAnim = anim;
-                                    if (anim && typeof anim.then === 'function') {
-                                        anim.then(function() {
-                                            if (settleAnim === anim) { settleAnim = null; restAt(pole); }
-                                        }, function() {});
-                                    }
-                                }
+                            } else if (!scrolling && !settleAnim && settledAt === null && !touchActive) {
+                                // GESTURE END (finger up + momentum finished): one
+                                // settle to the nearest pole, carrying the gesture's
+                                // velocity. While the finger is DOWN this never fires —
+                                // real slow scrolling is full of 100-300ms micro-pauses,
+                                // and settling on each one made the nav hunt between
+                                // finger-tracking and pole-seeking (the stutter).
+                                startSettle(now, p >= 0.5 ? 1 : 0);
                             }
-                            if (settledAt !== null && !settleAnim && (now - lastScrollT) > 400) { rafOn = false; prevFrameT = 0; return; }
+                            if (settledAt !== null && !settleAnim && !touchActive && (now - lastScrollT) > 400) { rafOn = false; prevFrameT = 0; return; }
                             requestAnimationFrame(tick);
                         };
 

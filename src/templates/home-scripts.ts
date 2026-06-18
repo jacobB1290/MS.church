@@ -765,61 +765,100 @@ export const homeScripts = (): string => `
                     }
                 }
 
+                // ── Event content helpers (shared by the card + the detail view) ──
+                // Escape staff-authored text before injecting it into markup.
+                function escEvent(s) {
+                    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+                        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+                    });
+                }
+                // A Google Maps search link for a location string.
+                function eventMapsLink(loc) {
+                    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(loc);
+                }
+                // Light formatting for the description body: blank lines split
+                // paragraphs; a run of "- " / "• " lines becomes a bullet list.
+                function formatEventBody(text) {
+                    return String(text).split(/\\n{2,}/).map(function (block) {
+                        var lines = block.split('\\n').filter(function (l) { return l.trim() !== ''; });
+                        if (lines.length === 0) return '';
+                        var isList = lines.every(function (l) { return /^\\s*[-•]\\s+/.test(l); });
+                        if (isList) {
+                            return '<ul>' + lines.map(function (l) {
+                                return '<li>' + escEvent(l.replace(/^\\s*[-•]\\s+/, '')) + '</li>';
+                            }).join('') + '</ul>';
+                        }
+                        return '<p>' + lines.map(function (l) { return escEvent(l); }).join('<br>') + '</p>';
+                    }).join('');
+                }
+                function eventFactRow(label, value, href) {
+                    var v = href
+                        ? '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + escEvent(value) + '</a>'
+                        : escEvent(value);
+                    return '<div class="event-fact"><dt>' + escEvent(label) + '</dt><dd>' + v + '</dd></div>';
+                }
+                // The detail lightbox body for one upcoming event: large flyer +
+                // when/where facts + formatted description + every CTA.
+                function renderEventDetail(event) {
+                    var imageHtml = event.image
+                        ? '<img src="' + event.image + '" alt="' + escEvent(event.title) + '" class="event-detail-flyer-img" decoding="async">'
+                        : '<div class="event-detail-placeholder"><span>📅</span></div>';
+                    var whenParts = [event.displayDate, event.time].filter(Boolean).join(' · ');
+                    var facts = [];
+                    if (event.location) facts.push(eventFactRow('Where', event.location, eventMapsLink(event.location)));
+                    if (event.cost) facts.push(eventFactRow('Cost', event.cost));
+                    if (event.ages) facts.push(eventFactRow('Who', event.ages));
+                    if (event.rsvpBy) facts.push(eventFactRow('RSVP by', event.rsvpBy));
+                    var factsHtml = facts.length ? '<dl class="event-detail-facts">' + facts.join('') + '</dl>' : '';
+                    var bodyHtml = event.description ? '<div class="event-detail-body">' + formatEventBody(event.description) + '</div>' : '';
+                    var ctas = event.ctas || [];
+                    var ctasHtml = ctas.length
+                        ? '<div class="event-detail-ctas">' + ctas.map(function (c, i) {
+                            return '<a href="' + c.link + '" class="event-link-btn' + (i > 0 ? ' event-link-btn-secondary' : '') + '" target="_blank" rel="noopener noreferrer">' + escEvent(c.text) + '</a>';
+                        }).join('') + '</div>'
+                        : '';
+                    return '<div class="event-detail-figure">' + imageHtml + '</div>'
+                        + '<div class="event-detail-info">'
+                        + (whenParts ? '<span class="event-detail-eyebrow">' + escEvent(whenParts) + '</span>' : '')
+                        + '<h3 class="event-detail-title">' + escEvent(event.title) + '</h3>'
+                        + factsHtml + bodyHtml + ctasHtml
+                        + '</div>';
+                }
+
                 function renderUpcomingEventCard(event, index, totalUpcoming) {
                     const imageHtml = event.image
-                        ? \`<img src="\${event.image}" alt="\${event.title}" class="flyer-image" loading="lazy" decoding="async" crossorigin="anonymous" onerror="this.style.display='none';">\`
+                        ? \`<img src="\${event.image}" alt="\${escEvent(event.title)}" class="flyer-image" loading="lazy" decoding="async" crossorigin="anonymous" onerror="this.style.display='none';">\`
                         : \`<div class="flyer-placeholder" style="width:100%;height:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;"><span style="font-size:48px;">📅</span></div>\`;
 
                     // Time text — only when a specific time exists (null means all-day event)
-                    const timePillHtml = event.time
-                        ? \`<span class="event-time-pill">\${event.time}</span>\`
+                    const timeHtml = event.time
+                        ? \`<span class="event-time-pill">\${escEvent(event.time)}</span>\`
                         : \`<span></span>\`;
 
-                    // Detect a link in the event description (after [CTA:...] tags are stripped).
-                    // Supports "Label: https://..." (uses label as button text) or a bare URL ("Learn More").
-                    let descLinkUrl = '';
-                    let descLinkText = 'Learn More';
-                    if (event.description) {
-                        // Try "Word(s): https://..." pattern first — label becomes the button text
-                        const labeledMatch = event.description.match(/([A-Za-z][A-Za-z0-9 ]{0,30}?)\\s*:\\s*(https?:\\/\\/[^\\s<>"']+)/);
-                        if (labeledMatch) {
-                            descLinkText = labeledMatch[1].trim();
-                            descLinkUrl = labeledMatch[2].replace(/[.,;)\\]]+$/, '');
-                        } else {
-                            // Fall back to any bare URL
-                            const bareMatch = event.description.match(/https?:\\/\\/[^\\s<>"']+/);
-                            if (bareMatch) {
-                                descLinkUrl = bareMatch[0].replace(/[.,;)\\]]+$/, '');
-                            }
-                        }
-                    }
-                    const hasDescLink = !!descLinkUrl;
-
-                    // [CTA:...] tag button (frosted-glass overlay on mobile, standalone button on desktop)
-                    const hasRealLink = event.cta && event.cta.link && event.cta.link !== '#contact' && event.cta.link.startsWith('http');
-                    const ctaHtml = hasRealLink
-                        ? \`<div class="event-cta"><a href="\${event.cta.link}" class="event-link-btn" target="_blank" rel="noopener noreferrer">\${event.cta.text}</a></div>\`
-                        : '';
-
-                    // Description-link: gold pill button BELOW the image card (not overlaid),
-                    // styled to match the "Find Us" button. Arrow icon right of text.
-                    const eventLinkBtnHtml = hasDescLink
-                        ? \`<a href="\${descLinkUrl}" class="event-link-btn" target="_blank" rel="noopener noreferrer">\${descLinkText}</a>\`
-                        : '';
+                    // Primary CTA (the first live link) → the gold pill under the
+                    // flyer. Every CTA + the facts + body live in the detail view
+                    // the flyer opens; with no link the pill itself opens it.
+                    const ctas = event.ctas || [];
+                    const primary = ctas[0];
+                    const buttonHtml = primary
+                        ? \`<a href="\${primary.link}" class="event-link-btn" target="_blank" rel="noopener noreferrer">\${escEvent(primary.text)}</a>\`
+                        : \`<button type="button" class="event-link-btn event-detail-open" data-event-index="\${index}">View details</button>\`;
 
                     return \`
                         <div class="carousel-card">
                             <div class="event-card">
                                 <div class="event-outer-card">
                                     <div class="event-card-header">
-                                        <span class="event-date">\${event.displayDate}</span>
-                                        \${timePillHtml}
+                                        <span class="event-date">\${escEvent(event.displayDate)}</span>
+                                        \${timeHtml}
                                     </div>
                                     <div class="event-flyer-wrapper" data-glow-detect>
                                         \${imageHtml}
-                                        \${ctaHtml}
+                                        <button type="button" class="event-flyer-trigger event-detail-open" data-event-index="\${index}" aria-label="View details for \${escEvent(event.title)}">
+                                            <span class="event-flyer-hint" aria-hidden="true">View details</span>
+                                        </button>
                                     </div>
-                                    \${eventLinkBtnHtml}
+                                    \${buttonHtml}
                                 </div>
                             </div>
                         </div>
@@ -886,6 +925,45 @@ export const homeScripts = (): string => `
                     }
 
                     initCarousel(allCards, past);
+                }
+
+                // ── Event detail lightbox ───────────────────────────────────
+                // Tapping an upcoming card's flyer (or a "View details" pill)
+                // opens a modal with the full flyer, when/where facts, the
+                // formatted description, and every CTA. Delegated so it survives
+                // carousel re-renders; guarded so it's a no-op where the modal
+                // isn't present (e.g. the home page).
+                const eventDetailModal = document.getElementById('event-detail-modal');
+                const eventDetailContent = document.getElementById('event-detail-content');
+                if (eventDetailModal && eventDetailContent) {
+                    const closeEventDetail = () => {
+                        eventDetailModal.classList.remove('active');
+                        body.classList.remove('modal-open');
+                    };
+                    const openEventDetail = (idx) => {
+                        const ev = upcoming[idx];
+                        if (!ev) return;
+                        eventDetailContent.innerHTML = renderEventDetail(ev);
+                        eventDetailContent.scrollTop = 0;
+                        eventDetailModal.classList.add('active');
+                        body.classList.add('modal-open');
+                        const closeBtn = document.getElementById('event-detail-close');
+                        if (closeBtn) closeBtn.focus();
+                    };
+                    document.addEventListener('click', (e) => {
+                        const t = e.target.closest ? e.target.closest('.event-detail-open') : null;
+                        if (!t) return;
+                        const idx = parseInt(t.getAttribute('data-event-index'), 10);
+                        if (!isNaN(idx)) openEventDetail(idx);
+                    });
+                    const edClose = document.getElementById('event-detail-close');
+                    if (edClose) edClose.addEventListener('click', closeEventDetail);
+                    eventDetailModal.addEventListener('click', (e) => {
+                        if (e.target === eventDetailModal) closeEventDetail();
+                    });
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && eventDetailModal.classList.contains('active')) closeEventDetail();
+                    });
                 }
 
                 // Render past events in modal

@@ -47,15 +47,77 @@ function formatEventTime(startDT: string, endDT?: string): string | null {
   return `${s.digits} ${s.ampm}`
 }
 
+export type EventCta = { text: string; link: string }
+
 export type CalendarEvent = {
   id: string
   title: string
+  // Body with every structured tag stripped (and, for hand-authored events
+  // without a [CTA:] tag, the detected link removed). Shown in the detail view.
   description: string
   date: string
   displayDate: string
   time: string | null
   image: string
-  cta: { text: string; link: string }
+  location: string
+  cost: string
+  ages: string
+  rsvpBy: string
+  // Every CTA whose link is a real http(s) URL, primary first. Rendered as
+  // button(s) on the card (primary) and in the detail view (all).
+  ctas: EventCta[]
+  // Primary CTA (back-compat for any older reader): ctas[0] or a #contact stub.
+  cta: EventCta
+}
+
+// ── Structured description parser ───────────────────────────────────────────
+// The CRM (ms-management) authors the calendar event description as a body plus
+// a block of `[Key: value]` tags; this parses them back out. Kept verbatim in
+// lockstep with the CRM's src/server/google/eventMapping.ts (its
+// scripts/events/verify-mapping.ts re-reads THIS file and asserts the regexes
+// below are unchanged — the drift guard). A hand-authored "Label: https://…"
+// or bare URL still becomes a button when no [CTA:] tag is present.
+const CTA_REGEX = /\[CTA:\s*([^|\]]+?)\s*\|\s*([^\]]+?)\s*\]/g
+const COST_REGEX = /\[Cost:\s*([^\]]+?)\s*\]/i
+const AGES_REGEX = /\[Ages:\s*([^\]]+?)\s*\]/i
+const RSVP_REGEX = /\[RSVP by:\s*([^\]]+?)\s*\]/i
+const TAG_STRIP_REGEX = /\[(?:CTA|Cost|Ages|RSVP by):[^\]]*\]/gi
+const LABELED_LINK_REGEX = /([A-Za-z][A-Za-z0-9 ]{0,30}?)\s*:\s*(https?:\/\/[^\s<>"']+)/
+const BARE_LINK_REGEX = /https?:\/\/[^\s<>"']+/
+const TRAILING_PUNCT = /[.,;)\]]+$/
+
+function parseEventContent(raw: string | undefined): {
+  body: string
+  ctas: EventCta[]
+  cost: string
+  ages: string
+  rsvpBy: string
+} {
+  const text = raw ?? ''
+  const ctas: EventCta[] = []
+  for (const m of text.matchAll(CTA_REGEX)) {
+    ctas.push({ text: m[1].trim(), link: m[2].trim() })
+  }
+  const cost = text.match(COST_REGEX)?.[1].trim() ?? ''
+  const ages = text.match(AGES_REGEX)?.[1].trim() ?? ''
+  const rsvpBy = text.match(RSVP_REGEX)?.[1].trim() ?? ''
+
+  let body = text.replace(TAG_STRIP_REGEX, '')
+  if (ctas.length === 0) {
+    const labeled = body.match(LABELED_LINK_REGEX)
+    if (labeled) {
+      ctas.push({ text: labeled[1].trim(), link: labeled[2].replace(TRAILING_PUNCT, '') })
+      body = body.replace(labeled[0], '')
+    } else {
+      const bare = body.match(BARE_LINK_REGEX)
+      if (bare) {
+        ctas.push({ text: 'Learn more', link: bare[0].replace(TRAILING_PUNCT, '') })
+        body = body.replace(bare[0], '')
+      }
+    }
+  }
+  body = body.replace(/\n{3,}/g, '\n\n').trim()
+  return { body, ctas, cost, ages, rsvpBy }
 }
 
 export type CalendarResult = {
@@ -132,6 +194,7 @@ export async function fetchCalendarEvents(): Promise<CalendarResult> {
     end?: { date?: string; dateTime?: string }
     attachments?: Array<{ mimeType?: string; fileId?: string; fileUrl?: string }>
     description?: string
+    location?: string
     id: string
     summary?: string
     htmlLink?: string
@@ -171,25 +234,24 @@ export async function fetchCalendarEvents(): Promise<CalendarResult> {
         }
       }
 
-      let ctaText = 'LEARN MORE'
-      let ctaLink = '#contact'
-      if (gcalEvent.description) {
-        const ctaMatch = gcalEvent.description.match(/\[CTA:\s*([^|]+)\s*\|\s*([^\]]+)\]/)
-        if (ctaMatch) {
-          ctaText = ctaMatch[1].trim()
-          ctaLink = ctaMatch[2].trim()
-        }
-      }
+      const { body, ctas, cost, ages, rsvpBy } = parseEventContent(gcalEvent.description)
+      // Only real http(s) links render as buttons (anchors like #contact don't).
+      const liveCtas = ctas.filter((c) => /^https?:\/\//i.test(c.link))
 
       return {
         id: gcalEvent.id,
         title: gcalEvent.summary ?? 'Untitled Event',
-        description: gcalEvent.description?.replace(/\[CTA:[^\]]+\]/, '').trim() ?? '',
+        description: body,
         date: eventDate.toISOString().split('T')[0],
         displayDate,
         time: displayTime,
         image: imageUrl,
-        cta: { text: ctaText, link: ctaLink },
+        location: gcalEvent.location?.trim() ?? '',
+        cost,
+        ages,
+        rsvpBy,
+        ctas: liveCtas,
+        cta: liveCtas[0] ?? { text: 'LEARN MORE', link: '#contact' },
       }
     })
 

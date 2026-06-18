@@ -307,22 +307,48 @@ const GOOGLE_CALENDAR_CONFIG = {
 {
   "id": "gcal-event-id",
   "title": "Event Title",
-  "description": "Clean description (CTA stripped)",
+  "description": "Clean body (every [Key: value] tag stripped)",
   "date": "2026-03-01",
   "displayDate": "MAR 1",
-  "image": "https://drive.google.com/uc?export=view&id=...",
-  "driveFileLink": "https://drive.google.com/file/d/.../view",
+  "time": "11 AM – 3 PM",
+  "image": "https://lh3.googleusercontent.com/d/<id>=w800 (or the /_vercel/image proxy)",
   "location": "3080 Wildwood St, Boise",
-  "cta": { "text": "REGISTER NOW", "link": "#contact" }
+  "cost": "Free",
+  "ages": "All ages",
+  "rsvpBy": "April 1",
+  "ctas": [{ "text": "REGISTER NOW", "link": "https://example.com/register" }],
+  "cta": { "text": "REGISTER NOW", "link": "https://example.com/register" }
 }
 ```
+`ctas` is every real http(s) link in priority order (primary first); `cta` is the
+first one, kept for back-compat. Parsing lives in `parseEventContent()` in
+`src/routes/calendar.ts`, kept verbatim in lockstep with the CRM's
+`src/server/google/eventMapping.ts` — the CRM's `npm run verify:events` re-reads
+this file and fails if the regexes drift, so change both together.
 
-### Adding CTA to a calendar event
-In the Google Calendar event description, include:
+### Structured event content (authored by the CRM, parsed here)
+The CRM (ms-management) is the authoring surface; it serializes an event into the
+calendar description as a body plus a block of `[Key: value]` tags. These can also
+be typed by hand directly in a Google Calendar event:
 ```
-[CTA: BUTTON TEXT | #contact]
+Join us for a free community celebration.
+
+What to bring:
+- A blanket
+- Your neighbors
+
+[Cost: Free]
+[Ages: All ages]
+[RSVP by: April 1]
+[CTA: Reserve your spot | https://ms.church/form]
+[CTA: Get directions | https://maps.google.com/...]
 ```
-Example: `[CTA: RESERVE YOUR SEAT | https://example.com/register]`
+The site strips every tag from the visible body and renders the facts + button(s)
+in the **event detail lightbox** (opened by tapping an upcoming card's flyer; see
+the Outreach section). Multiple `[CTA:]` tags are allowed; only real `http(s)`
+links render as buttons. A bare `Label: https://…` or URL still becomes a button
+when no `[CTA:]` tag is present (back-compat). `location` now also surfaces in the
+detail view with a tap-to-open map link.
 
 ### Adding images to events
 Attach a publicly shared Google Drive image file to the calendar event. The API proxy converts the Drive file ID to a direct image URL.
@@ -875,6 +901,9 @@ The outreach section is the most complex part of the page. Mistakes here took ma
 | Card CSS | `src/templates/home-styles.ts` | `.event-outer-card`, `.carousel-card`, `.carousel-past-card` |
 | Carousel JS logic | `src/templates/home-scripts.ts` | `initCarousel`, `startAutoTick` |
 | Memories card HTML | `src/templates/home-scripts.ts` | `carousel-see-past-btn`, `past-card-title` |
+| Detail lightbox render | `src/templates/home-scripts.ts` | `renderEventDetail`, `formatEventBody`, `event-detail-open` |
+| Detail lightbox markup | `src/templates/outreach-body.ts` | `event-detail-modal` |
+| Detail lightbox CSS | `src/templates/home-styles.ts` | `.event-detail-modal`, `.event-flyer-hint` |
 
 ### Card structure hierarchy
 
@@ -882,10 +911,24 @@ The outreach section is the most complex part of the page. Mistakes here took ma
 .carousel-card          ← slot in the scroll container; controls edge spacing
   .event-card           ← inner wrapper
     .event-outer-card   ← visible white frosted-glass card (rounded, shadowed)
-      .event-card-header ← date (left) + time pill (right), or MEMORIES label
-      .event-flyer-wrapper / .carousel-past-card  ← image or memories content
-      .event-link-btn   ← gold pill CTA button at the bottom of the card
+      .event-card-header ← date (left) + time (right) — plain gold uppercase text
+      .event-flyer-wrapper ← image; holds a .event-flyer-trigger button overlay
+        .event-flyer-trigger ← opens the detail lightbox (hover hint chip)
+      .event-link-btn   ← gold pill at the bottom: the primary live CTA, or
+                          "View details" when the event has no link
 ```
+
+### Event detail lightbox
+
+Tapping a card's flyer (or its "View details" pill) opens `#event-detail-modal`
+(markup in `outreach-body.ts`, populated by `renderEventDetail()`). It is the only
+place the description body, the `[Cost:]`/`[Ages:]`/`[RSVP by:]` facts, the
+location (with a map link), and every CTA actually surface to a visitor — the card
+itself stays flyer-forward. It mirrors the past-events modal's mechanics (`.active`
+toggle + `body.modal-open` + Esc/backdrop close) and is wired via event delegation
+in the events IIFE, so it survives carousel re-renders and is a no-op on pages
+without the modal (e.g. the home page). The body uses light formatting
+(`formatEventBody`): blank lines split paragraphs; `- ` lines become a list.
 
 ### Width and spacing rules
 

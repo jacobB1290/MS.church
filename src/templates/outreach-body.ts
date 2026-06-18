@@ -353,6 +353,16 @@ export const outreachBody = (): string => `
                         </div>
                     </div>
                 </div>
+
+                <!-- Upcoming Event Detail Modal — opened by tapping a card flyer -->
+                <div class="event-detail-modal" id="event-detail-modal" role="dialog" aria-modal="true" aria-label="Event details">
+                    <div class="event-detail-card">
+                        <button class="event-detail-close" id="event-detail-close" aria-label="Close event details" type="button">&times;</button>
+                        <div class="event-detail-content" id="event-detail-content">
+                            <!-- Detail content rendered by JS -->
+                        </div>
+                    </div>
+                </div>
             </main>
 
             ${footer()}

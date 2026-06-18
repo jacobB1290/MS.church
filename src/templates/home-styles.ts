@@ -4527,6 +4527,245 @@ export const homeStyles = (): string => `
                 border-radius: var(--radius-lg);
             }
 
+            /* Tap target over the flyer that opens the detail lightbox. Sits
+               above the image; the hint chip fades in on hover (desktop) and
+               stays gently visible on touch, so the flyer reads as "tap for
+               details" without adding chrome to the card. */
+            .event-flyer-trigger {
+                position: absolute;
+                inset: 0;
+                z-index: 3;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                padding: 14px;
+                margin: 0;
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                -webkit-appearance: none;
+                appearance: none;
+            }
+            .event-flyer-trigger:focus-visible {
+                outline: 2px solid var(--gold);
+                outline-offset: -3px;
+                border-radius: var(--radius-lg);
+            }
+            .event-flyer-hint {
+                display: inline-flex;
+                align-items: center;
+                padding: 7px 15px;
+                border-radius: var(--radius-pill);
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                box-shadow: var(--shadow-sm);
+                color: var(--text-primary);
+                font-size: var(--text-small);
+                font-weight: var(--weight-semibold);
+                letter-spacing: 0.2px;
+                opacity: 0;
+                transform: translateY(8px);
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-medium) var(--ease-out-soft);
+            }
+            .event-flyer-wrapper:hover .event-flyer-hint,
+            .event-flyer-trigger:focus-visible .event-flyer-hint {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            @media (hover: none) {
+                .event-flyer-hint { opacity: 0.9; transform: none; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .event-flyer-hint { transition: opacity var(--motion-fast) linear; transform: none; }
+            }
+
+            /* ── Upcoming event detail lightbox ─────────────────────────────
+               A light editorial card (flyer + when/where facts + formatted
+               body + CTAs) over a dimmed backdrop. Opened by tapping an
+               upcoming card's flyer; mirrors the past-events modal mechanics
+               (.active toggle, body.modal-open, Esc / backdrop close). */
+            .event-detail-modal {
+                position: fixed;
+                inset: 0;
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: clamp(16px, 4vw, 40px);
+                background: rgba(31, 26, 20, 0.55);
+                backdrop-filter: blur(6px);
+                -webkit-backdrop-filter: blur(6px);
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                            visibility 0s linear var(--motion-medium);
+            }
+            .event-detail-modal.active {
+                opacity: 1;
+                visibility: visible;
+                transition: opacity var(--motion-medium) var(--ease-out-soft);
+            }
+            .event-detail-card {
+                position: relative;
+                width: 100%;
+                max-width: 860px;
+                max-height: 90vh;
+                overflow: hidden;
+                background: var(--bg);
+                border-radius: var(--radius-2xl);
+                box-shadow: var(--shadow-overlay);
+                transform: translateY(16px) scale(0.985);
+                opacity: 0;
+                transition: transform var(--motion-medium) var(--ease-out-soft),
+                            opacity var(--motion-medium) var(--ease-out-soft);
+            }
+            .event-detail-modal.active .event-detail-card {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            .event-detail-close {
+                position: absolute;
+                top: 14px;
+                right: 14px;
+                z-index: 4;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                border-radius: var(--radius-circle);
+                background: rgba(255, 255, 255, 0.82);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                box-shadow: var(--shadow-sm);
+                font-size: var(--text-heading);
+                line-height: 1;
+                color: var(--text-primary);
+                cursor: pointer;
+                transition: transform var(--motion-fast) var(--ease-standard),
+                            background var(--motion-fast) var(--ease-standard);
+            }
+            .event-detail-close:hover { background: var(--white); transform: scale(1.06); }
+            .event-detail-content {
+                display: grid;
+                grid-template-columns: 1fr;
+                max-height: 90vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .event-detail-figure {
+                background: var(--surface);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .event-detail-flyer-img {
+                display: block;
+                width: 100%;
+                height: auto;
+                /* Reserve a portrait slot before the image decodes so the card
+                   geometry is stable from frame 0 — a late (cold-cache) image
+                   then fills the slot (object-fit: contain) with no reflow/jump.
+                   max-height clamps it on short viewports; both endpoints are
+                   known pre-load, so there is never a post-fade snap. */
+                aspect-ratio: 3 / 4;
+                max-height: 48vh;
+                object-fit: contain;
+            }
+            .event-detail-placeholder {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+                font-size: 56px;
+            }
+            .event-detail-info {
+                padding: clamp(22px, 3vw, 36px);
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+            .event-detail-eyebrow {
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                color: var(--gold);
+            }
+            .event-detail-title {
+                font-family: var(--font-display);
+                font-size: var(--text-title);
+                font-weight: var(--weight-semibold);
+                line-height: var(--leading-tight);
+                color: var(--text-primary);
+                margin: -4px 0 0;
+            }
+            .event-detail-facts {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: var(--space-sm) var(--space-md);
+                margin: 0;
+                padding: var(--space-md) 0;
+                border-top: 1px solid var(--text-primary-hairline);
+                border-bottom: 1px solid var(--text-primary-hairline);
+            }
+            .event-fact { display: flex; flex-direction: column; gap: 3px; }
+            .event-fact dt {
+                font-size: var(--text-micro);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wide);
+                text-transform: uppercase;
+                color: var(--text-primary-faint);
+            }
+            .event-fact dd {
+                margin: 0;
+                font-size: var(--text-compact);
+                color: var(--text-primary);
+                line-height: var(--leading-snug);
+            }
+            .event-fact dd a {
+                color: var(--gold-dark);
+                text-decoration: none;
+                border-bottom: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+                transition: color var(--motion-fast) var(--ease-standard);
+            }
+            .event-fact dd a:hover { color: var(--gold); }
+            .event-detail-body {
+                font-size: var(--text-body);
+                line-height: var(--leading-normal);
+                color: var(--text-primary-soft);
+            }
+            .event-detail-body p { margin: 0 0 var(--space-sm); }
+            .event-detail-body p:last-child { margin-bottom: 0; }
+            .event-detail-body ul { margin: 0 0 var(--space-sm); padding-left: 1.3em; }
+            .event-detail-body li { margin: 0 0 4px; }
+            .event-detail-ctas {
+                display: flex;
+                flex-wrap: wrap;
+                gap: var(--space-sm);
+                margin-top: var(--space-xs);
+            }
+            .event-detail-ctas .event-link-btn { width: auto; flex: 1 1 auto; min-width: 180px; }
+            @media (min-width: 961px) {
+                .event-detail-content {
+                    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+                    align-items: start;
+                }
+                .event-detail-figure { position: sticky; top: 0; align-self: start; }
+                .event-detail-flyer-img { max-height: 86vh; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .event-detail-modal { transition: opacity var(--motion-fast) linear, visibility 0s linear var(--motion-fast); }
+                .event-detail-card { transition: opacity var(--motion-fast) linear; transform: none; }
+                .event-detail-modal.active .event-detail-card { transform: none; }
+            }
+
             .flyer-image {
                 width: 100%;
                 height: 100%;

@@ -200,6 +200,14 @@ const ANCHOR_SCENARIOS = [
   { name: '86-jump-home-outreach-desktop',  path: '/', anchor: '#outreach', viewport: DESKTOP, expected: 60 },
   { name: '87-jump-home-about-mobile',      path: '/', anchor: '#about',    viewport: MOBILE,  expected: 16 },
   { name: '88-jump-home-watch-desktop',     path: '/', anchor: '#watch',    viewport: DESKTOP, expected: 60 },
+
+  // Per-CTA topic deep-links (e.g. "Join the next cook" → /?topic=…#contact)
+  // reuse the home hashload. The injected "Regarding" banner sits BELOW the
+  // section eyebrow, so it must NOT shift the landing — these assert the
+  // contact section lands exactly where a plain /#contact does (desktop 80,
+  // mobile 32, measured identical with and without ?topic).
+  { name: '89-jump-home-contact-topic-desktop', path: '/?topic=cooking-ministry', anchor: '#contact', viewport: DESKTOP, expected: 80 },
+  { name: '90-jump-home-contact-topic-mobile',  path: '/?topic=cooking-ministry', anchor: '#contact', viewport: MOBILE,  expected: 32 },
 ]
 
 // Performance scenarios — each runs an interaction (scroll / hash / click)
@@ -718,6 +726,17 @@ async function visualProbes(page) {
       // threshold; the 1px slack absorbs sub-pixel rounding.
       const requiredPx = Math.min(opts.HEADING_MIN_VISIBLE_PX, cr.height - 1)
       if (visiblePx < requiredPx) {
+        // Eyebrow tucked behind the header? The section is still LABELED if its
+        // heading reads below the header zone. Home hashloads intentionally tuck
+        // the eyebrow (getHomeAnchorTargetY) — e.g. /#contact lands with the
+        // "Contact" eyebrow behind the nav-shell but "Get in touch." fully
+        // visible. Checking the eyebrow alone wrongly flagged that as covered.
+        if (heading && heading !== candidate) {
+          const hr = heading.getBoundingClientRect()
+          const hVisible = Math.min(hr.bottom, vh) - Math.max(hr.top, fixedHeaderBottom)
+          const hRequired = Math.min(opts.HEADING_MIN_VISIBLE_PX, hr.height - 1)
+          if (!(hr.bottom < 0 || hr.top > vh) && hVisible >= hRequired) continue
+        }
         const sid = s.id
         const hasActiveNav = sid && !!document.querySelector(
           'nav .nav-shell a[href="#' + sid + '"].active, .nav-shell nav a[href="#' + sid + '"].active'

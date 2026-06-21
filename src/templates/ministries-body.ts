@@ -1430,7 +1430,7 @@ export const ministriesBody = (): string => `
                     <span class="section-eyebrow">Questions?</span>
                     <h2 class="section-heading">Want to know more about any of these?</h2>
                     <p class="subpage-final-cta-lead">Reach out and we’ll point you to the right person, whether it’s a Tuesday morning coffee at Caffeina${WEDNESDAY_ENABLED ? ', a Wednesday open gym,' : ''} or just figuring out what Sunday morning will be like for your family.</p>
-                    <a class="event-link-btn teaser-cta" href="/#contact">Contact Us</a>
+                    <a class="event-link-btn teaser-cta" href="/?topic=ministries#contact">Contact Us</a>
                 </section>
             </main>
 

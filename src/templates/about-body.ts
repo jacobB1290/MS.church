@@ -91,7 +91,7 @@ export const aboutBody = (): string => `
                         <div class="leadership-text">
                             <p>Our church is shepherded by a small, accessible leadership team rooted in scripture and committed to walking with our congregation through every season. We’re not a large staff. Leadership is shared among a few who have walked together for years, and we want every conversation to feel personal.</p>
                             <p>Reach out any time. Whether you have a question, a prayer request, or just want to introduce yourself before Sunday, the same handful of people who lead on Sunday morning are the ones who’ll write back.</p>
-                            <p class="leadership-cta-row"><a href="/#contact" class="leadership-cta">Send us a message &rarr;</a></p>
+                            <p class="leadership-cta-row"><a href="/?topic=leadership#contact" class="leadership-cta">Send us a message &rarr;</a></p>
                         </div>
                         <div class="leadership-portrait">
                             <picture>
@@ -110,7 +110,7 @@ export const aboutBody = (): string => `
                     <div class="subpage-cta-row">
                         <a class="event-link-btn" href="/#schedule">See Full Schedule</a>
                         <a class="event-link-btn event-link-btn-secondary" href="/outreach">Explore Outreach</a>
-                        <a class="event-link-btn event-link-btn-secondary" href="/#contact">Contact Us</a>
+                        <a class="event-link-btn event-link-btn-secondary" href="/?topic=visit#contact">Contact Us</a>
                     </div>
                 </section>
             </main>

@@ -6444,6 +6444,53 @@ export const homeStyles = (): string => `
                 padding: 0;
             }
 
+            /* Per-CTA "subject" banner — shown when the contact form is opened
+               with a ?topic= (e.g. "Join the next cook"). Flat editorial
+               treatment: a gold left rule + a small gold label, not a button.
+               JS toggles [hidden] then .is-visible; only opacity + transform
+               animate (never height), so it can't disturb the hashload landing. */
+            .contact-topic-banner {
+                display: flex;
+                align-items: baseline;
+                flex-wrap: wrap;
+                column-gap: var(--space-xs);
+                row-gap: 4px;
+                margin: 0 0 var(--space-sm);
+                padding-left: var(--space-sm);
+                border-left: 2px solid var(--gold);
+                opacity: 0;
+                transform: translateY(6px);
+                transition: opacity var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-medium) var(--ease-out-soft);
+            }
+            .contact-topic-banner.is-visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .contact-topic-banner-label {
+                flex: none;
+                font-family: var(--font-body), 'Inter', sans-serif;
+                font-size: var(--text-eyebrow);
+                font-weight: var(--weight-semibold);
+                letter-spacing: var(--tracking-wider);
+                text-transform: uppercase;
+                color: var(--gold-dark);
+                line-height: 1.2;
+            }
+            .contact-topic-banner-text {
+                font-family: var(--font-display), 'Playfair Display', serif;
+                font-size: var(--text-lead);
+                font-weight: var(--weight-medium);
+                color: var(--text-primary);
+                line-height: var(--leading-snug);
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .contact-topic-banner {
+                    transition: none;
+                    transform: none;
+                }
+            }
+
             .contact-form-col {
                 width: 100%;
             }

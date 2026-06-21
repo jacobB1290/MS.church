@@ -1750,6 +1750,38 @@ export const homeScripts = (): string => `
                         const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                         const labels = { 1: 'Your note', 2: 'How to reach you' };
 
+                        // Per-CTA topic. When the form is opened with ?topic=<slug>
+                        // (a specific CTA like "Join the next cook"), show the
+                        // tailored "subject" banner + prompt and carry the slug to
+                        // the CRM on submit. Unknown slug → plain contact form.
+                        let activeTopicSlug = '';
+                        try {
+                            const rawSlug = new URLSearchParams(location.search).get('topic');
+                            if (rawSlug) {
+                                let topics = {};
+                                const dataEl = document.getElementById('contact-topics');
+                                if (dataEl) { try { topics = JSON.parse(dataEl.textContent || '{}'); } catch (_) {} }
+                                const slug = rawSlug.toLowerCase();
+                                const t = topics[slug];
+                                if (t) {
+                                    activeTopicSlug = slug;
+                                    const headlineEl = document.getElementById('contact-topic-headline');
+                                    const bannerEl = document.getElementById('contact-topic-banner');
+                                    const leadEl = document.getElementById('contact-lead');
+                                    const msgEl = document.getElementById('cf-message');
+                                    if (headlineEl) headlineEl.textContent = t.headline;
+                                    if (leadEl && t.blurb) leadEl.textContent = t.blurb;
+                                    if (msgEl && t.placeholder) msgEl.setAttribute('placeholder', t.placeholder);
+                                    if (bannerEl) {
+                                        // Reserve height now (pre-scroll), animate only opacity+transform.
+                                        bannerEl.hidden = false;
+                                        if (reduceMotion) { bannerEl.classList.add('is-visible'); }
+                                        else { requestAnimationFrame(() => requestAnimationFrame(() => bannerEl.classList.add('is-visible'))); }
+                                    }
+                                }
+                            }
+                        } catch (_) {}
+
                         const showError = (el, msg, focusEl) => {
                             if (el) { el.textContent = msg; el.hidden = false; }
                             if (focusEl) focusEl.focus();
@@ -1795,7 +1827,8 @@ export const homeScripts = (): string => `
                                 message: form.message.value,
                                 updatesOptIn: form.updatesOptIn.checked,
                                 termsAccepted: form.termsAccepted.checked,
-                                sourcePage: '/#contact'
+                                sourcePage: '/#contact',
+                                topic: activeTopicSlug || undefined
                             };
 
                             // Defensive: step 1 gates these, but never submit with them empty.

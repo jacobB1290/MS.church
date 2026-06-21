@@ -1,5 +1,6 @@
 import { type Hono } from 'hono'
 import { createHmac, randomUUID } from 'node:crypto'
+import { resolveContactTopic } from '../contact-topics.js'
 
 // Public contact form receiver. The browser posts plain JSON here; this
 // server-side route signs the exact bytes with PUBLIC_FORM_HMAC_SECRET and
@@ -25,6 +26,9 @@ type ContactBody = {
   updatesOptIn?: boolean
   termsAccepted?: boolean
   sourcePage?: string
+  // Per-CTA "reason" slug (e.g. 'cooking-ministry'). Resolved against the
+  // server-side allowlist in contact-topics.ts; an unknown slug is ignored.
+  topic?: string
 }
 
 const getEnv = (name: string): string | undefined =>
@@ -69,16 +73,25 @@ export function registerContactRoute(app: Hono) {
     const message = (f.message ?? '').trim() || null
     const sourcePage = (f.sourcePage ?? '').trim() || null
 
+    // Per-CTA reason. The slug is whitelisted server-side; an unknown/absent
+    // slug means a plain contact (identical body to before). When present, the
+    // form_id and consent suffix carry the slug (nice provenance + audit), and
+    // the CRM-facing primitives (a suggested interest tag + an inbox category
+    // hint + the human label) ride in `payload` — the CRM persists the whole
+    // payload verbatim and acts on these keys generically.
+    const topic = resolveContactTopic(f.topic)
+    const formId = topic ? topic.slug : 'contact'
+
     // Build the signed body ONCE and sign those exact bytes — the CRM verifies
     // the raw text it receives, so the string we sign must be the string we send.
     const body = JSON.stringify({
       _ts: Date.now(),
       _nonce: randomUUID(),
-      form_id: 'contact',
+      form_id: formId,
       name,
       phone: phone || null,
       email: email || null,
-      consent_method: 'public_form:contact',
+      consent_method: `public_form:${formId}`,
       // "Receive updates" checkbox = express marketing consent.
       marketing_opt_in: Boolean(f.updatesOptIn),
       payload: {
@@ -88,6 +101,14 @@ export function registerContactRoute(app: Hono) {
         updates_opt_in: Boolean(f.updatesOptIn),
         terms_accepted: Boolean(f.termsAccepted),
         source_page: sourcePage,
+        ...(topic
+          ? {
+              topic: topic.slug,
+              topic_label: topic.headline,
+              suggested_tag: topic.tag,
+              category_hint: topic.category,
+            }
+          : {}),
       },
     })
 

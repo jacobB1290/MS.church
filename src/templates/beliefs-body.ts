@@ -199,7 +199,7 @@ export const beliefsBody = (): string => `
                     <span class="section-eyebrow">Questions?</span>
                     <h2 class="section-heading">We’d love to talk with you.</h2>
                     <p class="subpage-final-cta-lead">If anything here raises a question, sparks a conversation, or stirs something you want to talk through, we’re here. Reach out and we’ll get you everything you need.</p>
-                    <a class="event-link-btn teaser-cta" href="/#contact">Contact Us</a>
+                    <a class="event-link-btn teaser-cta" href="/?topic=beliefs#contact">Contact Us</a>
                 </section>
             </main>
 

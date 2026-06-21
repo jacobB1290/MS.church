@@ -1,6 +1,7 @@
 import { type Hono } from 'hono'
 import { GOLD } from '../design-tokens.js'
 import { fetchCalendarEvents } from './calendar.js'
+import { contactTopicsClientJson } from '../contact-topics.js'
 
 // Escape special XML characters in body text (titles, descriptions, etc.).
 const xmlEscape = (s: string): string =>
@@ -502,6 +503,51 @@ ${items}
                   font-weight: var(--weight-bold);
                   margin-bottom: 48px;
               }
+
+              /* Per-CTA "subject" banner — shown when /form is opened with a
+                 ?topic= (e.g. from "Join the next cook"). Flat editorial gold
+                 left rule + label; only opacity + transform animate. */
+              .contact-topic-banner {
+                  display: flex;
+                  align-items: baseline;
+                  flex-wrap: wrap;
+                  column-gap: 12px;
+                  row-gap: 4px;
+                  margin: 0 0 20px;
+                  padding-left: 16px;
+                  border-left: 2px solid var(--gold);
+                  opacity: 0;
+                  transform: translateY(6px);
+                  transition: opacity var(--motion-medium) var(--ease-standard),
+                              transform var(--motion-medium) var(--ease-standard);
+              }
+              .contact-topic-banner.is-visible {
+                  opacity: 1;
+                  transform: translateY(0);
+              }
+              .contact-topic-banner-label {
+                  flex: none;
+                  font-family: var(--font-body);
+                  font-size: var(--text-eyebrow);
+                  font-weight: var(--weight-semibold);
+                  letter-spacing: 0.25em;
+                  text-transform: uppercase;
+                  color: var(--gold-dark);
+                  line-height: 1.2;
+              }
+              .contact-topic-banner-text {
+                  font-family: 'Playfair Display', serif;
+                  font-size: var(--text-lead);
+                  font-weight: var(--weight-medium);
+                  color: var(--text-primary);
+                  line-height: 1.3;
+              }
+              @media (prefers-reduced-motion: reduce) {
+                  .contact-topic-banner {
+                      transition: none;
+                      transform: none;
+                  }
+              }
               
               .form-container {
                   background: rgba(255, 255, 255, 0.85);
@@ -687,6 +733,10 @@ ${items}
           </header>
           
           <div class="content">
+              <p class="contact-topic-banner" id="contact-topic-banner" hidden>
+                  <span class="contact-topic-banner-label">Regarding</span>
+                  <span class="contact-topic-banner-text" id="contact-topic-headline"></span>
+              </p>
               <h2>Get in touch.</h2>
               <div class="form-container" id="form-card">
                   <form id="contact-form-el" novalidate>
@@ -738,6 +788,7 @@ ${items}
               </div>
           </div>
 
+          <script type="application/json" id="contact-topics">${contactTopicsClientJson()}</script>
           <script>
               (function () {
                   const form = document.getElementById('contact-form-el');
@@ -747,6 +798,34 @@ ${items}
                   const card = document.getElementById('form-card');
                   const success = document.getElementById('form-success');
                   const showError = (msg) => { if (errorEl) { errorEl.textContent = msg; errorEl.hidden = false; } };
+
+                  // Per-CTA topic: when /form is opened with ?topic=<slug>, show the
+                  // tailored "subject" banner + prompt and send the slug to the CRM.
+                  let activeTopicSlug = '';
+                  try {
+                      const rawSlug = new URLSearchParams(location.search).get('topic');
+                      if (rawSlug) {
+                          let topics = {};
+                          const dataEl = document.getElementById('contact-topics');
+                          if (dataEl) { try { topics = JSON.parse(dataEl.textContent || '{}'); } catch (_) {} }
+                          const slug = rawSlug.toLowerCase();
+                          const t = topics[slug];
+                          if (t) {
+                              activeTopicSlug = slug;
+                              const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                              const headlineEl = document.getElementById('contact-topic-headline');
+                              const bannerEl = document.getElementById('contact-topic-banner');
+                              const msgEl = document.getElementById('cf-message');
+                              if (headlineEl) headlineEl.textContent = t.headline;
+                              if (msgEl && t.placeholder) msgEl.setAttribute('placeholder', t.placeholder);
+                              if (bannerEl) {
+                                  bannerEl.hidden = false;
+                                  if (reduceMotion) { bannerEl.classList.add('is-visible'); }
+                                  else { requestAnimationFrame(() => requestAnimationFrame(() => bannerEl.classList.add('is-visible'))); }
+                              }
+                          }
+                      }
+                  } catch (_) {}
 
                   form.addEventListener('submit', async (e) => {
                       e.preventDefault();
@@ -760,7 +839,8 @@ ${items}
                           message: form.message.value,
                           updatesOptIn: form.updatesOptIn.checked,
                           termsAccepted: form.termsAccepted.checked,
-                          sourcePage: '/form'
+                          sourcePage: '/form',
+                          topic: activeTopicSlug || undefined
                       };
 
                       if (!data.firstName.trim()) { showError('Please enter your first name.'); form.firstName.focus(); return; }

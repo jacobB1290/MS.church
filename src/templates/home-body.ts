@@ -8,6 +8,7 @@ import { nav } from './shared/nav.js'
 import { navMorph } from './shared/nav-morph.js'
 import { footer } from './shared/footer.js'
 import { WEDNESDAY_ENABLED } from '../config.js'
+import { contactTopicsClientJson } from '../contact-topics.js'
 
 export const homeBody = (): string => `
     <body>
@@ -354,8 +355,12 @@ export const homeBody = (): string => `
                 <section class="contact" id="contact">
                     <div class="contact-header">
                         <span class="section-eyebrow reveal-eyebrow">Contact</span>
+                        <p class="contact-topic-banner" id="contact-topic-banner" hidden>
+                            <span class="contact-topic-banner-label">Regarding</span>
+                            <span class="contact-topic-banner-text" id="contact-topic-headline"></span>
+                        </p>
                         <h2 class="section-heading reveal-rise">Get in touch.</h2>
-                        <p class="section-lead reveal-rise-slow">
+                        <p class="section-lead reveal-rise-slow" id="contact-lead">
                             We&rsquo;d love to hear from you. Whether it&rsquo;s a question, a prayer request, or simply hello, send us a note and someone from our team will be in touch.
                         </p>
                     </div>
@@ -420,6 +425,7 @@ export const homeBody = (): string => `
                             <p class="success-message">Thanks for reaching out. Someone from our team will be in touch soon.</p>
                         </div>
                     </div>
+                    <script type="application/json" id="contact-topics">${contactTopicsClientJson()}</script>
                 </section>
             </main>
 

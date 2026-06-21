@@ -2267,7 +2267,13 @@ export const homeScripts = (): string => `
                     var thumbUrl = video.thumbnailUrl || ('https://img.youtube.com/vi/' + video.videoId + '/maxresdefault.jpg');
                     if (img) {
                         img.src = thumbUrl;
-                        img.alt = video.title || 'Sunday service';
+                        // Descriptive, brand + location alt for image search — the
+                        // raw feed title ("LIVE - Sunday Morning 9:00am | 6/07/2026
+                        // | Morning Star Church of Boise") is upload metadata, not
+                        // good alt text. Anchor it on the real service date.
+                        var _altDate = formatVideoTitle(video.publishedAt);
+                        img.alt = 'Morning Star Christian Church Sunday worship service in Boise, Idaho'
+                            + (_altDate ? ' on ' + _altDate : '');
                         img.onerror = function() {
                             this.onerror = null;
                             this.src = 'https://img.youtube.com/vi/' + video.videoId + '/hqdefault.jpg';
@@ -2472,6 +2478,44 @@ export const homeScripts = (): string => `
                     if (titleEl) titleEl.textContent = formatVideoTitle(video.publishedAt) || 'Sunday service';
                 }
 
+                // Emit a real VideoObject for the latest Sunday service, built
+                // from the live YouTube feed data this page already fetched (no
+                // invented metadata). Google renders this JS and reads the
+                // injected JSON-LD; it makes the archived service eligible for
+                // video rich results and gives AI engines a clean, current
+                // entity. Only injected when we have a real uploadDate so the
+                // VideoObject is complete (name + description + thumbnailUrl +
+                // uploadDate); otherwise skipped rather than shipped incomplete.
+                function injectLatestVideoSchema(video) {
+                    if (!video || !video.videoId || !video.publishedAt) return;
+                    if (document.getElementById('latest-video-jsonld')) return;
+                    var dateLabel = formatVideoTitle(video.publishedAt);
+                    var schema = {
+                        '@context': 'https://schema.org',
+                        '@type': 'VideoObject',
+                        name: 'Sunday Worship at Morning Star Christian Church, Boise'
+                            + (dateLabel ? ' (' + dateLabel + ')' : ''),
+                        description: 'Sunday worship service from Morning Star Christian Church in Boise, Idaho. Live-streamed and archived on our YouTube channel.',
+                        thumbnailUrl: [video.thumbnailUrl || ('https://img.youtube.com/vi/' + video.videoId + '/maxresdefault.jpg')],
+                        uploadDate: video.publishedAt,
+                        contentUrl: 'https://www.youtube.com/watch?v=' + video.videoId,
+                        embedUrl: 'https://www.youtube-nocookie.com/embed/' + video.videoId,
+                        publisher: {
+                            '@type': 'Organization',
+                            name: 'Morning Star Christian Church',
+                            logo: {
+                                '@type': 'ImageObject',
+                                url: 'https://ms.church/static/church-building.jpg'
+                            }
+                        }
+                    };
+                    var s = document.createElement('script');
+                    s.type = 'application/ld+json';
+                    s.id = 'latest-video-jsonld';
+                    s.textContent = JSON.stringify(schema);
+                    document.head.appendChild(s);
+                }
+
                 fetch('/api/youtube/latest-video')
                     .then(function(r) { return r.json(); })
                     .then(function(data) {
@@ -2479,6 +2523,7 @@ export const homeScripts = (): string => `
                         if (videos.length > 0) {
                             setupVideo(videos[0].videoId, videos[0].thumbnailUrl);
                             populateLatestMeta(videos[0]);
+                            injectLatestVideoSchema(videos[0]);
                             if (videos[1]) populateRecentCard(2, videos[1]);
                             if (videos[2]) populateRecentCard(3, videos[2]);
                         } else {

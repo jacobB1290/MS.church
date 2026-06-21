@@ -297,6 +297,10 @@ export const homeHead = (): string => {
         <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
         <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
+        <!-- Watch-section sermon thumbnails are served from img.youtube.com;
+             warm the DNS early (they sit below the fold, so dns-prefetch is
+             the right cost — no wasted preconnect socket up front). -->
+        <link rel="dns-prefetch" href="https://img.youtube.com">
 
         <!-- Preload LCP hero image — three preload candidates, one per format.
              Browsers preload only the format whose type they support, so an
@@ -539,12 +543,7 @@ export const homeHead = (): string => {
                     "publisher": {
                         "@id": "https://ms.church/#church"
                     },
-                    "inLanguage": "en-US",
-                    "potentialAction": {
-                        "@type": "SearchAction",
-                        "target": "https://ms.church/?q={search_term_string}",
-                        "query-input": "required name=search_term_string"
-                    }
+                    "inLanguage": "en-US"
                 },
                 {
                     "@type": "WebPage",
@@ -574,8 +573,8 @@ export const homeHead = (): string => {
                     "logo": {
                         "@type": "ImageObject",
                         "url": "https://ms.church/static/church-building.jpg",
-                        "width": 1200,
-                        "height": 630
+                        "width": 1920,
+                        "height": 1038
                     },
                     "contactPoint": {
                         "@type": "ContactPoint",

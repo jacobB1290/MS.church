@@ -2,6 +2,8 @@ import { type Hono } from 'hono'
 import { GOLD } from '../design-tokens.js'
 import { fetchCalendarEvents } from './calendar.js'
 import { contactTopicsClientJson } from '../contact-topics.js'
+import { fetchAllPublishedSermons, tallyTopics, topicSlug } from '../sermons-feed.js'
+import { posterFor, formatNoun } from '../templates/watch-shared.js'
 
 // Escape special XML characters in body text (titles, descriptions, etc.).
 const xmlEscape = (s: string): string =>
@@ -78,7 +80,7 @@ Sitemap: https://ms.church/sitemap.xml
 
   // sitemap.xml — uses image:image extension so every page exposes its hero
   // image to Google Image search with descriptive caption + title.
-  app.get('/sitemap.xml', (c) => {
+  app.get('/sitemap.xml', async (c) => {
     // Google ignores dynamically-changing lastmod values (their guidance:
     // accurate-or-don't-bother). Bump this constant when meaningful content
     // changes ship — not on every deploy. Per-entry overrides handle the
@@ -87,6 +89,14 @@ Sitemap: https://ms.church/sitemap.xml
     const HOME_LASTMOD = new Date().toISOString().split('T')[0]
     const base = 'https://ms.church'
     type ImageInfo = { loc: string; title: string; caption: string }
+    type VideoInfo = {
+      thumbnail: string
+      title: string
+      description: string
+      playerLoc: string
+      publicationDate?: string
+      durationSec?: number
+    }
     type Entry = {
       loc: string
       lastmod: string
@@ -94,6 +104,7 @@ Sitemap: https://ms.church/sitemap.xml
       priority: string
       image?: ImageInfo
       images?: ImageInfo[]
+      video?: VideoInfo
     }
     const entries: Entry[] = [
       {
@@ -191,20 +202,55 @@ Sitemap: https://ms.church/sitemap.xml
       },
     ]
 
+    // Dynamic: every published service permalink (with a video sitemap block)
+    // plus a page per topic. Degrades to nothing when the CRM feed is unset or
+    // unreachable, so the static map above always renders.
+    const sermons = await fetchAllPublishedSermons().catch(() => [])
+    for (const s of sermons) {
+      const noun = formatNoun(s.format).toLowerCase()
+      const desc = (s.summary ?? s.seo?.description ?? `A ${noun} from Morning Star Christian Church in Boise, Idaho.`).slice(0, 2000)
+      entries.push({
+        loc: `${base}/watch/${s.slug}`,
+        lastmod: s.publishedAt ? s.publishedAt.split('T')[0] : SITE_LASTMOD,
+        changefreq: 'yearly',
+        priority: '0.6',
+        video: {
+          thumbnail: posterFor(s.youtubeVideoId, s.thumbnailUrl),
+          title: s.title.slice(0, 100),
+          description: desc,
+          playerLoc: `https://www.youtube.com/embed/${s.youtubeVideoId}`,
+          publicationDate: s.publishedAt ?? undefined,
+          durationSec: s.durationSec ?? undefined,
+        },
+      })
+    }
+    for (const t of tallyTopics(sermons)) {
+      entries.push({
+        loc: `${base}/watch/topic/${topicSlug(t.topic)}`,
+        lastmod: SITE_LASTMOD,
+        changefreq: 'monthly',
+        priority: '0.5',
+      })
+    }
+
     const urls = entries
       .map((e) => {
         const renderImage = (img: ImageInfo) =>
           `\n    <image:image>\n      <image:loc>${img.loc}</image:loc>\n      <image:title>${xmlEscape(img.title)}</image:title>\n      <image:caption>${xmlEscape(img.caption)}</image:caption>\n    </image:image>`
         const imgs: ImageInfo[] = e.images ?? (e.image ? [e.image] : [])
         const imgBlock = imgs.map(renderImage).join('')
-        return `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.lastmod}</lastmod>\n    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>${imgBlock}\n  </url>`
+        const v = e.video
+        const videoBlock = v
+          ? `\n    <video:video>\n      <video:thumbnail_loc>${xmlEscape(v.thumbnail)}</video:thumbnail_loc>\n      <video:title>${xmlEscape(v.title)}</video:title>\n      <video:description>${xmlEscape(v.description)}</video:description>\n      <video:player_loc>${xmlEscape(v.playerLoc)}</video:player_loc>${v.durationSec ? `\n      <video:duration>${Math.floor(v.durationSec)}</video:duration>` : ''}${v.publicationDate ? `\n      <video:publication_date>${v.publicationDate}</video:publication_date>` : ''}\n      <video:family_friendly>yes</video:family_friendly>\n      <video:live>no</video:live>\n    </video:video>`
+          : ''
+        return `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.lastmod}</lastmod>\n    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>${imgBlock}${videoBlock}\n  </url>`
       })
       .join('\n')
 
     c.header('Content-Type', 'application/xml; charset=utf-8')
     c.header('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400')
     return c.body(
-      `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls}\n</urlset>\n`
+      `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"\n        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">\n${urls}\n</urlset>\n`
     )
   })
 

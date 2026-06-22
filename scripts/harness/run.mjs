@@ -151,6 +151,8 @@ const ANCHOR_SCENARIOS = [
   { name: '06-outreach-mobile',        path: '/outreach',                          viewport: MOBILE,  headingSelector: '.section-eyebrow' },
   { name: '07-visit-desktop',          path: '/visit',                             viewport: DESKTOP, headingSelector: '.section-eyebrow' },
   { name: '08-visit-mobile',           path: '/visit',                             viewport: MOBILE,  headingSelector: '.section-eyebrow' },
+  { name: '09-watch-desktop',          path: '/watch',                             viewport: DESKTOP, headingSelector: '.section-eyebrow' },
+  { name: '09b-watch-mobile',          path: '/watch',                             viewport: MOBILE,  headingSelector: '.section-eyebrow' },
 
   { name: '10-jump-cooking-desktop',   path: '/outreach', anchor: '#cooking-ministry',    viewport: DESKTOP, expected: 90 },
   { name: '11-jump-cooking-mobile',    path: '/outreach', anchor: '#cooking-ministry',    viewport: MOBILE,  expected: 75 },
@@ -166,6 +168,15 @@ const ANCHOR_SCENARIOS = [
   // subpage offsets like every other in-page jump.
   { name: '17b-jump-privacy-terms-desktop', path: '/privacy', anchor: '#terms', viewport: DESKTOP, expected: 90 },
   { name: '17c-jump-privacy-terms-mobile',  path: '/privacy', anchor: '#terms', viewport: MOBILE,  expected: 75 },
+
+  // /watch — the new sermons hub. Same subpage hashload mechanism as /visit, so
+  // its jump-nav anchors must land at the standard subpage offsets (90 desktop,
+  // 75 mobile). #worship sits after the tall sermon/player block, so its landing
+  // is the one most exposed to the player image settling after first paint.
+  { name: '20-jump-watch-worship-desktop',    path: '/watch', anchor: '#worship',    viewport: DESKTOP, expected: 90 },
+  { name: '21-jump-watch-worship-mobile',     path: '/watch', anchor: '#worship',    viewport: MOBILE,  expected: 75 },
+  { name: '22-jump-watch-discussion-desktop', path: '/watch', anchor: '#discussion', viewport: DESKTOP, expected: 90 },
+  { name: '23-jump-watch-discussion-mobile',  path: '/watch', anchor: '#discussion', viewport: MOBILE,  expected: 75 },
 
   // 18s — NETWORK-THROTTLED landing-accuracy. Routine check that
   // the hashload lands at the right offset even when the calendar
@@ -219,6 +230,7 @@ const PERF_SCENARIOS = [
   { name: '32-perf-scroll-visit-mobile',     viewport: MOBILE,  path: '/visit',    action: 'scroll' },
   { name: '33-perf-scroll-outreach-mobile',  viewport: MOBILE,  path: '/outreach', action: 'scroll' },
   { name: '34-perf-scroll-about-mobile',     viewport: MOBILE,  path: '/about',    action: 'scroll' },
+  { name: '34c-perf-scroll-watch-mobile',    viewport: MOBILE,  path: '/watch',    action: 'scroll' },
 
   // 35s — smooth-scroll-to-hash (anchor jumps on the same page).
   { name: '35-perf-hash-visit-sundayschool-mobile', viewport: MOBILE, path: '/visit',    action: 'hash', hash: '#before-you-come' },
@@ -250,6 +262,7 @@ const PERF_SCENARIOS = [
   { name: '43-perf-hashload-outreach-cook-desktop',  viewport: DESKTOP, path: '/outreach', action: 'hashload', hash: '#cooking-ministry' },
   { name: '44-perf-hashload-outreach-cook-mobile',   viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry' },
   { name: '45-perf-hashload-about-mission-mobile',   viewport: MOBILE,  path: '/about',    action: 'hashload', hash: '#mission' },
+  { name: '45b-perf-hashload-watch-discussion-mobile', viewport: MOBILE, path: '/watch',  action: 'hashload', hash: '#discussion' },
 
   // 50s — HARD: CPU-throttled hashload scenarios. Simulates a slow
   // mid-range mobile (4× CPU slowdown). If our scroll path has any

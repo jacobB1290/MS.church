@@ -83,7 +83,7 @@ Sitemap: https://ms.church/sitemap.xml
     // accurate-or-don't-bother). Bump this constant when meaningful content
     // changes ship — not on every deploy. Per-entry overrides handle the
     // home page (event calendar updates weekly) below.
-    const SITE_LASTMOD = '2026-06-11'
+    const SITE_LASTMOD = '2026-06-22'
     const HOME_LASTMOD = new Date().toISOString().split('T')[0]
     const base = 'https://ms.church'
     type ImageInfo = { loc: string; title: string; caption: string }
@@ -167,6 +167,15 @@ Sitemap: https://ms.church/sitemap.xml
           title: 'Plan Your Visit — Morning Star Christian Church',
           caption: 'Morning Star Christian Church exterior at 3080 Wildwood Street in West Boise, Idaho — plan your first Sunday visit.',
         },
+      },
+      {
+        loc: `${base}/watch`,
+        // The rendered HTML is static (the featured video updates client-side
+        // from the live feed), so the honest lastmod is SITE_LASTMOD, not
+        // today — but the content a visitor sees refreshes weekly.
+        lastmod: SITE_LASTMOD,
+        changefreq: 'weekly',
+        priority: '0.9',
       },
       {
         loc: `${base}/form`,

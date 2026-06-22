@@ -329,8 +329,8 @@ export const homeBody = (): string => `
                                     </a>
                                 </div>
 
-                                <a href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" class="event-link-btn event-link-btn--red teaser-cta playlist-btn reveal-fill">
-                                    View Full Playlist
+                                <a href="/watch" class="event-link-btn teaser-cta playlist-btn reveal-fill">
+                                    Explore Sermons
                                 </a>
                             </div>
                         </div>

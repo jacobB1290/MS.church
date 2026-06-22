@@ -27,6 +27,7 @@ export function footer(): string {
 
                     <nav class="footer-nav" aria-label="Footer">
                         <a href="/visit">Visit</a>
+                        <a href="/watch">Watch</a>
                         <a href="/ministries">Ministries</a>
                         <a href="/outreach">Outreach</a>
                         <a href="/about">About</a>

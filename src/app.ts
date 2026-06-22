@@ -10,6 +10,7 @@ import { registerAboutRoute } from './routes/about.js'
 import { registerBeliefsRoute } from './routes/beliefs.js'
 import { registerOutreachRoute } from './routes/outreach.js'
 import { registerVisitRoute } from './routes/visit.js'
+import { registerWatchRoute } from './routes/watch.js'
 import { registerMinistriesRoute } from './routes/ministries.js'
 import { registerPrivacyRoute } from './routes/privacy.js'
 import { registerContactRoute } from './routes/contact.js'
@@ -48,6 +49,7 @@ registerAboutRoute(app)
 registerBeliefsRoute(app)
 registerOutreachRoute(app)
 registerVisitRoute(app)
+registerWatchRoute(app)
 registerMinistriesRoute(app)
 registerPrivacyRoute(app)
 registerContactRoute(app)

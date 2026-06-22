@@ -83,7 +83,7 @@ Sitemap: https://ms.church/sitemap.xml
     // accurate-or-don't-bother). Bump this constant when meaningful content
     // changes ship — not on every deploy. Per-entry overrides handle the
     // home page (event calendar updates weekly) below.
-    const SITE_LASTMOD = '2026-06-11'
+    const SITE_LASTMOD = '2026-06-22'
     const HOME_LASTMOD = new Date().toISOString().split('T')[0]
     const base = 'https://ms.church'
     type ImageInfo = { loc: string; title: string; caption: string }
@@ -169,6 +169,15 @@ Sitemap: https://ms.church/sitemap.xml
         },
       },
       {
+        loc: `${base}/watch`,
+        // The rendered HTML is static (the featured video updates client-side
+        // from the live feed), so the honest lastmod is SITE_LASTMOD, not
+        // today — but the content a visitor sees refreshes weekly.
+        lastmod: SITE_LASTMOD,
+        changefreq: 'weekly',
+        priority: '0.9',
+      },
+      {
         loc: `${base}/form`,
         lastmod: SITE_LASTMOD,
         changefreq: 'monthly',
@@ -197,6 +206,40 @@ Sitemap: https://ms.church/sitemap.xml
     return c.body(
       `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls}\n</urlset>\n`
     )
+  })
+
+  // /llms.txt — curated, plain-language index of the site for AI answer
+  // engines (Perplexity confirms it reads this; Anthropic respects it in
+  // retrieval). Low-confidence ranking benefit and Google ignores it, but
+  // it is trivial to maintain and complements the robots.txt AI-crawler
+  // allow-list. Every URL and fact here is real — no placeholders.
+  app.get('/llms.txt', (c) => {
+    c.header('Content-Type', 'text/plain; charset=utf-8')
+    c.header('Cache-Control', 'public, max-age=86400')
+    return c.text(`# Morning Star Christian Church
+
+> A welcoming, Bible-believing nondenominational Christian church in Boise, Idaho. Sunday worship at 9:00 AM at 3080 Wildwood St, with a free community breakfast after the service, weekday Bible studies, a Friday youth service, and community outreach. Mission: Mending the Broken.
+
+## Pages
+- [Home](https://ms.church/): Service times, weekly schedule, outreach, and how to watch the Sunday service online.
+- [About](https://ms.church/about): The church's mission ("Mending the Broken"), story, and what to expect.
+- [Plan Your Visit](https://ms.church/visit): First-time visitor guide — directions, parking, what to expect, and the Sunday service flow.
+- [Ministries](https://ms.church/ministries): Sunday worship, Bible study, Bible reading, Activity Day, Youth service, and kids' Sunday School.
+- [Outreach](https://ms.church/outreach): Monthly homeless-shelter cooking, the free Sunday community breakfast, and seasonal community events.
+- [Statement of Beliefs](https://ms.church/beliefs): The church's eleven core doctrinal convictions, each with scripture.
+- [Contact](https://ms.church/form): Submit a prayer request, ask a question, or get connected.
+
+## Key facts
+- Address: 3080 Wildwood St, Boise, ID 83713 (West Boise, Five Mile and Ustick area)
+- Sunday worship: 9:00 AM, followed by a free community breakfast open to all
+- Tuesday Bible reading: 8:30 AM at Caffeina State Street
+- Wednesday Activity Day: 6:00 PM (open gym and crochet circle, all ages)
+- Thursday Bible study: 6:00 PM at the church
+- Friday Youth Service: 7:00 PM (ages 15 and up)
+- Denomination: nondenominational, Bible-believing
+- Email: support@ms.church
+- Watch live and past services: https://www.youtube.com/@morningstarboise
+`)
   })
 
   // /.well-known/security.txt — RFC 9116. Trivial trust signal; none of the
@@ -263,6 +306,31 @@ ${items}
   
   // Contact form page
   app.get('/form', (c) => {
+    const formJsonLd = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'ContactPage',
+          '@id': 'https://ms.church/form#page',
+          url: 'https://ms.church/form',
+          name: 'Contact Morning Star Christian Church',
+          description:
+            'Contact Morning Star Christian Church in Boise, Idaho — submit a prayer request, ask a question, or get connected with our community.',
+          isPartOf: { '@id': 'https://ms.church/#website' },
+          about: { '@id': 'https://ms.church/#church' },
+          inLanguage: 'en-US',
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://ms.church/' },
+            { '@type': 'ListItem', position: 2, name: 'Contact', item: 'https://ms.church/form' },
+          ],
+        },
+      ],
+    })
+    // Static funnel page — cache at the edge like the other subpages.
+    c.header('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400')
     return c.html(`
       <!DOCTYPE html>
       <html lang="en">
@@ -271,29 +339,53 @@ ${items}
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
 
           <!-- Primary Meta Tags -->
-          <title>Contact Us | Morning Star Christian Church - Boise, Idaho</title>
-          <meta name="title" content="Contact Us | Morning Star Christian Church - Boise, Idaho">
+          <title>Contact Us · Morning Star Christian Church, Boise</title>
+          <meta name="title" content="Contact Us · Morning Star Christian Church, Boise">
           <meta name="description" content="Get in touch with Morning Star Christian Church in Boise, Idaho. Submit a prayer request, ask questions, or connect with our community. We'd love to hear from you!">
-          <meta name="robots" content="index, follow">
+          <meta name="author" content="Morning Star Christian Church">
+          <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+          <meta name="googlebot" content="index, follow">
           <link rel="canonical" href="https://ms.church/form">
+
+          <!-- Geographic Meta Tags (Local SEO) -->
+          <meta name="geo.region" content="US-ID">
+          <meta name="geo.placename" content="Boise, Idaho">
+          <meta name="geo.position" content="43.6150;-116.2023">
+          <meta name="ICBM" content="43.6150, -116.2023">
           
           <!-- Open Graph / Facebook -->
           <meta property="og:type" content="website">
           <meta property="og:url" content="https://ms.church/form">
-          <meta property="og:title" content="Contact Us | Morning Star Christian Church">
+          <meta property="og:title" content="Contact Us · Morning Star Christian Church">
           <meta property="og:description" content="Get in touch with Morning Star Christian Church in Boise, Idaho. Submit a prayer request or connect with our community.">
+          <meta property="og:image" content="https://ms.church/static/church-building.jpg">
+          <meta property="og:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
           <meta property="og:site_name" content="Morning Star Christian Church">
-          
+          <meta property="og:locale" content="en_US">
+
           <!-- Twitter -->
-          <meta name="twitter:card" content="summary">
+          <meta name="twitter:card" content="summary_large_image">
           <meta name="twitter:url" content="https://ms.church/form">
-          <meta name="twitter:title" content="Contact Us | Morning Star Christian Church">
+          <meta name="twitter:title" content="Contact Us · Morning Star Christian Church">
           <meta name="twitter:description" content="Get in touch with Morning Star Christian Church in Boise, Idaho. Submit a prayer request or connect with our community.">
-          
+          <meta name="twitter:image" content="https://ms.church/static/church-building.jpg">
+          <meta name="twitter:image:alt" content="Morning Star Christian Church building in Boise, Idaho">
+
           <!-- Safari iOS theme-color for status bar and tab bar background -->
           <meta name="theme-color" content="#faf8f5">
           <meta name="apple-mobile-web-app-status-bar-style" content="default">
-          
+
+          <!-- Favicon / manifest / feed parity with the rest of the site -->
+          <link rel="icon" href="/favicon.ico" sizes="any">
+          <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png">
+          <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16.png">
+          <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+          <link rel="manifest" href="/site.webmanifest">
+          <link rel="alternate" type="application/rss+xml" title="Morning Star Christian Church · Events &amp; News" href="/feed.xml">
+
+          <!-- Structured data — ContactPage + breadcrumb (built above) -->
+          <script type="application/ld+json">${formJsonLd}</script>
+
           <!-- Self-hosted fonts — same files the rest of the site uses
                (see home-styles.ts). Replaces the old Google Fonts link so
                /form matches the site's font pipeline (no third-party CSS). -->

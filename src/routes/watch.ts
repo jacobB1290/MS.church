@@ -1,6 +1,6 @@
 import { type Hono } from 'hono'
 import { pageHead } from '../templates/shared/page-head.js'
-import { watchBody, type WatchHubView, type WatchProgramItem } from '../templates/watch-body.js'
+import { watchBody, type WatchHubView } from '../templates/watch-body.js'
 import { watchItemBody } from '../templates/watch-item-body.js'
 import { watchTopicBody } from '../templates/watch-topic-body.js'
 import {
@@ -8,6 +8,7 @@ import {
   fetchSermonBySlug,
   tallyTopics,
   topicSlug,
+  itemTopic,
   type PublishedSermon,
 } from '../sermons-feed.js'
 import {
@@ -31,16 +32,6 @@ const PLAYLIST_URL = `https://www.youtube.com/playlist?list=${YOUTUBE_CONFIG.PLA
 const EVERGREEN_BLURB =
   'Every Sunday we open the Bible and work through it together, sometimes as a sermon, sometimes as a discussion-style lesson, and always grounded in the text. About half an hour, no jargon, nothing you need to bring.'
 
-const EVERGREEN_PROGRAM: WatchProgramItem[] = [
-  { title: 'Welcome', note: 'A brief hello from the front and a moment to settle in.' },
-  { title: 'Opening worship', note: 'Two songs, led live. Lyrics on the screen, sing or just listen.' },
-  { title: 'Scripture', note: 'The morning’s passage, read aloud before we open it.' },
-  { title: 'The message', note: 'A sermon or a discussion-style lesson, grounded in the text, about half an hour.' },
-  { title: 'Response and prayer', note: 'A few quiet minutes to respond, with prayer for anyone who wants it.' },
-  { title: 'A closing song', note: 'One more, to send us out.' },
-  { title: 'Breakfast', note: 'Free breakfast for everyone afterward. No rush to leave.' },
-]
-
 function unionRefs(sermon: PublishedSermon, limit = 6): string[] {
   return Array.from(
     new Set(sermon.segments.flatMap((s) => s.scriptureRefs).filter(Boolean)),
@@ -62,8 +53,6 @@ function buildHubView(
   all: PublishedSermon[],
   latest: { videoId: string; title: string; publishedAt: string | null; thumbnailUrl: string },
 ): WatchHubView {
-  const sermons = all.filter((s) => s.format !== 'discussion')
-  const discussions = all.filter((s) => s.format === 'discussion')
   const newest = all[0] ?? null
 
   if (newest) {
@@ -79,9 +68,7 @@ function buildHubView(
         scriptureRefs: unionRefs(newest),
         href: `/watch/${newest.slug}`,
       },
-      sermons,
-      discussions,
-      program: EVERGREEN_PROGRAM,
+      items: all,
       ytWatchUrl: `https://www.youtube.com/watch?v=${newest.youtubeVideoId}`,
       playlistUrl: PLAYLIST_URL,
     }
@@ -99,9 +86,7 @@ function buildHubView(
       scriptureRefs: [],
       href: null,
     },
-    sermons: [],
-    discussions: [],
-    program: EVERGREEN_PROGRAM,
+    items: [],
     ytWatchUrl: `https://www.youtube.com/watch?v=${latest.videoId}`,
     playlistUrl: PLAYLIST_URL,
   }
@@ -339,10 +324,13 @@ ${watchBody(view)}
   app.get('/watch/topic/:slug', async (c) => {
     const slug = c.req.param('slug')
     const all = await fetchAllPublishedSermons().catch(() => [] as PublishedSermon[])
-    const matches = all.filter((s) => s.topics.some((t) => topicSlug(t) === slug))
+    // One tag per item: a topic page lists items whose PRIMARY topic is this slug.
+    const matches = all.filter((s) => {
+      const t = itemTopic(s)
+      return t ? topicSlug(t) === slug : false
+    })
     if (matches.length === 0) return c.notFound()
-    // The display label is the most common original casing for this slug.
-    const label = matches.flatMap((s) => s.topics).find((t) => topicSlug(t) === slug) ?? slug
+    const label = matches.map((s) => itemTopic(s)).find((t) => t && topicSlug(t) === slug) ?? slug
 
     c.header('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400')
     return c.html(`<!DOCTYPE html>

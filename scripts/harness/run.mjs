@@ -169,14 +169,15 @@ const ANCHOR_SCENARIOS = [
   { name: '17b-jump-privacy-terms-desktop', path: '/privacy', anchor: '#terms', viewport: DESKTOP, expected: 90 },
   { name: '17c-jump-privacy-terms-mobile',  path: '/privacy', anchor: '#terms', viewport: MOBILE,  expected: 75 },
 
-  // /watch — the new sermons hub. Same subpage hashload mechanism as /visit, so
-  // its jump-nav anchors must land at the standard subpage offsets (90 desktop,
-  // 75 mobile). #worship sits after the tall sermon/player block, so its landing
-  // is the one most exposed to the player image settling after first paint.
-  { name: '20-jump-watch-worship-desktop',    path: '/watch', anchor: '#worship',    viewport: DESKTOP, expected: 90 },
-  { name: '21-jump-watch-worship-mobile',     path: '/watch', anchor: '#worship',    viewport: MOBILE,  expected: 75 },
-  { name: '22-jump-watch-discussion-desktop', path: '/watch', anchor: '#discussion', viewport: DESKTOP, expected: 90 },
-  { name: '23-jump-watch-discussion-mobile',  path: '/watch', anchor: '#discussion', viewport: MOBILE,  expected: 75 },
+  // /watch — the service library. Same subpage hashload mechanism as /visit, so
+  // its anchors must land at the standard subpage offsets (90 desktop, 75 mobile).
+  // #latest sits right under the intro; #watch-cta is the last section (the
+  // max-scrollY edge case) — both render in every mode (the library sections
+  // need published content, so they're not in the default no-feed run).
+  { name: '20-jump-watch-latest-desktop', path: '/watch', anchor: '#latest',    viewport: DESKTOP, expected: 90 },
+  { name: '21-jump-watch-latest-mobile',  path: '/watch', anchor: '#latest',    viewport: MOBILE,  expected: 75 },
+  { name: '22-jump-watch-cta-desktop',    path: '/watch', anchor: '#watch-cta', viewport: DESKTOP, expected: 90 },
+  { name: '23-jump-watch-cta-mobile',     path: '/watch', anchor: '#watch-cta', viewport: MOBILE,  expected: 75 },
 
   // 18s — NETWORK-THROTTLED landing-accuracy. Routine check that
   // the hashload lands at the right offset even when the calendar
@@ -262,7 +263,7 @@ const PERF_SCENARIOS = [
   { name: '43-perf-hashload-outreach-cook-desktop',  viewport: DESKTOP, path: '/outreach', action: 'hashload', hash: '#cooking-ministry' },
   { name: '44-perf-hashload-outreach-cook-mobile',   viewport: MOBILE,  path: '/outreach', action: 'hashload', hash: '#cooking-ministry' },
   { name: '45-perf-hashload-about-mission-mobile',   viewport: MOBILE,  path: '/about',    action: 'hashload', hash: '#mission' },
-  { name: '45b-perf-hashload-watch-discussion-mobile', viewport: MOBILE, path: '/watch',  action: 'hashload', hash: '#discussion' },
+  { name: '45b-perf-hashload-watch-cta-mobile', viewport: MOBILE, path: '/watch',  action: 'hashload', hash: '#watch-cta' },
 
   // 50s — HARD: CPU-throttled hashload scenarios. Simulates a slow
   // mid-range mobile (4× CPU slowdown). If our scroll path has any

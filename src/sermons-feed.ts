@@ -194,19 +194,27 @@ export function topicSlug(topic: string): string {
 
 export type TopicTally = { topic: string; slug: string; count: number }
 
-/** Distinct topics across the published library with counts, most-used first. */
+/**
+ * The one tag that represents a published item — the first topic. One tag per
+ * item is a hard design rule, so the whole site (filter chips, topic pages,
+ * sitemap) keys off this, never the full topics array.
+ */
+export function itemTopic(sermon: PublishedSermon): string | null {
+  const t = sermon.topics.find((x) => x.trim())
+  return t ? t.trim() : null
+}
+
+/** Distinct PRIMARY topics across the library with counts, most-used first. */
 export function tallyTopics(sermons: PublishedSermon[]): TopicTally[] {
   const bySlug = new Map<string, TopicTally>()
   for (const s of sermons) {
-    for (const raw of s.topics) {
-      const topic = raw.trim()
-      if (!topic) continue
-      const slug = topicSlug(topic)
-      if (!slug) continue
-      const existing = bySlug.get(slug)
-      if (existing) existing.count++
-      else bySlug.set(slug, { topic, slug, count: 1 })
-    }
+    const topic = itemTopic(s)
+    if (!topic) continue
+    const slug = topicSlug(topic)
+    if (!slug) continue
+    const existing = bySlug.get(slug)
+    if (existing) existing.count++
+    else bySlug.set(slug, { topic, slug, count: 1 })
   }
   return [...bySlug.values()].sort(
     (a, b) => b.count - a.count || a.topic.localeCompare(b.topic),

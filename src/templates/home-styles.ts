@@ -9606,9 +9606,10 @@ export const homeStyles = (): string => `
            per-service permalink. Tokens only; one card design everywhere.
            ============================================================ */
 
-        /* --- Library tabs (Sermons / Discussions) --- */
+        /* --- Library tabs (Sermons / Discussions / Full services) --- */
         .watch-tabs {
             display: flex;
+            flex-wrap: wrap;
             gap: var(--space-md);
             border-bottom: 1px solid var(--text-hairline);
             margin: 0 0 var(--space-lg);
@@ -9631,9 +9632,7 @@ export const homeStyles = (): string => `
         .watch-tab::after {
             content: '';
             position: absolute;
-            left: 0;
-            right: 0;
-            bottom: -1px;
+            left: 0; right: 0; bottom: -1px;
             height: 2px;
             background: var(--gold);
             border-radius: var(--radius-pill);
@@ -9648,8 +9647,15 @@ export const homeStyles = (): string => `
             font-weight: var(--weight-medium);
             color: var(--text-faint);
         }
+        .watch-panel { display: none; }
+        .watch-panel.is-active { display: block; animation: fade-in var(--motion-medium) var(--ease-out-soft); }
+        .watch-panel-lead { margin: 0 0 var(--space-lg); }
+        @media (prefers-reduced-motion: reduce) {
+            .watch-tab::after { transition: none; }
+            .watch-panel.is-active { animation: none; }
+        }
 
-        /* --- Topic filter chips (within a tab) --- */
+        /* --- Topic filter chips --- */
         .watch-filter {
             display: flex;
             flex-wrap: wrap;
@@ -9679,9 +9685,7 @@ export const homeStyles = (): string => `
         }
         .watch-chip-count { opacity: 0.66; margin-left: 5px; font-size: var(--text-micro); }
 
-        /* --- Tab panels: crossfade on switch / filter (reflow stays invisible) --- */
-        .watch-panel { display: none; }
-        .watch-panel.is-active { display: block; }
+        /* --- Grid: crossfade on filter (reflow stays invisible) --- */
         .watch-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
@@ -9805,6 +9809,45 @@ export const homeStyles = (): string => `
         }
         .watch-card-topic:hover { background: color-mix(in oklab, var(--gold) 22%, transparent); }
 
+        /* Duration badge (full-service cards) sits top-right, quiet. */
+        .watch-card-kind--len { left: auto; right: var(--space-xs); font-weight: var(--weight-semibold); }
+
+        /* Message card: the card IS an inline segment player. The .vplayer-stage
+           takes the card-thumb look (rounded, soft shadow, hover lift). */
+        .watch-card--message .vplayer-stage {
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--motion-medium) var(--ease-out-soft),
+                        box-shadow var(--motion-medium) var(--ease-out-soft);
+        }
+        .watch-card--message .vplayer--card:hover .vplayer-stage { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .watch-card--message .vplayer--card .vplayer-poster img { transition: transform var(--motion-slow) var(--ease-out-soft); }
+        .watch-card--message .vplayer--card:hover .vplayer-poster img { transform: scale(1.04); }
+        .watch-card--message .vplayer.is-playing .vplayer-stage { transform: none; box-shadow: var(--shadow-md); }
+        /* Compact control bar on a card. */
+        .vplayer--card .vplayer-bar { padding: 8px 12px; gap: var(--space-xs); box-shadow: none; border: 1px solid var(--text-hairline); margin-top: 8px; }
+        .vplayer--card .vplayer-btn { width: 32px; height: 32px; }
+        .vplayer--card .vplayer-poster-play { width: clamp(46px, 16vw, 56px); height: clamp(46px, 16vw, 56px); }
+
+        .watch-card-body { gap: 5px; }
+        .watch-card-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-sm);
+            margin-top: var(--space-xs);
+        }
+        .watch-card-full {
+            font-size: var(--text-micro);
+            font-weight: var(--weight-semibold);
+            letter-spacing: var(--tracking-wide);
+            color: var(--text-faint);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: color var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-card-full:hover { color: var(--gold-dark); }
+
         .watch-empty {
             padding: var(--space-2xl) 0;
             text-align: center;
@@ -9864,6 +9907,44 @@ export const homeStyles = (): string => `
             color: var(--text-muted); margin: var(--space-xs) 0 0;
         }
         .watch-feature-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-sm); }
+
+        /* Full-service selector: Older/Newer steppers + a by-date list. */
+        .watch-feature { transition: opacity var(--motion-medium) var(--ease-out-soft); }
+        .watch-feature.is-swapping { opacity: 0.25; }
+        .watch-feature-nav { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs); margin-top: var(--space-md); }
+        .watch-feature-step, .watch-feature-listbtn {
+            appearance: none; border: 1px solid var(--text-hairline); background: transparent;
+            color: var(--text-muted); font-family: var(--font-body), 'Inter', sans-serif;
+            font-size: var(--text-small); font-weight: var(--weight-medium);
+            border-radius: var(--radius-pill); padding: 7px 14px; cursor: pointer;
+            transition: color var(--motion-fast) var(--ease-out-soft), border-color var(--motion-fast) var(--ease-out-soft), opacity var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-feature-step:hover:not(:disabled), .watch-feature-listbtn:hover { border-color: var(--gold); color: var(--gold-dark); }
+        .watch-feature-step:disabled { opacity: 0.35; cursor: default; }
+        .watch-feature-listbtn { margin-left: auto; }
+        .watch-feature-count { color: var(--text-faint); margin-left: 5px; }
+        .watch-feature-list {
+            margin-top: var(--space-sm);
+            border: 1px solid var(--text-hairline); border-radius: var(--radius-md);
+            max-height: 0; opacity: 0; visibility: hidden; overflow: hidden;
+            transition: max-height var(--motion-medium) var(--ease-out-soft), opacity var(--motion-medium) var(--ease-out-soft), visibility 0s linear var(--motion-medium);
+        }
+        .watch-feature-list.is-open { max-height: 20rem; opacity: 1; visibility: visible; overflow-y: auto; transition: max-height var(--motion-medium) var(--ease-out-soft), opacity var(--motion-medium) var(--ease-out-soft), visibility 0s; }
+        .watch-feature-list ul { list-style: none; margin: 0; padding: 0; }
+        .watch-feature-li {
+            display: flex; align-items: baseline; gap: var(--space-sm); width: 100%; text-align: left;
+            appearance: none; background: none; border: none; border-bottom: 1px solid var(--text-hairline);
+            padding: 10px 14px; cursor: pointer;
+            transition: background var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-feature-li:last-child { border-bottom: none; }
+        .watch-feature-li:hover { background: var(--surface); }
+        .watch-feature-li.is-current { background: color-mix(in oklab, var(--gold) 9%, transparent); }
+        .watch-feature-li-date { color: var(--gold-dark); font-size: var(--text-micro); font-weight: var(--weight-semibold); white-space: nowrap; min-width: 8ch; }
+        .watch-feature-li-title { color: var(--text-primary); font-size: var(--text-small); }
+        @media (prefers-reduced-motion: reduce) {
+            .watch-feature, .watch-feature-list { transition: none; }
+        }
 
         /* --- Scripture chips (permalink + feature) --- */
         .watch-refs { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-sm); }

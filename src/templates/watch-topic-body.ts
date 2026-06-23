@@ -1,17 +1,17 @@
 import { subpageHeader } from './shared/subpage-header.js'
 import { footer } from './shared/footer.js'
-import { watchCard, escapeHtml } from './watch-shared.js'
+import { messageCard, escapeHtml, watchPlayerScript } from './watch-shared.js'
 import type { PublishedSermon } from '../sermons-feed.js'
 
-// /watch/topic/<slug> — every published service tagged with one AI topic. A real
-// filtered view (its own crawlable URL + schema), and the destination of the
-// topic chips on cards and permalinks.
+// /watch/topic/<slug> — every published message tagged with one AI topic. A real
+// filtered view (its own crawlable URL + schema). Each card plays the message
+// inline, like the hub's messages grid.
 
 export const watchTopicBody = (
   topic: string,
   sermons: PublishedSermon[],
 ): string => {
-  const cards = sermons.map((s) => watchCard(s)).join('\n                        ')
+  const cards = sermons.map((s) => messageCard(s)).join('\n                        ')
   const count = sermons.length
   return `
     <body class="page-subpage">
@@ -22,10 +22,10 @@ export const watchTopicBody = (
                 <section id="watch-intro">
                     <span class="section-eyebrow">Topic</span>
                     <h1 class="section-heading">${escapeHtml(topic)}.</h1>
-                    <p class="subpage-intro-lead">${count} ${count === 1 ? 'service' : 'services'} on ${escapeHtml(topic.toLowerCase())}, each one ready to watch in full right here. <a href="/watch" style="color: var(--gold-dark);">Back to all services</a>.</p>
+                    <p class="subpage-intro-lead">${count} ${count === 1 ? 'message' : 'messages'} on ${escapeHtml(topic.toLowerCase())}, each one ready to watch right here. <a href="/watch" style="color: var(--gold-dark);">Back to all services</a>.</p>
                 </section>
 
-                <section aria-label="Services on this topic">
+                <section aria-label="Messages on this topic">
                     <div class="watch-grid">
                         ${cards}
                     </div>
@@ -41,5 +41,6 @@ export const watchTopicBody = (
 
             ${footer()}
         </div>
+        ${watchPlayerScript()}
     </body>`
 }

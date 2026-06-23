@@ -9985,6 +9985,9 @@ export const homeStyles = (): string => `
             border: none; padding: 0; margin: 0; cursor: pointer;
             background: var(--surface);
             -webkit-tap-highlight-color: transparent;
+            /* Above the preloaded (paused) iframe so it stays hidden behind our
+               poster until playback is confirmed — no flash of YouTube's chrome. */
+            z-index: 2;
         }
         .vplayer-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
         .vplayer-poster-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,0.3) 100%); }
@@ -10000,7 +10003,17 @@ export const homeStyles = (): string => `
         .vplayer-poster-play svg { margin-left: 3px; }
         .vplayer-poster:hover .vplayer-poster-play { transform: translate(-50%, -50%) scale(1.08); }
         .vplayer-poster:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
-        .vplayer-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+        /* Loading: tap gives instant feedback (the play glyph becomes a spinner)
+           while the video buffers, so the wait never reads as a dead first press. */
+        .vplayer.is-loading .vplayer-poster-play svg { display: none; }
+        .vplayer.is-loading .vplayer-poster-play::after {
+            content: ''; width: 42%; height: 42%; border-radius: var(--radius-circle);
+            border: 2px solid rgba(255,255,255,0.35); border-top-color: var(--white);
+            animation: vplayer-spin 0.7s linear infinite;
+        }
+        @keyframes vplayer-spin { to { transform: rotate(360deg); } }
+        @media (prefers-reduced-motion: reduce) { .vplayer.is-loading .vplayer-poster-play::after { animation-duration: 1.4s; } }
+        .vplayer-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1; }
         /* The native YouTube chrome is hidden under our own bar; the iframe still
            handles the actual decode. A thin transparent shield over the iframe
            swallows clicks so the segment can't be scrubbed past via native UI. */

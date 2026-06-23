@@ -295,10 +295,6 @@ export function watchPlayerScript(): string {
   return `<script>
             (function () {
                 var active = null, apiPromise = null;
-                // Warm the IFrame API at idle so when a card is tapped the JS API can attach
-                // to the (already autoplaying) iframe quickly to drive the custom scrubber.
-                function warmAPI() { try { loadAPI(); } catch (e) {} }
-                if (typeof requestIdleCallback === 'function') requestIdleCallback(warmAPI); else setTimeout(warmAPI, 1200);
                 function loadAPI() {
                     if (window.YT && window.YT.Player) return Promise.resolve();
                     if (apiPromise) return apiPromise;
@@ -309,6 +305,23 @@ export function watchPlayerScript(): string {
                     });
                     return apiPromise;
                 }
+                // Warm the API right away so the first preloaded player is ready fast.
+                if (typeof requestIdleCallback === 'function') requestIdleCallback(function(){ loadAPI(); }); else setTimeout(function(){ loadAPI(); }, 600);
+
+                // Pool of PRELOADED (loaded, paused) players. Preloading the player BEFORE
+                // the tap is the whole fix: a ready player's playVideo() called inside the
+                // tap gesture starts on the FIRST press (the home-hero technique). Cap the
+                // idle ones so a long grid can't pile up iframes; a playing one is dropped
+                // from the pool and never evicted.
+                var pool = [];
+                function poolAdd(rec) { if (pool.indexOf(rec) >= 0) return; pool.push(rec); while (pool.length > 4) { var r = pool.shift(); if (r && r.evict) try { r.evict(); } catch (e) {} } }
+                function poolDrop(rec) { var i = pool.indexOf(rec); if (i >= 0) pool.splice(i, 1); }
+                // Preload a card's player once it has dwelt in view (so the play on tap is
+                // in-gesture), and release it when it scrolls well away.
+                var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function (entries) {
+                    entries.forEach(function (en) { var fn = en.target.__vpVisible; if (fn) fn(en.isIntersecting); });
+                }, { rootMargin: '120px 0px 120px 0px', threshold: 0.25 }) : null;
+
                 function fmt(t) { t = Math.max(0, Math.floor(t)); var h = Math.floor(t/3600), m = Math.floor((t%3600)/60), s = t%60; var ss = ('0'+s).slice(-2); return h>0 ? h+':'+('0'+m).slice(-2)+':'+ss : m+':'+ss; }
 
                 function initPlayer(root) {
@@ -333,9 +346,11 @@ export function watchPlayerScript(): string {
                     var playBtn = root.querySelector('[data-act="toggle"]');
                     var chapters = ownsChapters ? Array.prototype.slice.call(document.querySelectorAll('.watch-chapter')) : [];
 
-                    var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false, started = false, iframeEl = null;
+                    var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false, started = false, revealed = false;
+                    var isHero = root.classList.contains('vplayer--main') || root.classList.contains('vplayer--feature');
                     var mode = hasSeg() ? 'segment' : 'full';
-                    var raf = null, fallbackTimer = null, frameId = 'vpf-' + Math.random().toString(36).slice(2);
+                    var raf = null, fallbackTimer = null, dwellTimer = null, frameId = 'vpf-' + Math.random().toString(36).slice(2);
+                    var poolRec = { evict: evictIdle };
 
                     if (root.hasAttribute('data-allow-params')) {
                         try {
@@ -356,50 +371,74 @@ export function watchPlayerScript(): string {
                     // Reset to the poster state — used when the date selector swaps the
                     // featured player's video so the next play loads the new one.
                     root.__resetPlayer = function () {
+                        poolDrop(poolRec); if (dwellTimer) { clearTimeout(dwellTimer); dwellTimer = null; }
                         try { if (player && player.destroy) player.destroy(); } catch (e) {}
-                        player = null; ready = false; fellBack = false; pendingSeek = null; started = false; iframeEl = null;
+                        player = null; ready = false; fellBack = false; pendingSeek = null; started = false; revealed = false;
                         if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
                         cancelAnimationFrame(raf);
                         var fr = stage.querySelector('.vplayer-frame'); if (fr) fr.remove();
-                        poster.style.display = ''; poster.removeAttribute('disabled');
+                        poster.style.display = ''; poster.removeAttribute('disabled'); root.classList.remove('is-loading');
                         bar.hidden = true; root.classList.remove('is-playing');
                         mode = hasSeg() ? 'segment' : 'full';
                         if (active === api) active = null;
                     };
 
-                    function warm() { try { loadAPI(); } catch (e) {} }
+                    // Build the player NOW, paused (autoplay:0), hidden behind our poster, so
+                    // it's fully initialized before any tap. Then start() can play it inside
+                    // the user gesture and it starts on the first press.
+                    function preload() {
+                        if (player || fellBack || !vid()) return;
+                        var mount = document.createElement('div'); mount.id = frameId; mount.className = 'vplayer-frame'; stage.appendChild(mount);
+                        if (!isHero) poolAdd(poolRec);
+                        loadAPI().then(function () {
+                            if (fellBack || player) return;
+                            try {
+                                player = new YT.Player(frameId, {
+                                    videoId: vid(),
+                                    playerVars: { controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 1, start: Math.floor(lo()), autoplay: 0, origin: location.origin },
+                                    events: { onReady: onReady, onStateChange: onState }
+                                });
+                            } catch (e) {}
+                        }).catch(function () {});
+                    }
+                    function evictIdle() {
+                        if (started) return;
+                        try { if (player && player.destroy) player.destroy(); } catch (e) {}
+                        player = null; ready = false;
+                        var fr = stage.querySelector('.vplayer-frame'); if (fr) fr.remove();
+                    }
+                    // Hand the stage to the player — only once playback is CONFIRMED, so our
+                    // poster never blinks away to reveal YouTube's own play screen.
+                    function reveal() {
+                        if (revealed) return; revealed = true;
+                        root.classList.remove('is-loading');
+                        poster.style.display = 'none'; bar.hidden = false;
+                        durEl.textContent = fmt(span()); buildMarkers(); loop();
+                    }
 
-                    // Play, straight from the tap. The iframe is created WITH autoplay=1
-                    // inside the click handler, so the play is part of the user gesture and
-                    // starts on the first press (no landing on YouTube's own play screen and
-                    // tapping again). The JS API then attaches to that same iframe to drive
-                    // the custom scrubber / seek / pause.
+                    // The tap. Plays the (preloaded, ready) player inside the gesture. If the
+                    // player isn't up yet, build it and play the instant it's ready.
                     function start() {
                         if (fellBack) return;
                         if (started) { try { if (player && player.playVideo) player.playVideo(); } catch (e) {} return; }
-                        started = true; claim();
-                        poster.style.display = 'none'; bar.hidden = false;
-                        durEl.textContent = fmt(span()); buildMarkers();
-                        iframeEl = document.createElement('iframe');
-                        iframeEl.id = frameId; iframeEl.className = 'vplayer-frame';
-                        iframeEl.title = 'Service video from Morning Star Christian Church';
-                        iframeEl.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-                        iframeEl.setAttribute('allowfullscreen', '');
-                        iframeEl.src = 'https://www.youtube.com/embed/' + vid() + '?enablejsapi=1&autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&fs=1&start=' + Math.floor(lo()) + '&origin=' + encodeURIComponent(location.origin);
-                        stage.appendChild(iframeEl);
-                        loop();
-                        // Attach the JS API to the now-existing iframe (scrub/seek/pause).
-                        loadAPI().then(function () {
-                            if (fellBack || player || !iframeEl) return;
-                            try { player = new YT.Player(frameId, { events: { onReady: onReady, onStateChange: onState } }); } catch (e) {}
-                        }).catch(function () {});
-                        // If the API never attaches, fall back to native controls so it stays usable.
-                        fallbackTimer = setTimeout(function () { if (!ready) nativeControls(); }, 5000);
+                        started = true; poolDrop(poolRec); claim();
+                        root.classList.add('is-loading'); poster.setAttribute('disabled', '');
+                        if (player && ready) {
+                            if (pendingSeek != null) { doSeek(pendingSeek); pendingSeek = null; }
+                            else { try { player.playVideo(); } catch (e) {} }
+                        } else {
+                            preload();
+                        }
+                        // Safety net: if nothing is playing shortly, a plain autoplay embed.
+                        if (!fallbackTimer) fallbackTimer = setTimeout(function () { if (!revealed) autoplayFallback(); }, 2500);
                     }
-                    function nativeControls() {
-                        if (fellBack || ready) return; fellBack = true;
-                        bar.hidden = true; // our scrubber needs the API; give YouTube's own controls instead
+                    function autoplayFallback() {
+                        if (fellBack || revealed) return; fellBack = true;
+                        poolDrop(poolRec);
+                        try { if (player && player.destroy) player.destroy(); } catch (e) {}
+                        player = null;
                         var old = stage.querySelector('.vplayer-frame'); if (old) old.remove();
+                        root.classList.remove('is-loading'); poster.style.display = 'none'; bar.hidden = true; revealed = true;
                         var f = document.createElement('iframe'); f.className = 'vplayer-frame';
                         f.src = 'https://www.youtube.com/embed/' + vid() + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&start=' + Math.floor(lo());
                         f.title = 'Service video from Morning Star Christian Church';
@@ -407,11 +446,15 @@ export function watchPlayerScript(): string {
                         stage.appendChild(f);
                     }
                     function onReady() {
-                        ready = true; if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
-                        durEl.textContent = fmt(span()); buildMarkers();
+                        ready = true;
+                        if (!started) return; // silent preload — wait, paused, behind the poster
                         if (pendingSeek != null) { doSeek(pendingSeek); pendingSeek = null; }
+                        else { try { player.playVideo(); } catch (e) {} }
                     }
-                    function onState(e) { root.classList.toggle('is-playing', e.data === 1); if (e.data === 1) claim(); }
+                    function onState(e) {
+                        root.classList.toggle('is-playing', e.data === 1);
+                        if (e.data === 1) { started = true; poolDrop(poolRec); claim(); if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; } reveal(); }
+                    }
                     function loop() {
                         cancelAnimationFrame(raf);
                         (function tick() {
@@ -457,16 +500,26 @@ export function watchPlayerScript(): string {
                     function preview(f) { fill.style.width = (f*100) + '%'; knob.style.left = (f*100) + '%'; curEl.textContent = fmt(f * span()); }
 
                     poster.addEventListener('click', start);
-                    // Warm the IFrame API on first intent so it attaches fast after the tap.
-                    poster.addEventListener('pointerenter', warm);
-                    poster.addEventListener('focus', warm);
+                    // Preload ahead of the tap on intent (hover / press / focus) so the play
+                    // lands inside the gesture.
+                    poster.addEventListener('pointerenter', preload);
+                    poster.addEventListener('pointerdown', preload);
+                    poster.addEventListener('focus', preload);
                     playBtn.addEventListener('click', function () { if (!ready) return; try { player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo(); } catch (e) {} });
                     if (toggleBtn) toggleBtn.addEventListener('click', function () { setMode(mode === 'segment' ? 'full' : 'segment'); });
                     scrub.addEventListener('pointerdown', function (e) { if (!ready) return; scrubbing = true; try { scrub.setPointerCapture(e.pointerId); } catch (er) {} preview(frac(e.clientX)); });
                     scrub.addEventListener('pointermove', function (e) { if (scrubbing) preview(frac(e.clientX)); });
                     scrub.addEventListener('pointerup', function (e) { if (!scrubbing) return; scrubbing = false; doSeek(lo() + frac(e.clientX) * span()); });
                     scrub.addEventListener('keydown', function (e) { if (!ready) return; var step = e.shiftKey ? 30 : 5, t = player.getCurrentTime(); if (e.key === 'ArrowRight') { doSeek(Math.min(hi(), t + step)); e.preventDefault(); } else if (e.key === 'ArrowLeft') { doSeek(Math.max(lo(), t - step)); e.preventDefault(); } });
-                    chapters.forEach(function (ch) { ch.addEventListener('click', function () { var t = parseFloat(ch.getAttribute('data-seek') || '0'); if (ready && player) { doSeek(t); } else { pendingSeek = t; start(); } }); });
+                    chapters.forEach(function (ch) { ch.addEventListener('click', function () { var t = parseFloat(ch.getAttribute('data-seek') || '0'); if (ready && player) { started = true; reveal(); doSeek(t); } else { pendingSeek = t; start(); } }); });
+
+                    // Preload eagerly for the single hero; lazily (on approach + dwell) for cards.
+                    root.__vpVisible = function (vis) {
+                        if (vis) { if (!dwellTimer && !player) dwellTimer = setTimeout(function () { dwellTimer = null; preload(); }, 350); }
+                        else { if (dwellTimer) { clearTimeout(dwellTimer); dwellTimer = null; } if (!started) evictIdle(); }
+                    };
+                    if (isHero) preload();
+                    else if (io) io.observe(root);
                 }
 
                 document.querySelectorAll('.vplayer').forEach(initPlayer);

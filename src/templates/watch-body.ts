@@ -2,8 +2,10 @@ import { subpageHeader } from './shared/subpage-header.js'
 import { footer } from './shared/footer.js'
 import {
   messageCard,
+  songCard,
   escapeHtml,
   watchPlayerScript,
+  vplayer,
   posterFor,
   longDate,
   shortDate,
@@ -81,14 +83,12 @@ function renderFallbackFeature(view: WatchHubView): string {
 /* ---- Service selector (library): pick which full service to watch ---- */
 function renderServiceSelector(items: PublishedSermon[]): string {
   const first = items[0]
-  const poster = posterFor(first.youtubeVideoId, first.thumbnailUrl)
   const data = items.map((s) => ({
     slug: s.slug,
     title: s.title,
     poster: posterFor(s.youtubeVideoId, s.thumbnailUrl),
     videoId: s.youtubeVideoId,
-    date: longDate(s.publishedAt) ?? '',
-    short: shortDate(s.publishedAt) ?? '',
+    dur: Math.floor(s.durationSec ?? 0),
     meta: metaLineFor(s),
     blurb: s.summary ?? '',
   }))
@@ -99,22 +99,18 @@ function renderServiceSelector(items: PublishedSermon[]): string {
     )
     .join('\n                            ')
 
+  // The featured plays the WHOLE service inline (no segment). The date selector
+  // swaps which video it points at (the player reads its data attrs live).
   return `<section id="latest" aria-label="Watch a full service">
                     <span class="section-eyebrow">Watch a full service</span>
                     <div class="watch-feature" id="service-feature">
-                        <a class="watch-feature-thumb" id="feature-thumb" href="/watch/${escapeHtml(first.slug)}?full=1" aria-label="Watch the full service">
-                            <img id="feature-img" src="${escapeHtml(poster)}" alt="Sunday service from Morning Star Christian Church in Boise, Idaho." width="1280" height="720" loading="eager" fetchpriority="high"
-                                 onerror="this.onerror=null;this.src='https://img.youtube.com/vi/${escapeHtml(first.youtubeVideoId)}/hqdefault.jpg';">
-                            <span class="watch-feature-play">${PLAY_TRIANGLE}</span>
-                        </a>
+                        <div class="watch-feature-player">${vplayer(first, null, 'feature', 'Sunday service from Morning Star Christian Church in Boise, Idaho.')}</div>
                         <div class="watch-feature-meta">
                             <span class="watch-feature-tag" id="feature-tag">Latest service</span>
                             <h2 class="watch-feature-title" id="feature-title">${escapeHtml(first.title)}</h2>
                             <span class="watch-feature-meta-line" id="feature-meta">${escapeHtml(metaLineFor(first))}</span>
                             <p class="watch-feature-blurb" id="feature-blurb">${escapeHtml(first.summary ?? '')}</p>
-                            <div class="watch-feature-actions">
-                                <a class="event-link-btn teaser-cta" id="feature-cta" href="/watch/${escapeHtml(first.slug)}?full=1">Watch this service</a>
-                            </div>
+                            <a class="watch-feature-fulllink" id="feature-fulllink" href="/watch/${escapeHtml(first.slug)}">Chapters &amp; transcript<span aria-hidden="true"> &rarr;</span></a>
                             ${
                               items.length > 1
                                 ? `<div class="watch-feature-nav" role="group" aria-label="Browse services">
@@ -160,19 +156,36 @@ function messagePanel(id: string, items: PublishedSermon[], active: boolean, lea
                     </div>`
 }
 
+type SongItem = { sermon: PublishedSermon; song: PublishedSermon['songs'][number] }
+
+function songPanel(id: string, songItems: SongItem[], active: boolean, lead: string): string {
+  return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'}>
+                        <p class="section-lead watch-panel-lead">${lead}</p>
+                        <div class="watch-grid">
+                        ${songItems.map((it) => songCard(it.sermon, it.song)).join('\n                        ')}
+                        </div>
+                    </div>`
+}
+
 function renderLibrary(items: PublishedSermon[]): string {
   const sermons = items.filter((s) => s.format !== 'discussion')
   const discussions = items.filter((s) => s.format === 'discussion')
-  const tabs: { id: string; label: string; count: number; items: PublishedSermon[]; lead: string }[] = []
+  // Songs are individual worship clips, flattened across every service.
+  const songItems: SongItem[] = items.flatMap((s) => s.songs.map((song) => ({ sermon: s, song })))
+
+  // One content type at a time. Sermons lead, then Songs, then Discussions.
+  const tabs: { id: string; label: string; count: number; panel: (active: boolean) => string }[] = []
   if (sermons.length > 0)
-    tabs.push({ id: 'sermons', label: 'Sermons', count: sermons.length, items: sermons, lead: 'Tap a sermon and it plays right here, just the message. Filter by topic, or open the full service.' })
+    tabs.push({ id: 'sermons', label: 'Sermons', count: sermons.length, panel: (a) => messagePanel('sermons', sermons, a, 'Tap a sermon and it plays right here, just the message. Filter by topic, or open the full service.') })
+  if (songItems.length > 0)
+    tabs.push({ id: 'songs', label: 'Songs', count: songItems.length, panel: (a) => songPanel('songs', songItems, a, 'Every song we have sung, on its own. Tap one to play just that song.') })
   if (discussions.length > 0)
-    tabs.push({ id: 'discussions', label: 'Discussions', count: discussions.length, items: discussions, lead: 'Two hosts working through the text together. Tap one to play the conversation right here.' })
+    tabs.push({ id: 'discussions', label: 'Discussions', count: discussions.length, panel: (a) => messagePanel('discussions', discussions, a, 'Two hosts working through the text together. Tap one to play the conversation right here.') })
   if (tabs.length === 0) return ''
 
   const tabBar =
     tabs.length > 1
-      ? `<div class="watch-tabs" role="tablist" aria-label="Messages">
+      ? `<div class="watch-tabs" role="tablist" aria-label="Library">
                         ${tabs
                           .map(
                             (t, i) =>
@@ -181,10 +194,10 @@ function renderLibrary(items: PublishedSermon[]): string {
                           .join('\n                        ')}
                     </div>`
       : ''
-  const panels = tabs.map((t, i) => messagePanel(t.id, t.items, i === 0, t.lead)).join('\n                    ')
+  const panels = tabs.map((t, i) => t.panel(i === 0)).join('\n                    ')
 
-  return `<section id="library" aria-label="Messages">
-                    <span class="section-eyebrow">Messages</span>
+  return `<section id="library" aria-label="Library">
+                    <span class="section-eyebrow">Library</span>
                     <h2 class="section-heading">Find a message.</h2>
                     ${tabBar}
                     ${panels}
@@ -233,13 +246,13 @@ export const watchBody = (view: WatchHubView): string => {
                     var data = [];
                     try { data = JSON.parse(dataEl.textContent || '[]'); } catch (e) {}
                     var idx = 0;
-                    var img = document.getElementById('feature-img');
+                    var vp = feature.querySelector('.vplayer');
+                    var img = feature.querySelector('.vplayer-poster img');
                     var tag = document.getElementById('feature-tag');
                     var title = document.getElementById('feature-title');
                     var meta = document.getElementById('feature-meta');
                     var blurb = document.getElementById('feature-blurb');
-                    var cta = document.getElementById('feature-cta');
-                    var thumb = document.getElementById('feature-thumb');
+                    var fulllink = document.getElementById('feature-fulllink');
                     var older = document.getElementById('feature-older');
                     var newer = document.getElementById('feature-newer');
                     var listToggle = document.getElementById('feature-list-toggle');
@@ -248,12 +261,19 @@ export const watchBody = (view: WatchHubView): string => {
                     function paint(i) {
                         var s = data[i]; if (!s) return;
                         idx = i;
-                        var href = '/watch/' + s.slug + '?full=1';
                         var apply = function () {
-                            img.src = s.poster; img.onerror = function () { this.onerror = null; this.src = 'https://img.youtube.com/vi/' + s.videoId + '/hqdefault.jpg'; };
+                            // Point the inline player at the new service (full video),
+                            // reset it to the poster so the next play loads it.
+                            if (vp) {
+                                vp.setAttribute('data-video', s.videoId);
+                                vp.setAttribute('data-duration', String(s.dur || 0));
+                                vp.setAttribute('data-start', '0'); vp.setAttribute('data-end', '0');
+                                if (vp.__resetPlayer) vp.__resetPlayer();
+                            }
+                            if (img) { img.src = s.poster; img.onerror = function () { this.onerror = null; this.src = 'https://img.youtube.com/vi/' + s.videoId + '/hqdefault.jpg'; }; }
                             tag.textContent = i === 0 ? 'Latest service' : 'Past service';
                             title.textContent = s.title; meta.textContent = s.meta; blurb.textContent = s.blurb;
-                            cta.href = href; thumb.href = href;
+                            if (fulllink) fulllink.href = '/watch/' + s.slug;
                         };
                         if (reduce) { apply(); }
                         else { feature.classList.add('is-swapping'); setTimeout(function () { apply(); requestAnimationFrame(function () { feature.classList.remove('is-swapping'); }); }, 160); }

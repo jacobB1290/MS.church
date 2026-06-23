@@ -31,6 +31,14 @@ export type SermonSegment = {
 /** Each week's service is EITHER a sermon OR a 2-host discussion. */
 export type SermonFormat = 'sermon' | 'discussion'
 
+/** An individual worship song within a service (the Songs library item). */
+export type SermonSong = {
+  title: string
+  leader: string | null
+  startSec: number
+  endSec: number
+}
+
 export type PublishedSermon = {
   slug: string
   youtubeVideoId: string
@@ -47,6 +55,8 @@ export type PublishedSermon = {
   summary: string | null
   seo: { description: string; tags: string[] } | null
   segments: SermonSegment[]
+  /** Individual worship songs — the Songs library. */
+  songs: SermonSong[]
   /** Full caption transcript — present on the per-slug permalink for SEO; the
    *  list feed may omit it to stay lean (normalize tolerates either). */
   transcript: string | null
@@ -76,12 +86,28 @@ function isSegment(x: unknown): x is SermonSegment {
   )
 }
 
+/** Validate + normalize one worship song; null if unusable. */
+function normalizeSong(x: unknown): SermonSong | null {
+  if (!x || typeof x !== 'object') return null
+  const s = x as Record<string, unknown>
+  if (typeof s.title !== 'string' || !s.title.trim()) return null
+  if (typeof s.startSec !== 'number' || typeof s.endSec !== 'number') return null
+  if (!(s.endSec > s.startSec)) return null
+  return {
+    title: s.title.trim(),
+    leader: typeof s.leader === 'string' && s.leader.trim() ? s.leader.trim() : null,
+    startSec: s.startSec,
+    endSec: s.endSec,
+  }
+}
+
 /** Validate + normalize one feed item; returns null if it isn't a usable sermon. */
 function normalize(x: unknown): PublishedSermon | null {
   if (!x || typeof x !== 'object') return null
   const s = x as Record<string, unknown>
   if (typeof s.youtubeVideoId !== 'string' || typeof s.title !== 'string') return null
   const segments = Array.isArray(s.segments) ? s.segments.filter(isSegment) : []
+  const songs = Array.isArray(s.songs) ? s.songs.map(normalizeSong).filter((x): x is SermonSong => x !== null) : []
   const seo =
     s.seo && typeof s.seo === 'object' && typeof (s.seo as Record<string, unknown>).description === 'string'
       ? (s.seo as PublishedSermon['seo'])
@@ -103,6 +129,7 @@ function normalize(x: unknown): PublishedSermon | null {
     summary: typeof s.summary === 'string' ? s.summary : null,
     seo,
     segments,
+    songs,
     transcript: typeof s.transcript === 'string' && s.transcript ? s.transcript : null,
   }
 }

@@ -9942,6 +9942,16 @@ export const homeStyles = (): string => `
         .watch-feature-li.is-current { background: color-mix(in oklab, var(--gold) 9%, transparent); }
         .watch-feature-li-date { color: var(--gold-dark); font-size: var(--text-micro); font-weight: var(--weight-semibold); white-space: nowrap; min-width: 8ch; }
         .watch-feature-li-title { color: var(--text-primary); font-size: var(--text-small); }
+        /* The featured cell hosts the full-service inline player. */
+        .watch-feature-player { min-width: 0; }
+        .watch-feature-fulllink {
+            display: inline-flex; align-items: center; gap: 5px; width: fit-content; margin-top: var(--space-sm);
+            font-size: var(--text-small); font-weight: var(--weight-semibold);
+            color: var(--gold-dark); text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-feature-fulllink:hover { border-color: var(--gold); }
         @media (prefers-reduced-motion: reduce) {
             .watch-feature, .watch-feature-list { transition: none; }
         }

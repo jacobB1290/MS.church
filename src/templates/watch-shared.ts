@@ -3,7 +3,7 @@
 // labels, and timestamps the same way (single source of truth — the hub, a
 // topic page, and a "more like this" rail can never drift).
 
-import type { PublishedSermon, SermonSegment, SermonFormat } from '../sermons-feed.js'
+import type { PublishedSermon, SermonSegment, SermonFormat, SermonSong } from '../sermons-feed.js'
 import { topicSlug, itemTopic } from '../sermons-feed.js'
 
 export function escapeHtml(s: string): string {
@@ -139,25 +139,37 @@ const POSTER_PLAY = `<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden
  * below). By default its scrubber spans only the message segment; the permalink
  * variant adds the "Full service" toggle + chapter wiring.
  *
- *   variant 'card' — compact bar, no toggle. The card IS the player.
- *   variant 'main' — permalink hero; honors ?full / ?t and owns the chapter list.
+ *   variant 'card'    — compact bar, no toggle. The card IS the player.
+ *   variant 'main'    — permalink hero; honors ?full / ?t and owns the chapter list.
+ *   variant 'feature' — the hub's full-service hero; plays the WHOLE service
+ *                       (no segment), poster eager. Its video can be swapped by
+ *                       the date selector (the player reads its data attrs live).
+ *
+ * `segOverride` lets a song card play an arbitrary [start,end] slice instead of
+ * the message segment.
  */
 export function vplayer(
   sermon: PublishedSermon,
   primary: SermonSegment | null,
-  variant: 'card' | 'main',
+  variant: 'card' | 'main' | 'feature',
   posterAlt: string,
+  segOverride?: { startSec: number; endSec: number } | null,
+  badge?: string | null,
 ): string {
   const poster = posterFor(sermon.youtubeVideoId, sermon.thumbnailUrl)
-  const segStart = primary ? Math.floor(primary.startSec) : 0
-  const segEnd = primary ? Math.floor(primary.endSec) : 0
+  const seg = segOverride ?? primary
+  const segStart = seg ? Math.floor(seg.startSec) : 0
+  const segEnd = seg ? Math.floor(seg.endSec) : 0
   const duration = Math.floor(sermon.durationSec ?? 0)
   const isMain = variant === 'main'
-  const kindBadge = variant === 'card' ? `<span class="watch-card-kind">${escapeHtml(formatNoun(sermon.format))}</span>` : ''
+  const isFeature = variant === 'feature'
+  const badgeText = badge === undefined ? (variant === 'card' ? formatNoun(sermon.format) : '') : badge || ''
+  const kindBadge = badgeText ? `<span class="watch-card-kind">${escapeHtml(badgeText)}</span>` : ''
+  const loadAttr = isFeature ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"'
   return `<div class="vplayer vplayer--${variant}" data-video="${escapeHtml(sermon.youtubeVideoId)}" data-start="${segStart}" data-end="${segEnd}" data-duration="${duration}"${isMain ? ' data-chapters data-allow-params' : ''}>
                             <div class="vplayer-stage">
                                 <button class="vplayer-poster" type="button" aria-label="Play ${escapeHtml(sermon.title)}">
-                                    <img src="${escapeHtml(poster)}" alt="${escapeHtml(posterAlt)}" width="1280" height="720" loading="lazy" decoding="async"
+                                    <img src="${escapeHtml(poster)}" alt="${escapeHtml(posterAlt)}" width="1280" height="720" ${loadAttr}
                                          onerror="this.onerror=null;this.src='https://img.youtube.com/vi/${escapeHtml(sermon.youtubeVideoId)}/hqdefault.jpg';">
                                     <span class="vplayer-poster-scrim" aria-hidden="true"></span>
                                     <span class="vplayer-poster-play">${POSTER_PLAY}</span>
@@ -244,6 +256,30 @@ export function messageCard(sermon: PublishedSermon): string {
 }
 
 /**
+ * Song card — for the Songs library. The card IS an inline player scoped to the
+ * song's clip (segOverride), so tapping it plays just that song. Title + who led
+ * it; the small jump opens the full service at the song's moment.
+ */
+export function songCard(sermon: PublishedSermon, song: SermonSong): string {
+  const posterAlt = `${song.title} — worship at Morning Star Christian Church in Boise, Idaho`
+  const metaBits = [song.leader ? `led by ${escapeHtml(song.leader)}` : null, shortDate(sermon.publishedAt)]
+    .filter(Boolean)
+    .map((b) => `<span>${b}</span>`)
+    .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
+  return `<article class="watch-card watch-card--message watch-card--song">
+                        ${vplayer(sermon, null, 'card', posterAlt, { startSec: song.startSec, endSec: song.endSec }, '')}
+                        <div class="watch-card-body">
+                            ${metaBits ? `<span class="watch-card-meta">${metaBits}</span>` : ''}
+                            <span class="watch-card-title">${escapeHtml(song.title)}</span>
+                            <div class="watch-card-foot">
+                                <span></span>
+                                <a class="watch-card-full" href="/watch/${escapeHtml(sermon.slug)}?t=${Math.floor(song.startSec)}">Full service<span aria-hidden="true"> &rarr;</span></a>
+                            </div>
+                        </div>
+                    </article>`
+}
+
+/**
  * The reusable client player. Initializes EVERY `.vplayer` on the page (inline
  * cards + the permalink hero) from one implementation. Segment-only scrubber,
  * one-at-a-time playback (starting one pauses the others), a native-embed
@@ -268,11 +304,13 @@ export function watchPlayerScript(): string {
                 function fmt(t) { t = Math.max(0, Math.floor(t)); var h = Math.floor(t/3600), m = Math.floor((t%3600)/60), s = t%60; var ss = ('0'+s).slice(-2); return h>0 ? h+':'+('0'+m).slice(-2)+':'+ss : m+':'+ss; }
 
                 function initPlayer(root) {
-                    var videoId = root.getAttribute('data-video');
-                    var segStart = parseFloat(root.getAttribute('data-start')) || 0;
-                    var segEnd = parseFloat(root.getAttribute('data-end')) || 0;
-                    var fullDur = parseFloat(root.getAttribute('data-duration')) || 0;
-                    var hasSeg = segEnd > segStart + 1;
+                    if (root.__vpInit) return; root.__vpInit = true;
+                    // Read live so the date selector can swap the featured video.
+                    function vid() { return root.getAttribute('data-video'); }
+                    function segStart() { return parseFloat(root.getAttribute('data-start')) || 0; }
+                    function segEnd() { return parseFloat(root.getAttribute('data-end')) || 0; }
+                    function fullDur() { return parseFloat(root.getAttribute('data-duration')) || 0; }
+                    function hasSeg() { return segEnd() > segStart() + 1; }
                     var ownsChapters = root.hasAttribute('data-chapters');
                     var poster = root.querySelector('.vplayer-poster');
                     var stage = root.querySelector('.vplayer-stage');
@@ -288,7 +326,7 @@ export function watchPlayerScript(): string {
                     var chapters = ownsChapters ? Array.prototype.slice.call(document.querySelectorAll('.watch-chapter')) : [];
 
                     var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false;
-                    var mode = hasSeg ? 'segment' : 'full';
+                    var mode = hasSeg() ? 'segment' : 'full';
                     var raf = null, fallbackTimer = null, frameId = 'vpf-' + Math.random().toString(36).slice(2);
 
                     if (root.hasAttribute('data-allow-params')) {
@@ -300,12 +338,26 @@ export function watchPlayerScript(): string {
                         } catch (e) {}
                     }
 
-                    function lo() { return mode === 'segment' ? segStart : 0; }
-                    function hi() { var d = fullDur || (player && player.getDuration ? player.getDuration() : 0) || 0; return mode === 'segment' ? segEnd : d; }
+                    function lo() { return mode === 'segment' ? segStart() : 0; }
+                    function hi() { var d = fullDur() || (player && player.getDuration ? player.getDuration() : 0) || 0; return mode === 'segment' ? segEnd() : d; }
                     function span() { return Math.max(0.001, hi() - lo()); }
 
                     var api = { pause: function () { try { if (player && player.pauseVideo) player.pauseVideo(); } catch (e) {} } };
                     function claim() { if (active && active !== api) active.pause(); active = api; }
+
+                    // Reset to the poster state — used when the date selector swaps the
+                    // featured player's video so the next play loads the new one.
+                    root.__resetPlayer = function () {
+                        try { if (player && player.destroy) player.destroy(); } catch (e) {}
+                        player = null; ready = false; fellBack = false; pendingSeek = null;
+                        if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+                        cancelAnimationFrame(raf);
+                        var fr = stage.querySelector('.vplayer-frame'); if (fr) fr.remove();
+                        poster.style.display = ''; poster.removeAttribute('disabled');
+                        bar.hidden = true; root.classList.remove('is-playing');
+                        mode = hasSeg() ? 'segment' : 'full';
+                        if (active === api) active = null;
+                    };
 
                     function start() {
                         if (player || fellBack) return;
@@ -316,7 +368,7 @@ export function watchPlayerScript(): string {
                         loadAPI().then(function () {
                             if (fellBack) return;
                             player = new YT.Player(frameId, {
-                                videoId: videoId,
+                                videoId: vid(),
                                 playerVars: { controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 1, start: Math.floor(lo()), autoplay: 1, origin: location.origin },
                                 events: { onReady: onReady, onStateChange: onState }
                             });
@@ -327,7 +379,7 @@ export function watchPlayerScript(): string {
                         var m = document.getElementById(frameId); if (m) m.remove();
                         poster.style.display = 'none';
                         var f = document.createElement('iframe'); f.className = 'vplayer-frame';
-                        f.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0&modestbranding=1&start=' + Math.floor(lo());
+                        f.src = 'https://www.youtube.com/embed/' + vid() + '?autoplay=1&rel=0&modestbranding=1&start=' + Math.floor(lo());
                         f.title = 'Service video from Morning Star Christian Church';
                         f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.setAttribute('allowfullscreen', '');
                         stage.appendChild(f);
@@ -345,7 +397,7 @@ export function watchPlayerScript(): string {
                         (function tick() {
                             if (ready && player && player.getCurrentTime) {
                                 var t = player.getCurrentTime();
-                                if (mode === 'segment' && t >= segEnd - 0.2) { try { player.pauseVideo(); player.seekTo(segStart, true); } catch (e) {} t = segStart; root.classList.remove('is-playing'); }
+                                if (mode === 'segment' && t >= segEnd() - 0.2) { try { player.pauseVideo(); player.seekTo(segStart(), true); } catch (e) {} t = segStart(); root.classList.remove('is-playing'); }
                                 if (!scrubbing) {
                                     var p = Math.min(1, Math.max(0, (t - lo()) / span()));
                                     fill.style.width = (p*100) + '%'; knob.style.left = (p*100) + '%';
@@ -378,7 +430,7 @@ export function watchPlayerScript(): string {
                         durEl.textContent = fmt(span()); buildMarkers();
                     }
                     function doSeek(t) {
-                        if (mode === 'segment' && (t < segStart - 0.5 || t > segEnd + 0.5)) setMode('full');
+                        if (mode === 'segment' && (t < segStart() - 0.5 || t > segEnd() + 0.5)) setMode('full');
                         try { player.seekTo(t, true); player.playVideo(); } catch (e) {}
                     }
                     function frac(clientX) { var r = track.getBoundingClientRect(); return Math.min(1, Math.max(0, (clientX - r.left) / r.width)); }

@@ -132,18 +132,24 @@ function renderServiceSelector(items: PublishedSermon[]): string {
 }
 
 /* ---- Library tabs (message types) ---- */
-function topicFilter(items: PublishedSermon[]): string {
-  const topics = tallyTopics(items)
-  if (topics.length <= 1) return ''
-  return `<div class="watch-filter" role="group" aria-label="Filter by topic">
-                            <button class="watch-chip" type="button" data-topic="all" aria-pressed="true">All</button>
-                            ${topics
+
+/** A chip row that filters the panel's cards by a data attribute (key = topic | kind). */
+function filterRow(key: string, label: string, chips: { val: string; label: string; count: number }[]): string {
+  if (chips.length <= 1) return ''
+  return `<div class="watch-filter" role="group" aria-label="${escapeHtml(label)}" data-key="${escapeHtml(key)}">
+                            <button class="watch-chip" type="button" data-val="all" aria-pressed="true">All</button>
+                            ${chips
                               .map(
-                                (t) =>
-                                  `<button class="watch-chip" type="button" data-topic="${escapeHtml(t.slug)}" aria-pressed="false">${escapeHtml(t.topic)}<span class="watch-chip-count">${t.count}</span></button>`,
+                                (c) =>
+                                  `<button class="watch-chip" type="button" data-val="${escapeHtml(c.val)}" aria-pressed="false">${escapeHtml(c.label)}<span class="watch-chip-count">${c.count}</span></button>`,
                               )
                               .join('\n                            ')}
                         </div>`
+}
+
+function topicFilter(items: PublishedSermon[]): string {
+  const topics = tallyTopics(items)
+  return filterRow('topic', 'Filter by topic', topics.map((t) => ({ val: t.slug, label: t.topic, count: t.count })))
 }
 
 function messagePanel(id: string, items: PublishedSermon[], active: boolean, lead: string): string {
@@ -156,13 +162,23 @@ function messagePanel(id: string, items: PublishedSermon[], active: boolean, lea
                     </div>`
 }
 
-type SongItem = { sermon: PublishedSermon; song: PublishedSermon['songs'][number] }
+type SongItem = { sermon: PublishedSermon; song: PublishedSermon['songs'][number]; count: number }
 
 function songPanel(id: string, songItems: SongItem[], active: boolean, lead: string): string {
+  const worship = songItems.filter((it) => it.song.kind !== 'program').length
+  const program = songItems.filter((it) => it.song.kind === 'program').length
+  const filter =
+    worship > 0 && program > 0
+      ? filterRow('kind', 'Filter songs', [
+          { val: 'worship', label: 'Worship', count: worship },
+          { val: 'program', label: 'Program', count: program },
+        ])
+      : ''
   return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'}>
                         <p class="section-lead watch-panel-lead">${lead}</p>
+                        ${filter}
                         <div class="watch-grid">
-                        ${songItems.map((it) => songCard(it.sermon, it.song)).join('\n                        ')}
+                        ${songItems.map((it) => songCard(it.sermon, it.song, it.count)).join('\n                        ')}
                         </div>
                     </div>`
 }
@@ -170,8 +186,19 @@ function songPanel(id: string, songItems: SongItem[], active: boolean, lead: str
 function renderLibrary(items: PublishedSermon[]): string {
   const sermons = items.filter((s) => s.format !== 'discussion')
   const discussions = items.filter((s) => s.format === 'discussion')
-  // Songs are individual worship clips, flattened across every service.
-  const songItems: SongItem[] = items.flatMap((s) => s.songs.map((song) => ({ sermon: s, song })))
+  // Songs recur week to week, so de-dupe by title: one card per unique song,
+  // its newest occurrence, with a count. (items is newest-first, so the first
+  // time we see a title is the most recent one.)
+  const byTitle = new Map<string, SongItem>()
+  for (const s of items) {
+    for (const song of s.songs) {
+      const k = song.title.trim().toLowerCase()
+      const ex = byTitle.get(k)
+      if (ex) ex.count++
+      else byTitle.set(k, { sermon: s, song, count: 1 })
+    }
+  }
+  const songItems: SongItem[] = [...byTitle.values()]
 
   // One content type at a time. Sermons lead, then Songs, then Discussions.
   const tabs: { id: string; label: string; count: number; panel: (active: boolean) => string }[] = []
@@ -317,18 +344,19 @@ export const watchBody = (view: WatchHubView): string => {
                         target.classList.add('is-active'); target.removeAttribute('hidden');
                     });
                 }
-                document.querySelectorAll('.watch-panel, #panel-sermons, #panel-discussions').forEach(function (panel) {
+                document.querySelectorAll('.watch-panel').forEach(function (panel) {
                     var filter = panel.querySelector('.watch-filter');
                     var grid = panel.querySelector('.watch-grid');
                     if (!filter || !grid) return;
+                    var key = filter.getAttribute('data-key') || 'topic';
                     filter.addEventListener('click', function (e) {
                         var chip = e.target.closest('.watch-chip');
                         if (!chip) return;
-                        var topic = chip.getAttribute('data-topic');
+                        var val = chip.getAttribute('data-val');
                         filter.querySelectorAll('.watch-chip').forEach(function (c) { c.setAttribute('aria-pressed', String(c === chip)); });
                         fadeGrid(grid, function () {
                             grid.querySelectorAll('.watch-card').forEach(function (card) {
-                                var show = topic === 'all' || card.getAttribute('data-topic') === topic;
+                                var show = val === 'all' || card.getAttribute('data-' + key) === val;
                                 card.classList.toggle('is-filtered', !show);
                             });
                         });

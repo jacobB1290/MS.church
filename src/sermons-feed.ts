@@ -31,10 +31,16 @@ export type SermonSegment = {
 /** Each week's service is EITHER a sermon OR a 2-host discussion. */
 export type SermonFormat = 'sermon' | 'discussion'
 
+/** Regular congregational worship vs a program song (special/announced). */
+export type SongKind = 'worship' | 'program'
+
 /** An individual worship song within a service (the Songs library item). */
 export type SermonSong = {
   title: string
   leader: string | null
+  kind: SongKind
+  /** One theme tag, shared with the message topic vocabulary. */
+  topic: string | null
   startSec: number
   endSec: number
 }
@@ -96,6 +102,8 @@ function normalizeSong(x: unknown): SermonSong | null {
   return {
     title: s.title.trim(),
     leader: typeof s.leader === 'string' && s.leader.trim() ? s.leader.trim() : null,
+    kind: s.kind === 'program' ? 'program' : 'worship',
+    topic: typeof s.topic === 'string' && s.topic.trim() ? s.topic.trim() : null,
     startSec: s.startSec,
     endSec: s.endSec,
   }

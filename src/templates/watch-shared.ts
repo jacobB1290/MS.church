@@ -260,19 +260,23 @@ export function messageCard(sermon: PublishedSermon): string {
  * song's clip (segOverride), so tapping it plays just that song. Title + who led
  * it; the small jump opens the full service at the song's moment.
  */
-export function songCard(sermon: PublishedSermon, song: SermonSong): string {
-  const posterAlt = `${song.title} — worship at Morning Star Christian Church in Boise, Idaho`
-  const metaBits = [song.leader ? `led by ${escapeHtml(song.leader)}` : null, shortDate(sermon.publishedAt)]
+export function songCard(sermon: PublishedSermon, song: SermonSong, count = 1): string {
+  const isProgram = song.kind === 'program'
+  const posterAlt = `${song.title} — ${isProgram ? 'program song' : 'worship'} at Morning Star Christian Church in Boise, Idaho`
+  const who = song.leader ? `${isProgram ? 'sung by' : 'led by'} ${escapeHtml(song.leader)}` : null
+  const times = count > 1 ? `sung ${count} times` : null
+  const metaBits = [who, times, count > 1 ? `latest ${shortDate(sermon.publishedAt)}` : shortDate(sermon.publishedAt)]
     .filter(Boolean)
     .map((b) => `<span>${b}</span>`)
     .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
-  return `<article class="watch-card watch-card--message watch-card--song">
-                        ${vplayer(sermon, null, 'card', posterAlt, { startSec: song.startSec, endSec: song.endSec }, '')}
+  const topicChip = song.topic ? topicSlug(song.topic) : ''
+  return `<article class="watch-card watch-card--message watch-card--song" data-kind="${song.kind}" data-topic="${escapeHtml(topicChip)}">
+                        ${vplayer(sermon, null, 'card', posterAlt, { startSec: song.startSec, endSec: song.endSec }, isProgram ? 'Program' : '')}
                         <div class="watch-card-body">
                             ${metaBits ? `<span class="watch-card-meta">${metaBits}</span>` : ''}
                             <span class="watch-card-title">${escapeHtml(song.title)}</span>
                             <div class="watch-card-foot">
-                                <span></span>
+                                ${song.topic ? `<a class="watch-card-topic" href="/watch/topic/${escapeHtml(topicChip)}">${escapeHtml(song.topic)}</a>` : '<span></span>'}
                                 <a class="watch-card-full" href="/watch/${escapeHtml(sermon.slug)}?t=${Math.floor(song.startSec)}">Full service<span aria-hidden="true"> &rarr;</span></a>
                             </div>
                         </div>

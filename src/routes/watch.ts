@@ -324,25 +324,40 @@ ${watchBody(view)}
   app.get('/watch/topic/:slug', async (c) => {
     const slug = c.req.param('slug')
     const all = await fetchAllPublishedSermons().catch(() => [] as PublishedSermon[])
-    // One tag per item: a topic page lists items whose PRIMARY topic is this slug.
+    // One tag per item: a topic page lists every message AND song tagged with it.
     const matches = all.filter((s) => {
       const t = itemTopic(s)
       return t ? topicSlug(t) === slug : false
     })
-    if (matches.length === 0) return c.notFound()
-    const label = matches.map((s) => itemTopic(s)).find((t) => t && topicSlug(t) === slug) ?? slug
+    // Songs on this topic, de-duped by title (newest occurrence + count).
+    const songByTitle = new Map<string, { sermon: PublishedSermon; song: PublishedSermon['songs'][number]; count: number }>()
+    for (const s of all) {
+      for (const song of s.songs) {
+        if (!song.topic || topicSlug(song.topic) !== slug) continue
+        const k = song.title.trim().toLowerCase()
+        const ex = songByTitle.get(k)
+        if (ex) ex.count++
+        else songByTitle.set(k, { sermon: s, song, count: 1 })
+      }
+    }
+    const songMatches = [...songByTitle.values()]
+    if (matches.length === 0 && songMatches.length === 0) return c.notFound()
+    const label =
+      (matches.map((s) => itemTopic(s)).find((t) => t && topicSlug(t) === slug) ||
+        songMatches.map((x) => x.song.topic).find((t) => t && topicSlug(t) === slug)) ??
+      slug
 
     c.header('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400')
     return c.html(`<!DOCTYPE html>
 <html lang="en">
 ${pageHead({
   title: `${label} · Watch · Morning Star Christian Church, Boise`,
-  description: `Sermons and discussions on ${label.toLowerCase()} from Morning Star Christian Church in Boise. Watch each one free, right on the site.`,
+  description: `Sermons, discussions, and worship songs on ${label.toLowerCase()} from Morning Star Christian Church in Boise. Watch each one free, right on the site.`,
   canonical: `https://ms.church/watch/topic/${slug}`,
   ogImageAlt: `Sermons on ${label} from Morning Star Christian Church in Boise, Idaho`,
   jsonLd: buildTopicJsonLd(label, slug, matches),
 })}
-${watchTopicBody(label, matches)}
+${watchTopicBody(label, matches, songMatches)}
 </html>`)
   })
 

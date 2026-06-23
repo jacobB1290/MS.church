@@ -308,6 +308,12 @@ export const watchBody = (view: WatchHubView): string => {
                 <section id="watch-intro">
                     <h1 class="section-heading">Watch, anytime.</h1>
                     <p class="subpage-intro-lead">Missed a Sunday, or want to sit with a message again? Watch a whole service, or jump straight to a sermon or discussion by topic. Each one plays right here, nothing to sign up for.</p>
+                    <nav class="subpage-jump subpage-jump--short-set" aria-label="Jump to a section">
+                        <a href="#latest">Latest service</a>
+                        ${library ? '<a href="#library">Find a message</a>' : ''}
+                        <span class="subpage-jump-break" aria-hidden="true"></span>
+                        <a href="#watch-cta">Visit</a>
+                    </nav>
                 </section>
 
                 ${library ? renderServiceSelector(view.items) : renderFallbackFeature(view)}

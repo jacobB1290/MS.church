@@ -132,6 +132,7 @@ export function primaryTopic(sermon: PublishedSermon): string | null {
 const ICON_PLAY = `<svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>`
 const ICON_PAUSE = `<svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>`
 const POSTER_PLAY = `<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>`
+const ICON_EXPAND = `<svg class="icon-expand" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" fill="currentColor"/></svg>`
 
 /**
  * The reusable custom segment player. ONE implementation, used both inline on a
@@ -186,7 +187,10 @@ export function vplayer(
                                     </div>
                                     <span class="vplayer-time" data-dur>0:00</span>
                                 </div>
-                                ${isMain ? `<button class="vplayer-toggle" type="button" data-act="mode" aria-pressed="false">Full service</button>` : ''}
+                                <div class="vplayer-actions">
+                                    ${isMain ? `<button class="vplayer-toggle" type="button" data-act="mode" aria-pressed="false">Full service</button>` : ''}
+                                    <button class="vplayer-btn vplayer-btn--fs" type="button" data-act="fullscreen" aria-label="Full screen">${ICON_EXPAND}</button>
+                                </div>
                             </div>
                         </div>`
 }
@@ -201,9 +205,12 @@ export function serviceCard(sermon: PublishedSermon): string {
   const poster = posterFor(sermon.youtubeVideoId, sermon.thumbnailUrl)
   const noun = formatNoun(sermon.format)
   const len = lengthLabel(sermon.durationSec)
-  const metaBits = [shortDate(sermon.publishedAt), speakerLine(sermon.speakers) ? `with ${escapeHtml(speakerLine(sermon.speakers)!)}` : null]
+  const svcSpeaker = speakerLine(sermon.speakers)
+  const metaBits = [
+    shortDate(sermon.publishedAt) ? `<span class="watch-card-date">${shortDate(sermon.publishedAt)}</span>` : null,
+    svcSpeaker ? `<span class="watch-card-who">with ${escapeHtml(svcSpeaker)}</span>` : null,
+  ]
     .filter(Boolean)
-    .map((b) => `<span>${b}</span>`)
     .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
   return `<article class="watch-card watch-card--service">
                         <a class="watch-card-link" href="${href}" aria-label="${escapeHtml(`Watch the full service: ${sermon.title}`)}">
@@ -237,9 +244,11 @@ export function messageCard(sermon: PublishedSermon, sid?: string): string {
   const date = shortDate(sermon.publishedAt)
   const speaker = speakerLine(sermon.speakers)
   const preview = previewText(sermon)
-  const metaBits = [date, speaker ? `with ${escapeHtml(speaker)}` : null]
+  const metaBits = [
+    date ? `<span class="watch-card-date">${date}</span>` : null,
+    speaker ? `<span class="watch-card-who">with ${escapeHtml(speaker)}</span>` : null,
+  ]
     .filter(Boolean)
-    .map((b) => `<span>${b}</span>`)
     .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
   const posterAlt = `${sermon.title} — ${noun.toLowerCase()} from Morning Star Christian Church in Boise, Idaho`
   return `<article class="watch-card watch-card--message" data-topic="${escapeHtml(topicChip)}"${sid ? ` data-sid="${escapeHtml(sid)}"` : ''}>
@@ -266,9 +275,13 @@ export function songCard(sermon: PublishedSermon, song: SermonSong, count = 1, s
   const posterAlt = `${song.title} — ${isProgram ? 'program song' : 'worship'} at Morning Star Christian Church in Boise, Idaho`
   const who = song.leader ? `${isProgram ? 'sung by' : 'led by'} ${escapeHtml(song.leader)}` : null
   const times = count > 1 ? `sung ${count} times` : null
-  const metaBits = [who, times, count > 1 ? `latest ${shortDate(sermon.publishedAt)}` : shortDate(sermon.publishedAt)]
+  const songDate = count > 1 ? `latest ${shortDate(sermon.publishedAt)}` : shortDate(sermon.publishedAt)
+  const metaBits = [
+    who ? `<span class="watch-card-who">${who}</span>` : null,
+    times ? `<span>${times}</span>` : null,
+    songDate ? `<span class="watch-card-date">${songDate}</span>` : null,
+  ]
     .filter(Boolean)
-    .map((b) => `<span>${b}</span>`)
     .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
   const topicChip = song.topic ? topicSlug(song.topic) : ''
   return `<article class="watch-card watch-card--message watch-card--song" data-kind="${song.kind}" data-topic="${escapeHtml(topicChip)}"${sid ? ` data-sid="${escapeHtml(sid)}"` : ''}>
@@ -345,6 +358,8 @@ export function watchPlayerScript(): string {
                     var durEl = root.querySelector('[data-dur]');
                     var toggleBtn = root.querySelector('[data-act="mode"]');
                     var playBtn = root.querySelector('[data-act="toggle"]');
+                    var fsBtn = root.querySelector('[data-act="fullscreen"]');
+                    var fsCard = root.closest('.watch-card');
                     var chapters = ownsChapters ? Array.prototype.slice.call(document.querySelectorAll('.watch-chapter')) : [];
 
                     var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false, started = false, revealed = false;
@@ -542,6 +557,29 @@ export function watchPlayerScript(): string {
                     poster.addEventListener('focus', preload);
                     playBtn.addEventListener('click', function () { if (!ready) return; try { player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo(); } catch (e) {} });
                     if (toggleBtn) toggleBtn.addEventListener('click', function () { setMode(mode === 'segment' ? 'full' : 'segment'); });
+                    // Fullscreen: expand the STAGE to the top layer (the iframe fills
+                    // it on black). The card's backdrop-filter is neutralized while
+                    // fullscreen so a filtered ancestor can't trap the element, and
+                    // restored on exit. iOS only fullscreens <video>, so the request
+                    // is a guarded no-op there.
+                    function fsActive() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+                    function enterFs() {
+                        var req = stage.requestFullscreen || stage.webkitRequestFullscreen || stage.msRequestFullscreen;
+                        if (!req) return;
+                        if (fsCard) { fsCard.style.backdropFilter = 'none'; fsCard.style.webkitBackdropFilter = 'none'; }
+                        try { var r = req.call(stage); if (r && r.catch) r.catch(function () {}); } catch (e) {}
+                    }
+                    function exitFs() { try { (document.exitFullscreen || document.webkitExitFullscreen || function () {}).call(document); } catch (e) {} }
+                    function onFsChange() {
+                        var on = fsActive() === stage;
+                        root.classList.toggle('is-fs', on);
+                        if (!on && fsCard) { fsCard.style.backdropFilter = ''; fsCard.style.webkitBackdropFilter = ''; }
+                    }
+                    if (fsBtn) {
+                        fsBtn.addEventListener('click', function () { if (!started) start(); if (fsActive() === stage) exitFs(); else enterFs(); });
+                        document.addEventListener('fullscreenchange', onFsChange);
+                        document.addEventListener('webkitfullscreenchange', onFsChange);
+                    }
                     scrub.addEventListener('pointerdown', function (e) { if (!ready) return; scrubbing = true; try { scrub.setPointerCapture(e.pointerId); } catch (er) {} preview(frac(e.clientX)); });
                     scrub.addEventListener('pointermove', function (e) { if (scrubbing) preview(frac(e.clientX)); });
                     scrub.addEventListener('pointerup', function (e) { if (!scrubbing) return; scrubbing = false; doSeek(lo() + frac(e.clientX) * span()); });

@@ -154,6 +154,14 @@ export const homeStyles = (): string => `
                 --text-primary-faint:    rgba(26, 26, 46, 0.55); /* tertiary / metadata */
                 --text-primary-fade:     rgba(26, 26, 46, 0.30); /* placeholders, hints */
                 --text-primary-hairline: rgba(26, 26, 46, 0.10); /* dividers, faint borders */
+                /* Short aliases — the /watch section was authored against these
+                   names; without them its muted/faint text silently fell back to
+                   solid --text-primary (no hierarchy). Map them to the canonical
+                   alphas so the intended type hierarchy renders. */
+                --text-soft:             var(--text-primary-soft);
+                --text-muted:            var(--text-primary-muted);
+                --text-faint:            var(--text-primary-faint);
+                --text-fade:             var(--text-primary-fade);
 
                 /* ── Spacing scale — T-shirt sizing ──
                    Each token is a fluid clamp() tuned to the existing
@@ -9831,11 +9839,14 @@ export const homeStyles = (): string => `
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 6px;
-            font-size: var(--text-micro);
-            color: var(--text-faint);
+            gap: 7px;
+            font-size: var(--text-small);
+            font-weight: var(--weight-medium);
+            color: var(--text-soft);
         }
-        .watch-card-dot { opacity: 0.6; }
+        .watch-card-date { color: var(--text-soft); }
+        .watch-card-who { color: var(--text-primary); font-weight: var(--weight-semibold); }
+        .watch-card-dot { color: var(--text-fade); }
         .watch-card-title {
             font-family: var(--font-display);
             font-size: var(--text-heading);
@@ -9874,10 +9885,31 @@ export const homeStyles = (): string => `
         /* Duration badge (full-service cards) sits top-right, quiet. */
         .watch-card-kind--len { left: auto; right: var(--space-xs); font-weight: var(--weight-semibold); }
 
-        /* Message card: the card IS an inline segment player. The .vplayer-stage
-           takes the card-thumb look (rounded, soft shadow, hover lift). */
-        .watch-card--message .vplayer-stage {
-            border-radius: var(--radius-md);
+        /* Library cards (message + song): equal padding on all sides so the
+           thumbnail can nest CONCENTRICALLY inside the card corner. The frosted
+           --radius-2xl corner is kept; the padding is one token (--wc-pad) used
+           both as the card padding AND subtracted from the card radius to give
+           the thumbnail its own radius — concentric at every viewport width
+           (inner_radius = outer_radius - padding). */
+        .watch-card--message,
+        .watch-card--song {
+            --wc-pad: var(--space-md);
+            --wc-radius: var(--radius-2xl);
+            padding: var(--wc-pad);
+            border-radius: var(--wc-radius);
+        }
+        /* The card variant of the player carries no permalink bottom-margin; the
+           thumbnail-to-text rhythm is owned by the body's padding-top instead.
+           Scoped under .watch-card so it beats the base .vplayer margin rule
+           (which is defined later in source at equal specificity). */
+        .watch-card .vplayer--card { margin: 0; }
+
+        /* Message/song card: the card IS an inline segment player. The
+           .vplayer-stage takes the card-thumb look (concentric corner, soft
+           shadow, hover lift). */
+        .watch-card--message .vplayer-stage,
+        .watch-card--song .vplayer-stage {
+            border-radius: calc(var(--wc-radius) - var(--wc-pad));
             box-shadow: var(--shadow-sm);
             transition: transform var(--motion-medium) var(--ease-out-soft),
                         box-shadow var(--motion-medium) var(--ease-out-soft);
@@ -10143,6 +10175,21 @@ export const homeStyles = (): string => `
             transition: color var(--motion-fast) var(--ease-out-soft), border-color var(--motion-fast) var(--ease-out-soft);
         }
         .vplayer-toggle:hover { color: var(--gold-dark); border-color: var(--gold); }
+        /* Right-hand control group in the bar: optional Full-service toggle +
+           the fullscreen (expand) button, kept together on the bar's right. */
+        .vplayer-actions { display: flex; align-items: center; gap: var(--space-xs); }
+        .vplayer-btn--fs { color: var(--text-muted); }
+        .vplayer-btn--fs:hover { background: var(--surface); color: var(--gold-dark); }
+
+        /* Fullscreen: the stage becomes the top-layer fullscreen element; the
+           iframe fills it on black, corners squared, no aspect-ratio box. */
+        .vplayer-stage:fullscreen,
+        .vplayer-stage:-webkit-full-screen {
+            width: 100vw; height: 100vh; aspect-ratio: auto;
+            border-radius: 0; box-shadow: none; background: #000;
+        }
+        .vplayer-stage:fullscreen .vplayer-frame,
+        .vplayer-stage:-webkit-full-screen .vplayer-frame { width: 100%; height: 100%; }
 
         /* --- Permalink layout --- */
         .watch-permalink-head { margin-bottom: var(--space-lg); }

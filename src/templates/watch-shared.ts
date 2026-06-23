@@ -155,6 +155,7 @@ export function vplayer(
   posterAlt: string,
   segOverride?: { startSec: number; endSec: number } | null,
   badge?: string | null,
+  fadeAudio?: boolean,
 ): string {
   const poster = posterFor(sermon.youtubeVideoId, sermon.thumbnailUrl)
   const seg = segOverride ?? primary
@@ -166,7 +167,7 @@ export function vplayer(
   const badgeText = badge === undefined ? (variant === 'card' ? formatNoun(sermon.format) : '') : badge || ''
   const kindBadge = badgeText ? `<span class="watch-card-kind">${escapeHtml(badgeText)}</span>` : ''
   const loadAttr = isFeature ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"'
-  return `<div class="vplayer vplayer--${variant}" data-video="${escapeHtml(sermon.youtubeVideoId)}" data-start="${segStart}" data-end="${segEnd}" data-duration="${duration}"${isMain ? ' data-chapters data-allow-params' : ''}>
+  return `<div class="vplayer vplayer--${variant}" data-video="${escapeHtml(sermon.youtubeVideoId)}" data-start="${segStart}" data-end="${segEnd}" data-duration="${duration}"${isMain ? ' data-chapters data-allow-params' : ''}${fadeAudio ? ' data-fade' : ''}>
                             <div class="vplayer-stage">
                                 <button class="vplayer-poster" type="button" aria-label="Play ${escapeHtml(sermon.title)}">
                                     <img src="${escapeHtml(poster)}" alt="${escapeHtml(posterAlt)}" width="1280" height="720" ${loadAttr}
@@ -271,7 +272,7 @@ export function songCard(sermon: PublishedSermon, song: SermonSong, count = 1, s
     .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
   const topicChip = song.topic ? topicSlug(song.topic) : ''
   return `<article class="watch-card watch-card--message watch-card--song" data-kind="${song.kind}" data-topic="${escapeHtml(topicChip)}"${sid ? ` data-sid="${escapeHtml(sid)}"` : ''}>
-                        ${vplayer(sermon, null, 'card', posterAlt, { startSec: song.startSec, endSec: song.endSec }, isProgram ? 'Program' : '')}
+                        ${vplayer(sermon, null, 'card', posterAlt, { startSec: song.startSec, endSec: song.endSec }, isProgram ? 'Program' : '', true)}
                         <div class="watch-card-body">
                             ${metaBits ? `<span class="watch-card-meta">${metaBits}</span>` : ''}
                             <span class="watch-card-title">${escapeHtml(song.title)}</span>
@@ -347,6 +348,31 @@ export function watchPlayerScript(): string {
                     var chapters = ownsChapters ? Array.prototype.slice.call(document.querySelectorAll('.watch-chapter')) : [];
 
                     var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false, started = false, revealed = false;
+                    // Audio fade for song clips (data-fade): the clip eases up from silence
+                    // as it starts and eases back down as it reaches its end, so a tapped
+                    // song never cuts in or out abruptly. Only song cards opt in; the hero
+                    // and the message play at full volume. iOS ignores setVolume (hardware
+                    // volume), so it just plays normally there — no fade, never stuck silent.
+                    var doFade = root.hasAttribute('data-fade');
+                    var fadeRaf = null, targetVol = null, didFadeIn = false, didFadeOut = false;
+                    var FADE_IN_MS = 800, FADE_OUT_MS = 700;
+                    var reduceMotion = false; try { reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+                    function cancelFade() { if (fadeRaf) { cancelAnimationFrame(fadeRaf); fadeRaf = null; } }
+                    function rampVol(from, to, ms) {
+                        cancelFade();
+                        if (!player || !player.setVolume) return;
+                        if (reduceMotion || ms <= 0) { try { player.setVolume(Math.round(to)); } catch (e) {} return; }
+                        var t0 = (window.performance && performance.now) ? performance.now() : Date.now();
+                        (function step() {
+                            var now = (window.performance && performance.now) ? performance.now() : Date.now();
+                            var k = Math.min(1, (now - t0) / ms);
+                            var eased = 0.5 - 0.5 * Math.cos(Math.PI * k); // easeInOutSine, gentle on the ear
+                            try { player.setVolume(Math.round(from + (to - from) * eased)); } catch (er) {}
+                            if (k < 1) fadeRaf = requestAnimationFrame(step); else fadeRaf = null;
+                        })();
+                    }
+                    function fadeInAudio() { try { player.setVolume(0); } catch (e) {} rampVol(0, targetVol == null ? 100 : targetVol, FADE_IN_MS); }
+                    function fadeOutAudio(ms) { var cur = 100; try { cur = player.getVolume(); } catch (e) {} if (cur == null || isNaN(cur)) cur = (targetVol == null ? 100 : targetVol); rampVol(cur, 0, ms); }
                     var isHero = root.classList.contains('vplayer--main') || root.classList.contains('vplayer--feature');
                     var mode = hasSeg() ? 'segment' : 'full';
                     var raf = null, fallbackTimer = null, dwellTimer = null, frameId = 'vpf-' + Math.random().toString(36).slice(2);
@@ -376,6 +402,7 @@ export function watchPlayerScript(): string {
                         player = null; ready = false; fellBack = false; pendingSeek = null; started = false; revealed = false;
                         if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
                         cancelAnimationFrame(raf);
+                        cancelFade(); targetVol = null; didFadeIn = false; didFadeOut = false;
                         var fr = stage.querySelector('.vplayer-frame'); if (fr) fr.remove();
                         poster.style.display = ''; poster.removeAttribute('disabled'); root.classList.remove('is-loading');
                         bar.hidden = true; root.classList.remove('is-playing');
@@ -403,6 +430,7 @@ export function watchPlayerScript(): string {
                     }
                     function evictIdle() {
                         if (started) return;
+                        cancelFade();
                         try { if (player && player.destroy) player.destroy(); } catch (e) {}
                         player = null; ready = false;
                         var fr = stage.querySelector('.vplayer-frame'); if (fr) fr.remove();
@@ -447,20 +475,27 @@ export function watchPlayerScript(): string {
                     }
                     function onReady() {
                         ready = true;
+                        if (doFade) { try { var tv = player.getVolume ? player.getVolume() : 100; targetVol = (tv == null || isNaN(tv)) ? 100 : tv; player.setVolume(0); } catch (e) {} }
                         if (!started) return; // silent preload — wait, paused, behind the poster
                         if (pendingSeek != null) { doSeek(pendingSeek); pendingSeek = null; }
                         else { try { player.playVideo(); } catch (e) {} }
                     }
                     function onState(e) {
                         root.classList.toggle('is-playing', e.data === 1);
-                        if (e.data === 1) { started = true; poolDrop(poolRec); claim(); if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; } reveal(); }
+                        if (e.data === 1) {
+                            started = true; poolDrop(poolRec); claim(); if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; } reveal();
+                            // Fade up only when the clip is starting from its top; a resume
+                            // after a manual pause or a scrub keeps the volume it had.
+                            if (doFade && !didFadeIn) { var ct = lo(); try { ct = player.getCurrentTime(); } catch (er) {} if (ct <= lo() + 1.2) { didFadeIn = true; fadeInAudio(); } }
+                        }
                     }
                     function loop() {
                         cancelAnimationFrame(raf);
                         (function tick() {
                             if (ready && player && player.getCurrentTime) {
                                 var t = player.getCurrentTime();
-                                if (mode === 'segment' && t >= segEnd() - 0.2) { try { player.pauseVideo(); player.seekTo(segStart(), true); } catch (e) {} t = segStart(); root.classList.remove('is-playing'); }
+                                if (doFade && mode === 'segment' && !didFadeOut && t >= segEnd() - 0.2 - (FADE_OUT_MS / 1000) && t < segEnd() - 0.2) { didFadeOut = true; fadeOutAudio(Math.max(150, (segEnd() - 0.2 - t) * 1000)); }
+                                if (mode === 'segment' && t >= segEnd() - 0.2) { try { player.pauseVideo(); player.seekTo(segStart(), true); } catch (e) {} t = segStart(); root.classList.remove('is-playing'); if (doFade) { cancelFade(); try { player.setVolume(0); } catch (e) {} didFadeIn = false; didFadeOut = false; } }
                                 if (!scrubbing) {
                                     var p = Math.min(1, Math.max(0, (t - lo()) / span()));
                                     fill.style.width = (p*100) + '%'; knob.style.left = (p*100) + '%';

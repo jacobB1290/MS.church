@@ -295,6 +295,18 @@ export function watchPlayerScript(): string {
   return `<script>
             (function () {
                 var active = null, apiPromise = null;
+                // Idle pool of PRELOADED-but-not-yet-played players. Hovering or pressing
+                // a card warms its player ahead of the tap, so the actual playVideo() runs
+                // inside the user gesture (the home-hero technique) instead of well after —
+                // which is what stops "tap, land on the YouTube screen, tap play again".
+                // Cap the idle ones so scanning the grid can't pile iframes up.
+                var idlePool = [];
+                function poolAdd(kill) { idlePool.push(kill); while (idlePool.length > 3) { var k = idlePool.shift(); try { k(); } catch (e) {} } }
+                function poolRemove(kill) { var i = idlePool.indexOf(kill); if (i >= 0) idlePool.splice(i, 1); }
+                // Warm the IFrame API during idle time so the FIRST play's onReady fires
+                // fast (inside the gesture window), not seconds later.
+                function warmAPI() { try { loadAPI(); } catch (e) {} }
+                if (typeof requestIdleCallback === 'function') requestIdleCallback(warmAPI); else setTimeout(warmAPI, 1200);
                 function loadAPI() {
                     if (window.YT && window.YT.Player) return Promise.resolve();
                     if (apiPromise) return apiPromise;
@@ -329,7 +341,8 @@ export function watchPlayerScript(): string {
                     var playBtn = root.querySelector('[data-act="toggle"]');
                     var chapters = ownsChapters ? Array.prototype.slice.call(document.querySelectorAll('.watch-chapter')) : [];
 
-                    var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false;
+                    var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false, wantPlay = false, preloadTimer = null, loadingPreload = false;
+                    var isHero = root.classList.contains('vplayer--main') || root.classList.contains('vplayer--feature');
                     var mode = hasSeg() ? 'segment' : 'full';
                     var raf = null, fallbackTimer = null, frameId = 'vpf-' + Math.random().toString(36).slice(2);
 
@@ -352,8 +365,9 @@ export function watchPlayerScript(): string {
                     // Reset to the poster state — used when the date selector swaps the
                     // featured player's video so the next play loads the new one.
                     root.__resetPlayer = function () {
+                        cancelScheduledPreload(); poolRemove(killIdle);
                         try { if (player && player.destroy) player.destroy(); } catch (e) {}
-                        player = null; ready = false; fellBack = false; pendingSeek = null;
+                        player = null; ready = false; fellBack = false; pendingSeek = null; wantPlay = false; loadingPreload = false;
                         if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
                         cancelAnimationFrame(raf);
                         var fr = stage.querySelector('.vplayer-frame'); if (fr) fr.remove();
@@ -363,23 +377,55 @@ export function watchPlayerScript(): string {
                         if (active === api) active = null;
                     };
 
-                    function start() {
-                        if (player || fellBack) return;
-                        claim();
-                        poster.setAttribute('disabled', '');
+                    // Build the player BEHIND our poster, paused (autoplay:0). Triggered on
+                    // hover/press BEFORE the click, so by tap time it's ready and the real
+                    // playVideo() runs inside the user gesture.
+                    function preload() {
+                        if (player || fellBack || loadingPreload) return;
+                        loadingPreload = true;
                         var mount = document.createElement('div'); mount.id = frameId; mount.className = 'vplayer-frame'; stage.appendChild(mount);
-                        fallbackTimer = setTimeout(function () { if (!ready) nativeFallback(); }, 6000);
+                        if (!isHero) poolAdd(killIdle);
                         loadAPI().then(function () {
-                            if (fellBack) return;
+                            loadingPreload = false;
+                            if (fellBack || player) return;
                             player = new YT.Player(frameId, {
                                 videoId: vid(),
-                                playerVars: { controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 1, start: Math.floor(lo()), autoplay: 1, origin: location.origin },
+                                playerVars: { controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 1, start: Math.floor(lo()), autoplay: 0, origin: location.origin },
                                 events: { onReady: onReady, onStateChange: onState }
                             });
-                        }).catch(function () { if (!ready) nativeFallback(); });
+                        }).catch(function () { loadingPreload = false; if (wantPlay && !ready) nativeFallback(); });
+                    }
+                    function schedulePreload() { if (player || fellBack || preloadTimer) return; preloadTimer = setTimeout(function () { preloadTimer = null; preload(); }, 140); }
+                    function cancelScheduledPreload() { if (preloadTimer) { clearTimeout(preloadTimer); preloadTimer = null; } }
+                    // Evict a preloaded-but-unplayed player when the idle pool overflows.
+                    function killIdle() {
+                        if (wantPlay) return;
+                        try { if (player && player.destroy) player.destroy(); } catch (e) {}
+                        player = null; ready = false; loadingPreload = false;
+                        var fr = stage.querySelector('.vplayer-frame'); if (fr) fr.remove();
+                    }
+                    // Hand the stage to the (ready) player and show our chrome.
+                    function reveal() {
+                        poster.style.display = 'none'; bar.hidden = false;
+                        durEl.textContent = fmt(span()); buildMarkers(); loop();
+                    }
+                    // The actual play — always from a user gesture (poster / chapter click).
+                    function start() {
+                        if (fellBack) return;
+                        wantPlay = true; poolRemove(killIdle); cancelScheduledPreload();
+                        claim(); poster.setAttribute('disabled', '');
+                        if (ready && player) {
+                            reveal();
+                            if (pendingSeek != null) { doSeek(pendingSeek); pendingSeek = null; }
+                            else { try { player.playVideo(); } catch (e) {} }
+                        } else {
+                            preload();
+                            if (!fallbackTimer) fallbackTimer = setTimeout(function () { if (!ready) nativeFallback(); }, 6000);
+                        }
                     }
                     function nativeFallback() {
-                        if (fellBack || ready) return; fellBack = true;
+                        if (fellBack || ready || !wantPlay) return; fellBack = true;
+                        poolRemove(killIdle);
                         var m = document.getElementById(frameId); if (m) m.remove();
                         poster.style.display = 'none';
                         var f = document.createElement('iframe'); f.className = 'vplayer-frame';
@@ -390,12 +436,11 @@ export function watchPlayerScript(): string {
                     }
                     function onReady() {
                         ready = true; if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
-                        poster.style.display = 'none'; bar.hidden = false;
-                        durEl.textContent = fmt(span()); buildMarkers();
+                        if (!wantPlay) return; // preloaded silently — stay paused behind the poster until tapped
+                        poolRemove(killIdle); reveal();
                         if (pendingSeek != null) { doSeek(pendingSeek); pendingSeek = null; } else { try { player.playVideo(); } catch (e) {} }
-                        loop();
                     }
-                    function onState(e) { root.classList.toggle('is-playing', e.data === 1); if (e.data === 1) claim(); }
+                    function onState(e) { root.classList.toggle('is-playing', e.data === 1); if (e.data === 1) { wantPlay = true; poolRemove(killIdle); claim(); } }
                     function loop() {
                         cancelAnimationFrame(raf);
                         (function tick() {
@@ -441,13 +486,18 @@ export function watchPlayerScript(): string {
                     function preview(f) { fill.style.width = (f*100) + '%'; knob.style.left = (f*100) + '%'; curEl.textContent = fmt(f * span()); }
 
                     poster.addEventListener('click', start);
+                    // Warm the player ahead of the click so play lands in the gesture.
+                    poster.addEventListener('pointerenter', schedulePreload);
+                    poster.addEventListener('pointerleave', cancelScheduledPreload);
+                    poster.addEventListener('pointerdown', preload);
+                    poster.addEventListener('focus', schedulePreload);
                     playBtn.addEventListener('click', function () { if (!ready) return; try { player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo(); } catch (e) {} });
                     if (toggleBtn) toggleBtn.addEventListener('click', function () { setMode(mode === 'segment' ? 'full' : 'segment'); });
                     scrub.addEventListener('pointerdown', function (e) { if (!ready) return; scrubbing = true; try { scrub.setPointerCapture(e.pointerId); } catch (er) {} preview(frac(e.clientX)); });
                     scrub.addEventListener('pointermove', function (e) { if (scrubbing) preview(frac(e.clientX)); });
                     scrub.addEventListener('pointerup', function (e) { if (!scrubbing) return; scrubbing = false; doSeek(lo() + frac(e.clientX) * span()); });
                     scrub.addEventListener('keydown', function (e) { if (!ready) return; var step = e.shiftKey ? 30 : 5, t = player.getCurrentTime(); if (e.key === 'ArrowRight') { doSeek(Math.min(hi(), t + step)); e.preventDefault(); } else if (e.key === 'ArrowLeft') { doSeek(Math.max(lo(), t - step)); e.preventDefault(); } });
-                    chapters.forEach(function (ch) { ch.addEventListener('click', function () { var t = parseFloat(ch.getAttribute('data-seek') || '0'); if (ready) doSeek(t); else { pendingSeek = t; start(); } }); });
+                    chapters.forEach(function (ch) { ch.addEventListener('click', function () { var t = parseFloat(ch.getAttribute('data-seek') || '0'); if (ready && player) { wantPlay = true; poolRemove(killIdle); if (bar.hidden) reveal(); doSeek(t); } else { pendingSeek = t; start(); } }); });
                 }
 
                 document.querySelectorAll('.vplayer').forEach(initPlayer);

@@ -9985,6 +9985,9 @@ export const homeStyles = (): string => `
             border: none; padding: 0; margin: 0; cursor: pointer;
             background: var(--surface);
             -webkit-tap-highlight-color: transparent;
+            /* Above the (preloaded, paused) iframe so it stays hidden behind our
+               poster until the tap reveals it — no flash of YouTube's own chrome. */
+            z-index: 2;
         }
         .vplayer-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
         .vplayer-poster-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,0.3) 100%); }
@@ -10000,7 +10003,7 @@ export const homeStyles = (): string => `
         .vplayer-poster-play svg { margin-left: 3px; }
         .vplayer-poster:hover .vplayer-poster-play { transform: translate(-50%, -50%) scale(1.08); }
         .vplayer-poster:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
-        .vplayer-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+        .vplayer-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1; }
         /* The native YouTube chrome is hidden under our own bar; the iframe still
            handles the actual decode. A thin transparent shield over the iframe
            swallows clicks so the segment can't be scrubbed past via native UI. */

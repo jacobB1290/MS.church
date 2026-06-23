@@ -220,13 +220,30 @@ function buildItemJsonLd(sermon: PublishedSermon): string {
     ...(sermon.transcript ? { transcript: sermon.transcript } : {}),
   }
   if (sermon.segments.length > 0) {
-    video.hasPart = sermon.segments.map((seg) => ({
-      '@type': 'Clip',
-      name: seg.title,
-      startOffset: Math.floor(seg.startSec),
-      endOffset: Math.floor(seg.endSec),
-      url: `${url}?t=${Math.floor(seg.startSec)}`,
-    }))
+    // Key moments = the chapters (one Clip each, gap-free, non-overlapping — what
+    // Google's key-moments feature wants). Fold each worship chapter's songs into
+    // its label so song titles surface in video search without adding overlapping
+    // clips that would void the key moments. The visible chapter list is untouched.
+    video.hasPart = sermon.segments.map((seg) => {
+      let name = seg.title
+      if (seg.type === 'worship' && sermon.songs.length > 0) {
+        const titles = sermon.songs
+          .filter((sg) => {
+            const mid = (sg.startSec + sg.endSec) / 2
+            return mid >= seg.startSec && mid < seg.endSec
+          })
+          .map((sg) => sg.title.trim())
+          .filter(Boolean)
+        if (titles.length > 0) name = `${seg.title}: ${titles.join(', ')}`
+      }
+      return {
+        '@type': 'Clip',
+        name,
+        startOffset: Math.floor(seg.startSec),
+        endOffset: Math.floor(seg.endSec),
+        url: `${url}?t=${Math.floor(seg.startSec)}`,
+      }
+    })
   }
 
   const graph: Record<string, unknown>[] = [

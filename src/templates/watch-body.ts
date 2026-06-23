@@ -48,12 +48,44 @@ export type WatchHubView = {
 }
 
 const PLAY_TRIANGLE = `<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>`
+const PLAY_TRIANGLE_SM = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>`
 
 function metaLineFor(s: PublishedSermon): string {
   const speaker = speakerLine(s.speakers)
   return [longDate(s.publishedAt), speaker ? `with ${speaker}` : null, lengthLabel(s.durationSec)]
     .filter(Boolean)
     .join(' · ')
+}
+
+/**
+ * The raw YouTube livestream title ("LIVE - Sunday Morning 9:00am | 6/07/2026 |
+ * Morning Star Church of Boise") is machine boilerplate, identical every week and
+ * carrying a second copy of the date. Until a service is segmented and earns a
+ * real generated title, show a clean human label instead so the archive reads as
+ * authored content, not a data dump. A real (generated) title passes through.
+ */
+function cleanServiceTitle(raw: string): string {
+  const t = (raw || '').trim()
+  if (!t) return 'Sunday service'
+  if (/^live\b/i.test(t) || /morning star church/i.test(t) || /\|\s*\d{1,2}\/\d{1,2}\/\d{2,4}\s*\|/.test(t)) {
+    return 'Sunday service'
+  }
+  return t
+}
+
+/**
+ * Light smart-quotes for displayed titles + summaries (curly apostrophes and
+ * paired quotes) so editorial text reads correctly even though it arrives as
+ * plain ASCII from the CRM/YouTube. Conservative: only the unambiguous cases.
+ * Runs BEFORE escapeHtml (which leaves the curly glyphs untouched).
+ */
+function typo(s: string): string {
+  return (s || '')
+    .replace(/(\w)'(\w)/g, '$1’$2') // possessive / contraction: Lord's -> Lord’s
+    .replace(/(^|[\s([{“"])'/g, '$1‘') // opening single quote
+    .replace(/'/g, '’') // any remaining single -> closing
+    .replace(/(^|[\s([{])"/g, '$1“') // opening double quote
+    .replace(/"/g, '”') // any remaining double -> closing
 }
 
 /* ---- Fallback feature (no published items yet): live YouTube latest ---- */
@@ -68,10 +100,9 @@ function renderFallbackFeature(view: WatchHubView): string {
                             <span class="watch-feature-play">${PLAY_TRIANGLE}</span>
                         </button>
                         <div class="watch-feature-meta">
-                            <span class="watch-feature-tag">Most recent</span>
-                            <h2 class="watch-feature-title">${escapeHtml(f.title)}</h2>
+                            <h2 class="watch-feature-title">${escapeHtml(typo(cleanServiceTitle(f.title)))}</h2>
                             ${f.dateLabel ? `<span class="watch-feature-meta-line">${escapeHtml(f.dateLabel)}</span>` : ''}
-                            <p class="watch-feature-blurb">${escapeHtml(f.summary)}</p>
+                            <p class="watch-feature-blurb">${escapeHtml(typo(f.summary))}</p>
                             <div class="watch-feature-actions">
                                 <a class="event-link-btn event-link-btn--red teaser-cta" href="${escapeHtml(view.ytWatchUrl)}" target="_blank" rel="noopener">Watch on YouTube</a>
                             </div>
@@ -81,52 +112,58 @@ function renderFallbackFeature(view: WatchHubView): string {
 }
 
 /* ---- Service selector (library): pick which full service to watch ---- */
-function renderServiceSelector(items: PublishedSermon[]): string {
-  const first = items[0]
+function renderServiceSelector(allItems: PublishedSermon[]): string {
+  const first = allItems[0]
+  const firstTitle = typo(cleanServiceTitle(first.title))
+  // The index is a quick-access list of recent full services; the deep archive
+  // is the library tabs below (every older service is reachable via its card's
+  // "Full service" permalink). Cap it so it stays a list, not a ledger.
+  const items = allItems.slice(0, 8)
   const data = items.map((s) => ({
     slug: s.slug,
-    title: s.title,
+    title: typo(cleanServiceTitle(s.title)),
     poster: posterFor(s.youtubeVideoId, s.thumbnailUrl),
     videoId: s.youtubeVideoId,
     dur: Math.floor(s.durationSec ?? 0),
     meta: metaLineFor(s),
-    blurb: s.summary ?? '',
+    blurb: typo(s.summary ?? ''),
   }))
-  const list = items
+  // A quiet editorial index of recent services: date + clean title, hairline
+  // rules. Selecting a row swaps the featured player above (and scrolls to it).
+  const rows = items
     .map(
       (s, i) =>
-        `<li><button class="watch-feature-li${i === 0 ? ' is-current' : ''}" type="button" data-i="${i}"><span class="watch-feature-li-date">${escapeHtml(shortDate(s.publishedAt) ?? '')}</span><span class="watch-feature-li-title">${escapeHtml(s.title)}</span></button></li>`,
+        `<button class="watch-svc-row${i === 0 ? ' is-current' : ''}" type="button" data-i="${i}" aria-label="Watch ${escapeHtml(typo(cleanServiceTitle(s.title)))}">
+                            <span class="watch-svc-row-date">${escapeHtml(shortDate(s.publishedAt) ?? '')}</span>
+                            <span class="watch-svc-row-title">${escapeHtml(typo(cleanServiceTitle(s.title)))}</span>
+                            <span class="watch-svc-row-go" aria-hidden="true">${PLAY_TRIANGLE_SM}</span>
+                        </button>`,
     )
-    .join('\n                            ')
+    .join('\n                        ')
 
-  // The featured plays the WHOLE service inline (no segment). The date selector
+  // The featured plays the WHOLE service inline (no segment). The index below
   // swaps which video it points at (the player reads its data attrs live).
   return `<section id="latest" aria-label="Watch a full service">
                     <span class="section-eyebrow">Watch a full service</span>
                     <div class="watch-feature" id="service-feature">
                         <div class="watch-feature-player">${vplayer(first, null, 'feature', 'Sunday service from Morning Star Christian Church in Boise, Idaho.')}</div>
                         <div class="watch-feature-meta">
-                            <span class="watch-feature-tag" id="feature-tag">Latest service</span>
-                            <h2 class="watch-feature-title" id="feature-title">${escapeHtml(first.title)}</h2>
+                            <h2 class="watch-feature-title" id="feature-title">${escapeHtml(firstTitle)}</h2>
                             <span class="watch-feature-meta-line" id="feature-meta">${escapeHtml(metaLineFor(first))}</span>
-                            <p class="watch-feature-blurb" id="feature-blurb">${escapeHtml(first.summary ?? '')}</p>
+                            <p class="watch-feature-blurb" id="feature-blurb">${escapeHtml(typo(first.summary ?? ''))}</p>
                             <a class="watch-feature-fulllink" id="feature-fulllink" href="/watch/${escapeHtml(first.slug)}">Chapters &amp; transcript<span aria-hidden="true"> &rarr;</span></a>
-                            ${
-                              items.length > 1
-                                ? `<div class="watch-feature-nav" role="group" aria-label="Browse services">
-                                <button class="watch-feature-step" id="feature-newer" type="button" aria-label="Newer service" disabled><span aria-hidden="true">&larr;</span> Newer</button>
-                                <button class="watch-feature-step" id="feature-older" type="button" aria-label="Older service">Older <span aria-hidden="true">&rarr;</span></button>
-                                <button class="watch-feature-listbtn" id="feature-list-toggle" type="button" aria-expanded="false" aria-controls="feature-list">All services <span class="watch-feature-count">${items.length}</span></button>
-                            </div>
-                            <div class="watch-feature-list" id="feature-list">
-                                <ul>
-                            ${list}
-                                </ul>
-                            </div>`
-                                : ''
-                            }
                         </div>
                     </div>
+                    ${
+                      items.length > 1
+                        ? `<div class="watch-svc">
+                        <h3 class="watch-svc-label">Recent services</h3>
+                        <div class="watch-svc-list" id="feature-list">
+                        ${rows}
+                        </div>
+                    </div>`
+                        : ''
+                    }
                     <script type="application/json" id="services-data">${JSON.stringify(data)}</script>
                 </section>`
 }
@@ -344,17 +381,13 @@ export const watchBody = (view: WatchHubView): string => {
                     var idx = 0;
                     var vp = feature.querySelector('.vplayer');
                     var img = feature.querySelector('.vplayer-poster img');
-                    var tag = document.getElementById('feature-tag');
                     var title = document.getElementById('feature-title');
                     var meta = document.getElementById('feature-meta');
                     var blurb = document.getElementById('feature-blurb');
                     var fulllink = document.getElementById('feature-fulllink');
-                    var older = document.getElementById('feature-older');
-                    var newer = document.getElementById('feature-newer');
-                    var listToggle = document.getElementById('feature-list-toggle');
                     var list = document.getElementById('feature-list');
 
-                    function paint(i) {
+                    function paint(i, scroll) {
                         var s = data[i]; if (!s) return;
                         idx = i;
                         var apply = function () {
@@ -367,28 +400,24 @@ export const watchBody = (view: WatchHubView): string => {
                                 if (vp.__resetPlayer) vp.__resetPlayer();
                             }
                             if (img) { img.src = s.poster; img.onerror = function () { this.onerror = null; this.src = 'https://img.youtube.com/vi/' + s.videoId + '/hqdefault.jpg'; }; }
-                            tag.textContent = i === 0 ? 'Latest service' : 'Past service';
                             title.textContent = s.title; meta.textContent = s.meta; blurb.textContent = s.blurb;
                             if (fulllink) fulllink.href = '/watch/' + s.slug;
                         };
                         if (reduce) { apply(); }
                         else { feature.classList.add('is-swapping'); setTimeout(function () { apply(); requestAnimationFrame(function () { feature.classList.remove('is-swapping'); }); }, 160); }
-                        if (older) older.disabled = i >= data.length - 1;
-                        if (newer) newer.disabled = i <= 0;
-                        if (list) list.querySelectorAll('.watch-feature-li').forEach(function (b, j) { b.classList.toggle('is-current', j === i); });
+                        if (list) list.querySelectorAll('.watch-svc-row').forEach(function (b, j) { var on = j === i; b.classList.toggle('is-current', on); b.setAttribute('aria-current', on ? 'true' : 'false'); });
+                        // Bring the freshly-loaded player into view (the index sits below it).
+                        if (scroll) {
+                            try {
+                                var top = feature.getBoundingClientRect().top + window.pageYOffset - 96;
+                                window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
+                            } catch (e) { feature.scrollIntoView(); }
+                        }
                     }
-                    if (older) older.addEventListener('click', function () { if (idx < data.length - 1) paint(idx + 1); });
-                    if (newer) newer.addEventListener('click', function () { if (idx > 0) paint(idx - 1); });
-                    if (listToggle && list) {
-                        listToggle.addEventListener('click', function () {
-                            var open = !list.classList.contains('is-open');
-                            list.classList.toggle('is-open', open);
-                            listToggle.setAttribute('aria-expanded', String(open));
-                        });
+                    if (list) {
                         list.addEventListener('click', function (e) {
-                            var b = e.target.closest('.watch-feature-li'); if (!b) return;
-                            paint(parseInt(b.getAttribute('data-i'), 10) || 0);
-                            list.classList.remove('is-open'); listToggle.setAttribute('aria-expanded', 'false');
+                            var b = e.target.closest('.watch-svc-row'); if (!b) return;
+                            paint(parseInt(b.getAttribute('data-i'), 10) || 0, true);
                         });
                     }
                 }

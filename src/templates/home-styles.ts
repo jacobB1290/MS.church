@@ -9954,7 +9954,7 @@ export const homeStyles = (): string => `
             display: grid;
             grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
             gap: var(--space-xl);
-            align-items: center;
+            align-items: start;
             margin-bottom: var(--space-2xl);
         }
         .watch-feature-thumb {
@@ -9986,11 +9986,6 @@ export const homeStyles = (): string => `
         .watch-feature-play svg { margin-left: 3px; }
         .watch-feature-thumb:hover .watch-feature-play { transform: translate(-50%, -50%) scale(1.08); }
         .watch-feature-meta { display: flex; flex-direction: column; gap: var(--space-xs); }
-        .watch-feature-tag {
-            font-size: var(--text-eyebrow); font-weight: var(--weight-bold);
-            letter-spacing: var(--tracking-wider); text-transform: uppercase;
-            color: var(--gold-dark);
-        }
         .watch-feature-title {
             font-family: var(--font-display); font-size: var(--text-title);
             line-height: var(--leading-tight); color: var(--text-primary); margin: 0;
@@ -9998,44 +9993,43 @@ export const homeStyles = (): string => `
         .watch-feature-meta-line { font-size: var(--text-small); color: var(--text-muted); }
         .watch-feature-blurb {
             font-size: var(--text-body); line-height: var(--leading-normal);
-            color: var(--text-muted); margin: var(--space-xs) 0 0;
+            color: var(--text-muted); margin: var(--space-xs) 0 0; max-width: 58ch;
         }
         .watch-feature-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-sm); }
 
-        /* Full-service selector: Older/Newer steppers + a by-date list. */
+        /* Featured swap: the selected service cross-fades in place. */
         .watch-feature { transition: opacity var(--motion-medium) var(--ease-out-soft); }
         .watch-feature.is-swapping { opacity: 0.25; }
-        .watch-feature-nav { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs); margin-top: var(--space-md); }
-        .watch-feature-step, .watch-feature-listbtn {
-            appearance: none; border: 1px solid var(--text-hairline); background: transparent;
-            color: var(--text-muted); font-family: var(--font-body), 'Inter', sans-serif;
-            font-size: var(--text-small); font-weight: var(--weight-medium);
-            border-radius: var(--radius-pill); padding: 7px 14px; cursor: pointer;
-            transition: color var(--motion-fast) var(--ease-out-soft), border-color var(--motion-fast) var(--ease-out-soft), opacity var(--motion-fast) var(--ease-out-soft);
+
+        /* Recent-services index — a quiet editorial archive list (date · title),
+           hairline-ruled. Selecting a row swaps the featured player above. */
+        .watch-svc { margin-top: var(--space-2xl); }
+        .watch-svc-label {
+            font-size: var(--text-eyebrow); font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-wider); text-transform: uppercase;
+            color: var(--text-muted); margin: 0 0 var(--space-xs);
         }
-        .watch-feature-step:hover:not(:disabled), .watch-feature-listbtn:hover { border-color: var(--gold); color: var(--gold-dark); }
-        .watch-feature-step:disabled { opacity: 0.35; cursor: default; }
-        .watch-feature-listbtn { margin-left: auto; }
-        .watch-feature-count { color: var(--text-faint); margin-left: 5px; }
-        .watch-feature-list {
-            margin-top: var(--space-sm);
-            border: 1px solid var(--text-hairline); border-radius: var(--radius-md);
-            max-height: 0; opacity: 0; visibility: hidden; overflow: hidden;
-            transition: max-height var(--motion-medium) var(--ease-out-soft), opacity var(--motion-medium) var(--ease-out-soft), visibility 0s linear var(--motion-medium);
-        }
-        .watch-feature-list.is-open { max-height: 20rem; opacity: 1; visibility: visible; overflow-y: auto; transition: max-height var(--motion-medium) var(--ease-out-soft), opacity var(--motion-medium) var(--ease-out-soft), visibility 0s; }
-        .watch-feature-list ul { list-style: none; margin: 0; padding: 0; }
-        .watch-feature-li {
-            display: flex; align-items: baseline; gap: var(--space-sm); width: 100%; text-align: left;
-            appearance: none; background: none; border: none; border-bottom: 1px solid var(--text-hairline);
-            padding: 10px 14px; cursor: pointer;
+        .watch-svc-list { display: flex; flex-direction: column; }
+        .watch-svc-row {
+            display: grid; grid-template-columns: minmax(6.5ch, auto) 1fr auto;
+            align-items: baseline; gap: var(--space-md); width: 100%; text-align: left;
+            appearance: none; background: none; border: none; border-top: 1px solid var(--text-hairline);
+            padding: var(--space-sm) var(--space-xs); cursor: pointer;
             transition: background var(--motion-fast) var(--ease-out-soft);
         }
-        .watch-feature-li:last-child { border-bottom: none; }
-        .watch-feature-li:hover { background: var(--surface); }
-        .watch-feature-li.is-current { background: color-mix(in oklab, var(--gold) 9%, transparent); }
-        .watch-feature-li-date { color: var(--gold-dark); font-size: var(--text-micro); font-weight: var(--weight-semibold); white-space: nowrap; min-width: 8ch; }
-        .watch-feature-li-title { color: var(--text-primary); font-size: var(--text-small); }
+        .watch-svc-row:hover { background: color-mix(in oklab, var(--gold) 5%, transparent); }
+        .watch-svc-row.is-current { background: color-mix(in oklab, var(--gold) 8%, transparent); }
+        .watch-svc-row-date {
+            color: var(--gold-dark); font-size: var(--text-small); font-weight: var(--weight-semibold);
+            font-variant-numeric: tabular-nums; white-space: nowrap;
+        }
+        .watch-svc-row-title { color: var(--text-primary); font-size: var(--text-body); min-width: 0; }
+        .watch-svc-row-go {
+            display: inline-flex; align-self: center; color: var(--text-fade);
+            transition: color var(--motion-fast) var(--ease-out-soft), transform var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-svc-row:hover .watch-svc-row-go { color: var(--gold-dark); transform: translateX(2px); }
+        .watch-svc-row.is-current .watch-svc-row-go { color: var(--gold-dark); }
         /* The featured cell hosts the full-service inline player. */
         .watch-feature-player { min-width: 0; }
         .watch-feature-fulllink {
@@ -10047,7 +10041,7 @@ export const homeStyles = (): string => `
         }
         .watch-feature-fulllink:hover { border-color: var(--gold); }
         @media (prefers-reduced-motion: reduce) {
-            .watch-feature, .watch-feature-list { transition: none; }
+            .watch-feature, .watch-svc-row, .watch-svc-row-go { transition: none; }
         }
 
         /* --- Scripture chips (permalink + feature) --- */
@@ -10095,6 +10089,20 @@ export const homeStyles = (): string => `
             transition: transform var(--motion-medium) var(--ease-out-soft);
         }
         .vplayer-poster-play svg { margin-left: 3px; }
+        /* Feature hero play: a more intentional, branded affordance than the bare
+           translucent disc — a subtle ring + lift, warming to gold on hover. */
+        .vplayer--feature .vplayer-poster-play {
+            background: rgba(20, 16, 12, 0.52);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: var(--shadow-lg);
+            transition: transform var(--motion-medium) var(--ease-out-soft),
+                        background var(--motion-medium) var(--ease-out-soft),
+                        border-color var(--motion-medium) var(--ease-out-soft);
+        }
+        .vplayer--feature .vplayer-poster:hover .vplayer-poster-play {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            border-color: rgba(255, 255, 255, 0.55);
+        }
         .vplayer-poster:hover .vplayer-poster-play { transform: translate(-50%, -50%) scale(1.08); }
         .vplayer-poster:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
         /* Loading: tap gives instant feedback (the play glyph becomes a spinner)

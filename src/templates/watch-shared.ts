@@ -228,7 +228,7 @@ export function serviceCard(sermon: PublishedSermon): string {
  * there, just the message. Jumping to the full service page is a small optional
  * link. One topic tag, a brief preview, and a data-topic hook for the filter.
  */
-export function messageCard(sermon: PublishedSermon): string {
+export function messageCard(sermon: PublishedSermon, sid?: string): string {
   const noun = formatNoun(sermon.format)
   const topic = primaryTopic(sermon)
   const topicChip = topic ? topicSlug(topic) : ''
@@ -241,7 +241,7 @@ export function messageCard(sermon: PublishedSermon): string {
     .map((b) => `<span>${b}</span>`)
     .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
   const posterAlt = `${sermon.title} — ${noun.toLowerCase()} from Morning Star Christian Church in Boise, Idaho`
-  return `<article class="watch-card watch-card--message" data-topic="${escapeHtml(topicChip)}">
+  return `<article class="watch-card watch-card--message" data-topic="${escapeHtml(topicChip)}"${sid ? ` data-sid="${escapeHtml(sid)}"` : ''}>
                         ${vplayer(sermon, primary, 'card', posterAlt)}
                         <div class="watch-card-body">
                             ${metaBits ? `<span class="watch-card-meta">${metaBits}</span>` : ''}
@@ -260,7 +260,7 @@ export function messageCard(sermon: PublishedSermon): string {
  * song's clip (segOverride), so tapping it plays just that song. Title + who led
  * it; the small jump opens the full service at the song's moment.
  */
-export function songCard(sermon: PublishedSermon, song: SermonSong, count = 1): string {
+export function songCard(sermon: PublishedSermon, song: SermonSong, count = 1, sid?: string): string {
   const isProgram = song.kind === 'program'
   const posterAlt = `${song.title} — ${isProgram ? 'program song' : 'worship'} at Morning Star Christian Church in Boise, Idaho`
   const who = song.leader ? `${isProgram ? 'sung by' : 'led by'} ${escapeHtml(song.leader)}` : null
@@ -270,7 +270,7 @@ export function songCard(sermon: PublishedSermon, song: SermonSong, count = 1): 
     .map((b) => `<span>${b}</span>`)
     .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
   const topicChip = song.topic ? topicSlug(song.topic) : ''
-  return `<article class="watch-card watch-card--message watch-card--song" data-kind="${song.kind}" data-topic="${escapeHtml(topicChip)}">
+  return `<article class="watch-card watch-card--message watch-card--song" data-kind="${song.kind}" data-topic="${escapeHtml(topicChip)}"${sid ? ` data-sid="${escapeHtml(sid)}"` : ''}>
                         ${vplayer(sermon, null, 'card', posterAlt, { startSec: song.startSec, endSec: song.endSec }, isProgram ? 'Program' : '')}
                         <div class="watch-card-body">
                             ${metaBits ? `<span class="watch-card-meta">${metaBits}</span>` : ''}

@@ -152,19 +152,20 @@ function topicFilter(items: PublishedSermon[]): string {
   return filterRow('topic', 'Filter by topic', topics.map((t) => ({ val: t.slug, label: t.topic, count: t.count })))
 }
 
-function messagePanel(id: string, items: PublishedSermon[], active: boolean, lead: string): string {
+function messagePanel(id: string, items: PublishedSermon[], active: boolean, lead: string, groupLabel: string): string {
   return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'}>
                         <p class="section-lead watch-panel-lead">${lead}</p>
+                        <h3 class="watch-group-label" aria-hidden="true">${groupLabel}<span class="watch-group-count" data-group-count></span></h3>
                         ${topicFilter(items)}
                         <div class="watch-grid">
-                        ${items.map((s) => messageCard(s)).join('\n                        ')}
+                        ${items.map((s) => messageCard(s, s.slug)).join('\n                        ')}
                         </div>
                     </div>`
 }
 
 type SongItem = { sermon: PublishedSermon; song: PublishedSermon['songs'][number]; count: number }
 
-function songPanel(id: string, songItems: SongItem[], active: boolean, lead: string): string {
+function songPanel(id: string, songItems: SongItem[], active: boolean, lead: string, groupLabel: string): string {
   const worship = songItems.filter((it) => it.song.kind !== 'program').length
   const program = songItems.filter((it) => it.song.kind === 'program').length
   const filter =
@@ -176,11 +177,28 @@ function songPanel(id: string, songItems: SongItem[], active: boolean, lead: str
       : ''
   return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'}>
                         <p class="section-lead watch-panel-lead">${lead}</p>
+                        <h3 class="watch-group-label" aria-hidden="true">${groupLabel}<span class="watch-group-count" data-group-count></span></h3>
                         ${filter}
                         <div class="watch-grid">
-                        ${songItems.map((it) => songCard(it.sermon, it.song, it.count)).join('\n                        ')}
+                        ${songItems.map((it, i) => songCard(it.sermon, it.song, it.count, 'song-' + i)).join('\n                        ')}
                         </div>
                     </div>`
+}
+
+/** url-safe-ish text for the search blob; everything is matched lowercased. */
+type SearchEntry = { i: string; t: string; ti: string; wh: string; to: string[]; su: string; sc: string[]; tg: string[]; k?: string }
+function messageEntry(s: PublishedSermon): SearchEntry {
+  const scripture = [...new Set(s.segments.flatMap((seg) => seg.scriptureRefs || []))]
+  return {
+    i: s.slug,
+    t: s.format,
+    ti: s.title,
+    wh: s.speakers.join(' '),
+    to: s.topics || [],
+    su: s.summary || s.seo?.description || '',
+    sc: scripture,
+    tg: s.seo?.tags || [],
+  }
 }
 
 function renderLibrary(items: PublishedSermon[]): string {
@@ -203,12 +221,30 @@ function renderLibrary(items: PublishedSermon[]): string {
   // One content type at a time. Sermons lead, then Songs, then Discussions.
   const tabs: { id: string; label: string; count: number; panel: (active: boolean) => string }[] = []
   if (sermons.length > 0)
-    tabs.push({ id: 'sermons', label: 'Sermons', count: sermons.length, panel: (a) => messagePanel('sermons', sermons, a, 'Tap a sermon and it plays right here, just the message. Filter by topic, or open the full service.') })
+    tabs.push({ id: 'sermons', label: 'Sermons', count: sermons.length, panel: (a) => messagePanel('sermons', sermons, a, 'Tap a sermon and it plays right here, just the message. Filter by topic, or open the full service.', 'Sermons') })
   if (songItems.length > 0)
-    tabs.push({ id: 'songs', label: 'Songs', count: songItems.length, panel: (a) => songPanel('songs', songItems, a, 'Every song we have sung, on its own. Tap one to play just that song.') })
+    tabs.push({ id: 'songs', label: 'Songs', count: songItems.length, panel: (a) => songPanel('songs', songItems, a, 'Every song we have sung, on its own. Tap one to play just that song.', 'Songs') })
   if (discussions.length > 0)
-    tabs.push({ id: 'discussions', label: 'Discussions', count: discussions.length, panel: (a) => messagePanel('discussions', discussions, a, 'Two hosts working through the text together. Tap one to play the conversation right here.') })
+    tabs.push({ id: 'discussions', label: 'Discussions', count: discussions.length, panel: (a) => messagePanel('discussions', discussions, a, 'Two hosts working through the text together. Tap one to play the conversation right here.', 'Discussions') })
   if (tabs.length === 0) return ''
+
+  // The search index: every searchable item (messages + songs) keyed to its card's
+  // data-sid. Built from the same data the cards render, so it can never drift.
+  const searchIndex: SearchEntry[] = [
+    ...sermons.map(messageEntry),
+    ...discussions.map(messageEntry),
+    ...songItems.map((it, i): SearchEntry => ({
+      i: 'song-' + i,
+      t: 'song',
+      ti: it.song.title,
+      wh: it.song.leader || '',
+      to: it.song.topic ? [it.song.topic] : [],
+      su: '',
+      sc: [],
+      tg: [],
+      k: it.song.kind,
+    })),
+  ]
 
   const tabBar =
     tabs.length > 1
@@ -226,8 +262,15 @@ function renderLibrary(items: PublishedSermon[]): string {
   return `<section id="library" aria-label="Library">
                     <span class="section-eyebrow">Library</span>
                     <h2 class="section-heading">Find a message.</h2>
+                    <div class="watch-search">
+                        <svg class="watch-search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M10 4a6 6 0 104.47 10.03l4.24 4.25 1.42-1.42-4.25-4.24A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" fill="currentColor"/></svg>
+                        <input id="watch-search-input" class="watch-search-input" type="search" inputmode="search" autocomplete="off" enterkeyhint="search" placeholder="Search by topic, title, song, or who spoke" aria-label="Search the library">
+                        <button class="watch-search-clear" id="watch-search-clear" type="button" aria-label="Clear search" hidden>&times;</button>
+                    </div>
+                    <p class="watch-search-summary" id="watch-search-summary" role="status" aria-live="polite" hidden></p>
                     ${tabBar}
                     ${panels}
+                    <script type="application/json" id="watch-search-index">${JSON.stringify(searchIndex)}</script>
                 </section>`
 }
 
@@ -362,6 +405,124 @@ export const watchBody = (view: WatchHubView): string => {
                         });
                     });
                 });
+
+                /* --- Library search: advanced, multi-field, ranked, instant --- */
+                (function () {
+                    var lib = document.getElementById('library');
+                    var input = document.getElementById('watch-search-input');
+                    var clearBtn = document.getElementById('watch-search-clear');
+                    var summary = document.getElementById('watch-search-summary');
+                    var idxEl = document.getElementById('watch-search-index');
+                    if (!lib || !input || !idxEl) return;
+                    var INDEX = []; try { INDEX = JSON.parse(idxEl.textContent || '[]'); } catch (e) {}
+                    var cards = {};
+                    lib.querySelectorAll('.watch-card[data-sid]').forEach(function (c) { cards[c.getAttribute('data-sid')] = c; });
+
+                    // Filler words a visitor types in a natural query ("the message about ...").
+                    var STOP = {a:1,an:1,the:1,of:1,on:1,at:1,about:1,for:1,to:1,and:1,or:1,with:1,that:1,this:1,is:1,was:1,are:1,be:1,our:1,us:1,me:1,my:1,we:1,what:1,who:1,when:1,where:1,how:1,do:1,does:1,did:1,you:1,it:1,from:1,please:1,find:1,show:1,want:1,one:1};
+                    var FIELD_W = { ti: 10, wh: 8, to: 9, sc: 6, su: 4, tg: 7, ty: 5 };
+
+                    function words(s) { return (s || '').toLowerCase().split(/[^a-z0-9']+/).filter(Boolean); }
+                    function near(tok, w) {
+                        if (tok === w) return true;
+                        var la = tok.length, lb = w.length; if (Math.abs(la - lb) > 1) return false;
+                        var i = 0, j = 0, e = 0;
+                        while (i < la && j < lb) {
+                            if (tok[i] === w[j]) { i++; j++; }
+                            else { if (++e > 1) return false; if (la > lb) i++; else if (lb > la) j++; else { i++; j++; } }
+                        }
+                        if (i < la || j < lb) e++;
+                        return e <= 1;
+                    }
+                    function fieldScore(tok, ws) {
+                        var best = 0;
+                        for (var k = 0; k < ws.length; k++) {
+                            var w = ws[k];
+                            if (w === tok) return 1;
+                            if (w.indexOf(tok) === 0) best = Math.max(best, 0.85);
+                            else if (w.indexOf(tok) > 0) best = Math.max(best, 0.6);
+                            else if (tok.length >= 4 && w.length >= 3 && near(tok, w)) best = Math.max(best, 0.7);
+                        }
+                        return best;
+                    }
+                    function parse(q) {
+                        var raw = words(q);
+                        var speaker = {};
+                        for (var i = 0; i < raw.length; i++) if ((raw[i] === 'by' || raw[i] === 'pastor' || raw[i] === 'with') && raw[i + 1]) speaker[raw[i + 1]] = 1;
+                        return { toks: raw.filter(function (w) { return w.length >= 2 && !STOP[w]; }), speaker: speaker };
+                    }
+                    function typeText(item) {
+                        if (item.t === 'song') return 'song songs worship music ' + (item.k || '');
+                        if (item.t === 'discussion') return 'discussion conversation talk';
+                        return 'sermon message teaching preaching';
+                    }
+                    var FW_CACHE = {};
+                    function fieldsOf(item) {
+                        if (FW_CACHE[item.i]) return FW_CACHE[item.i];
+                        var f = {
+                            ti: words(item.ti), wh: words(item.wh), to: words((item.to || []).join(' ')),
+                            sc: words((item.sc || []).join(' ')), su: words(item.su), tg: words((item.tg || []).join(' ')),
+                            ty: words(typeText(item))
+                        };
+                        FW_CACHE[item.i] = f; return f;
+                    }
+                    function score(item, p) {
+                        var fw = fieldsOf(item), total = 0, matched = 0;
+                        for (var i = 0; i < p.toks.length; i++) {
+                            var tok = p.toks[i], best = 0;
+                            for (var f in FIELD_W) {
+                                var q = fieldScore(tok, fw[f]);
+                                if (q > 0) { var w = FIELD_W[f]; if (p.speaker[tok] && f === 'wh') w += 8; if (w * q > best) best = w * q; }
+                            }
+                            if (best > 0) matched++;
+                            total += best;
+                        }
+                        return matched === 0 ? 0 : total * (matched / p.toks.length);
+                    }
+
+                    var deb;
+                    function schedule() { clearTimeout(deb); deb = setTimeout(run, 90); }
+                    function run() {
+                        var q = input.value.trim();
+                        clearBtn.hidden = !q;
+                        var p = q ? parse(q) : { toks: [], speaker: {} };
+                        if (p.toks.length === 0) { exit(); return; }
+                        var ranked = [];
+                        for (var i = 0; i < INDEX.length; i++) { var sc = score(INDEX[i], p); if (sc > 0) ranked.push([INDEX[i].i, sc]); }
+                        ranked.sort(function (a, b) { return b[1] - a[1]; });
+                        var rank = {}; for (var r = 0; r < ranked.length; r++) rank[ranked[r][0]] = r;
+                        // A search overrides any active topic/kind chip so every match shows.
+                        lib.querySelectorAll('.watch-card.is-filtered').forEach(function (c) { c.classList.remove('is-filtered'); });
+                        lib.querySelectorAll('.watch-chip').forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-val') === 'all')); });
+                        lib.classList.add('is-searching');
+                        var shown = 0, sid;
+                        for (sid in cards) {
+                            var card = cards[sid];
+                            if (rank.hasOwnProperty(sid)) { card.classList.remove('is-search-hidden'); card.style.order = rank[sid]; shown++; }
+                            else { card.classList.add('is-search-hidden'); card.style.order = ''; }
+                        }
+                        lib.querySelectorAll('.watch-panel').forEach(function (pan) {
+                            var n = pan.querySelectorAll('.watch-card:not(.is-search-hidden)').length;
+                            pan.classList.toggle('is-empty-group', n === 0);
+                            var c = pan.querySelector('[data-group-count]'); if (c) c.textContent = n ? ' · ' + n : '';
+                        });
+                        summary.hidden = false;
+                        summary.textContent = shown
+                            ? shown + (shown === 1 ? ' result' : ' results') + ' for “' + q + '”'
+                            : 'No results for “' + q + '”. Try a topic, a name like “John”, or a song title.';
+                    }
+                    function exit() {
+                        lib.classList.remove('is-searching');
+                        for (var sid in cards) { cards[sid].classList.remove('is-search-hidden'); cards[sid].style.order = ''; }
+                        lib.querySelectorAll('.watch-panel').forEach(function (pan) { pan.classList.remove('is-empty-group'); });
+                        if (summary) { summary.hidden = true; summary.textContent = ''; }
+                        clearBtn.hidden = !input.value;
+                    }
+                    input.addEventListener('input', schedule);
+                    input.addEventListener('search', schedule);
+                    input.addEventListener('keydown', function (e) { if (e.key === 'Escape') { input.value = ''; exit(); } });
+                    if (clearBtn) clearBtn.addEventListener('click', function () { input.value = ''; exit(); input.focus(); });
+                })();
 
                 /* --- Fallback featured play --- */
                 var fp = document.getElementById('watch-feature-play');

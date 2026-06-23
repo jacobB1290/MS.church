@@ -9655,6 +9655,68 @@ export const homeStyles = (): string => `
             .watch-panel.is-active { animation: none; }
         }
 
+        /* --- Library search: a clean editorial field, gold on focus --- */
+        .watch-search {
+            display: flex; align-items: center; gap: var(--space-xs);
+            margin: var(--space-md) 0 var(--space-sm);
+            padding: 0 var(--space-md);
+            background: var(--white);
+            border: 1px solid var(--text-hairline);
+            border-radius: var(--radius-pill);
+            transition: border-color var(--motion-fast) var(--ease-out-soft),
+                        box-shadow var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-search:focus-within {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px color-mix(in oklab, var(--gold) 16%, transparent);
+        }
+        .watch-search-icon { color: var(--text-faint); flex-shrink: 0; transition: color var(--motion-fast) var(--ease-out-soft); }
+        .watch-search:focus-within .watch-search-icon { color: var(--gold-dark); }
+        .watch-search-input {
+            flex: 1 1 auto; min-width: 0;
+            border: none; background: none; outline: none;
+            font-family: var(--font-body), 'Inter', sans-serif;
+            font-size: var(--text-body);
+            color: var(--text-primary);
+            padding: 14px var(--space-xs);
+            -webkit-appearance: none; appearance: none;
+        }
+        .watch-search-input::placeholder { color: var(--text-faint); }
+        .watch-search-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+        .watch-search-clear {
+            flex-shrink: 0; appearance: none; border: none; background: none;
+            color: var(--text-faint); font-size: 24px; line-height: 1;
+            width: 32px; height: 32px; border-radius: var(--radius-circle);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: color var(--motion-fast) var(--ease-out-soft), background var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-search-clear:hover { color: var(--text-primary); background: var(--surface); }
+        .watch-search-clear[hidden] { display: none; }
+        .watch-search-summary { margin: 0 0 var(--space-lg); color: var(--text-muted); font-size: var(--text-small); }
+
+        /* Group labels: hidden while browsing (the tab already names the type),
+           shown only in search results so a mixed list stays legible by type. */
+        .watch-group-label { display: none; }
+        .watch-group-count { color: var(--text-fade); font-weight: var(--weight-regular); }
+        #library .watch-card.is-search-hidden { display: none; }
+        #library.is-searching .watch-tabs,
+        #library.is-searching .watch-filter,
+        #library.is-searching .watch-panel-lead { display: none; }
+        #library.is-searching .watch-panel { display: block; animation: none; }
+        #library.is-searching .watch-panel[hidden] { display: block; }
+        #library.is-searching .watch-panel.is-empty-group { display: none; }
+        #library.is-searching .watch-group-label {
+            display: block; margin: var(--space-lg) 0 var(--space-md);
+            font-family: var(--font-body), 'Inter', sans-serif;
+            font-size: var(--text-label); font-weight: var(--weight-semibold);
+            text-transform: uppercase; letter-spacing: var(--tracking-wide);
+            color: var(--text-faint);
+        }
+        #library.is-searching .watch-grid { animation: fade-in var(--motion-medium) var(--ease-out-soft); }
+        @media (prefers-reduced-motion: reduce) {
+            #library.is-searching .watch-grid { animation: none; }
+        }
+
         /* --- Topic filter chips --- */
         .watch-filter {
             display: flex;

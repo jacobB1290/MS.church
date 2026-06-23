@@ -17,7 +17,10 @@
 // src/app/api/public/sermons/route.ts `PublicSermon` type. If the CRM changes
 // the feed shape, change both together.
 
-const CACHE_TTL = 5 * 60 * 1000 // 5 minutes, matches the CRM's own s-maxage
+const CACHE_TTL = 60 * 1000 // 60s, matches the CRM feed's s-maxage — keeps a
+// freshly published sermon from being held back by stacked caches (this in-memory
+// layer + the CRM edge + the /watch edge). A serve-stale-on-error fallback below
+// still covers a transient CRM blip.
 
 export type SermonSegment = {
   startSec: number

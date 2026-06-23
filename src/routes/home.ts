@@ -5,11 +5,13 @@ import { homeScripts } from '../templates/home-scripts.js'
 
 export function registerHomeRoute(app: Hono) {
   app.get('/', (c) => {
-    // Cache the rendered HTML at the CDN edge for 5min, serve stale up to 1 day while
-    // revalidating. The home page changes infrequently (calendar feed is the dynamic
-    // bit and lives behind its own 5-min in-memory cache), so a long SWR window keeps
-    // origin load near-zero while never serving content that is more than 5 min stale.
-    c.header('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400')
+    // Split browser vs edge so new content (the calendar feed) is never served
+    // 24h-stale from the browser cache: the browser revalidates every load
+    // (max-age=0), while the edge holds a 5-min cache + short SWR so origin load
+    // stays near-zero. The dynamic bit (events) lives behind its own in-memory
+    // cache, so the page is never more than a few minutes stale.
+    c.header('Cache-Control', 'public, max-age=0, must-revalidate')
+    c.header('CDN-Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
     return c.html(`<!DOCTYPE html>
 <html lang="en">
 ${homeHead()}

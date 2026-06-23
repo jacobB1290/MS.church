@@ -818,13 +818,25 @@ When you add a new image to an existing page, ALSO:
 
 | Resource type | Header |
 |---|---|
-| Home page HTML | `public, s-maxage=300, stale-while-revalidate=86400` |
-| Static-ish subpage HTML | `public, s-maxage=600, stale-while-revalidate=86400` |
+| Live-content HTML (home `/`, `/outreach`, `/watch` + `/watch/*`) | `Cache-Control: public, max-age=0, must-revalidate` **plus** `CDN-Cache-Control: public, s-maxage=<60–300>, stale-while-revalidate=<300–600>` |
+| Static-ish subpage HTML (`/about`, `/beliefs`, `/ministries`, `/visit`) | `public, s-maxage=600, stale-while-revalidate=86400` |
 | `/api/calendar/events` (and similar dynamic JSON) | `public, s-maxage=300, stale-while-revalidate=600` |
+| `/api/public/sermons` (CRM feed, ms-management) | `public, s-maxage=60, stale-while-revalidate=120` |
 | `/static/(.*)` | `public, max-age=31536000, immutable` (set in `vercel.json`) |
 | `/sitemap.xml` | `public, s-maxage=3600, stale-while-revalidate=86400` |
 | `/feed.xml` | `public, s-maxage=900, stale-while-revalidate=86400` |
 | `/robots.txt`, `/.well-known/security.txt` | `public, max-age=86400` |
+
+**Live-content pages use the two-header split on purpose.** A single
+`Cache-Control: public, s-maxage=…, stale-while-revalidate=86400` lets the
+*browser* honor that 24h SWR too, so it serves its own day-stale copy and only
+revalidates in the background: newly published sermons/events then need a hard
+refresh (or a redeploy that purges the edge) to appear. The fix is to scope SWR
+to the edge only: send the browser `max-age=0, must-revalidate` (always
+revalidate against the edge, so the next normal reload is current) and give
+Vercel's edge the short `s-maxage` + bounded SWR via `CDN-Cache-Control`. Keep
+SWR windows in **minutes**, never 24h, on any page whose content can change
+between deploys. Genuinely static subpages can keep the long single-header SWR.
 
 ### Sitemap maintenance
 

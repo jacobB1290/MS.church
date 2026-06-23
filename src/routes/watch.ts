@@ -305,7 +305,11 @@ export function registerWatchRoute(app: Hono) {
       }
     const view = buildHubView(all, latest)
 
-    c.header('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400')
+    // Browser revalidates every load (max-age=0) so a freshly published service
+    // shows on the next refresh instead of a 24h-stale copy needing a hard reload;
+    // the edge keeps a short cache + SWR so origin load stays near-zero.
+    c.header('Cache-Control', 'public, max-age=0, must-revalidate')
+    c.header('CDN-Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
     return c.html(`<!DOCTYPE html>
 <html lang="en">
 ${pageHead({
@@ -347,7 +351,11 @@ ${watchBody(view)}
         songMatches.map((x) => x.song.topic).find((t) => t && topicSlug(t) === slug)) ??
       slug
 
-    c.header('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400')
+    // Browser revalidates every load (max-age=0) so a freshly published service
+    // shows on the next refresh instead of a 24h-stale copy needing a hard reload;
+    // the edge keeps a short cache + SWR so origin load stays near-zero.
+    c.header('Cache-Control', 'public, max-age=0, must-revalidate')
+    c.header('CDN-Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
     return c.html(`<!DOCTYPE html>
 <html lang="en">
 ${pageHead({
@@ -382,7 +390,11 @@ ${watchTopicBody(label, matches, songMatches)}
     const chapterNote =
       sermon.segments.length > 0 ? ` ${sermon.segments.length} chapters; jump to any moment.` : ''
 
-    c.header('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400')
+    // Browser revalidates every load (max-age=0) so a freshly published service
+    // shows on the next refresh instead of a 24h-stale copy needing a hard reload;
+    // the edge keeps a short cache + SWR so origin load stays near-zero.
+    c.header('Cache-Control', 'public, max-age=0, must-revalidate')
+    c.header('CDN-Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
     return c.html(`<!DOCTYPE html>
 <html lang="en">
 ${pageHead({

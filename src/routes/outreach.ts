@@ -111,7 +111,11 @@ const OUTREACH_JSON_LD = JSON.stringify({
 
 export function registerOutreachRoute(app: Hono) {
   app.get('/outreach', (c) => {
-    c.header('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+    // Browser revalidates every load so newly published events show on the next
+    // refresh (never a stale browser copy needing a hard reload); the edge keeps
+    // a tight cache + SWR.
+    c.header('Cache-Control', 'public, max-age=0, must-revalidate')
+    c.header('CDN-Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     return c.html(`<!DOCTYPE html>
 <!-- v1.42.1 - Outreach hub (refined design system) -->
 <html lang="en">

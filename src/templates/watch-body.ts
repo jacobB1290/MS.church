@@ -187,12 +187,32 @@ function songPanel(id: string, songItems: SongItem[], active: boolean, lead: str
 
 /** url-safe-ish text for the search blob; everything is matched lowercased. */
 type SearchEntry = { i: string; t: string; ti: string; wh: string; to: string[]; su: string; sc: string[]; tg: string[]; k?: string }
+
+// Boilerplate in the raw YouTube livestream titles ("LIVE - Sunday Morning
+// 9:00am | 5/3/2026 | Morning Star Church of Boise") is identical week to week,
+// so indexing it makes every message match generic words AND fuzzy-match
+// near-words (the classic: "love" matching "live" in every title). Strip it
+// from the SEARCH title only — the visible card title is untouched, and a real
+// remainder (if a service ever gets a meaningful title) still indexes. Songs
+// keep their real titles, which ARE the searchable content.
+const TITLE_NOISE = new Set([
+  'live', 'sunday', 'morning', 'am', 'pm', 'service', 'star', 'church', 'of',
+  'boise', 'christian', 'morningstar', 'livestream', 'stream',
+])
+function cleanMessageTitle(t: string): string {
+  return t
+    .toLowerCase()
+    .split(/[^a-z0-9']+/)
+    .filter((w) => w && !TITLE_NOISE.has(w) && !/^\d/.test(w))
+    .join(' ')
+}
+
 function messageEntry(s: PublishedSermon): SearchEntry {
   const scripture = [...new Set(s.segments.flatMap((seg) => seg.scriptureRefs || []))]
   return {
     i: s.slug,
     t: s.format,
-    ti: s.title,
+    ti: cleanMessageTitle(s.title),
     wh: s.speakers.join(' '),
     to: s.topics || [],
     su: s.summary || s.seo?.description || '',
@@ -420,6 +440,9 @@ export const watchBody = (view: WatchHubView): string => {
 
                     // Filler words a visitor types in a natural query ("the message about ...").
                     var STOP = {a:1,an:1,the:1,of:1,on:1,at:1,about:1,for:1,to:1,and:1,or:1,with:1,that:1,this:1,is:1,was:1,are:1,be:1,our:1,us:1,me:1,my:1,we:1,what:1,who:1,when:1,where:1,how:1,do:1,does:1,did:1,you:1,it:1,from:1,please:1,find:1,show:1,want:1,one:1};
+                    // Field weights + the scoring below are mirrored verbatim in
+                    // scripts/search-harness.mjs (run: npm run search:test), which tunes
+                    // relevance against the LIVE catalog. Change one, change both.
                     var FIELD_W = { ti: 10, wh: 8, to: 9, sc: 6, su: 4, tg: 7, ty: 5 };
 
                     function words(s) { return (s || '').toLowerCase().split(/[^a-z0-9']+/).filter(Boolean); }
@@ -441,7 +464,7 @@ export const watchBody = (view: WatchHubView): string => {
                             if (w === tok) return 1;
                             if (w.indexOf(tok) === 0) best = Math.max(best, 0.85);
                             else if (w.indexOf(tok) > 0) best = Math.max(best, 0.6);
-                            else if (tok.length >= 4 && w.length >= 3 && near(tok, w)) best = Math.max(best, 0.7);
+                            else if (tok.length >= 5 && w.length >= 4 && near(tok, w)) best = Math.max(best, 0.5);
                         }
                         return best;
                     }

@@ -2,7 +2,7 @@ import { type Hono } from 'hono'
 import { GOLD } from '../design-tokens.js'
 import { fetchCalendarEvents } from './calendar.js'
 import { contactTopicsClientJson } from '../contact-topics.js'
-import { fetchAllPublishedSermons, tallyTopics, topicSlug } from '../sermons-feed.js'
+import { fetchAllPublishedSermons, tallyTopics, topicSlug, itemTopic } from '../sermons-feed.js'
 import { posterFor, formatNoun } from '../templates/watch-shared.js'
 
 // Escape special XML characters in body text (titles, descriptions, etc.).
@@ -106,6 +106,26 @@ Sitemap: https://ms.church/sitemap.xml
       images?: ImageInfo[]
       video?: VideoInfo
     }
+    // Pull the live catalog up front so the watch hub and topic pages can carry
+    // an HONEST lastmod: the newest published service drives the dates Google
+    // sees for the catalog surfaces, not a hand-bumped constant. Degrades to
+    // nothing (the static map still renders) if the feed is unset or unreachable.
+    const sermons = await fetchAllPublishedSermons().catch(() => [])
+    const dateOf = (s: { publishedAt: string | null }): string =>
+      s.publishedAt ? s.publishedAt.split('T')[0] : SITE_LASTMOD
+    const newestSermonLastmod = sermons.length
+      ? sermons.map(dateOf).sort().slice(-1)[0]
+      : SITE_LASTMOD
+    const topicNewest = new Map<string, string>()
+    for (const s of sermons) {
+      const t = itemTopic(s)
+      if (!t) continue
+      const slug = topicSlug(t)
+      const d = dateOf(s)
+      const cur = topicNewest.get(slug)
+      if (!cur || d > cur) topicNewest.set(slug, d)
+    }
+
     const entries: Entry[] = [
       {
         loc: `${base}/`,
@@ -181,10 +201,10 @@ Sitemap: https://ms.church/sitemap.xml
       },
       {
         loc: `${base}/watch`,
-        // The rendered HTML is static (the featured video updates client-side
-        // from the live feed), so the honest lastmod is SITE_LASTMOD, not
-        // today — but the content a visitor sees refreshes weekly.
-        lastmod: SITE_LASTMOD,
+        // The hub renders the full library server-side, so its honest lastmod is
+        // the newest published service (not a hand-bumped constant): Google sees
+        // the catalog refresh the week a new sermon goes up.
+        lastmod: newestSermonLastmod,
         changefreq: 'weekly',
         priority: '0.9',
       },
@@ -203,9 +223,7 @@ Sitemap: https://ms.church/sitemap.xml
     ]
 
     // Dynamic: every published service permalink (with a video sitemap block)
-    // plus a page per topic. Degrades to nothing when the CRM feed is unset or
-    // unreachable, so the static map above always renders.
-    const sermons = await fetchAllPublishedSermons().catch(() => [])
+    // plus a page per topic, from the catalog fetched above.
     for (const s of sermons) {
       const noun = formatNoun(s.format).toLowerCase()
       const desc = (s.summary ?? s.seo?.description ?? `A ${noun} from Morning Star Christian Church in Boise, Idaho.`).slice(0, 2000)
@@ -227,7 +245,7 @@ Sitemap: https://ms.church/sitemap.xml
     for (const t of tallyTopics(sermons)) {
       entries.push({
         loc: `${base}/watch/topic/${topicSlug(t.topic)}`,
-        lastmod: SITE_LASTMOD,
+        lastmod: topicNewest.get(t.slug) ?? SITE_LASTMOD,
         changefreq: 'monthly',
         priority: '0.5',
       })

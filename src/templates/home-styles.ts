@@ -10078,10 +10078,12 @@ export const homeStyles = (): string => `
             z-index: 2;
         }
         .vplayer-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-        /* Gold-tinted poster scrim: a warm bronze grounding gradient (the brand
-           gold hue darkened) rather than a neutral grey shadow. Same hue at both
-           stops with an alpha-only ramp, so it never fades through grey. */
-        .vplayer-poster-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(47, 36, 25, 0) 45%, rgba(47, 36, 25, 0.34) 100%); }
+        /* Gold poster scrim: a warm gold grounding gradient, not a neutral grey
+           shadow. Uses a lighter, more saturated gold than the muted brand taupe
+           (rgb(168,124,52)) at a meaningful bottom opacity so the wash actually
+           reads gold rather than dark-grey. Same hue at both stops with an
+           alpha-only ramp, so it never fades through grey. */
+        .vplayer-poster-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(168, 124, 52, 0) 32%, rgba(168, 124, 52, 0.58) 100%); }
         .vplayer-poster-play {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(1);

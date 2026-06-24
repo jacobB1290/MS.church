@@ -9754,6 +9754,17 @@ export const homeStyles = (): string => `
             color: var(--white);
         }
         .watch-chip-count { opacity: 0.66; margin-left: 5px; font-size: var(--text-micro); }
+        /* Elegant hairline that sets the "All" chip apart from the value chips.
+           Uses --text-fade (.30), not --text-hairline (.10) — at 1px the .10
+           alpha is imperceptible on the cream surface and reads as bare spacing. */
+        .watch-chip-sep {
+            flex: 0 0 auto;
+            align-self: center;
+            width: 1px;
+            height: 20px;
+            background: var(--text-fade);
+            border-radius: 1px;
+        }
 
         /* --- Grid: crossfade on filter (reflow stays invisible) --- */
         .watch-grid {
@@ -10078,7 +10089,13 @@ export const homeStyles = (): string => `
             z-index: 2;
         }
         .vplayer-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-        .vplayer-poster-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,0.3) 100%); }
+        /* Gold poster scrim: a soft warm gold grounding gradient, not a neutral
+           grey shadow. Uses a lighter, more saturated gold than the muted brand
+           taupe (rgb(168,124,52)) so it reads gold rather than dark-grey, but
+           kept subtle — low bottom opacity, ramp starting low on the poster.
+           Same hue at both stops with an alpha-only ramp, so it never fades
+           through grey. */
+        .vplayer-poster-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(168, 124, 52, 0) 48%, rgba(168, 124, 52, 0.34) 100%); }
         .vplayer-poster-play {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(1);

@@ -9754,13 +9754,15 @@ export const homeStyles = (): string => `
             color: var(--white);
         }
         .watch-chip-count { opacity: 0.66; margin-left: 5px; font-size: var(--text-micro); }
-        /* Elegant hairline that sets the "All" chip apart from the value chips. */
+        /* Elegant hairline that sets the "All" chip apart from the value chips.
+           Uses --text-fade (.30), not --text-hairline (.10) — at 1px the .10
+           alpha is imperceptible on the cream surface and reads as bare spacing. */
         .watch-chip-sep {
             flex: 0 0 auto;
             align-self: center;
             width: 1px;
-            height: 18px;
-            background: var(--text-hairline);
+            height: 20px;
+            background: var(--text-fade);
             border-radius: 1px;
         }
 

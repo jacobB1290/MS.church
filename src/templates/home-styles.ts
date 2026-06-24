@@ -9754,6 +9754,15 @@ export const homeStyles = (): string => `
             color: var(--white);
         }
         .watch-chip-count { opacity: 0.66; margin-left: 5px; font-size: var(--text-micro); }
+        /* Elegant hairline that sets the "All" chip apart from the value chips. */
+        .watch-chip-sep {
+            flex: 0 0 auto;
+            align-self: center;
+            width: 1px;
+            height: 18px;
+            background: var(--text-hairline);
+            border-radius: 1px;
+        }
 
         /* --- Grid: crossfade on filter (reflow stays invisible) --- */
         .watch-grid {

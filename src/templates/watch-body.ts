@@ -171,14 +171,20 @@ function renderServiceSelector(allItems: PublishedSermon[]): string {
 /* ---- Library tabs (message types) ---- */
 
 /** A chip row that filters the panel's cards by a data attribute (key = topic | kind). */
-function filterRow(key: string, label: string, chips: { val: string; label: string; count: number }[]): string {
+function filterRow(
+  key: string,
+  label: string,
+  chips: { val: string; label: string; count: number }[],
+  defaultVal = 'all',
+): string {
   if (chips.length <= 1) return ''
-  return `<div class="watch-filter" role="group" aria-label="${escapeHtml(label)}" data-key="${escapeHtml(key)}">
-                            <button class="watch-chip" type="button" data-val="all" aria-pressed="true">All</button>
+  return `<div class="watch-filter" role="group" aria-label="${escapeHtml(label)}" data-key="${escapeHtml(key)}" data-default="${escapeHtml(defaultVal)}">
+                            <button class="watch-chip" type="button" data-val="all" aria-pressed="${defaultVal === 'all' ? 'true' : 'false'}">All</button>
+                            <span class="watch-chip-sep" aria-hidden="true"></span>
                             ${chips
                               .map(
                                 (c) =>
-                                  `<button class="watch-chip" type="button" data-val="${escapeHtml(c.val)}" aria-pressed="false">${escapeHtml(c.label)}<span class="watch-chip-count">${c.count}</span></button>`,
+                                  `<button class="watch-chip" type="button" data-val="${escapeHtml(c.val)}" aria-pressed="${defaultVal === c.val ? 'true' : 'false'}">${escapeHtml(c.label)}<span class="watch-chip-count">${c.count}</span></button>`,
                               )
                               .join('\n                            ')}
                         </div>`
@@ -207,10 +213,15 @@ function songPanel(id: string, songItems: SongItem[], active: boolean, lead: str
   const program = songItems.filter((it) => it.song.kind === 'program').length
   const filter =
     worship > 0 && program > 0
-      ? filterRow('kind', 'Filter songs', [
-          { val: 'worship', label: 'Worship', count: worship },
-          { val: 'program', label: 'Program', count: program },
-        ])
+      ? filterRow(
+          'kind',
+          'Filter songs',
+          [
+            { val: 'worship', label: 'Worship', count: worship },
+            { val: 'program', label: 'Program', count: program },
+          ],
+          'program',
+        )
       : ''
   return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'}>
                         <p class="section-lead watch-panel-lead">${lead}</p>
@@ -459,6 +470,14 @@ export const watchBody = (view: WatchHubView): string => {
                             });
                         });
                     });
+                    // Apply the panel's default filter on load (e.g. Songs defaults
+                    // to Program). 'all' is a no-op since every card already shows.
+                    var def = filter.getAttribute('data-default') || 'all';
+                    if (def !== 'all') {
+                        grid.querySelectorAll('.watch-card').forEach(function (card) {
+                            card.classList.toggle('is-filtered', card.getAttribute('data-' + key) !== def);
+                        });
+                    }
                 });
 
                 /* --- Library search: advanced, multi-field, ranked, instant --- */
@@ -572,7 +591,18 @@ export const watchBody = (view: WatchHubView): string => {
                     function exit() {
                         lib.classList.remove('is-searching');
                         for (var sid in cards) { cards[sid].classList.remove('is-search-hidden'); cards[sid].style.order = ''; }
-                        lib.querySelectorAll('.watch-panel').forEach(function (pan) { pan.classList.remove('is-empty-group'); });
+                        lib.querySelectorAll('.watch-panel').forEach(function (pan) {
+                            pan.classList.remove('is-empty-group');
+                            // Restore each panel's default chip filter (search had cleared it).
+                            var f = pan.querySelector('.watch-filter'); var g = pan.querySelector('.watch-grid');
+                            if (!f || !g) return;
+                            var k = f.getAttribute('data-key') || 'topic';
+                            var d = f.getAttribute('data-default') || 'all';
+                            f.querySelectorAll('.watch-chip').forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-val') === d)); });
+                            g.querySelectorAll('.watch-card').forEach(function (card) {
+                                card.classList.toggle('is-filtered', !(d === 'all' || card.getAttribute('data-' + k) === d));
+                            });
+                        });
                         if (summary) { summary.hidden = true; summary.textContent = ''; }
                         clearBtn.hidden = !input.value;
                     }

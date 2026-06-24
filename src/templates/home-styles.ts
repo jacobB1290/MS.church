@@ -10078,7 +10078,10 @@ export const homeStyles = (): string => `
             z-index: 2;
         }
         .vplayer-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-        .vplayer-poster-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,0.3) 100%); }
+        /* Gold-tinted poster scrim: a warm bronze grounding gradient (the brand
+           gold hue darkened) rather than a neutral grey shadow. Same hue at both
+           stops with an alpha-only ramp, so it never fades through grey. */
+        .vplayer-poster-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(47, 36, 25, 0) 45%, rgba(47, 36, 25, 0.34) 100%); }
         .vplayer-poster-play {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(1);

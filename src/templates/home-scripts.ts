@@ -2036,6 +2036,7 @@ export const homeScripts = (): string => `
                 var videoUnmuteBtn = document.getElementById('video-unmute-btn');
                 var _ytVideoId = null;
                 var _videoActivated = false;
+                var _launching = false;
                 var _shouldAutoPlay = false;
                 var _isMutedAutoPlay = false;
                 var _preloadedIframe = null;
@@ -2155,6 +2156,51 @@ export const homeScripts = (): string => `
                     }, 650);
                 }
 
+                // ===== Seamless "play here -> watch over there" hand-off =====
+                // Tapping the latest video doesn't open a local overlay; it carries
+                // you to /watch where the same service is the feature player. The
+                // video box is tagged with a shared view-transition-name so the
+                // browser MORPHS it from this card into the watch feature slot while
+                // the rest of the watch page fades in around it (cross-document view
+                // transition — the same machinery as the brand-wordmark morph). The
+                // destination starts the video the instant it lands (muted, per
+                // autoplay policy, with a one-tap "sound" pill), so it reads as one
+                // continuous, uninterrupted play.
+                function launchWatchTransition() {
+                    if (_launching) return;
+                    _launching = true;
+                    // Instant feedback: the play glyph becomes the loading spinner.
+                    if (videoPlayBtn) {
+                        videoPlayBtn.classList.add('is-loading');
+                        videoPlayBtn.style.pointerEvents = 'none';
+                    }
+                    // Tag the morph anchor. Matches .vplayer--feature .vplayer-stage
+                    // / .watch-feature-thumb on /watch (view-transition-name: watch-hero).
+                    if (videoWrapper) {
+                        try { videoWrapper.style.viewTransitionName = 'watch-hero'; } catch (e) {}
+                    }
+                    var go = function () { window.location.href = '/watch?play=1'; };
+                    // Let the spinner paint into the outgoing snapshot, then navigate.
+                    // The @view-transition rule turns the navigation into the morph.
+                    if (typeof requestAnimationFrame === 'function') {
+                        requestAnimationFrame(function () { requestAnimationFrame(go); });
+                    } else {
+                        go();
+                    }
+                }
+
+                // Returning here (back button / bfcache) must clear the launch state
+                // so the play button isn't frozen mid-spinner and the morph tag isn't
+                // left on the card (which would wrongly morph a later normal nav).
+                window.addEventListener('pageshow', function () {
+                    _launching = false;
+                    if (videoWrapper) { try { videoWrapper.style.viewTransitionName = ''; } catch (e) {} }
+                    if (videoPlayBtn) {
+                        videoPlayBtn.classList.remove('is-loading');
+                        videoPlayBtn.style.pointerEvents = '';
+                    }
+                });
+
                 // Unmute handler — uses YouTube iframe API postMessage for all platforms including Safari
                 if (videoUnmuteBtn) {
                     videoUnmuteBtn.addEventListener('click', function() {
@@ -2204,18 +2250,19 @@ export const homeScripts = (): string => `
                         return;
                     }
 
-                    // Typical visit: clicks open the centered video player overlay.
-                    var card1 = document.getElementById('video-card-1');
+                    // Typical visit: tapping the latest service hands off to /watch
+                    // with a seamless video morph (see launchWatchTransition). The
+                    // older recent cards (2-3) still open the in-place desktop overlay.
                     if (videoPlayBtn) {
                         videoPlayBtn.addEventListener('click', function(e) {
                             e.stopPropagation();
-                            expandCardPlayer(card1, videoId, _latestThumbnailUrl);
+                            launchWatchTransition();
                         });
                     }
                     if (videoThumbnail) {
                         videoThumbnail.addEventListener('click', function(e) {
                             if (e.target.closest('.video-play-btn, .video-unmute-btn')) return;
-                            expandCardPlayer(card1, videoId, _latestThumbnailUrl);
+                            launchWatchTransition();
                         });
                     }
                 }

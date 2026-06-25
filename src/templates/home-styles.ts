@@ -734,12 +734,41 @@ export const homeStyles = (): string => `
                 animation: vt-new-fade-in 150ms cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
             }
 
+            /* "Play here -> watch over there" hero morph (v-video-handoff).
+               The home latest-video frame is tagged view-transition-name:
+               watch-hero in JS the instant its play button is tapped; the
+               /watch feature player carries the same name (below). On the
+               resulting navigation the browser captures both and interpolates
+               the video box from the home card straight into the watch
+               feature slot, while everything else crossfades (root) — the
+               video appears to keep playing as the new page assembles around
+               it. Only the /watch surfaces define an element with this name,
+               so it is inert on every other page. Slightly longer + softer
+               than the brand morph so the larger travel reads as deliberate. */
+            .vplayer--feature .vplayer-stage,
+            .watch-feature-thumb {
+                view-transition-name: watch-hero;
+            }
+            ::view-transition-group(watch-hero) {
+                animation-duration: 460ms;
+                animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            ::view-transition-old(watch-hero) {
+                animation: vt-old-fade-out 300ms cubic-bezier(0.4, 0, 0.68, 0) forwards;
+            }
+            ::view-transition-new(watch-hero) {
+                animation: vt-new-fade-in 420ms cubic-bezier(0.22, 1, 0.36, 1) 60ms backwards;
+            }
+
             @media (prefers-reduced-motion: reduce) {
                 ::view-transition-old(root),
                 ::view-transition-new(root),
                 ::view-transition-old(site-brand),
                 ::view-transition-new(site-brand),
-                ::view-transition-group(site-brand) {
+                ::view-transition-group(site-brand),
+                ::view-transition-old(watch-hero),
+                ::view-transition-new(watch-hero),
+                ::view-transition-group(watch-hero) {
                     animation: none;
                 }
             }
@@ -5824,10 +5853,10 @@ export const homeStyles = (): string => `
                 display: inline-flex;
                 align-items: center;
                 gap: 12px;
-                background: rgba(139, 0, 0, 0.1);
+                background: color-mix(in srgb, var(--gold) 12%, transparent);
                 border-radius: var(--radius-pill);
                 padding: 8px 20px;
-                color: #8B0000;
+                color: var(--gold-deeper);
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
@@ -5838,8 +5867,8 @@ export const homeStyles = (): string => `
                 width: 10px;
                 height: 10px;
                 border-radius: var(--radius-circle);
-                background: #cc0000;
-                box-shadow: 0 0 16px rgba(204, 0, 0, 0.6);
+                background: var(--gold);
+                box-shadow: 0 0 16px color-mix(in srgb, var(--gold) 60%, transparent);
                 animation: pulse 2s ease-in-out infinite;
             }
 
@@ -5926,7 +5955,7 @@ export const homeStyles = (): string => `
 
             .live-verse small {
                 display: block;
-                color: #8B0000;
+                color: var(--gold-dark);
                 font-size: var(--text-small);
                 margin-top: 8px;
                 letter-spacing: 1px;
@@ -5970,7 +5999,7 @@ export const homeStyles = (): string => `
             .countdown-number {
                 font-size: var(--text-heading);
                 font-weight: var(--weight-bold);
-                color: #8B0000;
+                color: var(--gold-dark);
                 font-family: var(--font-display);
                 line-height: 1;
             }
@@ -6005,10 +6034,10 @@ export const homeStyles = (): string => `
                 height: 0;
                 overflow: hidden;
                 border-radius: var(--radius-md);
-                box-shadow: 0 8px 32px rgba(139, 0, 0, 0.25),
-                            0 16px 48px rgba(139, 0, 0, 0.15);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10),
+                            0 16px 48px color-mix(in srgb, var(--gold) 12%, transparent);
             }
-            
+
             .youtube-embed,
             .youtube-embed iframe {
                 position: absolute;
@@ -6065,7 +6094,17 @@ export const homeStyles = (): string => `
             }
 
             .video-play-btn:hover:not(.is-loading):not(.is-revealing) .video-play-btn-bg {
-                fill: #cc0000;
+                fill: var(--gold-dark);
+            }
+
+            /* Brand-gold play button (was YouTube red). The CSS fill overrides the
+               SVG presentation attribute, so the markup keeps its #FF0000 fallback
+               for any no-CSS context while the button reads as the brand gold. */
+            .video-play-btn-bg {
+                fill: var(--gold);
+            }
+            .play-spinner-ring {
+                stroke: var(--gold);
             }
 
             /* Play button morph-to-spinner — single SVG, no element swap */
@@ -6245,8 +6284,8 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-bold);
                 letter-spacing: 1.6px;
                 text-transform: uppercase;
-                color: #8B0000;
-                background: rgba(139, 0, 0, 0.08);
+                color: var(--gold-deeper);
+                background: color-mix(in srgb, var(--gold) 10%, transparent);
                 border-radius: var(--radius-pill);
                 padding: 5px 12px;
                 margin-bottom: 2px;
@@ -6282,7 +6321,7 @@ export const homeStyles = (): string => `
                 overflow: hidden;
                 background: #0a0a0a;
                 box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12),
-                            0 12px 40px rgba(139, 0, 0, 0.08);
+                            0 12px 40px color-mix(in srgb, var(--gold) 10%, transparent);
                 transition: transform 0.4s var(--ease-standard),
                             box-shadow 0.4s var(--ease-standard);
             }
@@ -6310,7 +6349,7 @@ export const homeStyles = (): string => `
             .video-card-recent:hover .video-card-thumb {
                 transform: translateY(-4px);
                 box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18),
-                            0 18px 48px rgba(139, 0, 0, 0.12);
+                            0 18px 48px color-mix(in srgb, var(--gold) 14%, transparent);
             }
 
             .video-card-recent:hover .video-card-thumb-img {
@@ -6323,7 +6362,13 @@ export const homeStyles = (): string => `
             }
 
             .video-card-recent:hover .video-card-title {
-                color: #8B0000;
+                color: var(--gold-dark);
+            }
+
+            /* Recent-card play glyph: gold YouTube-shape (first path), white
+               triangle (last path). CSS fill overrides the #FF0000 markup attr. */
+            .video-card-play svg path:first-child {
+                fill: var(--gold);
             }
 
             .video-card-title {
@@ -6383,7 +6428,7 @@ export const homeStyles = (): string => `
                 background-size: cover;
                 background-position: center;
                 box-shadow: 0 50px 120px rgba(0, 0, 0, 0.55),
-                            0 20px 60px rgba(139, 0, 0, 0.18);
+                            0 20px 60px color-mix(in srgb, var(--gold) 18%, transparent);
                 transform-origin: center center;
                 transition: transform var(--motion-slow) var(--ease-out-soft);
                 will-change: transform;
@@ -10133,6 +10178,35 @@ export const homeStyles = (): string => `
         @keyframes vplayer-spin { to { transform: rotate(360deg); } }
         @media (prefers-reduced-motion: reduce) { .vplayer.is-loading .vplayer-poster-play::after { animation-duration: 1.4s; } }
         .vplayer-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1; }
+
+        /* "Tap for sound" pill — the feature auto-starts MUTED after the home
+           hand-off (browser autoplay policy), so this one-tap control restores
+           audio. Lives inside the 16:9 stage, fades up once playback reveals. */
+        .vplayer-unmute {
+            position: absolute; left: var(--space-sm); bottom: var(--space-sm); z-index: 4;
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 9px 15px; border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: var(--radius-pill);
+            background: rgba(20, 16, 12, 0.6); color: var(--white);
+            font-family: var(--font-body), 'Inter', sans-serif;
+            font-size: var(--text-small); font-weight: var(--weight-medium);
+            letter-spacing: 0.2px; cursor: pointer; white-space: nowrap;
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            opacity: 0; transform: translateY(8px);
+            transition: opacity var(--motion-medium) var(--ease-out-soft),
+                        transform var(--motion-medium) var(--ease-out-soft),
+                        background var(--motion-fast) ease;
+        }
+        .vplayer-unmute.is-visible { opacity: 1; transform: translateY(0); }
+        .vplayer-unmute.is-hiding { opacity: 0; transform: translateY(8px); pointer-events: none; }
+        .vplayer-unmute:hover { background: rgba(20, 16, 12, 0.8); border-color: rgba(255, 255, 255, 0.45); }
+        .vplayer-unmute svg { flex-shrink: 0; }
+        @media (prefers-reduced-motion: reduce) {
+            .vplayer-unmute { transition: opacity var(--motion-medium) linear; transform: none; }
+            .vplayer-unmute.is-visible { transform: none; }
+            .vplayer-unmute.is-hiding { transform: none; }
+        }
+
         /* The native YouTube chrome is hidden under our own bar; the iframe still
            handles the actual decode. A thin transparent shield over the iframe
            swallows clicks so the segment can't be scrubbed past via native UI. */

@@ -349,6 +349,32 @@ export const watchBody = (view: WatchHubView): string => {
         .watch-feature-iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
     </style>
     <body class="page-subpage">
+        <script>
+            /* Seamless arrival from the home "play" tap (/watch?play=1). Before the
+               cross-document view-transition snapshot is captured, scroll the feature
+               player just under the nav so the morphing video box lands in view (and
+               not off-screen below the intro). Runs in pagereveal for the VT path and
+               on DOMContentLoaded as a no-VT fallback. The autoplay itself is wired in
+               the watch player script / fallback handler below. */
+            (function () {
+                try {
+                    if (new URLSearchParams(location.search).get('play') !== '1') return;
+                    document.documentElement.classList.add('watch-play-arrival');
+                    var placed = false;
+                    function place() {
+                        var el = document.querySelector('.vplayer--feature .vplayer-stage, .watch-feature-thumb');
+                        if (!el) return;
+                        placed = true;
+                        var top = el.getBoundingClientRect().top + (window.pageYOffset || 0);
+                        var off = (window.innerWidth <= 960) ? 80 : 96;
+                        window.scrollTo(0, Math.max(0, top - off));
+                    }
+                    addEventListener('pagereveal', place);
+                    if (document.readyState === 'loading') addEventListener('DOMContentLoaded', function () { if (!placed) place(); });
+                    else place();
+                } catch (e) {}
+            })();
+        </script>
         <div class="page">
             ${subpageHeader()}
             <div class="subpage-spacer"></div>
@@ -612,23 +638,42 @@ export const watchBody = (view: WatchHubView): string => {
                     if (clearBtn) clearBtn.addEventListener('click', function () { input.value = ''; exit(); input.focus(); });
                 })();
 
-                /* --- Fallback featured play --- */
+                /* --- Fallback featured play (no published library yet) --- */
                 var fp = document.getElementById('watch-feature-play');
                 if (fp) {
                     var played = false;
-                    fp.addEventListener('click', function () {
+                    function playFeature(muted) {
                         if (played) return; played = true;
+                        var vid = fp.getAttribute('data-video');
+                        var base = 'https://www.youtube.com/embed/' + vid + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
                         var iframe = document.createElement('iframe');
                         iframe.className = 'watch-feature-iframe';
-                        iframe.src = 'https://www.youtube.com/embed/' + fp.getAttribute('data-video') + '?autoplay=1&rel=0&modestbranding=1';
+                        iframe.src = base + (muted ? '&mute=1' : '');
                         iframe.title = 'Sunday service video from Morning Star Christian Church';
                         iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
                         iframe.setAttribute('allowfullscreen', '');
                         var holder = document.createElement('div');
                         holder.className = 'watch-feature-thumb';
                         holder.appendChild(iframe);
+                        // Muted auto-arrival: a one-tap "sound" pill reloads the embed
+                        // unmuted (the tap is a gesture, so audio is allowed).
+                        if (muted) {
+                            var b = document.createElement('button');
+                            b.type = 'button'; b.className = 'vplayer-unmute'; b.setAttribute('aria-label', 'Turn on sound');
+                            b.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg><span>Tap for sound</span>';
+                            b.addEventListener('click', function (e) {
+                                e.preventDefault(); e.stopPropagation();
+                                iframe.src = base;
+                                b.classList.add('is-hiding');
+                                setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 320);
+                            });
+                            holder.appendChild(b);
+                            requestAnimationFrame(function () { b.classList.add('is-visible'); });
+                        }
                         fp.replaceWith(holder);
-                    });
+                    }
+                    fp.addEventListener('click', function () { playFeature(false); });
+                    try { if (new URLSearchParams(location.search).get('play') === '1') playFeature(true); } catch (e) {}
                 }
             })();
         </script>

@@ -10507,8 +10507,25 @@ export const homeStyles = (): string => `
             .watch-feature { grid-template-columns: 1fr; gap: var(--space-lg); }
             .watch-permalink-grid { grid-template-columns: 1fr; gap: var(--space-xl); }
             .watch-tabs { gap: var(--space-sm); }
-            /* Home plate stacks: poster + caption, then the contents list below. */
-            .watch-plate { grid-template-columns: 1fr; gap: var(--space-lg); margin-top: var(--space-lg); }
+            /* Mobile: collapse to a single frosted card (as the section had
+               before) with the poster + description + the way in. The chapter
+               index is a /watch concern — drop it on the small screen. */
+            .watch-plate {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+                margin-top: var(--space-lg);
+                background: rgba(255, 255, 255, 0.85);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                border-radius: var(--radius-xl);
+                padding: var(--space-lg) var(--space-md);
+                box-shadow: var(--shadow-lg);
+                backdrop-filter: blur(20px);
+            }
+            .watch-plate .watch-aside-label,
+            .watch-plate .watch-chapters { display: none; }
+            /* Soften the poster's own drop shadow so it doesn't double up with
+               the card's elevation. */
+            .watch-plate .video-embed-wrapper { box-shadow: var(--shadow-md); }
             .watch-plate-cta { margin-top: var(--space-md); }
         }
 

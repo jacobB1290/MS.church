@@ -254,13 +254,6 @@ export const homeStyles = (): string => `
                 overflow-x: hidden;
             }
 
-            /* ── EXPERIMENT: site-wide film grain ──
-               The grain now lives in the BODY BACKGROUND (see the body rule), so it
-               textures only the cream page background and sits behind all content.
-               (Earlier it was a top overlay over everything, and a scroll-with-content
-               variant that needed body{position:relative} — which broke iOS fixed
-               elements. The background approach avoids both.) */
-
             /* Brand text selection — the default blue highlight reads as
                foreign chrome against the warm cream + gold palette. A
                translucent gold keeps selected text legible while staying
@@ -378,21 +371,6 @@ export const homeStyles = (): string => `
                 /* Solid background color for seamless Safari iOS overscroll */
                 background-color: var(--bg-color);
                 background: var(--bg-default);
-                /* Film grain on the PAGE BACKGROUND only (desktop: body shows behind
-                   the transparent .page + in the gutters). Set AFTER the background
-                   shorthand so it isn't reset to none. Multiply blends the fine noise
-                   into the cream so it sits BEHIND content, never over cards/text.
-                   Mobile carries the same grain on .page (the body bg is forced flat
-                   for the iOS status-bar tint).
-                   Warm-toned to match the cream --bg (#faf8f5): the monochrome noise
-                   (saturate 0) is re-tinted per channel so the dark speckles lean warm
-                   (R floor 0.56 > G 0.50 > B 0.40) while highlights stay neutral white
-                   — same luminance/intensity, just a warm hue instead of neutral gray.
-                   R/G/B funcs kept in lockstep with the .page copy below. */
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='pg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.44' intercept='0.56'/%3E%3CfeFuncG type='linear' slope='0.5' intercept='0.5'/%3E%3CfeFuncB type='linear' slope='0.6' intercept='0.4'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23pg)'/%3E%3C/svg%3E");
-                background-repeat: repeat;
-                background-size: 180px 180px;
-                background-blend-mode: multiply;
                 color: var(--text-primary);
                 min-height: 100vh;
                 min-height: 100dvh;
@@ -404,8 +382,7 @@ export const homeStyles = (): string => `
             }
 
 
-            /* Body background - static, no dynamic changes. Use background-color (not
-               the shorthand) so the grain background-image on body is preserved. */
+            /* Body background - static, no dynamic changes. */
             body.stay-tuned-active { background-color: var(--bg-stay-tuned); }
             
             /* Modal open - prevent body scroll */
@@ -8407,17 +8384,8 @@ export const homeStyles = (): string => `
                 .page {
                     width: 100%;
                     padding: 0 clamp(0px, 2.5vw, 5%);
-                    /* Light bg covers the olive body, AND carries the film-grain
-                       texture: baked into the page background so it sits behind all
-                       content (cards, images, text cover it — only the cream page
-                       background shows it) and scrolls with the page. Intensity =
-                       the grain SVG's feComponentTransfer slope (kept in lockstep
-                       with the body grain above). */
+                    /* Light bg covers the olive body behind the content. */
                     background-color: var(--bg-color);
-                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='pg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.44' intercept='0.56'/%3E%3CfeFuncG type='linear' slope='0.5' intercept='0.5'/%3E%3CfeFuncB type='linear' slope='0.6' intercept='0.4'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23pg)'/%3E%3C/svg%3E");
-                    background-repeat: repeat;
-                    background-size: 180px 180px;
-                    background-blend-mode: multiply;
                     box-sizing: border-box;
                 }
 

@@ -10455,11 +10455,61 @@ export const homeStyles = (): string => `
             white-space: pre-wrap; max-width: 70ch;
         }
 
+        /* --- Home Watch section: editorial "latest service" plate ---
+           A two-column composition: the live video poster (left, keeps the
+           press-play -> /watch morph) + a quiet "In this service" contents list
+           (right) with worship songs folded into the chapters. Each chapter is a
+           deep-link into the service permalink at its timestamp. Degrades to a
+           summary + scripture pull-quote when nothing is chaptered yet. */
+        .watch-live-line {
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+            margin-top: var(--space-sm); font-size: var(--text-small); color: var(--text-muted);
+        }
+        .watch-live-text { letter-spacing: 0.01em; }
+        .watch-plate {
+            display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+            gap: var(--space-2xl); align-items: start; margin-top: var(--space-xl);
+        }
+        .watch-plate-main { min-width: 0; display: flex; flex-direction: column; gap: var(--space-md); }
+        .watch-caption { display: flex; flex-direction: column; gap: 6px; }
+        .watch-cap-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: var(--text-small); color: var(--text-muted); }
+        .watch-cap-format {
+            font-size: var(--text-micro); font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide);
+            text-transform: uppercase; color: var(--gold-dark);
+            background: color-mix(in oklab, var(--gold) 12%, transparent);
+            padding: 4px 10px; border-radius: var(--radius-pill);
+        }
+        .watch-cap-title {
+            font-family: var(--font-display); font-weight: var(--weight-semibold);
+            font-size: var(--text-heading); line-height: var(--leading-snug); color: var(--text-primary); margin: 2px 0 0;
+        }
+        .watch-cap-summary { font-size: var(--text-body); line-height: var(--leading-normal); color: var(--text-soft); margin: 4px 0 0; max-width: 56ch; }
+        .watch-cap-summary--lead { max-width: 46ch; }
+        .watch-plate-aside { min-width: 0; }
+        .watch-chapter-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+        .watch-chapter-song {
+            font-size: var(--text-compact); font-style: italic; color: var(--text-muted);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .watch-chapter-song::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex: 0 0 auto; }
+        .watch-chapter-song em { font-style: normal; color: var(--text-faint); font-size: var(--text-small); }
+        /* The message chapter is the only promoted row — a quiet gold spine. */
+        .watch-chapter--message { box-shadow: inset 3px 0 0 0 var(--gold); padding-left: 13px; }
+        .watch-plate-cta { margin-top: var(--space-lg); }
+        /* Degraded state: a scripture pull-quote keeps the right column a finished
+           composition rather than an empty rail. */
+        .watch-pull { margin: var(--space-lg) 0 0; padding-left: var(--space-md); border-left: 2px solid color-mix(in srgb, var(--gold) 50%, transparent); }
+        .watch-pull p { font-family: var(--font-display); font-style: italic; font-size: var(--text-lead); line-height: var(--leading-loose); color: var(--text-soft); margin: 0; }
+        .watch-pull cite { display: block; font-style: normal; font-size: var(--text-small); color: var(--gold-dark); margin-top: var(--space-sm); letter-spacing: 0.04em; }
+
         /* --- Watch surfaces: mobile --- */
         @media (max-width: 960px) {
             .watch-feature { grid-template-columns: 1fr; gap: var(--space-lg); }
             .watch-permalink-grid { grid-template-columns: 1fr; gap: var(--space-xl); }
             .watch-tabs { gap: var(--space-sm); }
+            /* Home plate stacks: poster + caption, then the contents list below. */
+            .watch-plate { grid-template-columns: 1fr; gap: var(--space-lg); margin-top: var(--space-lg); }
+            .watch-plate-cta { margin-top: var(--space-md); }
         }
 
         @media (prefers-reduced-motion: reduce) {

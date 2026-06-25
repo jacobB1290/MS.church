@@ -7770,6 +7770,25 @@ export const homeStyles = (): string => `
                 html.nav-measuring .nav-shell * {
                     animation: none !important;
                 }
+                /* Release every collapse the cascade might be holding so the probe
+                   reads the TRUE natural rows, not a clamped one. .brand/.nav-cta
+                   carry max-height: var(--mnav-brand-h/--mnav-cta-h) — the very
+                   values this probe writes — so without this reset each measure
+                   would read the element clamped by the PREVIOUS measure and ratchet
+                   the rows shorter every time a stray resize (mobile URL-bar toggle,
+                   pinch-zoom) re-fired it. transform is reset too so a half-applied
+                   pose can't shrink the measured box. Scoped to .nav-sda: the boot
+                   probe only ever measures under the scroll-driven path. (The
+                   nav-morph harness reuses nav-measuring WITHOUT nav-sda to read the
+                   fallback compressed pose, which DOES want the class's max-height:0
+                   collapse — so this must not fire there.) */
+                html.nav-sda.nav-measuring .nav-shell .brand,
+                html.nav-sda.nav-measuring .nav-shell .nav-cta {
+                    max-height: none !important;
+                    transform: none !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                }
 
                 /* Shell geometry (main-thread tier) and shell rise (compositor
                    tier). The vertical travel between poles lives ENTIRELY in the

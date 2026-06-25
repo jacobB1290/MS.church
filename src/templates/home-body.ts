@@ -9,8 +9,116 @@ import { navMorph } from './shared/nav-morph.js'
 import { footer } from './shared/footer.js'
 import { WEDNESDAY_ENABLED } from '../config.js'
 import { contactTopicsClientJson } from '../contact-topics.js'
+import { escapeHtml } from './watch-shared.js'
 
-export const homeBody = (): string => `
+// ── Home Watch section view ──
+// Built server-side from the published-sermon feed (same source as /watch) so
+// the home "latest service" plate can render real chapters + songs, crawlable
+// and shift-free. Degrades to 'fallback' (just the live video + an evergreen
+// blurb) when nothing is chaptered yet — see buildHomeWatch in routes/home.ts.
+export type HomeWatchChapter = {
+  time: string
+  startSec: number
+  title: string
+  kind: string
+  isMessage: boolean
+  note: string | null
+  songs: { title: string; leader: string | null }[]
+}
+export type HomeWatchView = {
+  mode: 'library' | 'fallback'
+  slug: string | null
+  formatNoun: string | null
+  title: string | null
+  dateLabel: string | null
+  speaker: string | null
+  lengthLabel: string | null
+  summary: string | null
+  scriptureRefs: string[]
+  chapters: HomeWatchChapter[]
+}
+
+/** The unified contents list: chapters with worship songs folded in as
+ *  sub-rows. Each row is a deep-link into the service permalink at its
+ *  timestamp (the home section never plays inline — taps hand off to /watch,
+ *  the same doorway the poster's morph uses, just at a chosen moment). */
+function homeWatchChapters(w: HomeWatchView): string {
+  const slug = encodeURIComponent(w.slug || '')
+  return w.chapters
+    .map((ch) => {
+      const songs = ch.songs
+        .map(
+          (s) =>
+            `<span class="watch-chapter-song">${escapeHtml(s.title)}${s.leader ? `<em>led by ${escapeHtml(s.leader)}</em>` : ''}</span>`,
+        )
+        .join('')
+      const showKind = ch.kind && !ch.title.toLowerCase().startsWith(ch.kind.toLowerCase())
+      return `<li>
+                                <a class="watch-chapter${ch.isMessage ? ' watch-chapter--message' : ''}" href="/watch/${slug}?t=${ch.startSec}">
+                                    <span class="watch-chapter-time">${escapeHtml(ch.time)}</span>
+                                    <span class="watch-chapter-body">
+                                        <span class="watch-chapter-title">${escapeHtml(ch.title)}${showKind ? `<span class="watch-chapter-kind">${escapeHtml(ch.kind)}</span>` : ''}</span>
+                                        ${songs}
+                                    </span>
+                                </a>
+                            </li>`
+    })
+    .join('\n                            ')
+}
+
+/** Caption under the poster. Library = real sermon meta + title + summary.
+ *  Fallback keeps the #video-card-1-date/title hooks the client JS fills from
+ *  the live YouTube feed. */
+function homeWatchCaption(w: HomeWatchView): string {
+  if (w.mode === 'library') {
+    const metaBits = [w.dateLabel, w.speaker ? `with ${w.speaker}` : null, w.lengthLabel]
+      .filter(Boolean)
+      .map((b) => escapeHtml(b as string))
+      .join(' · ')
+    return `<div class="watch-caption">
+                            <div class="watch-cap-meta">
+                                ${w.formatNoun ? `<span class="watch-cap-format">${escapeHtml(w.formatNoun)}</span>` : ''}
+                                ${metaBits ? `<span class="watch-cap-metaline">${metaBits}</span>` : ''}
+                            </div>
+                            ${w.title ? `<h3 class="watch-cap-title">${escapeHtml(w.title)}</h3>` : ''}
+                            ${w.summary ? `<p class="watch-cap-summary">${escapeHtml(w.summary)}</p>` : ''}
+                        </div>`
+  }
+  // Fallback caption reuses the plate's caption styling but keeps the
+  // #video-card-1-date/title hooks the client JS fills from the live YouTube feed.
+  return `<div class="watch-caption">
+                            <div class="watch-cap-meta">
+                                <span class="watch-cap-format">Latest service</span>
+                                <span class="watch-cap-metaline" id="video-card-1-date"></span>
+                            </div>
+                            <h3 class="watch-cap-title" id="video-card-1-title"></h3>
+                        </div>`
+}
+
+/** The right-hand rail. Library = the contents list. Fallback = an evergreen
+ *  blurb + a scripture pull-quote, so the no-chapters state is a complete
+ *  composition, not an empty column. */
+function homeWatchAside(w: HomeWatchView): string {
+  if (w.mode === 'library') {
+    return `<aside class="watch-plate-aside" aria-label="In this service">
+                        <p class="watch-aside-label reveal-eyebrow">In this service</p>
+                        <ol class="watch-chapters reveal-rise">
+                            ${homeWatchChapters(w)}
+                        </ol>
+                        <a href="/watch" class="event-link-btn teaser-cta watch-plate-cta reveal-fill">Explore the library</a>
+                    </aside>`
+  }
+  return `<aside class="watch-plate-aside watch-plate-aside--degraded">
+                        <p class="watch-cap-summary watch-cap-summary--lead reveal-rise">Every Sunday we open the Bible and work through it together, sometimes as a sermon, sometimes as a discussion, and always grounded in the text. About half an hour, nothing you need to bring.</p>
+                        <blockquote class="watch-pull reveal-rise-slow">
+                            <p>Faith comes from hearing the message, and the message is heard through the word about Christ.</p>
+                            <cite>Romans 10:17</cite>
+                        </blockquote>
+                        <a href="/watch" class="event-link-btn teaser-cta watch-plate-cta reveal-fill">Explore the library</a>
+                    </aside>`
+}
+
+export const homeBody = (watch: HomeWatchView): string => `
     <body>
         <div class="page">
             <a class="skip-link" href="#main">Skip to content</a>
@@ -235,105 +343,37 @@ export const homeBody = (): string => `
                 <section class="watch" id="watch">
                     <div class="watch-header">
                         <span class="section-eyebrow reveal-eyebrow">Watch</span>
-                        <h2 class="section-heading reveal-rise">Watch our Sunday service live from Boise.</h2>
+                        <h2 class="section-heading reveal-rise">Watch our most recent Sunday.</h2>
+                        <p class="watch-live-line"><span class="live-status" style="display:none"><span class="live-dot"></span><span class="live-status-text">Live Soon</span></span><span class="watch-live-text">Live Sundays at 9:00 AM, in Boise</span></p>
                     </div>
-                    <div class="watch-card">
-                        <div class="watch-main">
-                            <div class="live-stream-container" data-reveal-sync>
-                                <span class="live-status"><span class="live-dot"></span><span class="live-status-text">Live Soon</span></span>
-                                <div class="countdown-container reveal-rise">
-                                    <div class="countdown-label">Next service starts in:</div>
-                                    <div class="countdown-timer">
-                                        <div class="countdown-item">
-                                            <span class="countdown-number" id="days">0</span>
-                                            <span class="countdown-label-small">Days</span>
-                                        </div>
-                                        <div class="countdown-item">
-                                            <span class="countdown-number" id="hours">0</span>
-                                            <span class="countdown-label-small">Hours</span>
-                                        </div>
-                                        <div class="countdown-item">
-                                            <span class="countdown-number" id="minutes">0</span>
-                                            <span class="countdown-label-small">Minutes</span>
-                                        </div>
-                                        <div class="countdown-item">
-                                            <span class="countdown-number" id="seconds">0</span>
-                                            <span class="countdown-label-small">Seconds</span>
-                                        </div>
-                                    </div>
+                    <div class="watch-plate" data-reveal-sync>
+                        <div class="watch-plate-main">
+                            <div class="video-embed-wrapper" id="video-embed-wrapper">
+                                <div class="video-thumbnail" id="video-thumbnail">
+                                    <img class="video-thumbnail-img" id="video-thumbnail-img"
+                                         alt="Latest Sunday worship service from Morning Star Christian Church in Boise, Idaho. Live-streamed and archived on our YouTube channel."
+                                         width="1280" height="720"
+                                         loading="lazy">
+                                    <button class="video-play-btn" id="video-play-btn" aria-label="Play video">
+                                        <svg class="play-icon" viewBox="0 0 68 48" width="68" height="48">
+                                            <path class="video-play-btn-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"></path>
+                                            <path class="play-triangle" d="M 45,24 27,14 27,34" fill="#fff"></path>
+                                            <circle class="play-spinner-ring" cx="34" cy="24" r="18" fill="none" stroke="#FF0000" stroke-width="2.5" stroke-dasharray="85 28" stroke-linecap="round"></circle>
+                                        </svg>
+                                    </button>
                                 </div>
-                                <p class="live-verse reveal-rise-slow">&ldquo;Consequently, faith comes from hearing the message, and the message is heard through the word about Christ.&rdquo;<small>Romans 10:17</small></p>
-
-                                <div class="video-grid reveal-power" id="video-grid">
-                                    <article class="video-card video-card-latest" id="video-card-1">
-                                        <div class="video-embed-wrapper" id="video-embed-wrapper">
-                                            <div class="video-thumbnail" id="video-thumbnail">
-                                                <img class="video-thumbnail-img" id="video-thumbnail-img"
-                                                     alt="Latest Sunday worship service from Morning Star Christian Church in Boise, Idaho. Live-streamed and archived on our YouTube channel."
-                                                     width="1280" height="720"
-                                                     loading="lazy">
-                                                <button class="video-play-btn" id="video-play-btn" aria-label="Play video">
-                                                    <svg class="play-icon" viewBox="0 0 68 48" width="68" height="48">
-                                                        <path class="video-play-btn-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"></path>
-                                                        <path class="play-triangle" d="M 45,24 27,14 27,34" fill="#fff"></path>
-                                                        <circle class="play-spinner-ring" cx="34" cy="24" r="18" fill="none" stroke="#FF0000" stroke-width="2.5" stroke-dasharray="85 28" stroke-linecap="round"></circle>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                            <button class="video-unmute-btn" id="video-unmute-btn" aria-label="Unmute video">
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                                                    <line x1="23" y1="9" x2="17" y2="15"></line>
-                                                    <line x1="17" y1="9" x2="23" y2="15"></line>
-                                                </svg>
-                                                Tap to unmute
-                                            </button>
-                                        </div>
-                                        <div class="video-card-meta">
-                                            <span class="video-card-tag">Latest Service</span>
-                                            <span class="video-card-date" id="video-card-1-date"></span>
-                                            <h3 class="video-card-title" id="video-card-1-title"></h3>
-                                        </div>
-                                    </article>
-
-                                    <a class="video-card video-card-recent" id="video-card-2" href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" aria-label="Previous Sunday service on YouTube">
-                                        <div class="video-card-thumb">
-                                            <img class="video-card-thumb-img" id="video-card-2-img" alt="" width="1280" height="720" loading="lazy">
-                                            <span class="video-card-play" aria-hidden="true">
-                                                <svg viewBox="0 0 68 48" width="48" height="34">
-                                                    <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"></path>
-                                                    <path d="M 45,24 27,14 27,34" fill="#fff"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="video-card-meta">
-                                            <span class="video-card-date" id="video-card-2-date"></span>
-                                            <h3 class="video-card-title" id="video-card-2-title"></h3>
-                                        </div>
-                                    </a>
-
-                                    <a class="video-card video-card-recent" id="video-card-3" href="https://www.youtube.com/playlist?list=PLHs3usNpG0bZHnAJlIpwBtkbnd7xDCeRC" target="_blank" rel="noopener" aria-label="Previous Sunday service on YouTube">
-                                        <div class="video-card-thumb">
-                                            <img class="video-card-thumb-img" id="video-card-3-img" alt="" width="1280" height="720" loading="lazy">
-                                            <span class="video-card-play" aria-hidden="true">
-                                                <svg viewBox="0 0 68 48" width="48" height="34">
-                                                    <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"></path>
-                                                    <path d="M 45,24 27,14 27,34" fill="#fff"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <div class="video-card-meta">
-                                            <span class="video-card-date" id="video-card-3-date"></span>
-                                            <h3 class="video-card-title" id="video-card-3-title"></h3>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <a href="/watch" class="event-link-btn teaser-cta playlist-btn reveal-fill">
-                                    Explore Our Library
-                                </a>
+                                <button class="video-unmute-btn" id="video-unmute-btn" aria-label="Unmute video">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                        <line x1="23" y1="9" x2="17" y2="15"></line>
+                                        <line x1="17" y1="9" x2="23" y2="15"></line>
+                                    </svg>
+                                    Tap to unmute
+                                </button>
                             </div>
+                            ${homeWatchCaption(watch)}
                         </div>
+                        ${homeWatchAside(watch)}
                     </div>
 
                     <div class="video-player-overlay" id="video-player-overlay" aria-hidden="true">

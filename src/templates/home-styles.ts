@@ -297,7 +297,13 @@ export const homeStyles = (): string => `
                 position: fixed;
                 top: var(--space-sm);
                 left: 50%;
-                transform: translateX(-50%) translateY(-200%);
+                transform: translateX(-50%) translateY(calc(-100% - var(--space-sm) - 24px));
+                /* opacity:0 + pointer-events:none GUARANTEE it is invisible and
+                   un-tappable even where the transform-only hide was being painted
+                   (iOS Safari was showing the off-screen pill at the top). It only
+                   ever appears on keyboard focus. */
+                opacity: 0;
+                pointer-events: none;
                 z-index: 10001;
                 padding: 12px 24px;
                 border-radius: var(--radius-pill);
@@ -309,10 +315,14 @@ export const homeStyles = (): string => `
                 text-transform: uppercase;
                 text-decoration: none;
                 box-shadow: var(--btn-cta-shadow);
-                transition: transform var(--motion-medium) var(--ease-out-soft);
+                transition: transform var(--motion-medium) var(--ease-out-soft),
+                            opacity var(--motion-medium) var(--ease-out-soft);
             }
+            .skip-link:focus,
             .skip-link:focus-visible {
                 transform: translateX(-50%) translateY(0);
+                opacity: 1;
+                pointer-events: auto;
                 outline: 2px solid var(--text-primary);
                 outline-offset: 2px;
             }
@@ -372,8 +382,8 @@ export const homeStyles = (): string => `
             }
 
 
-            /* Body background - static, no dynamic changes */
-            body.stay-tuned-active { background: var(--bg-stay-tuned); }
+            /* Body background - static, no dynamic changes. */
+            body.stay-tuned-active { background-color: var(--bg-stay-tuned); }
             
             /* Modal open - prevent body scroll */
             body.modal-open {
@@ -734,12 +744,41 @@ export const homeStyles = (): string => `
                 animation: vt-new-fade-in 150ms cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
             }
 
+            /* "Play here -> watch over there" hero morph (v-video-handoff).
+               The home latest-video frame is tagged view-transition-name:
+               watch-hero in JS the instant its play button is tapped; the
+               /watch feature player carries the same name (below). On the
+               resulting navigation the browser captures both and interpolates
+               the video box from the home card straight into the watch
+               feature slot, while everything else crossfades (root) — the
+               video appears to keep playing as the new page assembles around
+               it. Only the /watch surfaces define an element with this name,
+               so it is inert on every other page. Slightly longer + softer
+               than the brand morph so the larger travel reads as deliberate. */
+            .vplayer--feature .vplayer-stage,
+            .watch-feature-thumb {
+                view-transition-name: watch-hero;
+            }
+            ::view-transition-group(watch-hero) {
+                animation-duration: 460ms;
+                animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            ::view-transition-old(watch-hero) {
+                animation: vt-old-fade-out 300ms cubic-bezier(0.4, 0, 0.68, 0) forwards;
+            }
+            ::view-transition-new(watch-hero) {
+                animation: vt-new-fade-in 420ms cubic-bezier(0.22, 1, 0.36, 1) 60ms backwards;
+            }
+
             @media (prefers-reduced-motion: reduce) {
                 ::view-transition-old(root),
                 ::view-transition-new(root),
                 ::view-transition-old(site-brand),
                 ::view-transition-new(site-brand),
-                ::view-transition-group(site-brand) {
+                ::view-transition-group(site-brand),
+                ::view-transition-old(watch-hero),
+                ::view-transition-new(watch-hero),
+                ::view-transition-group(watch-hero) {
                     animation: none;
                 }
             }
@@ -5824,10 +5863,10 @@ export const homeStyles = (): string => `
                 display: inline-flex;
                 align-items: center;
                 gap: 12px;
-                background: rgba(139, 0, 0, 0.1);
+                background: color-mix(in srgb, var(--gold) 12%, transparent);
                 border-radius: var(--radius-pill);
                 padding: 8px 20px;
-                color: #8B0000;
+                color: var(--gold-deeper);
                 font-size: var(--text-eyebrow);
                 font-weight: var(--weight-bold);
                 letter-spacing: var(--tracking-wide);
@@ -5838,8 +5877,8 @@ export const homeStyles = (): string => `
                 width: 10px;
                 height: 10px;
                 border-radius: var(--radius-circle);
-                background: #cc0000;
-                box-shadow: 0 0 16px rgba(204, 0, 0, 0.6);
+                background: var(--gold);
+                box-shadow: 0 0 16px color-mix(in srgb, var(--gold) 60%, transparent);
                 animation: pulse 2s ease-in-out infinite;
             }
 
@@ -5926,7 +5965,7 @@ export const homeStyles = (): string => `
 
             .live-verse small {
                 display: block;
-                color: #8B0000;
+                color: var(--gold-dark);
                 font-size: var(--text-small);
                 margin-top: 8px;
                 letter-spacing: 1px;
@@ -5970,7 +6009,7 @@ export const homeStyles = (): string => `
             .countdown-number {
                 font-size: var(--text-heading);
                 font-weight: var(--weight-bold);
-                color: #8B0000;
+                color: var(--gold-dark);
                 font-family: var(--font-display);
                 line-height: 1;
             }
@@ -6005,10 +6044,10 @@ export const homeStyles = (): string => `
                 height: 0;
                 overflow: hidden;
                 border-radius: var(--radius-md);
-                box-shadow: 0 8px 32px rgba(139, 0, 0, 0.25),
-                            0 16px 48px rgba(139, 0, 0, 0.15);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10),
+                            0 16px 48px color-mix(in srgb, var(--gold) 12%, transparent);
             }
-            
+
             .youtube-embed,
             .youtube-embed iframe {
                 position: absolute;
@@ -6065,7 +6104,17 @@ export const homeStyles = (): string => `
             }
 
             .video-play-btn:hover:not(.is-loading):not(.is-revealing) .video-play-btn-bg {
-                fill: #cc0000;
+                fill: var(--gold-dark);
+            }
+
+            /* Brand-gold play button (was YouTube red). The CSS fill overrides the
+               SVG presentation attribute, so the markup keeps its #FF0000 fallback
+               for any no-CSS context while the button reads as the brand gold. */
+            .video-play-btn-bg {
+                fill: var(--gold);
+            }
+            .play-spinner-ring {
+                stroke: var(--gold);
             }
 
             /* Play button morph-to-spinner — single SVG, no element swap */
@@ -6245,8 +6294,8 @@ export const homeStyles = (): string => `
                 font-weight: var(--weight-bold);
                 letter-spacing: 1.6px;
                 text-transform: uppercase;
-                color: #8B0000;
-                background: rgba(139, 0, 0, 0.08);
+                color: var(--gold-deeper);
+                background: color-mix(in srgb, var(--gold) 10%, transparent);
                 border-radius: var(--radius-pill);
                 padding: 5px 12px;
                 margin-bottom: 2px;
@@ -6282,7 +6331,7 @@ export const homeStyles = (): string => `
                 overflow: hidden;
                 background: #0a0a0a;
                 box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12),
-                            0 12px 40px rgba(139, 0, 0, 0.08);
+                            0 12px 40px color-mix(in srgb, var(--gold) 10%, transparent);
                 transition: transform 0.4s var(--ease-standard),
                             box-shadow 0.4s var(--ease-standard);
             }
@@ -6310,7 +6359,7 @@ export const homeStyles = (): string => `
             .video-card-recent:hover .video-card-thumb {
                 transform: translateY(-4px);
                 box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18),
-                            0 18px 48px rgba(139, 0, 0, 0.12);
+                            0 18px 48px color-mix(in srgb, var(--gold) 14%, transparent);
             }
 
             .video-card-recent:hover .video-card-thumb-img {
@@ -6323,7 +6372,13 @@ export const homeStyles = (): string => `
             }
 
             .video-card-recent:hover .video-card-title {
-                color: #8B0000;
+                color: var(--gold-dark);
+            }
+
+            /* Recent-card play glyph: gold YouTube-shape (first path), white
+               triangle (last path). CSS fill overrides the #FF0000 markup attr. */
+            .video-card-play svg path:first-child {
+                fill: var(--gold);
             }
 
             .video-card-title {
@@ -6383,7 +6438,7 @@ export const homeStyles = (): string => `
                 background-size: cover;
                 background-position: center;
                 box-shadow: 0 50px 120px rgba(0, 0, 0, 0.55),
-                            0 20px 60px rgba(139, 0, 0, 0.18);
+                            0 20px 60px color-mix(in srgb, var(--gold) 18%, transparent);
                 transform-origin: center center;
                 transition: transform var(--motion-slow) var(--ease-out-soft);
                 will-change: transform;
@@ -7690,6 +7745,25 @@ export const homeStyles = (): string => `
                 html.nav-measuring .nav-shell * {
                     animation: none !important;
                 }
+                /* Release every collapse the cascade might be holding so the probe
+                   reads the TRUE natural rows, not a clamped one. .brand/.nav-cta
+                   carry max-height: var(--mnav-brand-h/--mnav-cta-h) — the very
+                   values this probe writes — so without this reset each measure
+                   would read the element clamped by the PREVIOUS measure and ratchet
+                   the rows shorter every time a stray resize (mobile URL-bar toggle,
+                   pinch-zoom) re-fired it. transform is reset too so a half-applied
+                   pose can't shrink the measured box. Scoped to .nav-sda: the boot
+                   probe only ever measures under the scroll-driven path. (The
+                   nav-morph harness reuses nav-measuring WITHOUT nav-sda to read the
+                   fallback compressed pose, which DOES want the class's max-height:0
+                   collapse — so this must not fire there.) */
+                html.nav-sda.nav-measuring .nav-shell .brand,
+                html.nav-sda.nav-measuring .nav-shell .nav-cta {
+                    max-height: none !important;
+                    transform: none !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                }
 
                 /* Shell geometry (main-thread tier) and shell rise (compositor
                    tier). The vertical travel between poles lives ENTIRELY in the
@@ -8309,8 +8383,9 @@ export const homeStyles = (): string => `
             @media (max-width: 960px) {
                 .page {
                     width: 100%;
-                    padding: 0 clamp(3%, 3vw, 0%);
-                    background: var(--bg-color); /* light bg covers olive body */
+                    padding: 0 clamp(0px, 2.5vw, 5%);
+                    /* Light bg covers the olive body behind the content. */
+                    background-color: var(--bg-color);
                     box-sizing: border-box;
                 }
 
@@ -9616,11 +9691,12 @@ export const homeStyles = (): string => `
 
         /* --- Library tabs (Sermons / Discussions / Full services) --- */
         .watch-tabs {
+            position: relative;
             display: flex;
             flex-wrap: wrap;
             gap: var(--space-md);
             border-bottom: 1px solid var(--text-hairline);
-            margin: 0 0 var(--space-lg);
+            margin: 0 0 var(--space-md);
         }
         .watch-tab {
             position: relative;
@@ -9637,29 +9713,43 @@ export const homeStyles = (): string => `
         }
         .watch-tab:hover { color: var(--text-muted); }
         .watch-tab[aria-selected="true"] { color: var(--text-primary); }
-        .watch-tab::after {
-            content: '';
-            position: absolute;
-            left: 0; right: 0; bottom: -1px;
-            height: 2px;
-            background: var(--gold);
-            border-radius: var(--radius-pill);
-            transform: scaleX(0);
-            transform-origin: center;
-            transition: transform var(--motion-medium) var(--ease-out-soft);
-        }
-        .watch-tab[aria-selected="true"]::after { transform: scaleX(1); }
         .watch-tab-count {
             margin-left: 6px;
             font-size: var(--text-micro);
             font-weight: var(--weight-medium);
             color: var(--text-faint);
         }
+        /* Sliding indicator: a gold ink bar on the tabs' baseline carrying a small
+           downward caret that points at the chip rail below — so it reads as "these
+           chips belong to this tab." JS sets its left/width/top to the active tab;
+           it slides + the caret travels on switch. */
+        .watch-tab-ink {
+            position: absolute;
+            left: 0; top: 0; width: 0;
+            height: 2px;
+            background: var(--gold);
+            border-radius: var(--radius-pill);
+            opacity: 0;
+            pointer-events: none;
+            transition: left var(--motion-medium) var(--ease-out-soft),
+                        width var(--motion-medium) var(--ease-out-soft),
+                        top var(--motion-medium) var(--ease-out-soft),
+                        opacity var(--motion-medium) var(--ease-out-soft);
+        }
+        .watch-tab-ink::after {
+            content: '';
+            position: absolute;
+            top: 100%; left: 50%;
+            transform: translateX(-50%);
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--gold);
+        }
         .watch-panel { display: none; }
         .watch-panel.is-active { display: block; animation: fade-in var(--motion-medium) var(--ease-out-soft); }
-        .watch-panel-lead { margin: 0 0 var(--space-lg); }
+        .watch-library-lead { margin: var(--space-xs) 0 var(--space-md); max-width: 62ch; }
         @media (prefers-reduced-motion: reduce) {
-            .watch-tab::after { transition: none; }
+            .watch-tab-ink { transition: opacity var(--motion-medium) linear; }
             .watch-panel.is-active { animation: none; }
         }
 
@@ -9708,8 +9798,8 @@ export const homeStyles = (): string => `
         .watch-group-count { color: var(--text-fade); font-weight: var(--weight-regular); }
         #library .watch-card.is-search-hidden { display: none; }
         #library.is-searching .watch-tabs,
-        #library.is-searching .watch-filter,
-        #library.is-searching .watch-panel-lead { display: none; }
+        #library.is-searching .watch-chips-rail,
+        #library.is-searching .watch-library-lead { display: none; }
         #library.is-searching .watch-panel { display: block; animation: none; }
         #library.is-searching .watch-panel[hidden] { display: block; }
         #library.is-searching .watch-panel.is-empty-group { display: none; }
@@ -9764,6 +9854,61 @@ export const homeStyles = (): string => `
             height: 20px;
             background: var(--text-fade);
             border-radius: 1px;
+        }
+
+        /* --- Shared chip rail: one container holding every tab's filter, only the
+           active one shown. On tab switch the rail height eases between sets while
+           the old chips fade/slide out and the new ones cascade in — never a cut. */
+        .watch-chips-rail {
+            position: relative;
+            margin: 0 0 var(--space-lg);
+            transition: height var(--motion-medium) var(--ease-out-soft);
+        }
+        .watch-chips-rail .watch-filter { margin: 0; }
+        .watch-filter[hidden] { display: none; }
+        /* The leaving set lifts out of flow so the entering set defines the rail's
+           target height while both are briefly present during the cross-fade. */
+        .watch-filter.is-anim-out {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            pointer-events: none;
+        }
+        @keyframes watch-chip-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: none; }
+        }
+        @keyframes watch-chip-out {
+            from { opacity: 1; transform: none; }
+            to   { opacity: 0; transform: translateY(-8px); }
+        }
+        .watch-filter.is-anim-in > .watch-chip,
+        .watch-filter.is-anim-in > .watch-chip-sep {
+            animation: watch-chip-in 340ms var(--ease-out-soft) backwards;
+        }
+        .watch-filter.is-anim-out > .watch-chip,
+        .watch-filter.is-anim-out > .watch-chip-sep {
+            animation: watch-chip-out 200ms var(--ease-out-soft) forwards;
+        }
+        /* Stagger the entering chips so they cascade rather than appear as a block. */
+        .watch-filter.is-anim-in > :nth-child(1)  { animation-delay: 0ms; }
+        .watch-filter.is-anim-in > :nth-child(2)  { animation-delay: 26ms; }
+        .watch-filter.is-anim-in > :nth-child(3)  { animation-delay: 52ms; }
+        .watch-filter.is-anim-in > :nth-child(4)  { animation-delay: 78ms; }
+        .watch-filter.is-anim-in > :nth-child(5)  { animation-delay: 104ms; }
+        .watch-filter.is-anim-in > :nth-child(6)  { animation-delay: 130ms; }
+        .watch-filter.is-anim-in > :nth-child(7)  { animation-delay: 152ms; }
+        .watch-filter.is-anim-in > :nth-child(8)  { animation-delay: 174ms; }
+        .watch-filter.is-anim-in > :nth-child(9)  { animation-delay: 196ms; }
+        .watch-filter.is-anim-in > :nth-child(10) { animation-delay: 216ms; }
+        .watch-filter.is-anim-in > :nth-child(11) { animation-delay: 234ms; }
+        .watch-filter.is-anim-in > :nth-child(12) { animation-delay: 250ms; }
+        .watch-filter.is-anim-in > :nth-child(n+13) { animation-delay: 264ms; }
+        @media (prefers-reduced-motion: reduce) {
+            .watch-chips-rail { transition: none; }
+            .watch-filter.is-anim-in > .watch-chip,
+            .watch-filter.is-anim-in > .watch-chip-sep,
+            .watch-filter.is-anim-out > .watch-chip,
+            .watch-filter.is-anim-out > .watch-chip-sep { animation: none; }
         }
 
         /* --- Grid: crossfade on filter (reflow stays invisible) --- */
@@ -10133,6 +10278,35 @@ export const homeStyles = (): string => `
         @keyframes vplayer-spin { to { transform: rotate(360deg); } }
         @media (prefers-reduced-motion: reduce) { .vplayer.is-loading .vplayer-poster-play::after { animation-duration: 1.4s; } }
         .vplayer-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1; }
+
+        /* "Tap for sound" pill — the feature auto-starts MUTED after the home
+           hand-off (browser autoplay policy), so this one-tap control restores
+           audio. Lives inside the 16:9 stage, fades up once playback reveals. */
+        .vplayer-unmute {
+            position: absolute; left: var(--space-sm); bottom: var(--space-sm); z-index: 4;
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 9px 15px; border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: var(--radius-pill);
+            background: rgba(20, 16, 12, 0.6); color: var(--white);
+            font-family: var(--font-body), 'Inter', sans-serif;
+            font-size: var(--text-small); font-weight: var(--weight-medium);
+            letter-spacing: 0.2px; cursor: pointer; white-space: nowrap;
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            opacity: 0; transform: translateY(8px);
+            transition: opacity var(--motion-medium) var(--ease-out-soft),
+                        transform var(--motion-medium) var(--ease-out-soft),
+                        background var(--motion-fast) ease;
+        }
+        .vplayer-unmute.is-visible { opacity: 1; transform: translateY(0); }
+        .vplayer-unmute.is-hiding { opacity: 0; transform: translateY(8px); pointer-events: none; }
+        .vplayer-unmute:hover { background: rgba(20, 16, 12, 0.8); border-color: rgba(255, 255, 255, 0.45); }
+        .vplayer-unmute svg { flex-shrink: 0; }
+        @media (prefers-reduced-motion: reduce) {
+            .vplayer-unmute { transition: opacity var(--motion-medium) linear; transform: none; }
+            .vplayer-unmute.is-visible { transform: none; }
+            .vplayer-unmute.is-hiding { transform: none; }
+        }
+
         /* The native YouTube chrome is hidden under our own bar; the iframe still
            handles the actual decode. A thin transparent shield over the iframe
            swallows clicks so the segment can't be scrubbed past via native UI. */
@@ -10291,7 +10465,7 @@ export const homeStyles = (): string => `
         @media (prefers-reduced-motion: reduce) {
             .watch-card-thumb, .watch-card-thumb img, .watch-card-play,
             .watch-feature-thumb img, .watch-feature-play, .watch-grid,
-            .watch-tab::after, .vplayer-poster-play, .vplayer-knob,
+            .watch-tab-ink, .watch-chips-rail, .vplayer-poster-play, .vplayer-knob,
             .watch-chip, .watch-card-topic, .vplayer-btn, .vplayer-toggle { transition: none; }
             .watch-card-link:hover .watch-card-thumb,
             .watch-card-link:hover .watch-card-thumb img { transform: none; }

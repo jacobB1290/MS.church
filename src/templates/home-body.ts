@@ -330,7 +330,7 @@ export const homeBody = (): string => `
                                 </div>
 
                                 <a href="/watch" class="event-link-btn teaser-cta playlist-btn reveal-fill">
-                                    Explore Sermons
+                                    Explore Our Library
                                 </a>
                             </div>
                         </div>

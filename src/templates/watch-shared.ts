@@ -363,6 +363,10 @@ export function watchPlayerScript(): string {
                     var chapters = ownsChapters ? Array.prototype.slice.call(document.querySelectorAll('.watch-chapter')) : [];
 
                     var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false, started = false, revealed = false;
+                    // Muted auto-start used by the home "play" hand-off: the browser
+                    // only allows autoplay without a gesture when muted, so the feature
+                    // begins muted and offers a one-tap "sound" pill.
+                    var wantMute = false;
                     // Audio fade for song clips (data-fade): the clip eases up from silence
                     // as it starts and eases back down as it reaches its end, so a tapped
                     // song never cuts in or out abruptly. Only song cards opt in; the hero
@@ -457,6 +461,7 @@ export function watchPlayerScript(): string {
                         root.classList.remove('is-loading');
                         poster.style.display = 'none'; bar.hidden = false;
                         durEl.textContent = fmt(span()); buildMarkers(); loop();
+                        showUnmute();
                     }
 
                     // The tap. Plays the (preloaded, ready) player inside the gesture. If the
@@ -475,6 +480,31 @@ export function watchPlayerScript(): string {
                         // Safety net: if nothing is playing shortly, a plain autoplay embed.
                         if (!fallbackTimer) fallbackTimer = setTimeout(function () { if (!revealed) autoplayFallback(); }, 2500);
                     }
+                    // Start muted on arrival (no user gesture) for the home hand-off.
+                    root.__autostartMuted = function () {
+                        if (started || fellBack) return;
+                        wantMute = true; started = true; poolDrop(poolRec); claim();
+                        root.classList.add('is-loading'); poster.setAttribute('disabled', '');
+                        if (player && ready) { try { player.mute(); player.playVideo(); } catch (e) {} }
+                        else preload();
+                        if (!fallbackTimer) fallbackTimer = setTimeout(function () { if (!revealed) autoplayFallback(); }, 3000);
+                    };
+                    function showUnmute() {
+                        if (!wantMute || root.querySelector('.vplayer-unmute')) return;
+                        var b = document.createElement('button');
+                        b.type = 'button'; b.className = 'vplayer-unmute'; b.setAttribute('aria-label', 'Turn on sound');
+                        b.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg><span>Tap for sound</span>';
+                        b.addEventListener('click', function (e) {
+                            e.preventDefault(); e.stopPropagation();
+                            wantMute = false;
+                            if (player && player.unMute) { try { player.unMute(); player.setVolume(100); } catch (er) {} }
+                            else { var nf = stage.querySelector('iframe.vplayer-frame'); if (nf) nf.src = nf.src.replace('&mute=1', ''); }
+                            b.classList.add('is-hiding');
+                            setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 320);
+                        });
+                        stage.appendChild(b);
+                        requestAnimationFrame(function () { b.classList.add('is-visible'); });
+                    }
                     function autoplayFallback() {
                         if (fellBack || revealed) return; fellBack = true;
                         poolDrop(poolRec);
@@ -483,15 +513,17 @@ export function watchPlayerScript(): string {
                         var old = stage.querySelector('.vplayer-frame'); if (old) old.remove();
                         root.classList.remove('is-loading'); poster.style.display = 'none'; bar.hidden = true; revealed = true;
                         var f = document.createElement('iframe'); f.className = 'vplayer-frame';
-                        f.src = 'https://www.youtube.com/embed/' + vid() + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&start=' + Math.floor(lo());
+                        f.src = 'https://www.youtube.com/embed/' + vid() + '?autoplay=1&rel=0&modestbranding=1&playsinline=1' + (wantMute ? '&mute=1' : '') + '&start=' + Math.floor(lo());
                         f.title = 'Service video from Morning Star Christian Church';
                         f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.setAttribute('allowfullscreen', '');
                         stage.appendChild(f);
+                        showUnmute();
                     }
                     function onReady() {
                         ready = true;
                         if (doFade) { try { var tv = player.getVolume ? player.getVolume() : 100; targetVol = (tv == null || isNaN(tv)) ? 100 : tv; player.setVolume(0); } catch (e) {} }
                         if (!started) return; // silent preload — wait, paused, behind the poster
+                        if (wantMute) { try { player.mute(); } catch (e) {} }
                         if (pendingSeek != null) { doSeek(pendingSeek); pendingSeek = null; }
                         else { try { player.playVideo(); } catch (e) {} }
                     }
@@ -596,6 +628,16 @@ export function watchPlayerScript(): string {
                 }
 
                 document.querySelectorAll('.vplayer').forEach(initPlayer);
+
+                // Seamless arrival from the home "play" tap (/watch?play=1): start the
+                // feature player the moment we land so the video is already running as
+                // the cross-document morph settles — one continuous, uninterrupted play.
+                try {
+                    if (new URLSearchParams(location.search).get('play') === '1') {
+                        var feat = document.querySelector('.vplayer--feature');
+                        if (feat && feat.__autostartMuted) feat.__autostartMuted();
+                    }
+                } catch (e) {}
             })();
         </script>`
 }

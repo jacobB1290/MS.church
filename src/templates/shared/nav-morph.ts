@@ -57,7 +57,13 @@ export function navMorph(): string {
                 /* ── 1. Measurement ── */
                 var measure = function() {
                     if (!isMobile() || !ul) return;
+                    // Strip the compressed pole class for the synchronous probe so no
+                    // class-based collapse leaks into the natural-row read (the CSS
+                    // nav-measuring rules release the animations + max-height clamp;
+                    // this covers the class too). Restored before the next paint.
+                    var wasScrolled = shell.classList.contains('scrolled-mobile');
                     html.classList.add('nav-measuring');
+                    if (wasScrolled) shell.classList.remove('scrolled-mobile');
                     var gap = parseFloat(getComputedStyle(ul).columnGap) || 0;
                     var cluster = gap * Math.max(0, links.length - 1);
                     for (var i = 0; i < links.length; i++) cluster += links[i].getBoundingClientRect().width;
@@ -67,8 +73,12 @@ export function navMorph(): string {
                     // scrollHeight rounds to integers and excludes borders,
                     // which clipped ~3px off the CTA's natural row). With
                     // nav-measuring on, the rects ARE the expanded design.
-                    if (brand) shell.style.setProperty('--mnav-brand-h', brand.getBoundingClientRect().height.toFixed(2) + 'px');
-                    if (cta) shell.style.setProperty('--mnav-cta-h', cta.getBoundingClientRect().height.toFixed(2) + 'px');
+                    // Round UP: the row max-height must never be a sub-pixel under the
+                    // natural content (that clips it), and an integer keeps repeated
+                    // measures from jittering the row by fractions of a pixel.
+                    if (brand) shell.style.setProperty('--mnav-brand-h', Math.ceil(brand.getBoundingClientRect().height) + 'px');
+                    if (cta) shell.style.setProperty('--mnav-cta-h', Math.ceil(cta.getBoundingClientRect().height) + 'px');
+                    if (wasScrolled) shell.classList.add('scrolled-mobile');
                     html.classList.remove('nav-measuring');
                 };
                 measure();   // synchronous, pre-first-paint
@@ -158,14 +168,46 @@ export function navMorph(): string {
                 window.addEventListener('wheel', cancelSnap, { passive: true });
                 window.addEventListener('keydown', cancelSnap, { passive: true });
 
-                /* Re-measure when metrics can change. */
+                /* Re-measure when metrics can change. Only the viewport WIDTH (and
+                   font load) changes the nav metrics — so gate the resize re-measure
+                   on a real width change. Mobile fires resize on every URL-bar
+                   show/hide during scroll (height only) and on pinch-zoom; measuring
+                   then is wasted work AND was the window where a stray probe could
+                   perturb the pose. Pole-class still syncs on every resize. */
                 var rsT = null;
+                var lastMeasuredW = window.innerWidth;
                 window.addEventListener('resize', function() {
                     if (rsT) clearTimeout(rsT);
-                    rsT = setTimeout(function() { measure(); syncPoleClass(); }, 120);
+                    rsT = setTimeout(function() {
+                        if (window.innerWidth !== lastMeasuredW) {
+                            lastMeasuredW = window.innerWidth;
+                            measure();
+                        }
+                        syncPoleClass();
+                    }, 120);
                 }, { passive: true });
                 if (document.fonts && document.fonts.ready) {
                     document.fonts.ready.then(measure);
+                }
+
+                /* iOS Safari can leave the fixed, backdrop-filtered nav-shell
+                   ghosted or offset after a pinch-zoom (a known compositor quirk
+                   with position:fixed + backdrop-filter). innerWidth doesn't change
+                   under pinch-zoom, so the measure path above never fires here; this
+                   listens to the VISUAL viewport instead and, once the zoom settles,
+                   nudges the shell's layer so it re-composites at the right place.
+                   will-change toggle only — no geometry/animation touched. */
+                if (window.visualViewport) {
+                    var vvT = null;
+                    var nudgeLayer = function() {
+                        shell.style.willChange = 'transform';
+                        void shell.offsetWidth; // force reflow
+                        requestAnimationFrame(function() { shell.style.willChange = ''; });
+                    };
+                    window.visualViewport.addEventListener('resize', function() {
+                        if (vvT) clearTimeout(vvT);
+                        vvT = setTimeout(nudgeLayer, 180);
+                    }, { passive: true });
                 }
                 window.addEventListener('pageshow', function(e) {
                     if (!e.persisted) return;

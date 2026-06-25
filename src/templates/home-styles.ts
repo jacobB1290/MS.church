@@ -384,7 +384,7 @@ export const homeStyles = (): string => `
                    into the cream so it sits BEHIND content, never over cards/text.
                    Mobile carries the same grain on .page (the body bg is forced flat
                    for the iOS status-bar tint). */
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='pg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.62' intercept='0.38'/%3E%3CfeFuncG type='linear' slope='0.62' intercept='0.38'/%3E%3CfeFuncB type='linear' slope='0.62' intercept='0.38'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23pg)'/%3E%3C/svg%3E");
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='pg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.5' intercept='0.5'/%3E%3CfeFuncG type='linear' slope='0.5' intercept='0.5'/%3E%3CfeFuncB type='linear' slope='0.5' intercept='0.5'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23pg)'/%3E%3C/svg%3E");
                 background-repeat: repeat;
                 background-size: 180px 180px;
                 background-blend-mode: multiply;
@@ -8409,7 +8409,7 @@ export const homeStyles = (): string => `
                        the grain SVG's feComponentTransfer slope (kept in lockstep
                        with the body grain above). */
                     background-color: var(--bg-color);
-                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='pg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.62' intercept='0.38'/%3E%3CfeFuncG type='linear' slope='0.62' intercept='0.38'/%3E%3CfeFuncB type='linear' slope='0.62' intercept='0.38'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23pg)'/%3E%3C/svg%3E");
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='pg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.5' intercept='0.5'/%3E%3CfeFuncG type='linear' slope='0.5' intercept='0.5'/%3E%3CfeFuncB type='linear' slope='0.5' intercept='0.5'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23pg)'/%3E%3C/svg%3E");
                     background-repeat: repeat;
                     background-size: 180px 180px;
                     background-blend-mode: multiply;

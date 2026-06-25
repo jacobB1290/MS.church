@@ -170,63 +170,71 @@ function renderServiceSelector(allItems: PublishedSermon[]): string {
 
 /* ---- Library tabs (message types) ---- */
 
-/** A chip row that filters the panel's cards by a data attribute (key = topic | kind). */
+/**
+ * A chip row (one per tab) that filters its panel's grid by a data attribute
+ * (key = topic | kind). All tab filters live together in the shared rail below
+ * the tabs; only the active tab's is shown. ALWAYS returns a wrapper — even when
+ * a tab has no chips to offer — so switching to that tab can collapse the rail
+ * smoothly instead of leaving the previous tab's chips behind.
+ */
 function filterRow(
+  panelId: string,
+  active: boolean,
   key: string,
   label: string,
   chips: { val: string; label: string; count: number }[],
   defaultVal = 'all',
 ): string {
-  if (chips.length <= 1) return ''
-  return `<div class="watch-filter" role="group" aria-label="${escapeHtml(label)}" data-key="${escapeHtml(key)}" data-default="${escapeHtml(defaultVal)}">
-                            <button class="watch-chip" type="button" data-val="all" aria-pressed="${defaultVal === 'all' ? 'true' : 'false'}">All</button>
+  const inner =
+    chips.length <= 1
+      ? ''
+      : `<button class="watch-chip" type="button" data-val="all" aria-pressed="${defaultVal === 'all' ? 'true' : 'false'}">All</button>
                             <span class="watch-chip-sep" aria-hidden="true"></span>
                             ${chips
                               .map(
                                 (c) =>
                                   `<button class="watch-chip" type="button" data-val="${escapeHtml(c.val)}" aria-pressed="${defaultVal === c.val ? 'true' : 'false'}">${escapeHtml(c.label)}<span class="watch-chip-count">${c.count}</span></button>`,
                               )
-                              .join('\n                            ')}
-                        </div>`
+                              .join('\n                            ')}`
+  return `<div class="watch-filter${active ? ' is-active' : ''}" role="group" aria-label="${escapeHtml(label)}" data-panel="${escapeHtml(panelId)}" data-key="${escapeHtml(key)}" data-default="${escapeHtml(defaultVal)}"${active ? '' : ' hidden'}>${inner}</div>`
 }
 
-function topicFilter(items: PublishedSermon[]): string {
+function topicFilter(panelId: string, active: boolean, items: PublishedSermon[]): string {
   const topics = tallyTopics(items)
-  return filterRow('topic', 'Filter by topic', topics.map((t) => ({ val: t.slug, label: t.topic, count: t.count })))
+  return filterRow(panelId, active, 'topic', 'Filter by topic', topics.map((t) => ({ val: t.slug, label: t.topic, count: t.count })))
 }
 
-function messagePanel(id: string, items: PublishedSermon[], active: boolean, lead: string, groupLabel: string): string {
+type SongItem = { sermon: PublishedSermon; song: PublishedSermon['songs'][number]; count: number }
+
+function songFilter(panelId: string, active: boolean, songItems: SongItem[]): string {
+  const worship = songItems.filter((it) => it.song.kind !== 'program').length
+  const program = songItems.filter((it) => it.song.kind === 'program').length
+  const chips =
+    worship > 0 && program > 0
+      ? [
+          { val: 'worship', label: 'Worship', count: worship },
+          { val: 'program', label: 'Program', count: program },
+        ]
+      : []
+  return filterRow(panelId, active, 'kind', 'Filter songs', chips, 'program')
+}
+
+/**
+ * A tab's panel: the group label (shown only in search results) + the card grid.
+ * The chips moved out to the shared rail above so they can animate on tab switch.
+ */
+function messageGrid(id: string, items: PublishedSermon[], active: boolean, groupLabel: string): string {
   return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'}>
-                        <p class="section-lead watch-panel-lead">${lead}</p>
                         <h3 class="watch-group-label" aria-hidden="true">${groupLabel}<span class="watch-group-count" data-group-count></span></h3>
-                        ${topicFilter(items)}
                         <div class="watch-grid">
                         ${items.map((s) => messageCard(s, s.slug)).join('\n                        ')}
                         </div>
                     </div>`
 }
 
-type SongItem = { sermon: PublishedSermon; song: PublishedSermon['songs'][number]; count: number }
-
-function songPanel(id: string, songItems: SongItem[], active: boolean, lead: string, groupLabel: string): string {
-  const worship = songItems.filter((it) => it.song.kind !== 'program').length
-  const program = songItems.filter((it) => it.song.kind === 'program').length
-  const filter =
-    worship > 0 && program > 0
-      ? filterRow(
-          'kind',
-          'Filter songs',
-          [
-            { val: 'worship', label: 'Worship', count: worship },
-            { val: 'program', label: 'Program', count: program },
-          ],
-          'program',
-        )
-      : ''
+function songGrid(id: string, songItems: SongItem[], active: boolean, groupLabel: string): string {
   return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'}>
-                        <p class="section-lead watch-panel-lead">${lead}</p>
                         <h3 class="watch-group-label" aria-hidden="true">${groupLabel}<span class="watch-group-count" data-group-count></span></h3>
-                        ${filter}
                         <div class="watch-grid">
                         ${songItems.map((it, i) => songCard(it.sermon, it.song, it.count, 'song-' + i)).join('\n                        ')}
                         </div>
@@ -287,13 +295,21 @@ function renderLibrary(items: PublishedSermon[]): string {
   const songItems: SongItem[] = [...byTitle.values()]
 
   // One content type at a time. Sermons lead, then Songs, then Discussions.
-  const tabs: { id: string; label: string; count: number; panel: (active: boolean) => string }[] = []
+  // Each tab owns a chip filter (rendered into the shared rail) AND a grid panel;
+  // the rail's active chips + the active grid switch together when the tab changes.
+  const tabs: {
+    id: string
+    label: string
+    count: number
+    filter: (active: boolean) => string
+    panel: (active: boolean) => string
+  }[] = []
   if (sermons.length > 0)
-    tabs.push({ id: 'sermons', label: 'Sermons', count: sermons.length, panel: (a) => messagePanel('sermons', sermons, a, 'Tap a sermon and it plays right here, just the message. Filter by topic, or open the full service.', 'Sermons') })
+    tabs.push({ id: 'sermons', label: 'Sermons', count: sermons.length, filter: (a) => topicFilter('sermons', a, sermons), panel: (a) => messageGrid('sermons', sermons, a, 'Sermons') })
   if (songItems.length > 0)
-    tabs.push({ id: 'songs', label: 'Songs', count: songItems.length, panel: (a) => songPanel('songs', songItems, a, 'Every song we have sung, on its own. Tap one to play just that song.', 'Songs') })
+    tabs.push({ id: 'songs', label: 'Songs', count: songItems.length, filter: (a) => songFilter('songs', a, songItems), panel: (a) => songGrid('songs', songItems, a, 'Songs') })
   if (discussions.length > 0)
-    tabs.push({ id: 'discussions', label: 'Discussions', count: discussions.length, panel: (a) => messagePanel('discussions', discussions, a, 'Two hosts working through the text together. Tap one to play the conversation right here.', 'Discussions') })
+    tabs.push({ id: 'discussions', label: 'Discussions', count: discussions.length, filter: (a) => topicFilter('discussions', a, discussions), panel: (a) => messageGrid('discussions', discussions, a, 'Discussions') })
   if (tabs.length === 0) return ''
 
   // The search index: every searchable item (messages + songs) keyed to its card's
@@ -314,22 +330,33 @@ function renderLibrary(items: PublishedSermon[]): string {
     })),
   ]
 
-  const tabBar =
-    tabs.length > 1
-      ? `<div class="watch-tabs" role="tablist" aria-label="Library">
+  const multi = tabs.length > 1
+  // The sliding gold ink under the tabs (with a downward caret) signals which
+  // tab the chips below belong to; JS positions it under the active tab and it
+  // slides on switch. Only rendered when there is more than one tab.
+  const tabBar = multi
+    ? `<div class="watch-tabs" role="tablist" aria-label="Library">
                         ${tabs
                           .map(
                             (t, i) =>
                               `<button class="watch-tab" type="button" role="tab" id="tab-${t.id}" data-panel="${t.id}" aria-controls="panel-${t.id}" aria-selected="${i === 0 ? 'true' : 'false'}">${t.label}<span class="watch-tab-count">${t.count}</span></button>`,
                           )
                           .join('\n                        ')}
+                        <span class="watch-tab-ink" aria-hidden="true"></span>
                     </div>`
-      : ''
+    : ''
+  // Shared chip rail: every tab's filter, only the active one shown. Pulling the
+  // chips out of the panels lets them fade/slide + resize on tab switch instead
+  // of the page cutting to a new layout.
+  const chipRail = `<div class="watch-chips-rail" id="watch-chips-rail">
+                        ${tabs.map((t, i) => t.filter(i === 0)).join('\n                        ')}
+                    </div>`
   const panels = tabs.map((t, i) => t.panel(i === 0)).join('\n                    ')
 
   return `<section id="library" aria-label="Library">
                     <span class="section-eyebrow">Library</span>
                     <h2 class="section-heading">Find a message.</h2>
+                    <p class="section-lead watch-library-lead">Tap any message and it plays right here, just the part you came for. Filter by topic, or open the full service.</p>
                     <div class="watch-search">
                         <svg class="watch-search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M10 4a6 6 0 104.47 10.03l4.24 4.25 1.42-1.42-4.25-4.24A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" fill="currentColor"/></svg>
                         <input id="watch-search-input" class="watch-search-input" type="search" inputmode="search" autocomplete="off" enterkeyhint="search" placeholder="Search by topic, title, song, or who spoke" aria-label="Search the library">
@@ -337,6 +364,7 @@ function renderLibrary(items: PublishedSermon[]): string {
                     </div>
                     <p class="watch-search-summary" id="watch-search-summary" role="status" aria-live="polite" hidden></p>
                     ${tabBar}
+                    ${chipRail}
                     ${panels}
                     <script type="application/json" id="watch-search-index">${JSON.stringify(searchIndex)}</script>
                 </section>`
@@ -459,14 +487,65 @@ export const watchBody = (view: WatchHubView): string => {
                     }
                 }
 
-                /* --- Library tabs + per-tab topic filter --- */
+                /* --- Library tabs + shared animated chip rail + per-tab filter --- */
                 var tablist = document.querySelector('.watch-tabs');
+                var chipsRail = document.getElementById('watch-chips-rail');
+                var tabInk = document.querySelector('.watch-tab-ink');
                 function fadeGrid(grid, apply) {
                     if (!grid || reduce) { apply(); return; }
                     grid.classList.add('is-fading');
                     setTimeout(function () { apply(); requestAnimationFrame(function () { grid.classList.remove('is-fading'); }); }, 200);
                 }
+
+                // The sliding gold ink (underline + downward caret) sits under the
+                // active tab, pointing at the chips it belongs to. Slides on switch.
+                function moveInk(animate) {
+                    if (!tabInk || !tablist) return;
+                    var act = tablist.querySelector('.watch-tab[aria-selected="true"]');
+                    if (!act) return;
+                    if (!animate) tabInk.style.transition = 'none';
+                    tabInk.style.left = act.offsetLeft + 'px';
+                    tabInk.style.width = act.offsetWidth + 'px';
+                    tabInk.style.top = (act.offsetTop + act.offsetHeight - 1) + 'px';
+                    tabInk.style.opacity = '1';
+                    if (!animate) { void tabInk.offsetWidth; tabInk.style.transition = ''; }
+                }
+
+                // Swap the rail from the old tab's chips to the new tab's: old chips
+                // fade/slide out, the rail height eases to the new set, new chips
+                // fade/slide in (staggered). Smooth whether the new tab has more or
+                // fewer chips — never a hard cut to a new layout.
+                function switchRail(toId) {
+                    if (!chipsRail) return;
+                    if (chipsRail.__cleanup) chipsRail.__cleanup();
+                    var from = chipsRail.querySelector('.watch-filter.is-active');
+                    var to = chipsRail.querySelector('.watch-filter[data-panel="' + toId + '"]');
+                    if (!to || from === to) return;
+                    if (reduce) {
+                        if (from) { from.classList.remove('is-active'); from.hidden = true; }
+                        to.hidden = false; to.classList.add('is-active');
+                        return;
+                    }
+                    var h1 = chipsRail.offsetHeight;
+                    chipsRail.style.height = h1 + 'px';
+                    chipsRail.style.overflow = 'hidden';
+                    if (from) { from.classList.add('is-anim-out'); from.classList.remove('is-active'); }
+                    to.hidden = false; to.classList.add('is-active');
+                    var h2 = to.offsetHeight;
+                    void chipsRail.offsetWidth;       // commit h1 before easing to h2
+                    to.classList.add('is-anim-in');   // staggered chip-in keyframes
+                    chipsRail.style.height = h2 + 'px';
+                    var t = setTimeout(function () { if (chipsRail.__cleanup) chipsRail.__cleanup(); }, 680);
+                    chipsRail.__cleanup = function () {
+                        clearTimeout(t); chipsRail.__cleanup = null;
+                        if (from) { from.classList.remove('is-anim-out'); from.hidden = true; }
+                        to.classList.remove('is-anim-in');
+                        chipsRail.style.height = ''; chipsRail.style.overflow = '';
+                    };
+                }
+
                 if (tablist) {
+                    moveInk(false);
                     tablist.addEventListener('click', function (e) {
                         var tab = e.target.closest('.watch-tab');
                         if (!tab || tab.getAttribute('aria-selected') === 'true') return;
@@ -475,18 +554,32 @@ export const watchBody = (view: WatchHubView): string => {
                         var target = document.getElementById('panel-' + id);
                         if (!target || current === target) return;
                         tablist.querySelectorAll('.watch-tab').forEach(function (t) { t.setAttribute('aria-selected', String(t === tab)); });
+                        moveInk(true);
+                        switchRail(id);
                         if (current) { current.classList.remove('is-active'); current.setAttribute('hidden', ''); }
                         target.classList.add('is-active'); target.removeAttribute('hidden');
                     });
+                    // Reposition the ink when layout shifts (web font load, resize).
+                    var inkTimer;
+                    window.addEventListener('resize', function () { clearTimeout(inkTimer); inkTimer = setTimeout(function () { moveInk(false); }, 120); });
+                    window.addEventListener('load', function () { moveInk(false); });
+                    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveInk(false); });
                 }
-                document.querySelectorAll('.watch-panel').forEach(function (panel) {
-                    var filter = panel.querySelector('.watch-filter');
-                    var grid = panel.querySelector('.watch-grid');
-                    if (!filter || !grid) return;
-                    var key = filter.getAttribute('data-key') || 'topic';
-                    filter.addEventListener('click', function (e) {
+
+                // Each rail filter drives its own panel's grid (chips left the panels).
+                function gridForFilter(filter) {
+                    var panel = document.getElementById('panel-' + filter.getAttribute('data-panel'));
+                    return panel ? panel.querySelector('.watch-grid') : null;
+                }
+                if (chipsRail) {
+                    chipsRail.addEventListener('click', function (e) {
                         var chip = e.target.closest('.watch-chip');
                         if (!chip) return;
+                        var filter = chip.closest('.watch-filter');
+                        if (!filter) return;
+                        var grid = gridForFilter(filter);
+                        if (!grid) return;
+                        var key = filter.getAttribute('data-key') || 'topic';
                         var val = chip.getAttribute('data-val');
                         filter.querySelectorAll('.watch-chip').forEach(function (c) { c.setAttribute('aria-pressed', String(c === chip)); });
                         fadeGrid(grid, function () {
@@ -496,15 +589,18 @@ export const watchBody = (view: WatchHubView): string => {
                             });
                         });
                     });
-                    // Apply the panel's default filter on load (e.g. Songs defaults
-                    // to Program). 'all' is a no-op since every card already shows.
-                    var def = filter.getAttribute('data-default') || 'all';
-                    if (def !== 'all') {
+                    // Apply each filter's default (e.g. Songs -> Program) on load.
+                    chipsRail.querySelectorAll('.watch-filter').forEach(function (filter) {
+                        var def = filter.getAttribute('data-default') || 'all';
+                        if (def === 'all') return;
+                        var grid = gridForFilter(filter);
+                        if (!grid) return;
+                        var key = filter.getAttribute('data-key') || 'topic';
                         grid.querySelectorAll('.watch-card').forEach(function (card) {
                             card.classList.toggle('is-filtered', card.getAttribute('data-' + key) !== def);
                         });
-                    }
-                });
+                    });
+                }
 
                 /* --- Library search: advanced, multi-field, ranked, instant --- */
                 (function () {
@@ -617,14 +713,17 @@ export const watchBody = (view: WatchHubView): string => {
                     function exit() {
                         lib.classList.remove('is-searching');
                         for (var sid in cards) { cards[sid].classList.remove('is-search-hidden'); cards[sid].style.order = ''; }
-                        lib.querySelectorAll('.watch-panel').forEach(function (pan) {
-                            pan.classList.remove('is-empty-group');
-                            // Restore each panel's default chip filter (search had cleared it).
-                            var f = pan.querySelector('.watch-filter'); var g = pan.querySelector('.watch-grid');
-                            if (!f || !g) return;
+                        lib.querySelectorAll('.watch-panel').forEach(function (pan) { pan.classList.remove('is-empty-group'); });
+                        // Restore each rail filter's default chip + filtering on its grid
+                        // (the chips live in the shared rail now, not inside the panels).
+                        var railEl = document.getElementById('watch-chips-rail');
+                        if (railEl) railEl.querySelectorAll('.watch-filter').forEach(function (f) {
+                            var panel = document.getElementById('panel-' + f.getAttribute('data-panel'));
+                            var g = panel ? panel.querySelector('.watch-grid') : null;
                             var k = f.getAttribute('data-key') || 'topic';
                             var d = f.getAttribute('data-default') || 'all';
                             f.querySelectorAll('.watch-chip').forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-val') === d)); });
+                            if (!g) return;
                             g.querySelectorAll('.watch-card').forEach(function (card) {
                                 card.classList.toggle('is-filtered', !(d === 'all' || card.getAttribute('data-' + k) === d));
                             });

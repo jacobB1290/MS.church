@@ -9661,11 +9661,12 @@ export const homeStyles = (): string => `
 
         /* --- Library tabs (Sermons / Discussions / Full services) --- */
         .watch-tabs {
+            position: relative;
             display: flex;
             flex-wrap: wrap;
             gap: var(--space-md);
             border-bottom: 1px solid var(--text-hairline);
-            margin: 0 0 var(--space-lg);
+            margin: 0 0 var(--space-md);
         }
         .watch-tab {
             position: relative;
@@ -9682,29 +9683,43 @@ export const homeStyles = (): string => `
         }
         .watch-tab:hover { color: var(--text-muted); }
         .watch-tab[aria-selected="true"] { color: var(--text-primary); }
-        .watch-tab::after {
-            content: '';
-            position: absolute;
-            left: 0; right: 0; bottom: -1px;
-            height: 2px;
-            background: var(--gold);
-            border-radius: var(--radius-pill);
-            transform: scaleX(0);
-            transform-origin: center;
-            transition: transform var(--motion-medium) var(--ease-out-soft);
-        }
-        .watch-tab[aria-selected="true"]::after { transform: scaleX(1); }
         .watch-tab-count {
             margin-left: 6px;
             font-size: var(--text-micro);
             font-weight: var(--weight-medium);
             color: var(--text-faint);
         }
+        /* Sliding indicator: a gold ink bar on the tabs' baseline carrying a small
+           downward caret that points at the chip rail below — so it reads as "these
+           chips belong to this tab." JS sets its left/width/top to the active tab;
+           it slides + the caret travels on switch. */
+        .watch-tab-ink {
+            position: absolute;
+            left: 0; top: 0; width: 0;
+            height: 2px;
+            background: var(--gold);
+            border-radius: var(--radius-pill);
+            opacity: 0;
+            pointer-events: none;
+            transition: left var(--motion-medium) var(--ease-out-soft),
+                        width var(--motion-medium) var(--ease-out-soft),
+                        top var(--motion-medium) var(--ease-out-soft),
+                        opacity var(--motion-medium) var(--ease-out-soft);
+        }
+        .watch-tab-ink::after {
+            content: '';
+            position: absolute;
+            top: 100%; left: 50%;
+            transform: translateX(-50%);
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--gold);
+        }
         .watch-panel { display: none; }
         .watch-panel.is-active { display: block; animation: fade-in var(--motion-medium) var(--ease-out-soft); }
-        .watch-panel-lead { margin: 0 0 var(--space-lg); }
+        .watch-library-lead { margin: var(--space-xs) 0 var(--space-md); max-width: 62ch; }
         @media (prefers-reduced-motion: reduce) {
-            .watch-tab::after { transition: none; }
+            .watch-tab-ink { transition: opacity var(--motion-medium) linear; }
             .watch-panel.is-active { animation: none; }
         }
 
@@ -9753,8 +9768,8 @@ export const homeStyles = (): string => `
         .watch-group-count { color: var(--text-fade); font-weight: var(--weight-regular); }
         #library .watch-card.is-search-hidden { display: none; }
         #library.is-searching .watch-tabs,
-        #library.is-searching .watch-filter,
-        #library.is-searching .watch-panel-lead { display: none; }
+        #library.is-searching .watch-chips-rail,
+        #library.is-searching .watch-library-lead { display: none; }
         #library.is-searching .watch-panel { display: block; animation: none; }
         #library.is-searching .watch-panel[hidden] { display: block; }
         #library.is-searching .watch-panel.is-empty-group { display: none; }
@@ -9809,6 +9824,61 @@ export const homeStyles = (): string => `
             height: 20px;
             background: var(--text-fade);
             border-radius: 1px;
+        }
+
+        /* --- Shared chip rail: one container holding every tab's filter, only the
+           active one shown. On tab switch the rail height eases between sets while
+           the old chips fade/slide out and the new ones cascade in — never a cut. */
+        .watch-chips-rail {
+            position: relative;
+            margin: 0 0 var(--space-lg);
+            transition: height var(--motion-medium) var(--ease-out-soft);
+        }
+        .watch-chips-rail .watch-filter { margin: 0; }
+        .watch-filter[hidden] { display: none; }
+        /* The leaving set lifts out of flow so the entering set defines the rail's
+           target height while both are briefly present during the cross-fade. */
+        .watch-filter.is-anim-out {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            pointer-events: none;
+        }
+        @keyframes watch-chip-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: none; }
+        }
+        @keyframes watch-chip-out {
+            from { opacity: 1; transform: none; }
+            to   { opacity: 0; transform: translateY(-8px); }
+        }
+        .watch-filter.is-anim-in > .watch-chip,
+        .watch-filter.is-anim-in > .watch-chip-sep {
+            animation: watch-chip-in 340ms var(--ease-out-soft) backwards;
+        }
+        .watch-filter.is-anim-out > .watch-chip,
+        .watch-filter.is-anim-out > .watch-chip-sep {
+            animation: watch-chip-out 200ms var(--ease-out-soft) forwards;
+        }
+        /* Stagger the entering chips so they cascade rather than appear as a block. */
+        .watch-filter.is-anim-in > :nth-child(1)  { animation-delay: 0ms; }
+        .watch-filter.is-anim-in > :nth-child(2)  { animation-delay: 26ms; }
+        .watch-filter.is-anim-in > :nth-child(3)  { animation-delay: 52ms; }
+        .watch-filter.is-anim-in > :nth-child(4)  { animation-delay: 78ms; }
+        .watch-filter.is-anim-in > :nth-child(5)  { animation-delay: 104ms; }
+        .watch-filter.is-anim-in > :nth-child(6)  { animation-delay: 130ms; }
+        .watch-filter.is-anim-in > :nth-child(7)  { animation-delay: 152ms; }
+        .watch-filter.is-anim-in > :nth-child(8)  { animation-delay: 174ms; }
+        .watch-filter.is-anim-in > :nth-child(9)  { animation-delay: 196ms; }
+        .watch-filter.is-anim-in > :nth-child(10) { animation-delay: 216ms; }
+        .watch-filter.is-anim-in > :nth-child(11) { animation-delay: 234ms; }
+        .watch-filter.is-anim-in > :nth-child(12) { animation-delay: 250ms; }
+        .watch-filter.is-anim-in > :nth-child(n+13) { animation-delay: 264ms; }
+        @media (prefers-reduced-motion: reduce) {
+            .watch-chips-rail { transition: none; }
+            .watch-filter.is-anim-in > .watch-chip,
+            .watch-filter.is-anim-in > .watch-chip-sep,
+            .watch-filter.is-anim-out > .watch-chip,
+            .watch-filter.is-anim-out > .watch-chip-sep { animation: none; }
         }
 
         /* --- Grid: crossfade on filter (reflow stays invisible) --- */
@@ -10365,7 +10435,7 @@ export const homeStyles = (): string => `
         @media (prefers-reduced-motion: reduce) {
             .watch-card-thumb, .watch-card-thumb img, .watch-card-play,
             .watch-feature-thumb img, .watch-feature-play, .watch-grid,
-            .watch-tab::after, .vplayer-poster-play, .vplayer-knob,
+            .watch-tab-ink, .watch-chips-rail, .vplayer-poster-play, .vplayer-knob,
             .watch-chip, .watch-card-topic, .vplayer-btn, .vplayer-toggle { transition: none; }
             .watch-card-link:hover .watch-card-thumb,
             .watch-card-link:hover .watch-card-thumb img { transform: none; }

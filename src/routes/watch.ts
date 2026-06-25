@@ -16,7 +16,8 @@ import {
   lengthLabel,
   speakerLine,
   formatNoun,
-  posterFor,
+  primarySegment,
+  segmentPoster,
 } from '../templates/watch-shared.js'
 import { fetchRecentVideos } from './youtube.js'
 import { YOUTUBE_CONFIG } from '../config.js'
@@ -60,7 +61,7 @@ function buildHubView(
       mode: 'library',
       feature: {
         videoId: newest.youtubeVideoId,
-        posterUrl: posterFor(newest.youtubeVideoId, newest.thumbnailUrl),
+        posterUrl: segmentPoster(newest.youtubeVideoId, 0, 0, newest.durationSec, newest.posterUrl),
         title: newest.title,
         dateLabel: longDate(newest.publishedAt),
         metaLine: featureMetaLine(newest),
@@ -78,7 +79,7 @@ function buildHubView(
     mode: 'fallback',
     feature: {
       videoId: latest.videoId,
-      posterUrl: posterFor(latest.videoId, latest.thumbnailUrl),
+      posterUrl: segmentPoster(latest.videoId, 0, 0, null, null),
       title: latest.title,
       dateLabel: longDate(latest.publishedAt),
       metaLine: longDate(latest.publishedAt),
@@ -198,9 +199,22 @@ function buildHubJsonLd(view: WatchHubView, all: PublishedSermon[]): string {
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })
 }
 
+/** The item's thumbnail (schema + OG): a still from within its message segment,
+ *  or the CRM frame, in preference to the channel monogram. */
+function itemPoster(sermon: PublishedSermon): string {
+  const primary = primarySegment(sermon)
+  return segmentPoster(
+    sermon.youtubeVideoId,
+    primary?.startSec ?? 0,
+    primary?.endSec ?? 0,
+    sermon.durationSec,
+    sermon.posterUrl,
+  )
+}
+
 function buildItemJsonLd(sermon: PublishedSermon): string {
   const url = `https://ms.church/watch/${sermon.slug}`
-  const poster = posterFor(sermon.youtubeVideoId, sermon.thumbnailUrl)
+  const poster = itemPoster(sermon)
   const noun = formatNoun(sermon.format)
   const duration = isoDuration(sermon.durationSec)
 
@@ -418,7 +432,7 @@ ${pageHead({
   title: `${sermon.title} · ${noun} · Morning Star Christian Church`,
   description: `${desc}${chapterNote}`.slice(0, 300),
   canonical: `https://ms.church/watch/${sermon.slug}`,
-  ogImage: posterFor(sermon.youtubeVideoId, sermon.thumbnailUrl),
+  ogImage: itemPoster(sermon),
   ogImageAlt: `${sermon.title} — ${noun.toLowerCase()} from Morning Star Christian Church in Boise, Idaho`,
   jsonLd: buildItemJsonLd(sermon),
 })}

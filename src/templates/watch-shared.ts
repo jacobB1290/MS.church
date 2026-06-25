@@ -63,6 +63,56 @@ export function posterFor(videoId: string, thumb: string | null): string {
   return thumb || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
 }
 
+/**
+ * A still frame from WITHIN a segment, for use as that item's thumbnail. A real
+ * face from the moment reads far better than the channel's monogram upload, which
+ * lifts engagement. Resolution order, designed so a frame is NEVER pulled from
+ * outside the segment it represents:
+ *   1. `override` — an exact frame the CRM extracted from this segment. Always
+ *      wins, and is the only way to get a precise in-segment frame for a SHORT
+ *      clip such as a worship song (see the CRM hook on the feed types).
+ *   2. A YouTube auto-storyboard frame (hq1/hq2/hq3 sit at ~25/50/75% of the
+ *      video) — but ONLY when one provably lands inside [segStart,segEnd]. A
+ *      sermon/discussion is long and central, so its midpoint frame is in-segment;
+ *      a short song usually has no auto-frame inside it, so we never borrow one
+ *      from a different part of the service.
+ *   3. The upload thumbnail (monogram) — when neither applies, rather than show a
+ *      frame from the wrong moment.
+ * With no segment bounds (segEnd<=segStart: the whole-service feature/home poster)
+ * the midpoint frame is in-segment by definition, so it's used directly.
+ */
+export function segmentPoster(
+  videoId: string,
+  segStartSec: number,
+  segEndSec: number,
+  durationSec: number | null,
+  override?: string | null,
+): string {
+  if (override) return override
+  const d = durationSec ?? 0
+  const frame = (n: number) => `https://i.ytimg.com/vi/${videoId}/hq${n}.jpg`
+  const monogram = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+  // No segment bounds at all = the whole-service feature/home poster → midpoint.
+  if (!(segEndSec > segStartSec)) return frame(2)
+  // A real segment but unknown duration: we can't prove a frame lands inside it,
+  // so fall back to the upload rather than risk a frame from the wrong moment.
+  if (!(d > 0)) return monogram
+  const s = segStartSec / d
+  const e = segEndSec / d
+  const mid = (s + e) / 2
+  const MARGIN = 0.04 // auto-frames sit only NEAR 25/50/75%; keep clear of the edges
+  const inSeg: [number, number][] = ([
+    [1, 0.25],
+    [2, 0.5],
+    [3, 0.75],
+  ] as [number, number][]).filter(([, f]) => f >= s + MARGIN && f <= e - MARGIN)
+  if (inSeg.length > 0) {
+    inSeg.sort((a, b) => Math.abs(a[1] - mid) - Math.abs(b[1] - mid))
+    return frame(inSeg[0][0])
+  }
+  return monogram
+}
+
 // Friendly chapter-type labels — mirrors the CRM segmenter's vocabulary.
 export const SEGMENT_LABEL: Record<string, string> = {
   welcome: 'Welcome',
@@ -157,12 +207,17 @@ export function vplayer(
   segOverride?: { startSec: number; endSec: number } | null,
   badge?: string | null,
   fadeAudio?: boolean,
+  posterOverride?: string | null,
 ): string {
-  const poster = posterFor(sermon.youtubeVideoId, sermon.thumbnailUrl)
   const seg = segOverride ?? primary
   const segStart = seg ? Math.floor(seg.startSec) : 0
   const segEnd = seg ? Math.floor(seg.endSec) : 0
   const duration = Math.floor(sermon.durationSec ?? 0)
+  // A still from WITHIN this item's own segment (real faces lift engagement).
+  // Song cards pass the song's own extracted frame as posterOverride; everything
+  // else defaults to the item-level CRM frame when the feed carries one.
+  const posterOv = posterOverride !== undefined ? posterOverride : sermon.posterUrl ?? null
+  const poster = segmentPoster(sermon.youtubeVideoId, segStart, segEnd, sermon.durationSec, posterOv)
   const isMain = variant === 'main'
   const isFeature = variant === 'feature'
   const badgeText = badge === undefined ? (variant === 'card' ? formatNoun(sermon.format) : '') : badge || ''
@@ -202,7 +257,8 @@ export function vplayer(
  */
 export function serviceCard(sermon: PublishedSermon): string {
   const href = `/watch/${escapeHtml(sermon.slug)}?full=1`
-  const poster = posterFor(sermon.youtubeVideoId, sermon.thumbnailUrl)
+  // Whole-service card → a real midpoint frame (or the CRM's item frame).
+  const poster = segmentPoster(sermon.youtubeVideoId, 0, 0, sermon.durationSec, sermon.posterUrl)
   const noun = formatNoun(sermon.format)
   const len = lengthLabel(sermon.durationSec)
   const svcSpeaker = speakerLine(sermon.speakers)
@@ -285,7 +341,7 @@ export function songCard(sermon: PublishedSermon, song: SermonSong, count = 1, s
     .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
   const topicChip = song.topic ? topicSlug(song.topic) : ''
   return `<article class="watch-card watch-card--message watch-card--song" data-kind="${song.kind}" data-topic="${escapeHtml(topicChip)}"${sid ? ` data-sid="${escapeHtml(sid)}"` : ''}>
-                        ${vplayer(sermon, null, 'card', posterAlt, { startSec: song.startSec, endSec: song.endSec }, isProgram ? 'Program' : '', true)}
+                        ${vplayer(sermon, null, 'card', posterAlt, { startSec: song.startSec, endSec: song.endSec }, isProgram ? 'Program' : '', true, song.posterUrl ?? null)}
                         <div class="watch-card-body">
                             ${metaBits ? `<span class="watch-card-meta">${metaBits}</span>` : ''}
                             <span class="watch-card-title">${escapeHtml(song.title)}</span>

@@ -2246,12 +2246,17 @@ export const homeScripts = (): string => `
 
                 function setupVideo(videoId, thumbnailUrl) {
                     _ytVideoId = videoId;
-                    _latestThumbnailUrl = thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg');
+                    // Poster = a real still from the middle of the service (the message),
+                    // not the channel's monogram upload — a real face lifts engagement.
+                    // YouTube's hq2.jpg is the ~50% auto-frame; for a whole service that
+                    // midpoint lands in the message. Falls back to the upload thumbnail
+                    // (or hqdefault) via onerror if the storyboard frame isn't ready.
+                    _latestThumbnailUrl = 'https://i.ytimg.com/vi/' + videoId + '/hq2.jpg';
                     if (videoThumbnailImg) {
                         videoThumbnailImg.src = _latestThumbnailUrl;
                         videoThumbnailImg.onerror = function() {
                             this.onerror = null;
-                            this.src = 'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
+                            this.src = thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg');
                             _latestThumbnailUrl = this.src;
                         };
                     }

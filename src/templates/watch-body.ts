@@ -6,7 +6,7 @@ import {
   escapeHtml,
   watchPlayerScript,
   vplayer,
-  posterFor,
+  segmentPoster,
   longDate,
   shortDate,
   lengthLabel,
@@ -122,7 +122,7 @@ function renderServiceSelector(allItems: PublishedSermon[]): string {
   const data = items.map((s) => ({
     slug: s.slug,
     title: typo(cleanServiceTitle(s.title)),
-    poster: posterFor(s.youtubeVideoId, s.thumbnailUrl),
+    poster: segmentPoster(s.youtubeVideoId, 0, 0, s.durationSec, s.posterUrl),
     videoId: s.youtubeVideoId,
     dur: Math.floor(s.durationSec ?? 0),
     meta: metaLineFor(s),

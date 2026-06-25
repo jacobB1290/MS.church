@@ -3,7 +3,7 @@ import { GOLD } from '../design-tokens.js'
 import { fetchCalendarEvents } from './calendar.js'
 import { contactTopicsClientJson } from '../contact-topics.js'
 import { fetchAllPublishedSermons, tallyTopics, topicSlug, itemTopic } from '../sermons-feed.js'
-import { posterFor, formatNoun } from '../templates/watch-shared.js'
+import { segmentPoster, formatNoun } from '../templates/watch-shared.js'
 
 // Escape special XML characters in body text (titles, descriptions, etc.).
 const xmlEscape = (s: string): string =>
@@ -233,7 +233,7 @@ Sitemap: https://ms.church/sitemap.xml
         changefreq: 'yearly',
         priority: '0.6',
         video: {
-          thumbnail: posterFor(s.youtubeVideoId, s.thumbnailUrl),
+          thumbnail: segmentPoster(s.youtubeVideoId, 0, 0, s.durationSec, s.posterUrl),
           title: s.title.slice(0, 100),
           description: desc,
           playerLoc: `https://www.youtube.com/embed/${s.youtubeVideoId}`,

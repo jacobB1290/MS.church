@@ -46,6 +46,12 @@ export type SermonSong = {
   topic: string | null
   startSec: number
   endSec: number
+  /** CRM-extracted still frame from WITHIN this song's clip, used as the card
+   *  thumbnail (real faces lift engagement). A song is too short for YouTube's
+   *  fixed 25/50/75% auto-frames to land inside it, so the exact in-clip frame
+   *  has to come from the CRM pipeline (which has the video). Null until then;
+   *  the site falls back to the upload thumbnail rather than a wrong-moment frame. */
+  posterUrl: string | null
 }
 
 export type PublishedSermon = {
@@ -60,6 +66,11 @@ export type PublishedSermon = {
   topics: string[]
   publishedAt: string | null
   thumbnailUrl: string | null
+  /** CRM-extracted still frame from WITHIN the message segment, used as the card
+   *  thumbnail in preference to the channel's monogram upload (thumbnailUrl).
+   *  Null until the CRM publishes it; the site then falls back to a YouTube
+   *  auto-frame only when one provably lands inside the message segment. */
+  posterUrl: string | null
   durationSec: number | null
   summary: string | null
   seo: { description: string; tags: string[] } | null
@@ -109,6 +120,7 @@ function normalizeSong(x: unknown): SermonSong | null {
     topic: typeof s.topic === 'string' && s.topic.trim() ? s.topic.trim() : null,
     startSec: s.startSec,
     endSec: s.endSec,
+    posterUrl: typeof s.posterUrl === 'string' && s.posterUrl.trim() ? s.posterUrl.trim() : null,
   }
 }
 
@@ -136,6 +148,7 @@ function normalize(x: unknown): PublishedSermon | null {
     topics: stringArray(s.topics),
     publishedAt: typeof s.publishedAt === 'string' ? s.publishedAt : null,
     thumbnailUrl: typeof s.thumbnailUrl === 'string' ? s.thumbnailUrl : null,
+    posterUrl: typeof s.posterUrl === 'string' && s.posterUrl.trim() ? s.posterUrl.trim() : null,
     durationSec: typeof s.durationSec === 'number' ? s.durationSec : null,
     summary: typeof s.summary === 'string' ? s.summary : null,
     seo,

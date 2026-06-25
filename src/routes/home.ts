@@ -95,6 +95,7 @@ const DEMO_SERMON: PublishedSermon = {
   topics: ['Faith'],
   publishedAt: '2026-06-21T16:00:00Z',
   thumbnailUrl: null,
+  posterUrl: null,
   durationSec: 48 * 60,
   summary:
     'Where real faith actually comes from, worked through Romans 10, and what it means to keep listening for it.',
@@ -108,9 +109,9 @@ const DEMO_SERMON: PublishedSermon = {
     { startSec: 2670, endSec: 2880, type: 'worship', title: 'Closing song', summary: '', scriptureRefs: [] },
   ],
   songs: [
-    { title: 'Goodness of God', leader: 'Anna', kind: 'worship', topic: null, startSec: 230, endSec: 480 },
-    { title: 'King of Kings', leader: null, kind: 'worship', topic: null, startSec: 480, endSec: 720 },
-    { title: 'Doxology', leader: null, kind: 'worship', topic: null, startSec: 2690, endSec: 2870 },
+    { title: 'Goodness of God', leader: 'Anna', kind: 'worship', topic: null, posterUrl: null, startSec: 230, endSec: 480 },
+    { title: 'King of Kings', leader: null, kind: 'worship', topic: null, posterUrl: null, startSec: 480, endSec: 720 },
+    { title: 'Doxology', leader: null, kind: 'worship', topic: null, posterUrl: null, startSec: 2690, endSec: 2870 },
   ],
   transcript: null,
 }

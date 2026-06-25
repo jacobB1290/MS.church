@@ -327,7 +327,13 @@ export const homeStyles = (): string => `
                 position: fixed;
                 top: var(--space-sm);
                 left: 50%;
-                transform: translateX(-50%) translateY(-200%);
+                transform: translateX(-50%) translateY(calc(-100% - var(--space-sm) - 24px));
+                /* opacity:0 + pointer-events:none GUARANTEE it is invisible and
+                   un-tappable even where the transform-only hide was being painted
+                   (iOS Safari was showing the off-screen pill at the top). It only
+                   ever appears on keyboard focus. */
+                opacity: 0;
+                pointer-events: none;
                 z-index: 10001;
                 padding: 12px 24px;
                 border-radius: var(--radius-pill);
@@ -339,10 +345,14 @@ export const homeStyles = (): string => `
                 text-transform: uppercase;
                 text-decoration: none;
                 box-shadow: var(--btn-cta-shadow);
-                transition: transform var(--motion-medium) var(--ease-out-soft);
+                transition: transform var(--motion-medium) var(--ease-out-soft),
+                            opacity var(--motion-medium) var(--ease-out-soft);
             }
+            .skip-link:focus,
             .skip-link:focus-visible {
                 transform: translateX(-50%) translateY(0);
+                opacity: 1;
+                pointer-events: auto;
                 outline: 2px solid var(--text-primary);
                 outline-offset: 2px;
             }

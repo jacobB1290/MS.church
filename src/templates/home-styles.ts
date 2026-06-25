@@ -255,28 +255,38 @@ export const homeStyles = (): string => `
             }
 
             /* ── EXPERIMENT: site-wide film grain ──
-               A fixed, viewport-covering SVG feTurbulence noise layer over the
-               whole site (the technique from the referenced post: a desaturated
-               fractal-noise texture at low opacity with a blend mode). Static, so
-               no per-frame cost beyond compositing; pointer-events:none so it never
-               intercepts input. Tuned for the warm-cream surface: a low-opacity
-               'multiply' reads as a fine film/paper grain here, where the post's
-               'screen' (and overlay/soft-light) all but vanish on a near-white
-               background. Tweak --grain-opacity / the blend mode to taste. */
-            body::after {
+               A fixed, viewport-covering SVG feTurbulence noise over the whole site
+               (the technique from the referenced post). Two SPARSE speck layers — not
+               a uniform veil — so the bright cream stays bright and only the specks
+               read (non-dulling): body::after stamps sparse DARK specks (multiply) that
+               show on light surfaces, body::before stamps sparse LIGHT specks (screen)
+               that show on the dark photos. Each turbulence is gamma-thresholded on its
+               alpha so most pixels stay transparent. Static (no per-frame cost beyond
+               compositing), pointer-events:none, disabled under reduced-transparency.
+               Turn the whole thing up/down with --grain-opacity. */
+            body::after,
+            body::before {
                 content: '';
                 position: fixed;
                 inset: 0;
                 z-index: 2147483646;
                 pointer-events: none;
-                opacity: var(--grain-opacity, 0.12);
-                mix-blend-mode: multiply;
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23grain)'/%3E%3C/svg%3E");
-                background-size: 160px 160px;
+                background-size: 170px 170px;
                 background-repeat: repeat;
             }
+            body::after {
+                opacity: var(--grain-opacity, 0.55);
+                mix-blend-mode: multiply;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='gd'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='gamma' amplitude='1' exponent='3' offset='0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23gd)'/%3E%3C/svg%3E");
+            }
+            body::before {
+                opacity: var(--grain-opacity, 0.55);
+                mix-blend-mode: screen;
+                background-position: 57px 83px;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='gl'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch' seed='7'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='gamma' amplitude='1' exponent='3' offset='0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23gl)'/%3E%3C/svg%3E");
+            }
             @media (prefers-reduced-transparency: reduce) {
-                body::after { display: none; }
+                body::after, body::before { display: none; }
             }
 
             /* Brand text selection — the default blue highlight reads as

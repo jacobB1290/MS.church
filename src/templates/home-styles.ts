@@ -255,34 +255,11 @@ export const homeStyles = (): string => `
             }
 
             /* ── EXPERIMENT: site-wide film grain ──
-               A fixed, viewport-covering SVG feTurbulence noise layer over the
-               whole site (the technique from the referenced post: a desaturated
-               fractal-noise texture at low opacity with a blend mode). Static, so
-               no per-frame cost beyond compositing; pointer-events:none so it never
-               intercepts input. Tuned for the warm-cream surface: a low-opacity
-               'multiply' reads as a fine film/paper grain here, where the post's
-               'screen' (and overlay/soft-light) all but vanish on a near-white
-               background. Tweak --grain-opacity / the blend mode to taste.
-               NOTE: kept position:fixed (NOT absolute). The scroll-with-content
-               variant required body{position:relative}, which on iOS Safari
-               disturbed the position:fixed nav-shell + skip-link (mispositioned
-               left / the skip link peeking) — a known iOS fixed-descendant quirk.
-               Fixed keeps it stable; the texture just doesn't travel with scroll. */
-            body::after {
-                content: '';
-                position: fixed;
-                inset: 0;
-                z-index: 2147483646;
-                pointer-events: none;
-                opacity: var(--grain-opacity, 0.16);
-                mix-blend-mode: multiply;
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23grain)'/%3E%3C/svg%3E");
-                background-size: 160px 160px;
-                background-repeat: repeat;
-            }
-            @media (prefers-reduced-transparency: reduce) {
-                body::after { display: none; }
-            }
+               The grain now lives in the BODY BACKGROUND (see the body rule), so it
+               textures only the cream page background and sits behind all content.
+               (Earlier it was a top overlay over everything, and a scroll-with-content
+               variant that needed body{position:relative} — which broke iOS fixed
+               elements. The background approach avoids both.) */
 
             /* Brand text selection — the default blue highlight reads as
                foreign chrome against the warm cream + gold palette. A
@@ -401,6 +378,16 @@ export const homeStyles = (): string => `
                 /* Solid background color for seamless Safari iOS overscroll */
                 background-color: var(--bg-color);
                 background: var(--bg-default);
+                /* Film grain on the PAGE BACKGROUND only (desktop: body shows behind
+                   the transparent .page + in the gutters). Set AFTER the background
+                   shorthand so it isn't reset to none. Multiply blends the fine noise
+                   into the cream so it sits BEHIND content, never over cards/text.
+                   Mobile carries the same grain on .page (the body bg is forced flat
+                   for the iOS status-bar tint). */
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='pg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.62' intercept='0.38'/%3E%3CfeFuncG type='linear' slope='0.62' intercept='0.38'/%3E%3CfeFuncB type='linear' slope='0.62' intercept='0.38'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23pg)'/%3E%3C/svg%3E");
+                background-repeat: repeat;
+                background-size: 180px 180px;
+                background-blend-mode: multiply;
                 color: var(--text-primary);
                 min-height: 100vh;
                 min-height: 100dvh;
@@ -412,8 +399,9 @@ export const homeStyles = (): string => `
             }
 
 
-            /* Body background - static, no dynamic changes */
-            body.stay-tuned-active { background: var(--bg-stay-tuned); }
+            /* Body background - static, no dynamic changes. Use background-color (not
+               the shorthand) so the grain background-image on body is preserved. */
+            body.stay-tuned-active { background-color: var(--bg-stay-tuned); }
             
             /* Modal open - prevent body scroll */
             body.modal-open {
@@ -8413,8 +8401,18 @@ export const homeStyles = (): string => `
             @media (max-width: 960px) {
                 .page {
                     width: 100%;
-                    padding: 0 clamp(3%, 3vw, 0%);
-                    background: var(--bg-color); /* light bg covers olive body */
+                    padding: 0 clamp(0px, 2.5vw, 5%);
+                    /* Light bg covers the olive body, AND carries the film-grain
+                       texture: baked into the page background so it sits behind all
+                       content (cards, images, text cover it — only the cream page
+                       background shows it) and scrolls with the page. Intensity =
+                       the grain SVG's feComponentTransfer slope (kept in lockstep
+                       with the body grain above). */
+                    background-color: var(--bg-color);
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='pg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.62' intercept='0.38'/%3E%3CfeFuncG type='linear' slope='0.62' intercept='0.38'/%3E%3CfeFuncB type='linear' slope='0.62' intercept='0.38'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23pg)'/%3E%3C/svg%3E");
+                    background-repeat: repeat;
+                    background-size: 180px 180px;
+                    background-blend-mode: multiply;
                     box-sizing: border-box;
                 }
 

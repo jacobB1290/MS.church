@@ -379,11 +379,14 @@ export const watchBody = (view: WatchHubView): string => {
     <body class="page-subpage">
         <script>
             /* Seamless arrival from the home "play" tap (/watch?play=1). Before the
-               cross-document view-transition snapshot is captured, scroll the feature
-               player just under the nav so the morphing video box lands in view (and
-               not off-screen below the intro). Runs in pagereveal for the VT path and
-               on DOMContentLoaded as a no-VT fallback. The autoplay itself is wired in
-               the watch player script / fallback handler below. */
+               cross-document view-transition snapshot is captured, position the feature
+               player so its CENTER sits exactly where the home thumbnail's center was on
+               screen (passed via sessionStorage). The shared-element morph then keeps the
+               video anchored in place and only SCALES it up to the feature size while the
+               rest of the page crossfades in around it — no slide, no jump. A capped top
+               spacer covers the case where the feature would otherwise sit too high to
+               reach that point. Falls back to a simple under-the-nav scroll if there's no
+               fresh home rect. Runs in pagereveal (VT path) + DOMContentLoaded (no-VT). */
             (function () {
                 try {
                     if (new URLSearchParams(location.search).get('play') !== '1') return;
@@ -393,9 +396,21 @@ export const watchBody = (view: WatchHubView): string => {
                         var el = document.querySelector('.vplayer--feature .vplayer-stage, .watch-feature-thumb');
                         if (!el) return;
                         placed = true;
-                        var top = el.getBoundingClientRect().top + (window.pageYOffset || 0);
-                        var off = (window.innerWidth <= 960) ? 80 : 96;
-                        window.scrollTo(0, Math.max(0, top - off));
+                        var sec = document.getElementById('latest');
+                        if (sec) sec.style.paddingTop = '';   // clear any prior spacer before measuring
+                        var rect = el.getBoundingClientRect();
+                        var natTop = rect.top + (window.pageYOffset || 0);
+                        var stored = null;
+                        try { stored = JSON.parse(sessionStorage.getItem('mscb:vhero') || 'null'); } catch (e) {}
+                        if (stored && stored.cy != null && (Date.now() - stored.ts) < 12000) {
+                            var natCenter = natTop + rect.height / 2;
+                            var spacer = Math.min(260, Math.max(0, Math.round(stored.cy - natCenter)));
+                            if (sec && spacer > 0) sec.style.paddingTop = spacer + 'px';
+                            window.scrollTo(0, Math.max(0, Math.round(natCenter + spacer - stored.cy)));
+                        } else {
+                            var off = (window.innerWidth <= 960) ? 80 : 96;
+                            window.scrollTo(0, Math.max(0, Math.round(natTop - off)));
+                        }
                     }
                     addEventListener('pagereveal', place);
                     if (document.readyState === 'loading') addEventListener('DOMContentLoaded', function () { if (!placed) place(); });

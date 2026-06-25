@@ -2169,6 +2169,22 @@ export const homeScripts = (): string => `
                 function launchWatchTransition() {
                     if (_launching) return;
                     _launching = true;
+                    // Record where the thumbnail sits on screen RIGHT NOW so /watch can
+                    // anchor its feature player to the exact same spot: the video then
+                    // stays put (its center doesn't move) and only SCALES up to the
+                    // feature size as the rest of the page crossfades in around it.
+                    if (videoWrapper) {
+                        try {
+                            var vr = videoWrapper.getBoundingClientRect();
+                            sessionStorage.setItem('mscb:vhero', JSON.stringify({
+                                cy: Math.round(vr.top + vr.height / 2),
+                                top: Math.round(vr.top),
+                                h: Math.round(vr.height),
+                                w: Math.round(vr.width),
+                                ts: Date.now()
+                            }));
+                        } catch (e) {}
+                    }
                     // Instant feedback: the play glyph becomes the loading spinner.
                     if (videoPlayBtn) {
                         videoPlayBtn.classList.add('is-loading');

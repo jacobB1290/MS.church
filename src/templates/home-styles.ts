@@ -254,6 +254,31 @@ export const homeStyles = (): string => `
                 overflow-x: hidden;
             }
 
+            /* ── EXPERIMENT: site-wide film grain ──
+               A fixed, viewport-covering SVG feTurbulence noise layer over the
+               whole site (the technique from the referenced post: a desaturated
+               fractal-noise texture at low opacity with a blend mode). Static, so
+               no per-frame cost beyond compositing; pointer-events:none so it never
+               intercepts input. Tuned for the warm-cream surface: a low-opacity
+               'multiply' reads as a fine film/paper grain here, where the post's
+               'screen' (and overlay/soft-light) all but vanish on a near-white
+               background. Tweak --grain-opacity / the blend mode to taste. */
+            body::after {
+                content: '';
+                position: fixed;
+                inset: 0;
+                z-index: 2147483646;
+                pointer-events: none;
+                opacity: var(--grain-opacity, 0.12);
+                mix-blend-mode: multiply;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23grain)'/%3E%3C/svg%3E");
+                background-size: 160px 160px;
+                background-repeat: repeat;
+            }
+            @media (prefers-reduced-transparency: reduce) {
+                body::after { display: none; }
+            }
+
             /* Brand text selection — the default blue highlight reads as
                foreign chrome against the warm cream + gold palette. A
                translucent gold keeps selected text legible while staying

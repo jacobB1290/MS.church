@@ -262,11 +262,17 @@ export const homeStyles = (): string => `
                intercepts input. Tuned for the warm-cream surface: a low-opacity
                'multiply' reads as a fine film/paper grain here, where the post's
                'screen' (and overlay/soft-light) all but vanish on a near-white
-               background. Tweak --grain-opacity / the blend mode to taste. */
+               background. Tweak --grain-opacity / the blend mode to taste.
+               Positioned ABSOLUTE (not fixed) and stretched top-to-bottom over the
+               whole body, so the texture is embedded in the page and travels with the
+               content as you scroll, instead of hovering as a fixed pane on top. */
             body::after {
                 content: '';
-                position: fixed;
-                inset: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
                 z-index: 2147483646;
                 pointer-events: none;
                 opacity: var(--grain-opacity, 0.16);
@@ -387,6 +393,10 @@ export const homeStyles = (): string => `
                 background-color: var(--bg-color);
                 background: var(--bg-default);
                 color: var(--text-primary);
+                /* Containing block for the full-document grain layer (body::after),
+                   so the grain spans the whole page height and scrolls WITH content
+                   rather than sitting fixed over it. */
+                position: relative;
                 min-height: 100vh;
                 min-height: 100dvh;
                 line-height: var(--leading-normal);

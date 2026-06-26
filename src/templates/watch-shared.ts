@@ -319,8 +319,12 @@ export function watchPlayerScript(): string {
                     });
                     return apiPromise;
                 }
-                // Warm the API right away so the first preloaded player is ready fast.
-                if (typeof requestIdleCallback === 'function') requestIdleCallback(function(){ loadAPI(); }); else setTimeout(function(){ loadAPI(); }, 600);
+                // Load the IFrame API IMMEDIATELY. /watch is a video page, so warming
+                // it up front means window.YT is almost always ready by the first tap —
+                // which lets start() build the player SYNCHRONOUSLY inside the click
+                // gesture (so it autoplays WITH SOUND on the first press, instead of
+                // playing from an async onReady that the browser blocks out-of-gesture).
+                loadAPI();
 
                 // Pool of PRELOADED (loaded, paused) players. Preloading the player BEFORE
                 // the tap is the whole fix: a ready player's playVideo() called inside the
@@ -432,20 +436,32 @@ export function watchPlayerScript(): string {
                     // Build the player NOW, paused (autoplay:0), hidden behind our poster, so
                     // it's fully initialized before any tap. Then start() can play it inside
                     // the user gesture and it starts on the first press.
+                    // Construct the YT.Player. When window.YT is already loaded this runs
+                    // SYNCHRONOUSLY (new YT.Player builds its iframe inline), so calling it
+                    // inside a click gesture with autoplay:1 lets the video start WITH SOUND
+                    // on the first press. Returns true if the player was built (or already
+                    // exists), false if the API isn't loaded yet (caller falls back).
+                    function buildPlayer(autoplay) {
+                        if (player) return true;
+                        if (fellBack || !vid() || !(window.YT && window.YT.Player)) return false;
+                        var mount = document.createElement('div'); mount.id = frameId; mount.className = 'vplayer-frame'; stage.appendChild(mount);
+                        try {
+                            player = new YT.Player(frameId, {
+                                videoId: vid(),
+                                playerVars: { controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 1, start: Math.floor(lo()), autoplay: autoplay ? 1 : 0, mute: (autoplay && wantMute) ? 1 : 0, origin: location.origin },
+                                events: { onReady: onReady, onStateChange: onState }
+                            });
+                            return true;
+                        } catch (e) { var m = document.getElementById(frameId); if (m) m.remove(); return false; }
+                    }
+                    // Silent preload: build the paused player ahead of the tap so the tap can
+                    // just playVideo() it in-gesture. Never starts playback itself — that is
+                    // start()'s job, inside the gesture.
                     function preload() {
                         if (player || fellBack || !vid()) return;
-                        var mount = document.createElement('div'); mount.id = frameId; mount.className = 'vplayer-frame'; stage.appendChild(mount);
                         if (!isHero) poolAdd(poolRec);
-                        loadAPI().then(function () {
-                            if (fellBack || player) return;
-                            try {
-                                player = new YT.Player(frameId, {
-                                    videoId: vid(),
-                                    playerVars: { controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 1, start: Math.floor(lo()), autoplay: 0, origin: location.origin },
-                                    events: { onReady: onReady, onStateChange: onState }
-                                });
-                            } catch (e) {}
-                        }).catch(function () {});
+                        if (buildPlayer(false)) return;
+                        loadAPI().then(function () { if (!fellBack && !player) buildPlayer(false); }).catch(function () {});
                     }
                     function evictIdle() {
                         if (started) return;
@@ -471,23 +487,45 @@ export function watchPlayerScript(): string {
                         if (started) { try { if (player && player.playVideo) player.playVideo(); } catch (e) {} return; }
                         started = true; poolDrop(poolRec); claim();
                         root.classList.add('is-loading'); poster.setAttribute('disabled', '');
+                        // We are INSIDE the user's click gesture here. The whole point is to
+                        // begin playback NOW, in this call stack, so the browser grants
+                        // autoplay WITH SOUND and YouTube never shows its own play screen.
                         if (player && ready) {
+                            // Preloaded player is up: just play it (keeps the custom scrubber).
                             if (pendingSeek != null) { doSeek(pendingSeek); pendingSeek = null; }
                             else { try { player.playVideo(); } catch (e) {} }
                         } else {
-                            preload();
+                            // Not confirmed-ready. Drop any half-built (autoplay:0) preload so we
+                            // can rebuild with autoplay ON inside this gesture.
+                            if (player && !ready) { try { if (player.destroy) player.destroy(); } catch (e) {} player = null; var pf = stage.querySelector('.vplayer-frame'); if (pf) pf.remove(); }
+                            // Preferred: build the API player NOW (synchronous when the API is
+                            // loaded) with autoplay:1 — first-press start, with sound, and the
+                            // custom scrubber / segment clip / chapters all still work.
+                            if (!buildPlayer(true)) {
+                                // API not loaded yet: a raw autoplay embed created in this same
+                                // gesture also starts with sound (loses the scrubber until reload).
+                                gestureAutoplay(false);
+                                return;
+                            }
                         }
-                        // Safety net: if nothing is playing shortly, a plain autoplay embed.
-                        if (!fallbackTimer) fallbackTimer = setTimeout(function () { if (!revealed) autoplayFallback(); }, 2500);
+                        // Reveal/repair watchdog. Playback was already initiated in-gesture above;
+                        // this only rescues the rare case where neither the API player nor its
+                        // events ever came up. Out of gesture it can only autoplay MUTED, so it
+                        // does exactly that and offers a one-tap sound pill — never a dead
+                        // "press play on YouTube" screen.
+                        if (!fallbackTimer) fallbackTimer = setTimeout(function () { if (!revealed) gestureAutoplay(); }, 2500);
                     }
                     // Start muted on arrival (no user gesture) for the home hand-off.
                     root.__autostartMuted = function () {
                         if (started || fellBack) return;
                         wantMute = true; started = true; poolDrop(poolRec); claim();
                         root.classList.add('is-loading'); poster.setAttribute('disabled', '');
+                        // No user gesture on arrival (cross-document hand-off), so this MUST be
+                        // muted per autoplay policy. Build with autoplay+mute so it starts on its
+                        // own; a one-tap sound pill is offered once it reveals.
                         if (player && ready) { try { player.mute(); player.playVideo(); } catch (e) {} }
-                        else preload();
-                        if (!fallbackTimer) fallbackTimer = setTimeout(function () { if (!revealed) autoplayFallback(); }, 3000);
+                        else if (!buildPlayer(true)) { loadAPI().then(function () { if (!fellBack && !player) buildPlayer(true); }).catch(function () {}); }
+                        if (!fallbackTimer) fallbackTimer = setTimeout(function () { if (!revealed) gestureAutoplay(); }, 3000);
                     };
                     function showUnmute() {
                         if (!wantMute || root.querySelector('.vplayer-unmute')) return;
@@ -498,26 +536,47 @@ export function watchPlayerScript(): string {
                             e.preventDefault(); e.stopPropagation();
                             wantMute = false;
                             if (player && player.unMute) { try { player.unMute(); player.setVolume(100); } catch (er) {} }
-                            else { var nf = stage.querySelector('iframe.vplayer-frame'); if (nf) nf.src = nf.src.replace('&mute=1', ''); }
+                            else {
+                                // Raw embed: unmute over the IFrame API (enablejsapi=1) so the
+                                // video keeps playing in place. Reload via src is the last resort.
+                                var nf = stage.querySelector('iframe.vplayer-frame');
+                                if (nf && nf.contentWindow) {
+                                    try {
+                                        nf.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                                        nf.contentWindow.postMessage('{"event":"command","func":"setVolume","args":[100]}', '*');
+                                    } catch (er) { try { nf.src = nf.src.replace('&mute=1', ''); } catch (e2) {} }
+                                } else if (nf) { try { nf.src = nf.src.replace('&mute=1', ''); } catch (e2) {} }
+                            }
                             b.classList.add('is-hiding');
                             setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 320);
                         });
                         stage.appendChild(b);
                         requestAnimationFrame(function () { b.classList.add('is-visible'); });
                     }
-                    function autoplayFallback() {
+                    // Raw-embed playback path. Building an <iframe autoplay=1> as a direct
+                    // result of a tap inherits the user activation, so it starts WITH SOUND
+                    // on the first press (the reliable lite-embed technique). forceMuted:
+                    //   false     -> sound (only call from inside a live gesture).
+                    //   true      -> muted (the cross-document hand-off).
+                    //   undefined -> decide from navigator.userActivation (the watchdog path):
+                    //                sound if activation is still live, else muted + sound pill.
+                    function gestureAutoplay(forceMuted) {
                         if (fellBack || revealed) return; fellBack = true;
                         poolDrop(poolRec);
                         try { if (player && player.destroy) player.destroy(); } catch (e) {}
                         player = null;
                         var old = stage.querySelector('.vplayer-frame'); if (old) old.remove();
                         root.classList.remove('is-loading'); poster.style.display = 'none'; bar.hidden = true; revealed = true;
+                        var muted;
+                        if (forceMuted === true || forceMuted === false) muted = forceMuted;
+                        else { var live = true; try { if (navigator.userActivation) live = !!navigator.userActivation.isActive; } catch (e) {} muted = !live; }
+                        if (wantMute) muted = true;
                         var f = document.createElement('iframe'); f.className = 'vplayer-frame';
-                        f.src = 'https://www.youtube.com/embed/' + vid() + '?autoplay=1&rel=0&modestbranding=1&playsinline=1' + (wantMute ? '&mute=1' : '') + '&start=' + Math.floor(lo());
+                        f.src = 'https://www.youtube-nocookie.com/embed/' + vid() + '?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1' + (muted ? '&mute=1' : '') + '&start=' + Math.floor(lo()) + '&origin=' + encodeURIComponent(location.origin);
                         f.title = 'Service video from Morning Star Christian Church';
                         f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.setAttribute('allowfullscreen', '');
                         stage.appendChild(f);
-                        showUnmute();
+                        if (muted) { wantMute = true; showUnmute(); }
                     }
                     function onReady() {
                         ready = true;

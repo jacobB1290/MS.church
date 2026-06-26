@@ -10392,8 +10392,11 @@ export const homeStyles = (): string => `
         .vplayer-mid { display: flex; align-items: center; gap: var(--space-sm); min-width: 0; }
         .vplayer-time { font-size: var(--text-micro); color: var(--text-muted); font-variant-numeric: tabular-nums; flex: 0 0 auto; }
         .vplayer-scrub {
-            position: relative; flex: 1 1 auto; height: 16px; cursor: pointer;
+            position: relative; flex: 1 1 auto; height: 20px; cursor: pointer;
             display: flex; align-items: center; min-width: 40px;
+            /* Own the gesture so a horizontal drag is never stolen by the browser as a
+               page scroll (which would fire pointercancel and drop the scrub). */
+            touch-action: none; -webkit-user-select: none; user-select: none;
         }
         .vplayer-track {
             position: relative; width: 100%; height: 4px;

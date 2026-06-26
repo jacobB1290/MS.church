@@ -35,9 +35,26 @@ export function watchHandoffScript(): string {
                     });
                     return htmlPromise;
                 }
-                window.__mscbWatchPrefetch = function () { try { prefetch().catch(function () {}); } catch (e) {} };
+                // Warm the YouTube IFrame API ahead of the tap so the persistent player can be
+                // built through the API (new YT.Player) IN the gesture — which both starts with
+                // sound and gives us onAutoplayBlocked, so a browser that refuses sound recovers
+                // to muted instead of leaving YouTube's own play screen up.
+                var ytApi = null;
+                function loadYT() {
+                    if (window.YT && window.YT.Player) return Promise.resolve();
+                    if (ytApi) return ytApi;
+                    ytApi = new Promise(function (res) {
+                        var prev = window.onYouTubeIframeAPIReady;
+                        window.onYouTubeIframeAPIReady = function () { if (prev) prev(); res(); };
+                        var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s);
+                    });
+                    return ytApi;
+                }
+                if (window.requestIdleCallback) requestIdleCallback(function () { loadYT(); }, { timeout: 2500 });
+                else setTimeout(function () { loadYT(); }, 1800);
+                window.__mscbWatchPrefetch = function () { try { loadYT(); prefetch().catch(function () {}); } catch (e) {} };
 
-                var started = false, inWatch = false, vhost = null, slot = null, reposTimer = null;
+                var started = false, inWatch = false, converted = false, vhost = null, slot = null, reposTimer = null, player = null;
                 function py() { return window.pageYOffset || document.documentElement.scrollTop || 0; }
                 function px() { return window.pageXOffset || document.documentElement.scrollLeft || 0; }
                 function setRect(el, top, left, w, h) { el.style.top = top + 'px'; el.style.left = left + 'px'; el.style.width = w + 'px'; el.style.height = h + 'px'; }
@@ -51,9 +68,34 @@ export function watchHandoffScript(): string {
                 function buildHost(rect, videoId, thumb) {
                     vhost = document.createElement('div');
                     vhost.id = 'mscb-vhost';
-                    vhost.style.cssText = 'position:absolute;z-index:40;overflow:hidden;border-radius:var(--radius-lg,16px);background:#000 center/cover no-repeat;box-shadow:var(--shadow-lg,0 18px 50px rgba(0,0,0,.18));will-change:transform;';
+                    // FIXED during the hand-off: a content swap resets window scroll, and a
+                    // fixed element is immune to that, so the video stays exactly where it was
+                    // tapped. It's converted to absolute (scrolls with the page) once landed.
+                    vhost.style.cssText = 'position:fixed;z-index:40;overflow:hidden;border-radius:var(--radius-lg,16px);background:#000 center/cover no-repeat;box-shadow:var(--shadow-lg,0 18px 50px rgba(0,0,0,.18));will-change:transform;';
                     if (thumb) { try { vhost.style.backgroundImage = 'url(' + thumb + ')'; } catch (e) {} }
-                    setRect(vhost, rect.top + py(), rect.left + px(), rect.width, rect.height);
+                    setRect(vhost, rect.top, rect.left, rect.width, rect.height);
+                    document.body.appendChild(vhost);
+                    // Preferred: the IFrame API. Building new YT.Player synchronously in this
+                    // gesture starts WITH SOUND, and onAutoplayBlocked lets us fall back to muted
+                    // (always allowed) + a one-tap sound button — never YouTube's play screen.
+                    if (window.YT && window.YT.Player) {
+                        var mount = document.createElement('div');
+                        mount.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+                        vhost.appendChild(mount);
+                        try {
+                            player = new YT.Player(mount, {
+                                videoId: videoId,
+                                playerVars: { autoplay: 1, controls: 1, rel: 0, modestbranding: 1, playsinline: 1, enablejsapi: 1, origin: location.origin },
+                                events: {
+                                    onReady: function () { try { player.playVideo(); } catch (e) {} },
+                                    onAutoplayBlocked: function () { try { player.mute(); player.playVideo(); } catch (e) {} showSoundBtn(); },
+                                    onError: function () {}
+                                }
+                            });
+                            return;
+                        } catch (e) { player = null; }
+                    }
+                    // API not warmed yet: a raw in-gesture autoplay embed (sound where allowed).
                     var f = document.createElement('iframe');
                     f.title = 'Sunday service video from Morning Star Christian Church';
                     f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
@@ -62,7 +104,21 @@ export function watchHandoffScript(): string {
                     f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(videoId) +
                         '?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1&controls=1&origin=' + encodeURIComponent(location.origin);
                     vhost.appendChild(f);
-                    document.body.appendChild(vhost);
+                }
+                // Shown only if a browser refuses unmuted autoplay (rare in-gesture): one tap
+                // restores sound. The common path never sees it.
+                function showSoundBtn() {
+                    if (!vhost || vhost.querySelector('.mscb-sound')) return;
+                    var b = document.createElement('button');
+                    b.type = 'button'; b.className = 'mscb-sound'; b.setAttribute('aria-label', 'Turn on sound');
+                    b.style.cssText = 'position:absolute;z-index:2;left:50%;bottom:16px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border:0;border-radius:999px;background:rgba(0,0,0,.74);color:#fff;font:600 14px/1 var(--font-body,sans-serif);cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.3);';
+                    b.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg><span>Tap for sound</span>';
+                    b.addEventListener('click', function (e) {
+                        e.preventDefault(); e.stopPropagation();
+                        try { if (player) { player.unMute(); player.setVolume(100); } } catch (er) {}
+                        if (b.parentNode) b.parentNode.removeChild(b);
+                    });
+                    vhost.appendChild(b);
                 }
 
                 // Inert <script>s injected via innerHTML never execute. Re-create every
@@ -87,7 +143,7 @@ export function watchHandoffScript(): string {
                 }
 
                 function reposition() {
-                    if (!inWatch || !vhost || !slot) return;
+                    if (!inWatch || !vhost || !slot || !converted) return;
                     var r = slotDocRect();
                     if (!r.w) return;
                     vhost.style.transition = 'none';
@@ -108,13 +164,40 @@ export function watchHandoffScript(): string {
                 // or reloaded).
                 function morphHostToSlot() {
                     if (!slot || !vhost) return;
+                    // The video is FIXED, so this is its true on-screen spot (where it was
+                    // tapped) — unaffected by the swap's scroll reset.
                     var first = vhost.getBoundingClientRect();
-                    var r = slotDocRect();
-                    setRect(vhost, r.top, r.left, r.w, r.h);
-                    var navOff = (window.innerWidth <= 960) ? 80 : 96;
-                    try { window.scrollTo(0, Math.max(0, Math.round(r.top - navOff))); } catch (e) {}
-                    if (reduce) { vhost.style.transition = 'none'; vhost.style.transform = 'none'; return; }
-                    var last = vhost.getBoundingClientRect();
+                    var homeCenterY = first.top + first.height / 2;
+                    // Scroll so the feature slot's CENTER lands exactly where the thumbnail's
+                    // center was — so the video stays put and only SCALES up (true continuity),
+                    // not travelling to the top. If the slot sits too high in the document to
+                    // reach that, pad its section down (capped), like the ?play=1 arrival.
+                    var sec = slot.closest('section'); if (sec) sec.style.paddingTop = '';
+                    var sr = slot.getBoundingClientRect();
+                    var slotDocCenter = sr.top + py() + sr.height / 2;
+                    var target = slotDocCenter - homeCenterY;
+                    if (target < 0 && sec) {
+                        var sp = Math.min(320, Math.round(-target));
+                        sec.style.paddingTop = sp + 'px';
+                        sr = slot.getBoundingClientRect();
+                        slotDocCenter = sr.top + py() + sr.height / 2;
+                        target = slotDocCenter - homeCenterY;
+                    }
+                    try { window.scrollTo(0, Math.max(0, Math.round(target))); } catch (e) {}
+                    // The slot's viewport rect after aligning — where the video must land.
+                    var last = slot.getBoundingClientRect();
+                    setRect(vhost, last.top, last.left, last.width, last.height);
+                    // Once landed, convert FIXED -> ABSOLUTE (document coords) so the player
+                    // scrolls naturally with the page from then on.
+                    var convert = function () {
+                        if (converted) return; converted = true;
+                        var lr = vhost.getBoundingClientRect();
+                        vhost.style.transition = 'none'; vhost.style.transform = 'none';
+                        vhost.style.position = 'absolute';
+                        setRect(vhost, lr.top + py(), lr.left + px(), lr.width, lr.height);
+                        scheduleRepos();
+                    };
+                    if (reduce) { vhost.style.transition = 'none'; vhost.style.transform = 'none'; convert(); return; }
                     var dx = first.left - last.left, dy = first.top - last.top;
                     var sx = last.width ? first.width / last.width : 1, sy = last.height ? first.height / last.height : 1;
                     vhost.style.transformOrigin = 'top left';
@@ -122,9 +205,10 @@ export function watchHandoffScript(): string {
                     vhost.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
                     void vhost.offsetWidth;
                     requestAnimationFrame(function () {
-                        vhost.style.transition = 'transform .55s cubic-bezier(.22,1,.36,1)';
+                        vhost.style.transition = 'transform .6s cubic-bezier(.22,1,.36,1)';
                         vhost.style.transform = 'none';
                     });
+                    setTimeout(convert, 680);
                 }
 
                 function finishSwap(html, fromRect) {
@@ -151,14 +235,13 @@ export function watchHandoffScript(): string {
                         runScripts(doc);
                         morphHostToSlot();
                         requestAnimationFrame(function () { pageEl.style.opacity = '1'; });
-                        scheduleRepos();
                     };
                     if (reduce) { apply(); return; }
-                    // Fade the home content out, swap, fade the watch content in while the
-                    // video glides up between the two states.
-                    pageEl.style.transition = 'opacity .26s ease';
+                    // Quick fade of the surrounding content out, swap, fade the watch content
+                    // back in while the anchored video scales into the feature slot.
+                    pageEl.style.transition = 'opacity .16s ease';
                     pageEl.style.opacity = '0';
-                    setTimeout(apply, 260);
+                    setTimeout(apply, 160);
                 }
 
                 // Fetch/parse failed AFTER audio already started: don't drop the sound the

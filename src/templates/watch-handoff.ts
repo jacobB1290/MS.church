@@ -12,11 +12,18 @@
 // crawlers, shared links, refresh, and any unsupported browser get the real page.
 // Every step is guarded; on any failure it falls back to the hard navigation.
 //
+// Audio specifically: the player is PRELOADED paused (autoplay:0) as the video
+// nears the viewport, and the tap calls playVideo() inside the gesture on that
+// ready player. Browsers treat that as a user-initiated play and allow SOUND —
+// unlike autoplay:1, which is governed by the muted-autoplay policy (that played
+// muted ~half the time). autoplay:1 + a muted watchdog remain only as fallbacks.
+//
 // Emitted once on the home page (after homeScripts). Exposes:
-//   window.__mscbWatchPrefetch()  — warm the /watch HTML on first intent (hover).
-//   window.__mscbWatchMorph(opts) — start the hand-off inside the click gesture;
-//                                   returns true if it took over, false to defer
-//                                   to the caller's hard-nav fallback.
+//   window.__mscbWatchPrefetch()       — warm the /watch HTML + API on first intent.
+//   window.__mscbWatchPreload(videoId) — warm HTML + API + the paused player.
+//   window.__mscbWatchMorph(opts)      — start the hand-off inside the click gesture;
+//                                        returns true if it took over, false to defer
+//                                        to the caller's hard-nav fallback.
 export function watchHandoffScript(): string {
   return `<script>
             (function () {
@@ -50,34 +57,69 @@ export function watchHandoffScript(): string {
                     });
                     return ytApi;
                 }
-                if (window.requestIdleCallback) requestIdleCallback(function () { loadYT(); }, { timeout: 2500 });
-                else setTimeout(function () { loadYT(); }, 1800);
+                // Warm the API IMMEDIATELY (not on idle): on mobile there is no hover and the
+                // pointerdown->click gap is far too short to fetch the API script, so idle
+                // warming lost the race ~half the time and the tap fell to the raw embed (which
+                // can sit on YouTube's play screen). The home card already loads youtube.com
+                // thumbnails, so this adds no new third party.
+                loadYT();
                 window.__mscbWatchPrefetch = function () { try { loadYT(); prefetch().catch(function () {}); } catch (e) {} };
 
-                var started = false, inWatch = false, converted = false, vhost = null, slot = null, reposTimer = null, player = null;
+                var started = false, inWatch = false, converted = false, vhost = null, slot = null, reposTimer = null, player = null, playWatch = null;
                 function py() { return window.pageYOffset || document.documentElement.scrollTop || 0; }
                 function px() { return window.pageXOffset || document.documentElement.scrollLeft || 0; }
                 function setRect(el, top, left, w, h) { el.style.top = top + 'px'; el.style.left = left + 'px'; el.style.width = w + 'px'; el.style.height = h + 'px'; }
                 function slotDocRect() { var r = slot.getBoundingClientRect(); return { top: r.top + py(), left: r.left + px(), w: r.width, h: r.height }; }
 
-                // Build the persistent player, positioned (absolute, document coords so it
-                // scrolls with the page) over the tapped thumbnail. autoplay=1 with NO mute,
-                // created inside the gesture => starts with sound. controls=1 gives a full
-                // native control bar for the morphed feature (the library cards below keep
-                // the custom scrubber). A poster background avoids a black flash.
-                function buildHost(rect, videoId, thumb) {
+                var playerReady = false, playOnReady = false, builtVideoId = null;
+                // The persistent player lives in a host that is never re-parented (re-parenting
+                // an <iframe> reloads it). FIXED during the hand-off (a content swap resets
+                // window scroll; fixed is immune), converted to ABSOLUTE once landed so it
+                // scrolls with the page.
+                function ensureVhost() {
+                    if (vhost) return;
                     vhost = document.createElement('div');
                     vhost.id = 'mscb-vhost';
-                    // FIXED during the hand-off: a content swap resets window scroll, and a
-                    // fixed element is immune to that, so the video stays exactly where it was
-                    // tapped. It's converted to absolute (scrolls with the page) once landed.
-                    vhost.style.cssText = 'position:fixed;z-index:40;overflow:hidden;border-radius:var(--radius-lg,16px);background:#000 center/cover no-repeat;box-shadow:var(--shadow-lg,0 18px 50px rgba(0,0,0,.18));will-change:transform;';
-                    if (thumb) { try { vhost.style.backgroundImage = 'url(' + thumb + ')'; } catch (e) {} }
-                    setRect(vhost, rect.top, rect.left, rect.width, rect.height);
+                    vhost.style.cssText = 'position:fixed;z-index:40;overflow:hidden;border-radius:var(--radius-lg,16px);background:#000 center/cover no-repeat;box-shadow:var(--shadow-lg,0 18px 50px rgba(0,0,0,.18));will-change:transform;opacity:0;pointer-events:none;left:0;top:0;width:1px;height:1px;';
                     document.body.appendChild(vhost);
-                    // Preferred: the IFrame API. Building new YT.Player synchronously in this
-                    // gesture starts WITH SOUND, and onAutoplayBlocked lets us fall back to muted
-                    // (always allowed) + a one-tap sound button — never YouTube's play screen.
+                }
+                // PRELOAD the player PAUSED (autoplay:0) before the tap. The tap then calls
+                // playVideo() inside the gesture on a READY player, which browsers treat as a
+                // user-initiated play and allow WITH SOUND. (autoplay:1 is governed by the
+                // muted-autoplay policy instead — that is what played muted ~half the time.)
+                function preloadPlayer(videoId) {
+                    if (player || !videoId) return;
+                    builtVideoId = videoId;
+                    ensureVhost();
+                    var w = document.getElementById('video-embed-wrapper');
+                    if (w) { var r = w.getBoundingClientRect(); if (r.width) setRect(vhost, r.top, r.left, r.width, r.height); }
+                    var build = function () {
+                        if (player || !(window.YT && window.YT.Player)) return;
+                        var mount = document.createElement('div');
+                        mount.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+                        vhost.appendChild(mount);
+                        try {
+                            player = new YT.Player(mount, {
+                                videoId: videoId,
+                                playerVars: { autoplay: 0, controls: 1, rel: 0, modestbranding: 1, playsinline: 1, enablejsapi: 1, origin: location.origin },
+                                events: {
+                                    onReady: function () { playerReady = true; if (playOnReady) { try { player.playVideo(); } catch (e) {} } },
+                                    onStateChange: function (e) { if (e && (e.data === 1 || e.data === 3)) clearPlayWatch(); },
+                                    onError: function () {}
+                                }
+                            });
+                        } catch (e) { player = null; }
+                    };
+                    if (window.YT && window.YT.Player) build();
+                    else loadYT().then(build).catch(function () {});
+                }
+                window.__mscbWatchPreload = function (videoId) { try { loadYT(); prefetch().catch(function () {}); preloadPlayer(videoId); } catch (e) {} };
+
+                // Fallback when the player wasn't preloaded in time: create it AT the tap with
+                // autoplay:1 (best effort) + a muted watchdog so it can never sit on YouTube's
+                // play screen. Raw embed if the API itself isn't up yet.
+                function createAtTap(videoId) {
+                    if (player) { try { player.destroy(); } catch (e) {} player = null; }
                     if (window.YT && window.YT.Player) {
                         var mount = document.createElement('div');
                         mount.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
@@ -87,15 +129,16 @@ export function watchHandoffScript(): string {
                                 videoId: videoId,
                                 playerVars: { autoplay: 1, controls: 1, rel: 0, modestbranding: 1, playsinline: 1, enablejsapi: 1, origin: location.origin },
                                 events: {
-                                    onReady: function () { try { player.playVideo(); } catch (e) {} },
-                                    onAutoplayBlocked: function () { try { player.mute(); player.playVideo(); } catch (e) {} showSoundBtn(); },
+                                    onReady: function () { try { player.playVideo(); } catch (e) {} armPlayWatch(); },
+                                    onStateChange: function (e) { if (e && (e.data === 1 || e.data === 3)) clearPlayWatch(); },
+                                    onAutoplayBlocked: function () { forceMutedPlay(); },
                                     onError: function () {}
                                 }
                             });
+                            armPlayWatch();
                             return;
                         } catch (e) { player = null; }
                     }
-                    // API not warmed yet: a raw in-gesture autoplay embed (sound where allowed).
                     var f = document.createElement('iframe');
                     f.title = 'Sunday service video from Morning Star Christian Church';
                     f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
@@ -104,7 +147,32 @@ export function watchHandoffScript(): string {
                     f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(videoId) +
                         '?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1&controls=1&origin=' + encodeURIComponent(location.origin);
                     vhost.appendChild(f);
+                    var rawPlaying = false;
+                    var onMsg = function (ev) { if (ev.source !== f.contentWindow) return; try { var d = JSON.parse(ev.data); if (d && d.event === 'onStateChange' && (d.info === 1 || d.info === 3)) rawPlaying = true; } catch (e) {} };
+                    window.addEventListener('message', onMsg);
+                    f.addEventListener('load', function () { try { f.contentWindow.postMessage('{"event":"listening"}', '*'); f.contentWindow.postMessage('{"event":"command","func":"addEventListener","args":["onStateChange"]}', '*'); } catch (e) {} });
+                    setTimeout(function () {
+                        if (rawPlaying) return;
+                        if (f.src.indexOf('mute=1') < 0) f.src = f.src + '&mute=1';
+                        showSoundBtn();
+                    }, 1900);
                 }
+                // Recovery for any browser that refuses unmuted play: muted (always allowed) +
+                // a one-tap sound button. Never YouTube's own play screen.
+                function forceMutedPlay() {
+                    clearPlayWatch();
+                    try { if (player) { player.mute(); player.playVideo(); } } catch (e) {}
+                    showSoundBtn();
+                }
+                function armPlayWatch() {
+                    clearPlayWatch();
+                    playWatch = setTimeout(function () {
+                        var st = null; try { if (player && player.getPlayerState) st = player.getPlayerState(); } catch (e) {}
+                        if (st === 1 || st === 3) return;   // playing / buffering -> fine
+                        forceMutedPlay();                    // refused -> muted + sound button
+                    }, 1800);
+                }
+                function clearPlayWatch() { if (playWatch) { clearTimeout(playWatch); playWatch = null; } }
                 // Shown only if a browser refuses unmuted autoplay (rare in-gesture): one tap
                 // restores sound. The common path never sees it.
                 function showSoundBtn() {
@@ -115,7 +183,16 @@ export function watchHandoffScript(): string {
                     b.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg><span>Tap for sound</span>';
                     b.addEventListener('click', function (e) {
                         e.preventDefault(); e.stopPropagation();
-                        try { if (player) { player.unMute(); player.setVolume(100); } } catch (er) {}
+                        try {
+                            if (player && player.unMute) { player.unMute(); player.setVolume(100); }
+                            else {
+                                var nf = vhost.querySelector('iframe');
+                                if (nf && nf.contentWindow) {
+                                    nf.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                                    nf.contentWindow.postMessage('{"event":"command","func":"setVolume","args":[100]}', '*');
+                                }
+                            }
+                        } catch (er) {}
                         if (b.parentNode) b.parentNode.removeChild(b);
                     });
                     vhost.appendChild(b);
@@ -282,7 +359,20 @@ export function watchHandoffScript(): string {
                         var rect = opts.wrapper.getBoundingClientRect();
                         if (!rect.width || !rect.height) return false;
                         started = true;
-                        buildHost(rect, opts.videoId, opts.thumb);   // AUDIO starts here, in the gesture
+                        ensureVhost();
+                        if (opts.thumb) { try { vhost.style.backgroundImage = 'url(' + opts.thumb + ')'; } catch (e) {} }
+                        // Reveal the host over the tapped thumbnail.
+                        setRect(vhost, rect.top, rect.left, rect.width, rect.height);
+                        vhost.style.opacity = '1'; vhost.style.pointerEvents = 'auto';
+                        // SOUND path: a preloaded, ready player + explicit playVideo() inside this
+                        // gesture = a user-initiated play, allowed with sound on every browser.
+                        if (player && builtVideoId === opts.videoId) {
+                            if (playerReady) { try { player.playVideo(); } catch (e) {} }
+                            else { playOnReady = true; }   // ready momentarily; play the instant it is
+                            armPlayWatch();
+                        } else {
+                            createAtTap(opts.videoId);      // not preloaded in time -> best effort
+                        }
                         prefetch().then(function (html) { finishSwap(html, rect); }).catch(function () { theater(); });
                         return true;
                     } catch (e) { return false; }

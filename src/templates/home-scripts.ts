@@ -2279,13 +2279,27 @@ export const homeScripts = (): string => `
                     // Typical visit: tapping the latest service hands off to /watch
                     // with a seamless video morph (see launchWatchTransition). The
                     // older recent cards (2-3) still open the in-place desktop overlay.
-                    // Warm the /watch HTML on first intent so the same-page morph's swap is
-                    // ready the instant the tap fires (the audio start is in-gesture either way).
-                    var warm = function () { try { if (window.__mscbWatchPrefetch) window.__mscbWatchPrefetch(); } catch (e) {} };
+                    // Warm the same-page morph ahead of the tap: prefetch /watch AND preload the
+                    // paused YouTube player, so the tap can play it WITH SOUND (a user-initiated
+                    // playVideo on a ready player). Fire on first intent...
+                    var warm = function () {
+                        try {
+                            if (window.__mscbWatchPreload && _ytVideoId) window.__mscbWatchPreload(_ytVideoId);
+                            else if (window.__mscbWatchPrefetch) window.__mscbWatchPrefetch();
+                        } catch (e) {}
+                    };
                     if (videoWrapper) {
                         videoWrapper.addEventListener('pointerenter', warm);
                         videoWrapper.addEventListener('pointerdown', warm);
                         videoWrapper.addEventListener('focusin', warm);
+                        // ...and, crucially for mobile (no hover), as the video nears the viewport,
+                        // so the player is already loaded-and-ready by the time it is tapped.
+                        if (window.IntersectionObserver && window.__mscbWatchPreload) {
+                            var preIO = new IntersectionObserver(function (ents, o) {
+                                ents.forEach(function (en) { if (en.isIntersecting) { try { window.__mscbWatchPreload(_ytVideoId); } catch (e) {} o.disconnect(); } });
+                            }, { rootMargin: '300px 0px 300px 0px' });
+                            preIO.observe(videoWrapper);
+                        }
                     }
                     if (videoPlayBtn) {
                         videoPlayBtn.addEventListener('click', function(e) {

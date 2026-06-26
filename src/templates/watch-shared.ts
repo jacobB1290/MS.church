@@ -449,7 +449,7 @@ export function watchPlayerScript(): string {
                             player = new YT.Player(frameId, {
                                 videoId: vid(),
                                 playerVars: { controls: 0, rel: 0, modestbranding: 1, playsinline: 1, fs: 1, start: Math.floor(lo()), autoplay: autoplay ? 1 : 0, mute: (autoplay && wantMute) ? 1 : 0, origin: location.origin },
-                                events: { onReady: onReady, onStateChange: onState }
+                                events: { onReady: onReady, onStateChange: onState, onAutoplayBlocked: onBlocked, onError: onError }
                             });
                             return true;
                         } catch (e) { var m = document.getElementById(frameId); if (m) m.remove(); return false; }
@@ -503,17 +503,31 @@ export function watchPlayerScript(): string {
                             // custom scrubber / segment clip / chapters all still work.
                             if (!buildPlayer(true)) {
                                 // API not loaded yet: a raw autoplay embed created in this same
-                                // gesture also starts with sound (loses the scrubber until reload).
-                                gestureAutoplay(false);
+                                // gesture also starts WITH SOUND (loses the scrubber until reload).
+                                gestureAutoplay(true);
                                 return;
                             }
                         }
-                        // Reveal/repair watchdog. Playback was already initiated in-gesture above;
-                        // this only rescues the rare case where neither the API player nor its
-                        // events ever came up. Out of gesture it can only autoplay MUTED, so it
-                        // does exactly that and offers a one-tap sound pill — never a dead
-                        // "press play on YouTube" screen.
-                        if (!fallbackTimer) fallbackTimer = setTimeout(function () { if (!revealed) gestureAutoplay(); }, 2500);
+                        // Reveal/repair watchdog (muted recovery; never a dead YouTube screen).
+                        armFallback();
+                    }
+                    // Watchdog that rescues a play that never confirmed — but ONLY after giving a
+                    // slow load real time, and NEVER by re-attempting unmuted out of gesture.
+                    // On a slow connection the API player legitimately takes a while; tearing it
+                    // down too early (and swapping to an out-of-gesture embed) is itself what
+                    // flashed YouTube's play screen. So: wait longer, and if the player is still
+                    // buffering or already playing, keep waiting instead of killing it. When it is
+                    // truly stalled, recover MUTED (always allowed) with a one-tap sound pill.
+                    function armFallback() {
+                        if (fallbackTimer) return;
+                        fallbackTimer = setTimeout(function tick() {
+                            fallbackTimer = null;
+                            if (revealed || fellBack) return;
+                            var st = null; try { if (player && player.getPlayerState) st = player.getPlayerState(); } catch (e) {}
+                            // 3 = buffering, 1 = playing (not yet revealed): it's working, give it more time.
+                            if (st === 3 || st === 1) { fallbackTimer = setTimeout(tick, 3000); return; }
+                            gestureAutoplay(false);
+                        }, 7000);
                     }
                     // Start muted on arrival (no user gesture) for the home hand-off.
                     root.__autostartMuted = function () {
@@ -525,7 +539,7 @@ export function watchPlayerScript(): string {
                         // own; a one-tap sound pill is offered once it reveals.
                         if (player && ready) { try { player.mute(); player.playVideo(); } catch (e) {} }
                         else if (!buildPlayer(true)) { loadAPI().then(function () { if (!fellBack && !player) buildPlayer(true); }).catch(function () {}); }
-                        if (!fallbackTimer) fallbackTimer = setTimeout(function () { if (!revealed) gestureAutoplay(); }, 3000);
+                        armFallback();
                     };
                     function showUnmute() {
                         if (!wantMute || root.querySelector('.vplayer-unmute')) return;
@@ -555,21 +569,19 @@ export function watchPlayerScript(): string {
                     }
                     // Raw-embed playback path. Building an <iframe autoplay=1> as a direct
                     // result of a tap inherits the user activation, so it starts WITH SOUND
-                    // on the first press (the reliable lite-embed technique). forceMuted:
-                    //   false     -> sound (only call from inside a live gesture).
-                    //   true      -> muted (the cross-document hand-off).
-                    //   undefined -> decide from navigator.userActivation (the watchdog path):
-                    //                sound if activation is still live, else muted + sound pill.
-                    function gestureAutoplay(forceMuted) {
+                    // on the first press (the reliable lite-embed technique). allowSound:
+                    //   true  -> with sound. ONLY pass this from INSIDE a live click gesture.
+                    //   false/undefined -> muted. This is the safe default for every async /
+                    //     watchdog / hand-off path: muted autoplay is ALWAYS allowed, so it can
+                    //     never trip YouTube's own play screen. A one-tap sound pill is offered.
+                    function gestureAutoplay(allowSound) {
                         if (fellBack || revealed) return; fellBack = true;
                         poolDrop(poolRec);
                         try { if (player && player.destroy) player.destroy(); } catch (e) {}
                         player = null;
                         var old = stage.querySelector('.vplayer-frame'); if (old) old.remove();
                         root.classList.remove('is-loading'); poster.style.display = 'none'; bar.hidden = true; revealed = true;
-                        var muted;
-                        if (forceMuted === true || forceMuted === false) muted = forceMuted;
-                        else { var live = true; try { if (navigator.userActivation) live = !!navigator.userActivation.isActive; } catch (e) {} muted = !live; }
+                        var muted = allowSound !== true;
                         if (wantMute) muted = true;
                         var f = document.createElement('iframe'); f.className = 'vplayer-frame';
                         f.src = 'https://www.youtube-nocookie.com/embed/' + vid() + '?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1' + (muted ? '&mute=1' : '') + '&start=' + Math.floor(lo()) + '&origin=' + encodeURIComponent(location.origin);
@@ -577,6 +589,22 @@ export function watchPlayerScript(): string {
                         f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.setAttribute('allowfullscreen', '');
                         stage.appendChild(f);
                         if (muted) { wantMute = true; showUnmute(); }
+                    }
+                    // YouTube tells us it refused to autoplay with sound (no usable gesture).
+                    // Don't leave its play screen up: flip THIS player to muted (always allowed)
+                    // and play — the custom scrubber survives — then offer a one-tap sound pill.
+                    function onBlocked() {
+                        wantMute = true;
+                        try { if (player) { player.mute(); player.playVideo(); } } catch (e) {}
+                    }
+                    // A hard player error before anything played (e.g. HTML5 hiccup): fall back to
+                    // a fresh muted embed rather than sit on a dead frame. Embedding-disabled
+                    // errors (101/150) can't be helped, so don't thrash on them.
+                    function onError(e) {
+                        var code = e && e.data;
+                        if (revealed || fellBack) return;
+                        if (code === 101 || code === 150) return;
+                        gestureAutoplay(false);
                     }
                     function onReady() {
                         ready = true;

@@ -2157,18 +2157,33 @@ export const homeScripts = (): string => `
                 }
 
                 // ===== Seamless "play here -> watch over there" hand-off =====
-                // Tapping the latest video doesn't open a local overlay; it carries
-                // you to /watch where the same service is the feature player. The
-                // video box is tagged with a shared view-transition-name so the
-                // browser MORPHS it from this card into the watch feature slot while
-                // the rest of the watch page fades in around it (cross-document view
-                // transition — the same machinery as the brand-wordmark morph). The
-                // destination starts the video the instant it lands (muted, per
-                // autoplay policy, with a one-tap "sound" pill), so it reads as one
-                // continuous, uninterrupted play.
+                // Tapping the latest video doesn't open a local overlay; it carries you to
+                // /watch where the same service is the feature player. PREFERRED PATH: the
+                // same-page morph controller (watch-handoff.ts) starts the video WITH SOUND
+                // inside this tap and swaps /watch in around the still-playing video, no
+                // navigation (so audio survives on every browser). If that controller is
+                // absent or declines (unsupported browser), fall back to the hard
+                // navigation: a cross-document view-transition morph that arrives muted
+                // with a one-tap "sound" pill.
                 function launchWatchTransition() {
                     if (_launching) return;
                     _launching = true;
+                    // Instant feedback: the play glyph becomes the loading spinner.
+                    if (videoPlayBtn) {
+                        videoPlayBtn.classList.add('is-loading');
+                        videoPlayBtn.style.pointerEvents = 'none';
+                    }
+                    // Same-page morph (keeps audio). Must run synchronously in this gesture.
+                    try {
+                        if (window.__mscbWatchMorph && _ytVideoId &&
+                            window.__mscbWatchMorph({ wrapper: videoWrapper, videoId: _ytVideoId, thumb: _latestThumbnailUrl })) {
+                            return;
+                        }
+                    } catch (e) {}
+                    hardNavToWatch();
+                }
+                // Fallback: the original cross-document hand-off (arrives muted + sound pill).
+                function hardNavToWatch() {
                     // Record where the thumbnail sits on screen RIGHT NOW so /watch can
                     // anchor its feature player to the exact same spot: the video then
                     // stays put (its center doesn't move) and only SCALES up to the
@@ -2184,11 +2199,6 @@ export const homeScripts = (): string => `
                                 ts: Date.now()
                             }));
                         } catch (e) {}
-                    }
-                    // Instant feedback: the play glyph becomes the loading spinner.
-                    if (videoPlayBtn) {
-                        videoPlayBtn.classList.add('is-loading');
-                        videoPlayBtn.style.pointerEvents = 'none';
                     }
                     // Tag the morph anchor. Matches .vplayer--feature .vplayer-stage
                     // / .watch-feature-thumb on /watch (view-transition-name: watch-hero).
@@ -2208,14 +2218,19 @@ export const homeScripts = (): string => `
                 // Returning here (back button / bfcache) must clear the launch state
                 // so the play button isn't frozen mid-spinner and the morph tag isn't
                 // left on the card (which would wrongly morph a later normal nav).
-                window.addEventListener('pageshow', function () {
+                function resetLaunchState() {
                     _launching = false;
                     if (videoWrapper) { try { videoWrapper.style.viewTransitionName = ''; } catch (e) {} }
                     if (videoPlayBtn) {
                         videoPlayBtn.classList.remove('is-loading');
                         videoPlayBtn.style.pointerEvents = '';
                     }
-                });
+                }
+                window.addEventListener('pageshow', resetLaunchState);
+                // The same-page morph restores home on Back without a reload (no pageshow), so
+                // clear the launch state here too — otherwise the play button stays a frozen
+                // spinner and a second play is blocked by the _launching guard.
+                window.addEventListener('popstate', resetLaunchState);
 
                 // Unmute handler — uses YouTube iframe API postMessage for all platforms including Safari
                 if (videoUnmuteBtn) {
@@ -2269,6 +2284,28 @@ export const homeScripts = (): string => `
                     // Typical visit: tapping the latest service hands off to /watch
                     // with a seamless video morph (see launchWatchTransition). The
                     // older recent cards (2-3) still open the in-place desktop overlay.
+                    // Warm the same-page morph ahead of the tap: prefetch /watch AND preload the
+                    // paused YouTube player, so the tap can play it WITH SOUND (a user-initiated
+                    // playVideo on a ready player). Fire on first intent...
+                    var warm = function () {
+                        try {
+                            if (window.__mscbWatchPreload && _ytVideoId) window.__mscbWatchPreload(_ytVideoId);
+                            else if (window.__mscbWatchPrefetch) window.__mscbWatchPrefetch();
+                        } catch (e) {}
+                    };
+                    if (videoWrapper) {
+                        videoWrapper.addEventListener('pointerenter', warm);
+                        videoWrapper.addEventListener('pointerdown', warm);
+                        videoWrapper.addEventListener('focusin', warm);
+                        // ...and, crucially for mobile (no hover), as the video nears the viewport,
+                        // so the player is already loaded-and-ready by the time it is tapped.
+                        if (window.IntersectionObserver && window.__mscbWatchPreload) {
+                            var preIO = new IntersectionObserver(function (ents, o) {
+                                ents.forEach(function (en) { if (en.isIntersecting) { try { window.__mscbWatchPreload(_ytVideoId); } catch (e) {} o.disconnect(); } });
+                            }, { rootMargin: '300px 0px 300px 0px' });
+                            preIO.observe(videoWrapper);
+                        }
+                    }
                     if (videoPlayBtn) {
                         videoPlayBtn.addEventListener('click', function(e) {
                             e.stopPropagation();

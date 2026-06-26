@@ -2218,14 +2218,19 @@ export const homeScripts = (): string => `
                 // Returning here (back button / bfcache) must clear the launch state
                 // so the play button isn't frozen mid-spinner and the morph tag isn't
                 // left on the card (which would wrongly morph a later normal nav).
-                window.addEventListener('pageshow', function () {
+                function resetLaunchState() {
                     _launching = false;
                     if (videoWrapper) { try { videoWrapper.style.viewTransitionName = ''; } catch (e) {} }
                     if (videoPlayBtn) {
                         videoPlayBtn.classList.remove('is-loading');
                         videoPlayBtn.style.pointerEvents = '';
                     }
-                });
+                }
+                window.addEventListener('pageshow', resetLaunchState);
+                // The same-page morph restores home on Back without a reload (no pageshow), so
+                // clear the launch state here too — otherwise the play button stays a frozen
+                // spinner and a second play is blocked by the _launching guard.
+                window.addEventListener('popstate', resetLaunchState);
 
                 // Unmute handler — uses YouTube iframe API postMessage for all platforms including Safari
                 if (videoUnmuteBtn) {

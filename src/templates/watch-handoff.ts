@@ -66,6 +66,7 @@ export function watchHandoffScript(): string {
                 window.__mscbWatchPrefetch = function () { try { loadYT(); prefetch().catch(function () {}); } catch (e) {} };
 
                 var started = false, inWatch = false, converted = false, vhost = null, slot = null, reposTimer = null, player = null, playWatch = null;
+                var homeHolderEl = null, homeScrollY = 0, lastVideoId = null;
                 function py() { return window.pageYOffset || document.documentElement.scrollTop || 0; }
                 function px() { return window.pageXOffset || document.documentElement.scrollLeft || 0; }
                 function setRect(el, top, left, w, h) { el.style.top = top + 'px'; el.style.left = left + 'px'; el.style.width = w + 'px'; el.style.height = h + 'px'; }
@@ -303,6 +304,14 @@ export function watchHandoffScript(): string {
                         if (fb && fb.parentNode) { var ph = doc.createElement('div'); ph.className = 'mscb-feature-slot'; ph.style.cssText = 'position:relative;width:100%;aspect-ratio:16/9;'; fb.parentNode.replaceChild(ph, fb); }
                     }
                     var apply = function () {
+                        // Preserve the live home content (DOM + listeners + scroll) by DETACHING
+                        // it into a holder rather than destroying it, so Back can restore it
+                        // instantly and land exactly where the video was tapped. Then mount the
+                        // watch content as DIRECT children of .page (so its CSS direct-child
+                        // selectors still match).
+                        var holder = document.createElement('div');
+                        while (pageEl.firstChild) holder.appendChild(pageEl.firstChild);
+                        homeHolderEl = holder;
                         pageEl.innerHTML = newPage.innerHTML;
                         try { document.body.classList.add('page-subpage'); } catch (e) {}
                         try { document.title = doc.title || document.title; } catch (e) {}
@@ -359,6 +368,8 @@ export function watchHandoffScript(): string {
                         var rect = opts.wrapper.getBoundingClientRect();
                         if (!rect.width || !rect.height) return false;
                         started = true;
+                        homeScrollY = py();          // where the user was on home, for Back
+                        lastVideoId = opts.videoId;
                         ensureVhost();
                         if (opts.thumb) { try { vhost.style.backgroundImage = 'url(' + opts.thumb + ')'; } catch (e) {} }
                         // Reveal the host over the tapped thumbnail.
@@ -378,10 +389,31 @@ export function watchHandoffScript(): string {
                     } catch (e) { return false; }
                 };
 
-                // Back from our swapped /watch -> a clean home load (re-runs home's own
-                // scripts correctly), which also stops the video.
+                // Back / forward across the same-page hand-off.
                 window.addEventListener('popstate', function () {
-                    if (started) { try { location.reload(); } catch (e) { location.href = '/'; } }
+                    // Forward back INTO /watch after we'd restored home: load the real page.
+                    if (!inWatch && location.pathname === '/watch') { try { location.reload(); } catch (e) {} return; }
+                    if (!inWatch) return;
+                    // Back to home: restore the PRESERVED home content (listeners intact) and the
+                    // exact scroll position, tear down the morph. No reload, so the visitor lands
+                    // right where the video was tapped — like the normal /watch back button.
+                    try {
+                        if (homeHolderEl) {
+                            pageEl.innerHTML = '';
+                            while (homeHolderEl.firstChild) pageEl.appendChild(homeHolderEl.firstChild);
+                            homeHolderEl = null;
+                        }
+                        document.body.classList.remove('page-subpage');
+                        pageEl.style.transition = ''; pageEl.style.opacity = '';
+                        try { if (player && player.destroy) player.destroy(); } catch (e) {}
+                        player = null; playerReady = false; playOnReady = false;
+                        clearPlayWatch();
+                        if (vhost && vhost.parentNode) vhost.parentNode.removeChild(vhost);
+                        vhost = null; slot = null; inWatch = false; converted = false; started = false;
+                        window.scrollTo(0, homeScrollY);
+                        // Re-arm the paused preload so a second play is instant + with sound again.
+                        if (lastVideoId) { builtVideoId = null; preloadPlayer(lastVideoId); }
+                    } catch (e) { try { location.reload(); } catch (e2) {} }
                 });
                 window.addEventListener('resize', function () { if (inWatch) scheduleRepos(); });
             })();

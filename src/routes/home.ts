@@ -2,6 +2,7 @@ import { type Hono } from 'hono'
 import { homeHead } from '../templates/home-head.js'
 import { homeBody, type HomeWatchView } from '../templates/home-body.js'
 import { homeScripts } from '../templates/home-scripts.js'
+import { watchHandoffScript } from '../templates/watch-handoff.js'
 import { fetchAllPublishedSermons, type PublishedSermon } from '../sermons-feed.js'
 import {
   mmss,
@@ -138,6 +139,7 @@ export function registerHomeRoute(app: Hono) {
 ${homeHead()}
 ${homeBody(watch)}
 ${homeScripts()}
+${watchHandoffScript()}
 </html>`)
   })
 }

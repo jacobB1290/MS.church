@@ -9923,6 +9923,58 @@ export const homeStyles = (): string => `
         /* --- Library card (one design, every surface) --- */
         .watch-card { display: flex; flex-direction: column; }
         .watch-card.is-filtered { display: none; }
+
+        /* --- Progressive disclosure: show 6, "Show more" reveals 12 at a time ---
+           SEO-safe: every card is server-rendered in the DOM. The collapse is gated
+           on html.watch-js, so a no-JS request and any crawler that doesn't run JS
+           see the WHOLE library; the JSON-LD ItemList + per-service sitemap entries
+           cover JS crawlers too. The nth-child rule gives a flash-free first paint
+           before the JS marks the panel .is-paged; then filter-aware .is-rest governs.
+           Both are off while searching (every match shows). */
+        .watch-js #library:not(.is-searching) .watch-panel:not(.is-paged) .watch-grid > .watch-card:nth-child(n+7) { display: none; }
+        .watch-js #library:not(.is-searching) .watch-panel.is-paged .watch-card.is-rest { display: none; }
+        .watch-more-wrap {
+            display: none;
+            justify-content: center;
+            margin-top: var(--space-xl);
+            max-height: 80px;
+            overflow: hidden;
+            transition: opacity var(--motion-medium) var(--ease-out-soft),
+                        max-height var(--motion-medium) var(--ease-out-soft),
+                        margin-top var(--motion-medium) var(--ease-out-soft);
+        }
+        /* :not([hidden]) so toggling the hidden attr actually hides it (the class
+           rule would otherwise out-specify the UA [hidden] display:none). */
+        .watch-js .watch-more-wrap:not([hidden]) { display: flex; }
+        /* Exhausted (last batch revealed): fade + collapse away instead of vanishing. */
+        .watch-more-wrap.is-exhausted { opacity: 0; max-height: 0; margin-top: 0; pointer-events: none; }
+        .watch-more {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px; /* tap target */
+            font-family: var(--font-body), 'Inter', sans-serif;
+            font-size: var(--text-small);
+            font-weight: var(--weight-medium);
+            letter-spacing: 0.02em;
+            color: var(--text-primary-soft);
+            background: var(--surface);
+            border: 1px solid var(--text-primary-hairline);
+            border-radius: var(--radius-pill);
+            padding: 11px 28px;
+            cursor: pointer;
+            transition: background var(--motion-fast) var(--ease-out-soft),
+                        border-color var(--motion-fast) var(--ease-out-soft),
+                        color var(--motion-fast) var(--ease-out-soft),
+                        transform var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-more:hover { background: var(--white); border-color: var(--text-fade); color: var(--text-primary); }
+        .watch-more:active { transform: translateY(1px); }
+        .watch-more-count { color: var(--text-faint); }
+        /* The revealed batch eases in (stagger via inline animation-delay set in JS). */
+        @keyframes watch-card-reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+        .watch-card.is-revealing { animation: watch-card-reveal var(--motion-medium) var(--ease-out-soft) both; }
+        @media (prefers-reduced-motion: reduce) { .watch-card.is-revealing { animation: none; } }
         .watch-card-link {
             display: flex;
             flex-direction: column;

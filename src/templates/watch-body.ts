@@ -219,30 +219,57 @@ function songFilter(panelId: string, active: boolean, songItems: SongItem[]): st
   return filterRow(panelId, active, 'kind', 'Filter songs', chips, 'program')
 }
 
+// Progressive disclosure: a tab shows the first PAGE_INITIAL cards and reveals
+// PAGE_BATCH more on each "Show more" press. Every card is still in the HTML (so
+// crawlers + the client search see the whole library); the rest are just visually
+// collapsed until asked for, so a large archive stays a light first paint.
+const PAGE_INITIAL = 6
+const PAGE_BATCH = 12
+
+/** The "Show more" control for a tab — only when a tab has more than the initial set. */
+function moreButton(total: number): string {
+  if (total <= PAGE_INITIAL) return ''
+  return `<div class="watch-more-wrap" data-more-wrap>
+                            <button class="watch-more" type="button" data-more>Show more<span class="watch-more-count" aria-hidden="true"></span></button>
+                        </div>`
+}
+
 /**
- * A tab's panel: the group label (shown only in search results) + the card grid.
- * The chips moved out to the shared rail above so they can animate on tab switch.
+ * A tab's panel: the group label (shown only in search results) + the card grid +
+ * the "Show more" control. The chips moved out to the shared rail above so they can
+ * animate on tab switch.
  */
 function messageGrid(id: string, items: PublishedSermon[], active: boolean, groupLabel: string): string {
-  return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'}>
+  return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'} data-shown="${PAGE_INITIAL}">
                         <h3 class="watch-group-label" aria-hidden="true">${groupLabel}<span class="watch-group-count" data-group-count></span></h3>
                         <div class="watch-grid">
                         ${items.map((s) => messageCard(s, s.slug)).join('\n                        ')}
                         </div>
+                        ${moreButton(items.length)}
                     </div>`
 }
 
 function songGrid(id: string, songItems: SongItem[], active: boolean, groupLabel: string): string {
-  return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'}>
+  return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'} data-shown="${PAGE_INITIAL}">
                         <h3 class="watch-group-label" aria-hidden="true">${groupLabel}<span class="watch-group-count" data-group-count></span></h3>
                         <div class="watch-grid">
                         ${songItems.map((it, i) => songCard(it.sermon, it.song, it.count, 'song-' + i)).join('\n                        ')}
                         </div>
+                        ${moreButton(songItems.length)}
                     </div>`
 }
 
-/** url-safe-ish text for the search blob; everything is matched lowercased. */
-type SearchEntry = { i: string; t: string; ti: string; wh: string; to: string[]; su: string; sc: string[]; tg: string[]; k?: string }
+/**
+ * One searchable item, all fields matched lowercased. Beyond title/speaker/topic/
+ * summary/tags, the index carries the dimensions a visitor actually reaches for:
+ *   sc — scripture, ENRICHED (book + standard abbreviations + numbered-book and
+ *        book+chapter glued tokens) so "Romans 8", "1 John", "matt", "ps 23" all hit.
+ *   dt — the service date as words ("june 2026 22") so a month/year/day finds it.
+ *   ch — distinctive chapter content (segment-type labels like "testimony" /
+ *        "benediction", plus filtered chapter titles + message-chapter notes) so a
+ *        thing published in a chapter but not the top summary is still findable.
+ */
+type SearchEntry = { i: string; t: string; ti: string; wh: string; to: string[]; su: string; sc: string[]; tg: string[]; dt: string; ch: string[]; k?: string }
 
 // Boilerplate in the raw YouTube livestream titles ("LIVE - Sunday Morning
 // 9:00am | 5/3/2026 | Morning Star Church of Boise") is identical week to week,
@@ -263,6 +290,128 @@ function cleanMessageTitle(t: string): string {
     .join(' ')
 }
 
+const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+
+/**
+ * The service date as searchable words, in the church's timezone so it matches the
+ * date shown on the card. Month name + year + day ("june 2026 22"); "jun"/"june
+ * 2026"/"june 22" all hit via the prefix matcher. Month names don't collide with
+ * scripture or topics, so this stays high-precision.
+ */
+function dateSearchText(iso: string | null): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Boise', year: 'numeric', month: 'numeric', day: 'numeric' }).formatToParts(d)
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? ''
+  const month = MONTHS[(parseInt(get('month'), 10) || 0) - 1] ?? ''
+  return [month, get('year'), get('day')].filter(Boolean).join(' ')
+}
+
+// Standard non-obvious Bible abbreviations a visitor might type. Prefix-style
+// abbreviations ("gen", "rom", "rev", "matt", "ps") already work through the
+// prefix matcher, so this map carries the SHORT / non-prefix ones that wouldn't
+// ("mt", "mk", "lk", "jn", "dt", "rm") plus the singular/plural Psalm pair.
+const BOOK_ALIASES: Record<string, string[]> = {
+  genesis: ['gen', 'gn'], exodus: ['exod', 'exo'], leviticus: ['lev', 'lv'],
+  numbers: ['num', 'nm'], deuteronomy: ['deut', 'dt'], joshua: ['josh', 'jos'],
+  psalm: ['ps', 'psa', 'psalms'], psalms: ['ps', 'psa', 'psalm'], proverbs: ['prov', 'prv'],
+  ecclesiastes: ['eccl', 'ecc'], isaiah: ['isa'], jeremiah: ['jer'],
+  ezekiel: ['ezek', 'eze'], daniel: ['dan', 'dn'], matthew: ['matt', 'mt'],
+  mark: ['mk', 'mrk'], luke: ['lk', 'luk'], john: ['jn', 'jhn'], acts: ['ac'],
+  romans: ['rom', 'rm'], corinthians: ['cor', 'co'], galatians: ['gal'],
+  ephesians: ['eph'], philippians: ['phil', 'php'], colossians: ['col'],
+  thessalonians: ['thess', 'thes'], timothy: ['tim'], titus: ['tit'],
+  philemon: ['philem', 'phm'], hebrews: ['heb'], james: ['jas'],
+  peter: ['pet', 'pt'], revelation: ['rev', 'rv', 'apocalypse'],
+  zechariah: ['zech'], malachi: ['mal'], nehemiah: ['neh'], habakkuk: ['hab'], haggai: ['hag'],
+}
+
+/**
+ * A scripture reference expanded into every token a visitor might search it by.
+ * "1 Corinthians 12:4-11" -> corinthians, cor, co, 1corinthians, 1cor, 1co,
+ * corinthians12, 1corinthians12, 12, 4, 11. "Matthew 6:9-13" -> matthew, matt,
+ * mt, matthew6, 6, 9, 13. The glued book+chapter / ordinal+book tokens are how
+ * single-digit chapters ("Matthew 6", "1 John") survive the query's >=2-length
+ * filter once the query parser glues the same way (see parse() / search-harness).
+ */
+function scriptureSearchText(refs: string[]): string[] {
+  const out = new Set<string>()
+  for (const raw of refs) {
+    const ref = (raw || '').toLowerCase().trim()
+    if (!ref) continue
+    const m = ref.match(/^(?:([123])\s+)?([a-z]+)\s*(\d+)?/)
+    if (m) {
+      const ord = m[1]
+      const book = m[2]
+      const chap = m[3]
+      const aliases = BOOK_ALIASES[book] ?? []
+      out.add(book)
+      for (const a of aliases) out.add(a)
+      if (ord) {
+        out.add(ord + book)
+        for (const a of aliases) out.add(ord + a)
+      }
+      if (chap) {
+        out.add(book + chap)
+        if (ord) out.add(ord + book + chap)
+      }
+    }
+    for (const n of ref.match(/\d+/g) ?? []) out.add(n)
+  }
+  return [...out]
+}
+
+// Chapter text is recall, not the headline — so index only what's distinctive.
+// Distinctive segment TYPES become searchable structure ("testimony", "poem",
+// "benediction"); the ubiquitous structure of every service (welcome, worship,
+// prayer, the offering) is dropped so it can't match everything. SUBSTANTIVE
+// chapters also contribute their note words. Everything is filtered against the
+// title boilerplate + these ubiquitous words so generic terms never leak in
+// (and the "boilerplate stays quiet" guarantee holds).
+const DISTINCTIVE_SEG = new Set(['testimony', 'poem', 'benediction', 'communion', 'baptism'])
+const SUBSTANTIVE_SEG = new Set(['sermon', 'discussion', 'testimony', 'poem', 'scripture'])
+const UBIQUITOUS = new Set([
+  'worship', 'welcome', 'opening', 'closing', 'offering', 'announcement', 'announcements',
+  'prayer', 'scripture', 'sermon', 'discussion', 'message', 'teaching', 'teaches', 'preaches',
+  'preached', 'reading', 'reads', 'read', 'song', 'songs', 'sing', 'sings', 'sung', 'singing',
+  'special', 'music', 'meet', 'greet', 'greets', 'greeting', 'congregation', 'brother', 'sister',
+  'pastor', 'god', 'jesus', 'christ', 'lord', 'today', 'week', 'weeks', 'services', 'members',
+  'member', 'share', 'shares', 'sharing', 'gather', 'gathers', 'opens', 'closes', 'begins',
+])
+// Common function words — they can never be searched for (the query parser drops
+// them as stop words) so indexing them in chapter text is pure dead weight.
+const CH_STOP = new Set([
+  'and', 'the', 'with', 'for', 'from', 'that', 'this', 'then', 'his', 'her', 'our', 'you', 'are',
+  'was', 'has', 'had', 'have', 'will', 'not', 'but', 'all', 'any', 'out', 'who', 'how', 'into',
+  'over', 'about', 'they', 'them', 'their', 'been', 'were', 'than', 'also', 'such', 'only', 'very',
+  'just', 'like', 'some', 'more', 'most', 'each', 'both', 'upon', 'onto', 'off', 'yet', 'its',
+])
+function chapterSearchText(segments: PublishedSermon['segments']): string[] {
+  const out = new Set<string>()
+  const add = (text: string) => {
+    for (const w of (text || '').toLowerCase().split(/[^a-z0-9']+/)) {
+      if (w.length < 3 || /^\d+$/.test(w) || TITLE_NOISE.has(w) || UBIQUITOUS.has(w) || CH_STOP.has(w)) continue
+      out.add(w)
+    }
+  }
+  for (const seg of segments) {
+    if (DISTINCTIVE_SEG.has(seg.type)) out.add(seg.type)
+    add(seg.title)
+    if (SUBSTANTIVE_SEG.has(seg.type)) add(seg.summary)
+  }
+  return [...out]
+}
+
+// The summary is a recall field, but indexing the livestream boilerplate it
+// inevitably contains ("...the Sunday service in Boise...", "...a Christian
+// home...") lets generic words match real messages. Strip the same title noise
+// from the indexed summary; the visible card summary (sermon.summary) is untouched.
+function summarySearchText(s: PublishedSermon): string {
+  const raw = s.summary || s.seo?.description || ''
+  return raw.toLowerCase().split(/[^a-z0-9']+/).filter((w) => w && !TITLE_NOISE.has(w)).join(' ')
+}
+
 function messageEntry(s: PublishedSermon): SearchEntry {
   const scripture = [...new Set(s.segments.flatMap((seg) => seg.scriptureRefs || []))]
   return {
@@ -271,9 +420,11 @@ function messageEntry(s: PublishedSermon): SearchEntry {
     ti: cleanMessageTitle(s.title),
     wh: s.speakers.join(' '),
     to: s.topics || [],
-    su: s.summary || s.seo?.description || '',
-    sc: scripture,
+    su: summarySearchText(s),
+    sc: scriptureSearchText(scripture),
     tg: s.seo?.tags || [],
+    dt: dateSearchText(s.publishedAt),
+    ch: chapterSearchText(s.segments),
   }
 }
 
@@ -326,6 +477,8 @@ function renderLibrary(items: PublishedSermon[]): string {
       su: '',
       sc: [],
       tg: [],
+      dt: dateSearchText(it.sermon.publishedAt),
+      ch: [],
       k: it.song.kind,
     })),
   ]
@@ -359,7 +512,7 @@ function renderLibrary(items: PublishedSermon[]): string {
                     <p class="section-lead watch-library-lead">Tap any message and it plays right here, just the part you came for. Filter by topic, or open the full service.</p>
                     <div class="watch-search">
                         <svg class="watch-search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M10 4a6 6 0 104.47 10.03l4.24 4.25 1.42-1.42-4.25-4.24A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" fill="currentColor"/></svg>
-                        <input id="watch-search-input" class="watch-search-input" type="search" inputmode="search" autocomplete="off" enterkeyhint="search" placeholder="Search by topic, title, song, or who spoke" aria-label="Search the library">
+                        <input id="watch-search-input" class="watch-search-input" type="search" inputmode="search" autocomplete="off" enterkeyhint="search" placeholder="Search a topic, passage, date, song, or speaker" aria-label="Search the library">
                         <button class="watch-search-clear" id="watch-search-clear" type="button" aria-label="Clear search" hidden>&times;</button>
                     </div>
                     <p class="watch-search-summary" id="watch-search-summary" role="status" aria-live="polite" hidden></p>
@@ -389,6 +542,10 @@ export const watchBody = (view: WatchHubView): string => {
                fresh home rect. Runs in pagereveal (VT path) + DOMContentLoaded (no-VT). */
             (function () {
                 try {
+                    // Mark JS-on pre-paint: the library's "Show more" collapse keys off
+                    // html.watch-js, so without JS every card stays visible (crawlers + no-JS
+                    // see the whole archive) and there's no first-paint flash with it.
+                    document.documentElement.classList.add('watch-js');
                     if (new URLSearchParams(location.search).get('play') !== '1') return;
                     document.documentElement.classList.add('watch-play-arrival');
                     var placed = false;
@@ -581,6 +738,78 @@ export const watchBody = (view: WatchHubView): string => {
                     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveInk(false); });
                 }
 
+                /* --- Progressive disclosure: show 6, reveal 12 more per press --- */
+                // Every card is in the DOM (SEO + search see all); this only collapses the
+                // overflow visually and reveals it in batches. Paging is filter-aware (it
+                // counts the cards a filter leaves visible) and bypassed during a search.
+                var PAGE_INITIAL = 6, PAGE_BATCH = 12;
+                var libEl = document.getElementById('library');
+                function panelVisibleCards(panel) {
+                    return Array.prototype.filter.call(panel.querySelectorAll('.watch-card'), function (c) {
+                        return !c.classList.contains('is-filtered') && !c.classList.contains('is-search-hidden');
+                    });
+                }
+                function setMoreButton(panel, remaining, animateGone) {
+                    var wrap = panel.querySelector('[data-more-wrap]');
+                    if (!wrap) return;
+                    var cnt = wrap.querySelector('.watch-more-count');
+                    if (remaining > 0) { wrap.classList.remove('is-exhausted'); wrap.hidden = false; if (cnt) cnt.textContent = ' (' + remaining + ')'; }
+                    else if (animateGone) { wrap.hidden = false; wrap.classList.add('is-exhausted'); } // fades + collapses via CSS
+                    else { wrap.classList.remove('is-exhausted'); wrap.hidden = true; }
+                }
+                function applyPaging(panel) {
+                    if (!panel) return;
+                    panel.classList.add('is-paged'); // hands collapse from the nth-child fallback to is-rest
+                    var shown = parseInt(panel.getAttribute('data-shown'), 10) || PAGE_INITIAL;
+                    var vis = panelVisibleCards(panel);
+                    for (var i = 0; i < vis.length; i++) vis[i].classList.toggle('is-rest', i >= shown);
+                    // A filtered/search-hidden card is hidden anyway; don't leave is-rest on it.
+                    panel.querySelectorAll('.watch-card.is-filtered.is-rest, .watch-card.is-search-hidden.is-rest').forEach(function (c) { c.classList.remove('is-rest'); });
+                    setMoreButton(panel, vis.length - shown, false);
+                }
+                function pageAll() { if (libEl) libEl.querySelectorAll('.watch-panel').forEach(applyPaging); }
+                function resetPaging(panel) { if (panel) { panel.setAttribute('data-shown', String(PAGE_INITIAL)); applyPaging(panel); } }
+                // Reveal the next batch. The layout must not open in one frame (that ejects the
+                // button + the section below downward instantly); instead animate the grid's
+                // HEIGHT from its current to its grown size so everything below travels down
+                // smoothly while the new cards fade/slide in over the same window.
+                function showMore(panel) {
+                    var grid = panel.querySelector('.watch-grid');
+                    var shown = parseInt(panel.getAttribute('data-shown'), 10) || PAGE_INITIAL;
+                    var vis = panelVisibleCards(panel);
+                    var next = vis.slice(shown, shown + PAGE_BATCH); // the cards about to appear
+                    var newShown = shown + PAGE_BATCH;
+                    panel.setAttribute('data-shown', String(newShown));
+                    panel.classList.add('is-paged');
+                    var remaining = Math.max(0, vis.length - newShown);
+                    if (reduce || !grid) {
+                        next.forEach(function (c) { c.classList.remove('is-rest'); });
+                        setMoreButton(panel, remaining, false);
+                        return;
+                    }
+                    if (grid.__pageDone) grid.__pageDone();          // settle any in-flight reveal
+                    var h1 = grid.offsetHeight;
+                    next.forEach(function (c) { c.classList.remove('is-rest'); });
+                    var h2 = grid.scrollHeight;
+                    grid.style.height = h1 + 'px'; grid.style.overflow = 'hidden';
+                    void grid.offsetHeight;                           // commit the start height
+                    // Material standard easing (gentle in AND out) so the open doesn't
+                    // front-load a big first frame the way a pure ease-out would.
+                    grid.style.transition = 'height 0.6s var(--ease-standard)';
+                    grid.style.height = h2 + 'px';
+                    next.forEach(function (c, i) {
+                        c.classList.add('is-revealing'); c.style.animationDelay = (i * 30) + 'ms';
+                        setTimeout(function () { c.classList.remove('is-revealing'); c.style.animationDelay = ''; }, 380 + i * 30);
+                    });
+                    grid.__pageDone = function () { clearTimeout(grid.__pageT); grid.__pageDone = null; grid.style.height = ''; grid.style.overflow = ''; grid.style.transition = ''; };
+                    grid.__pageT = setTimeout(grid.__pageDone, 640);
+                    setMoreButton(panel, remaining, true);            // animate the button out if exhausted
+                }
+                if (libEl) libEl.addEventListener('click', function (e) {
+                    var b = e.target.closest('[data-more]');
+                    if (b) { var panel = b.closest('.watch-panel'); if (panel) showMore(panel); }
+                });
+
                 // Each rail filter drives its own panel's grid (chips left the panels).
                 function gridForFilter(filter) {
                     var panel = document.getElementById('panel-' + filter.getAttribute('data-panel'));
@@ -602,6 +831,8 @@ export const watchBody = (view: WatchHubView): string => {
                                 var show = val === 'all' || card.getAttribute('data-' + key) === val;
                                 card.classList.toggle('is-filtered', !show);
                             });
+                            // A new filter is a new set — collapse it back to the first page.
+                            resetPaging(grid.closest('.watch-panel'));
                         });
                     });
                     // Apply each filter's default (e.g. Songs -> Program) on load.
@@ -616,6 +847,8 @@ export const watchBody = (view: WatchHubView): string => {
                         });
                     });
                 }
+                // First paint: collapse every tab to its first page (after default filters).
+                pageAll();
 
                 /* --- Library search: advanced, multi-field, ranked, instant --- */
                 (function () {
@@ -634,7 +867,13 @@ export const watchBody = (view: WatchHubView): string => {
                     // Field weights + the scoring below are mirrored verbatim in
                     // scripts/search-harness.mjs (run: npm run search:test), which tunes
                     // relevance against the LIVE catalog. Change one, change both.
-                    var FIELD_W = { ti: 10, wh: 8, to: 9, sc: 6, su: 4, tg: 7, ty: 5 };
+                    // dt (date) + ch (chapter content) join the original fields; dt is a
+                    // strong intent signal, ch is a recall booster kept below the summary.
+                    var FIELD_W = { ti: 10, wh: 8, to: 9, sc: 6, su: 4, tg: 7, ty: 5, dt: 7, ch: 5 };
+                    // When the query IS an item's full title (2+ words), pin it to the top —
+                    // so searching the exact hymn "Holy, Holy, Holy" leads with the song, not
+                    // every "the holy spirit" sermon it shares a word with.
+                    var EXACT_TITLE_BONUS = 100;
 
                     function words(s) { return (s || '').toLowerCase().split(/[^a-z0-9']+/).filter(Boolean); }
                     function near(tok, w) {
@@ -650,12 +889,15 @@ export const watchBody = (view: WatchHubView): string => {
                     }
                     function fieldScore(tok, ws) {
                         var best = 0;
+                        var hasDigit = /\d/.test(tok);
                         for (var k = 0; k < ws.length; k++) {
                             var w = ws[k];
                             if (w === tok) return 1;
                             if (w.indexOf(tok) === 0) best = Math.max(best, 0.85);
                             else if (w.indexOf(tok) > 0) best = Math.max(best, 0.6);
-                            else if (tok.length >= 5 && w.length >= 4 && near(tok, w)) best = Math.max(best, 0.5);
+                            // Fuzzy only for word typos, never for glued scripture tokens
+                            // (a digit in the token), so "matthew6" can't fuzz onto "matthew".
+                            else if (tok.length >= 5 && w.length >= 4 && !hasDigit && near(tok, w)) best = Math.max(best, 0.5);
                         }
                         return best;
                     }
@@ -663,7 +905,17 @@ export const watchBody = (view: WatchHubView): string => {
                         var raw = words(q);
                         var speaker = {};
                         for (var i = 0; i < raw.length; i++) if ((raw[i] === 'by' || raw[i] === 'pastor' || raw[i] === 'with') && raw[i + 1]) speaker[raw[i + 1]] = 1;
-                        return { toks: raw.filter(function (w) { return w.length >= 2 && !STOP[w]; }), speaker: speaker };
+                        var toks = raw.filter(function (w) { return w.length >= 2 && !STOP[w]; });
+                        // Scripture gluing: a book next to a number ("john 3", "1 john",
+                        // "matthew 6") also emits a glued token (john3 / 1john / matthew6) so
+                        // single-digit chapters/ordinals — dropped by the >=2 filter — still
+                        // hit the glued tokens we index. Originals stay, so book-only is intact.
+                        for (var j = 0; j < raw.length - 1; j++) {
+                            var a = raw[j], b = raw[j + 1];
+                            if (/^[a-z']+$/.test(a) && /^\d+$/.test(b)) toks.push(a + b);
+                            else if (/^\d+$/.test(a) && /^[a-z']+$/.test(b)) toks.push(a + b);
+                        }
+                        return { toks: toks, speaker: speaker, qnorm: raw.join(' ') };
                     }
                     function typeText(item) {
                         if (item.t === 'song') return 'song songs worship music ' + (item.k || '');
@@ -676,7 +928,7 @@ export const watchBody = (view: WatchHubView): string => {
                         var f = {
                             ti: words(item.ti), wh: words(item.wh), to: words((item.to || []).join(' ')),
                             sc: words((item.sc || []).join(' ')), su: words(item.su), tg: words((item.tg || []).join(' ')),
-                            ty: words(typeText(item))
+                            ty: words(typeText(item)), dt: words(item.dt), ch: words((item.ch || []).join(' '))
                         };
                         FW_CACHE[item.i] = f; return f;
                     }
@@ -691,7 +943,10 @@ export const watchBody = (view: WatchHubView): string => {
                             if (best > 0) matched++;
                             total += best;
                         }
-                        return matched === 0 ? 0 : total * (matched / p.toks.length);
+                        var base = matched === 0 ? 0 : total * (matched / p.toks.length);
+                        // Exact full-title query (2+ words) -> pin to the top.
+                        if (base > 0 && p.qnorm && fw.ti.length >= 2 && fw.ti.join(' ') === p.qnorm) base += EXACT_TITLE_BONUS;
+                        return base;
                     }
 
                     var deb;
@@ -708,6 +963,9 @@ export const watchBody = (view: WatchHubView): string => {
                         // A search overrides any active topic/kind chip so every match shows.
                         lib.querySelectorAll('.watch-card.is-filtered').forEach(function (c) { c.classList.remove('is-filtered'); });
                         lib.querySelectorAll('.watch-chip').forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-val') === 'all')); });
+                        // A search shows every match (paging is bypassed via .is-searching), so
+                        // the "Show more" controls don't apply while searching.
+                        lib.querySelectorAll('[data-more-wrap]').forEach(function (w) { w.hidden = true; });
                         lib.classList.add('is-searching');
                         var shown = 0, sid;
                         for (sid in cards) {
@@ -723,7 +981,7 @@ export const watchBody = (view: WatchHubView): string => {
                         summary.hidden = false;
                         summary.textContent = shown
                             ? shown + (shown === 1 ? ' result' : ' results') + ' for “' + q + '”'
-                            : 'No results for “' + q + '”. Try a topic, a name like “John”, or a song title.';
+                            : 'No results for “' + q + '”. Try a topic, a book like “Romans”, a date, or a song title.';
                     }
                     function exit() {
                         lib.classList.remove('is-searching');
@@ -743,6 +1001,8 @@ export const watchBody = (view: WatchHubView): string => {
                                 card.classList.toggle('is-filtered', !(d === 'all' || card.getAttribute('data-' + k) === d));
                             });
                         });
+                        // Leaving search restores the first-page collapse on every tab.
+                        pageAll();
                         if (summary) { summary.hidden = true; summary.textContent = ''; }
                         clearBtn.hidden = !input.value;
                     }

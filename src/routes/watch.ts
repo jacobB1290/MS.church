@@ -174,7 +174,9 @@ function buildHubJsonLd(view: WatchHubView, all: PublishedSermon[]): string {
       '@id': 'https://ms.church/watch#library',
       name: 'Sermons and discussions',
       numberOfItems: all.length,
-      itemListElement: all.slice(0, 50).map((s, i) => ({
+      // List the whole library (the feed is already capped server-side); a
+      // hard 50 here under-reported the catalog to search engines.
+      itemListElement: all.map((s, i) => ({
         '@type': 'ListItem',
         position: i + 1,
         url: `https://ms.church/watch/${s.slug}`,

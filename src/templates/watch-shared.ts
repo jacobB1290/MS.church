@@ -631,11 +631,18 @@ export function watchPlayerScript(): string {
                                 if (doFade && mode === 'segment' && !didFadeOut && t >= segEnd() - 0.2 - (FADE_OUT_MS / 1000) && t < segEnd() - 0.2) { didFadeOut = true; fadeOutAudio(Math.max(150, (segEnd() - 0.2 - t) * 1000)); }
                                 if (mode === 'segment' && t >= segEnd() - 0.2) { try { player.pauseVideo(); player.seekTo(segStart(), true); } catch (e) {} t = segStart(); root.classList.remove('is-playing'); if (doFade) { cancelFade(); try { player.setVolume(0); } catch (e) {} didFadeIn = false; didFadeOut = false; } }
                                 if (!scrubbing) {
-                                    var p = Math.min(1, Math.max(0, (t - lo()) / span()));
+                                    var dispT = t;
+                                    if (seekLock != null) {
+                                        // Hold the requested position until the seek lands (or 2s
+                                        // safety) so the knob doesn't flash back to the old time.
+                                        if (nowMs() > seekLock.until || Math.abs(t - seekLock.t) < 0.4) seekLock = null;
+                                        else dispT = seekLock.t;
+                                    }
+                                    var p = Math.min(1, Math.max(0, (dispT - lo()) / span()));
                                     fill.style.width = (p*100) + '%'; knob.style.left = (p*100) + '%';
-                                    curEl.textContent = fmt(Math.max(0, t - lo()));
+                                    curEl.textContent = fmt(Math.max(0, dispT - lo()));
                                     scrub.setAttribute('aria-valuenow', String(Math.round(p*100)));
-                                    if (ownsChapters) highlight(t);
+                                    if (ownsChapters) highlight(dispT);
                                 }
                             }
                             raf = requestAnimationFrame(tick);
@@ -665,8 +672,17 @@ export function watchPlayerScript(): string {
                         if (mode === 'segment' && (t < segStart() - 0.5 || t > segEnd() + 0.5)) setMode('full');
                         try { player.seekTo(t, true); player.playVideo(); } catch (e) {}
                     }
-                    function frac(clientX) { var r = track.getBoundingClientRect(); return Math.min(1, Math.max(0, (clientX - r.left) / r.width)); }
-                    function preview(f) { fill.style.width = (f*100) + '%'; knob.style.left = (f*100) + '%'; curEl.textContent = fmt(f * span()); }
+                    // Scrub state. trackRect is cached at pointerdown (no getBoundingClientRect
+                    // per move); previews are coalesced into one rAF; seekLock pins the on-screen
+                    // position to the requested time until the video catches up so the knob never
+                    // snaps backward after release.
+                    var trackRect = null, dragRaf = null, pendingFrac = 0, seekLock = null;
+                    function nowMs() { return (window.performance && performance.now) ? performance.now() : Date.now(); }
+                    function frac(clientX) { var r = trackRect || track.getBoundingClientRect(); return r.width ? Math.min(1, Math.max(0, (clientX - r.left) / r.width)) : 0; }
+                    function paintFrac(f) { fill.style.width = (f*100) + '%'; knob.style.left = (f*100) + '%'; curEl.textContent = fmt(f * span()); scrub.setAttribute('aria-valuenow', String(Math.round(f*100))); }
+                    function flushPreview() { dragRaf = null; paintFrac(pendingFrac); }
+                    function queuePreview(f) { pendingFrac = f; if (dragRaf == null) dragRaf = requestAnimationFrame(flushPreview); }
+                    function lockSeek(t) { seekLock = { t: t, until: nowMs() + 2000 }; paintFrac((t - lo()) / span()); doSeek(t); }
 
                     poster.addEventListener('click', start);
                     // Preload ahead of the tap on intent (hover / press / focus) so the play
@@ -699,10 +715,38 @@ export function watchPlayerScript(): string {
                         document.addEventListener('fullscreenchange', onFsChange);
                         document.addEventListener('webkitfullscreenchange', onFsChange);
                     }
-                    scrub.addEventListener('pointerdown', function (e) { if (!ready) return; scrubbing = true; try { scrub.setPointerCapture(e.pointerId); } catch (er) {} preview(frac(e.clientX)); });
-                    scrub.addEventListener('pointermove', function (e) { if (scrubbing) preview(frac(e.clientX)); });
-                    scrub.addEventListener('pointerup', function (e) { if (!scrubbing) return; scrubbing = false; doSeek(lo() + frac(e.clientX) * span()); });
-                    scrub.addEventListener('keydown', function (e) { if (!ready) return; var step = e.shiftKey ? 30 : 5, t = player.getCurrentTime(); if (e.key === 'ArrowRight') { doSeek(Math.min(hi(), t + step)); e.preventDefault(); } else if (e.key === 'ArrowLeft') { doSeek(Math.max(lo(), t - step)); e.preventDefault(); } });
+                    // Move/up are bound to the WINDOW for the drag's duration, so a finger that
+                    // wanders off the thin track (or vertically) keeps registering; pointercancel
+                    // ends the drag cleanly so it can never get stuck mid-scrub.
+                    function onScrubMove(e) { if (!scrubbing) return; if (e.cancelable) e.preventDefault(); queuePreview(frac(e.clientX)); }
+                    function endScrub(e) {
+                        if (!scrubbing) return;
+                        scrubbing = false;
+                        window.removeEventListener('pointermove', onScrubMove);
+                        window.removeEventListener('pointerup', endScrub);
+                        window.removeEventListener('pointercancel', endScrub);
+                        if (dragRaf != null) { cancelAnimationFrame(dragRaf); dragRaf = null; }
+                        var f = (e && typeof e.clientX === 'number' && e.type !== 'pointercancel') ? frac(e.clientX) : pendingFrac;
+                        paintFrac(f);
+                        lockSeek(lo() + f * span());
+                    }
+                    scrub.addEventListener('pointerdown', function (e) {
+                        if (!ready) return;
+                        if (e.button != null && e.button !== 0) return;
+                        scrubbing = true;
+                        trackRect = track.getBoundingClientRect();
+                        if (e.cancelable) e.preventDefault();
+                        window.addEventListener('pointermove', onScrubMove);
+                        window.addEventListener('pointerup', endScrub);
+                        window.addEventListener('pointercancel', endScrub);
+                        queuePreview(frac(e.clientX));
+                    });
+                    scrub.addEventListener('keydown', function (e) {
+                        if (!ready) return;
+                        var step = e.shiftKey ? 30 : 5, t; try { t = player.getCurrentTime(); } catch (er) { t = lo(); }
+                        if (e.key === 'ArrowRight') { lockSeek(Math.min(hi(), t + step)); e.preventDefault(); }
+                        else if (e.key === 'ArrowLeft') { lockSeek(Math.max(lo(), t - step)); e.preventDefault(); }
+                    });
                     chapters.forEach(function (ch) { ch.addEventListener('click', function () { var t = parseFloat(ch.getAttribute('data-seek') || '0'); if (ready && player) { started = true; reveal(); doSeek(t); } else { pendingSeek = t; start(); } }); });
 
                     // Preload eagerly for the single hero; lazily (on approach + dwell) for cards.

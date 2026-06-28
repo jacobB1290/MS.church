@@ -6,6 +6,16 @@
 import type { PublishedSermon, SermonSegment, SermonFormat, SermonSong } from '../sermons-feed.js'
 import { topicSlug, itemTopic } from '../sermons-feed.js'
 
+/**
+ * The complete-voiced description of a service that has no chapters yet (live
+ * right now, or aired but not segmented), and the cold-start fallback. It must
+ * read as a finished, watchable thing — present the full service, never "we're
+ * processing this" / "here's roughly what a Sunday looks like." Single source so
+ * the home plate and /watch can't drift.
+ */
+export const SERVICE_BLURB =
+  'The whole service is here to watch, the worship, the scripture, and the message, grounded in the Bible. About half an hour, nothing you need to bring.'
+
 export function escapeHtml(s: string): string {
   return s
     .replace(/&/g, '&amp;')

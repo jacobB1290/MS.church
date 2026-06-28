@@ -9,7 +9,7 @@ import { navMorph } from './shared/nav-morph.js'
 import { footer } from './shared/footer.js'
 import { WEDNESDAY_ENABLED } from '../config.js'
 import { contactTopicsClientJson } from '../contact-topics.js'
-import { escapeHtml } from './watch-shared.js'
+import { escapeHtml, SERVICE_BLURB } from './watch-shared.js'
 
 // ── Home Watch section view ──
 // Built server-side from the published-sermon feed (same source as /watch) so
@@ -95,11 +95,11 @@ function homeWatchCaption(w: HomeWatchView): string {
                         </div>
                         <div class="watch-caption watch-caption--live">
                             <h3 class="watch-cap-title">We&rsquo;re worshiping together right now.</h3>
-                            <p class="watch-cap-summary">Join us live. Today&rsquo;s message will be here in the library once it&rsquo;s ready to watch again.</p>
+                            <p class="watch-cap-summary">This is today&rsquo;s service, live from Boise. Press play and join us.</p>
                         </div>
                         <div class="watch-caption watch-caption--pending">
                             <h3 class="watch-cap-title">This Sunday&rsquo;s service.</h3>
-                            <p class="watch-cap-summary">The full recording is ready to watch right here. We&rsquo;re preparing the chaptered version for the library, so soon you can jump straight to the message.</p>
+                            <p class="watch-cap-summary">The whole thing is here to watch, start to finish. Press play and settle in.</p>
                         </div>`
   }
   // Fallback caption reuses the plate's caption styling but keeps the
@@ -130,7 +130,7 @@ function homeWatchAside(w: HomeWatchView): string {
                             </ol>
                         </div>
                         <div class="watch-aside-live">
-                            <p class="watch-cap-summary watch-cap-summary--lead">Every Sunday we open the Bible and work through it together, sometimes as a sermon, sometimes as a discussion, and always grounded in the text. About half an hour, nothing you need to bring.</p>
+                            <p class="watch-cap-summary watch-cap-summary--lead">${SERVICE_BLURB}</p>
                             <blockquote class="watch-pull">
                                 <p>Faith comes from hearing the message, and the message is heard through the word about Christ.</p>
                                 <cite>Romans 10:17</cite>
@@ -140,7 +140,7 @@ function homeWatchAside(w: HomeWatchView): string {
                     </aside>`
   }
   return `<aside class="watch-plate-aside watch-plate-aside--degraded">
-                        <p class="watch-cap-summary watch-cap-summary--lead reveal-rise">Every Sunday we open the Bible and work through it together, sometimes as a sermon, sometimes as a discussion, and always grounded in the text. About half an hour, nothing you need to bring.</p>
+                        <p class="watch-cap-summary watch-cap-summary--lead reveal-rise">${SERVICE_BLURB}</p>
                         <blockquote class="watch-pull reveal-rise-slow">
                             <p>Faith comes from hearing the message, and the message is heard through the word about Christ.</p>
                             <cite>Romans 10:17</cite>

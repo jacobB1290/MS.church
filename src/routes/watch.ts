@@ -17,6 +17,7 @@ import {
   speakerLine,
   formatNoun,
   posterFor,
+  SERVICE_BLURB,
 } from '../templates/watch-shared.js'
 import { fetchRecentVideos } from './youtube.js'
 import { YOUTUBE_CONFIG } from '../config.js'
@@ -28,9 +29,6 @@ import { YOUTUBE_CONFIG } from '../config.js'
 // off the live YouTube latest video + the evergreen order of service.
 
 const PLAYLIST_URL = `https://www.youtube.com/playlist?list=${YOUTUBE_CONFIG.PLAYLIST_ID}`
-
-const EVERGREEN_BLURB =
-  'Every Sunday we open the Bible and work through it together, sometimes as a sermon, sometimes as a discussion-style lesson, and always grounded in the text. About half an hour, no jargon, nothing you need to bring.'
 
 function unionRefs(sermon: PublishedSermon, limit = 6): string[] {
   return Array.from(
@@ -48,7 +46,36 @@ function featureMetaLine(sermon: PublishedSermon): string | null {
   return bits.length > 0 ? bits.join(' · ') : null
 }
 
-/** Compose the hub view: library when anything is published, else fallback. */
+/** The latest YouTube upload, cleaned, as the hero "live" feature: the most
+ *  recent service, shown whole even though it has no chapters yet (it's live
+ *  right now, or aired but not segmented). Reads as a complete, watchable thing. */
+function liveFeature(latest: {
+  videoId: string
+  title: string
+  publishedAt: string | null
+  thumbnailUrl: string
+}): WatchHubView['feature'] {
+  return {
+    videoId: latest.videoId,
+    posterUrl: posterFor(latest.videoId, latest.thumbnailUrl),
+    // Raw title; the render layer (watch-body) cleans the livestream boilerplate.
+    title: latest.title,
+    dateLabel: longDate(latest.publishedAt),
+    metaLine: longDate(latest.publishedAt),
+    summary: SERVICE_BLURB,
+    scriptureRefs: [],
+    href: `https://www.youtube.com/watch?v=${latest.videoId}`,
+    isLive: true,
+  }
+}
+
+/**
+ * Compose the hub view. Library when anything is published; the hero is the
+ * newest segmented service UNLESS the latest YouTube upload is newer than it
+ * (this Sunday is live, or aired but not yet chaptered) — then the hero is that
+ * live service, shown whole, with the chaptered archive still listed below.
+ * Fallback (no published library yet) features the latest video the same way.
+ */
 function buildHubView(
   all: PublishedSermon[],
   latest: { videoId: string; title: string; publishedAt: string | null; thumbnailUrl: string },
@@ -56,36 +83,38 @@ function buildHubView(
   const newest = all[0] ?? null
 
   if (newest) {
+    // Is the most recent actual service newer than the newest one we've
+    // chaptered? (different video AND a later upload date). If so, feature it
+    // live; otherwise the newest segmented service IS the latest, feature it.
+    const newerLatest =
+      latest.videoId !== newest.youtubeVideoId &&
+      !!latest.publishedAt &&
+      !!newest.publishedAt &&
+      new Date(latest.publishedAt).getTime() > new Date(newest.publishedAt).getTime()
     return {
       mode: 'library',
-      feature: {
-        videoId: newest.youtubeVideoId,
-        posterUrl: posterFor(newest.youtubeVideoId, newest.thumbnailUrl),
-        title: newest.title,
-        dateLabel: longDate(newest.publishedAt),
-        metaLine: featureMetaLine(newest),
-        summary: newest.summary ?? EVERGREEN_BLURB,
-        scriptureRefs: unionRefs(newest),
-        href: `/watch/${newest.slug}`,
-      },
+      feature: newerLatest
+        ? liveFeature(latest)
+        : {
+            videoId: newest.youtubeVideoId,
+            posterUrl: posterFor(newest.youtubeVideoId, newest.thumbnailUrl),
+            title: newest.title,
+            dateLabel: longDate(newest.publishedAt),
+            metaLine: featureMetaLine(newest),
+            summary: newest.summary ?? SERVICE_BLURB,
+            scriptureRefs: unionRefs(newest),
+            href: `/watch/${newest.slug}`,
+            isLive: false,
+          },
       items: all,
-      ytWatchUrl: `https://www.youtube.com/watch?v=${newest.youtubeVideoId}`,
+      ytWatchUrl: `https://www.youtube.com/watch?v=${newerLatest ? latest.videoId : newest.youtubeVideoId}`,
       playlistUrl: PLAYLIST_URL,
     }
   }
 
   return {
     mode: 'fallback',
-    feature: {
-      videoId: latest.videoId,
-      posterUrl: posterFor(latest.videoId, latest.thumbnailUrl),
-      title: latest.title,
-      dateLabel: longDate(latest.publishedAt),
-      metaLine: longDate(latest.publishedAt),
-      summary: EVERGREEN_BLURB,
-      scriptureRefs: [],
-      href: null,
-    },
+    feature: liveFeature(latest),
     items: [],
     ytWatchUrl: `https://www.youtube.com/watch?v=${latest.videoId}`,
     playlistUrl: PLAYLIST_URL,

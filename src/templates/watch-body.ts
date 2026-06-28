@@ -37,6 +37,11 @@ export type WatchFeature = {
   summary: string
   scriptureRefs: string[]
   href: string | null
+  // True when the hero is the latest service shown whole because it has no
+  // chapters yet (live now, or aired-but-not-segmented). It plays inline like
+  // every other service, so it shows no permalink link until an archived service
+  // is selected from the list.
+  isLive: boolean
 }
 
 export type WatchHubView = {
@@ -103,18 +108,39 @@ function renderFallbackFeature(view: WatchHubView): string {
                             <h2 class="watch-feature-title">${escapeHtml(typo(cleanServiceTitle(f.title)))}</h2>
                             ${f.dateLabel ? `<span class="watch-feature-meta-line">${escapeHtml(f.dateLabel)}</span>` : ''}
                             <p class="watch-feature-blurb">${escapeHtml(typo(f.summary))}</p>
-                            <div class="watch-feature-actions">
-                                <a class="event-link-btn event-link-btn--red teaser-cta" href="${escapeHtml(view.ytWatchUrl)}" target="_blank" rel="noopener">Watch on YouTube</a>
-                            </div>
                         </div>
                     </div>
                 </section>`
 }
 
+/** A synthetic sermon-shaped record so the feature player can play the live /
+ *  unsegmented latest video (no chapters, whole video) through the same vplayer
+ *  as every segmented service. */
+function liveHeroSermon(f: WatchFeature): PublishedSermon {
+  return {
+    slug: '',
+    youtubeVideoId: f.videoId,
+    title: f.title,
+    format: 'sermon',
+    speakers: [],
+    topics: [],
+    publishedAt: null,
+    thumbnailUrl: f.posterUrl,
+    durationSec: null,
+    summary: f.summary,
+    seo: null,
+    segments: [],
+    songs: [],
+    transcript: null,
+  }
+}
+
 /* ---- Service selector (library): pick which full service to watch ---- */
-function renderServiceSelector(allItems: PublishedSermon[]): string {
+function renderServiceSelector(view: WatchHubView): string {
+  const allItems = view.items
+  const f = view.feature
+  const live = f.isLive
   const first = allItems[0]
-  const firstTitle = typo(cleanServiceTitle(first.title))
   // The index is a quick-access list of recent full services; the deep archive
   // is the library tabs below (every older service is reachable via its card's
   // "Full service" permalink). Cap it so it stays a list, not a ledger.
@@ -130,10 +156,12 @@ function renderServiceSelector(allItems: PublishedSermon[]): string {
   }))
   // A quiet editorial index of recent services: date + clean title, hairline
   // rules. Selecting a row swaps the featured player above (and scrolls to it).
+  // When the hero is the live/unsegmented service, no archived row is the hero,
+  // so none starts current.
   const rows = items
     .map(
       (s, i) =>
-        `<button class="watch-svc-row${i === 0 ? ' is-current' : ''}" type="button" data-i="${i}" aria-label="Watch ${escapeHtml(typo(cleanServiceTitle(s.title)))}">
+        `<button class="watch-svc-row${!live && i === 0 ? ' is-current' : ''}" type="button" data-i="${i}" aria-label="Watch ${escapeHtml(typo(cleanServiceTitle(s.title)))}">
                             <span class="watch-svc-row-date">${escapeHtml(shortDate(s.publishedAt) ?? '')}</span>
                             <span class="watch-svc-row-title">${escapeHtml(typo(cleanServiceTitle(s.title)))}</span>
                             <span class="watch-svc-row-go" aria-hidden="true">${PLAY_TRIANGLE_SM}</span>
@@ -141,21 +169,38 @@ function renderServiceSelector(allItems: PublishedSermon[]): string {
     )
     .join('\n                        ')
 
+  // Hero: the live/unsegmented latest service when newer than anything chaptered,
+  // otherwise the newest segmented service. Same inline feature player either way.
+  const heroSermon = live ? liveHeroSermon(f) : first
+  const heroTitle = typo(cleanServiceTitle(live ? f.title : first.title))
+  const heroMeta = live ? f.metaLine ?? '' : metaLineFor(first)
+  const heroBlurb = typo(live ? f.summary : first.summary ?? '')
+  // The live hero plays inline (like every other service), so it needs no link;
+  // the empty #feature-fulllink is kept hidden so the swap JS can reveal it as the
+  // chaptered permalink the moment an archived service is selected. A segmented
+  // hero shows its "Chapters & transcript" permalink up front.
+  const heroLink = live
+    ? `<a class="watch-feature-fulllink" id="feature-fulllink" hidden></a>`
+    : `<a class="watch-feature-fulllink" id="feature-fulllink" href="/watch/${escapeHtml(first.slug)}">Chapters &amp; transcript<span aria-hidden="true"> &rarr;</span></a>`
+  // Show the archive list whenever there's at least one archived service to pick
+  // (when the hero is live it's distinct from every row, so even one row helps).
+  const showList = live ? items.length >= 1 : items.length > 1
+
   // The featured plays the WHOLE service inline (no segment). The index below
   // swaps which video it points at (the player reads its data attrs live).
   return `<section id="latest" aria-label="Watch a full service">
                     <span class="section-eyebrow">Watch a full service</span>
                     <div class="watch-feature" id="service-feature">
-                        <div class="watch-feature-player">${vplayer(first, null, 'feature', 'Sunday service from Morning Star Christian Church in Boise, Idaho.')}</div>
+                        <div class="watch-feature-player">${vplayer(heroSermon, null, 'feature', 'Sunday service from Morning Star Christian Church in Boise, Idaho.')}</div>
                         <div class="watch-feature-meta">
-                            <h2 class="watch-feature-title" id="feature-title">${escapeHtml(firstTitle)}</h2>
-                            <span class="watch-feature-meta-line" id="feature-meta">${escapeHtml(metaLineFor(first))}</span>
-                            <p class="watch-feature-blurb" id="feature-blurb">${escapeHtml(typo(first.summary ?? ''))}</p>
-                            <a class="watch-feature-fulllink" id="feature-fulllink" href="/watch/${escapeHtml(first.slug)}">Chapters &amp; transcript<span aria-hidden="true"> &rarr;</span></a>
+                            <h2 class="watch-feature-title" id="feature-title">${escapeHtml(heroTitle)}</h2>
+                            <span class="watch-feature-meta-line" id="feature-meta">${escapeHtml(heroMeta)}</span>
+                            <p class="watch-feature-blurb" id="feature-blurb">${escapeHtml(heroBlurb)}</p>
+                            ${heroLink}
                         </div>
                     </div>
                     ${
-                      items.length > 1
+                      showList
                         ? `<div class="watch-svc">
                         <h3 class="watch-svc-label">Recent services</h3>
                         <div class="watch-svc-list" id="feature-list">
@@ -590,7 +635,7 @@ export const watchBody = (view: WatchHubView): string => {
                     </nav>
                 </section>
 
-                ${library ? renderServiceSelector(view.items) : renderFallbackFeature(view)}
+                ${library ? renderServiceSelector(view) : renderFallbackFeature(view)}
 
                 ${library ? renderLibrary(view.items) : ''}
 
@@ -638,7 +683,10 @@ export const watchBody = (view: WatchHubView): string => {
                             }
                             if (img) { img.src = s.poster; img.onerror = function () { this.onerror = null; this.src = 'https://img.youtube.com/vi/' + s.videoId + '/hqdefault.jpg'; }; }
                             title.textContent = s.title; meta.textContent = s.meta; blurb.textContent = s.blurb;
-                            if (fulllink) fulllink.href = '/watch/' + s.slug;
+                            // Selecting an archived (segmented) service reveals + points the hero
+                            // link at that service's chaptered permalink (it starts hidden when the
+                            // hero is the live, inline-only service).
+                            if (fulllink) { fulllink.hidden = false; fulllink.href = '/watch/' + s.slug; fulllink.innerHTML = 'Chapters &amp; transcript<span aria-hidden="true"> &rarr;</span>'; }
                         };
                         if (reduce) { apply(); }
                         else { feature.classList.add('is-swapping'); setTimeout(function () { apply(); requestAnimationFrame(function () { feature.classList.remove('is-swapping'); }); }, 160); }

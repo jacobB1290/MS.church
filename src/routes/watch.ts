@@ -66,6 +66,7 @@ function liveFeature(latest: {
     scriptureRefs: [],
     href: `https://www.youtube.com/watch?v=${latest.videoId}`,
     isLive: true,
+    publishedAt: latest.publishedAt,
   }
 }
 
@@ -105,6 +106,7 @@ function buildHubView(
             scriptureRefs: unionRefs(newest),
             href: `/watch/${newest.slug}`,
             isLive: false,
+            publishedAt: newest.publishedAt,
           },
       items: all,
       ytWatchUrl: `https://www.youtube.com/watch?v=${newerLatest ? latest.videoId : newest.youtubeVideoId}`,

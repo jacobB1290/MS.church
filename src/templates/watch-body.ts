@@ -42,6 +42,9 @@ export type WatchFeature = {
   // every other service, so it shows no permalink link until an archived service
   // is selected from the list.
   isLive: boolean
+  // Raw publish ISO of the featured service — used for the short dateline on its
+  // row in the "Recent services" list (the live service appears there too).
+  publishedAt: string | null
 }
 
 export type WatchHubView = {
@@ -136,34 +139,64 @@ function liveHeroSermon(f: WatchFeature): PublishedSermon {
 }
 
 /* ---- Service selector (library): pick which full service to watch ---- */
+type SvcEntry = {
+  slug: string
+  title: string
+  date: string
+  poster: string
+  videoId: string
+  dur: number
+  meta: string
+  blurb: string
+  live: boolean
+}
+
 function renderServiceSelector(view: WatchHubView): string {
-  const allItems = view.items
   const f = view.feature
   const live = f.isLive
-  const first = allItems[0]
   // The index is a quick-access list of recent full services; the deep archive
   // is the library tabs below (every older service is reachable via its card's
-  // "Full service" permalink). Cap it so it stays a list, not a ledger.
-  const items = allItems.slice(0, 8)
-  const data = items.map((s) => ({
+  // "Full service" permalink). Cap it so it stays a list, not a ledger — leaving
+  // room for the live service at the top when it's present.
+  const segItems = view.items.slice(0, live ? 7 : 8)
+  const segEntries: SvcEntry[] = segItems.map((s) => ({
     slug: s.slug,
     title: typo(cleanServiceTitle(s.title)),
+    date: shortDate(s.publishedAt) ?? '',
     poster: posterFor(s.youtubeVideoId, s.thumbnailUrl),
     videoId: s.youtubeVideoId,
     dur: Math.floor(s.durationSec ?? 0),
     meta: metaLineFor(s),
     blurb: typo(s.summary ?? ''),
+    live: false,
   }))
+  // The live/unsegmented service leads both the hero AND the list — until it's
+  // chaptered it has no permalink (slug ''), so its row + hero play it inline.
+  const liveEntry: SvcEntry = {
+    slug: '',
+    title: typo(cleanServiceTitle(f.title)),
+    date: shortDate(f.publishedAt) ?? f.dateLabel ?? '',
+    poster: f.posterUrl,
+    videoId: f.videoId,
+    dur: 0,
+    meta: f.metaLine ?? '',
+    blurb: typo(f.summary),
+    live: true,
+  }
+  // One ordered list drives the hero (entry 0) and every row, so the live
+  // service can never be the hero but missing from the list.
+  const entries: SvcEntry[] = live ? [liveEntry, ...segEntries] : segEntries
+  const hero = entries[0]
+
   // A quiet editorial index of recent services: date + clean title, hairline
   // rules. Selecting a row swaps the featured player above (and scrolls to it).
-  // When the hero is the live/unsegmented service, no archived row is the hero,
-  // so none starts current.
-  const rows = items
+  // Entry 0 (the hero) starts current.
+  const rows = entries
     .map(
-      (s, i) =>
-        `<button class="watch-svc-row${!live && i === 0 ? ' is-current' : ''}" type="button" data-i="${i}" aria-label="Watch ${escapeHtml(typo(cleanServiceTitle(s.title)))}">
-                            <span class="watch-svc-row-date">${escapeHtml(shortDate(s.publishedAt) ?? '')}</span>
-                            <span class="watch-svc-row-title">${escapeHtml(typo(cleanServiceTitle(s.title)))}</span>
+      (e, i) =>
+        `<button class="watch-svc-row${i === 0 ? ' is-current' : ''}" type="button" data-i="${i}" aria-label="Watch ${escapeHtml(e.title)}">
+                            <span class="watch-svc-row-date">${escapeHtml(e.date)}</span>
+                            <span class="watch-svc-row-title">${escapeHtml(e.title)}</span>
                             <span class="watch-svc-row-go" aria-hidden="true">${PLAY_TRIANGLE_SM}</span>
                         </button>`,
     )
@@ -171,20 +204,19 @@ function renderServiceSelector(view: WatchHubView): string {
 
   // Hero: the live/unsegmented latest service when newer than anything chaptered,
   // otherwise the newest segmented service. Same inline feature player either way.
-  const heroSermon = live ? liveHeroSermon(f) : first
-  const heroTitle = typo(cleanServiceTitle(live ? f.title : first.title))
-  const heroMeta = live ? f.metaLine ?? '' : metaLineFor(first)
-  const heroBlurb = typo(live ? f.summary : first.summary ?? '')
-  // The live hero plays inline (like every other service), so it needs no link;
-  // the empty #feature-fulllink is kept hidden so the swap JS can reveal it as the
-  // chaptered permalink the moment an archived service is selected. A segmented
-  // hero shows its "Chapters & transcript" permalink up front.
-  const heroLink = live
+  const heroSermon = live ? liveHeroSermon(f) : view.items[0]
+  const heroTitle = hero.title
+  const heroMeta = hero.meta
+  const heroBlurb = hero.blurb
+  // A live hero plays inline (like every other service), so it needs no link; the
+  // empty #feature-fulllink stays hidden until the swap JS reveals it as the
+  // chaptered permalink of a selected archived service. A segmented hero shows its
+  // "Chapters & transcript" permalink up front.
+  const heroLink = hero.live
     ? `<a class="watch-feature-fulllink" id="feature-fulllink" hidden></a>`
-    : `<a class="watch-feature-fulllink" id="feature-fulllink" href="/watch/${escapeHtml(first.slug)}">Chapters &amp; transcript<span aria-hidden="true"> &rarr;</span></a>`
-  // Show the archive list whenever there's at least one archived service to pick
-  // (when the hero is live it's distinct from every row, so even one row helps).
-  const showList = live ? items.length >= 1 : items.length > 1
+    : `<a class="watch-feature-fulllink" id="feature-fulllink" href="/watch/${escapeHtml(hero.slug)}">Chapters &amp; transcript<span aria-hidden="true"> &rarr;</span></a>`
+  const showList = entries.length > 1
+  const data = entries
 
   // The featured plays the WHOLE service inline (no segment). The index below
   // swaps which video it points at (the player reads its data attrs live).
@@ -683,10 +715,13 @@ export const watchBody = (view: WatchHubView): string => {
                             }
                             if (img) { img.src = s.poster; img.onerror = function () { this.onerror = null; this.src = 'https://img.youtube.com/vi/' + s.videoId + '/hqdefault.jpg'; }; }
                             title.textContent = s.title; meta.textContent = s.meta; blurb.textContent = s.blurb;
-                            // Selecting an archived (segmented) service reveals + points the hero
-                            // link at that service's chaptered permalink (it starts hidden when the
-                            // hero is the live, inline-only service).
-                            if (fulllink) { fulllink.hidden = false; fulllink.href = '/watch/' + s.slug; fulllink.innerHTML = 'Chapters &amp; transcript<span aria-hidden="true"> &rarr;</span>'; }
+                            // An archived (segmented) service reveals + points the hero link at its
+                            // chaptered permalink; the live service (no slug) plays inline with no
+                            // link, so the link hides when it's selected.
+                            if (fulllink) {
+                                if (s.slug) { fulllink.hidden = false; fulllink.href = '/watch/' + s.slug; fulllink.innerHTML = 'Chapters &amp; transcript<span aria-hidden="true"> &rarr;</span>'; }
+                                else { fulllink.hidden = true; }
+                            }
                         };
                         if (reduce) { apply(); }
                         else { feature.classList.add('is-swapping'); setTimeout(function () { apply(); requestAnimationFrame(function () { feature.classList.remove('is-swapping'); }); }, 160); }

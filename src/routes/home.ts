@@ -27,6 +27,41 @@ function cleanServiceTitle(raw: string): string {
   return t
 }
 
+/**
+ * True when this week's Sunday service has already aired but the newest
+ * published service is still last week's (it hasn't been chaptered yet). The
+ * home plate then shows the generic "being prepared" state rather than passing
+ * last week's service off as the most recent. Compares the latest published
+ * service's Mountain-Time calendar date against the most recent Sunday whose
+ * 9:00 AM service has already started. Coarse by design (the window is hours,
+ * not seconds), so the ~5-min edge cache on the home page is fine.
+ */
+function pendingSegmentation(publishedAtISO: string | null, now: Date): boolean {
+  if (!publishedAtISO) return false
+  // MT wall-clock "now" (same America/Denver hack the client countdown uses).
+  const mtNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Denver' }))
+  const lastSunday = new Date(mtNow)
+  lastSunday.setHours(9, 0, 0, 0)
+  const day = mtNow.getDay()
+  if (day === 0) {
+    if (mtNow.getHours() < 9) lastSunday.setDate(lastSunday.getDate() - 7)
+  } else {
+    lastSunday.setDate(lastSunday.getDate() - day)
+  }
+  const pad = (n: number) => String(n).padStart(2, '0')
+  // lastSunday already holds MT wall-clock fields, so read them directly (don't
+  // re-project through a tz formatter, which would double-shift).
+  const lastSundayStr = `${lastSunday.getFullYear()}-${pad(lastSunday.getMonth() + 1)}-${pad(lastSunday.getDate())}`
+  // The published service is a real instant; project it to its MT calendar date.
+  const pubStr = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Denver',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(publishedAtISO))
+  return pubStr < lastSundayStr
+}
+
 /** Compose the home "latest service" plate view from the published-sermon feed.
  *  Library when the newest service is chaptered; fallback (just the live video +
  *  evergreen blurb) otherwise. Songs are folded into their worship chapter. */
@@ -44,6 +79,7 @@ function buildHomeWatch(all: PublishedSermon[]): HomeWatchView {
       summary: null,
       scriptureRefs: [],
       chapters: [],
+      pendingSegmentation: false,
     }
   }
   const primary = primarySegment(s)
@@ -81,6 +117,7 @@ function buildHomeWatch(all: PublishedSermon[]): HomeWatchView {
     summary: s.summary,
     scriptureRefs,
     chapters,
+    pendingSegmentation: pendingSegmentation(s.publishedAt, new Date()),
   }
 }
 

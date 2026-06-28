@@ -36,6 +36,11 @@ export type HomeWatchView = {
   summary: string | null
   scriptureRefs: string[]
   chapters: HomeWatchChapter[]
+  // True when this week's Sunday service has already aired but isn't published
+  // /chaptered yet (the newest published service predates the most recent
+  // Sunday). The section then shows the generic "being prepared" state instead
+  // of last week's chapters, until the new service lands. Server-computed.
+  pendingSegmentation: boolean
 }
 
 /** The unified contents list: chapters with worship songs folded in as
@@ -75,13 +80,26 @@ function homeWatchCaption(w: HomeWatchView): string {
       .filter(Boolean)
       .map((b) => escapeHtml(b as string))
       .join(' · ')
-    return `<div class="watch-caption">
+    // The library caption is last week's segmented service. While the stream
+    // is LIVE (toggled client-side by adding .is-live to the section), the
+    // section hides this and shows the generic --live caption below instead:
+    // today's service isn't segmented yet, so we present it fresh and generic
+    // (the fallback voice) rather than describing last week as if it were on.
+    return `<div class="watch-caption watch-caption--lib">
                             <div class="watch-cap-meta">
                                 ${w.formatNoun ? `<span class="watch-cap-format">${escapeHtml(w.formatNoun)}</span>` : ''}
                                 ${metaBits ? `<span class="watch-cap-metaline">${metaBits}</span>` : ''}
                             </div>
                             ${w.title ? `<h3 class="watch-cap-title">${escapeHtml(w.title)}</h3>` : ''}
                             ${w.summary ? `<p class="watch-cap-summary">${escapeHtml(w.summary)}</p>` : ''}
+                        </div>
+                        <div class="watch-caption watch-caption--live">
+                            <h3 class="watch-cap-title">We&rsquo;re worshiping together right now.</h3>
+                            <p class="watch-cap-summary">Join us live. Today&rsquo;s message will be here in the library once it&rsquo;s ready to watch again.</p>
+                        </div>
+                        <div class="watch-caption watch-caption--pending">
+                            <h3 class="watch-cap-title">This Sunday&rsquo;s service.</h3>
+                            <p class="watch-cap-summary">The full recording is ready to watch right here. We&rsquo;re preparing the chaptered version for the library, so soon you can jump straight to the message.</p>
                         </div>`
   }
   // Fallback caption reuses the plate's caption styling but keeps the
@@ -100,11 +118,24 @@ function homeWatchCaption(w: HomeWatchView): string {
  *  composition, not an empty column. */
 function homeWatchAside(w: HomeWatchView): string {
   if (w.mode === 'library') {
+    // .watch-aside-lib = last week's chapter index (the default). When the
+    // section goes .is-live, it's hidden and .watch-aside-live takes over with
+    // the same evergreen blurb + pull-quote the fallback uses, so a live visit
+    // reads fresh and generic instead of advertising last week's contents.
     return `<aside class="watch-plate-aside" aria-label="In this service">
-                        <p class="watch-aside-label reveal-eyebrow">In this service</p>
-                        <ol class="watch-chapters reveal-rise">
-                            ${homeWatchChapters(w)}
-                        </ol>
+                        <div class="watch-aside-lib">
+                            <p class="watch-aside-label reveal-eyebrow">In this service</p>
+                            <ol class="watch-chapters reveal-rise">
+                                ${homeWatchChapters(w)}
+                            </ol>
+                        </div>
+                        <div class="watch-aside-live">
+                            <p class="watch-cap-summary watch-cap-summary--lead">Every Sunday we open the Bible and work through it together, sometimes as a sermon, sometimes as a discussion, and always grounded in the text. About half an hour, nothing you need to bring.</p>
+                            <blockquote class="watch-pull">
+                                <p>Faith comes from hearing the message, and the message is heard through the word about Christ.</p>
+                                <cite>Romans 10:17</cite>
+                            </blockquote>
+                        </div>
                         <a href="/watch" class="event-link-btn teaser-cta watch-plate-cta reveal-fill">Explore the library</a>
                     </aside>`
   }
@@ -340,14 +371,15 @@ export const homeBody = (watch: HomeWatchView): string => `
                     </div>
                 </section>
 
-                <section class="watch" id="watch">
+                <section class="watch${watch.pendingSegmentation ? ' is-pending' : ''}" id="watch">
                     <div class="watch-header">
                         <span class="section-eyebrow reveal-eyebrow">Watch</span>
                         <h2 class="section-heading reveal-rise">Watch our most recent Sunday.</h2>
-                        <p class="watch-live-line"><span class="live-status" style="display:none"><span class="live-dot"></span><span class="live-status-text">Live Soon</span></span><span class="watch-live-text">Live Sundays at 9:00 AM, in Boise</span></p>
+                        <p class="watch-live-line"><span class="watch-live-text">Live Sundays at 9:00 AM, in Boise</span></p>
                     </div>
                     <div class="watch-plate" data-reveal-sync>
                         <div class="watch-plate-main">
+                            <span class="live-status" style="display:none"><span class="live-dot"></span><span class="live-status-text">Live Soon</span></span>
                             <div class="video-embed-wrapper" id="video-embed-wrapper">
                                 <div class="video-thumbnail" id="video-thumbnail">
                                     <img class="video-thumbnail-img" id="video-thumbnail-img"

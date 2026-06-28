@@ -10526,6 +10526,10 @@ export const homeStyles = (): string => `
             gap: var(--space-2xl); align-items: start; margin-top: var(--space-xl);
         }
         .watch-plate-main { min-width: 0; display: flex; flex-direction: column; gap: var(--space-md); }
+        /* The live pill now lives in the card, above the video. align-self keeps
+           it pill-width (a column flex child would otherwise stretch full-width).
+           It's display:none until the countdown JS flips it to inline-flex. */
+        .watch-plate-main > .live-status { align-self: flex-start; }
         .watch-caption { display: flex; flex-direction: column; gap: 6px; }
         .watch-cap-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: var(--text-small); color: var(--text-muted); }
         .watch-cap-format {
@@ -10540,6 +10544,24 @@ export const homeStyles = (): string => `
         }
         .watch-cap-summary { font-size: var(--text-body); line-height: var(--leading-normal); color: var(--text-soft); margin: 4px 0 0; max-width: 56ch; }
         .watch-cap-summary--lead { max-width: 46ch; }
+        /* Generic swap: two states drop last week's segmented caption + chapter
+           index for the fallback-voiced variants — .is-live (worshiping now,
+           client-toggled) and .is-pending (this Sunday aired but isn't chaptered
+           yet, server-set). Both share the evergreen aside; the caption differs.
+           Default = library. These sit AFTER the base .watch-caption rule so they
+           win source order. */
+        .watch-caption--live, .watch-caption--pending, .watch-aside-live { display: none; }
+        .watch.is-live .watch-caption--lib,
+        .watch.is-pending .watch-caption--lib { display: none; }
+        .watch.is-live .watch-aside-lib,
+        .watch.is-pending .watch-aside-lib { display: none; }
+        .watch.is-live .watch-aside-live,
+        .watch.is-pending .watch-aside-live { display: block; }
+        /* Pick the caption: pending by default in the generic state, but live
+           wins whenever we're actually on air (the .is-live rule comes last). */
+        .watch.is-pending .watch-caption--pending { display: flex; }
+        .watch.is-live .watch-caption--pending { display: none; }
+        .watch.is-live .watch-caption--live { display: flex; }
         .watch-plate-aside { min-width: 0; }
         .watch-chapter-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
         .watch-chapter-song {

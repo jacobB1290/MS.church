@@ -1984,6 +1984,13 @@ export const homeScripts = (): string => `
                     const oneHour = 3600000;
                     const isLiveNow = currentDay === 0 && mtNow.getHours() === 9;
 
+                    // While live, the watch section drops last week's segmented
+                    // caption/chapters for the generic fallback variants (today's
+                    // service isn't chaptered yet). Toggled here so it tracks the
+                    // same clock as the live pill.
+                    const watchSection = document.getElementById('watch');
+                    if (watchSection) watchSection.classList.toggle('is-live', isLiveNow);
+
                     if (isLiveNow) {
                         if (liveStatus) {
                             liveStatus.style.display = 'inline-flex';

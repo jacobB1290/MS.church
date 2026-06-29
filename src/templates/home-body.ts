@@ -28,6 +28,10 @@ export type HomeWatchChapter = {
 export type HomeWatchView = {
   mode: 'library' | 'fallback'
   slug: string | null
+  // The chaptered service's YouTube id — lets a chapter tap play that exact video
+  // from its timestamp via the watch hand-off (chapters only show when this is the
+  // current latest service, so it matches the live poster + the /watch feature).
+  videoId: string | null
   formatNoun: string | null
   title: string | null
   dateLabel: string | null
@@ -59,7 +63,7 @@ function homeWatchChapters(w: HomeWatchView): string {
         .join('')
       const showKind = ch.kind && !ch.title.toLowerCase().startsWith(ch.kind.toLowerCase())
       return `<li>
-                                <a class="watch-chapter${ch.isMessage ? ' watch-chapter--message' : ''}" href="/watch/${slug}?t=${ch.startSec}">
+                                <a class="watch-chapter${ch.isMessage ? ' watch-chapter--message' : ''}" href="/watch/${slug}?t=${ch.startSec}" data-start="${ch.startSec}">
                                     <span class="watch-chapter-time">${escapeHtml(ch.time)}</span>
                                     <span class="watch-chapter-body">
                                         <span class="watch-chapter-title">${escapeHtml(ch.title)}${showKind ? `<span class="watch-chapter-kind">${escapeHtml(ch.kind)}</span>` : ''}</span>
@@ -125,7 +129,7 @@ function homeWatchAside(w: HomeWatchView): string {
     return `<aside class="watch-plate-aside" aria-label="In this service">
                         <div class="watch-aside-lib">
                             <p class="watch-aside-label reveal-eyebrow">In this service</p>
-                            <ol class="watch-chapters reveal-rise">
+                            <ol class="watch-chapters reveal-rise" data-video="${escapeHtml(w.videoId || '')}">
                                 ${homeWatchChapters(w)}
                             </ol>
                         </div>

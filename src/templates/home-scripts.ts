@@ -2263,6 +2263,44 @@ export const homeScripts = (): string => `
                     });
                 }
 
+                // "In this service" chapters: a tap plays the service FROM that chapter's
+                // timestamp WITH SOUND through the same hand-off morph the poster uses, then
+                // lands on /watch. The chaptered service's id rides on the list (data-video);
+                // chapters only render when it's the current latest, so it matches the poster
+                // and the /watch feature. Falls back to the chapter's permalink ?t= deep-link
+                // (its href) when the morph is unavailable, declines, or the poster is hidden.
+                var chapterList = document.querySelector('.watch-chapters');
+                if (chapterList) {
+                    var chapterVideoId = chapterList.getAttribute('data-video') || '';
+                    var warmChapters = function () {
+                        try {
+                            var vid = chapterVideoId || _ytVideoId;
+                            if (window.__mscbWatchPreload && vid) window.__mscbWatchPreload(vid);
+                            else if (window.__mscbWatchPrefetch) window.__mscbWatchPrefetch();
+                        } catch (e) {}
+                    };
+                    chapterList.addEventListener('pointerenter', warmChapters);
+                    chapterList.addEventListener('pointerdown', warmChapters);
+                    chapterList.addEventListener('focusin', warmChapters);
+                    chapterList.addEventListener('click', function (e) {
+                        var a = e.target.closest('.watch-chapter');
+                        if (!a || !chapterList.contains(a)) return;
+                        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; // let new-tab / modified clicks be
+                        var vid = chapterVideoId || _ytVideoId;
+                        var start = parseInt(a.getAttribute('data-start'), 10) || 0;
+                        if (!vid || !videoWrapper || _launching) return; // fall through to the href
+                        try {
+                            if (window.__mscbWatchMorph &&
+                                window.__mscbWatchMorph({ wrapper: videoWrapper, videoId: vid, thumb: _latestThumbnailUrl, start: start })) {
+                                e.preventDefault();
+                                _launching = true;
+                                return;
+                            }
+                        } catch (err) {}
+                        // else: the anchor's href (permalink at ?t=) handles it as a hard nav.
+                    });
+                }
+
                 // Hardcoded fallback video ID — updated periodically, used when API is unreachable
                 var FALLBACK_VIDEO_ID = '8EP7I-lXdFI';
 

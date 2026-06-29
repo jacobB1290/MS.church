@@ -72,7 +72,16 @@ export function watchHandoffScript(): string {
                 function setRect(el, top, left, w, h) { el.style.top = top + 'px'; el.style.left = left + 'px'; el.style.width = w + 'px'; el.style.height = h + 'px'; }
                 function slotDocRect() { var r = slot.getBoundingClientRect(); return { top: r.top + py(), left: r.left + px(), w: r.width, h: r.height }; }
 
-                var playerReady = false, playOnReady = false, builtVideoId = null;
+                var playerReady = false, playOnReady = false, builtVideoId = null, playStartAt = 0;
+                // Start the (preloaded, ready) player inside the tap. A chapter tap carries a
+                // start time, so load from that second (still a user gesture -> WITH SOUND);
+                // the poster tap has no start and just plays from the top.
+                function resumePlay() {
+                    try {
+                        if (playStartAt > 0) player.loadVideoById({ videoId: lastVideoId, startSeconds: playStartAt });
+                        else player.playVideo();
+                    } catch (e) {}
+                }
                 // The persistent player lives in a host that is never re-parented (re-parenting
                 // an <iframe> reloads it). FIXED during the hand-off (a content swap resets
                 // window scroll; fixed is immune), converted to ABSOLUTE once landed so it
@@ -104,7 +113,7 @@ export function watchHandoffScript(): string {
                                 videoId: videoId,
                                 playerVars: { autoplay: 0, controls: 1, rel: 0, modestbranding: 1, playsinline: 1, enablejsapi: 1, origin: location.origin },
                                 events: {
-                                    onReady: function () { playerReady = true; if (playOnReady) { try { player.playVideo(); } catch (e) {} } },
+                                    onReady: function () { playerReady = true; if (playOnReady) resumePlay(); },
                                     onStateChange: function (e) { if (e && (e.data === 1 || e.data === 3)) clearPlayWatch(); },
                                     onError: function () {}
                                 }
@@ -119,7 +128,8 @@ export function watchHandoffScript(): string {
                 // Fallback when the player wasn't preloaded in time: create it AT the tap with
                 // autoplay:1 (best effort) + a muted watchdog so it can never sit on YouTube's
                 // play screen. Raw embed if the API itself isn't up yet.
-                function createAtTap(videoId) {
+                function createAtTap(videoId, startAt) {
+                    startAt = startAt || 0;
                     if (player) { try { player.destroy(); } catch (e) {} player = null; }
                     if (window.YT && window.YT.Player) {
                         var mount = document.createElement('div');
@@ -128,7 +138,7 @@ export function watchHandoffScript(): string {
                         try {
                             player = new YT.Player(mount, {
                                 videoId: videoId,
-                                playerVars: { autoplay: 1, controls: 1, rel: 0, modestbranding: 1, playsinline: 1, enablejsapi: 1, origin: location.origin },
+                                playerVars: { autoplay: 1, start: startAt, controls: 1, rel: 0, modestbranding: 1, playsinline: 1, enablejsapi: 1, origin: location.origin },
                                 events: {
                                     onReady: function () { try { player.playVideo(); } catch (e) {} armPlayWatch(); },
                                     onStateChange: function (e) { if (e && (e.data === 1 || e.data === 3)) clearPlayWatch(); },
@@ -146,7 +156,8 @@ export function watchHandoffScript(): string {
                     f.setAttribute('allowfullscreen', '');
                     f.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;display:block;';
                     f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(videoId) +
-                        '?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1&controls=1&origin=' + encodeURIComponent(location.origin);
+                        '?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1&controls=1' +
+                        (startAt > 0 ? '&start=' + startAt : '') + '&origin=' + encodeURIComponent(location.origin);
                     vhost.appendChild(f);
                     var rawPlaying = false;
                     var onMsg = function (ev) { if (ev.source !== f.contentWindow) return; try { var d = JSON.parse(ev.data); if (d && d.event === 'onStateChange' && (d.info === 1 || d.info === 3)) rawPlaying = true; } catch (e) {} };
@@ -370,6 +381,7 @@ export function watchHandoffScript(): string {
                         started = true;
                         homeScrollY = py();          // where the user was on home, for Back
                         lastVideoId = opts.videoId;
+                        playStartAt = opts.start ? Math.max(0, Math.floor(opts.start)) : 0;
                         ensureVhost();
                         if (opts.thumb) { try { vhost.style.backgroundImage = 'url(' + opts.thumb + ')'; } catch (e) {} }
                         // Reveal the host over the tapped thumbnail.
@@ -378,11 +390,11 @@ export function watchHandoffScript(): string {
                         // SOUND path: a preloaded, ready player + explicit playVideo() inside this
                         // gesture = a user-initiated play, allowed with sound on every browser.
                         if (player && builtVideoId === opts.videoId) {
-                            if (playerReady) { try { player.playVideo(); } catch (e) {} }
+                            if (playerReady) resumePlay();
                             else { playOnReady = true; }   // ready momentarily; play the instant it is
                             armPlayWatch();
                         } else {
-                            createAtTap(opts.videoId);      // not preloaded in time -> best effort
+                            createAtTap(opts.videoId, playStartAt);   // not preloaded in time -> best effort
                         }
                         prefetch().then(function (html) { finishSwap(html, rect); }).catch(function () { theater(); });
                         return true;

@@ -149,6 +149,14 @@ type SvcEntry = {
   meta: string
   blurb: string
   live: boolean
+  // Chapter starts for THIS service, so the hero scrubber can show markers + a
+  // chapter label as you pick different services from the Recent list.
+  chapters: { seek: number; title: string }[]
+}
+
+/** A service's segments as scrubber chapters ({seek, title}), in order. */
+function svcChapters(s: PublishedSermon): { seek: number; title: string }[] {
+  return s.segments.map((seg) => ({ seek: Math.floor(seg.startSec), title: typo(seg.title || '') }))
 }
 
 function renderServiceSelector(view: WatchHubView): string {
@@ -169,6 +177,7 @@ function renderServiceSelector(view: WatchHubView): string {
     meta: metaLineFor(s),
     blurb: typo(s.summary ?? ''),
     live: false,
+    chapters: svcChapters(s),
   }))
   // The live/unsegmented service leads both the hero AND the list — until it's
   // chaptered it has no permalink (slug ''), so its row + hero play it inline.
@@ -182,6 +191,7 @@ function renderServiceSelector(view: WatchHubView): string {
     meta: f.metaLine ?? '',
     blurb: typo(f.summary),
     live: true,
+    chapters: [],   // the live/unsegmented service has no chapters yet
   }
   // One ordered list drives the hero (entry 0) and every row, so the live
   // service can never be the hero but missing from the list.
@@ -886,6 +896,9 @@ export const watchBody = (view: WatchHubView): string => {
                     var blurb = document.getElementById('feature-blurb');
                     var fulllink = document.getElementById('feature-fulllink');
                     var list = document.getElementById('feature-list');
+                    // Feed the hero scrubber the starting service's chapters (markers + the
+                    // hover/scrub label). Swapping services re-feeds it inside paint().
+                    if (vp && vp.__setChapters) vp.__setChapters((data[0] || {}).chapters);
 
                     function paint(i, scroll) {
                         var s = data[i]; if (!s) return;
@@ -898,6 +911,7 @@ export const watchBody = (view: WatchHubView): string => {
                                 vp.setAttribute('data-duration', String(s.dur || 0));
                                 vp.setAttribute('data-start', '0'); vp.setAttribute('data-end', '0');
                                 if (vp.__resetPlayer) vp.__resetPlayer();
+                                if (vp.__setChapters) vp.__setChapters(s.chapters || []);
                             }
                             if (img) { img.src = s.poster; img.onerror = function () { this.onerror = null; this.src = 'https://img.youtube.com/vi/' + s.videoId + '/hqdefault.jpg'; }; }
                             title.textContent = s.title; meta.textContent = s.meta; blurb.textContent = s.blurb;

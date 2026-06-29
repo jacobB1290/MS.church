@@ -194,6 +194,7 @@ export function vplayer(
                                     <span class="vplayer-time" data-cur>0:00</span>
                                     <div class="vplayer-scrub" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                                         <div class="vplayer-track"><div class="vplayer-fill"></div><div class="vplayer-knob"></div></div>
+                                        <div class="vplayer-tip" hidden aria-hidden="true"></div>
                                     </div>
                                     <span class="vplayer-time" data-dur>0:00</span>
                                 </div>
@@ -360,7 +361,7 @@ export function watchPlayerScript(): string {
                     function segEnd() { return parseFloat(root.getAttribute('data-end')) || 0; }
                     function fullDur() { return parseFloat(root.getAttribute('data-duration')) || 0; }
                     function hasSeg() { return segEnd() > segStart() + 1; }
-                    var ownsChapters = root.hasAttribute('data-chapters');
+                    var hasChapterAttr = root.hasAttribute('data-chapters');
                     var poster = root.querySelector('.vplayer-poster');
                     var stage = root.querySelector('.vplayer-stage');
                     var bar = root.querySelector('.vplayer-bar');
@@ -368,13 +369,31 @@ export function watchPlayerScript(): string {
                     var knob = root.querySelector('.vplayer-knob');
                     var scrub = root.querySelector('.vplayer-scrub');
                     var track = root.querySelector('.vplayer-track');
+                    var tip = root.querySelector('.vplayer-tip');
                     var curEl = root.querySelector('[data-cur]');
                     var durEl = root.querySelector('[data-dur]');
                     var toggleBtn = root.querySelector('[data-act="mode"]');
                     var playBtn = root.querySelector('[data-act="toggle"]');
                     var fsBtn = root.querySelector('[data-act="fullscreen"]');
                     var fsCard = root.closest('.watch-card');
-                    var chapters = ownsChapters ? Array.prototype.slice.call(document.querySelectorAll('.watch-chapter')) : [];
+                    // Chapters come EITHER from the permalink's on-page list (.watch-chapter,
+                    // each with data-seek) OR, for the hub's full-service hero, from an injected
+                    // array set via root.__setChapters (it has no on-page list and its service
+                    // changes as you pick from "Recent services"). ownsChapters() is true for
+                    // either source. chapterData() yields {seek, title, el?} sorted by time.
+                    var injectedChapters = null, domChapters = null;
+                    function ownsChapters() { return hasChapterAttr || !!injectedChapters; }
+                    function chapterData() {
+                        if (injectedChapters) return injectedChapters;
+                        if (!hasChapterAttr) return [];
+                        if (domChapters) return domChapters;   // the on-page list is static — cache it
+                        domChapters = Array.prototype.map.call(document.querySelectorAll('.watch-chapter'), function (c) {
+                            var tEl = c.querySelector('.watch-chapter-title');
+                            var title = tEl ? (tEl.firstChild ? tEl.firstChild.textContent : tEl.textContent) : c.textContent;
+                            return { seek: parseFloat(c.getAttribute('data-seek') || '0'), title: (title || '').trim(), el: c };
+                        });
+                        return domChapters;
+                    }
                     // Adopt mode: the same-page home->watch morph hands this feature an
                     // already-playing external player (its iframe lives in an overlay host
                     // that can't be re-parented without reloading). We never self-build then,
@@ -676,27 +695,70 @@ export function watchPlayerScript(): string {
                                     fill.style.width = (p*100) + '%'; knob.style.left = (p*100) + '%';
                                     curEl.textContent = fmt(Math.max(0, dispT - lo()));
                                     scrub.setAttribute('aria-valuenow', String(Math.round(p*100)));
-                                    if (ownsChapters) highlight(dispT);
+                                    if (ownsChapters()) highlight(dispT);
                                 }
                             }
                             raf = requestAnimationFrame(tick);
                         })();
                     }
                     function highlight(t) {
-                        var idx = -1;
-                        for (var i = 0; i < chapters.length; i++) { if (t + 0.5 >= parseFloat(chapters[i].getAttribute('data-seek') || '0')) idx = i; }
-                        chapters.forEach(function (c, i) { c.classList.toggle('is-current', i === idx); });
+                        var cs = chapterData(), idx = -1;
+                        for (var i = 0; i < cs.length; i++) { if (t + 0.5 >= cs[i].seek) idx = i; }
+                        cs.forEach(function (c, i) { if (c.el) c.el.classList.toggle('is-current', i === idx); });
+                        if (track) track.querySelectorAll('.vplayer-marker').forEach(function (m) { m.classList.toggle('is-current', parseInt(m.getAttribute('data-ci'), 10) === idx); });
+                        return idx;
                     }
                     function buildMarkers() {
                         if (!track) return;
                         track.querySelectorAll('.vplayer-marker').forEach(function (m) { m.remove(); });
-                        if (mode !== 'full' || !ownsChapters) return;
+                        if (mode !== 'full' || !ownsChapters()) return;
                         var d = hi(); if (d <= 0) return;
-                        chapters.forEach(function (c) {
-                            var st = parseFloat(c.getAttribute('data-seek') || '0'); if (st <= 0 || st >= d) return;
-                            var m = document.createElement('span'); m.className = 'vplayer-marker'; m.style.left = ((st/d)*100) + '%'; track.appendChild(m);
+                        chapterData().forEach(function (c, i) {
+                            if (c.seek <= 0 || c.seek >= d) return;
+                            var m = document.createElement('span'); m.className = 'vplayer-marker';
+                            m.style.left = (((c.seek - lo()) / span()) * 100) + '%';
+                            m.setAttribute('data-ci', String(i));
+                            track.appendChild(m);
                         });
                     }
+                    // The chapter that contains time t (the last one that has started).
+                    function chapterAt(t) {
+                        var cs = chapterData(); if (!cs.length) return null;
+                        var pick = cs[0];
+                        for (var i = 0; i < cs.length; i++) { if (t + 0.001 >= cs[i].seek) pick = cs[i]; }
+                        return pick;
+                    }
+                    // The little label above the track naming the chapter at fraction f.
+                    function showTip(f) {
+                        if (!tip || !ownsChapters() || mode !== 'full') return;
+                        var c = chapterAt(lo() + f * span()); if (!c) return;
+                        tip.textContent = c.title || '';
+                        tip.style.left = (Math.min(0.98, Math.max(0.02, f)) * 100) + '%';
+                        if (tip.hidden) { tip.hidden = false; void tip.offsetWidth; }
+                        tip.classList.add('is-visible');
+                    }
+                    function hideTip() { if (tip) { tip.classList.remove('is-visible'); tip.hidden = true; } }
+                    // Magnetic snap: pull a near-miss to the chapter marker within ~14px so the
+                    // scrubber clicks onto chapter starts, while still allowing a free seek.
+                    function snapFrac(f) {
+                        if (!ownsChapters() || mode !== 'full') return f;
+                        var cs = chapterData(); if (!cs.length) return f;
+                        var w = ((trackRect || (track && track.getBoundingClientRect()) || {}).width) || 1;
+                        var best = f, bestPx = 14;
+                        for (var i = 0; i < cs.length; i++) {
+                            var cf = (cs[i].seek - lo()) / span(); if (cf < 0 || cf > 1) continue;
+                            var dpx = Math.abs(cf - f) * w; if (dpx < bestPx) { bestPx = dpx; best = cf; }
+                        }
+                        return best;
+                    }
+                    // Set/replace the chapter source for a data-fed player (the hub hero) and
+                    // refresh markers. Called on load and whenever the selected service changes.
+                    root.__setChapters = function (arr) {
+                        injectedChapters = (arr && arr.length)
+                            ? arr.map(function (c) { return { seek: Math.floor(c.seek != null ? c.seek : (c.t || 0)), title: (c.title || '').trim() }; })
+                            : null;
+                        buildMarkers();
+                    };
                     function setMode(next) {
                         if (mode === next) return; mode = next;
                         if (toggleBtn) { toggleBtn.textContent = mode === 'segment' ? 'Full service' : 'Just the message'; toggleBtn.setAttribute('aria-pressed', String(mode === 'full')); }
@@ -752,7 +814,7 @@ export function watchPlayerScript(): string {
                     // Move/up are bound to the WINDOW for the drag's duration, so a finger that
                     // wanders off the thin track (or vertically) keeps registering; pointercancel
                     // ends the drag cleanly so it can never get stuck mid-scrub.
-                    function onScrubMove(e) { if (!scrubbing) return; if (e.cancelable) e.preventDefault(); queuePreview(frac(e.clientX)); }
+                    function onScrubMove(e) { if (!scrubbing) return; if (e.cancelable) e.preventDefault(); var f = snapFrac(frac(e.clientX)); queuePreview(f); showTip(f); }
                     function endScrub(e) {
                         if (!scrubbing) return;
                         scrubbing = false;
@@ -761,7 +823,8 @@ export function watchPlayerScript(): string {
                         window.removeEventListener('pointercancel', endScrub);
                         if (dragRaf != null) { cancelAnimationFrame(dragRaf); dragRaf = null; }
                         var f = (e && typeof e.clientX === 'number' && e.type !== 'pointercancel') ? frac(e.clientX) : pendingFrac;
-                        paintFrac(f);
+                        f = snapFrac(f);
+                        paintFrac(f); hideTip();
                         lockSeek(lo() + f * span());
                     }
                     scrub.addEventListener('pointerdown', function (e) {
@@ -773,15 +836,23 @@ export function watchPlayerScript(): string {
                         window.addEventListener('pointermove', onScrubMove);
                         window.addEventListener('pointerup', endScrub);
                         window.addEventListener('pointercancel', endScrub);
-                        queuePreview(frac(e.clientX));
+                        var f0 = snapFrac(frac(e.clientX)); queuePreview(f0); showTip(f0);
                     });
+                    // Hover preview (no drag): glide the chapter label along the track so you
+                    // can read chapter names before seeking. Touch has no hover -> skip.
+                    scrub.addEventListener('pointermove', function (e) {
+                        if (scrubbing || e.pointerType === 'touch' || !ownsChapters() || mode !== 'full') return;
+                        var r = track.getBoundingClientRect(); if (!r.width) return;
+                        showTip(Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)));
+                    });
+                    scrub.addEventListener('pointerleave', function () { if (!scrubbing) hideTip(); });
                     scrub.addEventListener('keydown', function (e) {
                         if (!ready) return;
                         var step = e.shiftKey ? 30 : 5, t; try { t = player.getCurrentTime(); } catch (er) { t = lo(); }
                         if (e.key === 'ArrowRight') { lockSeek(Math.min(hi(), t + step)); e.preventDefault(); }
                         else if (e.key === 'ArrowLeft') { lockSeek(Math.max(lo(), t - step)); e.preventDefault(); }
                     });
-                    chapters.forEach(function (ch) { ch.addEventListener('click', function () { var t = parseFloat(ch.getAttribute('data-seek') || '0'); if (ready && player) { started = true; reveal(); doSeek(t); } else { pendingSeek = t; start(); } }); });
+                    chapterData().forEach(function (c) { if (!c.el) return; c.el.addEventListener('click', function () { var t = c.seek; if (ready && player) { started = true; reveal(); doSeek(t); } else { pendingSeek = t; start(); } }); });
 
                     // Preload eagerly for the single hero; lazily (on approach + dwell) for cards.
                     root.__vpVisible = function (vis) {

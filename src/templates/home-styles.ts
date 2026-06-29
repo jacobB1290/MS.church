@@ -10471,8 +10471,31 @@ export const homeStyles = (): string => `
             position: absolute; top: 50%; transform: translate(-50%, -50%);
             width: 3px; height: 10px; border-radius: var(--radius-pill);
             background: color-mix(in oklab, var(--gold-deeper) 50%, var(--white));
-            pointer-events: none;
+            pointer-events: none; transition: height var(--motion-fast) var(--ease-out-soft), background var(--motion-fast) var(--ease-out-soft);
         }
+        /* The marker for the chapter currently playing reads a touch stronger. */
+        .vplayer-marker.is-current { height: 14px; background: var(--gold-deeper); }
+        /* Chapter label above the scrubber: shows the chapter name as you hover or
+           drag the track, so you always know where you're seeking. */
+        .vplayer-tip {
+            position: absolute; bottom: calc(100% + 9px); left: 0;
+            transform: translateX(-50%);
+            background: var(--text-primary); color: var(--white);
+            font-family: var(--font-body), 'Inter', sans-serif;
+            font-size: var(--text-micro); font-weight: var(--weight-medium); line-height: 1.2;
+            white-space: nowrap; max-width: 56vw; overflow: hidden; text-overflow: ellipsis;
+            padding: 5px 10px; border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+            pointer-events: none; z-index: 6;
+            opacity: 0; transform: translateX(-50%) translateY(4px);
+            transition: opacity var(--motion-fast) var(--ease-out-soft), transform var(--motion-fast) var(--ease-out-soft);
+        }
+        .vplayer-tip.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .vplayer-tip::after {
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border: 5px solid transparent; border-top-color: var(--text-primary);
+        }
+        .vplayer-tip[hidden] { display: none; }
+        @media (prefers-reduced-motion: reduce) { .vplayer-tip { transition: opacity var(--motion-fast) linear; } }
         .vplayer-toggle {
             appearance: none; border: 1px solid var(--text-hairline); background: var(--white);
             color: var(--text-muted); cursor: pointer; flex: 0 0 auto;

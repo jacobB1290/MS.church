@@ -71,6 +71,7 @@ function buildHomeWatch(all: PublishedSermon[]): HomeWatchView {
     return {
       mode: 'fallback',
       slug: s?.slug ?? null,
+      videoId: s?.youtubeVideoId ?? null,
       formatNoun: null,
       title: null,
       dateLabel: null,
@@ -109,6 +110,7 @@ function buildHomeWatch(all: PublishedSermon[]): HomeWatchView {
   return {
     mode: 'library',
     slug: s.slug,
+    videoId: s.youtubeVideoId,
     formatNoun: formatNoun(s.format),
     title: cleanServiceTitle(s.title),
     dateLabel: longDate(s.publishedAt),

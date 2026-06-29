@@ -22,6 +22,11 @@ import { fileURLToPath } from 'node:url'
 import { dirname, resolve, relative } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+
+// Optional path to a pre-provisioned Chromium (set PW_EXECUTABLE_PATH when the
+// machine's Playwright browser build differs from the npm package's expected
+// build). Undefined falls back to Playwright's own download, so CI is unchanged.
+const EXEC_PATH = process.env.PW_EXECUTABLE_PATH || undefined
 const OUT_DIR = resolve(__dirname, 'output')
 mkdirSync(OUT_DIR, { recursive: true })
 
@@ -1624,7 +1629,7 @@ async function runFlowScenarios(launcher, report) {
     // collapses for all subsequent scenarios on this worker).
     if (!browser.isConnected()) {
       console.log('  ⚠ browser disconnected, re-launching')
-      browser = await chromium.launch({ headless: true })
+      browser = await chromium.launch({ headless: true, executablePath: EXEC_PATH })
     }
 
     const context = await browser.newContext({
@@ -2809,6 +2814,7 @@ async function run() {
   // parallelism a typical run completes in ~60-90s instead of ~225s.
   const perfLauncher = () => chromium.launch({
     headless: true,
+    executablePath: EXEC_PATH,
     args: [
       '--disable-frame-rate-limit',
       '--disable-gpu-vsync',
@@ -2817,7 +2823,7 @@ async function run() {
       '--disable-backgrounding-occluded-windows',
     ],
   })
-  const mainLauncher = () => chromium.launch({ headless: true })
+  const mainLauncher = () => chromium.launch({ headless: true, executablePath: EXEC_PATH })
   const report = { scenarios: [] }
 
   console.log(`  pools: anchor=${ANCHOR_PARALLELISM} perf=${PERF_PARALLELISM} flow=${FLOW_PARALLELISM} flicker=3`)

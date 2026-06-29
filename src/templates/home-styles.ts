@@ -9824,26 +9824,37 @@ export const homeStyles = (): string => `
         }
         .watch-chip {
             appearance: none;
-            border: 1px solid var(--text-hairline);
-            background: transparent;
+            border: 1px solid color-mix(in oklab, var(--gold) 16%, transparent);
+            /* A soft warm fill so each chip reads as a tappable pill on the cream
+               surface (not floating text); the active chip fills solid gold. */
+            background: color-mix(in oklab, var(--gold) 7%, var(--white));
             color: var(--text-muted);
             font-family: var(--font-body), 'Inter', sans-serif;
             font-size: var(--text-small);
             font-weight: var(--weight-medium);
+            line-height: 1.2;
             border-radius: var(--radius-pill);
-            padding: 6px 14px;
+            padding: 8px 15px;
             cursor: pointer;
             transition: color var(--motion-fast) var(--ease-out-soft),
                         background var(--motion-fast) var(--ease-out-soft),
                         border-color var(--motion-fast) var(--ease-out-soft);
         }
-        .watch-chip:hover { border-color: var(--gold); color: var(--gold-dark); }
+        .watch-chip:hover {
+            border-color: var(--gold);
+            color: var(--gold-dark);
+            background: color-mix(in oklab, var(--gold) 14%, var(--white));
+        }
         .watch-chip[aria-pressed="true"] {
             background: var(--gold);
             border-color: var(--gold);
             color: var(--white);
         }
-        .watch-chip-count { opacity: 0.66; margin-left: 5px; font-size: var(--text-micro); }
+        /* Solid --text-muted (not an opacity knockdown) so the count clears WCAG AA
+           on the cream surface; size + the gold accent on the active chip carry the
+           hierarchy instead of low contrast. */
+        .watch-chip-count { color: var(--text-muted); margin-left: 5px; font-size: var(--text-micro); font-variant-numeric: tabular-nums; }
+        .watch-chip[aria-pressed="true"] .watch-chip-count { color: var(--white); opacity: 0.85; }
         /* Elegant hairline that sets the "All" chip apart from the value chips.
            Uses --text-fade (.30), not --text-hairline (.10) — at 1px the .10
            alpha is imperceptible on the cream surface and reads as bare spacing. */
@@ -9909,6 +9920,48 @@ export const homeStyles = (): string => `
             .watch-filter.is-anim-in > .watch-chip-sep,
             .watch-filter.is-anim-out > .watch-chip,
             .watch-filter.is-anim-out > .watch-chip-sep { animation: none; }
+        }
+
+        /* --- Count-sorted collapse: two rows on mobile / three on desktop, with an
+           inline expand. Overflow chips are display:none until expanded; JS measures
+           the exact fit so it is always whole rows regardless of label length. The
+           no-JS path never sets .is-overflow, so crawlers + no-JS see every chip. --- */
+        .watch-chip.is-overflow { display: none; }
+        /* The expand/collapse toggle. Both labels are grid-stacked in one cell so
+           the button width never jumps as "+N more" crossfades to "Show less". */
+        .watch-chip--toggle {
+            order: 999;                       /* always trails the value chips */
+            display: inline-grid;
+            justify-items: center;
+            align-items: center;
+            color: var(--gold-dark);
+            background: transparent;          /* a text action, not a topic pill */
+            border-color: transparent;
+            font-weight: var(--weight-semibold);
+        }
+        .watch-chip--toggle[hidden] { display: none; }
+        .watch-chip--toggle:hover { color: var(--gold-deeper); border-color: var(--gold); background: color-mix(in oklab, var(--gold) 8%, transparent); }
+        .watch-chip-toggle-label {
+            grid-area: 1 / 1;
+            white-space: nowrap;
+            transition: opacity var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-chip-toggle-label[data-toggle-less] { opacity: 0; }
+        .watch-chip--toggle[aria-expanded="true"] [data-toggle-more] { opacity: 0; }
+        .watch-chip--toggle[aria-expanded="true"] [data-toggle-less] { opacity: 1; }
+        .watch-chip-toggle-n { font-variant-numeric: tabular-nums; }
+        /* Leaving chips fade out before they're pulled from flow (collapse phase 1). */
+        .watch-chip.is-chip-out {
+            opacity: 0; transform: scale(0.92); pointer-events: none;
+            transition: opacity 150ms var(--ease-out-soft), transform 150ms var(--ease-out-soft);
+        }
+        /* One restrained tactile beat on selection (no bounce — reads as quality). */
+        @keyframes watch-chip-pop { 0% { transform: scale(1); } 45% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .watch-chip.is-popping { animation: watch-chip-pop 190ms var(--ease-out-soft); }
+        @media (prefers-reduced-motion: reduce) {
+            .watch-chip.is-chip-out { transition: none; }
+            .watch-chip.is-popping { animation: none; }
+            .watch-chip-toggle-label { transition: none; }
         }
 
         /* --- Grid: crossfade on filter (reflow stays invisible) --- */
@@ -10418,8 +10471,31 @@ export const homeStyles = (): string => `
             position: absolute; top: 50%; transform: translate(-50%, -50%);
             width: 3px; height: 10px; border-radius: var(--radius-pill);
             background: color-mix(in oklab, var(--gold-deeper) 50%, var(--white));
-            pointer-events: none;
+            pointer-events: none; transition: height var(--motion-fast) var(--ease-out-soft), background var(--motion-fast) var(--ease-out-soft);
         }
+        /* The marker for the chapter currently playing reads a touch stronger. */
+        .vplayer-marker.is-current { height: 14px; background: var(--gold-deeper); }
+        /* Chapter label above the scrubber: shows the chapter name as you hover or
+           drag the track, so you always know where you're seeking. */
+        .vplayer-tip {
+            position: absolute; bottom: calc(100% + 9px); left: 0;
+            transform: translateX(-50%);
+            background: var(--text-primary); color: var(--white);
+            font-family: var(--font-body), 'Inter', sans-serif;
+            font-size: var(--text-micro); font-weight: var(--weight-medium); line-height: 1.2;
+            white-space: nowrap; max-width: 56vw; overflow: hidden; text-overflow: ellipsis;
+            padding: 5px 10px; border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+            pointer-events: none; z-index: 6;
+            opacity: 0; transform: translateX(-50%) translateY(4px);
+            transition: opacity var(--motion-fast) var(--ease-out-soft), transform var(--motion-fast) var(--ease-out-soft);
+        }
+        .vplayer-tip.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .vplayer-tip::after {
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border: 5px solid transparent; border-top-color: var(--text-primary);
+        }
+        .vplayer-tip[hidden] { display: none; }
+        @media (prefers-reduced-motion: reduce) { .vplayer-tip { transition: opacity var(--motion-fast) linear; } }
         .vplayer-toggle {
             appearance: none; border: 1px solid var(--text-hairline); background: var(--white);
             color: var(--text-muted); cursor: pointer; flex: 0 0 auto;

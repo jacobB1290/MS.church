@@ -808,6 +808,11 @@ export const watchBody = (view: WatchHubView): string => {
                         f.querySelectorAll(SEL).forEach(function (el) { if (el.offsetParent) first.set(el, el.getBoundingClientRect()); });
                         var h1 = railEl.offsetHeight;
                         mutate();
+                        // Natural target height, measured BEFORE we pin the start height —
+                        // collapse shrinks it, expand grows it. (scrollHeight after pinning
+                        // h1 would report h1 on collapse, so the height never animated and
+                        // the content below cut at cleanup.)
+                        var h2 = railEl.offsetHeight;
                         var els = Array.prototype.filter.call(f.querySelectorAll(SEL), function (el) { return el.offsetParent; });
                         var rev = 0, moved = [];
                         els.forEach(function (el) {
@@ -821,7 +826,6 @@ export const watchBody = (view: WatchHubView): string => {
                             }
                         });
                         railEl.style.height = h1 + 'px'; railEl.style.overflow = 'hidden'; railEl.style.transition = 'none';
-                        var h2 = railEl.scrollHeight;
                         void railEl.offsetWidth;
                         railEl.style.transition = 'height var(--motion-medium) var(--ease-out-soft)';
                         railEl.style.height = h2 + 'px';

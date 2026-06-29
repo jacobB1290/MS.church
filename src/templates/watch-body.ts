@@ -262,6 +262,16 @@ function filterRow(
   chips: { val: string; label: string; count: number }[],
   defaultVal = 'all',
 ): string {
+  // The toggle that opens/closes the overflow set. Both labels are rendered and
+  // crossfaded in place (grid-stacked, so the button width never jumps); JS shows
+  // it only when the chips actually overflow the collapsed row budget.
+  const toggle = `<button class="watch-chip watch-chip--toggle" type="button" data-chip-toggle aria-expanded="false" hidden>
+                            <span class="watch-chip-toggle-label" data-toggle-more>+<span class="watch-chip-toggle-n"></span> more</span>
+                            <span class="watch-chip-toggle-label" data-toggle-less aria-hidden="true">Show less</span>
+                          </button>`
+  // Every chip is in the HTML (crawlers + the no-JS path see the full taxonomy);
+  // JS collapses the overflow to three rows and reveals the rest inline on expand,
+  // keeping the count order throughout (most-preached first).
   const inner =
     chips.length <= 1
       ? ''
@@ -272,7 +282,8 @@ function filterRow(
                                 (c) =>
                                   `<button class="watch-chip" type="button" data-val="${escapeHtml(c.val)}" aria-pressed="${defaultVal === c.val ? 'true' : 'false'}">${escapeHtml(c.label)}<span class="watch-chip-count">${c.count}</span></button>`,
                               )
-                              .join('\n                            ')}`
+                              .join('\n                            ')}
+                            ${toggle}`
   return `<div class="watch-filter${active ? ' is-active' : ''}" role="group" aria-label="${escapeHtml(label)}" data-panel="${escapeHtml(panelId)}" data-key="${escapeHtml(key)}" data-default="${escapeHtml(defaultVal)}"${active ? '' : ' hidden'}>${inner}</div>`
 }
 
@@ -586,7 +597,7 @@ function renderLibrary(items: PublishedSermon[]): string {
   return `<section id="library" aria-label="Library">
                     <span class="section-eyebrow">Library</span>
                     <h2 class="section-heading">Find a message.</h2>
-                    <p class="section-lead watch-library-lead">Tap any message and it plays right here, just the part you came for. Filter by topic, or open the full service.</p>
+                    <p class="section-lead watch-library-lead">Tap any message to play just the part you came for.</p>
                     <div class="watch-search">
                         <svg class="watch-search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M10 4a6 6 0 104.47 10.03l4.24 4.25 1.42-1.42-4.25-4.24A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" fill="currentColor"/></svg>
                         <input id="watch-search-input" class="watch-search-input" type="search" inputmode="search" autocomplete="off" enterkeyhint="search" placeholder="Search a topic, passage, date, song, or speaker" aria-label="Search the library">
@@ -686,6 +697,177 @@ export const watchBody = (view: WatchHubView): string => {
             (function () {
                 var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+                /* --- Chip rail collapse: count-sorted, three rows, with an inline expand.
+                   Expand is additive — it reveals the rest of the chips in the SAME count
+                   order (the chips you were reading never jump), and an active chip from
+                   the overflow is pinned right after All so it never vanishes on collapse.
+                   Every chip is in the DOM — this only hides the overflow. --- */
+                var ChipCollapse = (function () {
+                    var railEl = document.getElementById('watch-chips-rail');
+                    function rowLimit() { return 3; }
+                    function valueChips(f) {
+                        return Array.prototype.filter.call(f.querySelectorAll('.watch-chip'), function (c) {
+                            return !c.hasAttribute('data-chip-toggle') && c.getAttribute('data-val') !== 'all';
+                        });
+                    }
+                    function toggleBtn(f) { return f.querySelector('[data-chip-toggle]'); }
+                    function activeChip(f) {
+                        return f.querySelector('.watch-chip[aria-pressed="true"]:not([data-chip-toggle]):not([data-val="all"])');
+                    }
+                    // Distinct row count of the laid-out chips. The separator is vertically
+                    // centered (its own offsetTop), so it's skipped; remaining tops are
+                    // bucketed with a tolerance so sub-pixel jitter never invents a row.
+                    function rowCount(f) {
+                        var tops = [];
+                        Array.prototype.forEach.call(f.children, function (el) {
+                            if (el.offsetParent === null) return;
+                            if (el.classList.contains('watch-chip-sep')) return;
+                            tops.push(el.offsetTop);
+                        });
+                        tops.sort(function (a, b) { return a - b; });
+                        var n = 0, last = -999;
+                        for (var i = 0; i < tops.length; i++) { if (tops[i] - last > 6) { n++; last = tops[i]; } }
+                        return n;
+                    }
+                    function measureOrder(f, pin) {
+                        var all = f.querySelector('.watch-chip[data-val="all"]'); if (all) all.style.order = '-3';
+                        var sep = f.querySelector('.watch-chip-sep'); if (sep) sep.style.order = '-2';
+                        valueChips(f).forEach(function (c) { c.style.order = ''; });
+                        if (pin) pin.style.order = '-1';
+                    }
+                    // Greedily keep the leading chips that fit rowLimit rows WITH the toggle
+                    // present (its space reserved). pin, if given, is forced visible first.
+                    function measureKeep(f, pin) {
+                        var chips = valueChips(f), tgl = toggleBtn(f), limit = rowLimit();
+                        measureOrder(f, pin);
+                        chips.forEach(function (c) { c.classList.remove('is-overflow'); });
+                        if (tgl) tgl.hidden = true;
+                        if (rowCount(f) <= limit) return { keep: chips.slice(), overflow: false };
+                        if (tgl) tgl.hidden = false;
+                        chips.forEach(function (c) { if (c !== pin) c.classList.add('is-overflow'); });
+                        var keep = pin ? [pin] : [];
+                        for (var i = 0; i < chips.length; i++) {
+                            var c = chips[i]; if (c === pin) continue;
+                            c.classList.remove('is-overflow');
+                            if (rowCount(f) > limit) { c.classList.add('is-overflow'); break; }
+                            keep.push(c);
+                        }
+                        return { keep: keep, overflow: true };
+                    }
+                    // Pure: returns the keep list + pin + overflow count, restoring the DOM.
+                    function fit(f) {
+                        var act = activeChip(f), chips = valueChips(f), tgl = toggleBtn(f);
+                        var snapO = Array.prototype.map.call(f.children, function (el) { return [el, el.style.order]; });
+                        var snapV = chips.map(function (c) { return [c, c.classList.contains('is-overflow')]; });
+                        var snapH = tgl ? tgl.hidden : null;
+                        var r = measureKeep(f, null), pin = null, keep = r.keep, overflow = r.overflow;
+                        if (act && overflow && keep.indexOf(act) === -1) {
+                            var r2 = measureKeep(f, act); keep = r2.keep; overflow = r2.overflow; pin = act;
+                        }
+                        snapO.forEach(function (p) { p[0].style.order = p[1]; });
+                        snapV.forEach(function (p) { p[0].classList.toggle('is-overflow', p[1]); });
+                        if (tgl) tgl.hidden = snapH;
+                        return { keep: keep, pin: pin, hasOverflow: overflow, count: chips.length - keep.length };
+                    }
+                    function order(f, pin) {
+                        var all = f.querySelector('.watch-chip[data-val="all"]'); if (all) all.style.order = '-3';
+                        var sep = f.querySelector('.watch-chip-sep'); if (sep) sep.style.order = '-2';
+                        valueChips(f).forEach(function (c) { c.classList.remove('is-pinned'); c.style.order = ''; });
+                        if (pin) { pin.style.order = '-1'; pin.classList.add('is-pinned'); }
+                    }
+                    function setToggle(f, expanded, n) {
+                        var t = toggleBtn(f); if (!t) return;
+                        if (expanded) { t.hidden = false; t.setAttribute('aria-expanded', 'true'); t.setAttribute('aria-label', 'Show fewer topics'); }
+                        else if (n > 0) {
+                            t.hidden = false; t.setAttribute('aria-expanded', 'false'); t.setAttribute('aria-label', n + ' more topics');
+                            var ns = t.querySelector('.watch-chip-toggle-n'); if (ns) ns.textContent = String(n);
+                        } else { t.hidden = true; }
+                    }
+                    function applyCollapsed(f) {
+                        if (!f) return;
+                        var ft = fit(f);
+                        order(f, ft.pin);
+                        valueChips(f).forEach(function (c) { c.classList.toggle('is-overflow', ft.keep.indexOf(c) === -1); });
+                        f.classList.remove('is-expanded');
+                        setToggle(f, false, ft.count);
+                    }
+                    function applyExpanded(f) {
+                        valueChips(f).forEach(function (c) { c.classList.remove('is-overflow'); });
+                        order(f, null);   // same count order, pins cleared — expand only reveals
+                        f.classList.add('is-expanded');
+                        setToggle(f, true, 0);
+                    }
+                    // FLIP: survivors glide to their new slots, newly-shown chips fade/stagger
+                    // in, and the rail height eases across. Newly-hidden chips are faded out
+                    // by the caller first so they never pop. Reduced motion = instant.
+                    function animate(f, mutate) {
+                        if (reduce || !railEl) { mutate(); return; }
+                        if (railEl.__cleanup) railEl.__cleanup();
+                        var SEL = '.watch-chip, .watch-chip-sep';
+                        var first = new Map();
+                        f.querySelectorAll(SEL).forEach(function (el) { if (el.offsetParent) first.set(el, el.getBoundingClientRect()); });
+                        var h1 = railEl.offsetHeight;
+                        mutate();
+                        var els = Array.prototype.filter.call(f.querySelectorAll(SEL), function (el) { return el.offsetParent; });
+                        var rev = 0, moved = [];
+                        els.forEach(function (el) {
+                            var fr = first.get(el), l = el.getBoundingClientRect();
+                            if (fr) {
+                                var dx = fr.left - l.left, dy = fr.top - l.top;
+                                if (dx || dy) { el.style.transition = 'none'; el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; el.__d = 0; moved.push(el); }
+                            } else {
+                                el.style.transition = 'none'; el.style.opacity = '0'; el.style.transform = 'translateY(8px)';
+                                el.__d = Math.min(rev++, 12) * 22; moved.push(el);
+                            }
+                        });
+                        railEl.style.height = h1 + 'px'; railEl.style.overflow = 'hidden'; railEl.style.transition = 'none';
+                        var h2 = railEl.scrollHeight;
+                        void railEl.offsetWidth;
+                        railEl.style.transition = 'height var(--motion-medium) var(--ease-out-soft)';
+                        railEl.style.height = h2 + 'px';
+                        moved.forEach(function (el) {
+                            el.style.transition = 'transform var(--motion-medium) var(--ease-out-soft) ' + el.__d + 'ms, opacity 280ms var(--ease-out-soft) ' + el.__d + 'ms';
+                            el.style.transform = ''; el.style.opacity = '';
+                        });
+                        var t = setTimeout(function () { if (railEl.__cleanup) railEl.__cleanup(); }, 780);
+                        railEl.__cleanup = function () {
+                            clearTimeout(t); railEl.__cleanup = null;
+                            moved.forEach(function (el) { el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; el.__d = null; });
+                            railEl.style.height = ''; railEl.style.overflow = ''; railEl.style.transition = '';
+                        };
+                    }
+                    function expand(f) { animate(f, function () { applyExpanded(f); }); }
+                    function collapse(f) {
+                        var ft = fit(f);
+                        var hide = valueChips(f).filter(function (c) { return ft.keep.indexOf(c) === -1; });
+                        if (reduce || hide.length === 0) { applyCollapsed(f); return; }
+                        hide.forEach(function (c) { c.classList.add('is-chip-out'); });
+                        setTimeout(function () {
+                            animate(f, function () { hide.forEach(function (c) { c.classList.remove('is-chip-out'); }); applyCollapsed(f); });
+                        }, 150);
+                    }
+                    function toggle(f) { if (f.classList.contains('is-expanded')) collapse(f); else expand(f); }
+                    function init() {
+                        if (!railEl) return;
+                        applyCollapsed(railEl.querySelector('.watch-filter.is-active'));
+                    }
+                    // After a selection: if a previously pinned (overflow) chip is no longer
+                    // the active one, re-fit so the stale pin returns to its count slot.
+                    function refresh(f) {
+                        if (!f || f.classList.contains('is-expanded')) return;
+                        var pinned = f.querySelector('.watch-chip.is-pinned');
+                        if (pinned && pinned !== activeChip(f)) animate(f, function () { applyCollapsed(f); });
+                    }
+                    // Width crossed the mobile/desktop line (2<->3 rows) — re-fit the
+                    // active collapsed filter. Expanded filters already show every chip.
+                    function onResize() {
+                        if (!railEl) return;
+                        var f = railEl.querySelector('.watch-filter.is-active');
+                        if (f && !f.classList.contains('is-expanded')) applyCollapsed(f);
+                    }
+                    return { init: init, applyCollapsed: applyCollapsed, toggle: toggle, refresh: refresh, onResize: onResize };
+                })();
+
                 /* --- Full-service selector --- */
                 var feature = document.getElementById('service-feature');
                 var dataEl = document.getElementById('services-data');
@@ -779,6 +961,7 @@ export const watchBody = (view: WatchHubView): string => {
                     if (reduce) {
                         if (from) { from.classList.remove('is-active'); from.hidden = true; }
                         to.hidden = false; to.classList.add('is-active');
+                        ChipCollapse.applyCollapsed(to);
                         return;
                     }
                     var h1 = chipsRail.offsetHeight;
@@ -786,6 +969,7 @@ export const watchBody = (view: WatchHubView): string => {
                     chipsRail.style.overflow = 'hidden';
                     if (from) { from.classList.add('is-anim-out'); from.classList.remove('is-active'); }
                     to.hidden = false; to.classList.add('is-active');
+                    ChipCollapse.applyCollapsed(to);  // collapse the incoming tab before measuring its height
                     var h2 = to.offsetHeight;
                     void chipsRail.offsetWidth;       // commit h1 before easing to h2
                     to.classList.add('is-anim-in');   // staggered chip-in keyframes
@@ -904,11 +1088,14 @@ export const watchBody = (view: WatchHubView): string => {
                         if (!chip) return;
                         var filter = chip.closest('.watch-filter');
                         if (!filter) return;
+                        if (chip.hasAttribute('data-chip-toggle')) { ChipCollapse.toggle(filter); return; }
                         var grid = gridForFilter(filter);
                         if (!grid) return;
                         var key = filter.getAttribute('data-key') || 'topic';
                         var val = chip.getAttribute('data-val');
-                        filter.querySelectorAll('.watch-chip').forEach(function (c) { c.setAttribute('aria-pressed', String(c === chip)); });
+                        filter.querySelectorAll('.watch-chip:not([data-chip-toggle])').forEach(function (c) { c.setAttribute('aria-pressed', String(c === chip)); });
+                        // One restrained tactile beat on the chosen chip.
+                        chip.classList.remove('is-popping'); void chip.offsetWidth; chip.classList.add('is-popping');
                         fadeGrid(grid, function () {
                             grid.querySelectorAll('.watch-card').forEach(function (card) {
                                 var show = val === 'all' || card.getAttribute('data-' + key) === val;
@@ -917,6 +1104,8 @@ export const watchBody = (view: WatchHubView): string => {
                             // A new filter is a new set — collapse it back to the first page.
                             resetPaging(grid.closest('.watch-panel'));
                         });
+                        // If the active chip changed, drop any stale pin while collapsed.
+                        ChipCollapse.refresh(filter);
                     });
                     // Apply each filter's default (e.g. Songs -> Program) on load.
                     chipsRail.querySelectorAll('.watch-filter').forEach(function (filter) {
@@ -929,6 +1118,11 @@ export const watchBody = (view: WatchHubView): string => {
                             card.classList.toggle('is-filtered', card.getAttribute('data-' + key) !== def);
                         });
                     });
+                    // Collapse the active filter to its row budget (others collapse lazily
+                    // as their tab is shown); re-fit on width changes across the breakpoint.
+                    ChipCollapse.init();
+                    var chipResizeT;
+                    window.addEventListener('resize', function () { clearTimeout(chipResizeT); chipResizeT = setTimeout(ChipCollapse.onResize, 150); });
                 }
                 // First paint: collapse every tab to its first page (after default filters).
                 pageAll();
@@ -1078,12 +1272,15 @@ export const watchBody = (view: WatchHubView): string => {
                             var g = panel ? panel.querySelector('.watch-grid') : null;
                             var k = f.getAttribute('data-key') || 'topic';
                             var d = f.getAttribute('data-default') || 'all';
-                            f.querySelectorAll('.watch-chip').forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-val') === d)); });
+                            f.querySelectorAll('.watch-chip:not([data-chip-toggle])').forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-val') === d)); });
                             if (!g) return;
                             g.querySelectorAll('.watch-card').forEach(function (card) {
                                 card.classList.toggle('is-filtered', !(d === 'all' || card.getAttribute('data-' + k) === d));
                             });
                         });
+                        // The rail reappears after search — re-fit the active filter to its
+                        // collapsed row budget (default reset may have changed the active chip).
+                        if (railEl) ChipCollapse.applyCollapsed(railEl.querySelector('.watch-filter.is-active'));
                         // Leaving search restores the first-page collapse on every tab.
                         pageAll();
                         if (summary) { summary.hidden = true; summary.textContent = ''; }

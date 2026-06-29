@@ -375,6 +375,12 @@ export function watchPlayerScript(): string {
                     var fsBtn = root.querySelector('[data-act="fullscreen"]');
                     var fsCard = root.closest('.watch-card');
                     var chapters = ownsChapters ? Array.prototype.slice.call(document.querySelectorAll('.watch-chapter')) : [];
+                    // Adopt mode: the same-page home->watch morph hands this feature an
+                    // already-playing external player (its iframe lives in an overlay host
+                    // that can't be re-parented without reloading). We never self-build then,
+                    // and fullscreen targets that host instead of our empty stage.
+                    var adoptMode = root.hasAttribute('data-adopt');
+                    var fsTarget = stage;
 
                     var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false, started = false, revealed = false;
                     // Muted auto-start used by the home "play" hand-off: the browser
@@ -551,6 +557,24 @@ export function watchPlayerScript(): string {
                         else if (!buildPlayer(true)) { loadAPI().then(function () { if (!fellBack && !player) buildPlayer(true); }).catch(function () {}); }
                         armFallback();
                     };
+                    // Adopt an EXTERNAL, already-playing player (the same-page home->watch
+                    // morph). Its iframe lives in fsEl (an overlay host) covering our stage,
+                    // so the custom controls wire to it in place — no rebuild, no reload, the
+                    // audio the morph started keeps going, now with the custom scrubber.
+                    root.__adoptPlayer = function (extPlayer, fsEl) {
+                        if (!extPlayer || player === extPlayer) return;
+                        try { if (player && player.destroy) player.destroy(); } catch (e) {}
+                        player = extPlayer; ready = true; started = true; fellBack = false; wantMute = false;
+                        if (fsEl) fsTarget = fsEl;
+                        poolDrop(poolRec); claim();
+                        try { if (player.addEventListener) player.addEventListener('onStateChange', onState); } catch (e) {}
+                        // Reveal WITHOUT hiding the poster: the overlay host covers it, but the
+                        // poster still gives the stage its height (the iframe isn't our child).
+                        revealed = true; root.classList.remove('is-loading');
+                        poster.style.pointerEvents = 'none';
+                        bar.hidden = false; durEl.textContent = fmt(span()); buildMarkers(); loop();
+                        try { root.classList.toggle('is-playing', player.getPlayerState && player.getPlayerState() === 1); } catch (e) {}
+                    };
                     function showUnmute() {
                         if (!wantMute || root.querySelector('.vplayer-unmute')) return;
                         var b = document.createElement('button');
@@ -709,19 +733,19 @@ export function watchPlayerScript(): string {
                     // is a guarded no-op there.
                     function fsActive() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
                     function enterFs() {
-                        var req = stage.requestFullscreen || stage.webkitRequestFullscreen || stage.msRequestFullscreen;
+                        var req = fsTarget.requestFullscreen || fsTarget.webkitRequestFullscreen || fsTarget.msRequestFullscreen;
                         if (!req) return;
                         if (fsCard) { fsCard.style.backdropFilter = 'none'; fsCard.style.webkitBackdropFilter = 'none'; }
-                        try { var r = req.call(stage); if (r && r.catch) r.catch(function () {}); } catch (e) {}
+                        try { var r = req.call(fsTarget); if (r && r.catch) r.catch(function () {}); } catch (e) {}
                     }
                     function exitFs() { try { (document.exitFullscreen || document.webkitExitFullscreen || function () {}).call(document); } catch (e) {} }
                     function onFsChange() {
-                        var on = fsActive() === stage;
+                        var on = fsActive() === fsTarget;
                         root.classList.toggle('is-fs', on);
                         if (!on && fsCard) { fsCard.style.backdropFilter = ''; fsCard.style.webkitBackdropFilter = ''; }
                     }
                     if (fsBtn) {
-                        fsBtn.addEventListener('click', function () { if (!started) start(); if (fsActive() === stage) exitFs(); else enterFs(); });
+                        fsBtn.addEventListener('click', function () { if (!started && !adoptMode) start(); if (fsActive() === fsTarget) exitFs(); else enterFs(); });
                         document.addEventListener('fullscreenchange', onFsChange);
                         document.addEventListener('webkitfullscreenchange', onFsChange);
                     }
@@ -764,7 +788,8 @@ export function watchPlayerScript(): string {
                         if (vis) { if (!dwellTimer && !player) dwellTimer = setTimeout(function () { dwellTimer = null; preload(); }, 350); }
                         else { if (dwellTimer) { clearTimeout(dwellTimer); dwellTimer = null; } if (!started) evictIdle(); }
                     };
-                    if (isHero) preload();
+                    if (adoptMode) { /* the morph adopts an external player; never self-build */ }
+                    else if (isHero) preload();
                     else if (io) io.observe(root);
                 }
 

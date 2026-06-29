@@ -32,6 +32,10 @@ export function watchHandoffScript(): string {
                     window.DOMParser && pageEl && window.requestAnimationFrame && window.Promise);
                 if (!SUPPORTED) return;
                 var reduce = false; try { reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+                // Library mode (the chaptered feature exists on /watch) -> build the player
+                // with NO native controls so the landed feature vplayer can adopt it and
+                // drive it with the custom scrubber. Fallback page -> keep YouTube controls.
+                var ADOPT = !!document.querySelector('.watch-chapters');
 
                 var htmlPromise = null;
                 function prefetch() {
@@ -111,7 +115,7 @@ export function watchHandoffScript(): string {
                         try {
                             player = new YT.Player(mount, {
                                 videoId: videoId,
-                                playerVars: { autoplay: 0, controls: 1, rel: 0, modestbranding: 1, playsinline: 1, enablejsapi: 1, origin: location.origin },
+                                playerVars: { autoplay: 0, controls: ADOPT ? 0 : 1, rel: 0, modestbranding: 1, playsinline: 1, enablejsapi: 1, origin: location.origin },
                                 events: {
                                     onReady: function () { playerReady = true; if (playOnReady) resumePlay(); },
                                     onStateChange: function (e) { if (e && (e.data === 1 || e.data === 3)) clearPlayWatch(); },
@@ -138,7 +142,7 @@ export function watchHandoffScript(): string {
                         try {
                             player = new YT.Player(mount, {
                                 videoId: videoId,
-                                playerVars: { autoplay: 1, start: startAt, controls: 1, rel: 0, modestbranding: 1, playsinline: 1, enablejsapi: 1, origin: location.origin },
+                                playerVars: { autoplay: 1, start: startAt, controls: ADOPT ? 0 : 1, rel: 0, modestbranding: 1, playsinline: 1, enablejsapi: 1, origin: location.origin },
                                 events: {
                                     onReady: function () { try { player.playVideo(); } catch (e) {} armPlayWatch(); },
                                     onStateChange: function (e) { if (e && (e.data === 1 || e.data === 3)) clearPlayWatch(); },
@@ -305,14 +309,22 @@ export function watchHandoffScript(): string {
                     try { doc = new DOMParser().parseFromString(html, 'text/html'); } catch (e) { return theater(); }
                     var newPage = doc.querySelector('.page');
                     if (!newPage) return theater();
-                    // Replace the watch feature player with an empty 16:9 placeholder our
-                    // persistent player covers, so the page's own feature vplayer never
-                    // double-loads the same video behind ours.
-                    var feat = newPage.querySelector('.watch-feature-player');
-                    if (feat) feat.innerHTML = '<div class="mscb-feature-slot" style="position:relative;width:100%;aspect-ratio:16/9;"></div>';
-                    else {
-                        var fb = newPage.querySelector('.watch-feature-thumb');
-                        if (fb && fb.parentNode) { var ph = doc.createElement('div'); ph.className = 'mscb-feature-slot'; ph.style.cssText = 'position:relative;width:100%;aspect-ratio:16/9;'; fb.parentNode.replaceChild(ph, fb); }
+                    // When /watch has the custom feature player AND we built a real API player
+                    // to hand over, KEEP that vplayer and let it ADOPT our player — the custom
+                    // scrubber drives our still-playing video in place. Otherwise (fallback page,
+                    // or a raw-embed player with no API handle) drop in an empty 16:9 placeholder
+                    // our player covers, so the page's own feature never double-loads behind ours.
+                    var featVp = newPage.querySelector('.watch-feature-player .vplayer--feature');
+                    var willAdopt = ADOPT && !!player && !!featVp;
+                    if (willAdopt) {
+                        featVp.setAttribute('data-adopt', '1');   // tell the engine not to self-build
+                    } else {
+                        var feat = newPage.querySelector('.watch-feature-player');
+                        if (feat) feat.innerHTML = '<div class="mscb-feature-slot" style="position:relative;width:100%;aspect-ratio:16/9;"></div>';
+                        else {
+                            var fb = newPage.querySelector('.watch-feature-thumb');
+                            if (fb && fb.parentNode) { var ph = doc.createElement('div'); ph.className = 'mscb-feature-slot'; ph.style.cssText = 'position:relative;width:100%;aspect-ratio:16/9;'; fb.parentNode.replaceChild(ph, fb); }
+                        }
                     }
                     var apply = function () {
                         // Preserve the live home content (DOM + listeners + scroll) by DETACHING
@@ -328,8 +340,14 @@ export function watchHandoffScript(): string {
                         try { document.title = doc.title || document.title; } catch (e) {}
                         try { history.pushState({ mscbWatch: 1 }, '', '/watch'); } catch (e) {}
                         inWatch = true;
-                        slot = pageEl.querySelector('.mscb-feature-slot');
-                        runScripts(doc);
+                        runScripts(doc);   // initPlayer runs here -> exposes __adoptPlayer + honors data-adopt
+                        if (willAdopt) {
+                            var fvp = pageEl.querySelector('.vplayer--feature[data-adopt]');
+                            slot = (fvp && fvp.querySelector('.vplayer-stage')) || pageEl.querySelector('.mscb-feature-slot');
+                            try { if (fvp && fvp.__adoptPlayer) fvp.__adoptPlayer(player, vhost); } catch (e) {}
+                        } else {
+                            slot = pageEl.querySelector('.mscb-feature-slot');
+                        }
                         morphHostToSlot();
                         requestAnimationFrame(function () { pageEl.style.opacity = '1'; });
                     };

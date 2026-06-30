@@ -10547,6 +10547,37 @@ export const homeStyles = (): string => `
         .vplayer-stage:fullscreen .vplayer-frame,
         .vplayer-stage:-webkit-full-screen .vplayer-frame { width: 100%; height: 100%; }
 
+        /* CSS pseudo-fullscreen fallback (iOS Safari only fullscreens a <video>,
+           and ours is inside a cross-origin YouTube iframe, so the Fullscreen API
+           is a no-op on the stage div). Pin the whole player to the viewport with
+           the control bar — and its exit button — still reachable at the bottom. */
+        html.vplayer-fs-lock, html.vplayer-fs-lock body { overflow: hidden; }
+        .vplayer.is-fs-css {
+            position: fixed; inset: 0; z-index: 9999; margin: 0;
+            width: 100vw; height: 100vh; height: 100dvh;
+            background: #000; display: flex; flex-direction: column;
+        }
+        .vplayer.is-fs-css .vplayer-stage {
+            flex: 1 1 auto; width: 100%; height: auto; min-height: 0;
+            aspect-ratio: auto; border-radius: 0; box-shadow: none;
+        }
+        .vplayer.is-fs-css .vplayer-bar {
+            flex: 0 0 auto; margin: 8px; margin-bottom: max(8px, env(safe-area-inset-bottom));
+        }
+        /* The message chip would fall off the bottom edge in fullscreen — hide it. */
+        .vplayer.is-fs-css .vplayer-flag { display: none; }
+        /* Floating exit button for adopt-mode pseudo-fullscreen, where the bar sits
+           behind the external video host. */
+        .vplayer-fs-exit {
+            position: absolute; z-index: 2; cursor: pointer;
+            top: max(12px, env(safe-area-inset-top)); right: 16px;
+            width: 44px; height: 44px; border: 0; border-radius: var(--radius-circle);
+            background: rgba(0, 0, 0, 0.6); color: var(--white);
+            display: flex; align-items: center; justify-content: center;
+            transition: background var(--motion-fast) var(--ease-out-soft);
+        }
+        .vplayer-fs-exit:hover { background: rgba(0, 0, 0, 0.78); }
+
         /* --- Permalink layout --- */
         .watch-permalink-head { margin-bottom: var(--space-lg); }
         .watch-permalink-kicker {

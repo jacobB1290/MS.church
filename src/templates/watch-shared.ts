@@ -836,22 +836,73 @@ export function watchPlayerScript(): string {
                     // restored on exit. iOS only fullscreens <video>, so the request
                     // is a guarded no-op there.
                     function fsActive() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-                    function enterFs() {
-                        var req = fsTarget.requestFullscreen || fsTarget.webkitRequestFullscreen || fsTarget.msRequestFullscreen;
-                        if (!req) return;
-                        if (fsCard) { fsCard.style.backdropFilter = 'none'; fsCard.style.webkitBackdropFilter = 'none'; }
-                        try { var r = req.call(fsTarget); if (r && r.catch) r.catch(function () {}); } catch (e) {}
+                    function nativeFsOk() { return !!(fsTarget.requestFullscreen || fsTarget.webkitRequestFullscreen || fsTarget.msRequestFullscreen); }
+                    function neutralizeCard(on) { if (!fsCard) return; fsCard.style.backdropFilter = on ? 'none' : ''; fsCard.style.webkitBackdropFilter = on ? 'none' : ''; }
+                    // CSS pseudo-fullscreen: iOS Safari only fullscreens a <video>, and ours
+                    // lives in a cross-origin YouTube iframe, so the Fullscreen API is absent
+                    // on the stage div there (the expand button used to do nothing). Pin the
+                    // player to the viewport instead so it works on iPhone/iPad too.
+                    var cssFs = false, cssExitBtn = null, fsPrevCss = '';
+                    function addCssExitBtn(host) {
+                        if (cssExitBtn) return;
+                        var b = document.createElement('button');
+                        b.type = 'button'; b.className = 'vplayer-fs-exit'; b.setAttribute('aria-label', 'Exit full screen');
+                        b.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg>';
+                        b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); exitFs(); });
+                        host.appendChild(b); cssExitBtn = b;
                     }
-                    function exitFs() { try { (document.exitFullscreen || document.webkitExitFullscreen || function () {}).call(document); } catch (e) {} }
+                    function enterCssFs() {
+                        if (cssFs) return; cssFs = true;
+                        neutralizeCard(true);
+                        document.documentElement.classList.add('vplayer-fs-lock');
+                        if (fsTarget === stage) {
+                            // The stage is inside our root -> fullscreen the whole player so the
+                            // control bar (and its exit button) rides along, pinned at the bottom.
+                            root.classList.add('is-fs', 'is-fs-css');
+                        } else {
+                            // Adopt mode: the live iframe host sits OUTSIDE our root and covers
+                            // the stage; fix it to the viewport and float an exit button on it.
+                            fsPrevCss = fsTarget.style.cssText;
+                            fsTarget.style.position = 'fixed'; fsTarget.style.left = '0'; fsTarget.style.top = '0';
+                            fsTarget.style.width = '100vw'; fsTarget.style.height = '100dvh';
+                            fsTarget.style.borderRadius = '0'; fsTarget.style.zIndex = '9999';
+                            root.classList.add('is-fs');
+                            addCssExitBtn(fsTarget);
+                        }
+                    }
+                    function exitCssFs() {
+                        if (!cssFs) return; cssFs = false;
+                        root.classList.remove('is-fs', 'is-fs-css');
+                        document.documentElement.classList.remove('vplayer-fs-lock');
+                        neutralizeCard(false);
+                        if (cssExitBtn) { try { cssExitBtn.parentNode && cssExitBtn.parentNode.removeChild(cssExitBtn); } catch (e) {} cssExitBtn = null; }
+                        if (fsTarget !== stage) {
+                            fsTarget.style.cssText = fsPrevCss;
+                            try { window.dispatchEvent(new Event('resize')); } catch (e) {}   // let the morph re-align the host
+                        }
+                    }
+                    function enterFs() {
+                        if (nativeFsOk()) {
+                            neutralizeCard(true);
+                            var req = fsTarget.requestFullscreen || fsTarget.webkitRequestFullscreen || fsTarget.msRequestFullscreen;
+                            try { var r = req.call(fsTarget); if (r && r.catch) r.catch(function () { enterCssFs(); }); } catch (e) { enterCssFs(); }
+                        } else { enterCssFs(); }
+                    }
+                    function exitFs() {
+                        if (cssFs) { exitCssFs(); return; }
+                        try { (document.exitFullscreen || document.webkitExitFullscreen || function () {}).call(document); } catch (e) {}
+                    }
+                    function isFs() { return cssFs || fsActive() === fsTarget; }
                     function onFsChange() {
                         var on = fsActive() === fsTarget;
-                        root.classList.toggle('is-fs', on);
-                        if (!on && fsCard) { fsCard.style.backdropFilter = ''; fsCard.style.webkitBackdropFilter = ''; }
+                        root.classList.toggle('is-fs', on || cssFs);
+                        if (!on && !cssFs) neutralizeCard(false);
                     }
                     if (fsBtn) {
-                        fsBtn.addEventListener('click', function () { if (!started && !adoptMode) start(); if (fsActive() === fsTarget) exitFs(); else enterFs(); });
+                        fsBtn.addEventListener('click', function () { if (!started && !adoptMode) start(); if (isFs()) exitFs(); else enterFs(); });
                         document.addEventListener('fullscreenchange', onFsChange);
                         document.addEventListener('webkitfullscreenchange', onFsChange);
+                        document.addEventListener('keydown', function (e) { if (cssFs && (e.key === 'Escape' || e.key === 'Esc')) exitFs(); });
                     }
                     // Move/up are bound to the WINDOW for the drag's duration, so a finger that
                     // wanders off the thin track (or vertically) keeps registering; pointercancel

@@ -28,6 +28,8 @@ export type SermonSegment = {
   type: string
   title: string
   summary: string
+  /** Who delivered this chapter — present on sermon/discussion chapters, else []. */
+  speakers: string[]
   scriptureRefs: string[]
 }
 
@@ -117,7 +119,17 @@ function normalize(x: unknown): PublishedSermon | null {
   if (!x || typeof x !== 'object') return null
   const s = x as Record<string, unknown>
   if (typeof s.youtubeVideoId !== 'string' || typeof s.title !== 'string') return null
-  const segments = Array.isArray(s.segments) ? s.segments.filter(isSegment) : []
+  const segStrings = (v: unknown): string[] =>
+    Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string' && x.trim() !== '').map((x) => x.trim()) : []
+  const segments = Array.isArray(s.segments)
+    ? s.segments.filter(isSegment).map((seg) => ({
+        ...seg,
+        // Per-chapter speakers may be absent on rows segmented before the field
+        // existed; normalize to [] so the renderer can rely on the array.
+        speakers: segStrings((seg as unknown as Record<string, unknown>).speakers),
+        scriptureRefs: segStrings((seg as unknown as Record<string, unknown>).scriptureRefs),
+      }))
+    : []
   const songs = Array.isArray(s.songs) ? s.songs.map(normalizeSong).filter((x): x is SermonSong => x !== null) : []
   const seo =
     s.seo && typeof s.seo === 'object' && typeof (s.seo as Record<string, unknown>).description === 'string'

@@ -51,11 +51,16 @@ export const watchItemBody = (
       const label = SEGMENT_LABEL[seg.type] ?? seg.type
       const title = chapterTitle(seg)
       const showKind = !title.toLowerCase().startsWith(label.toLowerCase())
+      // Per-message attribution: a sermon/discussion chapter names who delivered
+      // it, so a multi-message service reads "with Dmitri" on one and "with Zach"
+      // on the other instead of both names on each.
+      const who = seg.speakers && seg.speakers.length > 0 ? speakerLine(seg.speakers) : null
       return `<li>
                                 <button class="watch-chapter" type="button" data-seek="${Math.floor(seg.startSec)}">
                                     <span class="watch-chapter-time">${escapeHtml(mmss(seg.startSec))}</span>
                                     <span>
                                         <span class="watch-chapter-title">${escapeHtml(title)}${showKind ? `<span class="watch-chapter-kind">${escapeHtml(label)}</span>` : ''}</span>
+                                        ${who ? `<span class="watch-chapter-who">with ${escapeHtml(who)}</span>` : ''}
                                         ${seg.summary ? `<span class="watch-chapter-note">${escapeHtml(seg.summary)}</span>` : ''}
                                     </span>
                                 </button>

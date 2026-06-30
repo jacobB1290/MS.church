@@ -10636,6 +10636,7 @@ const RAW_HOME_STYLES = `
             font-size: var(--text-micro); letter-spacing: var(--tracking-wide); text-transform: uppercase;
             color: var(--text-faint); margin-left: 8px; font-weight: var(--weight-medium);
         }
+        .watch-chapter-who { display: block; font-size: var(--text-small); color: var(--gold-dark); font-weight: var(--weight-medium); margin-top: 2px; }
         .watch-chapter-note { font-size: var(--text-small); line-height: var(--leading-normal); color: var(--text-muted); margin-top: 2px; }
 
         .watch-aside-block { margin-bottom: var(--space-lg); }

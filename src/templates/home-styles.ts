@@ -1,6 +1,11 @@
 import { GOLD } from '../design-tokens.js'
+import { minifyCssOnce } from './_minify.js'
 
-export const homeStyles = (): string => `
+// The full stylesheet, authored unminified for readability. RAW_HOME_STYLES is
+// the source; homeStyles() (bottom of file) returns the minified form, computed
+// once per process. Edit the CSS here as normal — minification is invisible to
+// authoring.
+const RAW_HOME_STYLES = `
             /* Self-hosted Inter + Playfair Display (v1.62.7). Eliminates the
                cross-origin Google Fonts roundtrip + the FOUT window where
                a view-transition snapshot captured the fallback font and
@@ -10761,3 +10766,11 @@ export const homeStyles = (): string => `
         }
 
 `
+
+let _homeStylesMin: string | undefined
+// Minify once per process and reuse for every request — and every page, since
+// subpages inline the same sheet via page-head.ts. Memoized so the ~0.5 MB
+// source is only minified on the first render after a cold start; thereafter
+// it's a cached string read. Falls back to raw inside minifyCssOnce on error.
+export const homeStyles = (): string =>
+  (_homeStylesMin ??= minifyCssOnce(RAW_HOME_STYLES))

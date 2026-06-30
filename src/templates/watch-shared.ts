@@ -348,20 +348,69 @@ export function sermonSegmentCard(sermon: PublishedSermon, seg: SermonSegment, s
                     </article>`
 }
 
+/** One time a song was sung — a row in the "sung N times" dropdown, and the clip
+ *  the card's player swaps to when that row is tapped. */
+export type SongOccurrence = {
+  videoId: string
+  /** Permalink slug of the service (for the per-occurrence "full service" jump). */
+  slug: string
+  startSec: number
+  endSec: number
+  durationSec: number
+  /** Short date label ("Feb 5, 2024"). */
+  date: string | null
+  leader: string | null
+}
+
+const CARET = `<svg class="watch-song-caret" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M7 10l5 5 5-5z" fill="currentColor"/></svg>`
+
 /**
  * Song card — for the Songs library. The card IS an inline player scoped to the
  * song's clip (segOverride), so tapping it plays just that song. Title + who led
  * it; the small jump opens the full service at the song's moment.
+ *
+ * A recurring song (sung more than once) collapses to ONE card showing its latest
+ * occurrence. The "sung N times" label is then a dropdown of every occurrence
+ * (newest first); tapping a date re-points THIS card's player at that service's
+ * clip and plays it (`watch-song-occ-item` carries the video + clip bounds; the
+ * client wiring in watchSongMenuScript does the swap).
  */
-export function songCard(sermon: PublishedSermon, song: SermonSong, count = 1, sid?: string): string {
+export function songCard(
+  sermon: PublishedSermon,
+  song: SermonSong,
+  count = 1,
+  sid?: string,
+  occurrences: SongOccurrence[] = [],
+): string {
   const isProgram = song.kind === 'program'
   const posterAlt = `${song.title} — ${isProgram ? 'program song' : 'worship'} at Morning Star Christian Church in Boise, Idaho`
   const who = song.leader ? `${isProgram ? 'sung by' : 'led by'} ${escapeHtml(song.leader)}` : null
-  const times = count > 1 ? `sung ${count} times` : null
-  const songDate = count > 1 ? `latest ${shortDate(sermon.publishedAt)}` : shortDate(sermon.publishedAt)
+  const hasMenu = count > 1 && occurrences.length > 1
+  // Recurring song with the occurrence list: the count becomes a dropdown of dates.
+  const timesNode = hasMenu
+    ? `<span class="watch-song-times-wrap">
+                                <button type="button" class="watch-song-times" aria-haspopup="true" aria-expanded="false">sung ${count} times${CARET}</button>
+                                <span class="watch-song-occ" role="menu">
+                                    ${occurrences
+                                      .map(
+                                        (o, i) =>
+                                          `<button type="button" class="watch-song-occ-item" role="menuitem" data-video="${escapeHtml(o.videoId)}" data-start="${Math.floor(o.startSec)}" data-end="${Math.floor(o.endSec)}" data-dur="${Math.floor(o.durationSec)}"${i === 0 ? ' aria-current="true"' : ''}>
+                                        <span class="watch-song-occ-date">${escapeHtml(o.date || 'Service')}${i === 0 ? '<span class="watch-song-occ-tag">latest</span>' : ''}</span>${o.leader ? `<span class="watch-song-occ-who">${escapeHtml(o.leader)}</span>` : ''}
+                                    </button>`,
+                                      )
+                                      .join('\n                                    ')}
+                                </span>
+                            </span>`
+    : count > 1
+      ? `<span>sung ${count} times</span>`
+      : null
+  // Single occurrence shows its date inline; a recurring song carries its dates in
+  // the dropdown instead (so the card never advertises a stale "latest" once you
+  // swap to an older one).
+  const songDate = count > 1 ? null : shortDate(sermon.publishedAt)
   const metaBits = [
     who ? `<span class="watch-card-who">${who}</span>` : null,
-    times ? `<span>${times}</span>` : null,
+    timesNode,
     songDate ? `<span class="watch-card-date">${songDate}</span>` : null,
   ]
     .filter(Boolean)

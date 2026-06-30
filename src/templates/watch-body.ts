@@ -5,6 +5,7 @@ import {
   sermonSegmentCard,
   cleanSegmentTitle,
   songCard,
+  type SongOccurrence,
   escapeHtml,
   watchPlayerScript,
   vplayer,
@@ -304,7 +305,14 @@ function topicFilter(panelId: string, active: boolean, items: PublishedSermon[])
   return filterRow(panelId, active, 'topic', 'Filter by topic', topics.map((t) => ({ val: t.slug, label: t.topic, count: t.count })))
 }
 
-type SongItem = { sermon: PublishedSermon; song: PublishedSermon['songs'][number]; count: number }
+type SongItem = {
+  sermon: PublishedSermon
+  song: PublishedSermon['songs'][number]
+  count: number
+  // Every time this song was sung, newest first (occurrences[0] is the card's
+  // default). Powers the "sung N times" dropdown.
+  occurrences: SongOccurrence[]
+}
 
 function songFilter(panelId: string, active: boolean, songItems: SongItem[]): string {
   const worship = songItems.filter((it) => it.song.kind !== 'program').length
@@ -391,7 +399,7 @@ function songGrid(id: string, songItems: SongItem[], active: boolean, groupLabel
   return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'} data-shown="${PAGE_INITIAL}">
                         <h3 class="watch-group-label" aria-hidden="true">${groupLabel}<span class="watch-group-count" data-group-count></span></h3>
                         <div class="watch-grid">
-                        ${songItems.map((it, i) => songCard(it.sermon, it.song, it.count, 'song-' + i)).join('\n                        ')}
+                        ${songItems.map((it, i) => songCard(it.sermon, it.song, it.count, 'song-' + i, it.occurrences)).join('\n                        ')}
                         </div>
                         ${moreButton(songItems.length)}
                     </div>`
@@ -606,9 +614,24 @@ function renderLibrary(items: PublishedSermon[]): string {
   for (const s of items) {
     for (const song of s.songs) {
       const k = song.title.trim().toLowerCase()
+      const occ: SongOccurrence = {
+        videoId: s.youtubeVideoId,
+        slug: s.slug,
+        startSec: song.startSec,
+        endSec: song.endSec,
+        durationSec: s.durationSec ?? 0,
+        date: shortDate(s.publishedAt),
+        leader: song.leader,
+      }
       const ex = byTitle.get(k)
-      if (ex) ex.count++
-      else byTitle.set(k, { sermon: s, song, count: 1 })
+      // items is newest-first, so the first time we see a title is its newest
+      // occurrence (the card default); later ones append in descending order.
+      if (ex) {
+        ex.count++
+        ex.occurrences.push(occ)
+      } else {
+        byTitle.set(k, { sermon: s, song, count: 1, occurrences: [occ] })
+      }
     }
   }
   const songItems: SongItem[] = [...byTitle.values()]
@@ -689,6 +712,79 @@ function renderLibrary(items: PublishedSermon[]): string {
                     ${panels}
                     <script type="application/json" id="watch-search-index">${JSON.stringify(searchIndex)}</script>
                 </section>`
+}
+
+/**
+ * Client wiring for the "sung N times" recurrence dropdown on song cards. Opens on
+ * tap (toggles .is-open; hover/focus is handled by CSS on fine pointers), closes on
+ * outside-click / Escape, and — when a date is chosen — re-points THIS card's player
+ * at that service's clip (same data-attr swap the hub date selector uses) and plays
+ * it inside the tap gesture so it starts with sound. Idempotent + delegated, so it
+ * survives the tab/filter show-more re-rendering.
+ */
+function watchSongMenuScript(): string {
+  return `<script>
+            (function () {
+                function menuOf(trigger) { return trigger.parentNode ? trigger.parentNode.querySelector('.watch-song-occ') : null; }
+                function setOpen(trigger, open) {
+                    if (!trigger) return;
+                    trigger.setAttribute('aria-expanded', String(open));
+                    var m = menuOf(trigger); if (m) m.classList.toggle('is-open', open);
+                }
+                function closeAll(except) {
+                    document.querySelectorAll('.watch-song-times[aria-expanded="true"]').forEach(function (b) {
+                        if (b !== except) setOpen(b, false);
+                    });
+                }
+                // A mouse hover opens the menu (desktop) — but ONLY for a real mouse,
+                // never touch/pen — so a tap on a hybrid touch+hover laptop drives the
+                // SAME .is-open state as everywhere else (no CSS :hover fighting the
+                // tap-toggle). pointerenter/leave don't bubble, so bind per wrap; the
+                // song cards are all server-rendered, so they're present at load.
+                document.querySelectorAll('.watch-song-times-wrap').forEach(function (wrap) {
+                    var trg = wrap.querySelector('.watch-song-times');
+                    wrap.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') { closeAll(trg); setOpen(trg, true); } });
+                    wrap.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') setOpen(trg, false); });
+                });
+                document.addEventListener('click', function (e) {
+                    var t = e.target.closest ? e.target.closest('.watch-song-times') : null;
+                    var item = e.target.closest ? e.target.closest('.watch-song-occ-item') : null;
+                    if (t) {
+                        e.preventDefault();
+                        var open = t.getAttribute('aria-expanded') === 'true';
+                        closeAll(t);
+                        setOpen(t, !open);
+                        return;
+                    }
+                    if (item) {
+                        e.preventDefault(); e.stopPropagation();
+                        var card = item.closest('.watch-card');
+                        var vp = card && card.querySelector('.vplayer');
+                        if (vp) {
+                            vp.setAttribute('data-video', item.getAttribute('data-video') || '');
+                            vp.setAttribute('data-start', item.getAttribute('data-start') || '0');
+                            vp.setAttribute('data-end', item.getAttribute('data-end') || '0');
+                            vp.setAttribute('data-duration', item.getAttribute('data-dur') || '0');
+                            if (vp.__resetPlayer) vp.__resetPlayer();
+                            var menu = item.closest('.watch-song-occ');
+                            if (menu) menu.querySelectorAll('.watch-song-occ-item').forEach(function (it) { it.removeAttribute('aria-current'); });
+                            item.setAttribute('aria-current', 'true');
+                            var trg = card.querySelector('.watch-song-times');
+                            if (trg) trg.setAttribute('aria-expanded', 'false');
+                            if (menu) menu.classList.remove('is-open');
+                            // Play the chosen clip now, inside this tap gesture (so it gets sound).
+                            var poster = vp.querySelector('.vplayer-poster');
+                            if (poster) poster.click();
+                        }
+                        return;
+                    }
+                    closeAll(null);
+                });
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' || e.key === 'Esc') closeAll(null);
+                });
+            })();
+        </script>`
 }
 
 export const watchBody = (view: WatchHubView): string => {
@@ -773,6 +869,7 @@ export const watchBody = (view: WatchHubView): string => {
             ${footer()}
         </div>
         ${library ? watchPlayerScript() : ''}
+        ${library ? watchSongMenuScript() : ''}
         <script>
             (function () {
                 var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;

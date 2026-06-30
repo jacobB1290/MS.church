@@ -10497,10 +10497,11 @@ export const homeStyles = (): string => `
         .vplayer-tip[hidden] { display: none; }
         @media (prefers-reduced-motion: reduce) { .vplayer-tip { transition: opacity var(--motion-fast) linear; } }
         /* The pointed "message" chip on the full-service scrubber: a gold pin that
-           points down to where the sermon/discussion starts. Shows when the player
-           opens, fades after a few seconds, returns on scrub; tap to jump there. */
+           sits BELOW the bar and points up to where the sermon/discussion starts.
+           Shows when the player opens, fades after a few seconds, returns on scrub;
+           tap to jump there. */
         .vplayer-flag {
-            position: absolute; bottom: calc(100% + 9px); left: 0;
+            position: absolute; top: calc(100% + 9px); left: 0;
             appearance: none; border: 0; cursor: pointer;
             background: var(--gold); color: var(--white);
             font-family: var(--font-body), 'Inter', sans-serif;
@@ -10508,18 +10509,18 @@ export const homeStyles = (): string => `
             letter-spacing: var(--tracking-wide); text-transform: uppercase; line-height: 1; white-space: nowrap;
             padding: 5px 11px; border-radius: var(--radius-pill); box-shadow: var(--shadow-md); z-index: 7;
             opacity: 0; pointer-events: none;
-            transform: translateX(-50%) translateY(4px);
+            transform: translateX(-50%) translateY(-4px);
             transition: opacity var(--motion-medium) var(--ease-out-soft), transform var(--motion-medium) var(--ease-out-soft);
         }
         .vplayer-flag.is-visible { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
         .vplayer-flag[hidden] { display: none; }
         .vplayer-flag::after {
-            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-            border: 5px solid transparent; border-top-color: var(--gold);
-            transition: border-top-color var(--motion-fast) var(--ease-out-soft);
+            content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            border: 5px solid transparent; border-bottom-color: var(--gold);
+            transition: border-bottom-color var(--motion-fast) var(--ease-out-soft);
         }
         .vplayer-flag:hover { background: var(--gold-dark); }
-        .vplayer-flag:hover::after { border-top-color: var(--gold-dark); }
+        .vplayer-flag:hover::after { border-bottom-color: var(--gold-dark); }
         @media (prefers-reduced-motion: reduce) { .vplayer-flag { transition: opacity var(--motion-medium) linear; } }
         .vplayer-toggle {
             appearance: none; border: 1px solid var(--text-hairline); background: var(--white);

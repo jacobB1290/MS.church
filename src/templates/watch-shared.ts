@@ -791,6 +791,16 @@ export function watchPlayerScript(): string {
                             : null;
                         buildMarkers();
                     };
+                    // Report whether this player is mid-play and where, so a jump to the
+                    // service permalink can resume exactly there instead of its cue point.
+                    root.__playbackState = function () {
+                        var playing = false, t = 0;
+                        try {
+                            if (player && player.getPlayerState) { var st = player.getPlayerState(); playing = (st === 1 || st === 3); }
+                            if (player && player.getCurrentTime) t = player.getCurrentTime() || 0;
+                        } catch (e) {}
+                        return { playing: started && playing, time: t };
+                    };
                     function setMode(next) {
                         if (mode === next) return; mode = next;
                         if (toggleBtn) { toggleBtn.textContent = mode === 'segment' ? 'Full service' : 'Just the message'; toggleBtn.setAttribute('aria-pressed', String(mode === 'full')); }
@@ -898,13 +908,36 @@ export function watchPlayerScript(): string {
 
                 document.querySelectorAll('.vplayer').forEach(initPlayer);
 
-                // Seamless arrival from the home "play" tap (/watch?play=1): start the
-                // feature player the moment we land so the video is already running as
-                // the cross-document morph settles — one continuous, uninterrupted play.
+                // Jumping to a service permalink from the hub hero ("Chapters & transcript")
+                // or a library card ("Full service"): if the source player is mid-play, carry
+                // the position + a play flag so the permalink resumes exactly there. If it's
+                // idle, fall through to the link's natural target — the hero opens the whole
+                // service from the top (?full=1), a card opens its authored message/song moment
+                // (the href as rendered). A normal navigation drops the gesture's sound grant,
+                // so the permalink resumes muted with a one-tap sound pill (the ?play=1 path).
+                document.addEventListener('click', function (e) {
+                    var a = e.target && e.target.closest ? e.target.closest('a.watch-feature-fulllink, a.watch-card-full') : null;
+                    if (!a) return;
+                    var href = a.getAttribute('href'); if (!href || href.charAt(0) === '#') return;
+                    var isHero = a.classList.contains('watch-feature-fulllink');
+                    var card = isHero ? null : a.closest('.watch-card');
+                    var vp = isHero ? document.querySelector('.vplayer--feature') : (card && card.querySelector('.vplayer'));
+                    var ps = vp && vp.__playbackState ? vp.__playbackState() : null;
+                    var dest;
+                    if (ps && ps.playing) dest = href.split('?')[0] + '?t=' + Math.floor(ps.time) + '&play=1';
+                    else if (isHero) dest = href.split('?')[0] + '?full=1';   // idle hero -> from the top
+                    else return;   // idle card -> its authored library point; let the link navigate
+                    e.preventDefault();
+                    try { window.location.assign(dest); } catch (er) { window.location.href = dest; }
+                });
+
+                // Seamless arrival from a "play" tap (?play=1): start the hero/permalink
+                // player the moment we land so the video is already running. Covers both the
+                // home->/watch morph (feature) and a playing hero/card -> permalink jump (main).
                 try {
                     if (new URLSearchParams(location.search).get('play') === '1') {
-                        var feat = document.querySelector('.vplayer--feature');
-                        if (feat && feat.__autostartMuted) feat.__autostartMuted();
+                        var arrival = document.querySelector('.vplayer--feature, .vplayer--main');
+                        if (arrival && arrival.__autostartMuted) arrival.__autostartMuted();
                     }
                 } catch (e) {}
             })();

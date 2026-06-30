@@ -22,6 +22,14 @@ const CACHE_TTL = 60 * 1000 // 60s, matches the CRM feed's s-maxage — keeps a
 // layer + the CRM edge + the /watch edge). A serve-stale-on-error fallback below
 // still covers a transient CRM blip.
 
+/** A sub-section WITHIN a chapter — a jump point in the chapter list, never its
+ *  own chapter. Usually a message chapter that works through several parts. */
+export type SermonSubChapter = {
+  startSec: number
+  endSec: number
+  title: string
+}
+
 export type SermonSegment = {
   startSec: number
   endSec: number
@@ -31,6 +39,8 @@ export type SermonSegment = {
   /** Who delivered this chapter — present on sermon/discussion chapters, else []. */
   speakers: string[]
   scriptureRefs: string[]
+  /** Distinct, jump-worthy parts within this one chapter; usually empty. */
+  children: SermonSubChapter[]
 }
 
 /** Each week's service is EITHER a sermon OR a 2-host discussion. */
@@ -121,6 +131,20 @@ function normalize(x: unknown): PublishedSermon | null {
   if (typeof s.youtubeVideoId !== 'string' || typeof s.title !== 'string') return null
   const segStrings = (v: unknown): string[] =>
     Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string' && x.trim() !== '').map((x) => x.trim()) : []
+  const normChildren = (v: unknown): SermonSubChapter[] =>
+    Array.isArray(v)
+      ? v
+          .map((c): SermonSubChapter | null => {
+            if (!c || typeof c !== 'object') return null
+            const o = c as Record<string, unknown>
+            if (typeof o.startSec !== 'number' || typeof o.endSec !== 'number') return null
+            if (!(o.endSec > o.startSec)) return null
+            const title = typeof o.title === 'string' ? o.title.trim() : ''
+            if (!title) return null
+            return { startSec: o.startSec, endSec: o.endSec, title }
+          })
+          .filter((c): c is SermonSubChapter => c !== null)
+      : []
   const segments = Array.isArray(s.segments)
     ? s.segments.filter(isSegment).map((seg) => ({
         ...seg,
@@ -128,6 +152,8 @@ function normalize(x: unknown): PublishedSermon | null {
         // existed; normalize to [] so the renderer can rely on the array.
         speakers: segStrings((seg as unknown as Record<string, unknown>).speakers),
         scriptureRefs: segStrings((seg as unknown as Record<string, unknown>).scriptureRefs),
+        // Sub-chapters: absent on rows segmented before the field existed → [].
+        children: normChildren((seg as unknown as Record<string, unknown>).children),
       }))
     : []
   const songs = Array.isArray(s.songs) ? s.songs.map(normalizeSong).filter((x): x is SermonSong => x !== null) : []

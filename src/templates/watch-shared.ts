@@ -116,6 +116,43 @@ export function primarySegment(sermon: PublishedSermon): SermonSegment | null {
   return longest(substantive.length > 0 ? substantive : segs)
 }
 
+/**
+ * The full time span of the service's MESSAGE that a clipped player should play.
+ *
+ * The ONLY message that legitimately fans across multiple chapters is a
+ * DISCUSSION: one panel working through several topics is a single message, and
+ * a card must play all of those topic chapters back to back, not stop at the end
+ * of the first/longest one. So for a discussion this returns
+ * [first discussion chapter start, last discussion chapter end].
+ *
+ * Everything else stays a SINGLE chapter via `primarySegment`. This is
+ * deliberate and load-bearing: a sermon-format service with two "sermon"
+ * chapters is TWO DIFFERENT sermons (two preachers), which the library already
+ * splits into separate per-sermon cards (`expandSermonUnits` / `sermonSegmentCard`)
+ * — those must NEVER be merged into one span. By only spanning discussions, a
+ * multi-sermon service handed to `messageCard` (e.g. the "More to watch" rail)
+ * keeps the exact old single-chapter behavior and can't accidentally combine two
+ * sermons. Returns null only when the video has no chapters at all.
+ */
+export function messageSpan(sermon: PublishedSermon): { startSec: number; endSec: number } | null {
+  if (sermon.format === 'discussion') {
+    const topics = sermon.segments.filter((s) => s.type === 'discussion')
+    if (topics.length > 0) {
+      let lo = topics[0].startSec
+      let hi = topics[0].endSec
+      for (const s of topics) {
+        if (s.startSec < lo) lo = s.startSec
+        if (s.endSec > hi) hi = s.endSec
+      }
+      return { startSec: lo, endSec: hi }
+    }
+  }
+  // Sermons (and a discussion with no discussion chapter) keep single-chapter
+  // behavior — never merge separate sermons.
+  const primary = primarySegment(sermon)
+  return primary ? { startSec: primary.startSec, endSec: primary.endSec } : null
+}
+
 /** A short, human speaker line ("with Pastor John" / "John and Mark"). */
 export function speakerLine(speakers: string[]): string | null {
   const clean = speakers.map((s) => s.trim()).filter(Boolean)
@@ -269,7 +306,9 @@ export function messageCard(sermon: PublishedSermon, sid?: string): string {
   const noun = formatNoun(sermon.format)
   const topic = primaryTopic(sermon)
   const topicChip = topic ? topicSlug(topic) : ''
-  const primary = primarySegment(sermon)
+  // Clip the inline player to the WHOLE message, not the single longest chapter:
+  // a discussion split into topic chapters plays all of them, not just topic one.
+  const span = messageSpan(sermon)
   const date = shortDate(sermon.publishedAt)
   const speaker = speakerLine(sermon.speakers)
   const preview = previewText(sermon)
@@ -281,7 +320,7 @@ export function messageCard(sermon: PublishedSermon, sid?: string): string {
     .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
   const posterAlt = `${sermon.title} — ${noun.toLowerCase()} from Morning Star Christian Church in Boise, Idaho`
   return `<article class="watch-card watch-card--message" data-topic="${escapeHtml(topicChip)}"${sid ? ` data-sid="${escapeHtml(sid)}"` : ''}>
-                        ${vplayer(sermon, primary, 'card', posterAlt)}
+                        ${vplayer(sermon, null, 'card', posterAlt, span)}
                         <div class="watch-card-body">
                             ${metaBits ? `<span class="watch-card-meta">${metaBits}</span>` : ''}
                             <span class="watch-card-title">${escapeHtml(sermon.title)}</span>
@@ -1096,6 +1135,17 @@ export function watchPlayerScript(): string {
                         else if (e.key === 'ArrowLeft') { lockSeek(Math.max(lo(), t - step)); e.preventDefault(); }
                     });
                     chapterData().forEach(function (c) { if (!c.el) return; c.el.addEventListener('click', function () { var t = c.seek; if (ready && player) { started = true; reveal(); doSeek(t); } else { pendingSeek = t; start(); } }); });
+                    // Sub-chapter rows (a chapter's children) seek like chapters but are
+                    // NOT added as scrubber markers (they would clutter the track). Only the
+                    // permalink's main chapter player wires them; inline cards have no list.
+                    if (hasChapterAttr) {
+                        Array.prototype.forEach.call(document.querySelectorAll('.watch-subchapter'), function (b) {
+                            b.addEventListener('click', function () {
+                                var t = parseFloat(b.getAttribute('data-seek') || '0') || 0;
+                                if (ready && player) { started = true; reveal(); doSeek(t); } else { pendingSeek = t; start(); }
+                            });
+                        });
+                    }
 
                     // Preload eagerly for the single hero; lazily (on approach + dwell) for cards.
                     root.__vpVisible = function (vis) {

@@ -7,7 +7,7 @@ import {
   lengthLabel,
   speakerLine,
   formatNoun,
-  primarySegment,
+  messageSpan,
   SEGMENT_LABEL,
   vplayer,
   watchPlayerScript,
@@ -35,7 +35,10 @@ export const watchItemBody = (
   const dateLabel = longDate(sermon.publishedAt)
   const len = lengthLabel(sermon.durationSec)
   const speaker = speakerLine(sermon.speakers)
-  const primary = primarySegment(sermon)
+  // Default landing + scrubber bounds span the whole message (a discussion's
+  // topic children play as one continuous video), so the permalink opens at the
+  // message start and never mid-message when a later part is the longest.
+  const messageSeg = messageSpan(sermon)
 
   const refs = Array.from(
     new Set(sermon.segments.flatMap((s) => s.scriptureRefs).filter(Boolean)),
@@ -55,6 +58,25 @@ export const watchItemBody = (
       // it, so a multi-message service reads "with Dmitri" on one and "with Zach"
       // on the other instead of both names on each.
       const who = seg.speakers && seg.speakers.length > 0 ? speakerLine(seg.speakers) : null
+      // A chapter that the segmenter broke into parts (e.g. a discussion working
+      // through several topics) lists those parts as indented, tappable sub-rows
+      // under it. They jump within the one chapter; they are not chapters of their
+      // own (no scrubber marker, no kind badge). Usually there are none.
+      const subs =
+        seg.children && seg.children.length > 0
+          ? `<ol class="watch-subchapters">
+                                    ${seg.children
+                                      .map(
+                                        (c) => `<li>
+                                        <button class="watch-subchapter" type="button" data-seek="${Math.floor(c.startSec)}">
+                                            <span class="watch-subchapter-time">${escapeHtml(mmss(c.startSec))}</span>
+                                            <span class="watch-subchapter-title">${escapeHtml(c.title)}</span>
+                                        </button>
+                                    </li>`,
+                                      )
+                                      .join('\n                                    ')}
+                                </ol>`
+          : ''
       return `<li>
                                 <button class="watch-chapter" type="button" data-seek="${Math.floor(seg.startSec)}">
                                     <span class="watch-chapter-time">${escapeHtml(mmss(seg.startSec))}</span>
@@ -64,6 +86,7 @@ export const watchItemBody = (
                                         ${seg.summary ? `<span class="watch-chapter-note">${escapeHtml(seg.summary)}</span>` : ''}
                                     </span>
                                 </button>
+                                ${subs}
                             </li>`
     })
     .join('\n                            ')
@@ -118,7 +141,7 @@ export const watchItemBody = (
 
                 <div class="watch-permalink-grid">
                     <div class="watch-permalink-main">
-                        ${vplayer(sermon, primary, 'main', posterAlt)}
+                        ${vplayer(sermon, null, 'main', posterAlt, messageSeg)}
 
                         ${sermon.summary ? `<p class="watch-feature-blurb" style="font-size: var(--text-body); color: var(--text-primary-soft); max-width: 68ch;">${escapeHtml(sermon.summary)}</p>` : ''}
                         ${refChips}

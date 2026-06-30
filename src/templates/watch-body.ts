@@ -545,6 +545,9 @@ function chapterSearchText(segments: PublishedSermon['segments']): string[] {
     if (DISTINCTIVE_SEG.has(seg.type)) out.add(seg.type)
     add(seg.title)
     if (SUBSTANTIVE_SEG.has(seg.type)) add(seg.summary)
+    // Sub-chapter titles are real, distinctive content (a topic the message worked
+    // through), so a search for that part finds the service.
+    for (const c of seg.children || []) add(c.title)
   }
   return [...out]
 }

@@ -10715,6 +10715,28 @@ const RAW_HOME_STYLES = `
         .watch-chapter-who { display: block; font-size: var(--text-small); color: var(--gold-dark); font-weight: var(--weight-medium); margin-top: 2px; }
         .watch-chapter-note { font-size: var(--text-small); line-height: var(--leading-normal); color: var(--text-muted); margin-top: 2px; }
 
+        /* A chapter's sub-sections (children): an indented, hairline-anchored group
+           of jump-to-part rows under the chapter. Quieter than a chapter row so the
+           chapter list still reads as the primary structure. */
+        .watch-subchapters {
+            list-style: none; margin: 4px 0 var(--space-xs) clamp(20px, 8%, 40px);
+            padding: 2px 0 2px var(--space-md); border-left: 1px solid var(--text-hairline);
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        .watch-subchapter {
+            display: grid; grid-template-columns: auto 1fr; gap: var(--space-sm); align-items: baseline;
+            width: 100%; text-align: left; appearance: none; background: none; border: none;
+            padding: 5px 6px; border-radius: var(--radius-sm); cursor: pointer;
+            transition: background var(--motion-fast) var(--ease-out-soft), color var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-subchapter:hover { background: color-mix(in oklab, var(--gold) 5%, transparent); }
+        .watch-subchapter-time {
+            font-family: var(--font-body), 'Inter', sans-serif; font-size: var(--text-micro);
+            font-weight: var(--weight-medium); color: var(--gold-dark); font-variant-numeric: tabular-nums;
+        }
+        .watch-subchapter-title { font-size: var(--text-small); color: var(--text-muted); font-weight: var(--weight-medium); line-height: var(--leading-snug); }
+        .watch-subchapter:hover .watch-subchapter-title { color: var(--text-primary); }
+
         .watch-aside-block { margin-bottom: var(--space-lg); }
         .watch-aside-label {
             font-size: var(--text-eyebrow); font-weight: var(--weight-bold);

@@ -402,9 +402,12 @@ export function watchPlayerScript(): string {
                     // Adopt mode: the same-page home->watch morph hands this feature an
                     // already-playing external player (its iframe lives in an overlay host
                     // that can't be re-parented without reloading). We never self-build then,
-                    // and fullscreen targets that host instead of our empty stage.
+                    // and fullscreen targets that host instead of our own root.
                     var adoptMode = root.hasAttribute('data-adopt');
-                    var fsTarget = stage;
+                    // Fullscreen the whole player (stage + control bar), not just the video
+                    // stage, so the custom controls stay usable in native fullscreen. Adopt
+                    // mode overrides this to the external video host (see __adoptPlayer).
+                    var fsTarget = root;
 
                     var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false, started = false, revealed = false;
                     // Muted auto-start used by the home "play" hand-off: the browser
@@ -855,9 +858,9 @@ export function watchPlayerScript(): string {
                         if (cssFs) return; cssFs = true;
                         neutralizeCard(true);
                         document.documentElement.classList.add('vplayer-fs-lock');
-                        if (fsTarget === stage) {
-                            // The stage is inside our root -> fullscreen the whole player so the
-                            // control bar (and its exit button) rides along, pinned at the bottom.
+                        if (fsTarget === root) {
+                            // Normal mode -> pseudo-fullscreen the whole player so the control
+                            // bar (and its exit button) rides along, pinned at the bottom.
                             root.classList.add('is-fs', 'is-fs-css');
                         } else {
                             // Adopt mode: the live iframe host sits OUTSIDE our root and covers

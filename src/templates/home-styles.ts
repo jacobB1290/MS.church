@@ -10537,15 +10537,23 @@ export const homeStyles = (): string => `
         .vplayer-btn--fs { color: var(--text-muted); }
         .vplayer-btn--fs:hover { background: var(--surface); color: var(--gold-dark); }
 
-        /* Fullscreen: the stage becomes the top-layer fullscreen element; the
-           iframe fills it on black, corners squared, no aspect-ratio box. */
-        .vplayer-stage:fullscreen,
-        .vplayer-stage:-webkit-full-screen {
-            width: 100vw; height: 100vh; aspect-ratio: auto;
-            border-radius: 0; box-shadow: none; background: #000;
+        /* Native fullscreen: the WHOLE player (stage + control bar) is the top-layer
+           fullscreen element, so the custom scrubber/play/exit stay usable on black.
+           Same layout as the iOS pseudo-fullscreen below. Kept as its own rule (not
+           merged with .is-fs-css) so an unknown :fullscreen pseudo can't drop it. */
+        .vplayer:fullscreen, .vplayer:-webkit-full-screen {
+            width: 100vw; height: 100vh; max-width: none; margin: 0;
+            background: #000; display: flex; flex-direction: column;
         }
-        .vplayer-stage:fullscreen .vplayer-frame,
-        .vplayer-stage:-webkit-full-screen .vplayer-frame { width: 100%; height: 100%; }
+        .vplayer:fullscreen .vplayer-stage, .vplayer:-webkit-full-screen .vplayer-stage {
+            flex: 1 1 auto; width: 100%; height: auto; min-height: 0;
+            aspect-ratio: auto; border-radius: 0; box-shadow: none;
+        }
+        .vplayer:fullscreen .vplayer-frame, .vplayer:-webkit-full-screen .vplayer-frame { width: 100%; height: 100%; }
+        .vplayer:fullscreen .vplayer-bar, .vplayer:-webkit-full-screen .vplayer-bar {
+            flex: 0 0 auto; margin: 8px; margin-bottom: max(8px, env(safe-area-inset-bottom));
+        }
+        .vplayer:fullscreen .vplayer-flag, .vplayer:-webkit-full-screen .vplayer-flag { display: none; }
 
         /* CSS pseudo-fullscreen fallback (iOS Safari only fullscreens a <video>,
            and ours is inside a cross-origin YouTube iframe, so the Fullscreen API

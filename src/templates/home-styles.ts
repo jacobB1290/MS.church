@@ -10496,6 +10496,31 @@ export const homeStyles = (): string => `
         }
         .vplayer-tip[hidden] { display: none; }
         @media (prefers-reduced-motion: reduce) { .vplayer-tip { transition: opacity var(--motion-fast) linear; } }
+        /* The pointed "message" chip on the full-service scrubber: a gold pin that
+           points down to where the sermon/discussion starts. Shows when the player
+           opens, fades after a few seconds, returns on scrub; tap to jump there. */
+        .vplayer-flag {
+            position: absolute; bottom: calc(100% + 9px); left: 0;
+            appearance: none; border: 0; cursor: pointer;
+            background: var(--gold); color: var(--white);
+            font-family: var(--font-body), 'Inter', sans-serif;
+            font-size: var(--text-micro); font-weight: var(--weight-semibold);
+            letter-spacing: var(--tracking-wide); text-transform: uppercase; line-height: 1; white-space: nowrap;
+            padding: 5px 11px; border-radius: var(--radius-pill); box-shadow: var(--shadow-md); z-index: 7;
+            opacity: 0; pointer-events: none;
+            transform: translateX(-50%) translateY(4px);
+            transition: opacity var(--motion-medium) var(--ease-out-soft), transform var(--motion-medium) var(--ease-out-soft);
+        }
+        .vplayer-flag.is-visible { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+        .vplayer-flag[hidden] { display: none; }
+        .vplayer-flag::after {
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border: 5px solid transparent; border-top-color: var(--gold);
+            transition: border-top-color var(--motion-fast) var(--ease-out-soft);
+        }
+        .vplayer-flag:hover { background: var(--gold-dark); }
+        .vplayer-flag:hover::after { border-top-color: var(--gold-dark); }
+        @media (prefers-reduced-motion: reduce) { .vplayer-flag { transition: opacity var(--motion-medium) linear; } }
         .vplayer-toggle {
             appearance: none; border: 1px solid var(--text-hairline); background: var(--white);
             color: var(--text-muted); cursor: pointer; flex: 0 0 auto;
@@ -10536,6 +10561,10 @@ export const homeStyles = (): string => `
             display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
             margin-top: var(--space-sm); font-size: var(--text-small); color: var(--text-muted);
         }
+        /* Topic chip(s) promoted to the head, just under the meta line. */
+        .watch-permalink-topics { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-sm); }
+        /* Transcript demoted to the very bottom (an SEO surface, rarely read). */
+        .watch-transcript-section { margin-top: var(--space-2xl); }
         .watch-permalink-grid {
             display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
             gap: var(--space-2xl); align-items: start; margin-top: var(--space-lg);

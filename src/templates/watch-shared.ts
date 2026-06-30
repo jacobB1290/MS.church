@@ -175,6 +175,10 @@ export function vplayer(
   const duration = Math.floor(sermon.durationSec ?? 0)
   const isMain = variant === 'main'
   const isFeature = variant === 'feature'
+  // The full-service permalink marks where the message starts with a pointed chip
+  // on the scrubber (replacing the old "Just the message" toggle).
+  const msgNoun = formatNoun(sermon.format)
+  const showFlag = isMain && !!seg
   const badgeText = badge === undefined ? (variant === 'card' ? formatNoun(sermon.format) : '') : badge || ''
   const kindBadge = badgeText ? `<span class="watch-card-kind">${escapeHtml(badgeText)}</span>` : ''
   const loadAttr = isFeature ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"'
@@ -194,12 +198,12 @@ export function vplayer(
                                     <span class="vplayer-time" data-cur>0:00</span>
                                     <div class="vplayer-scrub" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                                         <div class="vplayer-track"><div class="vplayer-fill"></div><div class="vplayer-knob"></div></div>
+                                        ${showFlag ? `<button class="vplayer-flag" type="button" hidden aria-label="Jump to the ${escapeHtml(msgNoun.toLowerCase())}"><span>${escapeHtml(msgNoun)}</span></button>` : ''}
                                         <div class="vplayer-tip" hidden aria-hidden="true"></div>
                                     </div>
                                     <span class="vplayer-time" data-dur>0:00</span>
                                 </div>
                                 <div class="vplayer-actions">
-                                    ${isMain ? `<button class="vplayer-toggle" type="button" data-act="mode" aria-pressed="false">Full service</button>` : ''}
                                     <button class="vplayer-btn vplayer-btn--fs" type="button" data-act="fullscreen" aria-label="Full screen">${ICON_EXPAND}</button>
                                 </div>
                             </div>
@@ -370,6 +374,7 @@ export function watchPlayerScript(): string {
                     var scrub = root.querySelector('.vplayer-scrub');
                     var track = root.querySelector('.vplayer-track');
                     var tip = root.querySelector('.vplayer-tip');
+                    var flag = root.querySelector('.vplayer-flag');
                     var curEl = root.querySelector('[data-cur]');
                     var durEl = root.querySelector('[data-dur]');
                     var toggleBtn = root.querySelector('[data-act="mode"]');
@@ -436,13 +441,17 @@ export function watchPlayerScript(): string {
                     var raf = null, fallbackTimer = null, dwellTimer = null, frameId = 'vpf-' + Math.random().toString(36).slice(2);
                     var poolRec = { evict: evictIdle };
 
+                    // The permalink is the FULL service now (the "Just the message" toggle is
+                    // gone; a pointed chip on the scrubber marks where the message starts).
+                    // Default lands on the message; ?t deep-links a moment; ?full=1 starts at 0.
                     if (root.hasAttribute('data-allow-params')) {
+                        mode = 'full';
                         try {
                             var params = new URLSearchParams(location.search);
-                            if (params.get('full') === '1') mode = 'full';
                             var tp = parseFloat(params.get('t'));
-                            if (!isNaN(tp)) { mode = 'full'; pendingSeek = tp; }
-                        } catch (e) {}
+                            if (!isNaN(tp)) pendingSeek = tp;
+                            else if (params.get('full') !== '1' && hasSeg()) pendingSeek = segStart();
+                        } catch (e) { if (hasSeg()) pendingSeek = segStart(); }
                     }
 
                     function lo() { return mode === 'segment' ? segStart() : 0; }
@@ -512,6 +521,7 @@ export function watchPlayerScript(): string {
                         root.classList.remove('is-loading');
                         poster.style.display = 'none'; bar.hidden = false;
                         durEl.textContent = fmt(span()); buildMarkers(); loop();
+                        showFlag(9000);   // hold longer on first load; scrubbing re-shows it for 5s
                         showUnmute();
                     }
 
@@ -751,6 +761,28 @@ export function watchPlayerScript(): string {
                         }
                         return best;
                     }
+                    // The pointed "message" chip above the scrubber: marks where the sermon /
+                    // discussion starts. Shows when the bar appears, fades after a few seconds,
+                    // and returns whenever you touch the timeline. Tapping it jumps to the message.
+                    var flagTimer = null;
+                    function positionFlag() {
+                        if (!flag) return;
+                        var fr = (segStart() - lo()) / span();
+                        flag.style.left = (Math.min(0.985, Math.max(0.015, fr)) * 100) + '%';
+                    }
+                    function showFlag(ms) {
+                        if (!flag || mode !== 'full' || !hasSeg()) return;
+                        positionFlag();
+                        flag.hidden = false; void flag.offsetWidth; flag.classList.add('is-visible');
+                        clearTimeout(flagTimer);
+                        flagTimer = setTimeout(function () { flag.classList.remove('is-visible'); }, ms || 5000);
+                    }
+                    if (flag) flag.addEventListener('click', function (e) {
+                        e.preventDefault(); e.stopPropagation();
+                        var t = segStart();
+                        if (ready && player) { started = true; reveal(); doSeek(t); } else { pendingSeek = t; start(); }
+                        showFlag();
+                    });
                     // Set/replace the chapter source for a data-fed player (the hub hero) and
                     // refresh markers. Called on load and whenever the selected service changes.
                     root.__setChapters = function (arr) {
@@ -824,7 +856,7 @@ export function watchPlayerScript(): string {
                         if (dragRaf != null) { cancelAnimationFrame(dragRaf); dragRaf = null; }
                         var f = (e && typeof e.clientX === 'number' && e.type !== 'pointercancel') ? frac(e.clientX) : pendingFrac;
                         f = snapFrac(f);
-                        paintFrac(f); hideTip();
+                        paintFrac(f); hideTip(); showFlag();
                         lockSeek(lo() + f * span());
                     }
                     scrub.addEventListener('pointerdown', function (e) {
@@ -836,7 +868,7 @@ export function watchPlayerScript(): string {
                         window.addEventListener('pointermove', onScrubMove);
                         window.addEventListener('pointerup', endScrub);
                         window.addEventListener('pointercancel', endScrub);
-                        var f0 = snapFrac(frac(e.clientX)); queuePreview(f0); showTip(f0);
+                        var f0 = snapFrac(frac(e.clientX)); queuePreview(f0); showTip(f0); showFlag();
                     });
                     // Hover preview (no drag): glide the chapter label along the track so you
                     // can read chapter names before seeking. Touch has no hover -> skip.

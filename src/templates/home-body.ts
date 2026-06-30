@@ -32,6 +32,11 @@ export type HomeWatchView = {
   // from its timestamp via the watch hand-off (chapters only show when this is the
   // current latest service, so it matches the live poster + the /watch feature).
   videoId: string | null
+  // Raw publish ISO of that latest published service. The poster's video is filled
+  // client-side from the YouTube playlist feed, which isn't reliably newest-first;
+  // this lets the client keep the feed item ONLY when it's genuinely newer, so the
+  // poster never plays an older/other video than the most recent service.
+  publishedAt: string | null
   formatNoun: string | null
   title: string | null
   dateLabel: string | null
@@ -384,7 +389,7 @@ export const homeBody = (watch: HomeWatchView): string => `
                     <div class="watch-plate" data-reveal-sync>
                         <div class="watch-plate-main">
                             <span class="live-status" style="display:none"><span class="live-dot"></span><span class="live-status-text">Live Soon</span></span>
-                            <div class="video-embed-wrapper" id="video-embed-wrapper">
+                            <div class="video-embed-wrapper" id="video-embed-wrapper" data-latest-video="${escapeHtml(watch.videoId || '')}" data-latest-pub="${escapeHtml(watch.publishedAt || '')}">
                                 <div class="video-thumbnail" id="video-thumbnail">
                                     <img class="video-thumbnail-img" id="video-thumbnail-img"
                                          alt="Latest Sunday worship service from Morning Star Christian Church in Boise, Idaho. Live-streamed and archived on our YouTube channel."

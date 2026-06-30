@@ -2,6 +2,8 @@ import { subpageHeader } from './shared/subpage-header.js'
 import { footer } from './shared/footer.js'
 import {
   messageCard,
+  sermonSegmentCard,
+  cleanSegmentTitle,
   songCard,
   escapeHtml,
   watchPlayerScript,
@@ -347,6 +349,44 @@ function messageGrid(id: string, items: PublishedSermon[], active: boolean, grou
                     </div>`
 }
 
+// A single card slot in the Sermons tab. `seg: null` is a whole-service card
+// (the normal case); a set `seg` is one sermon of a multi-sermon service, split
+// out so each preacher's sermon is its own library entry. `sid` keys the card to
+// its search-index entry.
+type SermonUnit = { sermon: PublishedSermon; seg: PublishedSermon['segments'][number] | null; sid: string }
+
+/**
+ * Expand the sermon services into card slots. A service with two or more sermon
+ * chapters (two preachers) becomes one card PER sermon; every other service stays
+ * a single whole-service card. Discussions are never split (handled in their own
+ * tab). Order is preserved: newest service first, sermons within a service in play
+ * order.
+ */
+function expandSermonUnits(services: PublishedSermon[]): SermonUnit[] {
+  const out: SermonUnit[] = []
+  for (const s of services) {
+    const sermonSegs = s.segments.filter((seg) => seg.type === 'sermon')
+    if (sermonSegs.length >= 2) {
+      sermonSegs.forEach((seg, i) => out.push({ sermon: s, seg, sid: `${s.slug}--s${i + 1}` }))
+    } else {
+      out.push({ sermon: s, seg: null, sid: s.slug })
+    }
+  }
+  return out
+}
+
+function sermonUnitGrid(id: string, units: SermonUnit[], active: boolean, groupLabel: string): string {
+  return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'} data-shown="${PAGE_INITIAL}">
+                        <h3 class="watch-group-label" aria-hidden="true">${groupLabel}<span class="watch-group-count" data-group-count></span></h3>
+                        <div class="watch-grid">
+                        ${units
+                          .map((u) => (u.seg ? sermonSegmentCard(u.sermon, u.seg, u.sid) : messageCard(u.sermon, u.sid)))
+                          .join('\n                        ')}
+                        </div>
+                        ${moreButton(units.length)}
+                    </div>`
+}
+
 function songGrid(id: string, songItems: SongItem[], active: boolean, groupLabel: string): string {
   return `<div class="watch-panel${active ? ' is-active' : ''}" id="panel-${id}" role="tabpanel" aria-labelledby="tab-${id}"${active ? '' : ' hidden'} data-shown="${PAGE_INITIAL}">
                         <h3 class="watch-group-label" aria-hidden="true">${groupLabel}<span class="watch-group-count" data-group-count></span></h3>
@@ -526,8 +566,38 @@ function messageEntry(s: PublishedSermon): SearchEntry {
   }
 }
 
+/** Search entry for ONE sermon of a split multi-sermon service: keyed to its card's
+ *  sid, with that sermon's own title/speaker/summary/scripture so it's found on its
+ *  own terms (searching "Dmitri" or "Walking in Wisdom" returns just that card). */
+function sermonSegmentEntry(
+  s: PublishedSermon,
+  seg: PublishedSermon['segments'][number],
+  sid: string,
+): SearchEntry {
+  const speakers = seg.speakers && seg.speakers.length > 0 ? seg.speakers : s.speakers
+  return {
+    i: sid,
+    t: 'sermon',
+    ti: cleanMessageTitle(cleanSegmentTitle(seg.title)),
+    wh: speakers.join(' '),
+    to: s.topics || [],
+    su: (seg.summary || '')
+      .toLowerCase()
+      .split(/[^a-z0-9']+/)
+      .filter((w) => w && !TITLE_NOISE.has(w))
+      .join(' '),
+    sc: scriptureSearchText(seg.scriptureRefs || []),
+    tg: s.seo?.tags || [],
+    dt: dateSearchText(s.publishedAt),
+    ch: chapterSearchText([seg]),
+  }
+}
+
 function renderLibrary(items: PublishedSermon[]): string {
   const sermons = items.filter((s) => s.format !== 'discussion')
+  // A service with two+ sermons becomes one card per sermon; the Sermons tab, its
+  // topic filter, and the search index all key off these units, not the services.
+  const sermonUnits = expandSermonUnits(sermons)
   const discussions = items.filter((s) => s.format === 'discussion')
   // Songs recur week to week, so de-dupe by title: one card per unique song,
   // its newest occurrence, with a count. (items is newest-first, so the first
@@ -553,8 +623,8 @@ function renderLibrary(items: PublishedSermon[]): string {
     filter: (active: boolean) => string
     panel: (active: boolean) => string
   }[] = []
-  if (sermons.length > 0)
-    tabs.push({ id: 'sermons', label: 'Sermons', count: sermons.length, filter: (a) => topicFilter('sermons', a, sermons), panel: (a) => messageGrid('sermons', sermons, a, 'Sermons') })
+  if (sermonUnits.length > 0)
+    tabs.push({ id: 'sermons', label: 'Sermons', count: sermonUnits.length, filter: (a) => topicFilter('sermons', a, sermonUnits.map((u) => u.sermon)), panel: (a) => sermonUnitGrid('sermons', sermonUnits, a, 'Sermons') })
   if (songItems.length > 0)
     tabs.push({ id: 'songs', label: 'Songs', count: songItems.length, filter: (a) => songFilter('songs', a, songItems), panel: (a) => songGrid('songs', songItems, a, 'Songs') })
   if (discussions.length > 0)
@@ -564,7 +634,7 @@ function renderLibrary(items: PublishedSermon[]): string {
   // The search index: every searchable item (messages + songs) keyed to its card's
   // data-sid. Built from the same data the cards render, so it can never drift.
   const searchIndex: SearchEntry[] = [
-    ...sermons.map(messageEntry),
+    ...sermonUnits.map((u) => (u.seg ? sermonSegmentEntry(u.sermon, u.seg, u.sid) : messageEntry(u.sermon))),
     ...discussions.map(messageEntry),
     ...songItems.map((it, i): SearchEntry => ({
       i: 'song-' + i,

@@ -294,6 +294,60 @@ export function messageCard(sermon: PublishedSermon, sid?: string): string {
                     </article>`
 }
 
+/** Drop a redundant "Sermon:"/"Discussion:" prefix from a chapter title — the kind
+ *  already shows as the card's badge, so the card title reads as just the subject. */
+export function cleanSegmentTitle(t: string): string {
+  const raw = (t || '').trim()
+  return raw.replace(/^(sermon|discussion)\s*:\s*/i, '').trim() || raw
+}
+
+/**
+ * Per-sermon card — when one service holds more than one sermon (two preachers in
+ * an evening), the Sermons library lists EACH sermon as its own card instead of
+ * collapsing the service into one. Same inline-player card as `messageCard`, but
+ * scoped to this sermon's chapter: it plays just that sermon, shows that sermon's
+ * title + its own speaker, and "Full service" opens the permalink at this sermon's
+ * moment. `sid` keys the card to its own search-index entry.
+ */
+export function sermonSegmentCard(sermon: PublishedSermon, seg: SermonSegment, sid: string): string {
+  const noun = seg.type === 'discussion' ? 'Discussion' : 'Sermon'
+  const topic = primaryTopic(sermon)
+  const topicChip = topic ? topicSlug(topic) : ''
+  const date = shortDate(sermon.publishedAt)
+  // Prefer this sermon's own speaker; fall back to the service speakers only if the
+  // chapter names no one (older rows not yet given per-chapter speakers).
+  const who = speakerLine(seg.speakers && seg.speakers.length > 0 ? seg.speakers : sermon.speakers)
+  const title = cleanSegmentTitle(seg.title)
+  const raw = (seg.summary ?? '').trim()
+  const preview =
+    raw.length <= 160
+      ? raw
+      : `${(() => {
+          const cut = raw.slice(0, 157)
+          const ls = cut.lastIndexOf(' ')
+          return (ls > 80 ? cut.slice(0, ls) : cut).trim()
+        })()}…`
+  const metaBits = [
+    date ? `<span class="watch-card-date">${date}</span>` : null,
+    who ? `<span class="watch-card-who">with ${escapeHtml(who)}</span>` : null,
+  ]
+    .filter(Boolean)
+    .join('<span class="watch-card-dot" aria-hidden="true">·</span>')
+  const posterAlt = `${title} — ${noun.toLowerCase()} from Morning Star Christian Church in Boise, Idaho`
+  return `<article class="watch-card watch-card--message" data-topic="${escapeHtml(topicChip)}" data-sid="${escapeHtml(sid)}">
+                        ${vplayer(sermon, null, 'card', posterAlt, { startSec: seg.startSec, endSec: seg.endSec }, noun)}
+                        <div class="watch-card-body">
+                            ${metaBits ? `<span class="watch-card-meta">${metaBits}</span>` : ''}
+                            <span class="watch-card-title">${escapeHtml(title)}</span>
+                            ${preview ? `<span class="watch-card-preview">${escapeHtml(preview)}</span>` : ''}
+                            <div class="watch-card-foot">
+                                ${topic ? `<a class="watch-card-topic" href="/watch/topic/${escapeHtml(topicChip)}">${escapeHtml(topic)}</a>` : '<span></span>'}
+                                <a class="watch-card-full" href="/watch/${escapeHtml(sermon.slug)}?t=${Math.floor(seg.startSec)}">Full service<span aria-hidden="true"> &rarr;</span></a>
+                            </div>
+                        </div>
+                    </article>`
+}
+
 /**
  * Song card — for the Songs library. The card IS an inline player scoped to the
  * song's clip (segOverride), so tapping it plays just that song. Title + who led

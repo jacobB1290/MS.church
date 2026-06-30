@@ -175,6 +175,10 @@ export function vplayer(
   const duration = Math.floor(sermon.durationSec ?? 0)
   const isMain = variant === 'main'
   const isFeature = variant === 'feature'
+  // The full-service permalink marks where the message starts with a pointed chip
+  // on the scrubber (replacing the old "Just the message" toggle).
+  const msgNoun = formatNoun(sermon.format)
+  const showFlag = isMain && !!seg
   const badgeText = badge === undefined ? (variant === 'card' ? formatNoun(sermon.format) : '') : badge || ''
   const kindBadge = badgeText ? `<span class="watch-card-kind">${escapeHtml(badgeText)}</span>` : ''
   const loadAttr = isFeature ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"'
@@ -194,12 +198,12 @@ export function vplayer(
                                     <span class="vplayer-time" data-cur>0:00</span>
                                     <div class="vplayer-scrub" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                                         <div class="vplayer-track"><div class="vplayer-fill"></div><div class="vplayer-knob"></div></div>
+                                        ${showFlag ? `<button class="vplayer-flag" type="button" hidden aria-label="Jump to the ${escapeHtml(msgNoun.toLowerCase())}"><span>${escapeHtml(msgNoun)}</span></button>` : ''}
                                         <div class="vplayer-tip" hidden aria-hidden="true"></div>
                                     </div>
                                     <span class="vplayer-time" data-dur>0:00</span>
                                 </div>
                                 <div class="vplayer-actions">
-                                    ${isMain ? `<button class="vplayer-toggle" type="button" data-act="mode" aria-pressed="false">Full service</button>` : ''}
                                     <button class="vplayer-btn vplayer-btn--fs" type="button" data-act="fullscreen" aria-label="Full screen">${ICON_EXPAND}</button>
                                 </div>
                             </div>
@@ -370,6 +374,7 @@ export function watchPlayerScript(): string {
                     var scrub = root.querySelector('.vplayer-scrub');
                     var track = root.querySelector('.vplayer-track');
                     var tip = root.querySelector('.vplayer-tip');
+                    var flag = root.querySelector('.vplayer-flag');
                     var curEl = root.querySelector('[data-cur]');
                     var durEl = root.querySelector('[data-dur]');
                     var toggleBtn = root.querySelector('[data-act="mode"]');
@@ -397,9 +402,12 @@ export function watchPlayerScript(): string {
                     // Adopt mode: the same-page home->watch morph hands this feature an
                     // already-playing external player (its iframe lives in an overlay host
                     // that can't be re-parented without reloading). We never self-build then,
-                    // and fullscreen targets that host instead of our empty stage.
+                    // and fullscreen targets that host instead of our own root.
                     var adoptMode = root.hasAttribute('data-adopt');
-                    var fsTarget = stage;
+                    // Fullscreen the whole player (stage + control bar), not just the video
+                    // stage, so the custom controls stay usable in native fullscreen. Adopt
+                    // mode overrides this to the external video host (see __adoptPlayer).
+                    var fsTarget = root;
 
                     var player = null, ready = false, scrubbing = false, pendingSeek = null, fellBack = false, started = false, revealed = false;
                     // Muted auto-start used by the home "play" hand-off: the browser
@@ -436,13 +444,17 @@ export function watchPlayerScript(): string {
                     var raf = null, fallbackTimer = null, dwellTimer = null, frameId = 'vpf-' + Math.random().toString(36).slice(2);
                     var poolRec = { evict: evictIdle };
 
+                    // The permalink is the FULL service now (the "Just the message" toggle is
+                    // gone; a pointed chip on the scrubber marks where the message starts).
+                    // Default lands on the message; ?t deep-links a moment; ?full=1 starts at 0.
                     if (root.hasAttribute('data-allow-params')) {
+                        mode = 'full';
                         try {
                             var params = new URLSearchParams(location.search);
-                            if (params.get('full') === '1') mode = 'full';
                             var tp = parseFloat(params.get('t'));
-                            if (!isNaN(tp)) { mode = 'full'; pendingSeek = tp; }
-                        } catch (e) {}
+                            if (!isNaN(tp)) pendingSeek = tp;
+                            else if (params.get('full') !== '1' && hasSeg()) pendingSeek = segStart();
+                        } catch (e) { if (hasSeg()) pendingSeek = segStart(); }
                     }
 
                     function lo() { return mode === 'segment' ? segStart() : 0; }
@@ -512,6 +524,7 @@ export function watchPlayerScript(): string {
                         root.classList.remove('is-loading');
                         poster.style.display = 'none'; bar.hidden = false;
                         durEl.textContent = fmt(span()); buildMarkers(); loop();
+                        showFlag(9000);   // hold longer on first load; scrubbing re-shows it for 5s
                         showUnmute();
                     }
 
@@ -751,6 +764,28 @@ export function watchPlayerScript(): string {
                         }
                         return best;
                     }
+                    // The pointed "message" chip above the scrubber: marks where the sermon /
+                    // discussion starts. Shows when the bar appears, fades after a few seconds,
+                    // and returns whenever you touch the timeline. Tapping it jumps to the message.
+                    var flagTimer = null;
+                    function positionFlag() {
+                        if (!flag) return;
+                        var fr = (segStart() - lo()) / span();
+                        flag.style.left = (Math.min(0.985, Math.max(0.015, fr)) * 100) + '%';
+                    }
+                    function showFlag(ms) {
+                        if (!flag || mode !== 'full' || !hasSeg()) return;
+                        positionFlag();
+                        flag.hidden = false; void flag.offsetWidth; flag.classList.add('is-visible');
+                        clearTimeout(flagTimer);
+                        flagTimer = setTimeout(function () { flag.classList.remove('is-visible'); }, ms || 5000);
+                    }
+                    if (flag) flag.addEventListener('click', function (e) {
+                        e.preventDefault(); e.stopPropagation();
+                        var t = segStart();
+                        if (ready && player) { started = true; reveal(); doSeek(t); } else { pendingSeek = t; start(); }
+                        showFlag();
+                    });
                     // Set/replace the chapter source for a data-fed player (the hub hero) and
                     // refresh markers. Called on load and whenever the selected service changes.
                     root.__setChapters = function (arr) {
@@ -758,6 +793,16 @@ export function watchPlayerScript(): string {
                             ? arr.map(function (c) { return { seek: Math.floor(c.seek != null ? c.seek : (c.t || 0)), title: (c.title || '').trim() }; })
                             : null;
                         buildMarkers();
+                    };
+                    // Report whether this player is mid-play and where, so a jump to the
+                    // service permalink can resume exactly there instead of its cue point.
+                    root.__playbackState = function () {
+                        var playing = false, t = 0;
+                        try {
+                            if (player && player.getPlayerState) { var st = player.getPlayerState(); playing = (st === 1 || st === 3); }
+                            if (player && player.getCurrentTime) t = player.getCurrentTime() || 0;
+                        } catch (e) {}
+                        return { playing: started && playing, time: t };
                     };
                     function setMode(next) {
                         if (mode === next) return; mode = next;
@@ -794,22 +839,73 @@ export function watchPlayerScript(): string {
                     // restored on exit. iOS only fullscreens <video>, so the request
                     // is a guarded no-op there.
                     function fsActive() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-                    function enterFs() {
-                        var req = fsTarget.requestFullscreen || fsTarget.webkitRequestFullscreen || fsTarget.msRequestFullscreen;
-                        if (!req) return;
-                        if (fsCard) { fsCard.style.backdropFilter = 'none'; fsCard.style.webkitBackdropFilter = 'none'; }
-                        try { var r = req.call(fsTarget); if (r && r.catch) r.catch(function () {}); } catch (e) {}
+                    function nativeFsOk() { return !!(fsTarget.requestFullscreen || fsTarget.webkitRequestFullscreen || fsTarget.msRequestFullscreen); }
+                    function neutralizeCard(on) { if (!fsCard) return; fsCard.style.backdropFilter = on ? 'none' : ''; fsCard.style.webkitBackdropFilter = on ? 'none' : ''; }
+                    // CSS pseudo-fullscreen: iOS Safari only fullscreens a <video>, and ours
+                    // lives in a cross-origin YouTube iframe, so the Fullscreen API is absent
+                    // on the stage div there (the expand button used to do nothing). Pin the
+                    // player to the viewport instead so it works on iPhone/iPad too.
+                    var cssFs = false, cssExitBtn = null, fsPrevCss = '';
+                    function addCssExitBtn(host) {
+                        if (cssExitBtn) return;
+                        var b = document.createElement('button');
+                        b.type = 'button'; b.className = 'vplayer-fs-exit'; b.setAttribute('aria-label', 'Exit full screen');
+                        b.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg>';
+                        b.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); exitFs(); });
+                        host.appendChild(b); cssExitBtn = b;
                     }
-                    function exitFs() { try { (document.exitFullscreen || document.webkitExitFullscreen || function () {}).call(document); } catch (e) {} }
+                    function enterCssFs() {
+                        if (cssFs) return; cssFs = true;
+                        neutralizeCard(true);
+                        document.documentElement.classList.add('vplayer-fs-lock');
+                        if (fsTarget === root) {
+                            // Normal mode -> pseudo-fullscreen the whole player so the control
+                            // bar (and its exit button) rides along, pinned at the bottom.
+                            root.classList.add('is-fs', 'is-fs-css');
+                        } else {
+                            // Adopt mode: the live iframe host sits OUTSIDE our root and covers
+                            // the stage; fix it to the viewport and float an exit button on it.
+                            fsPrevCss = fsTarget.style.cssText;
+                            fsTarget.style.position = 'fixed'; fsTarget.style.left = '0'; fsTarget.style.top = '0';
+                            fsTarget.style.width = '100vw'; fsTarget.style.height = '100dvh';
+                            fsTarget.style.borderRadius = '0'; fsTarget.style.zIndex = '9999';
+                            root.classList.add('is-fs');
+                            addCssExitBtn(fsTarget);
+                        }
+                    }
+                    function exitCssFs() {
+                        if (!cssFs) return; cssFs = false;
+                        root.classList.remove('is-fs', 'is-fs-css');
+                        document.documentElement.classList.remove('vplayer-fs-lock');
+                        neutralizeCard(false);
+                        if (cssExitBtn) { try { cssExitBtn.parentNode && cssExitBtn.parentNode.removeChild(cssExitBtn); } catch (e) {} cssExitBtn = null; }
+                        if (fsTarget !== stage) {
+                            fsTarget.style.cssText = fsPrevCss;
+                            try { window.dispatchEvent(new Event('resize')); } catch (e) {}   // let the morph re-align the host
+                        }
+                    }
+                    function enterFs() {
+                        if (nativeFsOk()) {
+                            neutralizeCard(true);
+                            var req = fsTarget.requestFullscreen || fsTarget.webkitRequestFullscreen || fsTarget.msRequestFullscreen;
+                            try { var r = req.call(fsTarget); if (r && r.catch) r.catch(function () { enterCssFs(); }); } catch (e) { enterCssFs(); }
+                        } else { enterCssFs(); }
+                    }
+                    function exitFs() {
+                        if (cssFs) { exitCssFs(); return; }
+                        try { (document.exitFullscreen || document.webkitExitFullscreen || function () {}).call(document); } catch (e) {}
+                    }
+                    function isFs() { return cssFs || fsActive() === fsTarget; }
                     function onFsChange() {
                         var on = fsActive() === fsTarget;
-                        root.classList.toggle('is-fs', on);
-                        if (!on && fsCard) { fsCard.style.backdropFilter = ''; fsCard.style.webkitBackdropFilter = ''; }
+                        root.classList.toggle('is-fs', on || cssFs);
+                        if (!on && !cssFs) neutralizeCard(false);
                     }
                     if (fsBtn) {
-                        fsBtn.addEventListener('click', function () { if (!started && !adoptMode) start(); if (fsActive() === fsTarget) exitFs(); else enterFs(); });
+                        fsBtn.addEventListener('click', function () { if (!started && !adoptMode) start(); if (isFs()) exitFs(); else enterFs(); });
                         document.addEventListener('fullscreenchange', onFsChange);
                         document.addEventListener('webkitfullscreenchange', onFsChange);
+                        document.addEventListener('keydown', function (e) { if (cssFs && (e.key === 'Escape' || e.key === 'Esc')) exitFs(); });
                     }
                     // Move/up are bound to the WINDOW for the drag's duration, so a finger that
                     // wanders off the thin track (or vertically) keeps registering; pointercancel
@@ -824,7 +920,7 @@ export function watchPlayerScript(): string {
                         if (dragRaf != null) { cancelAnimationFrame(dragRaf); dragRaf = null; }
                         var f = (e && typeof e.clientX === 'number' && e.type !== 'pointercancel') ? frac(e.clientX) : pendingFrac;
                         f = snapFrac(f);
-                        paintFrac(f); hideTip();
+                        paintFrac(f); hideTip(); showFlag();
                         lockSeek(lo() + f * span());
                     }
                     scrub.addEventListener('pointerdown', function (e) {
@@ -836,7 +932,7 @@ export function watchPlayerScript(): string {
                         window.addEventListener('pointermove', onScrubMove);
                         window.addEventListener('pointerup', endScrub);
                         window.addEventListener('pointercancel', endScrub);
-                        var f0 = snapFrac(frac(e.clientX)); queuePreview(f0); showTip(f0);
+                        var f0 = snapFrac(frac(e.clientX)); queuePreview(f0); showTip(f0); showFlag();
                     });
                     // Hover preview (no drag): glide the chapter label along the track so you
                     // can read chapter names before seeking. Touch has no hover -> skip.
@@ -866,13 +962,36 @@ export function watchPlayerScript(): string {
 
                 document.querySelectorAll('.vplayer').forEach(initPlayer);
 
-                // Seamless arrival from the home "play" tap (/watch?play=1): start the
-                // feature player the moment we land so the video is already running as
-                // the cross-document morph settles — one continuous, uninterrupted play.
+                // Jumping to a service permalink from the hub hero ("Chapters & transcript")
+                // or a library card ("Full service"): if the source player is mid-play, carry
+                // the position + a play flag so the permalink resumes exactly there. If it's
+                // idle, fall through to the link's natural target — the hero opens the whole
+                // service from the top (?full=1), a card opens its authored message/song moment
+                // (the href as rendered). A normal navigation drops the gesture's sound grant,
+                // so the permalink resumes muted with a one-tap sound pill (the ?play=1 path).
+                document.addEventListener('click', function (e) {
+                    var a = e.target && e.target.closest ? e.target.closest('a.watch-feature-fulllink, a.watch-card-full') : null;
+                    if (!a) return;
+                    var href = a.getAttribute('href'); if (!href || href.charAt(0) === '#') return;
+                    var isHero = a.classList.contains('watch-feature-fulllink');
+                    var card = isHero ? null : a.closest('.watch-card');
+                    var vp = isHero ? document.querySelector('.vplayer--feature') : (card && card.querySelector('.vplayer'));
+                    var ps = vp && vp.__playbackState ? vp.__playbackState() : null;
+                    var dest;
+                    if (ps && ps.playing) dest = href.split('?')[0] + '?t=' + Math.floor(ps.time) + '&play=1';
+                    else if (isHero) dest = href.split('?')[0] + '?full=1';   // idle hero -> from the top
+                    else return;   // idle card -> its authored library point; let the link navigate
+                    e.preventDefault();
+                    try { window.location.assign(dest); } catch (er) { window.location.href = dest; }
+                });
+
+                // Seamless arrival from a "play" tap (?play=1): start the hero/permalink
+                // player the moment we land so the video is already running. Covers both the
+                // home->/watch morph (feature) and a playing hero/card -> permalink jump (main).
                 try {
                     if (new URLSearchParams(location.search).get('play') === '1') {
-                        var feat = document.querySelector('.vplayer--feature');
-                        if (feat && feat.__autostartMuted) feat.__autostartMuted();
+                        var arrival = document.querySelector('.vplayer--feature, .vplayer--main');
+                        if (arrival && arrival.__autostartMuted) arrival.__autostartMuted();
                     }
                 } catch (e) {}
             })();

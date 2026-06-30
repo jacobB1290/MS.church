@@ -2304,6 +2304,22 @@ export const homeScripts = (): string => `
                 // Hardcoded fallback video ID — updated periodically, used when API is unreachable
                 var FALLBACK_VIDEO_ID = '8EP7I-lXdFI';
 
+                // The latest published SERVICE the server already knows (newest in the CRM
+                // sermon feed), stamped on the wrapper. The YouTube playlist feed is NOT
+                // reliably newest-first (playlist order, a non-service upload, a stale/failed
+                // feed), so the poster could play "some other one." Only let the feed's first
+                // item drive the poster when it is genuinely newer than this known service;
+                // otherwise play the known service (mirrors how /watch picks its hero).
+                var SRV_VIDEO_ID = (videoWrapper && videoWrapper.getAttribute('data-latest-video')) || '';
+                var SRV_VIDEO_PUB = (videoWrapper && videoWrapper.getAttribute('data-latest-pub')) || '';
+                function preferredPosterVideo(feedVid, feedPub) {
+                    if (!SRV_VIDEO_ID) return feedVid || '';          // no known service -> trust the feed
+                    if (!feedVid) return SRV_VIDEO_ID;                // no feed item -> the known service
+                    if (feedVid === SRV_VIDEO_ID) return feedVid;     // same -> the feed item (carries thumb/meta)
+                    if (feedPub && SRV_VIDEO_PUB && Date.parse(feedPub) > Date.parse(SRV_VIDEO_PUB)) return feedVid; // genuinely newer
+                    return SRV_VIDEO_ID;                              // older/other -> the known latest service
+                }
+
                 function setupVideo(videoId, thumbnailUrl) {
                     _ytVideoId = videoId;
                     _latestThumbnailUrl = thumbnailUrl || ('https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg');
@@ -2665,19 +2681,27 @@ export const homeScripts = (): string => `
                     .then(function(r) { return r.json(); })
                     .then(function(data) {
                         var videos = (data && data.videos) || [];
-                        if (videos.length > 0) {
-                            setupVideo(videos[0].videoId, videos[0].thumbnailUrl);
-                            populateLatestMeta(videos[0]);
-                            injectLatestVideoSchema(videos[0]);
-                            if (videos[1]) populateRecentCard(2, videos[1]);
-                            if (videos[2]) populateRecentCard(3, videos[2]);
+                        var v = videos[0];
+                        var pick = preferredPosterVideo(v && v.videoId, v && v.publishedAt);
+                        if (v && pick === v.videoId) {
+                            // The feed's latest IS the service to show (newest, or matches).
+                            setupVideo(v.videoId, v.thumbnailUrl);
+                            populateLatestMeta(v);
+                            injectLatestVideoSchema(v);
+                        } else if (pick) {
+                            // The feed's first item is older/other than our known latest
+                            // service (or the feed was empty) -> play the real latest service.
+                            // Its caption is already server-rendered in library mode.
+                            setupVideo(pick, null);
                         } else {
                             setupVideo(FALLBACK_VIDEO_ID, null);
                         }
+                        if (videos[1]) populateRecentCard(2, videos[1]);
+                        if (videos[2]) populateRecentCard(3, videos[2]);
                     })
                     .catch(function() {
-                        // Network error — use fallback video
-                        setupVideo(FALLBACK_VIDEO_ID, null);
+                        // Network error — play the known latest service if we have one.
+                        setupVideo(SRV_VIDEO_ID || FALLBACK_VIDEO_ID, null);
                     });
 
                 // Auto-play video during Sunday service (9:00am - 9:45am MT)

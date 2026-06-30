@@ -70,14 +70,12 @@ export const watchItemBody = (
                             </div>`
       : ''
 
-  const topicLinks =
+  // Topic moves up to the head (next to the title), where it's actually seen.
+  const topicHead =
     sermon.topics.length > 0
-      ? `<div class="watch-aside-block">
-                            <p class="watch-aside-label">Topic</p>
-                            <div class="watch-card-topics">
-                                <a class="watch-card-topic" href="/watch/topic/${escapeHtml(topicSlug(sermon.topics[0]))}">${escapeHtml(sermon.topics[0])}</a>
-                            </div>
-                        </div>`
+      ? `<div class="watch-permalink-topics" aria-label="Topic">
+                        <a class="watch-card-topic" href="/watch/topic/${escapeHtml(topicSlug(sermon.topics[0]))}">${escapeHtml(sermon.topics[0])}</a>
+                    </div>`
       : ''
 
   const transcript = sermon.transcript
@@ -114,6 +112,7 @@ export const watchItemBody = (
                     <span class="watch-permalink-kicker">${escapeHtml(noun)}</span>
                     <h1 class="watch-permalink-title">${escapeHtml(sermon.title)}</h1>
                     <div class="watch-permalink-meta">${metaBits}</div>
+                    ${topicHead}
                 </section>
 
                 <div class="watch-permalink-grid">
@@ -122,7 +121,6 @@ export const watchItemBody = (
 
                         ${sermon.summary ? `<p class="watch-feature-blurb" style="font-size: var(--text-body); color: var(--text-primary-soft); max-width: 68ch;">${escapeHtml(sermon.summary)}</p>` : ''}
                         ${refChips}
-                        ${transcript}
                     </div>
 
                     <aside class="watch-permalink-aside" aria-label="Chapters and details">
@@ -136,7 +134,6 @@ export const watchItemBody = (
                         </div>`
                             : ''
                         }
-                        ${topicLinks}
                         <div class="watch-aside-block">
                             <a class="event-link-btn teaser-cta" href="/visit">Plan a Visit</a>
                         </div>
@@ -144,6 +141,8 @@ export const watchItemBody = (
                 </div>
 
                 ${relatedBlock}
+
+                ${transcript ? `<section class="watch-transcript-section" aria-label="Transcript">${transcript}</section>` : ''}
             </main>
 
             ${footer()}

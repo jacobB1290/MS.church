@@ -10496,6 +10496,32 @@ export const homeStyles = (): string => `
         }
         .vplayer-tip[hidden] { display: none; }
         @media (prefers-reduced-motion: reduce) { .vplayer-tip { transition: opacity var(--motion-fast) linear; } }
+        /* The pointed "message" chip on the full-service scrubber: a gold pin that
+           sits BELOW the bar and points up to where the sermon/discussion starts.
+           Shows when the player opens, fades after a few seconds, returns on scrub;
+           tap to jump there. */
+        .vplayer-flag {
+            position: absolute; top: calc(100% + 9px); left: 0;
+            appearance: none; border: 0; cursor: pointer;
+            background: var(--gold); color: var(--white);
+            font-family: var(--font-body), 'Inter', sans-serif;
+            font-size: var(--text-micro); font-weight: var(--weight-semibold);
+            letter-spacing: var(--tracking-wide); text-transform: uppercase; line-height: 1; white-space: nowrap;
+            padding: 5px 11px; border-radius: var(--radius-pill); box-shadow: var(--shadow-md); z-index: 7;
+            opacity: 0; pointer-events: none;
+            transform: translateX(-50%) translateY(-4px);
+            transition: opacity var(--motion-medium) var(--ease-out-soft), transform var(--motion-medium) var(--ease-out-soft);
+        }
+        .vplayer-flag.is-visible { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+        .vplayer-flag[hidden] { display: none; }
+        .vplayer-flag::after {
+            content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            border: 5px solid transparent; border-bottom-color: var(--gold);
+            transition: border-bottom-color var(--motion-fast) var(--ease-out-soft);
+        }
+        .vplayer-flag:hover { background: var(--gold-dark); }
+        .vplayer-flag:hover::after { border-bottom-color: var(--gold-dark); }
+        @media (prefers-reduced-motion: reduce) { .vplayer-flag { transition: opacity var(--motion-medium) linear; } }
         .vplayer-toggle {
             appearance: none; border: 1px solid var(--text-hairline); background: var(--white);
             color: var(--text-muted); cursor: pointer; flex: 0 0 auto;
@@ -10511,15 +10537,54 @@ export const homeStyles = (): string => `
         .vplayer-btn--fs { color: var(--text-muted); }
         .vplayer-btn--fs:hover { background: var(--surface); color: var(--gold-dark); }
 
-        /* Fullscreen: the stage becomes the top-layer fullscreen element; the
-           iframe fills it on black, corners squared, no aspect-ratio box. */
-        .vplayer-stage:fullscreen,
-        .vplayer-stage:-webkit-full-screen {
-            width: 100vw; height: 100vh; aspect-ratio: auto;
-            border-radius: 0; box-shadow: none; background: #000;
+        /* Native fullscreen: the WHOLE player (stage + control bar) is the top-layer
+           fullscreen element, so the custom scrubber/play/exit stay usable on black.
+           Same layout as the iOS pseudo-fullscreen below. Kept as its own rule (not
+           merged with .is-fs-css) so an unknown :fullscreen pseudo can't drop it. */
+        .vplayer:fullscreen, .vplayer:-webkit-full-screen {
+            width: 100vw; height: 100vh; max-width: none; margin: 0;
+            background: #000; display: flex; flex-direction: column;
         }
-        .vplayer-stage:fullscreen .vplayer-frame,
-        .vplayer-stage:-webkit-full-screen .vplayer-frame { width: 100%; height: 100%; }
+        .vplayer:fullscreen .vplayer-stage, .vplayer:-webkit-full-screen .vplayer-stage {
+            flex: 1 1 auto; width: 100%; height: auto; min-height: 0;
+            aspect-ratio: auto; border-radius: 0; box-shadow: none;
+        }
+        .vplayer:fullscreen .vplayer-frame, .vplayer:-webkit-full-screen .vplayer-frame { width: 100%; height: 100%; }
+        .vplayer:fullscreen .vplayer-bar, .vplayer:-webkit-full-screen .vplayer-bar {
+            flex: 0 0 auto; margin: 8px; margin-bottom: max(8px, env(safe-area-inset-bottom));
+        }
+        .vplayer:fullscreen .vplayer-flag, .vplayer:-webkit-full-screen .vplayer-flag { display: none; }
+
+        /* CSS pseudo-fullscreen fallback (iOS Safari only fullscreens a <video>,
+           and ours is inside a cross-origin YouTube iframe, so the Fullscreen API
+           is a no-op on the stage div). Pin the whole player to the viewport with
+           the control bar — and its exit button — still reachable at the bottom. */
+        html.vplayer-fs-lock, html.vplayer-fs-lock body { overflow: hidden; }
+        .vplayer.is-fs-css {
+            position: fixed; inset: 0; z-index: 9999; margin: 0;
+            width: 100vw; height: 100vh; height: 100dvh;
+            background: #000; display: flex; flex-direction: column;
+        }
+        .vplayer.is-fs-css .vplayer-stage {
+            flex: 1 1 auto; width: 100%; height: auto; min-height: 0;
+            aspect-ratio: auto; border-radius: 0; box-shadow: none;
+        }
+        .vplayer.is-fs-css .vplayer-bar {
+            flex: 0 0 auto; margin: 8px; margin-bottom: max(8px, env(safe-area-inset-bottom));
+        }
+        /* The message chip would fall off the bottom edge in fullscreen — hide it. */
+        .vplayer.is-fs-css .vplayer-flag { display: none; }
+        /* Floating exit button for adopt-mode pseudo-fullscreen, where the bar sits
+           behind the external video host. */
+        .vplayer-fs-exit {
+            position: absolute; z-index: 2; cursor: pointer;
+            top: max(12px, env(safe-area-inset-top)); right: 16px;
+            width: 44px; height: 44px; border: 0; border-radius: var(--radius-circle);
+            background: rgba(0, 0, 0, 0.6); color: var(--white);
+            display: flex; align-items: center; justify-content: center;
+            transition: background var(--motion-fast) var(--ease-out-soft);
+        }
+        .vplayer-fs-exit:hover { background: rgba(0, 0, 0, 0.78); }
 
         /* --- Permalink layout --- */
         .watch-permalink-head { margin-bottom: var(--space-lg); }
@@ -10536,6 +10601,10 @@ export const homeStyles = (): string => `
             display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
             margin-top: var(--space-sm); font-size: var(--text-small); color: var(--text-muted);
         }
+        /* Topic chip(s) promoted to the head, just under the meta line. */
+        .watch-permalink-topics { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-sm); }
+        /* Transcript demoted to the very bottom (an SEO surface, rarely read). */
+        .watch-transcript-section { margin-top: var(--space-2xl); }
         .watch-permalink-grid {
             display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
             gap: var(--space-2xl); align-items: start; margin-top: var(--space-lg);

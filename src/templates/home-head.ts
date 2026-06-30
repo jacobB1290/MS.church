@@ -292,25 +292,29 @@ export const homeHead = (): string => {
         <!-- RSS feed of upcoming events — feed-discovery signal for Google Discover and AI crawlers -->
         <link rel="alternate" type="application/rss+xml" title="Morning Star Christian Church — Events &amp; News" href="/feed.xml">
 
-        <!-- Preconnect for Performance -->
-        <link rel="preconnect" href="https://www.youtube-nocookie.com">
-        <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
+        <!-- DNS warm-up for the only cross-origin origins, all below the fold
+             (YouTube embeds in the watch section, calendar flyer images on lh3).
+             They carry no above-the-fold cost, so dns-prefetch is the right hint:
+             a preconnect would open TLS sockets that sit idle while competing with
+             the hero image for the throttled mobile pipe. Every above-the-fold
+             asset (fonts, hero photo) is same-origin and self-hosted, so no
+             preconnect is warranted. -->
         <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-        <!-- Watch-section sermon thumbnails are served from img.youtube.com;
-             warm the DNS early (they sit below the fold, so dns-prefetch is
-             the right cost — no wasted preconnect socket up front). -->
         <link rel="dns-prefetch" href="https://img.youtube.com">
 
-        <!-- Preload LCP hero image — three preload candidates, one per format.
-             Browsers preload only the format whose type they support, so an
-             AVIF-capable browser preloads the AVIF (~139 KB) and skips the
-             others, while older browsers fall through to JPG (~308 KB).
-             Avoids the double-load you'd get from a single JPG preload
-             plus an AVIF CSS background. -->
-        <link rel="preload" as="image" href="https://ms.church/static/church-building.avif" type="image/avif" fetchpriority="high">
-        <link rel="preload" as="image" href="https://ms.church/static/church-building.webp" type="image/webp" fetchpriority="high">
-        <link rel="preload" as="image" href="https://ms.church/static/church-building.jpg" type="image/jpeg" fetchpriority="high">
+        <!-- Preload the LCP hero image, scoped to the variant each viewport paints.
+             The hero is a CSS background-image that differs by breakpoint:
+             hero-mobile (~43 KB) at 960px and below, church-building (~142 KB) at
+             961px and up. The preload MUST match the breakpoint, or it wastes the
+             pipe on an unused image AND leaves the real LCP image undiscovered
+             until the CSS parses. AVIF-only is deliberate: a type-scoped preload is
+             fetched by every browser that supports that type, so listing
+             avif+webp+jpg makes a modern browser download all three. Non-AVIF
+             browsers fall through the CSS image-set with no preload. Keep these two
+             URLs in lockstep with the .hero image-set rules in home-styles.ts. -->
+        <link rel="preload" as="image" href="/static/hero-mobile.avif" type="image/avif" media="(max-width: 960px)" fetchpriority="high">
+        <link rel="preload" as="image" href="/static/church-building.avif" type="image/avif" media="(min-width: 961px)" fetchpriority="high">
 
         <!-- Eager prefetch of the primary hero CTA target. Speculation
              Rules (below) covers hover/touch intent for /about, /outreach,

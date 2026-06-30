@@ -14,11 +14,14 @@
     "@hono/node-server": "^1.19.6",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
+    "clean-css": "^5.3.3",
+    "esbuild": "^0.28.1",
     "hono": "^4.10.4",
     "motion": "^12.40.0"
   },
   "devDependencies": {
     "@hono/vite-dev-server": "^0.18.2",
+    "@types/clean-css": "^4.2.11",
     "@types/node": "^24.10.0",
     "pdf-lib": "^1.17.1",
     "playwright": "^1.60.0",

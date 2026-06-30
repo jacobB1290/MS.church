@@ -143,12 +143,12 @@ const DEMO_SERMON: PublishedSermon = {
     'Where real faith actually comes from, worked through Romans 10, and what it means to keep listening for it.',
   seo: null,
   segments: [
-    { startSec: 0, endSec: 200, type: 'welcome', title: 'Welcome', summary: '', scriptureRefs: [] },
-    { startSec: 200, endSec: 725, type: 'worship', title: 'Worship', summary: '', scriptureRefs: [] },
-    { startSec: 725, endSec: 880, type: 'scripture', title: 'Scripture reading', summary: '', scriptureRefs: ['Romans 10'] },
-    { startSec: 880, endSec: 2350, type: 'sermon', title: 'The Message', summary: 'Faith comes by hearing', scriptureRefs: ['Romans 10:14-17'] },
-    { startSec: 2350, endSec: 2670, type: 'prayer', title: 'Prayer & response', summary: '', scriptureRefs: [] },
-    { startSec: 2670, endSec: 2880, type: 'worship', title: 'Closing song', summary: '', scriptureRefs: [] },
+    { startSec: 0, endSec: 200, type: 'welcome', title: 'Welcome', summary: '', speakers: [], scriptureRefs: [] },
+    { startSec: 200, endSec: 725, type: 'worship', title: 'Worship', summary: '', speakers: [], scriptureRefs: [] },
+    { startSec: 725, endSec: 880, type: 'scripture', title: 'Scripture reading', summary: '', speakers: [], scriptureRefs: ['Romans 10'] },
+    { startSec: 880, endSec: 2350, type: 'sermon', title: 'The Message', summary: 'Faith comes by hearing', speakers: ['Pastor John'], scriptureRefs: ['Romans 10:14-17'] },
+    { startSec: 2350, endSec: 2670, type: 'prayer', title: 'Prayer & response', summary: '', speakers: [], scriptureRefs: [] },
+    { startSec: 2670, endSec: 2880, type: 'worship', title: 'Closing song', summary: '', speakers: [], scriptureRefs: [] },
   ],
   songs: [
     { title: 'Goodness of God', leader: 'Anna', kind: 'worship', topic: null, startSec: 230, endSec: 480 },

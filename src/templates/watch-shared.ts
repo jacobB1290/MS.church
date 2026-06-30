@@ -175,10 +175,24 @@ export function vplayer(
   const duration = Math.floor(sermon.durationSec ?? 0)
   const isMain = variant === 'main'
   const isFeature = variant === 'feature'
-  // The full-service permalink marks where the message starts with a pointed chip
-  // on the scrubber (replacing the old "Just the message" toggle).
-  const msgNoun = formatNoun(sermon.format)
-  const showFlag = isMain && !!seg
+  // The full-service permalink marks where each message starts with a pointed chip
+  // on the scrubber. One chip per sermon/discussion chapter, so a service with two
+  // sermons (or a sermon and a discussion) shows a chip for each. With more than one
+  // message the chip is labeled by that message's speaker (the distinguishing fact,
+  // e.g. "Dmitri" / "Zach"); a single-message service keeps one kind-labeled chip
+  // ("Sermon" / "Discussion").
+  const messageSegs = isMain
+    ? sermon.segments.filter((s) => s.type === 'sermon' || s.type === 'discussion')
+    : []
+  const multiMessage = messageSegs.length > 1
+  const flagsHtml = messageSegs
+    .map((s) => {
+      const noun = s.type === 'discussion' ? 'Discussion' : 'Sermon'
+      const who = multiMessage ? speakerLine(s.speakers ?? []) : null
+      const label = who || noun
+      return `<button class="vplayer-flag" type="button" hidden data-flag-start="${Math.floor(s.startSec)}" aria-label="${escapeHtml(`Jump to ${label}`)}"><span>${escapeHtml(label)}</span></button>`
+    })
+    .join('')
   const badgeText = badge === undefined ? (variant === 'card' ? formatNoun(sermon.format) : '') : badge || ''
   const kindBadge = badgeText ? `<span class="watch-card-kind">${escapeHtml(badgeText)}</span>` : ''
   const loadAttr = isFeature ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"'
@@ -198,7 +212,7 @@ export function vplayer(
                                     <span class="vplayer-time" data-cur>0:00</span>
                                     <div class="vplayer-scrub" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                                         <div class="vplayer-track"><div class="vplayer-fill"></div><div class="vplayer-knob"></div></div>
-                                        ${showFlag ? `<button class="vplayer-flag" type="button" hidden aria-label="Jump to the ${escapeHtml(msgNoun.toLowerCase())}"><span>${escapeHtml(msgNoun)}</span></button>` : ''}
+                                        ${flagsHtml}
                                         <div class="vplayer-tip" hidden aria-hidden="true"></div>
                                     </div>
                                     <span class="vplayer-time" data-dur>0:00</span>
@@ -374,7 +388,7 @@ export function watchPlayerScript(): string {
                     var scrub = root.querySelector('.vplayer-scrub');
                     var track = root.querySelector('.vplayer-track');
                     var tip = root.querySelector('.vplayer-tip');
-                    var flag = root.querySelector('.vplayer-flag');
+                    var flags = root.querySelectorAll('.vplayer-flag');
                     var curEl = root.querySelector('[data-cur]');
                     var durEl = root.querySelector('[data-dur]');
                     var toggleBtn = root.querySelector('[data-act="mode"]');
@@ -764,28 +778,58 @@ export function watchPlayerScript(): string {
                         }
                         return best;
                     }
-                    // The pointed "message" chip above the scrubber: marks where the sermon /
-                    // discussion starts. Shows when the bar appears, fades after a few seconds,
-                    // and returns whenever you touch the timeline. Tapping it jumps to the message.
+                    // The pointed "message" chips above the scrubber: one per sermon /
+                    // discussion chapter, marking where each message starts. They show when
+                    // the bar appears, fade after a few seconds, and return whenever you touch
+                    // the timeline. Tapping a chip jumps to that message. Each chip carries its
+                    // own data-flag-start, so a multi-message service gets a chip per message.
                     var flagTimer = null;
-                    function positionFlag() {
-                        if (!flag) return;
-                        var fr = (segStart() - lo()) / span();
-                        flag.style.left = (Math.min(0.985, Math.max(0.015, fr)) * 100) + '%';
+                    function flagStart(f) { return parseFloat(f.getAttribute('data-flag-start')) || 0; }
+                    function flagFrac(f) { return Math.min(0.985, Math.max(0.015, (flagStart(f) - lo()) / span())); }
+                    // Place each chip at its message's start, then push apart any that would
+                    // collide: two messages close in time (a 2-sermon service back to back)
+                    // would otherwise smear their opaque pills into an unreadable overlap.
+                    function positionFlags() {
+                        if (!flags.length) return;
+                        var tw = (track && track.getBoundingClientRect) ? track.getBoundingClientRect().width : 0;
+                        if (!tw) { for (var k = 0; k < flags.length; k++) flags[k].style.left = (flagFrac(flags[k]) * 100) + '%'; return; }
+                        var items = [];
+                        for (var i = 0; i < flags.length; i++) items.push({ f: flags[i], px: flagFrac(flags[i]) * tw, w: flags[i].getBoundingClientRect().width || 0 });
+                        items.sort(function (a, b) { return a.px - b.px; });
+                        for (var j = 1; j < items.length; j++) {
+                            var gap = items[j - 1].w / 2 + items[j].w / 2 + 6;
+                            if (items[j].px - items[j - 1].px < gap) items[j].px = items[j - 1].px + gap;
+                        }
+                        // If the de-collided run overran the right edge, slide it all back left.
+                        var last = items[items.length - 1];
+                        var over = last.px + last.w / 2 - tw;
+                        if (over > 0) for (var m = 0; m < items.length; m++) items[m].px -= over;
+                        for (var n = 0; n < items.length; n++) {
+                            var px = Math.max(items[n].w / 2, items[n].px);
+                            items[n].f.style.left = ((px / tw) * 100) + '%';
+                        }
                     }
                     function showFlag(ms) {
-                        if (!flag || mode !== 'full' || !hasSeg()) return;
-                        positionFlag();
-                        flag.hidden = false; void flag.offsetWidth; flag.classList.add('is-visible');
+                        if (!flags.length || mode !== 'full') return;
+                        // Un-hide (still opacity 0) so the chips have layout to measure for
+                        // de-collision, THEN place them, THEN fade in together.
+                        for (var i = 0; i < flags.length; i++) flags[i].hidden = false;
+                        void flags[0].offsetWidth;
+                        positionFlags();
+                        for (var k = 0; k < flags.length; k++) flags[k].classList.add('is-visible');
                         clearTimeout(flagTimer);
-                        flagTimer = setTimeout(function () { flag.classList.remove('is-visible'); }, ms || 5000);
+                        flagTimer = setTimeout(function () { for (var j = 0; j < flags.length; j++) flags[j].classList.remove('is-visible'); }, ms || 5000);
                     }
-                    if (flag) flag.addEventListener('click', function (e) {
-                        e.preventDefault(); e.stopPropagation();
-                        var t = segStart();
-                        if (ready && player) { started = true; reveal(); doSeek(t); } else { pendingSeek = t; start(); }
-                        showFlag();
-                    });
+                    for (var ff = 0; ff < flags.length; ff++) {
+                        (function (f) {
+                            f.addEventListener('click', function (e) {
+                                e.preventDefault(); e.stopPropagation();
+                                var t = flagStart(f);
+                                if (ready && player) { started = true; reveal(); doSeek(t); } else { pendingSeek = t; start(); }
+                                showFlag();
+                            });
+                        })(flags[ff]);
+                    }
                     // Set/replace the chapter source for a data-fed player (the hub hero) and
                     // refresh markers. Called on load and whenever the selected service changes.
                     root.__setChapters = function (arr) {

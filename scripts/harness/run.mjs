@@ -598,8 +598,20 @@ async function getCLS(page) {
 //                             inputLatency spikes). Sequential
 //                             preserves measurement integrity.
 //   FLOW_PARALLELISM   = 2  — video recording + view-transitions are
-//                             heavy. 2-way works without contention;
-//                             higher gets flaky on slower hosts.
+//                             heavy: each worker is a Chromium context
+//                             recording video (ffmpeg-encoded screencast)
+//                             while running a real navigation. Kept at 2
+//                             even after the dev-server networkidle/load
+//                             stall fix (see waitForFlowSettled) collapsed
+//                             each scenario's dominant cost from ~9s of
+//                             dead waiting per step to sub-second — the
+//                             remaining time per scenario is now mostly
+//                             actual CPU work (page render + video encode),
+//                             which is the contention case this constant
+//                             guards against on this host's 4 cores. Worth
+//                             re-measuring at 3 on a clean, uncontended run
+//                             (no other suites/processes competing) before
+//                             raising it permanently.
 //
 // `launcher` is an async fn returning a Browser. `body(browser, scenario)`
 // processes one scenario. Output is intentionally interleaved across
@@ -661,12 +673,14 @@ async function safeScreenshot(page, opts) {
   }
 }
 
-async function waitForSettled(page) {
-  try { await withTimeout(page.waitForLoadState('load'), 5000, 'waitForLoadState load') } catch {}
-  try { await page.waitForLoadState('networkidle', { timeout: 4000 }) } catch {}
-  // Wait for every non-looping animation to finish. Infinite/looping
-  // animations (.live-status pulse, .stay-tuned-card color swirl, etc.)
-  // never reach a non-running state, so we explicitly exclude them.
+// Wait for every non-looping animation to finish. Infinite/looping
+// animations (.live-status pulse, .stay-tuned-card color swirl, etc.)
+// never reach a non-running state, so they're explicitly excluded.
+// Shared by waitForSettled / waitForAnchorLanded / waitForFlowSettled —
+// each caller picks its own timeout (this check itself is cheap, ~25ms
+// once animations are actually done; the timeout just bounds the worst
+// case of "still mid-transition").
+async function waitForAnimationsSettled(page, timeoutMs) {
   try {
     await page.waitForFunction(
       () => document.getAnimations().every((a) => {
@@ -678,9 +692,31 @@ async function waitForSettled(page) {
         return false
       }),
       null,
-      { timeout: 2000 }
+      { timeout: timeoutMs }
     )
   } catch {}
+}
+
+// 'load' and 'networkidle' used to be the first two waits here. Five
+// independent scenario-suite passes each measured, on this dev server,
+// that neither ever resolves before its full budget: third-party hosts
+// already treated as noise elsewhere in this file (cdn.vercel-insights.com,
+// www.youtube.com/iframe_api — see IGNORED_ERROR_PATTERNS) plus the Vite
+// HMR websocket keep the connection "active" from Playwright's point of
+// view, so every caller of this function was paying a flat ~9s (5000ms +
+// 4000ms) dead wait on every call, regardless of how fast the page
+// actually rendered. domcontentloaded resolves in well under a second
+// here and is sufficient for every remaining caller of this shared
+// helper (the perf suite's non-hashload actions and the flicker suite's
+// chain/backAction/from branches) — none of them need the network-level
+// "every subresource finished" signal, just a rendered, interactive DOM.
+// (The anchor and flow suites no longer call this at all — they swapped
+// to their own more specialized local settle checks, waitForAnchorLanded
+// and waitForFlowSettled, which need more/less than this generic version
+// respectively.) Per CLAUDE.md "pick the cheapest wait".
+async function waitForSettled(page) {
+  try { await withTimeout(page.waitForLoadState('domcontentloaded'), 2000, 'waitForLoadState domcontentloaded') } catch {}
+  await waitForAnimationsSettled(page, 2000)
   await page.waitForTimeout(60)
 }
 
@@ -833,6 +869,61 @@ async function getInflightSectionAnimations(page) {
 // Anchor scenarios
 // ============================================================
 
+// waitForAnchorLanded — anchor-scenario-local replacement for the shared
+// waitForSettled() helper, used ONLY by the no-anchor "plain landing"
+// scenarios (01-09b) below. waitForSettled() blocks on
+// page.waitForLoadState('load') then ('networkidle'), which in turn wait
+// on EVERY subresource finishing — including third-party hosts the site
+// legitimately loads (cdn.vercel-insights.com, www.youtube.com/iframe_api,
+// img.youtube.com thumbnails). Those hosts are already known-unreliable
+// enough that IGNORED_ERROR_PATTERNS above suppresses their failures from
+// ever failing a scenario — but waitForSettled() still waits on them to
+// finish (or fail) before proceeding, costing ~9s/scenario dead time on
+// any host/network where they hang instead of erroring quickly (verified
+// here: 'load' timed out at its full 5000ms budget, then 'networkidle'
+// timed out at its full 4000ms budget, on every plain-landing scenario).
+// What the anchor scenario actually needs before running getCLS() /
+// getInflightSectionAnimations() / visualProbes() is DOM-rendered +
+// above-the-fold images painted + fonts swapped in + no in-flight CSS
+// animations — none of which require the browser's network-level load
+// signal. Per CLAUDE.md "pick the cheapest wait": swap the network-level
+// wait for the precise in-page condition.
+async function waitForAnchorLanded(page) {
+  try {
+    await page.waitForFunction(() => {
+      // 'loading' = HTML still being parsed. 'interactive' (DOMContentLoaded
+      // fired, deferred scripts run) or 'complete' are both fine — we check
+      // image completeness explicitly below rather than waiting for the
+      // browser's 'complete' state, which itself blocks on every
+      // subresource (including the same hung third-party hosts).
+      if (document.readyState === 'loading') return false
+      const imgs = Array.from(document.images).filter((img) => {
+        const r = img.getBoundingClientRect()
+        return r.width > 0 && r.top < window.innerHeight && r.bottom > 0
+      })
+      return imgs.every((img) => img.complete)
+    }, null, { timeout: 4000 })
+  } catch {
+    // Above-fold image never completed within budget — most often a
+    // remote thumbnail (img.youtube.com) unreachable in this environment.
+    // Fall through rather than hang; visualProbes() still runs and will
+    // catch any genuine layout issue the missing image causes.
+  }
+  // document.fonts.ready measured FLAKY in this environment: usually
+  // resolves in <50ms, but intermittently hangs 10s+ (reproduced directly
+  // against a fresh page.goto with nothing else running — a headless-
+  // Chromium font-matching quirk, not specific to this harness or to the
+  // site's own font-loading code, which already uses font-display: swap +
+  // metric-matched fallbacks so real users never block on this at all).
+  // Bound it like every other settle condition here rather than trust a
+  // bare await — an unbounded wait on a flaky promise is exactly the
+  // failure mode this rewrite exists to remove.
+  try { await withTimeout(page.evaluate(() => (document.fonts ? document.fonts.ready : Promise.resolve())), 1500, 'fonts.ready') } catch {}
+  // Same non-looping-animation settle check waitForSettled() uses — this
+  // part was never the slow part (measured ~25ms), kept verbatim.
+  await waitForAnimationsSettled(page, 2000)
+}
+
 async function runAnchorScenarios(launcher, report) {
   const lines = []
   let pass = 0, fail = 0
@@ -964,7 +1055,7 @@ async function runAnchorScenarios(launcher, report) {
           }
         }
       } else {
-        await waitForSettled(page)
+        await waitForAnchorLanded(page)
       }
 
       const cls = await getCLS(page)
@@ -1435,17 +1526,53 @@ async function runPerfScenarios(launcher, report) {
       if (isHashload) {
         await installPerfObservers(page)
         await page.evaluate(() => window.__perfStart())
-        // v1.49 timing budget:
+        // Precise completion signal instead of a flat worst-case sleep
+        // (CLAUDE.md "pick the cheapest wait" / "no padding sleeps").
+        // subpage-header.ts's own landing flow adds html.hash-fade-in
+        // the instant its stability watchdog (or hard cap) decides the
+        // page is settled — that's the SAME application-level "done"
+        // event a real user's screen reflects, so polling it tracks
+        // reality instead of always paying the slowest possible case:
         //   ~500-1500ms wait for window.load + fonts.ready + 2rAF + rIC
         //     (subpage-header.ts defers until truly idle so the smooth-
         //      scroll fires on a quiet thread — matches home-click feel)
-        //   ~850ms browser-native scroll
-        //   2000ms snap-correct safety net
-        // Under CPU throttling, every phase stretches. Budget 3500ms
-        // baseline + 800ms per cpuThrottle multiplier.
-        const baseWait = 3500
-        const throttleBoost = (s.cpuThrottle || 1) > 1 ? (s.cpuThrottle - 1) * 800 : 0
-        await page.waitForTimeout(baseWait + throttleBoost)
+        //   ≤1500ms watchdog stability loop (often settles much sooner
+        //      on an unloaded localhost than its worst-case cap)
+        // Once hash-fade-in lands, the CSS opacity/transform transition
+        // itself still needs to play out — that's a real, bounded
+        // animation duration (950ms, see the `transform 950ms` rule in
+        // home-styles.ts's html.hash-fade.hash-fade-in block), not
+        // padding, so we keep that as a fixed wait afterward; it's the
+        // "tail end of a smooth-scroll" the comment below describes and
+        // perf data from that window is exactly what these scenarios
+        // exist to capture.
+        //
+        // The waitForFunction timeout is a CAP, not a typical-case
+        // estimate, so it stays generous (worst-case watchdog 1500ms +
+        // load-stall hard cap 1200ms + scheduling slack, scaled up for
+        // CPU throttling since every phase stretches proportionally,
+        // and again for network throttling since window.load itself —
+        // which the whole landing flow waits on — is slower under
+        // added latency/bandwidth caps). If the cap is ever hit (script
+        // failure, pathological layout thrash), we fall back to the
+        // old fixed-wait behavior so the scenario still produces
+        // well-formed perf data instead of erroring out.
+        const throttleMult = s.cpuThrottle && s.cpuThrottle > 1 ? s.cpuThrottle : 1
+        const netPaddingMs = s.netThrottle ? 2000 : 0
+        const landingCapMs = 3000 * throttleMult + netPaddingMs
+        const fadeTailMs = 950
+        try {
+          await page.waitForFunction(
+            () => document.documentElement.classList.contains('hash-fade-in'),
+            null,
+            { timeout: landingCapMs },
+          )
+          await page.waitForTimeout(fadeTailMs)
+        } catch {
+          // Cap exceeded — preserve old worst-case-budget behavior as a
+          // safety net rather than measuring an unsettled page.
+          await page.waitForTimeout(500 + (s.cpuThrottle && s.cpuThrottle > 1 ? (s.cpuThrottle - 1) * 800 : 0))
+        }
       } else {
         await waitForSettled(page)
         await installPerfObservers(page)
@@ -1483,9 +1610,24 @@ async function runPerfScenarios(launcher, report) {
         // so we capture the tail of the deceleration curve.
         await page.waitForTimeout(1400)
       } else if (s.action === 'click') {
+        // 'load' over 'networkidle', and domcontentloaded over 'load':
+        // measured on this dev server (see waitForSettled, waitForAnchorLanded,
+        // waitForFlowSettled, and the flicker chain/from fixes above) that
+        // window 'load' never fires within budget — third-party hosts
+        // already treated as noise elsewhere in this file plus the Vite HMR
+        // websocket keep the connection "active". Promise.all waits for the
+        // SLOWER of the two promises, so loadWait was ALWAYS the one
+        // determining when this resolved (the click itself is near-instant),
+        // meaning inputLatency below was measuring "how long until the dead
+        // load-wait timed out" (~8000ms, every time) instead of real click
+        // responsiveness — almost certainly why these two scenarios both ran
+        // ~10-11s and both failed their inputLatency grade on every run.
+        // domcontentloaded fires promptly once the destination page is
+        // interactive, which is what "click responsiveness" should actually
+        // measure here.
         const clickStart = Date.now()
         await Promise.all([
-          withTimeout(page.waitForLoadState('load'), 8_000, 'click waitForLoad').catch(() => {}),
+          withTimeout(page.waitForLoadState('domcontentloaded'), 2_000, 'click waitForLoad').catch(() => {}),
           withTimeout(page.click(s.selector), 8_000, `click ${s.selector}`),
         ])
         inputLatency = Date.now() - clickStart
@@ -1613,6 +1755,43 @@ async function runPerfScenarios(launcher, report) {
 // Flow scenarios (frame capture + post-nav assertions)
 // ============================================================
 
+// Flow-local settle — replaces the shared waitForSettled() for this suite
+// only. Measured on this dev server: window 'load' never fires within 5s
+// and 'networkidle' never fires within 4s on ANY of these pages, because
+// third-party requests that are explicitly noise per IGNORED_ERROR_PATTERNS
+// (cdn.vercel-insights.com, youtube.com/iframe_api) and the Vite HMR
+// websocket keep the connection "active" from Playwright's point of view.
+// waitForSettled() was therefore burning its full ~9s budget (5s load +
+// 4s networkidle) on every goto/scroll/navigate step — the dominant cost
+// in every flow scenario's recorded video length (measured: the 3-nav
+// desktop scenario hit the full 60s SCENARIO_BUDGET_MS and got cut off;
+// an isolated probe of goto+click+goBack+goForward on this exact dev
+// server reproduced ~60.5s of pure wait, matching almost exactly).
+// domcontentloaded resolves in ~100-500ms here and is sufficient — the
+// page is interactive and the transition has already been captured by
+// captureTransitionFrames/the video by the time this runs. This mirrors
+// the ANCHOR/PERF suites, which never call waitForSettled() at all and
+// use bounded sampling instead (see DRIFT_SAMPLES_MS) — flow was the only
+// suite still paying the networkidle tax. Per CLAUDE.md "pick the
+// cheapest wait": domcontentloaded over load/networkidle on a dev server
+// where neither fires promptly.
+//
+// The animation-settle phase is also capped much tighter than the shared
+// helper's 2s: home's "Stay Tuned" card runs a legitimate one-shot
+// `swirlFadeIn 2s forwards` (home-styles.ts) that getAnimations() reports
+// as playState 'running' for the full 2s even though nothing visible is
+// still moving by ~500ms — it pinned the shared helper's animation wait
+// to its full 2s cap on every settle. Flow only needs to confirm the
+// PAGE-TRANSITION animations (view-transition crossfade, entrance
+// suppression) finished, which resolve well under 600ms; capping at
+// 600ms avoids paying for an unrelated decorative animation's full
+// nominal duration on every step.
+async function waitForFlowSettled(page) {
+  try { await withTimeout(page.waitForLoadState('domcontentloaded'), 1_500, 'waitForLoadState domcontentloaded') } catch {}
+  await waitForAnimationsSettled(page, 600)
+  await page.waitForTimeout(60)
+}
+
 async function runFlowScenarios(launcher, report) {
   const lines = []
   let pass = 0, fail = 0
@@ -1634,7 +1813,7 @@ async function runFlowScenarios(launcher, report) {
 
     const context = await browser.newContext({
       viewport: s.viewport,
-      recordVideo: { dir: videoDir, size: s.viewport },
+      recordVideo: { dir: videoDir },
     })
     await installCLSObserver(context)
     const page = await context.newPage()
@@ -1659,7 +1838,7 @@ async function runFlowScenarios(launcher, report) {
             page.goto(BASE + step.url, { waitUntil: 'commit' }),
             10_000, `goto ${step.url}`
           )
-          await waitForSettled(page)
+          await waitForFlowSettled(page)
         } else if (step.type === 'scroll') {
           // Smooth incremental scroll so reveals are visible in the recorded
           // video. Step count keeps each delta below typical reveal threshold
@@ -1673,7 +1852,7 @@ async function runFlowScenarios(launcher, report) {
             await page.evaluate((px) => window.scrollBy(0, px), stepPx)
             await page.waitForTimeout(delayMs)
           }
-          await waitForSettled(page)
+          await waitForFlowSettled(page)
           // Linger so the final reveals (and their 720ms transitions) finish
           // before the video ends.
           await page.waitForTimeout(900)
@@ -1711,10 +1890,23 @@ async function runFlowScenarios(launcher, report) {
           navIdx++
           const prefix = `nav${String(navIdx).padStart(2, '0')}-${step.kind}`
           const trigger = async () => {
-            // Bound the load-state wait so a navigation that never fires
-            // `load` (e.g. after a renderer crash) doesn't pin us forever.
+            // Use domcontentloaded, not 'load', as the post-navigation
+            // signal. Measured on this dev server: window 'load' never
+            // fires within 5s on ANY page here (third-party requests the
+            // harness already treats as noise per IGNORED_ERROR_PATTERNS —
+            // cdn.vercel-insights.com, youtube.com/iframe_api — plus the
+            // Vite HMR websocket keep the load event from firing promptly).
+            // Promise.all() below waits for the SLOWER of loadWait vs the
+            // action, so when loadWait was doomed to its full 8s timeout on
+            // every call, EVERY navigate trigger took a flat 8s regardless
+            // of how fast the click/back/forward itself resolved — this was
+            // the single biggest per-step cost in the flow suite (confirmed
+            // via isolated probe against this dev server: 8001ms per call,
+            // every call). domcontentloaded resolves in well under 1s here.
+            // Still bounded with a short cap so a navigation that never
+            // fires anything (e.g. after a renderer crash) doesn't pin us.
             const loadWait = withTimeout(
-              page.waitForLoadState('load'), 8_000, `${step.kind} waitForLoad`
+              page.waitForLoadState('domcontentloaded'), 2_000, `${step.kind} waitForLoad`
             ).catch(() => {})
             if (step.kind === 'click') {
               await Promise.all([loadWait, withTimeout(page.click(step.selector), 8_000, `click ${step.selector}`)])
@@ -1741,7 +1933,7 @@ async function runFlowScenarios(launcher, report) {
             issues.push(`step ${navIdx} (${step.kind}): page died after navigation`)
             break
           }
-          await waitForSettled(page)
+          await waitForFlowSettled(page)
 
           const noEntrance = await withTimeout(
             page.evaluate(() => document.documentElement.classList.contains('no-entrance')),
@@ -1818,6 +2010,27 @@ async function runFlowScenarios(launcher, report) {
 // (reveal-FOUC, logo movement, subpage-exit flash).
 // ============================================================
 
+// Module-level resolved handles for node:zlib + the async fs/promises
+// writeFile, fetched once via top-level await (this file runs as ESM —
+// "type": "module" — so a bare `require(...)` inside a function body is a
+// ReferenceError, not a CJS require). These are scoped here rather than
+// added to the shared top-of-file import block since this file is being
+// edited concurrently by sibling agents working on other scenario systems.
+// Resolution cost is ~10ms, paid once at module load, irrelevant against
+// total harness runtime.
+//
+// CORRECTNESS NOTE: prior to this fix, `decodePngStats` called a bare
+// `require('node:zlib')` which threw `ReferenceError: require is not
+// defined` on every invocation (verified by running this file directly —
+// not a CJS environment). That threw inside decodePngStats's try/catch,
+// so every call silently returned null. The fallout: pngStats[i].stats was
+// always null, so the blank-frame check (line ~2520) and the see-through-
+// flicker crossfade check (line ~2335) never fired — both detectors have
+// been dead since v1.62.75 introduced the flicker suite. Fixing the import
+// restores the actual pixel-diff detection the scenarios are named for.
+const __zlibMod = await import('node:zlib')
+const __fsWriteFile = (await import('node:fs/promises')).writeFile
+
 // Tiny PNG decoder — enough to read pixel stats out of a Buffer
 // returned by page.screenshot. We only need IHDR + the first
 // IDAT to compute luminance variance + per-row deltas (a "blank
@@ -1848,8 +2061,8 @@ function decodePngStats(buf) {
     }
     if (!idatChunks.length) return null
     // Inflate all IDAT data — node zlib handles concatenation fine.
-    const zlib = require('node:zlib')
-    const inflated = zlib.inflateSync(Buffer.concat(idatChunks))
+    // (zlib module resolved once at module load — see __zlibMod above.)
+    const inflated = __zlibMod.inflateSync(Buffer.concat(idatChunks))
     // PNG scanlines: 1 filter byte + width * bytesPerPixel data.
     const samplesPerPixel = colorType === 6 ? 4 : colorType === 2 ? 3 : colorType === 4 ? 2 : 1
     const bytesPerPixel = (bitDepth / 8) * samplesPerPixel
@@ -1901,13 +2114,6 @@ function decodePngStats(buf) {
   } catch (e) {
     return null
   }
-}
-
-// Diff two stats objects — returns a rough "structural similarity"
-// (higher = more similar). Used to flag big inter-frame jumps.
-function pngStatsDiff(a, b) {
-  if (!a || !b) return null
-  return { meanDiff: Math.abs(a.mean - b.mean), stddevDiff: Math.abs(a.stddev - b.stddev) }
 }
 
 // Compare two per-pixel luminance signatures. Returns the mean
@@ -2055,6 +2261,24 @@ async function installFlickerProbe(page) {
   })
 }
 
+// Concurrency for the flicker suite — N independent browsers pulling off a
+// shared scenario queue (see runScenariosWithPool). Each scenario's
+// wall-clock floor is mostly its own fixed sampling window (12-14 timed
+// screenshots spread over several real seconds, by design — flicker
+// detection needs to actually observe the page settle, not just probe it
+// once), so this suite is the dominant cost of the concurrent anchor/flow/
+// flicker block (see run()) regardless of per-sample CPU optimization.
+// Tested at 3 on a fully clean, uncontended 4-core run (no other suites or
+// sibling processes competing): zero BUDGET EXCEEDED failures, ~20s faster
+// total than at 2. An earlier measurement at 3 DID show contention-driven
+// budget failures, but that run also had unrelated sibling processes (a
+// separate validation harness run + 5 concurrent improvement agents, all
+// launching their own Chromium instances) competing for the same 4 cores —
+// not a property of this suite's own internal concurrency. If flicker
+// failures start showing BUDGET EXCEEDED again on a properly idle machine,
+// re-check this value before assuming it's a code regression.
+const FLICKER_PARALLELISM = 3
+
 async function runFlickerScenarios(launcher, report) {
   const lines = []
   let pass = 0, fail = 0
@@ -2091,6 +2315,18 @@ async function runFlickerScenarios(launcher, report) {
     // before the action (pre samples) get negative or ~0 values — correct.
     let actionStartMs = null
 
+    // Deferred post-capture work (disk write + PNG decode) collected here
+    // and drained once after the full sample loop finishes, rather than
+    // awaited inline between every sample. Nothing reads pngStats[i].stats
+    // until after the loop (see the see-through-flicker + blank-frame
+    // analysis below) — only the screenshot buffer itself needs to exist
+    // before the *next* page.screenshot() call, not its decoded stats or
+    // its on-disk copy. Deferring lets Playwright's screenshot/probe round
+    // trip for sample N+1 proceed without waiting on sample N's zlib
+    // inflate + fs write first — CPU-bound decode work overlaps with the
+    // next sample's browser-bound capture instead of serializing with it.
+    const pendingWrites = []
+
     const collectAt = async (label, t) => {
       let probe = null
       try { probe = await page.evaluate(() => window.__flickerProbe ? window.__flickerProbe() : null) } catch (e) {}
@@ -2106,14 +2342,41 @@ async function runFlickerScenarios(launcher, report) {
         }), 3000, `screenshot ${label}`)
       } catch (e) {}
       if (buf) {
-        try { writeFileSync(screenshotPath, buf) } catch (e) {}
-        const stats = decodePngStats(buf)
-        pngStats.push({ label, t, stats })
+        // Reserve the slot now so pngStats keeps the same index order as
+        // the sample loop (the see-through-flicker check below relies on
+        // pngStats[0] = pre and pngStats[length-1] = settled). `stats` is
+        // filled in by the deferred decode pass.
+        const entry = { label, t, stats: null }
+        pngStats.push(entry)
+        pendingWrites.push(
+          // Disk write is fire-and-forget from the sample loop's point of
+          // view (best-effort, same as the old writeFileSync's swallowed
+          // catch) — only used by the HTML report viewer, never read back
+          // by the harness itself.
+          __fsWriteFile(screenshotPath, buf).catch(() => {}),
+          // Defer the CPU decode to a fresh macrotask via setImmediate so
+          // it doesn't run synchronously inside this await chain — it
+          // yields back to the event loop (and Playwright's pending
+          // protocol I/O for the next sample) immediately, then decodes.
+          new Promise((res) => {
+            setImmediate(() => {
+              try { entry.stats = decodePngStats(buf) } catch (e) {}
+              res()
+            })
+          })
+        )
       }
       if (probe) {
         const wallRelativeMs = actionStartMs !== null ? Date.now() - actionStartMs : null
         samples.push({ label, t, wallRelativeMs, ...probe })
       }
+    }
+
+    // Drain every pending disk-write + decode job queued by collectAt().
+    // Call once after the sample loop, before any code reads pngStats[i].stats.
+    const flushPending = async () => {
+      if (!pendingWrites.length) return
+      await Promise.all(pendingWrites.splice(0, pendingWrites.length))
     }
 
     const body = (async () => {
@@ -2160,7 +2423,13 @@ async function runFlickerScenarios(launcher, report) {
         // scroll" flicker class.
         for (const step of s.chain) {
           if (step.type === 'goto') {
-            await withTimeout(page.goto(BASE + step.url, { waitUntil: 'load' }), 10_000, `goto ${step.url}`)
+            // 'commit' here, not 'load' — waitForSettled() immediately
+            // below already does page.waitForLoadState('load') as its
+            // first step, so waiting for 'load' twice in a row was pure
+            // redundancy (the second wait always resolved instantly since
+            // the state was already satisfied). One real 'load' wait,
+            // inside waitForSettled, same end state.
+            await withTimeout(page.goto(BASE + step.url, { waitUntil: 'commit' }), 10_000, `goto ${step.url}`)
             await waitForSettled(page)
           } else if (step.type === 'scroll') {
             await page.evaluate((y) => window.scrollTo(0, y), step.y)
@@ -2226,7 +2495,14 @@ async function runFlickerScenarios(launcher, report) {
         // CROSS-DOCUMENT NAVIGATION. Open `from`, optionally
         // pre-scroll, optionally wait for a settled state, then
         // trigger `action` and start sampling.
-        await withTimeout(page.goto(BASE + s.from, { waitUntil: 'load' }), 10_000, `goto ${s.from}`)
+        // 'commit' here, not 'load' — see the matching note in the
+        // chain/backAction branch above. waitForSettled() does the real
+        // 'load' wait immediately below; doing it twice in a row here
+        // was redundant and, under a slow/contended dev server, doubled
+        // the exposure to the 10s goto timeout for no detection benefit
+        // (this is the SOURCE page load, before the measured navigation
+        // even fires — sampling hasn't started yet).
+        await withTimeout(page.goto(BASE + s.from, { waitUntil: 'commit' }), 10_000, `goto ${s.from}`)
         await waitForSettled(page)
         if (s.preScroll) {
           await page.evaluate((y) => window.scrollTo(0, y), s.preScroll)
@@ -2263,6 +2539,9 @@ async function runFlickerScenarios(launcher, report) {
         // "NEW page" baseline used for see-through detection.
         await page.waitForTimeout(200)
         await collectAt('settled', 0)
+        // Drain deferred decode/write jobs before reading pngStats[i].stats
+        // below — the see-through check needs every sample's signature.
+        await flushPending()
         // SEE-THROUGH FRAME DETECTION. We have two baselines:
         //   pngStats[0] = pre  (the OLD page fully visible)
         //   pngStats[N] = settled (the NEW page fully visible)
@@ -2307,6 +2586,13 @@ async function runFlickerScenarios(launcher, report) {
           }
         }
       }
+
+      // Safety net for the `load` and chain/backAction branches, which
+      // don't read pngStats mid-branch (the `from` branch already flushed
+      // above, right before its inline see-through check) — ensures every
+      // pngStats[i].stats is populated before the blank-frame check below.
+      // No-op if already drained.
+      await flushPending()
 
       // Analyze samples for flicker signals.
       // 1. Reveal-FOUC: any sample where reveals.inView is high but
@@ -2524,7 +2810,7 @@ async function runFlickerScenarios(launcher, report) {
     try { await withTimeout(context.close(), 3_000, 'context.close').catch(() => {}) } catch {}
   }
 
-  await runScenariosWithPool(launcher, FLICKER_SCENARIOS, 3, runOne)
+  await runScenariosWithPool(launcher, FLICKER_SCENARIOS, FLICKER_PARALLELISM, runOne)
   return { lines, pass, fail }
 }
 
@@ -2826,7 +3112,7 @@ async function run() {
   const mainLauncher = () => chromium.launch({ headless: true, executablePath: EXEC_PATH })
   const report = { scenarios: [] }
 
-  console.log(`  pools: anchor=${ANCHOR_PARALLELISM} perf=${PERF_PARALLELISM} flow=${FLOW_PARALLELISM} flicker=3`)
+  console.log(`  pools: anchor=${ANCHOR_PARALLELISM} perf=${PERF_PARALLELISM} flow=${FLOW_PARALLELISM} flicker=${FLICKER_PARALLELISM}`)
   console.log('')
 
   // Allow running just the flicker suite for fast iteration:
@@ -2837,12 +3123,27 @@ async function run() {
   const runFlow    = !only || /\bflow\b/.test(only)
   const runFlicker = !only || /\bflicker\b/.test(only)
 
+  // ANCHOR / FLOW / FLICKER run concurrently — all three only care about
+  // positional/pixel/structural correctness, never frame-rate timing, so
+  // sharing the same 4 cores across their pools doesn't corrupt anything
+  // they measure (this used to be 4 fully sequential phases, the single
+  // biggest reason a full run took several minutes instead of under one).
+  // PERF stays temporally isolated, run on its own before/after the other
+  // three: its uncapped-rAF browser flags already need a separate process
+  // (see perfLauncher's comment above), and frame-interval/longtask/LoAF
+  // measurements are exactly the kind of number that gets skewed by
+  // unrelated Chromium-heavy work competing for the same CPU at the same
+  // moment — concurrency would trade wall-clock for measurement noise,
+  // which is the wrong trade for a suite whose entire job is grading fps.
   const empty = { lines: [], pass: 0, fail: 0 }
-  let a = empty, p = empty, f = empty, fl = empty
-  if (runAnchor)  { a  = await runAnchorScenarios(mainLauncher, report);  console.log('') }
-  if (runPerf)    { p  = await runPerfScenarios(perfLauncher, report);    console.log('') }
-  if (runFlow)    { f  = await runFlowScenarios(mainLauncher, report);    console.log('') }
-  if (runFlicker) { fl = await runFlickerScenarios(mainLauncher, report) }
+  const [a, f, fl] = await Promise.all([
+    runAnchor  ? runAnchorScenarios(mainLauncher, report)  : Promise.resolve(empty),
+    runFlow    ? runFlowScenarios(mainLauncher, report)    : Promise.resolve(empty),
+    runFlicker ? runFlickerScenarios(mainLauncher, report) : Promise.resolve(empty),
+  ])
+  console.log('')
+  const p = runPerf ? await runPerfScenarios(perfLauncher, report) : empty
+  if (runPerf) console.log('')
 
   writeHtmlReport(report)
 

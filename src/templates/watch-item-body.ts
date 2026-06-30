@@ -104,11 +104,7 @@ export const watchItemBody = (
       : ''
 
   return `
-    <style>
-        .watch-permalink-aside { position: sticky; top: calc(var(--space-2xl)); }
-        @media (max-width: 960px) { .watch-permalink-aside { position: static; } }
-    </style>
-    <body class="page-subpage">
+    <body class="page-subpage watch-permalink-page">
         <div class="page">
             ${subpageHeader()}
             <div class="subpage-spacer"></div>
@@ -121,7 +117,7 @@ export const watchItemBody = (
                 </section>
 
                 <div class="watch-permalink-grid">
-                    <div>
+                    <div class="watch-permalink-main">
                         ${vplayer(sermon, primary, 'main', posterAlt)}
 
                         ${sermon.summary ? `<p class="watch-feature-blurb" style="font-size: var(--text-body); color: var(--text-primary-soft); max-width: 68ch;">${escapeHtml(sermon.summary)}</p>` : ''}

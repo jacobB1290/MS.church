@@ -10665,6 +10665,31 @@ const RAW_HOME_STYLES = `
             display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
             gap: var(--space-2xl); align-items: start; margin-top: var(--space-lg);
         }
+        /* The chapter list (aside) is routinely the taller column, so it's the
+           one left in normal flow; the video pins in place via sticky so it
+           stays in view while a long chapter list scrolls past on the right.
+           top is a literal 76px (not --space-2xl, which is a fluid clamp
+           that only reaches 64px above 1280px) — the fixed .subpage-back /
+           .subpage-menu-trigger pills hold top:24px + height:40px at every
+           desktop width, so 76px clears their 64px bottom edge with a 12px
+           gap regardless of viewport width. */
+        .watch-permalink-main { position: sticky; top: 76px; }
+        @media (max-width: 960px) { .watch-permalink-main { position: static; } }
+        /* body's site-wide overflow-x: hidden (see the body rule) silently
+           promotes its overflow-y to auto per spec, since visible can't
+           survive next to a non-visible sibling axis, which makes body
+           itself a scroll container. That breaks position:sticky for any
+           descendant whose nearest non-visible-overflow ancestor is body:
+           body's own box is never height-clamped, so it never actually
+           scrolls, and a sticky element anchored to a scrollport that
+           never moves just sits inert. Scoped to this one page (not a
+           global body change, which unmasks unrelated pre-existing
+           overflow elsewhere the site was relying on body to silently
+           clip) and to the desktop width where the sticky video is
+           actually active. html's own overflow-x stays hidden and still
+           governs the real viewport, so horizontal scroll stays blocked
+           exactly as before. */
+        @media (min-width: 961px) { body.watch-permalink-page { overflow-x: visible; } }
         .watch-chapters { list-style: none; margin: 0; padding: 0; }
         .watch-chapter {
             display: grid; grid-template-columns: auto 1fr; gap: var(--space-md);

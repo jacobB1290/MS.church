@@ -2,6 +2,7 @@ import { type Hono } from 'hono'
 import { homeHead } from '../templates/home-head.js'
 import { homeBody, type HomeWatchView } from '../templates/home-body.js'
 import { homeScripts } from '../templates/home-scripts.js'
+import { minifyInlineAssets } from '../templates/_minify.js'
 import { watchHandoffScript } from '../templates/watch-handoff.js'
 import { fetchAllPublishedSermons, type PublishedSermon } from '../sermons-feed.js'
 import {
@@ -175,12 +176,12 @@ export function registerHomeRoute(app: Hono) {
     // cache, so the page is never more than a few minutes stale.
     c.header('Cache-Control', 'public, max-age=0, must-revalidate')
     c.header('CDN-Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600')
-    return c.html(`<!DOCTYPE html>
+    return c.html(minifyInlineAssets(`<!DOCTYPE html>
 <html lang="en">
 ${homeHead()}
 ${homeBody(watch)}
 ${homeScripts()}
 ${watchHandoffScript()}
-</html>`)
+</html>`))
   })
 }

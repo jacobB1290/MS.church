@@ -31,6 +31,14 @@
 
 import { chromium, webkit } from 'playwright'
 
+// Optional path to a pre-provisioned Chromium (set PW_EXECUTABLE_PATH when the
+// machine's Playwright browser build differs from the npm package's expected
+// build — same override run.mjs supports). Undefined falls back to
+// Playwright's own download/lookup, so CI is unchanged. WebKit has no
+// equivalent override here: Playwright resolves its own WebKit build, and
+// there's no sandbox-local pre-provisioned WebKit binary to point at.
+const EXEC_PATH = process.env.PW_EXECUTABLE_PATH || undefined
+
 const BASE = process.env.HARNESS_URL || 'http://localhost:5173'
 const MOBILE = { width: 390, height: 844 }
 const NARROW = { width: 360, height: 780 }
@@ -76,6 +84,20 @@ const stepTo = async (page, y) => {
   }, y)
 }
 
+// Every test page waits for the morph to arm before driving scroll. The
+// swallowed .catch() lets pages without SDA support proceed (the fallback
+// test, page5, deliberately stubs CSS.supports so this never arms — that's
+// expected, not a failure). But a genuine regression where the morph fails
+// to arm on a page that SHOULD support it previously failed silently here,
+// then surfaced many checks later as a wall of confusing pose-mismatch
+// failures with no signal pointing at the real cause. Logging a breadcrumb
+// on timeout doesn't change any pass/fail outcome — the actual assertions
+// are still the check() calls downstream — it just makes root-causing fast
+// instead of "wait, why are 12 unrelated things failing at once."
+const waitForScrub = (page, engine, label) =>
+  page.waitForFunction(() => window.__navScrubActive === true, null, { timeout: 5000 })
+    .catch(() => console.error(`[${engine}] __navScrubActive never armed within 5s (${label}) — if this page expects SDA support, the morph likely failed to initialize; downstream checks will misreport as pose mismatches`))
+
 async function testEngine(name, browserType) {
   // Chromium gets the same flags as run.mjs's perf launcher so rAF gaps
   // measure actual per-frame work cost, not the 60Hz vsync cadence
@@ -83,6 +105,7 @@ async function testEngine(name, browserType) {
   // frame-health check grades the display clock instead of the morph).
   const browser = await browserType.launch(name === 'chromium' ? {
     headless: true,
+    executablePath: EXEC_PATH,
     args: [
       '--disable-frame-rate-limit',
       '--disable-gpu-vsync',
@@ -96,7 +119,7 @@ async function testEngine(name, browserType) {
     const page = await browser.newPage({ viewport: MOBILE })
     await page.addInitScript(() => { window.__navSnapDisabled = true })
     await page.goto(BASE + '/?notrack=true', { waitUntil: 'domcontentloaded' })
-    await page.waitForFunction(() => window.__navScrubActive === true, null, { timeout: 5000 }).catch(() => {})
+    await waitForScrub(page, name, 'mode/lockstep/parity page')
 
     const mode = await page.evaluate(() => ({
       sda: document.documentElement.classList.contains('nav-sda'),
@@ -208,10 +231,38 @@ async function testEngine(name, browserType) {
     // ── settle: parked mid-range nudges the page to the nearest pole ──
     const page2 = await browser.newPage({ viewport: MOBILE })
     await page2.goto(BASE + '/?notrack=true', { waitUntil: 'domcontentloaded' })
-    await page2.waitForFunction(() => window.__navScrubActive === true, null, { timeout: 5000 }).catch(() => {})
-    const settleCase = async (park, expected) => {
+    await waitForScrub(page2, name, 'settle page')
+    // Precise condition instead of a flat sleep: the settle path is
+    // IDLE_MS(150) idle-detect + SNAP_MS(300) eased snap ≈ 450-500ms on the
+    // happy path (see nav-morph.ts), but "parked at 300" never snaps at all
+    // (outside RANGE_START..RANGE_END) so there's no settle event to wait
+    // on for that case — only a guarantee that scrollY stays put. Poll for
+    // scrollY to stop CHANGING rather than guessing a duration. Crucially,
+    // the stability window must exceed IDLE_MS(150ms): scrollTo() lands at
+    // the parked position immediately, then sits genuinely still for up to
+    // 150ms BEFORE settle()/snapTo() even starts — a short stability check
+    // (e.g. ~100ms) false-positives inside that dead zone and reads the
+    // pre-snap position. STABLE_MS(220ms) clears the idle-detect window
+    // with margin, so "stable for 220ms" only happens once the snap has
+    // truly finished (or, for the 300-park case, was never going to start).
+    // A generous 2s cap keeps this from ever flaking false on a
+    // slow/contended run, it just resolves near-instantly on the fast path.
+    const STABLE_MS = 220
+    const settleCase = async (park) => {
       await page2.evaluate((y) => window.scrollTo(0, y), park)
-      await page2.waitForTimeout(800)
+      await page2.evaluate((STABLE_MS) => new Promise((resolve) => {
+        const deadline = performance.now() + 2000
+        let lastY = window.scrollY
+        let stableSince = performance.now()
+        const tick = () => {
+          const now = performance.now()
+          const y = window.scrollY
+          if (y !== lastY) { lastY = y; stableSince = now }
+          if (now - stableSince >= STABLE_MS || now > deadline) { resolve(); return }
+          requestAnimationFrame(tick)
+        }
+        requestAnimationFrame(tick)
+      }), STABLE_MS)
       return page2.evaluate(() => window.scrollY)
     }
     const s60 = await settleCase(60)
@@ -230,7 +281,7 @@ async function testEngine(name, browserType) {
       const pageV = await browser.newPage({ viewport: { width: w, height: h } })
       await pageV.addInitScript(() => { window.__navSnapDisabled = true })
       await pageV.goto(BASE + '/?notrack=true', { waitUntil: 'domcontentloaded' })
-      await pageV.waitForFunction(() => window.__navScrubActive === true, null, { timeout: 5000 }).catch(() => {})
+      await waitForScrub(pageV, name, `viewport matrix: ${label}`)
       await stepTo(pageV, 200)
       const pose = await pageV.evaluate(READ_POSE)
       if (expectMorph) {
@@ -246,7 +297,7 @@ async function testEngine(name, browserType) {
     const page6 = await browser.newPage({ viewport: WIDE })
     await page6.addInitScript(() => { window.__navSnapDisabled = true })
     await page6.goto(BASE + '/?notrack=true', { waitUntil: 'domcontentloaded' })
-    await page6.waitForFunction(() => window.__navScrubActive === true, null, { timeout: 5000 }).catch(() => {})
+    await waitForScrub(page6, name, 'pill morph page (414 viewport)')
     const pillAt = {}
     for (const y of [0, 40, 134]) { await stepTo(page6, y); pillAt[y] = await page6.evaluate(READ_POSE) }
     check(name, 'pill 414: silent until 45%, fully in at the pole',
@@ -261,7 +312,7 @@ async function testEngine(name, browserType) {
     if (name === 'chromium') {
       const page4 = await browser.newPage({ viewport: MOBILE })
       await page4.goto(BASE + '/?notrack=true', { waitUntil: 'domcontentloaded' })
-      await page4.waitForFunction(() => window.__navScrubActive === true, null, { timeout: 5000 }).catch(() => {})
+      await waitForScrub(page4, name, 'pose-reversal scrub page')
       await page4.evaluate(() => {
         window.__frames = []
         const tick = (t) => {
@@ -297,11 +348,27 @@ async function testEngine(name, browserType) {
     })
     await page5.goto(BASE + '/?notrack=true', { waitUntil: 'domcontentloaded' })
     const fb0 = await page5.evaluate(() => document.documentElement.classList.contains('nav-sda'))
-    await page5.evaluate(() => window.scrollTo(0, 300))
-    await page5.waitForTimeout(500)
+    // Precise condition instead of a flat sleep: the fallback's class flip
+    // is synchronous on the scroll event (home-scripts.ts), the only real
+    // delay is the .nav-shell CSS transition itself (--motion-springy =
+    // 500ms, gated behind html.nav-anim-ready arming ~350ms post-load).
+    // Wait for that transition's actual transitionend rather than guessing
+    // the duration; a 700ms timeout (200ms over the known 500ms) is the
+    // safety net so this can never be flakier than the original fixed wait,
+    // only faster on the common case where the event fires on time. Scroll
+    // + listener-attach happen inside ONE evaluate call so there's no
+    // round-trip gap where the transition could start (and even finish on
+    // a slow/contended run) before the listener exists.
+    const scrollAndWaitSettled = (y) => page5.evaluate((y) => new Promise((resolve) => {
+      const shell = document.querySelector('.nav-shell')
+      const timer = setTimeout(() => { shell.removeEventListener('transitionend', onEnd); resolve() }, 700)
+      const onEnd = () => { clearTimeout(timer); shell.removeEventListener('transitionend', onEnd); resolve() }
+      shell.addEventListener('transitionend', onEnd)
+      window.scrollTo(0, y)
+    }), y)
+    await scrollAndWaitSettled(300)
     const fbScrolled = await page5.evaluate(() => document.querySelector('.nav-shell').classList.contains('scrolled-mobile'))
-    await page5.evaluate(() => window.scrollTo(0, 0))
-    await page5.waitForTimeout(500)
+    await scrollAndWaitSettled(0)
     const fbTop = await page5.evaluate(() => document.querySelector('.nav-shell').classList.contains('scrolled-mobile'))
     check(name, 'fallback: nav-sda absent when unsupported', fb0 === false)
     check(name, 'fallback: threshold compresses at depth', fbScrolled === true)
@@ -319,6 +386,7 @@ async function testEngine(name, browserType) {
 async function scrubFramePhase() {
   const browser = await chromium.launch({
     headless: true,
+    executablePath: EXEC_PATH,
     args: [
       '--disable-frame-rate-limit',
       '--disable-gpu-vsync',
@@ -330,7 +398,7 @@ async function scrubFramePhase() {
   try {
     const page = await browser.newPage({ viewport: MOBILE })
     await page.goto(BASE + '/?notrack=true', { waitUntil: 'domcontentloaded' })
-    await page.waitForFunction(() => window.__navScrubActive === true, null, { timeout: 5000 }).catch(() => {})
+    await waitForScrub(page, 'chromium', 'frame-health phase page')
     // Warmup: first-scroll work (image decode, observer setup, initial
     // raster) is one-time cost, not morph cost.
     for (let i = 0; i < 14; i++) { await page.mouse.wheel(0, 12); await page.waitForTimeout(16) }

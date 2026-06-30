@@ -10113,6 +10113,57 @@ const RAW_HOME_STYLES = `
         .watch-card-date { color: var(--text-soft); }
         .watch-card-who { color: var(--text-primary); font-weight: var(--weight-semibold); }
         .watch-card-dot { color: var(--text-fade); }
+
+        /* "sung N times" recurrence dropdown: each row re-points this card's player
+           at that service's clip. Opens on hover (fine pointers) / focus / tap; the
+           caret flips; the menu fades + lifts in, never a display flip. */
+        .watch-song-times-wrap { position: relative; display: inline-flex; }
+        /* The dropdown escapes the card (the player poster self-clips via its own
+           stage, so the card needn't), and an open card rides above its neighbors. */
+        .watch-card--song { overflow: visible; position: relative; }
+        .watch-card--song:has(.watch-song-occ.is-open),
+        .watch-card--song:has(.watch-song-times[aria-expanded="true"]) { z-index: 40; }
+        .watch-song-times {
+            appearance: none; border: 0; background: none; cursor: pointer; padding: 0;
+            font: inherit; color: var(--text-muted); display: inline-flex; align-items: center; gap: 2px;
+            line-height: 1; border-bottom: 1px dotted var(--text-fade);
+            transition: color var(--motion-fast) var(--ease-out-soft), border-color var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-song-times:hover, .watch-song-times:focus-visible { color: var(--gold-dark); border-bottom-color: var(--gold); outline: none; }
+        .watch-song-caret { transition: transform var(--motion-fast) var(--ease-out-soft); }
+        .watch-song-times[aria-expanded="true"] .watch-song-caret { transform: rotate(180deg); }
+        .watch-song-occ {
+            position: absolute; z-index: 30; top: calc(100% + 6px); left: 0;
+            min-width: 12rem; max-width: 16rem;
+            background: var(--white); border: 1px solid var(--text-hairline);
+            border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+            padding: 6px; display: flex; flex-direction: column;
+            opacity: 0; visibility: hidden; transform: translateY(6px);
+            transition: opacity var(--motion-fast) var(--ease-out-soft),
+                        transform var(--motion-fast) var(--ease-out-soft),
+                        visibility var(--motion-fast) var(--ease-out-soft);
+        }
+        /* Open state is driven entirely by JS (.is-open) so there is ONE source of
+           truth: tap toggles it; a mouse hover opens it (pointer-gated in JS, never
+           on touch); outside-tap / Escape / mouse-leave close it. No CSS :hover open
+           — that fought the tap-toggle on hybrid touch+hover laptops. */
+        .watch-song-occ.is-open { opacity: 1; visibility: visible; transform: translateY(0); }
+        .watch-song-occ-item {
+            appearance: none; border: 0; background: none; cursor: pointer; text-align: left;
+            font: inherit; color: var(--text-primary); padding: 8px 10px; border-radius: var(--radius-sm);
+            display: flex; flex-direction: column; gap: 1px; min-height: 40px; justify-content: center;
+            transition: background var(--motion-fast) var(--ease-out-soft);
+        }
+        .watch-song-occ-item:hover, .watch-song-occ-item:focus-visible { background: color-mix(in oklab, var(--gold) 8%, transparent); outline: none; }
+        .watch-song-occ-item[aria-current="true"] { background: color-mix(in oklab, var(--gold) 13%, transparent); }
+        .watch-song-occ-date { font-size: var(--text-small); font-weight: var(--weight-medium); display: inline-flex; align-items: baseline; gap: 6px; }
+        .watch-song-occ-tag { font-size: var(--text-micro); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--gold-dark); }
+        .watch-song-occ-who { font-size: var(--text-micro); color: var(--text-faint); }
+        @media (prefers-reduced-motion: reduce) {
+            .watch-song-occ { transition: opacity var(--motion-fast) linear, visibility var(--motion-fast) linear; transform: none; }
+            .watch-song-occ.is-open { transform: none; }
+            .watch-song-caret { transition: none; }
+        }
         .watch-card-title {
             font-family: var(--font-display);
             font-size: var(--text-heading);

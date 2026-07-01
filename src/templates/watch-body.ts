@@ -869,7 +869,7 @@ export const watchBody = (view: WatchHubView): string => {
                 </section>
             </main>
 
-            ${footer()}
+            ${footer('/')}
         </div>
         ${library ? watchPlayerScript() : ''}
         ${library ? watchSongMenuScript() : ''}

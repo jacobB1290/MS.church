@@ -1434,7 +1434,7 @@ export const ministriesBody = (): string => `
                 </section>
             </main>
 
-            ${footer()}
+            ${footer('/')}
         </div>
         <script>
             (function() {

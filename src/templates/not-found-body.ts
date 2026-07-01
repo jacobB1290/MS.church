@@ -50,6 +50,6 @@ export const notFoundBody = (): string => `
                 </section>
             </main>
 
-            ${footer()}
+            ${footer('/')}
         </div>
     </body>`

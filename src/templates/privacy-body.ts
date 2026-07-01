@@ -419,6 +419,6 @@ export const privacyBody = (): string => `
                 </section>
             </main>
 
-            ${footer()}
+            ${footer('/')}
         </div>
     </body>`

@@ -169,7 +169,7 @@ export const watchItemBody = (
                 ${transcript ? `<section class="watch-transcript-section" aria-label="Transcript">${transcript}</section>` : ''}
             </main>
 
-            ${footer()}
+            ${footer('/')}
         </div>
         ${watchPlayerScript()}
     </body>`

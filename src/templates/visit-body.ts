@@ -206,6 +206,6 @@ export const visitBody = (): string => `
                 </section>
             </main>
 
-            ${footer()}
+            ${footer('/')}
         </div>
     </body>`

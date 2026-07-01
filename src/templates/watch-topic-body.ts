@@ -64,7 +64,7 @@ export const watchTopicBody = (
                 </section>
             </main>
 
-            ${footer()}
+            ${footer('/')}
         </div>
         ${watchPlayerScript()}
     </body>`

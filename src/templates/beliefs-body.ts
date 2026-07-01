@@ -203,6 +203,6 @@ export const beliefsBody = (): string => `
                 </section>
             </main>
 
-            ${footer()}
+            ${footer('/')}
         </div>
     </body>`

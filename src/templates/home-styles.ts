@@ -9469,41 +9469,66 @@ const RAW_HOME_STYLES = `
 
 
             /* ========================================
-               FOOTER
+               FOOTER — editorial multi-column sitemap
+
+               Upgraded from the old single centered stack into a proper
+               navigable colophon: a brand / identity column (wordmark,
+               motto, service line, "Plan a Visit" CTA, social) beside
+               three grouped link columns (Explore / Our Church /
+               Connect), over a copyright + legal bottom bar.
+
+               Still transparent on the page cream with the gold
+               top-rule; tokens only. Desktop lays the columns out in a
+               grid; the <=960px block recomposes it into a centered
+               brand block over a two-column link grid.
                ======================================== */
             .site-footer {
                 background: transparent;
-                padding: 60px 0 40px;
-                /* Safari iOS safe area - add extra padding for home indicator */
-                padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
-                margin-top: 40px;
+                padding: var(--space-3xl) 0 var(--space-2xl);
+                /* Safari iOS safe area - extra padding for the home indicator */
+                padding-bottom: calc(var(--space-2xl) + env(safe-area-inset-bottom, 0px));
+                margin-top: var(--space-2xl);
                 border-top: 1px solid var(--gold);
             }
-            
+
             .footer-content {
                 max-width: 1280px;
                 margin: 0 auto;
                 padding: 0 5%;
                 display: flex;
                 flex-direction: column;
-                align-items: center;
-                gap: 32px;
+                gap: var(--space-2xl);
             }
-            
+
+            /* Top zone — brand column (1.4fr) beside the three grouped
+               link columns (2.7fr, an inner 3-track grid). */
+            .footer-top {
+                display: grid;
+                grid-template-columns: minmax(0, 1.4fr) minmax(0, 2.7fr);
+                gap: var(--space-2xl);
+                align-items: start;
+            }
+
+            /* ---- Brand / identity column ---- */
+            .footer-brand-col {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-md);
+            }
+
             .footer-brand {
                 display: flex;
                 flex-direction: column;
-                align-items: center;
                 line-height: 1;
-                text-align: center;
                 text-decoration: none;
                 color: inherit;
-                transition: transform 0.4s var(--ease-standard);
+                transition: transform var(--motion-medium) var(--ease-standard);
             }
             .footer-brand:hover {
                 transform: translateY(-2px);
             }
-            
+
             .footer-brand-title {
                 font-family: var(--font-display);
                 font-size: var(--text-heading);
@@ -9521,83 +9546,34 @@ const RAW_HOME_STYLES = `
                 font-weight: var(--weight-semibold);
                 margin-top: 4px;
             }
-            
-            /* When / where / email — the answers a visitor actually scrolls
-               to a church footer for. Service time leads at near-solid ink;
-               address + email sit a step quieter and underline on hover. */
-            .footer-meta {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 6px;
-                text-align: center;
+
+            /* Motto — italic gold identity phrase (.motto adds the style). */
+            .footer-motto {
+                font-family: var(--font-display);
+                font-size: var(--text-lead);
+                line-height: var(--leading-snug);
+                margin: 0;
             }
-            .footer-meta-when {
+
+            /* Service line — the "when" a church-footer visitor scans for. */
+            .footer-service {
                 font-size: var(--text-small);
                 font-weight: var(--weight-semibold);
                 letter-spacing: var(--tracking-wide);
                 text-transform: uppercase;
                 color: var(--text-primary-soft);
             }
-            .footer-meta-link {
-                font-size: var(--text-small);
-                color: var(--text-primary-faint);
-                text-decoration: underline;
-                text-decoration-color: transparent;
-                text-underline-offset: 3px;
-                transition: color var(--motion-fast) var(--ease-out-soft),
-                            text-decoration-color var(--motion-fast) var(--ease-out-soft);
-            }
-            .footer-meta-link:hover {
-                color: var(--gold-dark);
-                text-decoration-color: currentColor;
-            }
 
-            /* Quick links — one-tap path to every page. Same scaleX gold
-               underline vocabulary as .subpage-jump so hover reads as one
-               system across the site. */
-            .footer-nav {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: var(--space-sm) var(--space-md);
-            }
-            .footer-nav a {
-                position: relative;
-                font-size: var(--text-label);
-                font-weight: var(--weight-bold);
-                letter-spacing: var(--tracking-wide);
-                text-transform: uppercase;
-                color: var(--text-primary-muted);
-                text-decoration: none;
-                padding-bottom: 3px;
-                transition: color var(--motion-fast) var(--ease-out-soft);
-            }
-            .footer-nav a::after {
-                content: '';
-                position: absolute;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                height: 1px;
-                background: var(--gold);
-                transform: scaleX(0);
-                transform-origin: center;
-                transition: transform var(--motion-medium) var(--ease-out-soft);
-            }
-            .footer-nav a:hover {
-                color: var(--gold-dark);
-            }
-            .footer-nav a:hover::after {
-                transform: scaleX(1);
+            .footer-cta {
+                margin-top: var(--space-xs);
             }
 
             .footer-social {
                 display: flex;
-                gap: 24px;
+                gap: var(--space-sm);
                 align-items: center;
+                margin-top: var(--space-xs);
             }
-            
             .footer-social a {
                 display: flex;
                 align-items: center;
@@ -9607,85 +9583,184 @@ const RAW_HOME_STYLES = `
                 border-radius: var(--radius-circle);
                 background: var(--text-primary-hairline);
                 color: var(--text-primary);
-                transition: all var(--motion-medium) var(--ease-out-soft);
+                transition: background var(--motion-medium) var(--ease-out-soft),
+                            color var(--motion-medium) var(--ease-out-soft),
+                            transform var(--motion-medium) var(--ease-out-soft);
             }
-            
             .footer-social a:hover {
                 background: var(--gold);
                 color: #ffffff;
                 transform: translateY(-3px);
             }
-            
             .footer-social svg {
                 width: 20px;
                 height: 20px;
                 fill: currentColor;
             }
-            
-            .footer-divider {
-                display: none;
+
+            /* ---- Grouped link columns ---- */
+            .footer-nav {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: var(--space-xl);
             }
-            
-            .footer-links {
+            .footer-col {
                 display: flex;
-                gap: 24px;
+                flex-direction: column;
             }
-            
-            .footer-link {
+            .footer-col-title {
+                font-size: var(--text-micro);
+                font-weight: var(--weight-bold);
+                letter-spacing: var(--tracking-wider);
+                text-transform: uppercase;
+                color: var(--text-primary-faint);
+                margin-bottom: var(--space-md);
+            }
+            .footer-col-links {
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-sm);
+                margin: 0;
+                padding: 0;
+            }
+            /* Same scaleX gold underline vocabulary as .subpage-jump and
+               the old footer quick-links, so link hover reads as one
+               system across the whole site. */
+            .footer-col-links a {
+                position: relative;
+                display: inline-block;
+                font-size: var(--text-small);
+                font-weight: var(--weight-medium);
+                color: var(--text-primary-muted);
+                text-decoration: none;
+                transition: color var(--motion-fast) var(--ease-out-soft);
+            }
+            .footer-col-links a::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -2px;
+                height: 1px;
+                background: var(--gold);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform var(--motion-medium) var(--ease-out-soft);
+            }
+            .footer-col-links a:hover {
+                color: var(--gold-dark);
+            }
+            .footer-col-links a:hover::after {
+                transform: scaleX(1);
+            }
+
+            /* ---- Bottom bar — copyright + legal ---- */
+            .footer-bottom {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: var(--space-md);
+                padding-top: var(--space-lg);
+                border-top: 1px solid var(--text-primary-hairline);
+            }
+            .footer-copyright {
+                font-size: var(--text-small);
+                color: var(--text-primary-faint);
+                margin: 0;
+            }
+            .footer-legal-link {
                 font-size: var(--text-small);
                 color: var(--text-primary-muted);
                 text-decoration: none;
                 transition: color var(--motion-medium) var(--ease-out-soft);
             }
-
-            .footer-link:hover {
-                color: var(--gold);
+            .footer-legal-link:hover {
+                color: var(--gold-dark);
             }
 
-            .footer-link-separator {
-                color: var(--text-primary-fade);
-                font-size: var(--text-small);
-            }
-
-            .footer-copyright {
-                font-size: var(--text-small);
-                color: var(--text-primary-faint);
-                text-align: center;
-            }
-            
             @media (max-width: 960px) {
                 .site-footer {
                     padding: var(--space-2xl) 0 var(--space-xl);
-                    /* Safari iOS safe area - add extra padding for home indicator on mobile */
+                    /* Safari iOS safe area - extra padding for the home indicator on mobile */
                     padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom, 0px));
                     margin-top: 0;
                 }
 
                 .footer-content {
-                    gap: var(--space-lg);
-                }
-
-                .footer-nav {
-                    gap: var(--space-sm) var(--space-md);
+                    gap: var(--space-xl);
                     padding: 0 var(--space-md);
                 }
 
-                .footer-brand-title {
-                    font-size: var(--text-heading);
+                /* Stack: centered brand block over the link grid. */
+                .footer-top {
+                    grid-template-columns: 1fr;
+                    gap: var(--space-xl);
+                    justify-items: center;
+                    text-align: center;
+                }
+
+                .footer-brand-col {
+                    align-items: center;
+                    text-align: center;
+                    gap: var(--space-sm);
+                }
+                .footer-brand-col .footer-cta {
+                    align-self: center;
+                    margin-top: var(--space-sm);
+                }
+
+                /* Two-column link grid, left-aligned within, centered as a
+                   block. Connect spans the full width so the address has
+                   room to breathe. */
+                .footer-nav {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: var(--space-lg) var(--space-xl);
+                    width: 100%;
+                    max-width: 440px;
+                    text-align: left;
+                }
+                .footer-col-title {
+                    margin-bottom: var(--space-sm);
+                }
+                .footer-col--connect {
+                    grid-column: 1 / -1;
                 }
 
                 .footer-social {
                     gap: var(--space-md);
                 }
-
                 .footer-social a {
                     width: clamp(40px, 5vw, 44px);
                     height: clamp(40px, 5vw, 44px);
                 }
-
                 .footer-social svg {
                     width: clamp(18px, 2.2vw, 20px);
                     height: clamp(18px, 2.2vw, 20px);
+                }
+
+                /* Bottom bar stacks + centers on mobile. */
+                .footer-bottom {
+                    flex-direction: column;
+                    gap: var(--space-sm);
+                    justify-content: center;
+                    text-align: center;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .footer-brand,
+                .footer-social a,
+                .footer-col-links a,
+                .footer-col-links a::after,
+                .footer-legal-link,
+                .footer-cta {
+                    transition: none;
+                }
+                .footer-brand:hover,
+                .footer-social a:hover,
+                .footer-cta:hover {
+                    transform: none;
                 }
             }
 

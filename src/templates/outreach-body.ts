@@ -365,6 +365,6 @@ export const outreachBody = (): string => `
                 </div>
             </main>
 
-            ${footer()}
+            ${footer('/')}
         </div>
     </body>`

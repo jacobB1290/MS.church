@@ -34,11 +34,6 @@ function getNextWeekdayISO(targetDow: number, startTime: string, endTime: string
 }
 
 export const homeHead = (): string => {
-    const nextSunday = getNextWeekdayISO(0, '09:00:00', '11:00:00')
-    const nextTuesday = getNextWeekdayISO(2, '08:30:00', '10:00:00')
-    const nextWednesday = getNextWeekdayISO(3, '18:00:00', '21:00:00')
-    const nextThursday = getNextWeekdayISO(4, '18:00:00', '19:30:00')
-    const nextFriday = getNextWeekdayISO(5, '19:00:00', '20:30:00')
     return `
     <head>
         <meta charset="UTF-8">
@@ -323,6 +318,95 @@ export const homeHead = (): string => {
              pay the bandwidth up front to guarantee an instant tap. -->
         <link rel="prefetch" href="/visit" as="document">
 
+<!-- Motion (self-hosted) is NOT loaded on home: the nav compress/expand
+             morph is a native CSS scroll-driven animation (html.nav-sda), and
+             the motion engine's only remaining job — the subpage menu
+             choreography — never runs here. Subpages load the bundle via
+             page-head.ts. -->
+${prefetchSnippet()}
+
+        <!-- Self-hosted Inter + Playfair Display (v1.62.7). The @font-face
+             rules live in home-styles.ts; here we preload the single
+             variable-font file per family (every weight instances from it)
+             so the font files are fetched in parallel with the HTML parse.
+             Eliminates the cross-origin Google Fonts roundtrip and the
+             font-flash during cross-document view transitions. -->
+        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/inter-var.woff2" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/playfair-display-var.woff2" crossorigin>
+        <style>
+            /* Metric-matched fallbacks. Layout boxes are computed against
+               these adjusted Georgia/system metrics; when Playfair / Inter
+               loads (cached or optional), the swap is invisible because
+               glyph dimensions already match. */
+            @font-face {
+                font-family: 'Playfair Display Fallback';
+                src: local('Georgia'), local('Times New Roman');
+                size-adjust: 106%;
+                ascent-override: 99%;
+                descent-override: 25%;
+                line-gap-override: 0%;
+            }
+            @font-face {
+                font-family: 'Inter Fallback';
+                src: local('-apple-system'), local('BlinkMacSystemFont'), local('Segoe UI'), local('Arial');
+                size-adjust: 107%;
+                ascent-override: 90%;
+                descent-override: 22%;
+                line-gap-override: 0%;
+            }
+        </style>
+
+        <!-- Vercel Analytics & Speed Insights (disabled with ?notrack=true parameter) -->
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            const noTrack = urlParams.get('notrack') === 'true';
+
+            if (!noTrack) {
+                window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+                const analyticsScript = document.createElement('script');
+                analyticsScript.defer = true;
+                analyticsScript.src = 'https://cdn.vercel-insights.com/v1/script.js';
+                document.head.appendChild(analyticsScript);
+
+                const speedInsightsScript = document.createElement('script');
+                speedInsightsScript.defer = true;
+                speedInsightsScript.src = 'https://cdn.vercel-insights.com/v1/speed-insights/script.js';
+                speedInsightsScript.onload = function() {
+                    if (window.si) { window.si('start'); }
+                };
+                document.head.appendChild(speedInsightsScript);
+            } else {
+                console.log('Analytics & Speed Insights tracking disabled via ?notrack=true parameter');
+                window.va = function() {};
+                window.si = function() {};
+                if (window.navigator && window.navigator.sendBeacon) {
+                    const originalSendBeacon = window.navigator.sendBeacon.bind(window.navigator);
+                    window.navigator.sendBeacon = function(url, data) {
+                        if (url && (url.includes('vercel') || url.includes('analytics') || url.includes('speed-insights'))) {
+                            return true;
+                        }
+                        return originalSendBeacon(url, data);
+                    };
+                }
+            }
+        </script>
+
+        <style>${homeStyles()}</style>
+    </head>`
+}
+
+// Schema.org structured-data graph for the home page, rendered as its own
+// JSON-LD block. Emitted at the END of the document (home.ts) rather than in
+// <head>: Google parses JSON-LD anywhere in the DOM, and moving these ~23 KB
+// after the visible content lets the parser reach the hero that much sooner
+// on a throttled mobile connection.
+export const homeJsonLd = (): string => {
+    const nextSunday = getNextWeekdayISO(0, '09:00:00', '11:00:00')
+    const nextTuesday = getNextWeekdayISO(2, '08:30:00', '10:00:00')
+    const nextWednesday = getNextWeekdayISO(3, '18:00:00', '21:00:00')
+    const nextThursday = getNextWeekdayISO(4, '18:00:00', '19:30:00')
+    const nextFriday = getNextWeekdayISO(5, '19:00:00', '20:30:00')
+    return `
         <!-- Schema.org Structured Data for Rich Results -->
         <script type="application/ld+json">
         {
@@ -1044,80 +1128,5 @@ export const homeHead = (): string => {
                 }
             ]
         }
-        </script>
-<!-- Motion (self-hosted) is NOT loaded on home: the nav compress/expand
-             morph is a native CSS scroll-driven animation (html.nav-sda), and
-             the motion engine's only remaining job — the subpage menu
-             choreography — never runs here. Subpages load the bundle via
-             page-head.ts. -->
-${prefetchSnippet()}
-
-        <!-- Self-hosted Inter + Playfair Display (v1.62.7). The @font-face
-             rules live in home-styles.ts; here we preload the two weights
-             most critical for first-paint (400 body + 700 display headings)
-             so the font files are fetched in parallel with the HTML parse.
-             Eliminates the cross-origin Google Fonts roundtrip and the
-             font-flash during cross-document view transitions. -->
-        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/inter-400.woff2" crossorigin>
-        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/playfair-display-700.woff2" crossorigin>
-        <style>
-            /* Metric-matched fallbacks. Layout boxes are computed against
-               these adjusted Georgia/system metrics; when Playfair / Inter
-               loads (cached or optional), the swap is invisible because
-               glyph dimensions already match. */
-            @font-face {
-                font-family: 'Playfair Display Fallback';
-                src: local('Georgia'), local('Times New Roman');
-                size-adjust: 106%;
-                ascent-override: 99%;
-                descent-override: 25%;
-                line-gap-override: 0%;
-            }
-            @font-face {
-                font-family: 'Inter Fallback';
-                src: local('-apple-system'), local('BlinkMacSystemFont'), local('Segoe UI'), local('Arial');
-                size-adjust: 107%;
-                ascent-override: 90%;
-                descent-override: 22%;
-                line-gap-override: 0%;
-            }
-        </style>
-
-        <!-- Vercel Analytics & Speed Insights (disabled with ?notrack=true parameter) -->
-        <script>
-            const urlParams = new URLSearchParams(window.location.search);
-            const noTrack = urlParams.get('notrack') === 'true';
-
-            if (!noTrack) {
-                window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-                const analyticsScript = document.createElement('script');
-                analyticsScript.defer = true;
-                analyticsScript.src = 'https://cdn.vercel-insights.com/v1/script.js';
-                document.head.appendChild(analyticsScript);
-
-                const speedInsightsScript = document.createElement('script');
-                speedInsightsScript.defer = true;
-                speedInsightsScript.src = 'https://cdn.vercel-insights.com/v1/speed-insights/script.js';
-                speedInsightsScript.onload = function() {
-                    if (window.si) { window.si('start'); }
-                };
-                document.head.appendChild(speedInsightsScript);
-            } else {
-                console.log('Analytics & Speed Insights tracking disabled via ?notrack=true parameter');
-                window.va = function() {};
-                window.si = function() {};
-                if (window.navigator && window.navigator.sendBeacon) {
-                    const originalSendBeacon = window.navigator.sendBeacon.bind(window.navigator);
-                    window.navigator.sendBeacon = function(url, data) {
-                        if (url && (url.includes('vercel') || url.includes('analytics') || url.includes('speed-insights'))) {
-                            return true;
-                        }
-                        return originalSendBeacon(url, data);
-                    };
-                }
-            }
-        </script>
-
-        <style>${homeStyles()}</style>
-    </head>`
+        </script>`
 }

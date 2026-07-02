@@ -1,5 +1,5 @@
 import { type Hono } from 'hono'
-import { homeHead } from '../templates/home-head.js'
+import { homeHead, homeJsonLd } from '../templates/home-head.js'
 import { homeBody, type HomeWatchView } from '../templates/home-body.js'
 import { homeScripts } from '../templates/home-scripts.js'
 import { minifyInlineAssets } from '../templates/_minify.js'
@@ -182,6 +182,7 @@ ${homeHead()}
 ${homeBody(watch)}
 ${homeScripts()}
 ${watchHandoffScript()}
+${homeJsonLd()}
 </html>`))
   })
 }

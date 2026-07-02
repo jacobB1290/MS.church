@@ -453,14 +453,11 @@ ${items}
           <!-- Self-hosted fonts — same files the rest of the site uses
                (see home-styles.ts). Replaces the old Google Fonts link so
                /form matches the site's font pipeline (no third-party CSS). -->
-          <link rel="preload" as="font" type="font/woff2" href="/static/fonts/inter-400.woff2" crossorigin>
-          <link rel="preload" as="font" type="font/woff2" href="/static/fonts/playfair-display-700.woff2" crossorigin>
+          <link rel="preload" as="font" type="font/woff2" href="/static/fonts/inter-var.woff2" crossorigin>
+          <link rel="preload" as="font" type="font/woff2" href="/static/fonts/playfair-display-var.woff2" crossorigin>
           <style>
-              @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('/static/fonts/inter-400.woff2') format('woff2'); }
-              @font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url('/static/fonts/inter-500.woff2') format('woff2'); }
-              @font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url('/static/fonts/inter-600.woff2') format('woff2'); }
-              @font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url('/static/fonts/inter-700.woff2') format('woff2'); }
-              @font-face { font-family: 'Playfair Display'; font-style: normal; font-weight: 700; font-display: swap; src: url('/static/fonts/playfair-display-700.woff2') format('woff2'); }
+              @font-face { font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('/static/fonts/inter-var.woff2') format('woff2'); }
+              @font-face { font-family: 'Playfair Display'; font-style: normal; font-weight: 400 900; font-display: swap; src: url('/static/fonts/playfair-display-var.woff2') format('woff2'); }
           </style>
 
           <!-- Vercel Analytics & Speed Insights (disabled with ?notrack=true parameter) -->

@@ -185,8 +185,8 @@ export function pageHead({
         <link rel="alternate" type="application/rss+xml" title="Morning Star Christian Church · Events &amp; News" href="/feed.xml">
 
         <!-- Self-hosted fonts — see home-head.ts and home-styles.ts. -->
-        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/inter-400.woff2" crossorigin>
-        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/playfair-display-700.woff2" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/inter-var.woff2" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="/static/fonts/playfair-display-var.woff2" crossorigin>
         <style>
             @font-face {
                 font-family: 'Playfair Display Fallback';

@@ -9,73 +9,36 @@ const RAW_HOME_STYLES = `
             /* Self-hosted Inter + Playfair Display (v1.62.7). Eliminates the
                cross-origin Google Fonts roundtrip + the FOUT window where
                a view-transition snapshot captured the fallback font and
-               flashed on subpage navigation. Each weight uses display=swap
-               with the metric-matched fallback below so any brief swap
-               window is shape-only, no CLS. Files live in public/static/fonts/
-               with a 1-year immutable cache via vercel.json. Regenerate with
-               scripts/_download-fonts.mjs if the typeface set changes. */
+               flashed on subpage navigation. display=swap with the
+               metric-matched fallback below so any brief swap window is
+               shape-only, no CLS. Files live in public/static/fonts/ with a
+               1-year immutable cache via vercel.json.
+
+               ONE variable-font file per family (perf pass, Jul 2026): the
+               old per-weight files were byte-identical copies of the same
+               variable font, so each declared weight forced a duplicate
+               ~40 KB download — 8 files, ~357 KB, and the last-discovered
+               weight gated the Lighthouse LCP chain. A single declaration
+               with a font-weight RANGE serves every weight from one file
+               (~75 KB total) and renders pixel-identically: browsers
+               instance the wght axis at the requested weight either way.
+               Keep the weight ranges in sync with the fvar axes
+               (Inter 100-900, Playfair 400-900) if the files are ever
+               regenerated. */
             @font-face {
                 font-family: 'Inter';
                 font-style: normal;
-                font-weight: 300;
+                font-weight: 100 900;
                 font-display: swap;
-                src: url('/static/fonts/inter-300.woff2') format('woff2');
-                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-            }
-            @font-face {
-                font-family: 'Inter';
-                font-style: normal;
-                font-weight: 400;
-                font-display: swap;
-                src: url('/static/fonts/inter-400.woff2') format('woff2');
-                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-            }
-            @font-face {
-                font-family: 'Inter';
-                font-style: normal;
-                font-weight: 500;
-                font-display: swap;
-                src: url('/static/fonts/inter-500.woff2') format('woff2');
-                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-            }
-            @font-face {
-                font-family: 'Inter';
-                font-style: normal;
-                font-weight: 600;
-                font-display: swap;
-                src: url('/static/fonts/inter-600.woff2') format('woff2');
-                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-            }
-            @font-face {
-                font-family: 'Inter';
-                font-style: normal;
-                font-weight: 700;
-                font-display: swap;
-                src: url('/static/fonts/inter-700.woff2') format('woff2');
+                src: url('/static/fonts/inter-var.woff2') format('woff2');
                 unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
             }
             @font-face {
                 font-family: 'Playfair Display';
                 font-style: normal;
-                font-weight: 400;
+                font-weight: 400 900;
                 font-display: swap;
-                src: url('/static/fonts/playfair-display-400.woff2') format('woff2');
-                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-            }
-            @font-face {
-                font-family: 'Playfair Display';
-                font-style: normal;
-                font-weight: 600;
-                font-display: swap;
-                src: url('/static/fonts/playfair-display-600.woff2') format('woff2');
-                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-            }
-            @font-face {
-                font-family: 'Playfair Display';
-                font-style: normal;
-                font-weight: 700;
-                font-display: swap;
-                src: url('/static/fonts/playfair-display-700.woff2') format('woff2');
+                src: url('/static/fonts/playfair-display-var.woff2') format('woff2');
                 unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
             }
 
